@@ -15,7 +15,8 @@
         "stomp-php/stomp-php": "^4",
         "enqueue/psr-queue": "dev-master",
         "php-http/guzzle6-adapter": "^1.1",
-        "richardfullmer/rabbitmq-management-api": "^2.0"
+        "richardfullmer/rabbitmq-management-api": "^2.0",
+        "psr/log": "^1"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
