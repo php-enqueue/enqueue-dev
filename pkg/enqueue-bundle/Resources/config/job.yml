@@ -1,0 +1,50 @@
+parameters:
+    enqueue.job.unique_job_table_name: 'enqueue_job_unique'
+
+services:
+    enqueue.job.storage:
+        class: 'Enqueue\JobQueue\JobStorage'
+        arguments:
+            - '@doctrine'
+            - 'Enqueue\EnqueueBundle\Entity\Job'
+            - '%enqueue.job.unique_job_table_name%'
+
+    enqueue.job.processor:
+        class: 'Enqueue\JobQueue\JobProcessor'
+        arguments:
+            - '@enqueue.job.storage'
+            - '@enqueue.client.message_producer'
+
+    enqueue.job.runner:
+        class: 'Enqueue\JobQueue\JobRunner'
+        arguments:
+            - '@enqueue.job.processor'
+
+    enqueue.job.calculate_root_job_status_service:
+        class: 'Enqueue\JobQueue\CalculateRootJobStatusService'
+        arguments:
+            - '@enqueue.job.storage'
+
+    enqueue.job.calculate_root_job_status_processor:
+        class: 'Enqueue\JobQueue\CalculateRootJobStatusProcessor'
+        arguments:
+            - '@enqueue.job.storage'
+            - '@enqueue.job.calculate_root_job_status_service'
+            - '@enqueue.client.message_producer'
+            - '@logger'
+        tags:
+            - { name: 'enqueue.client.message_processor' }
+
+    enqueue.job.dependent_job_processor:
+        class: 'Enqueue\JobQueue\DependentJobMessageProcessor'
+        arguments:
+            - '@enqueue.job.storage'
+            - '@enqueue.client.message_producer'
+            - '@logger'
+        tags:
+            - { name: 'enqueue.client.message_processor' }
+
+    enqueue.job.dependent_job_service:
+        class: 'Enqueue\JobQueue\DependentJobService'
+        arguments:
+            - '@enqueue.job.storage'

@@ -1,0 +1,65 @@
+<?php
+namespace Enqueue\Client\ConsumptionExtension;
+
+use Enqueue\Client\DriverInterface;
+use Enqueue\Consumption\Context;
+use Enqueue\Consumption\EmptyExtensionTrait;
+use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Result;
+
+class DelayRedeliveredMessageExtension implements ExtensionInterface
+{
+    use EmptyExtensionTrait;
+
+    const PROPERTY_REDELIVER_COUNT = 'enqueue.redelivery_count';
+
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
+
+    /**
+     * The number of seconds the message should be delayed.
+     *
+     * @var int
+     */
+    private $delay;
+
+    /**
+     * @param DriverInterface $driver
+     * @param int             $delay  The number of seconds the message should be delayed
+     */
+    public function __construct(DriverInterface $driver, $delay)
+    {
+        $this->driver = $driver;
+        $this->delay = $delay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onPreReceived(Context $context)
+    {
+        $message = $context->getPsrMessage();
+        if (false == $message->isRedelivered()) {
+            return;
+        }
+
+        $delayedMessage = $this->driver->createClientMessage($message);
+
+        // increment redelivery count
+        $redeliveryCount = (int) $delayedMessage->getProperty(self::PROPERTY_REDELIVER_COUNT, 0);
+        $delayedMessage->setProperty(self::PROPERTY_REDELIVER_COUNT, $redeliveryCount + 1);
+
+        $delayedMessage->setDelay($this->delay);
+
+        $this->driver->sendToProcessor($delayedMessage);
+        $context->getLogger()->debug('[DelayRedeliveredMessageExtension] Send delayed message');
+
+        $context->setResult(Result::REJECT);
+        $context->getLogger()->debug(
+            '[DelayRedeliveredMessageExtension] '.
+            'Reject redelivered original message by setting reject status to context.'
+        );
+    }
+}

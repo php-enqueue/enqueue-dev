@@ -1,0 +1,111 @@
+services:
+    enqueue.client.config:
+        class: 'Enqueue\Client\Config'
+        public: false
+
+    enqueue.client.message_producer:
+        class: 'Enqueue\Client\MessageProducer'
+        arguments: ['@enqueue.client.driver']
+
+    enqueue.message_producer:
+        alias: 'enqueue.client.message_producer'
+
+    enqueue.client.router_processor:
+        class: 'Enqueue\Client\RouterProcessor'
+        public: true
+        arguments:
+            - '@enqueue.client.driver'
+            - []
+        tags:
+            -
+                name: 'enqueue.client.message_processor'
+                topicName: '__router__'
+                queueName: '%enqueue.client.router_queue_name%'
+
+    enqueue.client.message_processor_registry:
+        class: 'Enqueue\Symfony\Client\ContainerAwareMessageProcessorRegistry'
+        public: false
+        calls:
+            - ['setContainer', ['@service_container']]
+
+    enqueue.client.meta.topic_meta_registry:
+        class: 'Enqueue\Client\Meta\TopicMetaRegistry'
+        public: true
+        arguments: [[]]
+
+    enqueue.client.meta.queue_meta_registry:
+        class: 'Enqueue\Client\Meta\QueueMetaRegistry'
+        public: true
+        arguments: ['@enqueue.client.config', []]
+
+    enqueue.client.delegate_message_processor:
+        class: 'Enqueue\Client\DelegateMessageProcessor'
+        public: false
+        arguments:
+            - '@enqueue.client.message_processor_registry'
+
+    enqueue.client.extension.set_router_properties:
+        class: 'Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension'
+        public: false
+        arguments:
+            - '@enqueue.client.driver'
+        tags:
+            - { name: 'enqueue.consumption.extension', priority: 5 }
+
+    enqueue.client.queue_consumer:
+        class: 'Enqueue\Consumption\QueueConsumer'
+        public: false
+        arguments:
+            - '@enqueue.transport.context'
+            - '@enqueue.consumption.extensions'
+
+    enqueue.client.consume_messages_command:
+        class: 'Enqueue\Symfony\Client\ConsumeMessagesCommand'
+        public: true
+        arguments:
+            - '@enqueue.client.queue_consumer'
+            - '@enqueue.client.delegate_message_processor'
+            - '@enqueue.client.meta.queue_meta_registry'
+            - '@enqueue.client.driver'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.produce_message_command:
+        class: 'Enqueue\Symfony\Client\ProduceMessageCommand'
+        public: true
+        arguments:
+            - '@enqueue.client.message_producer'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.meta.topics_command:
+        class: 'Enqueue\Symfony\Client\Meta\TopicsCommand'
+        arguments:
+            - '@enqueue.client.meta.topic_meta_registry'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.meta.queues_command:
+        class: 'Enqueue\Symfony\Client\Meta\QueuesCommand'
+        arguments:
+            - '@enqueue.client.meta.queue_meta_registry'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.setup_broker_command:
+        class: 'Enqueue\Symfony\Client\SetupBrokerCommand'
+        public: true
+        arguments:
+            - '@enqueue.client.driver'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.profiler.message_queue_collector:
+        class: 'Enqueue\EnqueueBundle\Profiler\MessageQueueCollector'
+        public: false
+        arguments: ['@enqueue.message_producer']
+        tags:
+            -
+              name: 'data_collector'
+              template: 'EnqueueBundle:Profiler:panel.html.twig'
+              id: 'enqueue.message_queue'

@@ -1,0 +1,43 @@
+parameters:
+    locale: 'en'
+    secret: 'ThisTokenIsNotSoSecretChangeIt'
+
+
+framework:
+    #esi:             ~
+    #translator:      { fallback: "%locale%" }
+    test: ~
+    assets: false
+    templating: false
+    session:
+        storage_id: session.storage.mock_file
+    secret:          '%secret%'
+    router:          { resource: '%kernel.root_dir%/config/routing.yml' }
+    default_locale:  '%locale%'
+
+monolog:
+    handlers:
+        main:
+            type: 'null'
+            level: 'error'
+
+enqueue:
+    transport:
+        default: 'amqp'
+        amqp:
+            host: '%rabbitmq.host%'
+            port: '%rabbitmq.amqp.port%'
+            login: '%rabbitmq.user%'
+            password: '%rabbitmq.password%'
+            vhost: '%rabbitmq.vhost%'
+    client:
+        prefix: 'amqp'
+        router_topic: 'test'
+        router_queue: 'test'
+        default_processor_queue: 'test'
+
+services:
+    test.message.processor:
+        class: 'Enqueue\EnqueueBundle\Tests\Functional\TestMessageProcessor'
+        tags:
+            - { name: 'enqueue.client.message_processor' }

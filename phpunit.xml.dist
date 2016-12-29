@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="false"
+         bootstrap="./vendor/autoload.php"
+        >
+
+    <testsuites>
+        <testsuite name="psr-queue">
+            <directory>pkg/psr-queue/Tests</directory>
+        </testsuite>
+
+        <testsuite name="enqueue">
+            <directory>pkg/enqueue/Tests</directory>
+        </testsuite>
+
+        <testsuite name="stomp">
+            <directory>pkg/stomp/Tests</directory>
+        </testsuite>
+
+        <testsuite name="amqp-ext">
+            <directory>pkg/amqp-ext/Tests</directory>
+        </testsuite>
+
+        <testsuite name="enqueue-bundle">
+            <directory>pkg/enqueue-bundle/Tests</directory>
+        </testsuite>
+
+        <testsuite name="job-queue">
+            <directory>pkg/job-queue/Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">.</directory>
+            <exclude>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

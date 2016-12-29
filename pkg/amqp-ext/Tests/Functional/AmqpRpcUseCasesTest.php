@@ -1,0 +1,99 @@
+<?php
+namespace Enqueue\AmqpExt\Tests\Functional;
+
+use Enqueue\AmqpExt\AmqpContext;
+use Enqueue\AmqpExt\AmqpMessage;
+use Enqueue\Rpc\Promise;
+use Enqueue\Rpc\RpcClient;
+use Enqueue\Test\RabbitmqAmqpExtension;
+use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+
+/**
+ * @group functional
+ */
+class AmqpRpcUseCasesTest extends \PHPUnit_Framework_TestCase
+{
+    use RabbitmqAmqpExtension;
+    use RabbitmqManagmentExtensionTrait;
+
+    /**
+     * @var AmqpContext
+     */
+    private $amqpContext;
+
+    public function setUp()
+    {
+        $this->amqpContext = $this->buildAmqpContext();
+
+        $this->removeQueue('rpc.test');
+        $this->removeQueue('rpc.reply_test');
+    }
+
+    public function tearDown()
+    {
+        $this->amqpContext->close();
+    }
+
+    public function testDoAsyncRpcCallWithCustomReplyQueue()
+    {
+        $queue = $this->amqpContext->createQueue('rpc.test');
+        $this->amqpContext->declareQueue($queue);
+
+        $replyQueue = $this->amqpContext->createQueue('rpc.reply_test');
+        $this->amqpContext->declareQueue($replyQueue);
+
+        $rpcClient = new RpcClient($this->amqpContext);
+
+        $message = $this->amqpContext->createMessage();
+        $message->setReplyTo($replyQueue->getQueueName());
+
+        $promise = $rpcClient->callAsync($queue, $message, 10);
+        $this->assertInstanceOf(Promise::class, $promise);
+
+        $consumer = $this->amqpContext->createConsumer($queue);
+        $message = $consumer->receive(1);
+        $this->assertInstanceOf(AmqpMessage::class, $message);
+        $this->assertNotNull($message->getReplyTo());
+        $this->assertNotNull($message->getCorrelationId());
+        $consumer->acknowledge($message);
+
+        $replyQueue = $this->amqpContext->createQueue($message->getReplyTo());
+        $replyMessage = $this->amqpContext->createMessage('This a reply!');
+        $replyMessage->setCorrelationId($message->getCorrelationId());
+
+        $this->amqpContext->createProducer()->send($replyQueue, $replyMessage);
+
+        $actualReplyMessage = $promise->getMessage();
+        $this->assertInstanceOf(AmqpMessage::class, $actualReplyMessage);
+    }
+
+    public function testDoAsyncRecCallWithCastInternallyCreatedTemporaryReplyQueue()
+    {
+        $queue = $this->amqpContext->createQueue('rpc.test');
+        $this->amqpContext->declareQueue($queue);
+
+        $rpcClient = new RpcClient($this->amqpContext);
+
+        $message = $this->amqpContext->createMessage();
+
+        $promise = $rpcClient->callAsync($queue, $message, 10);
+        $this->assertInstanceOf(Promise::class, $promise);
+
+        $consumer = $this->amqpContext->createConsumer($queue);
+        $receivedMessage = $consumer->receive(1);
+
+        $this->assertInstanceOf(AmqpMessage::class, $receivedMessage);
+        $this->assertNotNull($receivedMessage->getReplyTo());
+        $this->assertNotNull($receivedMessage->getCorrelationId());
+        $consumer->acknowledge($receivedMessage);
+
+        $replyQueue = $this->amqpContext->createQueue($receivedMessage->getReplyTo());
+        $replyMessage = $this->amqpContext->createMessage('This a reply!');
+        $replyMessage->setCorrelationId($receivedMessage->getCorrelationId());
+
+        $this->amqpContext->createProducer()->send($replyQueue, $replyMessage);
+
+        $actualReplyMessage = $promise->getMessage();
+        $this->assertInstanceOf(AmqpMessage::class, $actualReplyMessage);
+    }
+}

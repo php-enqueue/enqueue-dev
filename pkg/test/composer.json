@@ -1,0 +1,13 @@
+{
+    "name": "enqueue/test",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": { "Enqueue\\Test\\": "" }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}

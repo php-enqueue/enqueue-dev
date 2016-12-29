@@ -1,0 +1,35 @@
+<?php
+namespace Enqueue\EnqueueBundle\DependencyInjection\Compiler;
+
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+
+class BuildExtensionsPass implements CompilerPassInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
+        $tags = $container->findTaggedServiceIds('enqueue.consumption.extension');
+
+        $groupByPriority = [];
+        foreach ($tags as $serviceId => $tagAttributes) {
+            foreach ($tagAttributes as $tagAttribute) {
+                $priority = isset($tagAttribute['priority']) ? (int) $tagAttribute['priority'] : 0;
+
+                $groupByPriority[$priority][] = new Reference($serviceId);
+            }
+        }
+
+        ksort($groupByPriority);
+
+        $flatExtensions = [];
+        foreach ($groupByPriority as $extension) {
+            $flatExtensions = array_merge($flatExtensions, $extension);
+        }
+
+        $container->getDefinition('enqueue.consumption.extensions')->replaceArgument(0, $flatExtensions);
+    }
+}

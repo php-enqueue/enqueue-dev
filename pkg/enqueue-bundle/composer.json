@@ -1,0 +1,45 @@
+{
+    "name": "enqueue/enqueue-bundle",
+    "type": "symfony-bundle",
+    "description": "Message Queue Bundle",
+    "keywords": ["messaging", "queue", "amqp", "rabbitmq"],
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:php-enqueue/test.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "symfony/framework-bundle": "^2.8|^3",
+        "enqueue/enqueue": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.5",
+        "enqueue/stomp": "dev-master",
+        "enqueue/amqp-ext": "dev-master",
+        "enqueue/job-queue": "dev-master",
+        "enqueue/test": "dev-master",
+        "doctrine/doctrine-bundle": "~1.2",
+        "symfony/monolog-bundle": "^2.8|^3",
+        "symfony/browser-kit": "^2.8|^3",
+        "symfony/expression-language": "^2.8|^3"
+    },
+    "suggest": {
+        "enqueue/amqp-ext": "Message queue AMQP transport",
+        "enqueue/stomp": "Message queue STOMP transport"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\EnqueueBundle\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}

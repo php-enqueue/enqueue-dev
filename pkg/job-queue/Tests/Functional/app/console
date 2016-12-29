@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+$env = 'test';
+$debug = false;
+
+$autoload = null;
+foreach ([__DIR__.'/../../../vendor/autoload.php', __DIR__.'/../../../../../vendor/autoload.php'] as $file) {
+    if (file_exists($file)) {
+        $autoload = $file;
+
+        break;
+    }
+}
+
+if ($autoload) {
+    require_once $autoload;
+} else {
+    throw new \LogicException('Composer autoload was not found');
+}
+
+require_once __DIR__.'/AppKernel.php';
+
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+
+$input = new ArgvInput();
+
+$kernel = new AppKernel($env, $debug);
+$application = new Application($kernel);
+$application->run($input);

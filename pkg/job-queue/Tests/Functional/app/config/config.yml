@@ -1,0 +1,37 @@
+parameters:
+    locale: 'en'
+    secret: 'ThisTokenIsNotSoSecretChangeIt'
+
+framework:
+    #esi:             ~
+    #translator:      { fallback: "%locale%" }
+    test: ~
+    assets: false
+    templating: false
+    session:
+        storage_id: session.storage.mock_file
+    secret:          "%secret%"
+    router:          { resource: "%kernel.root_dir%/config/routing.yml" }
+    default_locale:  "%locale%"
+
+doctrine:
+    dbal:
+        driver:   "%db.driver%"
+        host:     "%db.host%"
+        port:     "%db.port%"
+        dbname:   "%db.name%"
+        user:     "%db.user%"
+        password: "%db.password%"
+        charset:  UTF8
+        wrapper_class: "Enqueue\\JobQueue\\Test\\DbalPersistedConnection"
+    orm:
+        auto_generate_proxy_classes: true
+        auto_mapping: true
+        mappings:
+            TestEntity:
+                mapping: true
+                type: annotation
+                dir: '%kernel.root_dir%/../Entity'
+                alias: 'EnqueueJobQueue'
+                prefix: 'Enqueue\JobQueue\Tests\Functional\Entity'
+                is_bundle: false

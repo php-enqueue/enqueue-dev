@@ -1,0 +1,35 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+{% endblock %}
+
+{% block menu %}
+    <span class="label {{ not collector.sentMessages ? 'disabled' }}">
+        <strong>Message Queue</strong>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>Sent messages</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Topic</th>
+                <th>Message</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sentMessage in collector.sentMessages %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ sentMessage.topic }}</td>
+                    <td><pre>{{ collector.prettyPrintMessage(sentMessage.body)|raw }}</pre></td>
+                    <td><span title="{{ sentMessage.priority }}">{{ collector.prettyPrintPriority(sentMessage.priority) }}</span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+{% endblock %}

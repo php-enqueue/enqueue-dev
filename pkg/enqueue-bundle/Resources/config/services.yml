@@ -1,0 +1,25 @@
+services:
+    enqueue.consumption.extensions:
+        class: 'Enqueue\Consumption\ChainExtension'
+        public: false
+        arguments:
+            - []
+
+    enqueue.consumption.signal_extension:
+        class: 'Enqueue\Consumption\Extension\SignalExtension'
+        public: false
+        tags:
+            - { name: 'enqueue.consumption.extension' }
+
+    enqueue.consumption.queue_consumer:
+        class: 'Enqueue\Consumption\QueueConsumer'
+        arguments:
+            - '@enqueue.transport.context'
+            - '@enqueue.consumption.extensions'
+
+    enqueue.command.consume_messages:
+        class: 'Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand'
+        arguments:
+            - '@enqueue.consumption.queue_consumer'
+        tags:
+            - { name: 'console.command' }

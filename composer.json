@@ -1,0 +1,56 @@
+{
+  "name": "enqueue/dev-message-queue",
+  "type": "project",
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.6",
+    "enqueue/psr-queue": "*",
+    "enqueue/enqueue": "*",
+    "enqueue/stomp": "*",
+    "enqueue/amqp-ext": "*",
+    "enqueue/enqueue-bundle": "*",
+    "enqueue/job-queue": "*",
+    "enqueue/test": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5",
+    "doctrine/doctrine-bundle": "~1.2",
+    "symfony/monolog-bundle": "^2.8|^3",
+    "symfony/browser-kit": "^2.8|^3",
+    "symfony/expression-language": "^2.8|^3",
+    "friendsofphp/php-cs-fixer": "^1"
+  },
+  "config": {
+    "bin-dir": "bin"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "pkg/psr-queue"
+    },
+    {
+      "type": "path",
+      "url": "pkg/test"
+    },
+    {
+      "type": "path",
+      "url": "pkg/enqueue"
+    },
+    {
+      "type": "path",
+      "url": "pkg/stomp"
+    },
+    {
+      "type": "path",
+      "url": "pkg/amqp-ext"
+    },
+    {
+      "type": "path",
+      "url": "pkg/enqueue-bundle"
+    },
+    {
+      "type": "path",
+      "url": "pkg/job-queue"
+    }
+  ]
+}

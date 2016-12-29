@@ -1,0 +1,43 @@
+version: '2'
+services:
+  dev:
+    build: { context: ., dockerfile: Dockerfile.dev }
+    depends_on:
+      - rabbitmq
+      - mysql
+    volumes:
+      - ./:/mqdev
+    environment:
+      - SYMFONY__RABBITMQ__HOST=rabbitmq
+      - SYMFONY__RABBITMQ__USER=guest
+      - SYMFONY__RABBITMQ__PASSWORD=guest
+      - SYMFONY__RABBITMQ__VHOST=mqdev
+      - SYMFONY__RABBITMQ__AMQP__PORT=5672
+      - SYMFONY__RABBITMQ__STOMP__PORT=61613
+      - SYMFONY__DB__DRIVER=pdo_mysql
+      - SYMFONY__DB__HOST=mysql
+      - SYMFONY__DB__PORT=3306
+      - SYMFONY__DB__NAME=mqdev
+      - SYMFONY__DB__USER=root
+      - SYMFONY__DB__PASSWORD=rootpass
+
+  rabbitmq:
+    build: { context: ., dockerfile: Dockerfile.rabbitmq }
+    ports:
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=mqdev
+  mysql:
+    image: mariadb:10
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+
+volumes:
+  mysql-data:
+    driver: local

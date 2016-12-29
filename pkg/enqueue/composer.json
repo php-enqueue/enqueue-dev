@@ -1,0 +1,42 @@
+{
+    "name": "enqueue/enqueue",
+    "type": "library",
+    "description": "Message Queue Library",
+    "keywords": ["messaging", "queue", "amqp", "rabbitmq"],
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:php-enqueue/test.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "enqueue/psr-queue": "dev-master",
+        "ramsey/uuid": "^2|^3.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.5",
+        "symfony/console": "^2.8|^3",
+        "symfony/dependency-injection": "^2.8|^3",
+        "symfony/config": "^2.8|^3",
+        "enqueue/test": "dev-master"
+    },
+    "suggest": {
+        "symfony/console": "^2.8|^3 If you want to use li commands",
+        "symfony/dependency-injection": "^2.8|^3",
+        "symfony/config": "^2.8|^3"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}
