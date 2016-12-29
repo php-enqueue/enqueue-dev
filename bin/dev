@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -x
+set -e
+
+while getopts "buste" OPTION; do
+  case $OPTION in
+    b)
+      COMPOSE_PROJECT_NAME=mqdev docker-compose build
+      ;;
+    u)
+      COMPOSE_PROJECT_NAME=mqdev docker-compose up
+      ;;
+    s)
+      COMPOSE_PROJECT_NAME=mqdev docker-compose stop
+      ;;
+    e)
+      docker exec -it mqdev_dev_1 /bin/bash
+      ;;
+    t)
+      COMPOSE_PROJECT_NAME=mqdev docker-compose run --workdir="/mqdev" --rm dev ./bin/test
+      ;;
+
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done

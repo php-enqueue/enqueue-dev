@@ -1,4 +1,7 @@
 *~
 /.idea/
-bin
+bin/doctrine*
+bin/php-cs-fixer
+bin/phpunit
+bin/sql-formatter
 vendor

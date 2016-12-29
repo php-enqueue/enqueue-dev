@@ -1,0 +1,147 @@
+#!/usr/bin/env php
+<?php
+
+use Symfony\Component\Process\PhpExecutableFinder;
+
+/**
+ * This script fixes code style for files which are going to be committed.
+ * If errors were found commit will be interrupted and errors will be fixed.
+ * Then you need to manually stage your changes and run commit again
+ *
+ * To install this hook just run "pre-commit -i"
+ */
+
+include_once __DIR__.'/../vendor/autoload.php';
+$projectRootDir = realpath(__DIR__ . '/..');
+if (!$projectRootDir) {
+    throw new \LogicException('The project root dir was not guessed');
+}
+
+$phpExecutableFinder = new PhpExecutableFinder();
+$phpBin = $phpExecutableFinder->find();
+if (!$phpBin) {
+    echo 'Php executable could not be found.'.PHP_EOL;
+}
+
+$options = getopt('i', array('install'));
+if (isset($options['i']) || isset($options['install'])) {
+    install();
+
+    echo "Git hook successfully installed" . PHP_EOL;
+    exit(1);
+}
+
+$options = getopt('u', array('uninstall'));
+if (isset($options['u']) || isset($options['uninstall'])) {
+    uninstall();
+
+    echo "Git hook successfully uninstalled" . PHP_EOL;
+    exit(1);
+}
+
+function install()
+{
+    global $projectRootDir;
+
+    uninstall();
+
+    //create link
+    $link = $projectRootDir . '/.git/hooks/pre-commit';
+    exec(sprintf('ln -s %s %s', __FILE__, $link));
+}
+
+function uninstall()
+{
+    global $projectRootDir;
+
+    //create link
+    $link = $projectRootDir . '/.git/hooks/pre-commit';
+    @unlink($link);
+}
+
+function getFilesToFix()
+{
+    $files = array();
+    exec('git diff-index --name-only --cached --diff-filter=ACMR HEAD --', $files);
+
+    $stagedFiles = array_filter($files, function ($file) {
+        return (bool) preg_match('/\.(php|twig|translations\/*.yml)$/', $file);
+    });
+
+    echo sprintf('Found %s staged files', count($stagedFiles)).PHP_EOL;
+
+    return $stagedFiles;
+}
+
+function runPhpLint()
+{
+    global $phpBin, $projectRootDir;
+
+    $filesWithErrors = array();
+    foreach (getFilesToFix() as $file) {
+        $output = '';
+        $returnCode = null;
+        exec(sprintf('%s -l %s 2>/dev/null', $phpBin, $projectRootDir.'/'.$file), $output, $returnCode);
+
+        if ($returnCode) {
+            $filesWithErrors[] = $file;
+        }
+    }
+
+    return $filesWithErrors;
+}
+
+function runPhpCsFixer()
+{
+    global $phpBin, $projectRootDir;
+
+    $phpCsFixerBin = $projectRootDir . '/bin/php-cs-fixer';
+    if (!file_exists($phpCsFixerBin)) {
+        echo $phpCsFixerBin.' File could not be found. Make sure you run command from project\'s root directory'.PHP_EOL;
+    }
+
+    $filesWithErrors = array();
+    foreach (getFilesToFix() as $file) {
+        $output = '';
+        $returnCode = null;
+        exec(sprintf(
+            '%s %s fix %s --config-file=%s',
+            $phpBin,
+            $phpCsFixerBin,
+            $projectRootDir.'/'.$file,
+            $projectRootDir.'/.php_cs'
+        ), $output, $returnCode);
+
+        if ($returnCode) {
+            $filesWithErrors[] = $file;
+        }
+    }
+
+    return $filesWithErrors;
+}
+
+$phpSyntaxErrors = runPhpLint();
+if ($phpSyntaxErrors) {
+    echo "Php syntax errors were found in next files:" . PHP_EOL;
+
+    foreach ($phpSyntaxErrors as $error) {
+        echo $error . PHP_EOL;
+    }
+
+    exit(1);
+}
+
+$phpCSFixerErrors = runPhpCsFixer();
+if ($phpCSFixerErrors) {
+    echo "Incorrect coding standards were detected and fixed." . PHP_EOL;
+    echo "Please stash changes and run commit again." . PHP_EOL;
+    echo "List of changed files:" . PHP_EOL;
+
+    foreach ($phpCSFixerErrors as $error) {
+        echo $error . PHP_EOL;
+    }
+
+    exit(1);
+}
+
+exit(0);

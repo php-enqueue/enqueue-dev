@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+CURRENT_BRANCH=`git name-rev --name-only HEAD`
+
+function split()
+{
+#    split_new_repo $1 $2
+
+    CURRENT_BRANCH=`git name-rev --name-only HEAD`
+
+    SHA1=`./bin/splitsh-lite --prefix=$1`
+    git push $2 "$SHA1:$CURRENT_BRANCH"
+}
+
+function split_new_repo()
+{
+    TMP_DIR="/tmp/enqueue-repo"
+    REMOTE_URL=`git remote get-url $2`
+
+    rm -rf $TMP_DIR;
+    mkdir $TMP_DIR;
+
+    (
+        cd $TMP_DIR;
+        git clone $REMOTE_URL .;
+        git checkout -b master;
+        touch foo;
+        git add foo;
+        git commit -m "foo";
+        git push origin master;
+    );
+
+    CURRENT_BRANCH=`git name-rev --name-only HEAD`
+
+    SHA1=`./bin/splitsh-lite --prefix=$1`
+    git fetch $2
+    git push $2 "$SHA1:$CURRENT_BRANCH" -f
+}
+
+
+function remote()
+{
+    git remote add $1 $2 || true
+}
+
+remote psr-queue git@github.com:php-enqueue/psr-queue.git
+remote enqueue git@github.com:php-enqueue/enqueue.git
+remote stomp git@github.com:php-enqueue/stomp.git
+remote amqp-ext git@github.com:php-enqueue/amqp-ext.git
+remote enqueue-bundle git@github.com:php-enqueue/enqueue-bundle.git
+remote job-queue git@github.com:php-enqueue/job-queue.git
+remote test git@github.com:php-enqueue/test.git
+
+split 'pkg/psr-queue' psr-queue
+split 'pkg/enqueue' enqueue
+split 'pkg/stomp' stomp
+split 'pkg/amqp-ext' amqp-ext
+split 'pkg/enqueue-bundle' enqueue-bundle
+split 'pkg/job-queue' job-queue
+split 'pkg/test' test
