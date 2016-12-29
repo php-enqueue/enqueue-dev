@@ -1,6 +1,6 @@
 # Message Queue. Test utils
 
-[![Gitter](https://badges.gitter.im/php-enqueue/enqueue-dev.svg)](https://gitter.im/php-enqueue/enqueue-dev?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
  
 Contains stuff needed in tests. Shared among different packages.  
 

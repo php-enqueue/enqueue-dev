@@ -1,6 +1,6 @@
 # Job Queue.
 
-[![Gitter](https://badges.gitter.im/php-enqueue/enqueue-dev.svg)](https://gitter.im/php-enqueue/enqueue-dev?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
 [![Build Status](https://travis-ci.org/php-enqueue/job-queue.png?branch=master)](https://travis-ci.org/php-enqueue/job-queue)
 [![Total Downloads](https://poser.pugx.org/enqueue/job-queue/d/total.png)](https://packagist.org/packages/enqueue/job-queue)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/job-queue/version.png)](https://packagist.org/packages/enqueue/job-queue)

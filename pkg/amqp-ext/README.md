@@ -1,6 +1,6 @@
 # AMQP Transport
 
-[![Gitter](https://badges.gitter.im/php-enqueue/enqueue-dev.svg)](https://gitter.im/php-enqueue/enqueue-dev?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
 [![Build Status](https://travis-ci.org/php-enqueue/amqp-ext.png?branch=master)](https://travis-ci.org/php-enqueue/amqp-ext)
 [![Total Downloads](https://poser.pugx.org/enqueue/amqp-ext/d/total.png)](https://packagist.org/packages/enqueue/amqp-ext)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/amqp-ext/version.png)](https://packagist.org/packages/enqueue/amqp-ext)
