@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Functional;
+namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Symfony\Client\Meta\QueuesCommand;
 use Symfony\Component\Console\Tester\CommandTester;

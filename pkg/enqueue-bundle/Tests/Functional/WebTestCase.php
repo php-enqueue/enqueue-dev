@@ -1,7 +1,7 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Functional;
+namespace Enqueue\Bundle\Tests\Functional;
 
-use Enqueue\EnqueueBundle\Tests\Functional\App\AppKernel;
+use Enqueue\Bundle\Tests\Functional\App\AppKernel;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;

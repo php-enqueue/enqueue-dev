@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Functional\App;
+namespace Enqueue\Bundle\Tests\Functional\App;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -15,7 +15,7 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\MonologBundle\MonologBundle(),
-            new \Enqueue\EnqueueBundle\EnqueueBundle(),
+            new \Enqueue\Bundle\EnqueueBundle(),
         ];
 
         return $bundles;

@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock;
+namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock;
 
 use Enqueue\Client\TopicSubscriberInterface;
 

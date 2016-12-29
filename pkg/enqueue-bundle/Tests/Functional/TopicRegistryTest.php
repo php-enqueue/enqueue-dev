@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Functional;
+namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Client\Meta\TopicMetaRegistry;
 

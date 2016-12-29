@@ -101,7 +101,7 @@ services:
             - { name: 'console.command' }
 
     enqueue.profiler.message_queue_collector:
-        class: 'Enqueue\EnqueueBundle\Profiler\MessageQueueCollector'
+        class: 'Enqueue\Bundle\Profiler\MessageQueueCollector'
         public: false
         arguments: ['@enqueue.message_producer']
         tags:

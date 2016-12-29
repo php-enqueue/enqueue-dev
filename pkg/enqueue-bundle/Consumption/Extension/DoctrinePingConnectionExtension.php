@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Consumption\Extension;
+namespace Enqueue\Bundle\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
 use Enqueue\Consumption\Context;

@@ -1,6 +1,6 @@
 services:
     enqueue.consumption.doctrine_clear_identity_map_extension:
-        class: 'Enqueue\EnqueueBundle\Consumption\Extension\DoctrineClearIdentityMapExtension'
+        class: 'Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension'
         public: false
         arguments:
             - '@doctrine'

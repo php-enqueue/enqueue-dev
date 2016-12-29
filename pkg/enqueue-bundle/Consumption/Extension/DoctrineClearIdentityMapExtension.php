@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Consumption\Extension;
+namespace Enqueue\Bundle\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;

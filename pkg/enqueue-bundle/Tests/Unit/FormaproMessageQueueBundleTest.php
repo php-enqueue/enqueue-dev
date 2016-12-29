@@ -1,18 +1,18 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit;
+namespace Enqueue\Bundle\Tests\Unit;
 
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildClientRoutingPass;
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildExtensionsPass;
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildMessageProcessorRegistryPass;
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
-use Enqueue\EnqueueBundle\DependencyInjection\EnqueueExtension;
-use Enqueue\EnqueueBundle\EnqueueBundle;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildMessageProcessorRegistryPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
+use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
+use Enqueue\Bundle\EnqueueBundle;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

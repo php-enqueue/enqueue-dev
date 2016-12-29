@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\DependencyInjection\Compiler;
+namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

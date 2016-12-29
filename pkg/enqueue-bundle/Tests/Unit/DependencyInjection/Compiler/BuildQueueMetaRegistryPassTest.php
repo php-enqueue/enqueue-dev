@@ -1,10 +1,10 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler;
+namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
-use Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
-use Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
-use Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 

@@ -1,12 +1,12 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit\Consumption\Extension;
+namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Enqueue\Psr\Consumer;
 use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\EnqueueBundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
+use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\DependencyInjection;
+namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\JobQueue\Job;
 use Enqueue\Client\TraceableMessageProducer;

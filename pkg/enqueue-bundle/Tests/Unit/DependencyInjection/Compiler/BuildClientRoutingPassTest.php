@@ -1,11 +1,11 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler;
+namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildClientRoutingPass;
-use Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidTopicSubscriber;
-use Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
-use Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
-use Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Entity;
+namespace Enqueue\Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

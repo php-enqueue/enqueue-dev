@@ -1,10 +1,10 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Functional;
+namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
-use Enqueue\EnqueueBundle\Tests\Functional\App\AmqpAppKernel;
+use Enqueue\Bundle\Tests\Functional\App\AmqpAppKernel;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**

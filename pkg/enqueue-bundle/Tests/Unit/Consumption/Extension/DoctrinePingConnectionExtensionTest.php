@@ -1,12 +1,12 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit\Consumption\Extension;
+namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
 use Enqueue\Psr\Consumer;
 use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\EnqueueBundle\Consumption\Extension\DoctrinePingConnectionExtension;
+use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

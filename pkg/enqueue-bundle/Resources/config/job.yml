@@ -6,7 +6,7 @@ services:
         class: 'Enqueue\JobQueue\JobStorage'
         arguments:
             - '@doctrine'
-            - 'Enqueue\EnqueueBundle\Entity\Job'
+            - 'Enqueue\Bundle\Entity\Job'
             - '%enqueue.job.unique_job_table_name%'
 
     enqueue.job.processor:

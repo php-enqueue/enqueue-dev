@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Profiler;
+namespace Enqueue\Bundle\Profiler;
 
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\MessageProducerInterface;

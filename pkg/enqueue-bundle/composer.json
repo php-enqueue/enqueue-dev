@@ -31,7 +31,7 @@
         "enqueue/stomp": "Message queue STOMP transport"
     },
     "autoload": {
-        "psr-4": { "Enqueue\\EnqueueBundle\\": "" },
+        "psr-4": { "Enqueue\\Bundle\\": "" },
         "exclude-from-classmap": [
             "/Tests/"
         ]

@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection;
+namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
 use Enqueue\Client\MessageProducer;
 use Enqueue\Client\TraceableMessageProducer;
@@ -7,9 +7,9 @@ use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullContext;
-use Enqueue\EnqueueBundle\DependencyInjection\Configuration;
-use Enqueue\EnqueueBundle\DependencyInjection\EnqueueExtension;
-use Enqueue\EnqueueBundle\Tests\Unit\Mocks\FooTransportFactory;
+use Enqueue\Bundle\DependencyInjection\Configuration;
+use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
+use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;

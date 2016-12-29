@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\EnqueueBundle\DependencyInjection\Compiler;
+namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
 use Enqueue\Client\TopicSubscriberInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

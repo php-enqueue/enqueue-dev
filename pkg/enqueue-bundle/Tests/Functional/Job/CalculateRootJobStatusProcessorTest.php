@@ -1,8 +1,8 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Functional\Job;
+namespace Enqueue\Bundle\Tests\Functional\Job;
 
 use Enqueue\JobQueue\CalculateRootJobStatusProcessor;
-use Enqueue\EnqueueBundle\Tests\Functional\WebTestCase;
+use Enqueue\Bundle\Tests\Functional\WebTestCase;
 
 /**
  * @group functional

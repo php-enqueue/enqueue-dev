@@ -1,8 +1,8 @@
 <?php
-namespace Enqueue\EnqueueBundle\Tests\Unit\DependencyInjection\Compiler;
+namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\EnqueueBundle\DependencyInjection\Compiler\BuildExtensionsPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
