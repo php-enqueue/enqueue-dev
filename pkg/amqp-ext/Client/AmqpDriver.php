@@ -5,6 +5,7 @@ use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
+use Enqueue\Psr\DeliveryMode;
 use Enqueue\Psr\Message as TransportMessage;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
@@ -161,7 +162,7 @@ class AmqpDriver implements DriverInterface
             $headers['priority'] = $this->priorityMap[$priority];
         }
 
-        $headers['delivery_mode'] = AmqpMessage::DELIVERY_MODE_PERSISTENT;
+        $headers['delivery_mode'] = DeliveryMode::PERSISTENT;
 
         $transportMessage = $this->context->createMessage();
         $transportMessage->setBody($message->getBody());
