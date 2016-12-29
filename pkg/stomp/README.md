@@ -1,9 +1,9 @@
 # STOMP Transport
 
 [![Gitter](https://badges.gitter.im/php-enqueue/enqueue-dev.svg)](https://gitter.im/php-enqueue/enqueue-dev?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/php-enqueue/stomp-transport.png?branch=master)](https://travis-ci.org/php-enqueue/stomp-transport)
-[![Total Downloads](https://poser.pugx.org/php-enqueue/stomp/d/total.png)](https://packagist.org/packages/php-enqueue/stomp)
-[![Latest Stable Version](https://poser.pugx.org/php-enqueue/stomp/version.png)](https://packagist.org/packages/php-enqueue/stomp)
+[![Build Status](https://travis-ci.org/php-enqueue/stomp.png?branch=master)](https://travis-ci.org/php-enqueue/stomp)
+[![Total Downloads](https://poser.pugx.org/enqueue/stomp/d/total.png)](https://packagist.org/packages/enqueue/stomp)
+[![Latest Stable Version](https://poser.pugx.org/enqueue/stomp/version.png)](https://packagist.org/packages/enqueue/stomp)
 
 This is an implementation of PSR specification. It allows you to send and consume message via STOMP protocol.  
 
