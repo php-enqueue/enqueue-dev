@@ -22,8 +22,8 @@
         "phpunit/phpunit": "~5.4.0",
         "enqueue/test": "dev-master",
         "enqueue/enqueue": "dev-master",
-        "symfony/framework-bundle": "~2.8",
-        "symfony/browser-kit": "~2.8"
+        "symfony/dependency-injection": "^2.8|^3",
+        "symfony/config": "^2.8|^3"
     },
     "autoload": {
         "psr-4": { "Enqueue\\Stomp\\": "" },
