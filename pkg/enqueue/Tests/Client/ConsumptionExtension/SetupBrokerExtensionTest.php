@@ -7,7 +7,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
-use Monolog\Logger;
+use Psr\Log\NullLogger;
 
 class SetupBrokerExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class SetupBrokerExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSetupBroker()
     {
-        $logger = new Logger('');
+        $logger = new NullLogger('');
 
         $driver = $this->createDriverMock();
         $driver
@@ -43,7 +43,7 @@ class SetupBrokerExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSetupBrokerOnlyOnce()
     {
-        $logger = new Logger('');
+        $logger = new NullLogger('');
 
         $driver = $this->createDriverMock();
         $driver
