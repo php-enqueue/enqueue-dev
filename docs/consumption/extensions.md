@@ -1,6 +1,7 @@
 # Consumption extensions.
 
-
+You can learn how to register extensions in [quick tour](../quick_tour.md#consumption).
+There's dedicated [chapter](../bundle/consumption_extension.md) for how to add extension in Symfony app.
 
 ## [LoggerExtension](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue/Consumption/Extension/LoggerExtension.php) 
 

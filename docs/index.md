@@ -12,6 +12,7 @@
     - [Config reference](bundle/config_reference.md)
     - [Cli commands](bundle/cli_commands.md)
     - [Job queue](bundle/job_queue.md)
+    - [Consumption extension](bundle/consumption_extension.md)
     - [Production settings](bundle/production_settings.md)
     - [Debuging](bundle/debuging.md)
     - [Functional testing](bundle/functional_testing.md)
