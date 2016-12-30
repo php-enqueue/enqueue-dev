@@ -87,7 +87,7 @@ $queueConsumer->bind('bar_queue', function(Message $message) {
 $queueConsumer->consume();
 ```
 
-There are bunch of [extensions](consumption_extensions.md) available. 
+There are bunch of [extensions](consumption/extensions.md) available. 
 This is an example of how you can add them. 
 The `SignalExtension` provides support of process signals, whenever you send SIGTERM for example it will correctly managed.
 The `LimitConsumptionTimeExtension` interrupts the consumption after given time. 
