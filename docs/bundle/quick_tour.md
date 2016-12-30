@@ -80,7 +80,7 @@ foo_message_processor:
 Now you can start consuming messages:
 
 ```bash
-$ ./app/console enqueue:consume
+$ ./app/console enqueue:consume --setup-broker
 ```
 
 _**Note**: Add -vvv to find out what is going while you are consuming messages. There is a lot of valuable debug info there._
