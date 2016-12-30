@@ -1,15 +1,15 @@
 <?php
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
+use Enqueue\Bundle\DependencyInjection\Configuration;
+use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
+use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Client\MessageProducer;
 use Enqueue\Client\TraceableMessageProducer;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullContext;
-use Enqueue\Bundle\DependencyInjection\Configuration;
-use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
-use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -397,5 +397,39 @@ class EnqueueExtensionTest extends \PHPUnit_Framework_TestCase
         ]], $container);
 
         self::assertFalse($container->hasDefinition('enqueue.consumption.doctrine_clear_identity_map_extension'));
+    }
+
+    public function testShouldLoadSignalExtensionServiceIfEnabled()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.debug', true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'transport' => [],
+            'extensions' => [
+                'signal_extension' => true,
+            ],
+        ]], $container);
+
+        self::assertTrue($container->hasDefinition('enqueue.consumption.signal_extension'));
+    }
+
+    public function testShouldNotLoadSignalExtensionServiceIfDisabled()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.debug', true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'transport' => [],
+            'extensions' => [
+                'signal_extension' => false,
+            ],
+        ]], $container);
+
+        self::assertFalse($container->hasDefinition('enqueue.consumption.signal_extension'));
     }
 }

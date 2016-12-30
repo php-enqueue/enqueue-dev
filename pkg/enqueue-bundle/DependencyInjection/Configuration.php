@@ -53,6 +53,7 @@ class Configuration implements ConfigurationInterface
             ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                 ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
                 ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
+                ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
             ->end()->end()
         ;
 
