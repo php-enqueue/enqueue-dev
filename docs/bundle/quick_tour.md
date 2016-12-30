@@ -1,4 +1,4 @@
-# Message queue bundle. Quick tour.
+# EnqueueBundle. Quick tour.
 
 The bundle integrates MessageQueue component.
 It adds easy to use configuration layer, register services and tie them together, register handy cli commands.
