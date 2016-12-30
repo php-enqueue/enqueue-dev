@@ -1,5 +1,12 @@
 # Cli commands
 
+* [enqueue:consume](#enqueueconsume)
+* [enqueue:produce](#enqueueproduce)
+* [enqueue:setup-broker](#enqueuesetup-broker)
+* [enqueue:queues](#enqueuequeues)
+* [enqueue:topics](#enqueuetopics)
+* [enqueue:transport:consume](#enqueuetransportconsume)
+
 ## enqueue:consume
 
 ```
