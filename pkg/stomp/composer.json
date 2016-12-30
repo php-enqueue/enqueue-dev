@@ -13,15 +13,15 @@
     "require": {
         "php": ">=5.6",
         "stomp-php/stomp-php": "^4",
-        "enqueue/psr-queue": "dev-master",
+        "enqueue/psr-queue": "^0.1",
         "php-http/guzzle6-adapter": "^1.1",
         "richardfullmer/rabbitmq-management-api": "^2.0",
         "psr/log": "^1"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
-        "enqueue/test": "dev-master",
-        "enqueue/enqueue": "dev-master",
+        "enqueue/test": "^0.1",
+        "enqueue/enqueue": "^0.1",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
     },
