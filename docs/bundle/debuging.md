@@ -18,6 +18,8 @@ enqueue:
 
 Now suppose you have this code in an action:
 
+![Symfony profiler](../images/symfony_profiler.png)
+
 ```php
 <?php
 
