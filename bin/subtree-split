@@ -3,13 +3,12 @@
 set -e
 set -x
 
-CURRENT_BRANCH=`git name-rev --name-only HEAD`
+CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 function split()
 {
 #    split_new_repo $1 $2
 
-    CURRENT_BRANCH=`git name-rev --name-only HEAD`
 
     SHA1=`./bin/splitsh-lite --prefix=$1`
     git push $2 "$SHA1:$CURRENT_BRANCH"
@@ -32,8 +31,6 @@ function split_new_repo()
         git commit -m "foo";
         git push origin master;
     );
-
-    CURRENT_BRANCH=`git name-rev --name-only HEAD`
 
     SHA1=`./bin/splitsh-lite --prefix=$1`
     git fetch $2

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+if (( "$#" != 1 ))
+then
+    echo "Tag has to be provided"
+    exit 1
+fi
+
+./bin/subtree-split
+
+CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+for REMOTE in amqp-ext enqueue enqueue-bundle job-queue psr-queue stomp test
+do
+	TMP_DIR="/tmp/enqueue-repo"
+    REMOTE_URL=`git remote get-url $REMOTE`
+
+    rm -rf $TMP_DIR;
+    mkdir $TMP_DIR;
+
+    (
+        cd $TMP_DIR;
+        git clone $REMOTE_URL . --depth=10
+        git checkout $CURRENT_BRANCH;
+        git tag $1 -m "Release $1"
+        git push origin --tags
+    )
+done
