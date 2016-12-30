@@ -18,8 +18,6 @@ enqueue:
 
 Now suppose you have this code in an action:
 
-![Symfony profiler](../images/symfony_profiler.png)
-
 ```php
 <?php
 
@@ -50,6 +48,24 @@ class DefaultController extends Controller
 
 ```
 
-For this action you may see something like this in the profiler: 
+For this action you may see something like this in the profiler:
+ 
+ ![Symfony profiler](../images/symfony_profiler.png)
+ 
+## Queues and topics available 
+
+There are two console commands `./bin/console enqueue:queues` and `./bin/console enqueue:topics`.
+They are here to help you to learn more about existing topics and queues.
+
+Here's the result:
+
+![Cli debug commands](../images/cli_debug_commands.png)
+
+## Consume command verbosity 
+
+By default the commands `enqueu:conume` or `enqueue:transport:consume` does not output anything. 
+You can add `-vvv` to see more information.
+ 
+![Consume command verbosity](../images/consume_command_verbosity.png)
 
 [back to index](../index.md)
