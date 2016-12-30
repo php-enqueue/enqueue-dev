@@ -1,7 +1,7 @@
 # EnqueueBundle. Quick tour.
 
-The bundle integrates MessageQueue component.
-It adds easy to use configuration layer, register services and tie them together, register handy cli commands.
+The bundle integrates enqueue library.
+It adds easy to use [configuration layer](config_reference.md), register services, adds handy [cli commands](cli_commands.md).
 
 ## Install
 
