@@ -5,12 +5,6 @@ services:
         arguments:
             - []
 
-    enqueue.consumption.signal_extension:
-        class: 'Enqueue\Consumption\Extension\SignalExtension'
-        public: false
-        tags:
-            - { name: 'enqueue.consumption.extension' }
-
     enqueue.consumption.queue_consumer:
         class: 'Enqueue\Consumption\QueueConsumer'
         arguments:

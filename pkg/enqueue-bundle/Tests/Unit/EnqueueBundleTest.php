@@ -3,9 +3,6 @@ namespace Enqueue\Bundle\Tests\Unit;
 
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqTransportFactory;
-use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Symfony\NullTransportFactory;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildMessageProcessorRegistryPass;
@@ -15,6 +12,9 @@ use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\EnqueueBundle;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
+use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\NullTransportFactory;
+use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
