@@ -1,5 +1,8 @@
 # AMQP transport
 
+Implements [AMQP specifications](https://www.rabbitmq.com/specification.html).
+Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
+
 * [Create context](#create-context)
 * [Declare topic](#declare-topic)
 * [Declare queue](#decalre-queue)

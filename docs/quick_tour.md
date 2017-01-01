@@ -4,7 +4,6 @@
 * [Consumption](#consumption)
 * [Remote Procedure Call (RPC)](#remote-procedure-call-rpc)
 * [Client](#client)
-* [Job queue](#job-queue)
 * [Cli commands](#cli-commands)
 
 ## Transport
@@ -221,7 +220,7 @@ $app->run();
 and starts the consumption from the console:
  
 ```bash
-$ app.php consume --time-limit="now + 60 sec" --message-limit=10 --memory-limit=256
+$ app.php consume
 ```
 
 [back to index](index.md)
