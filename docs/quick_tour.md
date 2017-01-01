@@ -156,11 +156,12 @@ $queueConsumer->consume();
 
 ## Client
 
-It provides a high level abstraction.
-The goal of the component is hide as much as possible details from you so you can concentrate on things that really matters. 
-For example, It configure a broker for you, if needed.
-It provides easy to use services for producing and processing messages.
-It supports message bus so different applications can send message to each other.
+It provides an easy to use high level abstraction.
+The goal of the component is hide as much as possible low level details so you can concentrate on things that really matters. 
+For example, It configure a broker for you by creating queuest, exchanges and bind them.
+It provides easy to use services for producing and processing messages. 
+It supports unified format for setting message expiration, delay, timestamp, correlation id.
+It supports message bus so different applications can talk to each other.
  
 Here's an example of how you can send and consume messages.
  
@@ -183,104 +184,6 @@ $client->send('foo_topic', 'Hello there!');
 
 // in another process you can consume messages. 
 $client->consume();
-```
-
-## Job queue
-
-There is job queue component build on top of a transport. It provides some additional features:
-
-* Stores jobs to a database. So you can query that information and build a UI for it.
-* Run unique job feature. If used guarantee that there is not any job with the same name running same time.
-* Sub jobs. If used allow split a big job into smaller pieces and process them asynchronously and in parallel.
-* Depended job. If used allow send a message when the whole job is finished (including sub jobs).
-  
-Here's some  examples.
-First shows how you can run unique job using job queue (The configuration is described in a dedicated chapter). 
-
-```php
-<?php 
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
-use Enqueue\JobQueue\JobRunner;
-
-class MessageProcessor implements MessageProcessorInterface
-{
-    /** @var JobRunner */
-    private $jobRunner;
-
-    public function process(Message $message, Context $context)
-    {
-        $result = $this->jobRunner->runUnique($message->getMessageId(), 'aJobName', function () {
-            // do your job, there is no any other processes executing same job,
-
-            return true; // if you want to ACK message or false to REJECT
-        });
-
-        return $result ? Result::ACK : Result::REJECT;
-    }
-}
-```
-
-Second shows how you can create and run a sub job, which it is executed separately. 
-You can create as many sub jobs as you like. 
-They will be executed in parallel. 
-
-```php
-<?php
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Client\MessageProducerInterface;
-use Enqueue\Consumption\Result;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
-use Enqueue\JobQueue\JobRunner;
-use Enqueue\JobQueue\Job;
-use Enqueue\Util\JSON;
-
-class RootJobMessageProcessor implements MessageProcessorInterface
-{
-    /** @var JobRunner */
-    private $jobRunner;
-    
-    /** @var  MessageProducerInterface */
-    private $producer;
-
-    public function process(Message $message, Context $context)
-    {
-        $result = $this->jobRunner->runUnique($message->getMessageId(), 'aJobName', function (JobRunner $runner) {
-            $runner->createDelayed('aSubJobName1', function (JobRunner $runner, Job $childJob) {
-                $this->producer->send('aJobTopic', [
-                    'jobId' => $childJob->getId(),
-                    // other data required by sub job
-                ]);
-            });
-
-            return true;
-        });
-
-        return $result ? Result::ACK : Result::REJECT;
-    }
-}
-
-class SubJobMessageProcessor implements MessageProcessorInterface
-{
-    /** @var JobRunner */
-    private $jobRunner;
-
-    public function process(Message $message, Context $context)
-    {
-        $data = JSON::decode($message->getBody());
-
-        $result = $this->jobRunner->runDelayed($data['jobId'], function () use ($data) {
-            // do your job
-
-            return true;
-        });
-
-        return $result ? Result::ACK : Result::REJECT;
-    }
-}
 ```
 
 ## Cli commands

@@ -7,6 +7,13 @@
     - [NULL](null_transport.md)
 * Consumption
     - [Extensions](consumption/extensions.md)
+* Client
+    - [Message examples](client/message_examples.md)
+    - [Supported brokers](client/supported_brokers.md)
+    - [Message bus](client/message_bus.md)
+* Job queue
+    - [Run unique job](job_queue/run_unique_job.md)
+    - [Run sub job(s)](job_queue/run_sub_job.md)
 * EnqueueBundle (Symfony).  
     - [Quick tour](bundle/quick_tour.md)
     - [Config reference](bundle/config_reference.md)
