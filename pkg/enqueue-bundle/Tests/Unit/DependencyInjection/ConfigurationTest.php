@@ -1,11 +1,11 @@
 <?php
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
+use Enqueue\Bundle\DependencyInjection\Configuration;
+use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Bundle\DependencyInjection\Configuration;
-use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
@@ -309,6 +309,41 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertArraySubset([
             'extensions' => [
                 'doctrine_clear_identity_map_extension' => true,
+            ],
+        ], $config);
+    }
+
+    public function testSignalExtensionShouldBeEnabledByDefault()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+        ]]);
+
+        $this->assertArraySubset([
+            'extensions' => [
+                'signal_extension' => true,
+            ],
+        ], $config);
+    }
+
+    public function testSignalExtensionCouldBeDisabled()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+            'extensions' => [
+                'signal_extension' => false,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'extensions' => [
+                'signal_extension' => false,
             ],
         ], $config);
     }

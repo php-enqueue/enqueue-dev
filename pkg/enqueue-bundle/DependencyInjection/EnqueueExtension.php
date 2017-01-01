@@ -1,8 +1,8 @@
 <?php
 namespace Enqueue\Bundle\DependencyInjection;
 
-use Enqueue\JobQueue\Job;
 use Enqueue\Client\TraceableMessageProducer;
+use Enqueue\JobQueue\Job;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -110,6 +110,10 @@ class EnqueueExtension extends Extension
 
         if ($config['extensions']['doctrine_clear_identity_map_extension']) {
             $loader->load('extensions/doctrine_clear_identity_map_extension.yml');
+        }
+
+        if ($config['extensions']['signal_extension']) {
+            $loader->load('extensions/signal_extension.yml');
         }
     }
 
