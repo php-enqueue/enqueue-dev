@@ -4,17 +4,17 @@ namespace Enqueue\Bundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class BuildMessageProcessorRegistryPass implements CompilerPassInterface
+class BuildProcessorRegistryPass implements CompilerPassInterface
 {
-    use ExtractMessageProcessorTagSubscriptionsTrait;
+    use ExtractProcessorTagSubscriptionsTrait;
 
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        $processorTagName = 'enqueue.client.message_processor';
-        $processorRegistryId = 'enqueue.client.message_processor_registry';
+        $processorTagName = 'enqueue.client.processor';
+        $processorRegistryId = 'enqueue.client.processor_registry';
 
         if (false == $container->hasDefinition($processorRegistryId)) {
             return;

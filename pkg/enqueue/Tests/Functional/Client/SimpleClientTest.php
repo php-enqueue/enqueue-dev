@@ -2,12 +2,12 @@
 namespace Enqueue\Tests\Functional\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\Psr\Message;
 use Enqueue\Client\SimpleClient;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Message;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 

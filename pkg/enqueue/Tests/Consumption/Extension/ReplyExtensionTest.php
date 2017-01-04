@@ -1,12 +1,12 @@
 <?php
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Producer;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context as PsrContext;
+use Enqueue\Psr\Producer;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
@@ -76,7 +76,7 @@ class ReplyExtensionTest extends \PHPUnit_Framework_TestCase
         $context->setResult('notInstanceOfResult');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('To send a reply an instance of Result class has to returned from a MessageProcessor.');
+        $this->expectExceptionMessage('To send a reply an instance of Result class has to returned from a Processor.');
         $extension->onPostReceived($context);
     }
 

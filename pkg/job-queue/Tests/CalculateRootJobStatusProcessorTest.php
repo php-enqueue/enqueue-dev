@@ -1,14 +1,14 @@
 <?php
 namespace Enqueue\JobQueue\Tests;
 
-use Enqueue\Psr\Context;
+use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\CalculateRootJobStatusProcessor;
 use Enqueue\JobQueue\CalculateRootJobStatusService;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobStorage;
 use Enqueue\JobQueue\Topics;
-use Enqueue\Client\MessageProducerInterface;
-use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
 

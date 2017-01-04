@@ -14,15 +14,14 @@ Guaranty that there is only single job running with such name.
 
 ```php
 <?php 
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
 use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
 use Enqueue\Psr\Context;
 use Enqueue\Util\JSON;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 
-class MessageProcessor implements MessageProcessorInterface
+class ReindexProcessor implements Processor
 {
     /**
      * @var JobRunner
@@ -43,7 +42,7 @@ class MessageProcessor implements MessageProcessorInterface
             }
         );
 
-        return $result ? Result::ACK : Result::REJECT;
+        return $result ? self::ACK : self::REJECT;
     }
 }
 ```
@@ -54,16 +53,15 @@ Run several sub jobs in parallel.
 
 ```php
 <?php
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Client\MessageProducerInterface;
 use Enqueue\Util\JSON;
 use Enqueue\Psr\Message;
 use Enqueue\Psr\Context;
+use Enqueue\Psr\Processor;
 
-class Step1MessageProcessor implements MessageProcessorInterface
+class Step1Processor implements Processor 
 {
     /**
      * @var JobRunner
@@ -102,11 +100,11 @@ class Step1MessageProcessor implements MessageProcessorInterface
             }
         );
 
-        return $result ? Result::ACK : Result::REJECT;
+        return $result ? self::ACK : self::REJECT;
     }
 }
 
-class Step2MessageProcessor implements MessageProcessorInterface
+class Step2Processor implements Processor 
 {
     /**
      * @var JobRunner
@@ -138,17 +136,15 @@ just after all steps are finished.
 
 ```php
 <?php
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\DependentJobService;
-use Enqueue\Client\MessageProducerInterface;
 use Enqueue\Util\JSON;
 use Enqueue\Psr\Message;
 use Enqueue\Psr\Context;
+use Enqueue\Psr\Processor;
 
-class MessageProcessor implements MessageProcessorInterface
+class ReindexProcessor implements Processor 
 {
     /**
      * @var JobRunner
@@ -182,7 +178,7 @@ class MessageProcessor implements MessageProcessorInterface
             }
         );
 
-        return $result ? Result::ACK : Result::REJECT;
+        return $result ? self::ACK : self::REJECT;
     }
 }
 ```

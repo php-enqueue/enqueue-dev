@@ -12,13 +12,12 @@ It shows how you can run unique job using job queue (The configuration is descri
 
 ```php
 <?php 
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
 use Enqueue\Psr\Message;
 use Enqueue\Psr\Context;
+use Enqueue\Psr\Processor;
 use Enqueue\JobQueue\JobRunner;
 
-class MessageProcessor implements MessageProcessorInterface
+class UniqueJobProcessor implements Processor 
 {
     /** @var JobRunner */
     private $jobRunner;
@@ -31,7 +30,7 @@ class MessageProcessor implements MessageProcessorInterface
             return true; // if you want to ACK message or false to REJECT
         });
 
-        return $result ? Result::ACK : Result::REJECT;
+        return $result ? self::ACK : self::REJECT;
     }
 }
 ```

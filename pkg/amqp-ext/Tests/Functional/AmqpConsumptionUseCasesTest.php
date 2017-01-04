@@ -2,15 +2,15 @@
 namespace Enqueue\AmqpExt\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 
@@ -52,7 +52,7 @@ class AmqpConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
             new LimitConsumptionTimeExtension(new \DateTime('+3sec')),
         ]));
 
-        $processor = new StubMessageProcessor();
+        $processor = new StubProcessor();
         $queueConsumer->bind($queue, $processor);
 
         $queueConsumer->consume();
@@ -81,10 +81,10 @@ class AmqpConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
 
         $replyMessage = $this->amqpContext->createMessage(__METHOD__.'.reply');
 
-        $processor = new StubMessageProcessor();
+        $processor = new StubProcessor();
         $processor->result = Result::reply($replyMessage);
 
-        $replyProcessor = new StubMessageProcessor();
+        $replyProcessor = new StubProcessor();
 
         $queueConsumer->bind($queue, $processor);
         $queueConsumer->bind($replyQueue, $replyProcessor);
@@ -98,7 +98,7 @@ class AmqpConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class StubMessageProcessor implements MessageProcessorInterface
+class StubProcessor implements Processor
 {
     public $result = Result::ACK;
 

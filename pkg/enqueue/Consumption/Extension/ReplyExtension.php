@@ -21,9 +21,10 @@ class ReplyExtension implements ExtensionInterface
             return;
         }
 
+        /** @var Result $result */
         $result = $context->getResult();
         if (false == $result instanceof Result) {
-            throw new \LogicException('To send a reply an instance of Result class has to returned from a MessageProcessor.');
+            throw new \LogicException('To send a reply an instance of Result class has to returned from a Processor.');
         }
 
         if (false == $result->getReply()) {

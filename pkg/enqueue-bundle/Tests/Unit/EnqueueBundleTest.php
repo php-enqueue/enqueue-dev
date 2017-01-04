@@ -5,7 +5,7 @@ use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqTransportFactory;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
-use Enqueue\Bundle\DependencyInjection\Compiler\BuildMessageProcessorRegistryPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
@@ -50,7 +50,7 @@ class EnqueueBundleTest extends \PHPUnit_Framework_TestCase
         $container
             ->expects($this->at(2))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildMessageProcessorRegistryPass::class))
+            ->with($this->isInstanceOf(BuildProcessorRegistryPass::class))
         ;
         $container
             ->expects($this->at(3))

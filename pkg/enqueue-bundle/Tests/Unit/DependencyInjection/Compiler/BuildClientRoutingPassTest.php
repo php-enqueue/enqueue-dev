@@ -21,7 +21,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'topicName' => 'topic',
             'processorName' => 'processor',
             'queueName' => 'queue',
@@ -49,7 +49,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition('notExistingClass');
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'processorName' => 'processor',
         ]);
         $container->setDefinition('processor', $processor);
@@ -70,7 +70,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor', $processor);
 
         $router = new Definition();
@@ -89,7 +89,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'topicName' => 'topic',
             'queueName' => 'queue',
         ]);
@@ -116,7 +116,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'topicName' => 'topic',
         ]);
         $container->setDefinition('processor-service-id', $processor);
@@ -142,7 +142,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(OnlyTopicNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-service-id', $processor);
 
         $router = new Definition();
@@ -166,7 +166,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(ProcessorNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-service-id', $processor);
 
         $router = new Definition();
@@ -190,7 +190,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(QueueNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-service-id', $processor);
 
         $router = new Definition();
@@ -216,7 +216,7 @@ class BuildClientRoutingPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(InvalidTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-service-id', $processor);
 
         $router = new Definition();

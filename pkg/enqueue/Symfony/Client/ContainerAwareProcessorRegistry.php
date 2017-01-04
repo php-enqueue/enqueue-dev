@@ -1,17 +1,17 @@
 <?php
 namespace Enqueue\Symfony\Client;
 
-use Enqueue\Client\MessageProcessorRegistryInterface;
-use Enqueue\Consumption\MessageProcessorInterface;
+use Enqueue\Client\ProcessorRegistryInterface;
+use Enqueue\Psr\Processor;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class ContainerAwareMessageProcessorRegistry implements MessageProcessorRegistryInterface, ContainerAwareInterface
+class ContainerAwareProcessorRegistry implements ProcessorRegistryInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
     /**
-     * @var MessageProcessorInterface[]
+     * @var Processor[]
      */
     protected $processors;
 
@@ -38,7 +38,7 @@ class ContainerAwareMessageProcessorRegistry implements MessageProcessorRegistry
     public function get($processorName)
     {
         if (false == isset($this->processors[$processorName])) {
-            throw new \LogicException(sprintf('MessageProcessor was not found. processorName: "%s"', $processorName));
+            throw new \LogicException(sprintf('Processor was not found. processorName: "%s"', $processorName));
         }
 
         if (null === $this->container) {
@@ -47,10 +47,10 @@ class ContainerAwareMessageProcessorRegistry implements MessageProcessorRegistry
 
         $processor = $this->container->get($this->processors[$processorName]);
 
-        if (false == $processor instanceof MessageProcessorInterface) {
+        if (false == $processor instanceof Processor) {
             throw new \LogicException(sprintf(
                 'Invalid instance of message processor. expected: "%s", got: "%s"',
-                MessageProcessorInterface::class,
+                Processor::class,
                 is_object($processor) ? get_class($processor) : gettype($processor)
             ));
         }

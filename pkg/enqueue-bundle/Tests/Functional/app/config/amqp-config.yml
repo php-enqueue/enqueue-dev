@@ -38,6 +38,6 @@ enqueue:
 
 services:
     test.message.processor:
-        class: 'Enqueue\Bundle\Tests\Functional\TestMessageProcessor'
+        class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'
         tags:
-            - { name: 'enqueue.client.message_processor' }
+            - { name: 'enqueue.client.processor' }

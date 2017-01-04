@@ -6,14 +6,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class BuildClientRoutingPass implements CompilerPassInterface
 {
-    use ExtractMessageProcessorTagSubscriptionsTrait;
+    use ExtractProcessorTagSubscriptionsTrait;
 
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        $processorTagName = 'enqueue.client.message_processor';
+        $processorTagName = 'enqueue.client.processor';
         $routerId = 'enqueue.client.router_processor';
 
         if (false == $container->hasDefinition($routerId)) {

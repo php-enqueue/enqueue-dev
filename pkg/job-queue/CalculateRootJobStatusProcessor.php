@@ -1,16 +1,16 @@
 <?php
 namespace Enqueue\JobQueue;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message;
 use Enqueue\Client\MessageProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
 use Enqueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class CalculateRootJobStatusProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class CalculateRootJobStatusProcessor implements Processor, TopicSubscriberInterface
 {
     /**
      * @var JobStorage

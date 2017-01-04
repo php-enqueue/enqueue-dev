@@ -6,7 +6,7 @@ use Enqueue\AmqpExt\Client\AmqpDriver;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
-use Enqueue\Consumption\CallbackMessageProcessor;
+use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
@@ -32,7 +32,7 @@ final class SimpleClient
     private $config;
 
     /**
-     * @var ArrayMessageProcessorRegistry
+     * @var ArrayProcessorRegistry
      */
     private $processorsRegistry;
 
@@ -60,7 +60,7 @@ final class SimpleClient
         $this->queueMetaRegistry->add($this->config->getRouterQueueName());
 
         $this->topicsMetaRegistry = new TopicMetaRegistry([]);
-        $this->processorsRegistry = new ArrayMessageProcessorRegistry();
+        $this->processorsRegistry = new ArrayProcessorRegistry();
 
         $this->driver = new AmqpDriver($context, $this->config, $this->queueMetaRegistry);
         $this->routerProcessor = new RouterProcessor($this->driver, []);
@@ -80,7 +80,7 @@ final class SimpleClient
 
         $this->topicsMetaRegistry->addProcessor($topic, $processorName);
         $this->queueMetaRegistry->addProcessor($queueName, $processorName);
-        $this->processorsRegistry->add($processorName, new CallbackMessageProcessor($processor));
+        $this->processorsRegistry->add($processorName, new CallbackProcessor($processor));
 
         $this->routerProcessor->add($topic, $queueName, $processorName);
     }
@@ -124,10 +124,10 @@ final class SimpleClient
     }
 
     /**
-     * @return DelegateMessageProcessor
+     * @return DelegateProcessor
      */
     private function getProcessor()
     {
-        return new DelegateMessageProcessor($this->processorsRegistry);
+        return new DelegateProcessor($this->processorsRegistry);
     }
 }

@@ -1,11 +1,11 @@
 <?php
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
-use Enqueue\Consumption\MessageProcessorInterface;
+use Enqueue\Psr\Consumer;
+use Enqueue\Psr\Context as PsrContext;
+use Enqueue\Psr\Processor;
 use Psr\Log\LoggerInterface;
 
 class LimitConsumedMessagesExtensionTest extends \PHPUnit_Framework_TestCase
@@ -100,7 +100,7 @@ class LimitConsumedMessagesExtensionTest extends \PHPUnit_Framework_TestCase
         $context = new Context($this->createMock(PsrContext::class));
         $context->setLogger($this->createMock(LoggerInterface::class));
         $context->setPsrConsumer($this->createMock(Consumer::class));
-        $context->setMessageProcessor($this->createMock(MessageProcessorInterface::class));
+        $context->setPsrProcessor($this->createMock(Processor::class));
 
         return $context;
     }

@@ -1,11 +1,12 @@
 <?php
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Exception\IllegalContextModificationException;
 use Enqueue\Psr\Consumer;
 use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
 use Enqueue\Psr\Queue;
-use Enqueue\Consumption\Exception\IllegalContextModificationException;
 use Psr\Log\LoggerInterface;
 
 class Context
@@ -21,9 +22,9 @@ class Context
     private $psrConsumer;
 
     /**
-     * @var MessageProcessorInterface
+     * @var Processor
      */
-    private $messageProcessor;
+    private $psrProcessor;
 
     /**
      * @var LoggerInterface
@@ -114,23 +115,23 @@ class Context
     }
 
     /**
-     * @return MessageProcessorInterface
+     * @return Processor
      */
-    public function getMessageProcessor()
+    public function getPsrProcessor()
     {
-        return $this->messageProcessor;
+        return $this->psrProcessor;
     }
 
     /**
-     * @param MessageProcessorInterface $messageProcessor
+     * @param Processor $psrProcessor
      */
-    public function setMessageProcessor(MessageProcessorInterface $messageProcessor)
+    public function setPsrProcessor(Processor $psrProcessor)
     {
-        if ($this->messageProcessor) {
+        if ($this->psrProcessor) {
             throw new IllegalContextModificationException('The message processor could be set once');
         }
 
-        $this->messageProcessor = $messageProcessor;
+        $this->psrProcessor = $psrProcessor;
     }
 
     /**

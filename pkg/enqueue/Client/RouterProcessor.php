@@ -3,10 +3,9 @@ namespace Enqueue\Client;
 
 use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Psr\Message as PsrMessage;
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
+use Enqueue\Psr\Processor;
 
-class RouterProcessor implements MessageProcessorInterface
+class RouterProcessor implements Processor
 {
     /**
      * @var DriverInterface
@@ -61,6 +60,6 @@ class RouterProcessor implements MessageProcessorInterface
             }
         }
 
-        return Result::ACK;
+        return self::ACK;
     }
 }

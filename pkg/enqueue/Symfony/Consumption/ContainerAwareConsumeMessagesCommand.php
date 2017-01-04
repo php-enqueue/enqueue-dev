@@ -3,8 +3,8 @@ namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Psr\Processor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -59,13 +59,13 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
     {
         $queueName = $input->getArgument('queue');
 
-        /** @var MessageProcessorInterface $messageProcessor */
-        $messageProcessor = $this->container->get($input->getArgument('processor-service'));
-        if (!$messageProcessor instanceof  MessageProcessorInterface) {
+        /** @var Processor $processor */
+        $processor = $this->container->get($input->getArgument('processor-service'));
+        if (!$processor instanceof  Processor) {
             throw new \LogicException(sprintf(
                 'Invalid message processor service given. It must be an instance of %s but %s',
-                MessageProcessorInterface::class,
-                get_class($messageProcessor)
+                Processor::class,
+                get_class($processor)
             ));
         }
 
@@ -78,7 +78,7 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
             $queue = $this->consumer->getPsrContext()->createQueue($queueName);
             // @todo set additional queue options
 
-            $this->consumer->bind($queue, $messageProcessor);
+            $this->consumer->bind($queue, $processor);
             $this->consumer->consume($runtimeExtensions);
         } finally {
             $this->consumer->getPsrContext()->close();

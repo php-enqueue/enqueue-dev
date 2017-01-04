@@ -6,14 +6,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class BuildQueueMetaRegistryPass implements CompilerPassInterface
 {
-    use ExtractMessageProcessorTagSubscriptionsTrait;
+    use ExtractProcessorTagSubscriptionsTrait;
 
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        $processorTagName = 'enqueue.client.message_processor';
+        $processorTagName = 'enqueue.client.processor';
         $queueMetaRegistryId = 'enqueue.client.meta.queue_meta_registry';
         if (false == $container->hasDefinition($queueMetaRegistryId)) {
             return;

@@ -1,11 +1,11 @@
 <?php
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Psr\Message;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Message;
 use Psr\Log\LoggerInterface;
 
 class LoggerExtension implements ExtensionInterface

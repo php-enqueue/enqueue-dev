@@ -1,12 +1,12 @@
 <?php
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Consumer;
+use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;

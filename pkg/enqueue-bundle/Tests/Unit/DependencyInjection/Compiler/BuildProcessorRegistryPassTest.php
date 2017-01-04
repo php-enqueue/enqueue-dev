@@ -1,18 +1,18 @@
 <?php
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Enqueue\Bundle\DependencyInjection\Compiler\BuildMessageProcessorRegistryPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
-class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
+class BuildProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testCouldBeConstructedWithoutAnyArguments()
     {
-        new BuildMessageProcessorRegistryPass();
+        new BuildProcessorRegistryPass();
     }
 
     public function testShouldBuildRouteRegistry()
@@ -20,7 +20,7 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'topicName' => 'topic',
             'processorName' => 'processor-name',
         ]);
@@ -28,9 +28,9 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
 
         $processorRegistry = new Definition();
         $processorRegistry->setArguments([]);
-        $container->setDefinition('enqueue.client.message_processor_registry', $processorRegistry);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
-        $pass = new BuildMessageProcessorRegistryPass();
+        $pass = new BuildProcessorRegistryPass();
         $pass->process($container);
 
         $expectedValue = [
@@ -45,16 +45,16 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition('notExistingClass');
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'processorName' => 'processor',
         ]);
         $container->setDefinition('processor', $processor);
 
         $processorRegistry = new Definition();
         $processorRegistry->setArguments([]);
-        $container->setDefinition('enqueue.client.message_processor_registry', $processorRegistry);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
-        $pass = new BuildMessageProcessorRegistryPass();
+        $pass = new BuildProcessorRegistryPass();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The class "notExistingClass" could not be found.');
@@ -66,14 +66,14 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor', $processor);
 
         $processorRegistry = new Definition();
         $processorRegistry->setArguments([]);
-        $container->setDefinition('enqueue.client.message_processor_registry', $processorRegistry);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
-        $pass = new BuildMessageProcessorRegistryPass();
+        $pass = new BuildProcessorRegistryPass();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Topic name is not set on message processor tag but it is required.');
@@ -85,16 +85,16 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'topicName' => 'topic',
         ]);
         $container->setDefinition('processor-id', $processor);
 
         $processorRegistry = new Definition();
         $processorRegistry->setArguments([]);
-        $container->setDefinition('enqueue.client.message_processor_registry', $processorRegistry);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
-        $pass = new BuildMessageProcessorRegistryPass();
+        $pass = new BuildProcessorRegistryPass();
         $pass->process($container);
 
         $expectedValue = [
@@ -109,14 +109,14 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(OnlyTopicNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-id', $processor);
 
         $processorRegistry = new Definition();
         $processorRegistry->setArguments([]);
-        $container->setDefinition('enqueue.client.message_processor_registry', $processorRegistry);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
-        $pass = new BuildMessageProcessorRegistryPass();
+        $pass = new BuildProcessorRegistryPass();
         $pass->process($container);
 
         $expectedValue = [
@@ -131,14 +131,14 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(ProcessorNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-id', $processor);
 
         $processorRegistry = new Definition();
         $processorRegistry->setArguments([]);
-        $container->setDefinition('enqueue.client.message_processor_registry', $processorRegistry);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
-        $pass = new BuildMessageProcessorRegistryPass();
+        $pass = new BuildProcessorRegistryPass();
         $pass->process($container);
 
         $expectedValue = [
@@ -155,14 +155,14 @@ class BuildMessageProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(InvalidTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-id', $processor);
 
         $processorRegistry = new Definition();
         $processorRegistry->setArguments([]);
-        $container->setDefinition('enqueue.client.message_processor_registry', $processorRegistry);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
-        $pass = new BuildMessageProcessorRegistryPass();
+        $pass = new BuildProcessorRegistryPass();
         $pass->process($container);
     }
 

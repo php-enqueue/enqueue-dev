@@ -20,7 +20,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'processorName' => 'processor',
         ]);
         $container->setDefinition('processor', $processor);
@@ -34,7 +34,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition('notExistingClass');
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'processorName' => 'processor',
         ]);
         $container->setDefinition('processor', $processor);
@@ -55,7 +55,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'processorName' => 'theProcessorName',
             'topicName' => 'aTopicName',
         ]);
@@ -80,7 +80,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'topicName' => 'aTopicName',
         ]);
         $container->setDefinition('processor-service-id', $processor);
@@ -104,7 +104,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(\stdClass::class);
-        $processor->addTag('enqueue.client.message_processor', [
+        $processor->addTag('enqueue.client.processor', [
             'queueName' => 'theClientQueueName',
             'topicName' => 'aTopicName',
         ]);
@@ -129,7 +129,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(OnlyTopicNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-service-id', $processor);
 
         $registry = new Definition();
@@ -151,7 +151,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(ProcessorNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-service-id', $processor);
 
         $registry = new Definition();
@@ -173,7 +173,7 @@ class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(QueueNameTopicSubscriber::class);
-        $processor->addTag('enqueue.client.message_processor');
+        $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-service-id', $processor);
 
         $registry = new Definition();

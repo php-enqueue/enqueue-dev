@@ -2,9 +2,9 @@
 namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpMessage;
+use Enqueue\Bundle\Tests\Functional\App\AmqpAppKernel;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
-use Enqueue\Bundle\Tests\Functional\App\AmqpAppKernel;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -35,9 +35,9 @@ class ConsumeMessagesCommandTest extends WebTestCase
     public function testClientConsumeMessagesCommandShouldConsumeMessage()
     {
         $command = $this->container->get('enqueue.client.consume_messages_command');
-        $messageProcessor = $this->container->get('test.message.processor');
+        $processor = $this->container->get('test.message.processor');
 
-        $this->getMessageProducer()->send(TestMessageProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->send(TestProcessor::TOPIC, 'test message body');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -45,16 +45,16 @@ class ConsumeMessagesCommandTest extends WebTestCase
             '--time-limit' => 'now +10 seconds',
         ]);
 
-        $this->assertInstanceOf(AmqpMessage::class, $messageProcessor->message);
-        $this->assertEquals('test message body', $messageProcessor->message->getBody());
+        $this->assertInstanceOf(AmqpMessage::class, $processor->message);
+        $this->assertEquals('test message body', $processor->message->getBody());
     }
 
     public function testClientConsumeMessagesFromExplicitlySetQueue()
     {
         $command = $this->container->get('enqueue.client.consume_messages_command');
-        $messageProcessor = $this->container->get('test.message.processor');
+        $processor = $this->container->get('test.message.processor');
 
-        $this->getMessageProducer()->send(TestMessageProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->send(TestProcessor::TOPIC, 'test message body');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -63,17 +63,17 @@ class ConsumeMessagesCommandTest extends WebTestCase
             'client-queue-names' => ['test'],
         ]);
 
-        $this->assertInstanceOf(AmqpMessage::class, $messageProcessor->message);
-        $this->assertEquals('test message body', $messageProcessor->message->getBody());
+        $this->assertInstanceOf(AmqpMessage::class, $processor->message);
+        $this->assertEquals('test message body', $processor->message->getBody());
     }
 
     public function testTransportConsumeMessagesCommandShouldConsumeMessage()
     {
         $command = $this->container->get('enqueue.command.consume_messages');
         $command->setContainer($this->container);
-        $messageProcessor = $this->container->get('test.message.processor');
+        $processor = $this->container->get('test.message.processor');
 
-        $this->getMessageProducer()->send(TestMessageProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->send(TestProcessor::TOPIC, 'test message body');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -83,8 +83,8 @@ class ConsumeMessagesCommandTest extends WebTestCase
             'processor-service' => 'test.message.processor',
         ]);
 
-        $this->assertInstanceOf(AmqpMessage::class, $messageProcessor->message);
-        $this->assertEquals('test message body', $messageProcessor->message->getBody());
+        $this->assertInstanceOf(AmqpMessage::class, $processor->message);
+        $this->assertEquals('test message body', $processor->message->getBody());
     }
 
     private function getMessageProducer()

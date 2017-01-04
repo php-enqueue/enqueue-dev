@@ -5,7 +5,7 @@ use Enqueue\Client\TopicSubscriberInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 
-trait ExtractMessageProcessorTagSubscriptionsTrait
+trait ExtractProcessorTagSubscriptionsTrait
 {
     /**
      * @param ContainerBuilder $container
