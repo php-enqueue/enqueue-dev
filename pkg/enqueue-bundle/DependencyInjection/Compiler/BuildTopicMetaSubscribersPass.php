@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

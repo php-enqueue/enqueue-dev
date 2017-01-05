@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\StompHeadersEncoder;
@@ -31,6 +32,8 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider headerValuesDataProvider
+     * @param mixed $originalValue
+     * @param mixed $encodedValue
      */
     public function testShouldEncodeHeaders($originalValue, $encodedValue)
     {
@@ -39,6 +42,8 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider propertyValuesDataProvider
+     * @param mixed $originalValue
+     * @param mixed $encodedValue
      */
     public function testShouldEncodeProperties($originalValue, $encodedValue)
     {
@@ -47,6 +52,8 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider headerValuesDataProvider
+     * @param mixed $originalValue
+     * @param mixed $encodedValue
      */
     public function testShouldDecodeHeaders($originalValue, $encodedValue)
     {
@@ -55,6 +62,8 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider propertyValuesDataProvider
+     * @param mixed $originalValue
+     * @param mixed $encodedValue
      */
     public function testShouldDecodeProperties($originalValue, $encodedValue)
     {

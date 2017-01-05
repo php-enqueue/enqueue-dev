@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Client\Mock;
 
 use Enqueue\Client\Config;
@@ -15,6 +16,11 @@ class SetupBrokerExtensionCommand extends Command
 
     protected $extension;
 
+    public function getExtension()
+    {
+        return $this->extension;
+    }
+
     protected function configure()
     {
         parent::configure();
@@ -25,10 +31,5 @@ class SetupBrokerExtensionCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->extension = $this->getSetupBrokerExtension($input, new NullDriver(new NullContext(), Config::create()));
-    }
-
-    public function getExtension()
-    {
-        return $this->extension;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Router;
 
 use Enqueue\Consumption\Result;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpTopic;

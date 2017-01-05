@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue\Test;
 
 use Enqueue\JobQueue\Job;

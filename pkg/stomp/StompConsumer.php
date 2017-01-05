@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp;
 
 use Enqueue\Psr\Consumer;
@@ -65,7 +66,7 @@ class StompConsumer implements Consumer
      */
     public function setAckMode($mode)
     {
-        if (false === in_array($mode, [self::ACK_AUTO, self::ACK_CLIENT, self::ACK_CLIENT_INDIVIDUAL])) {
+        if (false === in_array($mode, [self::ACK_AUTO, self::ACK_CLIENT, self::ACK_CLIENT_INDIVIDUAL], true)) {
             throw new \LogicException(sprintf('Ack mode is not valid: "%s"', $mode));
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Client;
 
 use Enqueue\Psr\Context;

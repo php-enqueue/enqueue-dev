@@ -1,8 +1,9 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Functional\Client;
 
-use Enqueue\Client\DriverInterface;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
+use Enqueue\Client\DriverInterface;
 
 /**
  * @group functional

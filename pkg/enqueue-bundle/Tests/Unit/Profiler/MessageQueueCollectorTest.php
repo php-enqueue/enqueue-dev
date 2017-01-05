@@ -1,11 +1,12 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Unit\Profiler;
 
+use Enqueue\Bundle\Profiler\MessageQueueCollector;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\MessageProducerInterface;
 use Enqueue\Client\TraceableMessageProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Bundle\Profiler\MessageQueueCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;

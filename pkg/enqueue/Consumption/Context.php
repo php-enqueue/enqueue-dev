@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Exception\IllegalContextModificationException;

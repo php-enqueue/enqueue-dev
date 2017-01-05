@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue;
 
 use Doctrine\Common\Persistence\ManagerRegistry;

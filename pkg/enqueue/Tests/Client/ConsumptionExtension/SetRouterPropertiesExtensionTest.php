@@ -1,12 +1,13 @@
 <?php
+
 namespace Enqueue\Tests\Client\ConsumptionExtension;
 
-use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp;
 
 use Enqueue\Psr\Message;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Rpc;
 
 use Enqueue\Psr\Consumer;
@@ -41,9 +42,8 @@ class Promise
                     $this->consumer->acknowledge($message);
 
                     return $message;
-                } else {
-                    $this->consumer->reject($message, true);
                 }
+                $this->consumer->reject($message, true);
             }
         }
 

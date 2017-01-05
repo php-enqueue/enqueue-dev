@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Psr;
 
 /**
@@ -10,7 +11,7 @@ namespace Enqueue\Psr;
  *
  * Within this general form, the definition of a message varies significantly across products.
  *
- * @link https://docs.oracle.com/javaee/7/api/javax/jms/Message.html
+ * @see https://docs.oracle.com/javaee/7/api/javax/jms/Message.html
  */
 interface Message
 {

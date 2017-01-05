@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Symfony;
 
 use Enqueue\AmqpExt\Client\RabbitMqDriver;

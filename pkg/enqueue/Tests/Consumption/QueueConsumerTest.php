@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\CallbackProcessor;
@@ -955,6 +956,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @param  null|mixed                                        $message
      */
     protected function createMessageConsumerStub($message = null)
     {
@@ -970,6 +972,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @param  null|mixed                                          $messageConsumer
      */
     protected function createPsrContextStub($messageConsumer = null)
     {

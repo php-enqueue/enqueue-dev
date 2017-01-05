@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Symfony;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;

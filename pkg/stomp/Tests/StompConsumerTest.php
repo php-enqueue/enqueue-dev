@@ -1,14 +1,15 @@
 <?php
+
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Psr\Consumer;
 use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\Message;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
+use Enqueue\Test\ClassExtensionTrait;
 use Stomp\Protocol\Protocol;
 use Stomp\Transport\Frame;
 

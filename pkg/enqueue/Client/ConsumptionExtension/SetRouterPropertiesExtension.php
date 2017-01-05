@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;

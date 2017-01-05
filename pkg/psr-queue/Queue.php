@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Psr;
 
 /**
@@ -6,7 +7,7 @@ namespace Enqueue\Psr;
  * It is the way a client specifies the identity of a queue to transport methods.
  * For those methods that use a Destination as a parameter, a Queue object used as an argument.
  *
- * @link https://docs.oracle.com/javaee/7/api/javax/jms/Queue.html
+ * @see https://docs.oracle.com/javaee/7/api/javax/jms/Queue.html
  */
 interface Queue extends Destination
 {

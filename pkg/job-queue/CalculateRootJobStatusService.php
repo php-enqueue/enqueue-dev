@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue;
 
 use Doctrine\Common\Collections\Collection;
@@ -28,13 +29,13 @@ class CalculateRootJobStatusService
         $rootJob = $job->isRoot() ? $job : $job->getRootJob();
         $stopStatuses = [Job::STATUS_SUCCESS, Job::STATUS_FAILED, Job::STATUS_CANCELLED];
 
-        if (in_array($rootJob->getStatus(), $stopStatuses)) {
+        if (in_array($rootJob->getStatus(), $stopStatuses, true)) {
             return;
         }
 
         $rootStopped = false;
         $this->jobStorage->saveJob($rootJob, function (Job $rootJob) use ($stopStatuses, &$rootStopped) {
-            if (in_array($rootJob->getStatus(), $stopStatuses)) {
+            if (in_array($rootJob->getStatus(), $stopStatuses, true)) {
                 return;
             }
 
@@ -47,7 +48,7 @@ class CalculateRootJobStatusService
 
             $rootJob->setStatus($status);
 
-            if (in_array($status, $stopStatuses)) {
+            if (in_array($status, $stopStatuses, true)) {
                 $rootStopped = true;
                 if (!$rootJob->getStoppedAt()) {
                     $rootJob->setStoppedAt(new \DateTime());

@@ -1,9 +1,10 @@
 <?php
+
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Psr\Message;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\StompMessage;
+use Enqueue\Test\ClassExtensionTrait;
 use Stomp\Transport\Frame;
 
 class StompMessageTest extends \PHPUnit_Framework_TestCase

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\ProcessorRegistryInterface;

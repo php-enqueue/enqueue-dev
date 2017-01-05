@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\Consumption\Extension;
 
 use Enqueue\Consumption\Context;

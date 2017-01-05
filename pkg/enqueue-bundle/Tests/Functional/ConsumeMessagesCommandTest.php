@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpMessage;
@@ -87,11 +88,6 @@ class ConsumeMessagesCommandTest extends WebTestCase
         $this->assertEquals('test message body', $processor->message->getBody());
     }
 
-    private function getMessageProducer()
-    {
-        return $this->container->get('enqueue.client.message_producer');
-    }
-
     /**
      * @return string
      */
@@ -100,5 +96,10 @@ class ConsumeMessagesCommandTest extends WebTestCase
         include_once __DIR__.'/app/AmqpAppKernel.php';
 
         return AmqpAppKernel::class;
+    }
+
+    private function getMessageProducer()
+    {
+        return $this->container->get('enqueue.client.message_producer');
     }
 }

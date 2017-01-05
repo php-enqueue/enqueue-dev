@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Consumption\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Test;
 
 trait RabbitmqManagmentExtensionTrait
@@ -35,7 +36,7 @@ trait RabbitmqManagmentExtensionTrait
 
         curl_close($ch);
 
-        if (false == in_array($httpCode, [204, 404])) {
+        if (false == in_array($httpCode, [204, 404], true)) {
             throw new \LogicException('Failed to remove queue. The response status is '.$httpCode);
         }
     }
@@ -72,7 +73,7 @@ trait RabbitmqManagmentExtensionTrait
 
         curl_close($ch);
 
-        if (false == in_array($httpCode, [204, 404])) {
+        if (false == in_array($httpCode, [204, 404], true)) {
             throw new \LogicException('Failed to remove queue. The response status is '.$httpCode);
         }
     }

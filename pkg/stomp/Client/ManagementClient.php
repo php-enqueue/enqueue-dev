@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp\Client;
 
 use RabbitMq\ManagementApi\Client;

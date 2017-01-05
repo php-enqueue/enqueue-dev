@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt;
 
 use Enqueue\Psr\Message;

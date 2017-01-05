@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Symfony;
 
 use Enqueue\Client\NullDriver;

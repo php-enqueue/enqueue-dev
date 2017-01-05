@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;

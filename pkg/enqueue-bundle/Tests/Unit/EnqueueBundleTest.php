@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Unit;
 
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;

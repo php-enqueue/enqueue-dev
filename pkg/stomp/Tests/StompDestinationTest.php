@@ -1,10 +1,11 @@
 <?php
+
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Psr\Queue;
 use Enqueue\Psr\Topic;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\StompDestination;
+use Enqueue\Test\ClassExtensionTrait;
 
 class StompDestinationTest extends \PHPUnit_Framework_TestCase
 {

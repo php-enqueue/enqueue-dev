@@ -1,11 +1,12 @@
 <?php
+
 namespace Enqueue\Tests\Client\ConsumptionExtension;
 
-use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Client\ConsumptionExtension\SetupBrokerExtension;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Psr\Log\NullLogger;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Tests\Symfony;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;

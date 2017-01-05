@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue;
 
 use Enqueue\Client\MessageProducerInterface;
@@ -202,7 +203,7 @@ class JobProcessor
 
         $job = $this->jobStorage->findJobById($job->getId());
 
-        if (!in_array($job->getStatus(), [Job::STATUS_NEW, Job::STATUS_RUNNING])) {
+        if (!in_array($job->getStatus(), [Job::STATUS_NEW, Job::STATUS_RUNNING], true)) {
             throw new \LogicException(sprintf(
                 'Can cancel only new or running jobs. id: "%s", status: "%s"',
                 $job->getId(),

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Psr\InvalidDestinationException;
@@ -6,10 +7,10 @@ use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\Message as PsrMessage;
 use Enqueue\Psr\Producer;
 use Enqueue\Psr\Queue;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
+use Enqueue\Test\ClassExtensionTrait;
 use Stomp\Client;
 use Stomp\Transport\Message;
 

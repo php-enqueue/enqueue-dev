@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\Profiler;
 
 use Enqueue\Client\MessagePriority;

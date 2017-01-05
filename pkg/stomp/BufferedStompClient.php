@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp;
 
 use Stomp\Client;

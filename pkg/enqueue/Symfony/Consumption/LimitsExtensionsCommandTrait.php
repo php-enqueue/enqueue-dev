@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;

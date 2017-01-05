@@ -1,17 +1,18 @@
 <?php
+
 namespace  Enqueue\AmqpExt\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
-use Enqueue\Psr\DeliveryMode;
-use Enqueue\Psr\Message as TransportMessage;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Psr\DeliveryMode;
+use Enqueue\Psr\Message as TransportMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

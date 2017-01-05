@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Util\Fixtures;
 
 class JsonSerializableClass implements \JsonSerializable

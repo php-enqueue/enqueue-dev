@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp\Symfony;
 
 use Enqueue\Stomp\Client\ManagementClient;

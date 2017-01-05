@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Consumption;
 
 class ChainExtension implements ExtensionInterface

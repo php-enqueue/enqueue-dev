@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp;
 
 use Enqueue\Psr\Queue;
@@ -110,7 +111,7 @@ class StompDestination implements Topic, Queue
             self::TYPE_REPLY_QUEUE,
         ];
 
-        if (false == in_array($type, $types)) {
+        if (false == in_array($type, $types, true)) {
             throw new \LogicException(sprintf('Invalid destination type: "%s"', $type));
         }
 

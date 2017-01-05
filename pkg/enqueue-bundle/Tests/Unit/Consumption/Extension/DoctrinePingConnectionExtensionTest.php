@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;

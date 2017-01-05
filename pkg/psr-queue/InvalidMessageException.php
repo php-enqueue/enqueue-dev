@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Psr;
 
 class InvalidMessageException extends Exception

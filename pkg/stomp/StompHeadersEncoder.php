@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp;
 
 class StompHeadersEncoder
@@ -26,6 +27,32 @@ class StompHeadersEncoder
         }
 
         return $encodedHeaders;
+    }
+
+    /**
+     * @param array $headers
+     *
+     * @return array [[headers], [properties]]
+     */
+    public static function decode(array $headers = [])
+    {
+        $encodedHeaders = [];
+        $encodedProperties = [];
+        $prefixLength = strlen(self::PROPERTY_PREFIX);
+
+        // separate headers/properties
+        foreach ($headers as $key => $value) {
+            if (0 === strpos($key, self::PROPERTY_PREFIX)) {
+                $encodedProperties[substr($key, $prefixLength)] = $value;
+            } else {
+                $encodedHeaders[$key] = $value;
+            }
+        }
+
+        $decodedHeaders = self::doDecode($encodedHeaders);
+        $decodedProperties = self::doDecode($encodedProperties);
+
+        return [$decodedHeaders, $decodedProperties];
     }
 
     /**
@@ -70,32 +97,6 @@ class StompHeadersEncoder
         }
 
         return $encoded;
-    }
-
-    /**
-     * @param array $headers
-     *
-     * @return array [[headers], [properties]]
-     */
-    public static function decode(array $headers = [])
-    {
-        $encodedHeaders = [];
-        $encodedProperties = [];
-        $prefixLength = strlen(self::PROPERTY_PREFIX);
-
-        // separate headers/properties
-        foreach ($headers as $key => $value) {
-            if (0 === strpos($key, self::PROPERTY_PREFIX)) {
-                $encodedProperties[substr($key, $prefixLength)] = $value;
-            } else {
-                $encodedHeaders[$key] = $value;
-            }
-        }
-
-        $decodedHeaders = self::doDecode($encodedHeaders);
-        $decodedProperties = self::doDecode($encodedProperties);
-
-        return [$decodedHeaders, $decodedProperties];
     }
 
     /**

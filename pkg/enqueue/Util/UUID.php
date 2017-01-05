@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Util;
 
 use Ramsey\Uuid\Uuid as RamseyUuid;
@@ -13,8 +14,8 @@ class UUID
     {
         if (class_exists(RamseyUuid::class)) {
             return RamseyUuid::uuid4()->toString();
-        } else {
-            return RhumsaaUuid::uuid4()->toString();
         }
+
+        return RhumsaaUuid::uuid4()->toString();
     }
 }

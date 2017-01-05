@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;

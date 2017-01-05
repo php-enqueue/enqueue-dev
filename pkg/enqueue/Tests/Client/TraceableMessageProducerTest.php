@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Message;

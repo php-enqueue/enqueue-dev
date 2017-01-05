@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Tests\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
@@ -6,12 +7,12 @@ use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\AmqpExt\Client\AmqpDriver;
-use Enqueue\Psr\Producer;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Psr\Producer;
 use Enqueue\Test\ClassExtensionTrait;
 
 class AmqpDriverTest extends \PHPUnit_Framework_TestCase

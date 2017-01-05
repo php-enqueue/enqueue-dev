@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Transport\Null;
 
 use Enqueue\Psr\Message;
@@ -23,7 +24,7 @@ class NullMessageTest extends \PHPUnit_Framework_TestCase
     {
         $message = new NullMessage();
 
-        $this->assertSame(null, $message->getBody());
+        $this->assertNull($message->getBody());
     }
 
     public function testShouldNewMessageReturnEmptyProperties()

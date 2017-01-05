@@ -1,8 +1,9 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Functional\Client;
 
-use Enqueue\Client\MessageProducerInterface;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
+use Enqueue\Client\MessageProducerInterface;
 
 /**
  * @group functional

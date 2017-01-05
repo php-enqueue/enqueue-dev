@@ -1,11 +1,12 @@
 <?php
+
 namespace Enqueue\Stomp\Tests\Symfony;
 
-use Enqueue\Symfony\TransportFactoryInterface;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\Client\StompDriver;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
+use Enqueue\Symfony\TransportFactoryInterface;
+use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

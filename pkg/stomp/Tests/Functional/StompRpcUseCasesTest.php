@@ -1,12 +1,13 @@
 <?php
+
 namespace Enqueue\Stomp\Tests\Functional;
 
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
-use Enqueue\Test\RabbitmqManagmentExtensionTrait;
-use Enqueue\Test\RabbitmqStompExtension;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompMessage;
+use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Enqueue\Test\RabbitmqStompExtension;
 
 /**
  * @group functional

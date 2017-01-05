@@ -5,3 +5,5 @@ bin/php-cs-fixer
 bin/phpunit
 bin/sql-formatter
 vendor
+.php_cs
+.php_cs.cache

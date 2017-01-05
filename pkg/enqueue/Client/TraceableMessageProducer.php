@@ -1,17 +1,17 @@
 <?php
+
 namespace Enqueue\Client;
 
 class TraceableMessageProducer implements MessageProducerInterface
 {
     /**
-     * @var MessageProducerInterface
-     */
-    private $messageProducer;
-
-    /**
      * @var array
      */
     protected $traces = [];
+    /**
+     * @var MessageProducerInterface
+     */
+    private $messageProducer;
 
     /**
      * @param MessageProducerInterface $messageProducer

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Psr;
 
 /**
@@ -6,7 +7,7 @@ namespace Enqueue\Psr;
  * A MessageConsumer object is created by passing a Destination object
  * to a message-consumer creation method supplied by a session.
  *
- * @link https://docs.oracle.com/javaee/7/api/javax/jms/MessageConsumer.html
+ * @see https://docs.oracle.com/javaee/7/api/javax/jms/MessageConsumer.html
  */
 interface Consumer
 {

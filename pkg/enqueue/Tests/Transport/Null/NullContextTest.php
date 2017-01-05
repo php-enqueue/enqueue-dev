@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Transport\Null;
 
 use Enqueue\Psr\Context;
@@ -32,7 +33,7 @@ class NullContextTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(NullMessage::class, $message);
 
-        $this->assertSame(null, $message->getBody());
+        $this->assertNull($message->getBody());
         $this->assertSame([], $message->getHeaders());
         $this->assertSame([], $message->getProperties());
     }
