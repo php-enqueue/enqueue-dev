@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": ">=5.6",
-        "enqueue/psr-queue": "^0.1",
+        "enqueue/psr-queue": "^0.2",
         "ramsey/uuid": "^2|^3.5"
     },
     "require-dev": {
@@ -20,7 +20,7 @@
         "symfony/console": "^2.8|^3",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3",
-        "enqueue/test": "^0.1"
+        "enqueue/test": "^0.2"
     },
     "suggest": {
         "symfony/console": "^2.8|^3 If you want to use li commands",
@@ -36,7 +36,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.1.x-dev"
+            "dev-master": "0.2.x-dev"
         }
     }
 }

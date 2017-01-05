@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",
-        "enqueue/test": "^0.1"
+        "enqueue/test": "^0.2"
     },
     "autoload": {
         "psr-4": { "Enqueue\\Psr\\": "" },
@@ -26,7 +26,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.1.x-dev"
+            "dev-master": "0.2.x-dev"
         }
     }
 }
