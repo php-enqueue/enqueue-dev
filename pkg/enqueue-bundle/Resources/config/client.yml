@@ -56,7 +56,7 @@ services:
         class: 'Enqueue\Consumption\QueueConsumer'
         public: false
         arguments:
-            - '@enqueue.transport.context'
+            - '@enqueue.transport.connection_factory'
             - '@enqueue.consumption.extensions'
 
     enqueue.client.consume_messages_command:

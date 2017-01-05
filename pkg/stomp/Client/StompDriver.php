@@ -6,6 +6,7 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
@@ -14,6 +15,11 @@ use Psr\Log\NullLogger;
 
 class StompDriver implements DriverInterface
 {
+    /**
+     * @var StompConnectionFactory
+     */
+    private $connectionFactory;
+
     /**
      * @var StompContext
      */
@@ -25,12 +31,12 @@ class StompDriver implements DriverInterface
     private $config;
 
     /**
-     * @param StompContext $context
-     * @param Config       $config
+     * @param StompConnectionFactory $connectionFactory
+     * @param Config $config
      */
-    public function __construct(StompContext $context, Config $config)
+    public function __construct(StompConnectionFactory $connectionFactory, Config $config)
     {
-        $this->context = $context;
+        $this->connectionFactory = $connectionFactory;
         $this->config = $config;
     }
 
@@ -46,7 +52,7 @@ class StompDriver implements DriverInterface
         $topic = $this->createRouterTopic();
         $transportMessage = $this->createTransportMessage($message);
 
-        $this->context->createProducer()->send($topic, $transportMessage);
+        $this->getContext()->createProducer()->send($topic, $transportMessage);
     }
 
     /**
@@ -65,7 +71,7 @@ class StompDriver implements DriverInterface
         $transportMessage = $this->createTransportMessage($message);
         $destination = $this->createQueue($queueName);
 
-        $this->context->createProducer()->send($destination, $transportMessage);
+        $this->getContext()->createProducer()->send($destination, $transportMessage);
     }
 
     /**
@@ -87,7 +93,7 @@ class StompDriver implements DriverInterface
         $headers = $message->getHeaders();
         $headers['content-type'] = $message->getContentType();
 
-        $transportMessage = $this->context->createMessage();
+        $transportMessage = $this->getContext()->createMessage();
         $transportMessage->setHeaders($headers);
         $transportMessage->setPersistent(true);
         $transportMessage->setBody($message->getBody());
@@ -137,7 +143,7 @@ class StompDriver implements DriverInterface
      */
     public function createQueue($queueName)
     {
-        $queue = $this->context->createQueue($this->config->createTransportQueueName($queueName));
+        $queue = $this->getContext()->createQueue($this->config->createTransportQueueName($queueName));
         $queue->setDurable(true);
         $queue->setAutoDelete(false);
         $queue->setExclusive(false);
@@ -158,12 +164,24 @@ class StompDriver implements DriverInterface
      */
     private function createRouterTopic()
     {
-        $topic = $this->context->createTopic(
+        $topic = $this->getContext()->createTopic(
             $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())
         );
         $topic->setDurable(true);
         $topic->setAutoDelete(false);
 
         return $topic;
+    }
+
+    /**
+     * @return StompContext
+     */
+    protected function getContext()
+    {
+        if (false == $this->context) {
+            $this->context = $this->connectionFactory->createContext();
+        }
+
+        return $this->context;
     }
 }

@@ -6,6 +6,7 @@ use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Psr\Consumer;
+use Enqueue\Psr\ConnectionFactory as PsrConnectionFactory;
 use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Psr\Processor;
 use Enqueue\Psr\Queue;
@@ -14,6 +15,11 @@ use Psr\Log\NullLogger;
 
 class QueueConsumer
 {
+    /**
+     * @var PsrConnectionFactory
+     */
+    private $psrConnectionFactory;
+
     /**
      * @var PsrContext
      */
@@ -39,28 +45,20 @@ class QueueConsumer
     private $idleMicroseconds;
 
     /**
-     * @param PsrContext                             $psrContext
+     * @param PsrConnectionFactory                   $psrConnectionFactory
      * @param ExtensionInterface|ChainExtension|null $extension
      * @param int                                    $idleMicroseconds 100ms by default
      */
     public function __construct(
-        PsrContext $psrContext,
+        PsrConnectionFactory $psrConnectionFactory,
         ExtensionInterface $extension = null,
         $idleMicroseconds = 100000
     ) {
-        $this->psrContext = $psrContext;
+        $this->psrConnectionFactory = $psrConnectionFactory;
         $this->extension = $extension;
         $this->idleMicroseconds = $idleMicroseconds;
 
         $this->boundProcessors = [];
-    }
-
-    /**
-     * @return PsrContext
-     */
-    public function getPsrContext()
-    {
-        return $this->psrContext;
     }
 
     /**
@@ -72,7 +70,7 @@ class QueueConsumer
     public function bind($queue, $processor)
     {
         if (is_string($queue)) {
-            $queue = $this->psrContext->createQueue($queue);
+            $queue = $this->getPsrContext()->createQueue($queue);
         }
         if (is_callable($processor)) {
             $processor = new CallbackProcessor($processor);
@@ -103,11 +101,13 @@ class QueueConsumer
      */
     public function consume(ExtensionInterface $runtimeExtension = null)
     {
+        $psrContext = $this->getPsrContext();
+
         /** @var Consumer[] $messageConsumers */
         $messageConsumers = [];
         /** @var \Enqueue\Psr\Queue $queue */
         foreach ($this->boundProcessors as list($queue, $processor)) {
-            $messageConsumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
+            $messageConsumers[$queue->getQueueName()] = $psrContext->createConsumer($queue);
         }
 
         $extension = $this->extension ?: new ChainExtension([]);
@@ -115,7 +115,8 @@ class QueueConsumer
             $extension = new ChainExtension([$extension, $runtimeExtension]);
         }
 
-        $context = new Context($this->psrContext);
+
+        $context = new Context($psrContext);
         $extension->onStart($context);
 
         $logger = $context->getLogger() ?: new NullLogger();
@@ -129,7 +130,7 @@ class QueueConsumer
 
                     $messageConsumer = $messageConsumers[$queue->getQueueName()];
 
-                    $context = new Context($this->psrContext);
+                    $context = new Context($psrContext);
                     $context->setLogger($logger);
                     $context->setPsrQueue($queue);
                     $context->setPsrConsumer($messageConsumer);
@@ -143,7 +144,7 @@ class QueueConsumer
                 $context->setExecutionInterrupted(true);
 
                 $extension->onInterrupted($context);
-                $this->psrContext->close();
+                $psrContext->close();
 
                 return;
             } catch (\Exception $exception) {
@@ -152,15 +153,27 @@ class QueueConsumer
 
                 try {
                     $this->onInterruptionByException($extension, $context);
-                    $this->psrContext->close();
+                    $psrContext->close();
                 } catch (\Exception $e) {
                     // for some reason finally does not work here on php5.5
-                    $this->psrContext->close();
+                    $psrContext->close();
 
                     throw $e;
                 }
             }
         }
+    }
+
+    /**
+     * @return PsrContext
+     */
+    public function getPsrContext()
+    {
+        if (false == $this->psrContext) {
+            $this->psrContext = $this->psrConnectionFactory->createContext();
+        }
+
+        return $this->psrContext;
     }
 
     /**
@@ -176,6 +189,7 @@ class QueueConsumer
         $processor = $context->getPsrProcessor();
         $consumer = $context->getPsrConsumer();
         $logger = $context->getLogger();
+        $psrContext = $context->getPsrContext();
 
         $extension->onBeforeReceive($context);
 
@@ -193,7 +207,7 @@ class QueueConsumer
 
             $extension->onPreReceived($context);
             if (!$context->getResult()) {
-                $result = $processor->process($message, $this->psrContext);
+                $result = $processor->process($message, $psrContext);
                 $context->setResult($result);
             }
 

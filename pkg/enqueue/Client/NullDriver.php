@@ -3,6 +3,7 @@
 namespace Enqueue\Client;
 
 use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Transport\Null\NullConnectionFactory;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
@@ -11,22 +12,28 @@ use Psr\Log\NullLogger;
 class NullDriver implements DriverInterface
 {
     /**
+     * @var NullConnectionFactory
+     */
+    private $connectionFactory;
+
+    /**
      * @var NullContext
      */
-    protected $context;
+    private $context;
 
     /**
      * @var Config
      */
-    protected $config;
+    private $config;
 
     /**
-     * @param NullContext $session
+     * @param NullConnectionFactory $connectionFactory
      * @param Config      $config
      */
-    public function __construct(NullContext $session, Config $config)
+    public function __construct(NullConnectionFactory $connectionFactory, Config $config)
     {
-        $this->context = $session;
+        $this->connectionFactory = $connectionFactory;
+        $this->context = $connectionFactory->createContext();
         $this->config = $config;
     }
 
@@ -138,6 +145,6 @@ class NullDriver implements DriverInterface
     public function setupBroker(LoggerInterface $logger = null)
     {
         $logger ?: new NullLogger();
-        $logger->debug('[NullDriver] setup broker');
+        $logger->debug('[NullDriver] nothing to setup');
     }
 }
