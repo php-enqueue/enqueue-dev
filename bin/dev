@@ -3,7 +3,7 @@
 set -x
 set -e
 
-while getopts "buste" OPTION; do
+while getopts "bustef" OPTION; do
   case $OPTION in
     b)
       COMPOSE_PROJECT_NAME=mqdev docker-compose build
@@ -16,6 +16,9 @@ while getopts "buste" OPTION; do
       ;;
     e)
       docker exec -it mqdev_dev_1 /bin/bash
+      ;;
+    f)
+      ./bin/php-cs-fixer fix
       ;;
     t)
       COMPOSE_PROJECT_NAME=mqdev docker-compose run --workdir="/mqdev" --rm dev ./bin/test

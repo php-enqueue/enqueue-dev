@@ -18,7 +18,7 @@
     "symfony/monolog-bundle": "^2.8|^3",
     "symfony/browser-kit": "^2.8|^3",
     "symfony/expression-language": "^2.8|^3",
-    "friendsofphp/php-cs-fixer": "^1"
+    "friendsofphp/php-cs-fixer": "^2"
   },
   "config": {
     "bin-dir": "bin"
