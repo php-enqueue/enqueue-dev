@@ -1,14 +1,14 @@
 <?php
 namespace Enqueue\Client;
 
-use Enqueue\Consumption\MessageProcessorInterface;
+use Enqueue\Psr\Processor;
 
-interface MessageProcessorRegistryInterface
+interface ProcessorRegistryInterface
 {
     /**
      * @param string $processorName
      *
-     * @return MessageProcessorInterface
+     * @return Processor
      */
     public function get($processorName);
 }

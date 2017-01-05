@@ -5,7 +5,7 @@ use Enqueue\Client\Config;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
-    public function testShouldReturnRouterMessageProcessorNameSetInConstructor()
+    public function testShouldReturnRouterProcessorNameSetInConstructor()
     {
         $config = new Config(
             'aPrefix',

@@ -1,12 +1,13 @@
 <?php
 namespace Enqueue\Consumption;
 
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Queue;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
+use Enqueue\Psr\Consumer;
+use Enqueue\Psr\Context as PsrContext;
+use Enqueue\Psr\Processor;
+use Enqueue\Psr\Queue;
 use Enqueue\Util\VarExport;
 use Psr\Log\NullLogger;
 
@@ -24,12 +25,12 @@ class QueueConsumer
 
     /**
      * [
-     *   [Queue, MessageProcessorInterface],
+     *   [Queue, Processor],
      * ].
      *
      * @var array
      */
-    private $boundMessageProcessors;
+    private $boundProcessors;
 
     /**
      * @var int
@@ -50,7 +51,7 @@ class QueueConsumer
         $this->extension = $extension;
         $this->idleMicroseconds = $idleMicroseconds;
 
-        $this->boundMessageProcessors = [];
+        $this->boundProcessors = [];
     }
 
     /**
@@ -62,31 +63,31 @@ class QueueConsumer
     }
 
     /**
-     * @param Queue|string                       $queue
-     * @param MessageProcessorInterface|callable $messageProcessor
+     * @param Queue|string       $queue
+     * @param Processor|callable $processor
      *
      * @return QueueConsumer
      */
-    public function bind($queue, $messageProcessor)
+    public function bind($queue, $processor)
     {
         if (is_string($queue)) {
             $queue = $this->psrContext->createQueue($queue);
         }
-        if (is_callable($messageProcessor)) {
-            $messageProcessor = new CallbackMessageProcessor($messageProcessor);
+        if (is_callable($processor)) {
+            $processor = new CallbackProcessor($processor);
         }
 
         InvalidArgumentException::assertInstanceOf($queue, Queue::class);
-        InvalidArgumentException::assertInstanceOf($messageProcessor, MessageProcessorInterface::class);
+        InvalidArgumentException::assertInstanceOf($processor, Processor::class);
 
         if (empty($queue->getQueueName())) {
             throw new LogicException('The queue name must be not empty.');
         }
-        if (array_key_exists($queue->getQueueName(), $this->boundMessageProcessors)) {
+        if (array_key_exists($queue->getQueueName(), $this->boundProcessors)) {
             throw new LogicException(sprintf('The queue was already bound. Queue: %s', $queue->getQueueName()));
         }
 
-        $this->boundMessageProcessors[$queue->getQueueName()] = [$queue, $messageProcessor];
+        $this->boundProcessors[$queue->getQueueName()] = [$queue, $processor];
 
         return $this;
     }
@@ -104,7 +105,7 @@ class QueueConsumer
         /** @var Consumer[] $messageConsumers */
         $messageConsumers = [];
         /** @var \Enqueue\Psr\Queue $queue */
-        foreach ($this->boundMessageProcessors as list($queue, $messageProcessor)) {
+        foreach ($this->boundProcessors as list($queue, $processor)) {
             $messageConsumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
         }
 
@@ -122,7 +123,7 @@ class QueueConsumer
         while (true) {
             try {
                 /** @var Queue $queue */
-                foreach ($this->boundMessageProcessors as list($queue, $messageProcessor)) {
+                foreach ($this->boundProcessors as list($queue, $processor)) {
                     $logger->debug(sprintf('Switch to a queue %s', $queue->getQueueName()));
 
                     $messageConsumer = $messageConsumers[$queue->getQueueName()];
@@ -131,7 +132,7 @@ class QueueConsumer
                     $context->setLogger($logger);
                     $context->setPsrQueue($queue);
                     $context->setPsrConsumer($messageConsumer);
-                    $context->setMessageProcessor($messageProcessor);
+                    $context->setPsrProcessor($processor);
 
                     $this->doConsume($extension, $context);
                 }
@@ -171,8 +172,8 @@ class QueueConsumer
      */
     protected function doConsume(ExtensionInterface $extension, Context $context)
     {
-        $messageProcessor = $context->getMessageProcessor();
-        $messageConsumer = $context->getPsrConsumer();
+        $processor = $context->getPsrProcessor();
+        $consumer = $context->getPsrConsumer();
         $logger = $context->getLogger();
 
         $extension->onBeforeReceive($context);
@@ -181,7 +182,7 @@ class QueueConsumer
             throw new ConsumptionInterruptedException();
         }
 
-        if ($message = $messageConsumer->receive($timeout = 1)) {
+        if ($message = $consumer->receive($timeout = 1)) {
             $logger->info('Message received');
             $logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
             $logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
@@ -191,19 +192,19 @@ class QueueConsumer
 
             $extension->onPreReceived($context);
             if (!$context->getResult()) {
-                $result = $messageProcessor->process($message, $this->psrContext);
+                $result = $processor->process($message, $this->psrContext);
                 $context->setResult($result);
             }
 
             switch ($context->getResult()) {
                 case Result::ACK:
-                    $messageConsumer->acknowledge($message);
+                    $consumer->acknowledge($message);
                     break;
                 case Result::REJECT:
-                    $messageConsumer->reject($message, false);
+                    $consumer->reject($message, false);
                     break;
                 case Result::REQUEUE:
-                    $messageConsumer->reject($message, true);
+                    $consumer->reject($message, true);
                     break;
                 default:
                     throw new \LogicException(sprintf('Status is not supported: %s', $context->getResult()));

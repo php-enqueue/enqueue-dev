@@ -1,12 +1,12 @@
 <?php
 namespace Enqueue\Tests\Client\ConsumptionExtension;
 
-use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
 use Psr\Log\LoggerInterface;

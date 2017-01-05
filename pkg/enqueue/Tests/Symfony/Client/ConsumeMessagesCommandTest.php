@@ -1,13 +1,13 @@
 <?php
 namespace Enqueue\Tests\Symfony\Client;
 
-use Enqueue\Psr\Context;
 use Enqueue\Client\Config;
-use Enqueue\Client\DelegateMessageProcessor;
+use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Psr\Context;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Enqueue\Transport\Null\NullQueue;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -18,7 +18,7 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     {
         new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
-            $this->createDelegateMessageProcessorMock(),
+            $this->createDelegateProcessorMock(),
             $this->createQueueMetaRegistry([]),
             $this->createDriverMock()
         );
@@ -28,7 +28,7 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
-            $this->createDelegateMessageProcessorMock(),
+            $this->createDelegateProcessorMock(),
             $this->createQueueMetaRegistry([]),
             $this->createDriverMock()
         );
@@ -40,7 +40,7 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
-            $this->createDelegateMessageProcessorMock(),
+            $this->createDelegateProcessorMock(),
             $this->createQueueMetaRegistry([]),
             $this->createDriverMock()
         );
@@ -52,7 +52,7 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
-            $this->createDelegateMessageProcessorMock(),
+            $this->createDelegateProcessorMock(),
             $this->createQueueMetaRegistry([]),
             $this->createDriverMock()
         );
@@ -70,7 +70,7 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
-            $this->createDelegateMessageProcessorMock(),
+            $this->createDelegateProcessorMock(),
             $this->createQueueMetaRegistry([]),
             $this->createDriverMock()
         );
@@ -85,7 +85,7 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     {
         $queue = new NullQueue('');
 
-        $processor = $this->createDelegateMessageProcessorMock();
+        $processor = $this->createDelegateProcessorMock();
 
         $context = $this->createPsrContextMock();
         $context
@@ -132,7 +132,7 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     {
         $queue = new NullQueue('');
 
-        $processor = $this->createDelegateMessageProcessorMock();
+        $processor = $this->createDelegateProcessorMock();
 
         $context = $this->createPsrContextMock();
         $context
@@ -205,11 +205,11 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DelegateMessageProcessor
+     * @return \PHPUnit_Framework_MockObject_MockObject|DelegateProcessor
      */
-    private function createDelegateMessageProcessorMock()
+    private function createDelegateProcessorMock()
     {
-        return $this->createMock(DelegateMessageProcessor::class);
+        return $this->createMock(DelegateProcessor::class);
     }
 
     /**

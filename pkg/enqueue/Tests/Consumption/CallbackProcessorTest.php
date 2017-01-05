@@ -1,24 +1,24 @@
 <?php
 namespace Enqueue\Tests\Consumption;
 
-use Enqueue\Consumption\CallbackMessageProcessor;
-use Enqueue\Consumption\MessageProcessorInterface;
+use Enqueue\Consumption\CallbackProcessor;
+use Enqueue\Psr\Processor;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
 
-class CallbackMessageProcessorTest extends \PHPUnit_Framework_TestCase
+class CallbackProcessorTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementMessageProcessorInterface()
+    public function testShouldImplementProcessorInterface()
     {
-        $this->assertClassImplements(MessageProcessorInterface::class, CallbackMessageProcessor::class);
+        $this->assertClassImplements(Processor::class, CallbackProcessor::class);
     }
 
     public function testCouldBeConstructedWithCallableAsArgument()
     {
-        new CallbackMessageProcessor(function () {
+        new CallbackProcessor(function () {
         });
     }
 
@@ -27,7 +27,7 @@ class CallbackMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $expectedMessage = new NullMessage();
         $expectedContext = new NullContext();
 
-        $processor = new CallbackMessageProcessor(function ($message, $context) use ($expectedMessage, $expectedContext) {
+        $processor = new CallbackProcessor(function ($message, $context) use ($expectedMessage, $expectedContext) {
             $this->assertSame($expectedMessage, $message);
             $this->assertSame($expectedContext, $context);
 

@@ -1,13 +1,12 @@
 <?php
 namespace Enqueue\Bundle\Tests\Functional;
 
+use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Psr\Context;
 use Enqueue\Psr\Message;
-use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
+use Enqueue\Psr\Processor;
 
-class TestMessageProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class TestProcessor implements Processor, TopicSubscriberInterface
 {
     const TOPIC = 'test-topic';
 
@@ -20,7 +19,7 @@ class TestMessageProcessor implements MessageProcessorInterface, TopicSubscriber
     {
         $this->message = $message;
 
-        return Result::ACK;
+        return self::ACK;
     }
 
     public static function getSubscribedTopics()

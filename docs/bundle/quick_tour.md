@@ -46,19 +46,18 @@ To consume messages you have to first create a message processor:
 <?php
 use Enqueue\Psr\Message;
 use Enqueue\Psr\Context;
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
+use Enqueue\Psr\Processor;
 use Enqueue\Client\TopicSubscriberInterface;
 
-class FooMessageProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class FooProcessor implements Processor, TopicSubscriberInterface
 {
     public function process(Message $message, Context $session)
     {
         echo $message->getBody();
 
-        return Result::ACK;
-        // return Result::REJECT; // when the message is broken
-        // return Result::REQUEUE; // the message is fine but you want to postpone processing
+        return self::ACK;
+        // return self::REJECT; // when the message is broken
+        // return self::REQUEUE; // the message is fine but you want to postpone processing
     }
 
     public static function getSubscribedTopics()
@@ -72,9 +71,9 @@ Register it as a container service and subscribe to the topic:
 
 ```yaml
 foo_message_processor:
-    class: 'FooMessageProcessor'
+    class: 'FooProcessor'
     tags:
-        - { name: 'enqueue.client.message_processor' }
+        - { name: 'enqueue.client.processor' }
 ```
 
 Now you can start consuming messages:

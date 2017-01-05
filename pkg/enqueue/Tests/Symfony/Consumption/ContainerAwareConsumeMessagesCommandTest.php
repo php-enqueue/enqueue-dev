@@ -1,11 +1,11 @@
 <?php
 namespace Enqueue\Tests\Symfony\Consumption;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Queue;
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\Processor;
+use Enqueue\Psr\Queue;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
@@ -50,7 +50,7 @@ class ContainerAwareConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCa
     public function testShouldThrowExceptionIfProcessorInstanceHasWrongClass()
     {
         $this->setExpectedException(\LogicException::class, 'Invalid message processor service given.'.
-            ' It must be an instance of Enqueue\Consumption\MessageProcessorInterface but stdClass');
+            ' It must be an instance of Enqueue\Psr\Processor but stdClass');
 
         $container = new Container();
         $container->set('processor-service', new \stdClass());
@@ -67,7 +67,7 @@ class ContainerAwareConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCa
 
     public function testShouldExecuteConsumption()
     {
-        $processor = $this->createMessageProcessor();
+        $processor = $this->createProcessor();
 
         $queue = $this->createQueueMock();
 
@@ -129,11 +129,11 @@ class ContainerAwareConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MessageProcessorInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
      */
-    protected function createMessageProcessor()
+    protected function createProcessor()
     {
-        return $this->createMock(MessageProcessorInterface::class);
+        return $this->createMock(Processor::class);
     }
 
     /**

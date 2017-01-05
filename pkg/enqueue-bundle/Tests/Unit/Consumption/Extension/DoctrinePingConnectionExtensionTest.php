@@ -2,11 +2,11 @@
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
+use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
+use Enqueue\Consumption\Context;
 use Enqueue\Psr\Consumer;
 use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
+use Enqueue\Psr\Processor;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -99,7 +99,7 @@ class DoctrinePingConnectionExtensionTest extends \PHPUnit_Framework_TestCase
         $context = new Context($this->createMock(PsrContext::class));
         $context->setLogger($this->createMock(LoggerInterface::class));
         $context->setPsrConsumer($this->createMock(Consumer::class));
-        $context->setMessageProcessor($this->createMock(MessageProcessorInterface::class));
+        $context->setPsrProcessor($this->createMock(Processor::class));
 
         return $context;
     }

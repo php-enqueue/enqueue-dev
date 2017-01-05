@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\Psr\Tests\Exception;
+namespace Enqueue\Psr\Tests;
 
 use Enqueue\Psr\Destination;
 use Enqueue\Psr\Exception as ExceptionInterface;
@@ -24,8 +24,8 @@ class InvalidDestinationExceptionTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage(
-            'The destination must be an instance of Enqueue\Psr\Tests\Exception\DestinationBar'.
-            ' but got Enqueue\Psr\Tests\Exception\DestinationFoo.'
+            'The destination must be an instance of Enqueue\Psr\Tests\DestinationBar'.
+            ' but got Enqueue\Psr\Tests\DestinationFoo.'
         );
 
         InvalidDestinationException::assertDestinationInstanceOf(new DestinationFoo(), DestinationBar::class);

@@ -1,7 +1,7 @@
 <?php
 namespace Enqueue\Symfony\Client;
 
-use Enqueue\Client\DelegateMessageProcessor;
+use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
@@ -25,7 +25,7 @@ class ConsumeMessagesCommand extends Command
     private $consumer;
 
     /**
-     * @var DelegateMessageProcessor
+     * @var DelegateProcessor
      */
     private $processor;
 
@@ -40,14 +40,14 @@ class ConsumeMessagesCommand extends Command
     private $driver;
 
     /**
-     * @param QueueConsumer            $consumer
-     * @param DelegateMessageProcessor $processor
-     * @param QueueMetaRegistry        $queueMetaRegistry
-     * @param DriverInterface          $driver
+     * @param QueueConsumer     $consumer
+     * @param DelegateProcessor $processor
+     * @param QueueMetaRegistry $queueMetaRegistry
+     * @param DriverInterface   $driver
      */
     public function __construct(
         QueueConsumer $consumer,
-        DelegateMessageProcessor $processor,
+        DelegateProcessor $processor,
         QueueMetaRegistry $queueMetaRegistry,
         DriverInterface $driver
     ) {

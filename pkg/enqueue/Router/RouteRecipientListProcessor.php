@@ -3,10 +3,9 @@ namespace Enqueue\Router;
 
 use Enqueue\Psr\Context;
 use Enqueue\Psr\Message;
-use Enqueue\Consumption\MessageProcessorInterface;
-use Enqueue\Consumption\Result;
+use Enqueue\Psr\Processor;
 
-class RouteRecipientListProcessor implements MessageProcessorInterface
+class RouteRecipientListProcessor implements Processor
 {
     /**
      * @var RecipientListRouterInterface
@@ -31,6 +30,6 @@ class RouteRecipientListProcessor implements MessageProcessorInterface
             $producer->send($recipient->getDestination(), $recipient->getMessage());
         }
 
-        return Result::ACK;
+        return self::ACK;
     }
 }

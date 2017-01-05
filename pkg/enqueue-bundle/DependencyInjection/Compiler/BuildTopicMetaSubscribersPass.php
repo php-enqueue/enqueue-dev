@@ -6,14 +6,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class BuildTopicMetaSubscribersPass implements CompilerPassInterface
 {
-    use ExtractMessageProcessorTagSubscriptionsTrait;
+    use ExtractProcessorTagSubscriptionsTrait;
 
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        $processorTagName = 'enqueue.client.message_processor';
+        $processorTagName = 'enqueue.client.processor';
 
         $topicsSubscribers = [];
         foreach ($container->findTaggedServiceIds($processorTagName) as $serviceId => $tagAttributes) {

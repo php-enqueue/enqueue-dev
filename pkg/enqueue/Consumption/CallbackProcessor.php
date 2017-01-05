@@ -3,8 +3,9 @@ namespace Enqueue\Consumption;
 
 use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
 
-class CallbackMessageProcessor implements MessageProcessorInterface
+class CallbackProcessor implements Processor
 {
     /**
      * @var callable

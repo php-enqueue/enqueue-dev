@@ -33,16 +33,16 @@ services:
             - '@enqueue.client.message_producer'
             - '@logger'
         tags:
-            - { name: 'enqueue.client.message_processor' }
+            - { name: 'enqueue.client.processor' }
 
     enqueue.job.dependent_job_processor:
-        class: 'Enqueue\JobQueue\DependentJobMessageProcessor'
+        class: 'Enqueue\JobQueue\DependentJobProcessor'
         arguments:
             - '@enqueue.job.storage'
             - '@enqueue.client.message_producer'
             - '@logger'
         tags:
-            - { name: 'enqueue.client.message_processor' }
+            - { name: 'enqueue.client.processor' }
 
     enqueue.job.dependent_job_service:
         class: 'Enqueue\JobQueue\DependentJobService'

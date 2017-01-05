@@ -1,10 +1,10 @@
 <?php
 namespace Enqueue\Tests\Router;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Producer;
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\Processor;
+use Enqueue\Psr\Producer;
 use Enqueue\Router\Recipient;
 use Enqueue\Router\RecipientListRouterInterface;
 use Enqueue\Router\RouteRecipientListProcessor;
@@ -16,9 +16,9 @@ class RouteRecipientListProcessorTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementMessageProcessorInterface()
+    public function testShouldImplementProcessorInterface()
     {
-        $this->assertClassImplements(MessageProcessorInterface::class, RouteRecipientListProcessor::class);
+        $this->assertClassImplements(Processor::class, RouteRecipientListProcessor::class);
     }
 
     public function testCouldBeConstructedWithRouterAsFirstArgument()

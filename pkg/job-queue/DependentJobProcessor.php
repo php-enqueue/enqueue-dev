@@ -1,17 +1,17 @@
 <?php
 namespace Enqueue\JobQueue;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message as PsrMessage;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessageProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\Message as PsrMessage;
+use Enqueue\Psr\Processor;
 use Enqueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class DependentJobMessageProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class DependentJobProcessor implements Processor, TopicSubscriberInterface
 {
     /**
      * @var JobStorage
@@ -49,7 +49,7 @@ class DependentJobMessageProcessor implements MessageProcessorInterface, TopicSu
 
         if (!isset($data['jobId'])) {
             $this->logger->critical(sprintf(
-                '[DependentJobMessageProcessor] Got invalid message. body: "%s"',
+                '[DependentJobProcessor] Got invalid message. body: "%s"',
                 $message->getBody()
             ));
 
@@ -59,7 +59,7 @@ class DependentJobMessageProcessor implements MessageProcessorInterface, TopicSu
         $job = $this->jobStorage->findJobById($data['jobId']);
         if (!$job) {
             $this->logger->critical(sprintf(
-                '[DependentJobMessageProcessor] Job was not found. id: "%s"',
+                '[DependentJobProcessor] Job was not found. id: "%s"',
                 $data['jobId']
             ));
 
@@ -68,7 +68,7 @@ class DependentJobMessageProcessor implements MessageProcessorInterface, TopicSu
 
         if (!$job->isRoot()) {
             $this->logger->critical(sprintf(
-                '[DependentJobMessageProcessor] Expected root job but got child. id: "%s"',
+                '[DependentJobProcessor] Expected root job but got child. id: "%s"',
                 $data['jobId']
             ));
 
@@ -86,7 +86,7 @@ class DependentJobMessageProcessor implements MessageProcessorInterface, TopicSu
         foreach ($dependentJobs as $dependentJob) {
             if (!isset($dependentJob['topic']) || !isset($dependentJob['message'])) {
                 $this->logger->critical(sprintf(
-                    '[DependentJobMessageProcessor] Got invalid dependent job data. job: "%s", dependentJob: "%s"',
+                    '[DependentJobProcessor] Got invalid dependent job data. job: "%s", dependentJob: "%s"',
                     $job->getId(),
                     JSON::encode($dependentJob)
                 ));

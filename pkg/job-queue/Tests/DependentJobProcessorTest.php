@@ -1,24 +1,24 @@
 <?php
 namespace Enqueue\JobQueue\Tests;
 
-use Enqueue\Psr\Context;
-use Enqueue\JobQueue\DependentJobMessageProcessor;
-use Enqueue\JobQueue\Job;
-use Enqueue\JobQueue\JobStorage;
-use Enqueue\JobQueue\Topics;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessageProducerInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\JobQueue\DependentJobProcessor;
+use Enqueue\JobQueue\Job;
+use Enqueue\JobQueue\JobStorage;
+use Enqueue\JobQueue\Topics;
+use Enqueue\Psr\Context;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
 
-class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
+class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
 {
     public function testShouldReturnSubscribedTopicNames()
     {
         $this->assertEquals(
             [Topics::ROOT_JOB_STOPPED],
-            DependentJobMessageProcessor::getSubscribedTopics()
+            DependentJobProcessor::getSubscribedTopics()
         );
     }
 
@@ -32,13 +32,13 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $logger
             ->expects($this->once())
             ->method('critical')
-            ->with('[DependentJobMessageProcessor] Got invalid message. body: "{"key":"value"}"')
+            ->with('[DependentJobProcessor] Got invalid message. body: "{"key":"value"}"')
         ;
 
         $message = new NullMessage();
         $message->setBody(json_encode(['key' => 'value']));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 
@@ -60,13 +60,13 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $logger
             ->expects($this->once())
             ->method('critical')
-            ->with('[DependentJobMessageProcessor] Job was not found. id: "12345"')
+            ->with('[DependentJobProcessor] Job was not found. id: "12345"')
         ;
 
         $message = new NullMessage();
         $message->setBody(json_encode(['jobId' => 12345]));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 
@@ -92,13 +92,13 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $logger
             ->expects($this->once())
             ->method('critical')
-            ->with('[DependentJobMessageProcessor] Expected root job but got child. id: "12345"')
+            ->with('[DependentJobProcessor] Expected root job but got child. id: "12345"')
         ;
 
         $message = new NullMessage();
         $message->setBody(json_encode(['jobId' => 12345]));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 
@@ -128,7 +128,7 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $message = new NullMessage();
         $message->setBody(json_encode(['jobId' => 12345]));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 
@@ -163,13 +163,13 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $logger
             ->expects($this->once())
             ->method('critical')
-            ->with('[DependentJobMessageProcessor] Got invalid dependent job data. job: "123", dependentJob: "[]"')
+            ->with('[DependentJobProcessor] Got invalid dependent job data. job: "123", dependentJob: "[]"')
         ;
 
         $message = new NullMessage();
         $message->setBody(json_encode(['jobId' => 12345]));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 
@@ -206,14 +206,14 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $logger
             ->expects($this->once())
             ->method('critical')
-            ->with('[DependentJobMessageProcessor] Got invalid dependent job data. '.
+            ->with('[DependentJobProcessor] Got invalid dependent job data. '.
              'job: "123", dependentJob: "{"topic":"topic-name"}"')
         ;
 
         $message = new NullMessage();
         $message->setBody(json_encode(['jobId' => 12345]));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 
@@ -257,7 +257,7 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $message = new NullMessage();
         $message->setBody(json_encode(['jobId' => 12345]));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 
@@ -305,7 +305,7 @@ class DependentJobMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $message = new NullMessage();
         $message->setBody(json_encode(['jobId' => 12345]));
 
-        $processor = new DependentJobMessageProcessor($jobStorage, $producer, $logger);
+        $processor = new DependentJobProcessor($jobStorage, $producer, $logger);
 
         $result = $processor->process($message, $this->createContextMock());
 

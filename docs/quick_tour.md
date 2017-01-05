@@ -65,8 +65,8 @@ The `consume` method starts the consumption process which last as long as it is 
 ```php
 <?php
 use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
 use Enqueue\Consumption\QueueConsumer;
-use Enqueue\Consumption\Result;
 
 /** @var \Enqueue\Psr\Context $psrContext */
 
@@ -75,12 +75,12 @@ $queueConsumer = new QueueConsumer($psrContext);
 $queueConsumer->bind('foo_queue', function(Message $message) {
     // process messsage
     
-    return Result::ACK;
+    return Processor::ACK;
 });
 $queueConsumer->bind('bar_queue', function(Message $message) {
     // process messsage
     
-    return Result::ACK;
+    return Processor::ACK;
 });
 
 $queueConsumer->consume();
@@ -167,16 +167,16 @@ Here's an example of how you can send and consume messages.
 ```php
 <?php
 use Enqueue\Client\SimpleClient;
-use Enqueue\Consumption\Result;
 use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
 
-/** @var \Enqueue\Psr\Context $psrClient */
+/** @var \Enqueue\Psr\Context $psrContext */
 
-$client = new SimpleClient($psrClient);
+$client = new SimpleClient($psrContext);
 $client->bind('foo_topic', function (Message $message) {
     // process message
 
-    return Result::ACK;
+    return Processor::ACK;
 });
 
 $client->send('foo_topic', 'Hello there!');

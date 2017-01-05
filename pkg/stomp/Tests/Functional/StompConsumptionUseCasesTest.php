@@ -1,18 +1,18 @@
 <?php
 namespace Enqueue\Stomp\Tests\Functional;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\Message;
+use Enqueue\Psr\Processor;
+use Enqueue\Stomp\StompContext;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use Enqueue\Test\RabbitmqStompExtension;
-use Enqueue\Stomp\StompContext;
 
 /**
  * @group functional
@@ -51,7 +51,7 @@ class StompConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
             new LimitConsumptionTimeExtension(new \DateTime('+3sec')),
         ]));
 
-        $processor = new StubMessageProcessor();
+        $processor = new StubProcessor();
         $queueConsumer->bind($queue, $processor);
 
         $queueConsumer->consume();
@@ -78,10 +78,10 @@ class StompConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
 
         $replyMessage = $this->stompContext->createMessage(__METHOD__.'.reply');
 
-        $processor = new StubMessageProcessor();
+        $processor = new StubProcessor();
         $processor->result = Result::reply($replyMessage);
 
-        $replyProcessor = new StubMessageProcessor();
+        $replyProcessor = new StubProcessor();
 
         $queueConsumer->bind($queue, $processor);
         $queueConsumer->bind($replyQueue, $replyProcessor);
@@ -95,7 +95,7 @@ class StompConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class StubMessageProcessor implements MessageProcessorInterface
+class StubProcessor implements Processor
 {
     public $result = Result::ACK;
 

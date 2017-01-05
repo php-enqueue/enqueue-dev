@@ -3,19 +3,19 @@ namespace Enqueue\Client;
 
 use Enqueue\Psr\Context;
 use Enqueue\Psr\Message as PsrMessage;
-use Enqueue\Consumption\MessageProcessorInterface;
+use Enqueue\Psr\Processor;
 
-class DelegateMessageProcessor implements MessageProcessorInterface
+class DelegateProcessor implements Processor
 {
     /**
-     * @var MessageProcessorRegistryInterface
+     * @var ProcessorRegistryInterface
      */
     private $registry;
 
     /**
-     * @param MessageProcessorRegistryInterface $registry
+     * @param ProcessorRegistryInterface $registry
      */
-    public function __construct(MessageProcessorRegistryInterface $registry)
+    public function __construct(ProcessorRegistryInterface $registry)
     {
         $this->registry = $registry;
     }

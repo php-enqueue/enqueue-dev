@@ -18,12 +18,12 @@ services:
             - []
         tags:
             -
-                name: 'enqueue.client.message_processor'
+                name: 'enqueue.client.processor'
                 topicName: '__router__'
                 queueName: '%enqueue.client.router_queue_name%'
 
-    enqueue.client.message_processor_registry:
-        class: 'Enqueue\Symfony\Client\ContainerAwareMessageProcessorRegistry'
+    enqueue.client.processor_registry:
+        class: 'Enqueue\Symfony\Client\ContainerAwareProcessorRegistry'
         public: false
         calls:
             - ['setContainer', ['@service_container']]
@@ -38,11 +38,11 @@ services:
         public: true
         arguments: ['@enqueue.client.config', []]
 
-    enqueue.client.delegate_message_processor:
-        class: 'Enqueue\Client\DelegateMessageProcessor'
+    enqueue.client.delegate_processor:
+        class: 'Enqueue\Client\DelegateProcessor'
         public: false
         arguments:
-            - '@enqueue.client.message_processor_registry'
+            - '@enqueue.client.processor_registry'
 
     enqueue.client.extension.set_router_properties:
         class: 'Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension'
@@ -64,7 +64,7 @@ services:
         public: true
         arguments:
             - '@enqueue.client.queue_consumer'
-            - '@enqueue.client.delegate_message_processor'
+            - '@enqueue.client.delegate_processor'
             - '@enqueue.client.meta.queue_meta_registry'
             - '@enqueue.client.driver'
         tags:

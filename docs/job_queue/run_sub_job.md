@@ -6,16 +6,15 @@ They will be executed in parallel.
 
 ```php
 <?php
-use Enqueue\Consumption\MessageProcessorInterface;
 use Enqueue\Client\MessageProducerInterface;
-use Enqueue\Consumption\Result;
 use Enqueue\Psr\Message;
 use Enqueue\Psr\Context;
+use Enqueue\Psr\Processor;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Util\JSON;
 
-class RootJobMessageProcessor implements MessageProcessorInterface
+class RootJobProcessor implements Processor
 {
     /** @var JobRunner */
     private $jobRunner;
@@ -36,11 +35,11 @@ class RootJobMessageProcessor implements MessageProcessorInterface
             return true;
         });
 
-        return $result ? Result::ACK : Result::REJECT;
+        return $result ? self::ACK : self::REJECT;
     }
 }
 
-class SubJobMessageProcessor implements MessageProcessorInterface
+class SubJobProcessor implements Processor
 {
     /** @var JobRunner */
     private $jobRunner;

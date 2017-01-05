@@ -1,18 +1,18 @@
 <?php
 namespace Enqueue\Tests\Client;
 
-use Enqueue\Psr\Context;
 use Enqueue\Client\Config;
-use Enqueue\Client\DelegateMessageProcessor;
-use Enqueue\Client\MessageProcessorRegistryInterface;
-use Enqueue\Consumption\MessageProcessorInterface;
+use Enqueue\Client\DelegateProcessor;
+use Enqueue\Client\ProcessorRegistryInterface;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\Processor;
 use Enqueue\Transport\Null\NullMessage;
 
-class DelegateMessageProcessorTest extends \PHPUnit_Framework_TestCase
+class DelegateProcessorTest extends \PHPUnit_Framework_TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new DelegateMessageProcessor($this->createMessageProcessorRegistryMock());
+        new DelegateProcessor($this->createProcessorRegistryMock());
     }
 
     public function testShouldThrowExceptionIfProcessorNameIsNotSet()
@@ -22,7 +22,7 @@ class DelegateMessageProcessorTest extends \PHPUnit_Framework_TestCase
             'Got message without required parameter: "enqueue.processor_name"'
         );
 
-        $processor = new DelegateMessageProcessor($this->createMessageProcessorRegistryMock());
+        $processor = new DelegateProcessor($this->createProcessorRegistryMock());
         $processor->process(new NullMessage(), $this->createPsrContextMock());
     }
 
@@ -34,34 +34,34 @@ class DelegateMessageProcessorTest extends \PHPUnit_Framework_TestCase
             Config::PARAMETER_PROCESSOR_NAME => 'processor-name',
         ]);
 
-        $messageProcessor = $this->createMessageProcessorMock();
-        $messageProcessor
+        $processor = $this->createProcessorMock();
+        $processor
             ->expects($this->once())
             ->method('process')
             ->with($this->identicalTo($message), $this->identicalTo($session))
             ->will($this->returnValue('return-value'))
         ;
 
-        $processorRegistry = $this->createMessageProcessorRegistryMock();
+        $processorRegistry = $this->createProcessorRegistryMock();
         $processorRegistry
             ->expects($this->once())
             ->method('get')
             ->with('processor-name')
-            ->will($this->returnValue($messageProcessor))
+            ->will($this->returnValue($processor))
         ;
 
-        $processor = new DelegateMessageProcessor($processorRegistry);
+        $processor = new DelegateProcessor($processorRegistry);
         $return = $processor->process($message, $session);
 
         $this->assertEquals('return-value', $return);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MessageProcessorRegistryInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProcessorRegistryInterface
      */
-    protected function createMessageProcessorRegistryMock()
+    protected function createProcessorRegistryMock()
     {
-        return $this->createMock(MessageProcessorRegistryInterface::class);
+        return $this->createMock(ProcessorRegistryInterface::class);
     }
 
     /**
@@ -73,10 +73,10 @@ class DelegateMessageProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MessageProcessorInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
      */
-    protected function createMessageProcessorMock()
+    protected function createProcessorMock()
     {
-        return $this->createMock(MessageProcessorInterface::class);
+        return $this->createMock(Processor::class);
     }
 }

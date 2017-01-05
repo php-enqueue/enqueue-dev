@@ -1,5 +1,5 @@
 <?php
-namespace Enqueue\Psr\Tests\Exception;
+namespace Enqueue\Psr\Tests;
 
 use Enqueue\Psr\Exception as ExceptionInterface;
 use Enqueue\Psr\InvalidMessageException;

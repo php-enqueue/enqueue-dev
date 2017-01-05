@@ -1,12 +1,12 @@
 <?php
 namespace Enqueue\Tests\Consumption;
 
+use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Exception\IllegalContextModificationException;
 use Enqueue\Psr\Consumer;
 use Enqueue\Psr\Context as PsrContext;
 use Enqueue\Psr\Message;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\Exception\IllegalContextModificationException;
-use Enqueue\Consumption\MessageProcessorInterface;
+use Enqueue\Psr\Processor;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 use Psr\Log\NullLogger;
@@ -55,26 +55,26 @@ class ContextTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAllowGetMessageProducerPreviouslySet()
     {
-        $messageProcessor = $this->createMessageProcessor();
+        $processorMock = $this->createProcessorMock();
 
         $context = new Context($this->createPsrContext());
-        $context->setMessageProcessor($messageProcessor);
+        $context->setPsrProcessor($processorMock);
 
-        $this->assertSame($messageProcessor, $context->getMessageProcessor());
+        $this->assertSame($processorMock, $context->getPsrProcessor());
     }
 
-    public function testThrowOnTryToChangeMessageProcessorIfAlreadySet()
+    public function testThrowOnTryToChangeProcessorIfAlreadySet()
     {
-        $messageProcessor = $this->createMessageProcessor();
-        $anotherMessageProcessor = $this->createMessageProcessor();
+        $processor = $this->createProcessorMock();
+        $anotherProcessor = $this->createProcessorMock();
 
         $context = new Context($this->createPsrContext());
 
-        $context->setMessageProcessor($messageProcessor);
+        $context->setPsrProcessor($processor);
 
         $this->expectException(IllegalContextModificationException::class);
 
-        $context->setMessageProcessor($anotherMessageProcessor);
+        $context->setPsrProcessor($anotherProcessor);
     }
 
     public function testShouldAllowGetLoggerPreviouslySet()
@@ -247,10 +247,10 @@ class ContextTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MessageProcessorInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
      */
-    protected function createMessageProcessor()
+    protected function createProcessorMock()
     {
-        return $this->createMock(MessageProcessorInterface::class);
+        return $this->createMock(Processor::class);
     }
 }
