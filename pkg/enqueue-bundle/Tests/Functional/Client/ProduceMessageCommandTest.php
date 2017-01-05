@@ -1,8 +1,9 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Functional\Client;
 
-use Enqueue\Symfony\Client\ProduceMessageCommand;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
+use Enqueue\Symfony\Client\ProduceMessageCommand;
 
 /**
  * @group functional

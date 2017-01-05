@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Client\Meta;
 
 use Enqueue\Client\Meta\QueueMeta;
@@ -90,6 +91,7 @@ class QueuesCommandTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
+     * @param  mixed                                                      $destinations
      */
     protected function createQueueMetaRegistryStub($destinations = [])
     {

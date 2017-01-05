@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Util;
 
 class JSON

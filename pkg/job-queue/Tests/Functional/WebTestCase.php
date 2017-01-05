@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Client;

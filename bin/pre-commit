@@ -105,11 +105,10 @@ function runPhpCsFixer()
         $output = '';
         $returnCode = null;
         exec(sprintf(
-            '%s %s fix %s --config=%s',
+            '%s %s fix %s',
             $phpBin,
             $phpCsFixerBin,
-            $projectRootDir.'/'.$file,
-            $projectRootDir.'/.php_cs'
+            $projectRootDir.'/'.$file
         ), $output, $returnCode);
 
         if ($returnCode) {

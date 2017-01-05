@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue\Tests\Functional\Job;
 
 use Enqueue\JobQueue\DuplicateJobException;

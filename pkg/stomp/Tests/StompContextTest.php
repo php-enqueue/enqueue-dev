@@ -1,16 +1,17 @@
 <?php
+
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Psr\Context;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\Queue;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
+use Enqueue\Test\ClassExtensionTrait;
 
 class StompContextTest extends \PHPUnit_Framework_TestCase
 {

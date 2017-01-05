@@ -1,15 +1,16 @@
 <?php
+
 namespace Enqueue\Stomp\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\Client\StompDriver;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
+use Enqueue\Test\ClassExtensionTrait;
 use Psr\Log\LoggerInterface;
 
 class StompDriverTest extends \PHPUnit_Framework_TestCase

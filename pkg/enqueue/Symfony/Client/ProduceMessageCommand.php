@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\MessageProducerInterface;

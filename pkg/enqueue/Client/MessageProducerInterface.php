@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Client;
 
 interface MessageProducerInterface
@@ -10,7 +11,7 @@ interface MessageProducerInterface
      * @param string|array|Message $message
      *
      * @throws \Enqueue\Psr\Exception - if the producer fails to send
-     *                                 the message due to some internal error
+     *                                the message due to some internal error
      */
     public function send($topic, $message);
 }

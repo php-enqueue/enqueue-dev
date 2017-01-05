@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Psr;
 
 /**
@@ -11,7 +12,7 @@ namespace Enqueue\Psr;
  * Since Destination is an administered object,
  * it may contain provider-specific configuration information in addition to its address.
  *
- * @link https://docs.oracle.com/javaee/7/api/javax/jms/Destination.html
+ * @see https://docs.oracle.com/javaee/7/api/javax/jms/Destination.html
  */
 interface Destination
 {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Consumption;
 
 use Enqueue\Psr\Message as PsrMessage;
@@ -49,6 +50,14 @@ class Result
     /**
      * @return string
      */
+    public function __toString()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return string
+     */
     public function getStatus()
     {
         return $this->status;
@@ -76,14 +85,6 @@ class Result
     public function setReply(PsrMessage $reply = null)
     {
         $this->reply = $reply;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->status;
     }
 
     /**

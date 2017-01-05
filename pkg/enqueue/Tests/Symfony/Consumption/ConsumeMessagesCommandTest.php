@@ -1,9 +1,10 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Consumption;
 
-use Enqueue\Psr\Context;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Psr\Context;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 

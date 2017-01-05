@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Util;
 
 use Enqueue\Tests\Util\Fixtures\JsonSerializableClass;
@@ -36,6 +37,7 @@ class JSONTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider nonStringDataProvider
+     * @param mixed $value
      */
     public function testShouldThrowExceptionIfInputIsNotString($value)
     {

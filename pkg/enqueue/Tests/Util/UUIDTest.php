@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Util;
 
 use Enqueue\Util\UUID;

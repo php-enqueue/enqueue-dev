@@ -1,9 +1,10 @@
 <?php
+
 namespace Enqueue\Stomp\Tests;
 
+use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\WriteAttributeTrait;
-use Enqueue\Stomp\BufferedStompClient;
 use Stomp\Client;
 use Stomp\Network\Connection;
 use Stomp\Transport\Frame;

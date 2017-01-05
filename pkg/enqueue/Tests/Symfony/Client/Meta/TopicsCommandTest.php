@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Client\Meta;
 
 use Enqueue\Client\Meta\TopicMetaRegistry;

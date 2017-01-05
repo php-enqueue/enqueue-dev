@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt;
 
 use Enqueue\Psr\Context;
@@ -156,9 +157,9 @@ class AmqpContext implements Context
             $this->bind($destination, $queue);
 
             return new AmqpConsumer($this, $queue);
-        } else {
-            return new AmqpConsumer($this, $destination);
         }
+
+        return new AmqpConsumer($this, $destination);
     }
 
     public function close()

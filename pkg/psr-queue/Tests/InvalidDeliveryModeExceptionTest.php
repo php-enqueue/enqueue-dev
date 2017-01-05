@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Psr\Tests;
 
 use Enqueue\Psr\DeliveryMode;

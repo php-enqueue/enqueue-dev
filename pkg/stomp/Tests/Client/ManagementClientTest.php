@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp\Tests\Client;
 
 use Enqueue\Stomp\Client\ManagementClient;

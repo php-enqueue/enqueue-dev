@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\Client\Config;

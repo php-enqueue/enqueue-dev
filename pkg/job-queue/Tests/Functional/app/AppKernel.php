@@ -36,16 +36,16 @@ class AppKernel extends Kernel
         return sys_get_temp_dir().'/EnqueueJobQueue/cache/logs';
     }
 
-    protected function getContainerClass()
-    {
-        return parent::getContainerClass().'JobQueue';
-    }
-
     /**
      * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config.yml');
+    }
+
+    protected function getContainerClass()
+    {
+        return parent::getContainerClass().'JobQueue';
     }
 }

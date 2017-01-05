@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Consumption\Mock;
 
 use Enqueue\Symfony\Consumption\LimitsExtensionsCommandTrait;
@@ -12,6 +13,11 @@ class LimitsExtensionsCommand extends Command
 
     protected $extensions;
 
+    public function getExtensions()
+    {
+        return $this->extensions;
+    }
+
     protected function configure()
     {
         parent::configure();
@@ -22,10 +28,5 @@ class LimitsExtensionsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->extensions = $this->getLimitsExtensions($input, $output);
-    }
-
-    public function getExtensions()
-    {
-        return $this->extensions;
     }
 }

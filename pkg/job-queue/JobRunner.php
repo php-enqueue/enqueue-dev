@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue;
 
 class JobRunner

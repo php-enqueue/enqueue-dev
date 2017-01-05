@@ -1,8 +1,9 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Functional\Job;
 
-use Enqueue\JobQueue\JobStorage;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
+use Enqueue\JobQueue\JobStorage;
 
 /**
  * @group functional

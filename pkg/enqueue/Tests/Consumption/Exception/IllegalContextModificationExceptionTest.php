@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\Exception\ExceptionInterface;

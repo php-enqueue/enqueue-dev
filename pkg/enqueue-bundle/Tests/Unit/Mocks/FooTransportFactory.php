@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Bundle\Tests\Unit\Mocks;
 
 use Enqueue\Symfony\TransportFactoryInterface;

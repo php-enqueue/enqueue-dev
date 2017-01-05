@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Transport\Null;
 
 use Enqueue\Psr\Topic;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpContext;

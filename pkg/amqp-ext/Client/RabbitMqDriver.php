@@ -1,15 +1,16 @@
 <?php
+
 namespace  Enqueue\AmqpExt\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
-use Enqueue\Psr\Message as TransportMessage;
 use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\Exception\LogicException;
+use Enqueue\Psr\Message as TransportMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -31,8 +32,8 @@ class RabbitMqDriver extends AmqpDriver
     private $queueMetaRegistry;
 
     /**
-     * @param AmqpContext $context
-     * @param Config $config
+     * @param AmqpContext       $context
+     * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      */
     public function __construct(AmqpContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpMessage;
@@ -18,7 +19,7 @@ class AmqpMessageTest extends \PHPUnit_Framework_TestCase
     {
         $message = new AmqpMessage();
 
-        $this->assertSame(null, $message->getBody());
+        $this->assertNull($message->getBody());
         $this->assertSame([], $message->getProperties());
         $this->assertSame([], $message->getHeaders());
     }

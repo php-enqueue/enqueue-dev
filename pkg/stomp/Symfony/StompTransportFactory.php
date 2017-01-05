@@ -1,10 +1,11 @@
 <?php
+
 namespace Enqueue\Stomp\Symfony;
 
-use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Stomp\Client\StompDriver;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
+use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;

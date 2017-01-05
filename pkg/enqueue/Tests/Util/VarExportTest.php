@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Util;
 
 use Enqueue\Util\VarExport;
@@ -12,6 +13,8 @@ class VarExportTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideValues
+     * @param mixed $value
+     * @param mixed $expected
      */
     public function testShouldConvertValueToStringUsingVarExportFunction($value, $expected)
     {

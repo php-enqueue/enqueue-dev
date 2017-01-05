@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Test;
 
 use Enqueue\Stomp\StompConnectionFactory;

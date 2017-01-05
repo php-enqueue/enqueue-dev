@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;

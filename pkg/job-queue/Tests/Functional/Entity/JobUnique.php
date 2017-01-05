@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue\Tests\Functional\Entity;
 
 use Doctrine\ORM\Mapping as ORM;

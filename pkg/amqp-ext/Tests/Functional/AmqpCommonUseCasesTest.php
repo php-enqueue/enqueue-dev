@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpContext;
@@ -156,7 +157,7 @@ class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
 
         $consumer = $this->amqpContext->createConsumer($topic);
         //guard
-        $this->assertSame(null, $consumer->receive(1));
+        $this->assertNull($consumer->receive(1));
 
         $message = $this->amqpContext->createMessage(__METHOD__);
 

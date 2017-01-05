@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue\Test;
 
 use Doctrine\DBAL\Connection;
@@ -66,40 +67,6 @@ class DbalPersistedConnection extends Connection
     }
 
     /**
-     * @param int $level
-     */
-    private function setTransactionNestingLevel($level)
-    {
-        $prop = new \ReflectionProperty('Doctrine\DBAL\Connection', '_transactionNestingLevel');
-        $prop->setAccessible(true);
-
-        return $prop->setValue($this, $level);
-    }
-
-    /**
-     * @param string $method
-     *
-     * @throws \Exception
-     */
-    private function wrapTransactionNestingLevel($method)
-    {
-        $e = null;
-
-        $this->setTransactionNestingLevel($this->getPersistedTransactionNestingLevel());
-
-        try {
-            call_user_func(['parent', $method]);
-        } catch (\Exception $e) {
-        }
-
-        $this->persistTransactionNestingLevel($this->getTransactionNestingLevel());
-
-        if ($e) {
-            throw $e;
-        }
-    }
-
-    /**
      * @param bool $connected
      */
     protected function setConnected($connected)
@@ -160,5 +127,39 @@ class DbalPersistedConnection extends Connection
     protected function getConnectionId()
     {
         return md5(serialize($this->getParams()));
+    }
+
+    /**
+     * @param int $level
+     */
+    private function setTransactionNestingLevel($level)
+    {
+        $prop = new \ReflectionProperty('Doctrine\DBAL\Connection', '_transactionNestingLevel');
+        $prop->setAccessible(true);
+
+        return $prop->setValue($this, $level);
+    }
+
+    /**
+     * @param string $method
+     *
+     * @throws \Exception
+     */
+    private function wrapTransactionNestingLevel($method)
+    {
+        $e = null;
+
+        $this->setTransactionNestingLevel($this->getPersistedTransactionNestingLevel());
+
+        try {
+            call_user_func(['parent', $method]);
+        } catch (\Exception $e) {
+        }
+
+        $this->persistTransactionNestingLevel($this->getTransactionNestingLevel());
+
+        if ($e) {
+            throw $e;
+        }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Router;
 
 use Enqueue\Psr\Destination;

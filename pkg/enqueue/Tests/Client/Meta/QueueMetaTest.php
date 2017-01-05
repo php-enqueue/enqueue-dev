@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Client\Meta;
 
 use Enqueue\Client\Meta\QueueMeta;

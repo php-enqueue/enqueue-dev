@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Stomp\Tests\Client;
 
 use Enqueue\Client\Config;
@@ -7,13 +8,13 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMeta;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Stomp\Client\ManagementClient;
 use Enqueue\Stomp\Client\RabbitMqStompDriver;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
+use Enqueue\Test\ClassExtensionTrait;
 use Psr\Log\LoggerInterface;
 
 class RabbitMqStompDriverTest extends \PHPUnit_Framework_TestCase
