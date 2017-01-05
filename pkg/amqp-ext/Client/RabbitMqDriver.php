@@ -2,7 +2,7 @@
 
 namespace  Enqueue\AmqpExt\Client;
 
-use Enqueue\AmqpExt\AmqpContext;
+use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
@@ -17,11 +17,6 @@ use Psr\Log\NullLogger;
 class RabbitMqDriver extends AmqpDriver
 {
     /**
-     * @var AmqpContext
-     */
-    private $context;
-
-    /**
      * @var Config
      */
     private $config;
@@ -32,16 +27,15 @@ class RabbitMqDriver extends AmqpDriver
     private $queueMetaRegistry;
 
     /**
-     * @param AmqpContext       $context
+     * @param AmqpConnectionFactory $connectionFactory
      * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      */
-    public function __construct(AmqpContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
+    public function __construct(AmqpConnectionFactory $connectionFactory, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
-        parent::__construct($context, $config, $queueMetaRegistry);
+        parent::__construct($connectionFactory, $config, $queueMetaRegistry);
 
         $this->config = $config;
-        $this->context = $context;
         $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
@@ -65,7 +59,7 @@ class RabbitMqDriver extends AmqpDriver
             $destination = $this->createDelayedTopic($destination);
         }
 
-        $this->context->createProducer()->send($destination, $transportMessage);
+        $this->getContext()->createProducer()->send($destination, $transportMessage);
     }
 
     /**
@@ -129,10 +123,10 @@ class RabbitMqDriver extends AmqpDriver
                 $delayTopic = $this->createDelayedTopic($queue);
 
                 $log('Declare delay exchange: %s', $delayTopic->getTopicName());
-                $this->context->declareTopic($delayTopic);
+                $this->getContext()->declareTopic($delayTopic);
 
                 $log('Bind processor queue to delay exchange: %s -> %s', $queue->getQueueName(), $delayTopic->getTopicName());
-                $this->context->bind($delayTopic, $queue);
+                $this->getContext()->bind($delayTopic, $queue);
             }
         }
     }
@@ -147,7 +141,7 @@ class RabbitMqDriver extends AmqpDriver
         $queueName = $queue->getQueueName();
 
         // in order to use delay feature make sure the rabbitmq_delayed_message_exchange plugin is installed.
-        $delayTopic = $this->context->createTopic($queueName.'.delayed');
+        $delayTopic = $this->getContext()->createTopic($queueName.'.delayed');
         $delayTopic->setRoutingKey($queueName);
         $delayTopic->setType('x-delayed-message');
         $delayTopic->addFlag(AMQP_DURABLE);

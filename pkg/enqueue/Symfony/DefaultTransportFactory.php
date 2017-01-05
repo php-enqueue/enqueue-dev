@@ -42,6 +42,12 @@ class DefaultTransportFactory implements TransportFactoryInterface
      */
     public function createContext(ContainerBuilder $container, array $config)
     {
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+        $aliasId = sprintf('enqueue.transport.%s.connection_factory', $config['alias']);
+
+        $container->setAlias($factoryId, $aliasId);
+        $container->setAlias('enqueue.transport.connection_factory', $factoryId);
+
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
         $aliasId = sprintf('enqueue.transport.%s.context', $config['alias']);
 

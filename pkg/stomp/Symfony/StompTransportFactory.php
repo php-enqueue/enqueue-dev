@@ -71,7 +71,7 @@ class StompTransportFactory implements TransportFactoryInterface
     {
         $driver = new Definition(StompDriver::class);
         $driver->setArguments([
-            new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
+            new Reference(sprintf('enqueue.transport.%s.connection_factory', $this->getName())),
             new Reference('enqueue.client.config'),
         ]);
 

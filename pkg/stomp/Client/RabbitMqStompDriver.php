@@ -7,6 +7,7 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
@@ -15,11 +16,6 @@ use Psr\Log\NullLogger;
 
 class RabbitMqStompDriver extends StompDriver
 {
-    /**
-     * @var StompContext
-     */
-    private $context;
-
     /**
      * @var Config
      */
@@ -41,16 +37,15 @@ class RabbitMqStompDriver extends StompDriver
     private $queueMetaRegistry;
 
     /**
-     * @param StompContext      $context
+     * @param StompConnectionFactory      $connectionFactory
      * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      * @param ManagementClient  $management
      */
-    public function __construct(StompContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry, ManagementClient $management)
+    public function __construct(StompConnectionFactory $connectionFactory, Config $config, QueueMetaRegistry $queueMetaRegistry, ManagementClient $management)
     {
-        parent::__construct($context, $config);
+        parent::__construct($connectionFactory, $config);
 
-        $this->context = $context;
         $this->config = $config;
         $this->queueMetaRegistry = $queueMetaRegistry;
         $this->management = $management;
@@ -160,7 +155,7 @@ class RabbitMqStompDriver extends StompDriver
             $destination = $this->createDelayedTopic($destination);
         }
 
-        $this->context->createProducer()->send($destination, $transportMessage);
+        $this->getContext()->createProducer()->send($destination, $transportMessage);
     }
 
     /**
@@ -258,7 +253,7 @@ class RabbitMqStompDriver extends StompDriver
     private function createDelayedTopic(StompDestination $queue)
     {
         // in order to use delay feature make sure the rabbitmq_delayed_message_exchange plugin is installed.
-        $destination = $this->context->createTopic($queue->getStompName().'.delayed');
+        $destination = $this->getContext()->createTopic($queue->getStompName().'.delayed');
         $destination->setType(StompDestination::TYPE_EXCHANGE);
         $destination->setDurable(true);
         $destination->setAutoDelete(false);
