@@ -58,10 +58,43 @@ class RabbitMqStompTransportFactoryTest extends \PHPUnit_Framework_TestCase
             'delay_plugin_installed' => false,
             'management_plugin_installed' => false,
             'management_plugin_port' => 15672,
+            'lazy' => true,
         ], $config);
     }
 
-    public function testShouldCreateService()
+    public function testShouldCreateConnectionFactory()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new RabbitMqStompTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'uri' => 'tcp://localhost:61613',
+            'login' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'sync' => true,
+            'connection_timeout' => 1,
+            'buffer_size' => 1000,
+            'delay_plugin_installed' => false,
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(StompConnectionFactory::class, $factory->getClass());
+        $this->assertSame([[
+            'uri' => 'tcp://localhost:61613',
+            'login' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'sync' => true,
+            'connection_timeout' => 1,
+            'buffer_size' => 1000,
+            'delay_plugin_installed' => false,
+        ]], $factory->getArguments());
+    }
+
+    public function testShouldCreateContext()
     {
         $container = new ContainerBuilder();
 
@@ -85,20 +118,6 @@ class RabbitMqStompTransportFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
         $this->assertEquals('enqueue.transport.rabbitmq_stomp.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
-
-        $this->assertTrue($container->hasDefinition('enqueue.transport.rabbitmq_stomp.connection_factory'));
-        $factory = $container->getDefinition('enqueue.transport.rabbitmq_stomp.connection_factory');
-        $this->assertEquals(StompConnectionFactory::class, $factory->getClass());
-        $this->assertSame([[
-            'uri' => 'tcp://localhost:61613',
-            'login' => 'guest',
-            'password' => 'guest',
-            'vhost' => '/',
-            'sync' => true,
-            'connection_timeout' => 1,
-            'buffer_size' => 1000,
-            'delay_plugin_installed' => false,
-        ]], $factory->getArguments());
     }
 
     public function testShouldCreateDriver()

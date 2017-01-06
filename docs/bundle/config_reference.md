@@ -16,6 +16,7 @@ enqueue:
             sync:                 true
             connection_timeout:   1
             buffer_size:          1000
+            lazy:                 true
         rabbitmq_stomp:
             host:                 localhost
             port:                 61613
@@ -25,6 +26,7 @@ enqueue:
             sync:                 true
             connection_timeout:   1
             buffer_size:          1000
+            lazy:                 true
 
             # The option tells whether RabbitMQ broker has management plugin installed or not
             management_plugin_installed: false
@@ -58,7 +60,8 @@ enqueue:
             # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
             write_timeout:        ~
             persisted:            false
-        rabbitmq:
+            lazy:                 true
+        rabbitmq_amqp:
 
             # The host to connect too. Note: Max 1024 characters
             host:                 localhost
@@ -84,6 +87,7 @@ enqueue:
             # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
             write_timeout:        ~
             persisted:            false
+            lazy:                 true
 
             # The option tells whether RabbitMQ broker has delay plugin installed or not
             delay_plugin_installed: false
@@ -100,6 +104,7 @@ enqueue:
     extensions:
         doctrine_ping_connection_extension: false
         doctrine_clear_identity_map_extension: false
+        signal_extension:     true
 ```
 
 [back to index](../index.md)

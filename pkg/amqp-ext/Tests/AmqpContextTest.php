@@ -28,6 +28,21 @@ class AmqpContextTest extends \PHPUnit_Framework_TestCase
         new AmqpContext($this->createExtChannelMock());
     }
 
+    public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
+    {
+        new AmqpContext(function() {
+            return $this->createExtChannelMock();
+        });
+    }
+
+    public function testThrowIfNeitherCallbackNorExtChannelAsFirstArgument()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The extChannel argument must be either AMQPChannel or callable that return AMQPChannel.');
+
+        new AmqpContext(new \stdClass());
+    }
+
     public function testShouldReturnAmqpMessageOnCreateMessageCallWithoutArguments()
     {
         $context = new AmqpContext($this->createExtChannelMock());

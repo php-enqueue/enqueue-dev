@@ -27,6 +27,21 @@ class StompContextTest extends \PHPUnit_Framework_TestCase
         new StompContext($this->createStompClientMock());
     }
 
+    public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
+    {
+        new StompContext(function() {
+            return $this->createStompClientMock();
+        });
+    }
+
+    public function testThrowIfNeitherCallbackNorExtChannelAsFirstArgument()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The stomp argument must be either BufferedStompClient or callable that return BufferedStompClient.');
+
+        new StompContext(new \stdClass());
+    }
+
     public function testShouldCreateMessageInstance()
     {
         $context = new StompContext($this->createStompClientMock());

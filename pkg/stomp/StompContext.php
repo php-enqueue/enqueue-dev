@@ -14,11 +14,22 @@ class StompContext implements Context
     private $stomp;
 
     /**
-     * @param BufferedStompClient $stomp
+     * @var callable
      */
-    public function __construct(BufferedStompClient $stomp)
+    private $stompFactory;
+
+    /**
+     * @param BufferedStompClient|callable $stomp
+     */
+    public function __construct($stomp)
     {
-        $this->stomp = $stomp;
+        if ($stomp instanceof BufferedStompClient) {
+            $this->stomp = $stomp;
+        } elseif (is_callable($stomp)) {
+            $this->stompFactory = $stomp;
+        } else {
+            throw new \InvalidArgumentException('The stomp argument must be either BufferedStompClient or callable that return BufferedStompClient.');
+        }
     }
 
     /**
@@ -154,7 +165,7 @@ class StompContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
 
-        return new StompConsumer($this->stomp, $destination);
+        return new StompConsumer($this->getStomp(), $destination);
     }
 
     /**
@@ -164,7 +175,7 @@ class StompContext implements Context
      */
     public function createProducer()
     {
-        return new StompProducer($this->stomp);
+        return new StompProducer($this->getStomp());
     }
 
     /**
@@ -172,6 +183,26 @@ class StompContext implements Context
      */
     public function close()
     {
-        $this->stomp->disconnect();
+        $this->getStomp()->disconnect();
+    }
+
+    /**
+     * @return BufferedStompClient
+     */
+    private function getStomp()
+    {
+        if (false == $this->stomp) {
+            $stomp = call_user_func($this->stompFactory);
+            if (false == $stomp instanceof BufferedStompClient) {
+                throw new \LogicException(sprintf(
+                    'The factory must return instance of BufferedStompClient. It returns %s',
+                    is_object($stomp) ? get_class($stomp) : gettype($stomp)
+                ));
+            }
+
+            $this->stomp = $stomp;
+        }
+
+        return $this->stomp;
     }
 }

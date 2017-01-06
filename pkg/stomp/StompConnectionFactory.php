@@ -31,6 +31,7 @@ class StompConnectionFactory implements ConnectionFactory
             'buffer_size' => 1000,
             'connection_timeout' => 1,
             'sync' => false,
+            'lazy' => true,
         ], $config);
     }
 
@@ -40,6 +41,20 @@ class StompConnectionFactory implements ConnectionFactory
      * @return StompContext
      */
     public function createContext()
+    {
+        if ($this->config['lazy']) {
+            return new StompContext(function() {
+                return $this->establishConnection();
+            });
+        }
+
+        return new StompContext($this->stomp);
+    }
+
+    /**
+     * @return BufferedStompClient
+     */
+    private function establishConnection()
     {
         if (false == $this->stomp) {
             $config = $this->config;
@@ -55,6 +70,6 @@ class StompConnectionFactory implements ConnectionFactory
             $this->stomp->connect();
         }
 
-        return new StompContext($this->stomp);
+        return $this->stomp;
     }
 }

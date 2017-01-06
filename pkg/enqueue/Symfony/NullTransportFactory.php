@@ -3,6 +3,7 @@
 namespace Enqueue\Symfony;
 
 use Enqueue\Client\NullDriver;
+use Enqueue\Transport\Null\NullConnectionFactory;
 use Enqueue\Transport\Null\NullContext;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -34,10 +35,27 @@ class NullTransportFactory implements TransportFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function createConnectionFactory(ContainerBuilder $container, array $config)
+    {
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+
+        $factory = new Definition(NullConnectionFactory::class);
+
+        $container->setDefinition($factoryId, $factory);
+
+        return $factoryId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function createContext(ContainerBuilder $container, array $config)
     {
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
         $context = new Definition(NullContext::class);
+        $context->setFactory([new Reference($factoryId), 'createContext']);
 
         $container->setDefinition($contextId, $context);
 

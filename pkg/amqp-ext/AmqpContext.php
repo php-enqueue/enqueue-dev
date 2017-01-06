@@ -15,11 +15,24 @@ class AmqpContext implements Context
     private $extChannel;
 
     /**
-     * @param \AMQPChannel $extChannel
+     * @var callable
      */
-    public function __construct(\AMQPChannel $extChannel)
+    private $extChannelFactory;
+
+    /**
+     * Callable must return instance of \AMQPChannel once called
+     *
+     * @param \AMQPChannel|callable $extChannel
+     */
+    public function __construct($extChannel)
     {
-        $this->extChannel = $extChannel;
+        if ($extChannel instanceof \AMQPChannel) {
+            $this->extChannel = $extChannel;
+        } elseif (is_callable($extChannel)) {
+            $this->extChannelFactory = $extChannel;
+        } else {
+            throw new \InvalidArgumentException('The extChannel argument must be either AMQPChannel or callable that return AMQPChannel.');
+        }
     }
 
     /**
@@ -49,7 +62,7 @@ class AmqpContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
 
-        $extExchange = new \AMQPExchange($this->extChannel);
+        $extExchange = new \AMQPExchange($this->getExtChannel());
         $extExchange->delete($destination->getTopicName(), $destination->getFlags());
     }
 
@@ -60,7 +73,7 @@ class AmqpContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
 
-        $extExchange = new \AMQPExchange($this->extChannel);
+        $extExchange = new \AMQPExchange($this->getExtChannel());
         $extExchange->setName($destination->getTopicName());
         $extExchange->setType($destination->getType());
         $extExchange->setArguments($destination->getArguments());
@@ -86,7 +99,7 @@ class AmqpContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
 
-        $extQueue = new \AMQPQueue($this->extChannel);
+        $extQueue = new \AMQPQueue($this->getExtChannel());
         $extQueue->setName($destination->getQueueName());
         $extQueue->delete($destination->getFlags());
     }
@@ -98,7 +111,7 @@ class AmqpContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
 
-        $extQueue = new \AMQPQueue($this->extChannel);
+        $extQueue = new \AMQPQueue($this->getExtChannel());
         $extQueue->setFlags($destination->getFlags());
         $extQueue->setArguments($destination->getArguments());
 
@@ -135,7 +148,7 @@ class AmqpContext implements Context
      */
     public function createProducer()
     {
-        return new AmqpProducer($this->extChannel);
+        return new AmqpProducer($this->getExtChannel());
     }
 
     /**
@@ -164,7 +177,7 @@ class AmqpContext implements Context
 
     public function close()
     {
-        $extConnection = $this->extChannel->getConnection();
+        $extConnection = $this->getExtChannel()->getConnection();
         if ($extConnection->isConnected()) {
             $extConnection->isPersistent() ? $extConnection->pdisconnect() : $extConnection->disconnect();
         }
@@ -179,7 +192,7 @@ class AmqpContext implements Context
         InvalidDestinationException::assertDestinationInstanceOf($source, AmqpTopic::class);
         InvalidDestinationException::assertDestinationInstanceOf($target, AmqpQueue::class);
 
-        $amqpQueue = new \AMQPQueue($this->extChannel);
+        $amqpQueue = new \AMQPQueue($this->getExtChannel());
         $amqpQueue->setName($target->getQueueName());
         $amqpQueue->bind($source->getTopicName(), $amqpQueue->getName(), $target->getBindArguments());
     }
@@ -189,14 +202,26 @@ class AmqpContext implements Context
      */
     public function getExtConnection()
     {
-        return $this->extChannel->getConnection();
+        return $this->getExtChannel()->getConnection();
     }
 
     /**
-     * @return mixed
+     * @return \AMQPChannel
      */
     public function getExtChannel()
     {
+        if (false == $this->extChannel) {
+            $extChannel = call_user_func($this->extChannelFactory);
+            if (false == $extChannel instanceof \AMQPChannel) {
+                throw new \LogicException(sprintf(
+                    'The factory must return instance of AMQPChannel. It returns %s',
+                    is_object($extChannel) ? get_class($extChannel) : gettype($extChannel)
+                ));
+            }
+
+            $this->extChannel = $extChannel;
+        }
+
         return $this->extChannel;
     }
 }
