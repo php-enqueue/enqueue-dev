@@ -54,10 +54,41 @@ class StompTransportFactoryTest extends \PHPUnit_Framework_TestCase
             'sync' => true,
             'connection_timeout' => 1,
             'buffer_size' => 1000,
+            'lazy' => true,
         ], $config);
     }
 
-    public function testShouldCreateService()
+    public function testShouldCreateConnectionFactory()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new StompTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'uri' => 'tcp://localhost:61613',
+            'login' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'sync' => true,
+            'connection_timeout' => 1,
+            'buffer_size' => 1000,
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(StompConnectionFactory::class, $factory->getClass());
+        $this->assertSame([[
+            'uri' => 'tcp://localhost:61613',
+            'login' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'sync' => true,
+            'connection_timeout' => 1,
+            'buffer_size' => 1000,
+        ]], $factory->getArguments());
+    }
+
+    public function testShouldCreateContext()
     {
         $container = new ContainerBuilder();
 
@@ -80,19 +111,6 @@ class StompTransportFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
         $this->assertEquals('enqueue.transport.stomp.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
-
-        $this->assertTrue($container->hasDefinition('enqueue.transport.stomp.connection_factory'));
-        $factory = $container->getDefinition('enqueue.transport.stomp.connection_factory');
-        $this->assertEquals(StompConnectionFactory::class, $factory->getClass());
-        $this->assertSame([[
-            'uri' => 'tcp://localhost:61613',
-            'login' => 'guest',
-            'password' => 'guest',
-            'vhost' => '/',
-            'sync' => true,
-            'connection_timeout' => 1,
-            'buffer_size' => 1000,
-        ]], $factory->getArguments());
     }
 
     public function testShouldCreateDriver()

@@ -3,7 +3,7 @@
 namespace Enqueue\Bundle\Tests\Unit;
 
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqTransportFactory;
+use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
@@ -132,7 +132,7 @@ class EnqueueBundleTest extends \PHPUnit_Framework_TestCase
         $extensionMock
             ->expects($this->at(5))
             ->method('addTransportFactory')
-            ->with($this->isInstanceOf(RabbitMqTransportFactory::class))
+            ->with($this->isInstanceOf(RabbitMqAmqpTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();

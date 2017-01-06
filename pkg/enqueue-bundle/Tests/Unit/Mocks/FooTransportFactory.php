@@ -36,13 +36,25 @@ class FooTransportFactory implements TransportFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function createConnectionFactory(ContainerBuilder $container, array $config)
+    {
+        $factoryId = 'foo.connection_factory';
+
+        $container->setDefinition($factoryId, new Definition(\stdClass::class, [$config]));
+
+        return $factoryId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function createContext(ContainerBuilder $container, array $config)
     {
-        $connectionId = 'foo.context';
+        $contextId = 'foo.context';
 
-        $container->setDefinition($connectionId, new Definition(\stdClass::class, [$config]));
+        $container->setDefinition($contextId, new Definition(\stdClass::class, [$config]));
 
-        return $connectionId;
+        return $contextId;
     }
 
     public function createDriver(ContainerBuilder $container, array $config)

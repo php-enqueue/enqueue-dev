@@ -52,7 +52,36 @@ class AmqpTransportFactoryTest extends \PHPUnit_Framework_TestCase
             'password' => 'guest',
             'vhost' => '/',
             'persisted' => false,
+            'lazy' => true,
         ], $config);
+    }
+
+    public function testShouldCreateConnectionFactory()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new AmqpTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'host' => 'localhost',
+            'port' => 5672,
+            'login' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'persisted' => false,
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+        $this->assertSame([[
+            'host' => 'localhost',
+            'port' => 5672,
+            'login' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'persisted' => false,
+        ]], $factory->getArguments());
     }
 
     public function testShouldCreateContext()
@@ -77,18 +106,6 @@ class AmqpTransportFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
         $this->assertEquals('enqueue.transport.amqp.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
-
-        $this->assertTrue($container->hasDefinition('enqueue.transport.amqp.connection_factory'));
-        $factory = $container->getDefinition('enqueue.transport.amqp.connection_factory');
-        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
-        $this->assertSame([[
-            'host' => 'localhost',
-            'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
-            'vhost' => '/',
-            'persisted' => false,
-        ]], $factory->getArguments());
     }
 
     public function testShouldCreateDriver()

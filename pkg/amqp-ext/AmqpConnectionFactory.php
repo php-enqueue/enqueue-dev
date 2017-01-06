@@ -43,6 +43,7 @@ class AmqpConnectionFactory implements ConnectionFactory
             'write_timeout' => null,
             'connect_timeout' => null,
             'persisted' => false,
+            'lazy' => true,
         ], $config);
     }
 
@@ -52,6 +53,17 @@ class AmqpConnectionFactory implements ConnectionFactory
      * @return AmqpContext
      */
     public function createContext()
+    {
+        if ($this->config['lazy']) {
+            return new AmqpContext(function() {
+                return new \AMQPChannel($this->establishConnection());
+            });
+        }
+
+        return new AmqpContext(new \AMQPChannel($this->establishConnection()));
+    }
+
+    private function establishConnection()
     {
         if (false == $this->connection) {
             $this->connection = new \AMQPConnection($this->config);
@@ -63,6 +75,6 @@ class AmqpConnectionFactory implements ConnectionFactory
             $this->config['persisted'] ? $this->connection->preconnect() : $this->connection->reconnect();
         }
 
-        return new AmqpContext(new \AMQPChannel($this->connection));
+        return $this->connection;
     }
 }

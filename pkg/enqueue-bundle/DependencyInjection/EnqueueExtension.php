@@ -52,6 +52,7 @@ class EnqueueExtension extends Extension
         $loader->load('services.yml');
 
         foreach ($config['transport'] as $name => $transportConfig) {
+            $this->factories[$name]->createConnectionFactory($container, $transportConfig);
             $this->factories[$name]->createContext($container, $transportConfig);
         }
 

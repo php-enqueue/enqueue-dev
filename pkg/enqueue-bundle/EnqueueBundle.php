@@ -4,7 +4,7 @@ namespace Enqueue\Bundle;
 
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqTransportFactory;
+use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
@@ -44,7 +44,7 @@ class EnqueueBundle extends Bundle
 
         if (class_exists(AmqpContext::class)) {
             $extension->addTransportFactory(new AmqpTransportFactory());
-            $extension->addTransportFactory(new RabbitMqTransportFactory());
+            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory());
         }
     }
 }

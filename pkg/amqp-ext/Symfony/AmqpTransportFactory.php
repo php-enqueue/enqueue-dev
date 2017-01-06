@@ -73,7 +73,24 @@ class AmqpTransportFactory implements TransportFactoryInterface
                 ->booleanNode('persisted')
                     ->defaultFalse()
                 ->end()
+                ->booleanNode('lazy')
+                    ->defaultTrue()
+                ->end()
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createConnectionFactory(ContainerBuilder $container, array $config)
+    {
+        $factory = new Definition(AmqpConnectionFactory::class);
+        $factory->setArguments([$config]);
+
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+        $container->setDefinition($factoryId, $factory);
+
+        return $factoryId;
     }
 
     /**
@@ -81,12 +98,7 @@ class AmqpTransportFactory implements TransportFactoryInterface
      */
     public function createContext(ContainerBuilder $container, array $config)
     {
-        $factory = new Definition(AmqpConnectionFactory::class);
-        $factory->setPublic(false);
-        $factory->setArguments([$config]);
-
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
-        $container->setDefinition($factoryId, $factory);
 
         $context = new Definition(AmqpContext::class);
         $context->setFactory([new Reference($factoryId), 'createContext']);

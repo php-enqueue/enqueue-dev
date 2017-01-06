@@ -41,7 +41,22 @@ class StompTransportFactory implements TransportFactoryInterface
                 ->booleanNode('sync')->defaultTrue()->end()
                 ->integerNode('connection_timeout')->min(1)->defaultValue(1)->end()
                 ->integerNode('buffer_size')->min(1)->defaultValue(1000)->end()
+                ->booleanNode('lazy')->defaultTrue()->end()
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createConnectionFactory(ContainerBuilder $container, array $config)
+    {
+        $factory = new Definition(StompConnectionFactory::class);
+        $factory->setArguments([$config]);
+
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+        $container->setDefinition($factoryId, $factory);
+
+        return $factoryId;
     }
 
     /**
@@ -49,11 +64,7 @@ class StompTransportFactory implements TransportFactoryInterface
      */
     public function createContext(ContainerBuilder $container, array $config)
     {
-        $factory = new Definition(StompConnectionFactory::class);
-        $factory->setArguments([$config]);
-
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
-        $container->setDefinition($factoryId, $factory);
 
         $context = new Definition(StompContext::class);
         $context->setFactory([new Reference($factoryId), 'createContext']);

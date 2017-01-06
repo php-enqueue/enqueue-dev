@@ -6,10 +6,12 @@ use Enqueue\Client\NullDriver;
 use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Transport\Null\NullConnectionFactory;
 use Enqueue\Transport\Null\NullContext;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class NullTransportFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,6 +49,20 @@ class NullTransportFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([], $config);
     }
 
+    public function testShouldCreateConnectionFactory()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new NullTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, []);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(NullConnectionFactory::class, $factory->getClass());
+        $this->assertSame([], $factory->getArguments());
+    }
+
     public function testShouldCreateContext()
     {
         $container = new ContainerBuilder();
@@ -60,7 +76,10 @@ class NullTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $context = $container->getDefinition($serviceId);
         $this->assertEquals(NullContext::class, $context->getClass());
-        $this->assertNull($context->getFactory());
+        $this->assertEquals(
+            [new Reference('enqueue.transport.null.connection_factory'), 'createContext'],
+            $context->getFactory()
+        );
     }
 
     public function testShouldCreateDriver()
