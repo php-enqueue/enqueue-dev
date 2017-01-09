@@ -68,7 +68,7 @@ class AmqpConsumer implements Consumer
 
         $originalTimeout = $extConnection->getReadTimeout();
         try {
-            $extConnection->setReadTimeout($timeout);
+            $extConnection->setReadTimeout($timeout / 1000);
 
             if (false == $this->isInit) {
                 $this->getExtQueue()->consume(null, AMQP_NOPARAM, $this->consumerId);
