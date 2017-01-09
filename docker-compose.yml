@@ -38,6 +38,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
 
+  generate-changelog:
+    build: { context: ., dockerfile: Dockerfile.generate-changelog }
+    volumes:
+      - ./:/mqdev
+
 volumes:
   mysql-data:
     driver: local
