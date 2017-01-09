@@ -12,6 +12,7 @@ php:
 cache:
     directories:
         - $HOME/.composer/cache
+        - $HOME/php-amqp
 
 install:
     - travis/build-php-amqp-ext
