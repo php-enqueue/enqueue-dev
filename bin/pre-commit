@@ -104,14 +104,24 @@ function runPhpCsFixer()
     foreach (getFilesToFix() as $file) {
         $output = '';
         $returnCode = null;
+
         exec(sprintf(
-            '%s %s fix %s',
+            '%s %s fix %s --dry-run',
             $phpBin,
             $phpCsFixerBin,
             $projectRootDir.'/'.$file
         ), $output, $returnCode);
 
         if ($returnCode) {
+            $output = '';
+
+            exec(sprintf(
+                '%s %s fix %s',
+                $phpBin,
+                $phpCsFixerBin,
+                $projectRootDir.'/'.$file
+            ), $output);
+
             $filesWithErrors[] = $file;
         }
     }
