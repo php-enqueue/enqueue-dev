@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
-# build librabbitmq
-cd $HOME
-git clone git://github.com/alanxz/rabbitmq-c.git
-cd $HOME/rabbitmq-c
-git submodule init && git submodule update
-autoreconf -i && ./configure --prefix=$HOME/rabbitmq-c && make && make install
+if [ ! -f $HOME/php-amqp/modules/amqp.so ]; then
+    # build librabbitmq
+    cd $HOME
+    git clone git://github.com/alanxz/rabbitmq-c.git
+    cd $HOME/rabbitmq-c
+    git submodule init && git submodule update
+    autoreconf -i && ./configure --prefix=$HOME/rabbitmq-c && make && make install
 
-# build php-amqp extension
-cd $HOME
-git clone git://github.com/pdezwart/php-amqp.git
-cd $HOME/php-amqp
-phpize && ./configure  --with-librabbitmq-dir=$HOME/rabbitmq-c && make && make install
-echo "extension=amqp.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    # build php-amqp extension
+    cd $HOME
+    git clone git://github.com/pdezwart/php-amqp.git
+    cd $HOME/php-amqp
+    phpize && ./configure  --with-librabbitmq-dir=$HOME/rabbitmq-c && make && make install
+fi
+
+echo "extension=$HOME/php-amqp/modules/amqp.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
