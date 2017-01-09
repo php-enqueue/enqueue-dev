@@ -41,7 +41,7 @@ class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
         $startAt = microtime(true);
 
         $consumer = $this->amqpContext->createConsumer($queue);
-        $message = $consumer->receive(2);
+        $message = $consumer->receive(2000);
 
         $endAt = microtime(true);
 
@@ -83,7 +83,7 @@ class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
         $producer->send($queue, $message);
 
         $consumer = $this->amqpContext->createConsumer($queue);
-        $message = $consumer->receive(1);
+        $message = $consumer->receive(1000);
 
         $this->assertInstanceOf(AmqpMessage::class, $message);
         $consumer->acknowledge($message);
@@ -115,7 +115,7 @@ class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
         $producer->send($queue, $message);
 
         $consumer = $this->amqpContext->createConsumer($queue);
-        $message = $consumer->receive(1);
+        $message = $consumer->receive(1000);
 
         $this->assertInstanceOf(AmqpMessage::class, $message);
         $consumer->acknowledge($message);
@@ -140,7 +140,7 @@ class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
         $producer->send($topic, $message);
 
         $consumer = $this->amqpContext->createConsumer($queue);
-        $message = $consumer->receive(1);
+        $message = $consumer->receive(1000);
 
         $this->assertInstanceOf(AmqpMessage::class, $message);
         $consumer->acknowledge($message);
@@ -157,13 +157,37 @@ class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
 
         $consumer = $this->amqpContext->createConsumer($topic);
         //guard
-        $this->assertNull($consumer->receive(1));
+        $this->assertNull($consumer->receive(1000));
 
         $message = $this->amqpContext->createMessage(__METHOD__);
 
         $producer = $this->amqpContext->createProducer();
         $producer->send($topic, $message);
-        $actualMessage = $consumer->receive(1);
+        $actualMessage = $consumer->receive(1000);
+
+        $this->assertInstanceOf(AmqpMessage::class, $actualMessage);
+        $consumer->acknowledge($message);
+
+        $this->assertEquals(__METHOD__, $message->getBody());
+    }
+
+    public function testConsumerReceiveMessageWithZeroTimeout()
+    {
+        $topic = $this->amqpContext->createTopic('amqp_ext.test_exchange');
+        $topic->setType(AMQP_EX_TYPE_FANOUT);
+
+        $this->amqpContext->declareTopic($topic);
+
+        $consumer = $this->amqpContext->createConsumer($topic);
+        //guard
+        $this->assertNull($consumer->receive(1000));
+
+        $message = $this->amqpContext->createMessage(__METHOD__);
+
+        $producer = $this->amqpContext->createProducer();
+        $producer->send($topic, $message);
+        usleep(100);
+        $actualMessage = $consumer->receive(0);
 
         $this->assertInstanceOf(AmqpMessage::class, $actualMessage);
         $consumer->acknowledge($message);
