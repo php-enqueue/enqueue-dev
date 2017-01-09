@@ -121,11 +121,16 @@ class QueueConsumer
         $logger = $context->getLogger() ?: new NullLogger();
         $logger->info('Start consuming');
 
+        /** @var Queue|null $previousQueue */
+        $previousQueue = null;
+
         while (true) {
             try {
                 /** @var Queue $queue */
                 foreach ($this->boundProcessors as list($queue, $processor)) {
-                    $logger->debug(sprintf('Switch to a queue %s', $queue->getQueueName()));
+                    if (false == $previousQueue || $previousQueue->getQueueName() != $queue->getQueueName()) {
+                        $logger->debug(sprintf('Switch to a queue %s', $queue->getQueueName()));
+                    }
 
                     $messageConsumer = $messageConsumers[$queue->getQueueName()];
 
@@ -136,6 +141,8 @@ class QueueConsumer
                     $context->setPsrProcessor($processor);
 
                     $this->doConsume($extension, $context);
+
+                    $previousQueue = $queue;
                 }
             } catch (ConsumptionInterruptedException $e) {
                 $logger->info(sprintf('Consuming interrupted'));
@@ -215,7 +222,7 @@ class QueueConsumer
 
             $extension->onPostReceived($context);
         } else {
-            $logger->info(sprintf('Idle'));
+            $logger->debug(sprintf('Idle'));
 
             usleep($this->idleMicroseconds);
             $extension->onIdle($context);
