@@ -3,7 +3,7 @@
 set -x
 set -e
 
-while getopts "bustef" OPTION; do
+while getopts "bustefc" OPTION; do
   case $OPTION in
     b)
       COMPOSE_PROJECT_NAME=mqdev docker-compose build
@@ -22,6 +22,9 @@ while getopts "bustef" OPTION; do
       ;;
     t)
       COMPOSE_PROJECT_NAME=mqdev docker-compose run --workdir="/mqdev" --rm dev ./bin/test
+      ;;
+    c)
+      COMPOSE_PROJECT_NAME=mqdev docker-compose run --workdir="/mqdev" --rm generate-changelog github_changelog_generator --future-release "$2"
       ;;
 
     \?)
