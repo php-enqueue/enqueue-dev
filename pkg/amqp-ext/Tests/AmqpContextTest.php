@@ -30,7 +30,7 @@ class AmqpContextTest extends \PHPUnit_Framework_TestCase
 
     public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
     {
-        new AmqpContext(function() {
+        new AmqpContext(function () {
             return $this->createExtChannelMock();
         });
     }
@@ -287,6 +287,15 @@ class AmqpContextTest extends \PHPUnit_Framework_TestCase
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Transport\Null\NullQueue.');
         $context->bind(new AmqpTopic('aName'), new NullQueue('aName'));
+    }
+
+    public function testShouldThrowIfGivenQueueNotAmqpQueueOnPurge()
+    {
+        $context = new AmqpContext($this->createExtChannelMock());
+
+        $this->expectException(InvalidDestinationException::class);
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Transport\Null\NullQueue.');
+        $context->purge(new NullQueue('aName'));
     }
 
     /**

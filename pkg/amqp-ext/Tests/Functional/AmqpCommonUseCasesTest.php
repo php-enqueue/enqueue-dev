@@ -194,4 +194,22 @@ class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(__METHOD__, $message->getBody());
     }
+
+    public function testPurgeMessagesFromQueue()
+    {
+        $queue = $this->amqpContext->createQueue('amqp_ext.test');
+        $this->amqpContext->declareQueue($queue);
+
+        $consumer = $this->amqpContext->createConsumer($queue);
+
+        $message = $this->amqpContext->createMessage(__METHOD__);
+
+        $producer = $this->amqpContext->createProducer();
+        $producer->send($queue, $message);
+        $producer->send($queue, $message);
+
+        $this->amqpContext->purge($queue);
+
+        $this->assertNull($consumer->receive(1));
+    }
 }

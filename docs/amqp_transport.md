@@ -10,6 +10,7 @@ Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)
+* [Purge queue messages](#purge-queue-messages)
 
 ## Create context
 
@@ -113,6 +114,18 @@ $message = $consumer->receive();
 
 $consumer->acknowledge($message);
 // $consumer->reject($message);
+```
+
+## Purge queue messages:
+
+```php
+<?php
+/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+/** @var \Enqueue\AmqpExt\AmqpQueue $fooQueue */
+
+$queue = $psrContext->createQueue('aQueue');
+
+$psrContext->purge($queue);
 ```
 
 [back to index](index.md)

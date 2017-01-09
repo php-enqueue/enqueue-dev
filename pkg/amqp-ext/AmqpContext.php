@@ -5,6 +5,7 @@ namespace Enqueue\AmqpExt;
 use Enqueue\Psr\Context;
 use Enqueue\Psr\Destination;
 use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Psr\Queue;
 use Enqueue\Psr\Topic;
 
 class AmqpContext implements Context
@@ -20,7 +21,7 @@ class AmqpContext implements Context
     private $extChannelFactory;
 
     /**
-     * Callable must return instance of \AMQPChannel once called
+     * Callable must return instance of \AMQPChannel once called.
      *
      * @param \AMQPChannel|callable $extChannel
      */
@@ -223,5 +224,19 @@ class AmqpContext implements Context
         }
 
         return $this->extChannel;
+    }
+
+    /**
+     * Purge all messages from the given queue.
+     *
+     * @param Queue $queue
+     */
+    public function purge(Queue $queue)
+    {
+        InvalidDestinationException::assertDestinationInstanceOf($queue, AmqpQueue::class);
+
+        $amqpQueue = new \AMQPQueue($this->getExtChannel());
+        $amqpQueue->setName($queue->getQueueName());
+        $amqpQueue->purge();
     }
 }
