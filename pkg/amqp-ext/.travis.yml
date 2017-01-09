@@ -13,6 +13,7 @@ cache:
     directories:
         - $HOME/.composer/cache
         - $HOME/php-amqp
+        - $HOME/rabbitmq-c
 
 install:
     - travis/build-php-amqp-ext
