@@ -11,6 +11,8 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
+use Enqueue\Fs\FsContext;
+use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
@@ -45,6 +47,10 @@ class EnqueueBundle extends Bundle
         if (class_exists(AmqpContext::class)) {
             $extension->addTransportFactory(new AmqpTransportFactory());
             $extension->addTransportFactory(new RabbitMqAmqpTransportFactory());
+        }
+
+        if (class_exists(FsContext::class)) {
+            $extension->addTransportFactory(new FsTransportFactory());
         }
     }
 }

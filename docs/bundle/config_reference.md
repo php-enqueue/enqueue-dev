@@ -1,7 +1,8 @@
 # Config reference
 
+You can get this info by running `./bin/console config:dump-reference enqueue` command.
+
 ```yaml
-# Default configuration for extension with alias: "enqueue"
 enqueue:
     transport:            # Required
         default:
@@ -91,6 +92,16 @@ enqueue:
 
             # The option tells whether RabbitMQ broker has delay plugin installed or not
             delay_plugin_installed: false
+        fs:
+
+            # The store directory where all queue\topics files will be created and messages are stored
+            store_dir:            ~ # Required
+
+            # The option tells how many messages should be read from file at once. The feature save resources but could lead to bigger messages lose.
+            pre_fetch_count:      1
+
+            # The queue files are created with this given permissions if not exist.
+            chmod:                384
     client:
         traceable_producer:   false
         prefix:               enqueue

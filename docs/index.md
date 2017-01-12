@@ -2,9 +2,10 @@
 
 * [Quick tour](quick_tour.md)
 * Transports
-    - [AMQP](amqp_transport.md)
-    - [STOMP](stomp_transport.md)
-    - [NULL](null_transport.md)
+    - [Amqp](amqp_transport.md)
+    - [Stomp](stomp_transport.md)
+    - [Filesystem](filesystem_transport.md)
+    - [Null](null_transport.md)
 * Consumption
     - [Extensions](consumption/extensions.md)
 * Client

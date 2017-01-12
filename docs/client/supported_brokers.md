@@ -8,7 +8,7 @@ Here's the list of protocols and Client features supported by them
 | RabbitMQ AMQP  |   Yes    |    Yes*  |    Yes     |     Yes      |     Yes     |
 | STOMP          |   No     |    No    |    Yes     |     No       |     Yes**   |
 | RabbitMQ STOMP |   Yes    |    Yes*  |    Yes     |     Yes***   |     Yes**   |
-
+| Filesystem     |   No     |    No    |    No      |     Yes      |     No      |
 
 * \* Possible if a RabbitMQ delay plugin is installed.
 * \*\* Possible if topics (exchanges) are configured on broker side manually.

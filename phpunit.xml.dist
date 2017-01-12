@@ -29,6 +29,10 @@
             <directory>pkg/amqp-ext/Tests</directory>
         </testsuite>
 
+        <testsuite name="fs">
+            <directory>pkg/fs/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>

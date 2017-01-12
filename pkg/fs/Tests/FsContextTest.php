@@ -1,0 +1,236 @@
+<?php
+
+namespace Enqueue\Fs\Tests;
+
+use Enqueue\Fs\FsConsumer;
+use Enqueue\Fs\FsContext;
+use Enqueue\Fs\FsDestination;
+use Enqueue\Fs\FsMessage;
+use Enqueue\Fs\FsProducer;
+use Enqueue\Psr\Context;
+use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Transport\Null\NullQueue;
+use Makasim\File\TempFile;
+
+class FsContextTest extends \PHPUnit_Framework_TestCase
+{
+    use ClassExtensionTrait;
+
+    public function testShouldImplementContextInterface()
+    {
+        $this->assertClassImplements(Context::class, FsContext::class);
+    }
+
+    public function testCouldBeConstructedWithExpectedArguments()
+    {
+        new FsContext(sys_get_temp_dir(), 1, 0666);
+    }
+
+    public function testShouldAllowCreateEmptyMessage()
+    {
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $message = $context->createMessage();
+
+        $this->assertInstanceOf(FsMessage::class, $message);
+
+        $this->assertSame('', $message->getBody());
+        $this->assertSame([], $message->getProperties());
+        $this->assertSame([], $message->getHeaders());
+    }
+
+    public function testShouldAllowCreateCustomMessage()
+    {
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $message = $context->createMessage('theBody', ['aProp' => 'aPropVal'], ['aHeader' => 'aHeaderVal']);
+
+        $this->assertInstanceOf(FsMessage::class, $message);
+
+        $this->assertSame('theBody', $message->getBody());
+        $this->assertSame(['aProp' => 'aPropVal'], $message->getProperties());
+        $this->assertSame(['aHeader' => 'aHeaderVal'], $message->getHeaders());
+    }
+
+    public function testShouldCreateQueue()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $queue = $context->createQueue($tmpFile->getFilename());
+
+        $this->assertInstanceOf(FsDestination::class, $queue);
+        $this->assertInstanceOf(\SplFileInfo::class, $queue->getFileInfo());
+        $this->assertSame((string) $tmpFile, (string) $queue->getFileInfo());
+
+        $this->assertSame($tmpFile->getFilename(), $queue->getTopicName());
+    }
+
+    public function testShouldAllowCreateTopic()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $topic = $context->createTopic($tmpFile->getFilename());
+
+        $this->assertInstanceOf(FsDestination::class, $topic);
+        $this->assertInstanceOf(\SplFileInfo::class, $topic->getFileInfo());
+        $this->assertSame((string) $tmpFile, (string) $topic->getFileInfo());
+
+        $this->assertSame($tmpFile->getFilename(), $topic->getTopicName());
+    }
+
+    public function testShouldAllowCreateTmpQueue()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $queue = $context->createTemporaryQueue();
+
+        $this->assertInstanceOf(FsDestination::class, $queue);
+        $this->assertInstanceOf(TempFile::class, $queue->getFileInfo());
+        $this->assertNotEmpty($queue->getQueueName());
+    }
+
+    public function testShouldCreateProducer()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $producer = $context->createProducer();
+
+        $this->assertInstanceOf(FsProducer::class, $producer);
+    }
+
+    public function testShouldThrowIfNotFsDestinationGivenOnCreateConsumer()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $this->expectException(InvalidDestinationException::class);
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Transport\Null\NullQueue.');
+        $consumer = $context->createConsumer(new NullQueue('aQueue'));
+
+        $this->assertInstanceOf(FsConsumer::class, $consumer);
+    }
+
+    public function testShouldCreateConsumer()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $queue = $context->createQueue($tmpFile->getFilename());
+
+        $context->createConsumer($queue);
+    }
+
+    public function testShouldPropagatePreFetchCountToCreatedConsumer()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 123, 0666);
+
+        $queue = $context->createQueue($tmpFile->getFilename());
+
+        $consumer = $context->createConsumer($queue);
+
+        // guard
+        $this->assertInstanceOf(FsConsumer::class, $consumer);
+
+        $this->assertAttributeSame(123, 'preFetchCount', $consumer);
+    }
+
+    public function testShouldAllowGetPreFetchCountSetInConstructor()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 123, 0666);
+
+        $this->assertSame(123, $context->getPreFetchCount());
+    }
+
+    public function testShouldAllowGetPreviouslySetPreFetchCount()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $context->setPreFetchCount(456);
+
+        $this->assertSame(456, $context->getPreFetchCount());
+    }
+
+    public function testShouldAllowPurgeMessagesFromQueue()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        file_put_contents($tmpFile, 'foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $queue = $context->createQueue($tmpFile->getFilename());
+
+        $context->purge($queue);
+
+        $this->assertEmpty(file_get_contents($tmpFile));
+    }
+
+    public function testShouldReleaseAllLocksOnClose()
+    {
+        new TempFile(sys_get_temp_dir().'/foo');
+        new TempFile(sys_get_temp_dir().'/bar');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $fooQueue = $context->createQueue('foo');
+        $barQueue = $context->createTopic('bar');
+
+        $this->assertAttributeCount(0, 'lockHandlers', $context);
+
+        $context->workWithFile($fooQueue, 'r+', function () {
+        });
+        $context->workWithFile($barQueue, 'r+', function () {
+        });
+        $context->workWithFile($fooQueue, 'c+', function () {
+        });
+        $context->workWithFile($barQueue, 'c+', function () {
+        });
+
+        $this->assertAttributeCount(2, 'lockHandlers', $context);
+
+        $context->close();
+
+        $this->assertAttributeCount(0, 'lockHandlers', $context);
+    }
+
+    public function testShouldCreateFileOnFilesystemIfNotExistOnDeclareDestination()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/'.uniqid());
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+
+        $queue = $context->createQueue($tmpFile->getFilename());
+
+        $this->assertFileNotExists((string) $tmpFile);
+
+        $context->declareDestination($queue);
+
+        $this->assertFileExists((string) $tmpFile);
+        $this->assertTrue(is_readable($tmpFile));
+        $this->assertTrue(is_writable($tmpFile));
+
+        // do nothing if file already exists
+        $context->declareDestination($queue);
+
+        $this->assertFileExists((string) $tmpFile);
+
+        unlink($tmpFile);
+    }
+}
