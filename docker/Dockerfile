@@ -10,8 +10,8 @@ RUN set -x && \
 
 # RUN rm -f /etc/php/7.0/cli/conf.d/*xdebug.ini
 
-COPY ./docker/php/cli.ini /etc/php/7.0/cli/conf.d/1-dev_cli.ini
-COPY ./docker/bin/dev_entrypoiny.sh /usr/local/bin/entrypoint.sh
+COPY ./php/cli.ini /etc/php/7.0/cli/conf.d/1-dev_cli.ini
+COPY ./bin/dev_entrypoiny.sh /usr/local/bin/entrypoint.sh
 RUN chmod u+x /usr/local/bin/entrypoint.sh
 
 RUN mkdir -p /mqdev

@@ -1,7 +1,7 @@
 version: '2'
 services:
   dev:
-    build: { context: ., dockerfile: Dockerfile.dev }
+    build: { context: docker, dockerfile: Dockerfile }
     depends_on:
       - rabbitmq
       - mysql
@@ -22,7 +22,7 @@ services:
       - SYMFONY__DB__PASSWORD=rootpass
 
   rabbitmq:
-    build: { context: ., dockerfile: Dockerfile.rabbitmq }
+    build: { context: docker, dockerfile: Dockerfile.rabbitmq }
     ports:
       - "15672:15672"
     environment:
@@ -39,7 +39,7 @@ services:
       MYSQL_ROOT_PASSWORD: rootpass
 
   generate-changelog:
-    build: { context: ., dockerfile: Dockerfile.generate-changelog }
+    build: { context: docker, dockerfile: Dockerfile.generate-changelog }
     volumes:
       - ./:/mqdev
 
