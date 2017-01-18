@@ -1,0 +1,34 @@
+{
+    "name": "enqueue/fs",
+    "type": "library",
+    "description": "Enqueue Filesystem based transport",
+    "keywords": ["messaging", "queue", "filesystem", "local"],
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:php-enqueue/test.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "symfony/filesystem": "^2.8|^3",
+        "makasim/temp-file": "^0.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.5",
+        "enqueue/test": "^0.2"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\Fs\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.2.x-dev"
+        }
+    }
+}

@@ -2,9 +2,9 @@
 
 namespace Enqueue\AmqpExt\Tests\Symfony;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Client\AmqpDriver;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
+use Enqueue\Fs\Client\FsDriver;
+use Enqueue\Fs\FsConnectionFactory;
+use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -12,47 +12,45 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class AmqpTransportFactoryTest extends \PHPUnit_Framework_TestCase
+class FsTransportFactoryTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementTransportFactoryInterface()
     {
-        $this->assertClassImplements(TransportFactoryInterface::class, AmqpTransportFactory::class);
+        $this->assertClassImplements(TransportFactoryInterface::class, FsTransportFactory::class);
     }
 
     public function testCouldBeConstructedWithDefaultName()
     {
-        $transport = new AmqpTransportFactory();
+        $transport = new FsTransportFactory();
 
-        $this->assertEquals('amqp', $transport->getName());
+        $this->assertEquals('fs', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
     {
-        $transport = new AmqpTransportFactory('theCustomName');
+        $transport = new FsTransportFactory('theCustomName');
 
         $this->assertEquals('theCustomName', $transport->getName());
     }
 
     public function testShouldAllowAddConfiguration()
     {
-        $transport = new AmqpTransportFactory();
+        $transport = new FsTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), []);
+        $config = $processor->process($tb->buildTree(), [[
+            'store_dir' => sys_get_temp_dir(),
+        ]]);
 
         $this->assertEquals([
-            'host' => 'localhost',
-            'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
-            'vhost' => '/',
-            'persisted' => false,
-            'lazy' => true,
+            'store_dir' => sys_get_temp_dir(),
+            'pre_fetch_count' => 1,
+            'chmod' => 0600,
         ], $config);
     }
 
@@ -60,27 +58,21 @@ class AmqpTransportFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory();
+        $transport = new FsTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
-            'host' => 'localhost',
-            'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
-            'vhost' => '/',
-            'persisted' => false,
+            'store_dir' => sys_get_temp_dir(),
+            'pre_fetch_count' => 1,
+            'chmod' => 0600,
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+        $this->assertEquals(FsConnectionFactory::class, $factory->getClass());
         $this->assertSame([[
-            'host' => 'localhost',
-            'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
-            'vhost' => '/',
-            'persisted' => false,
+            'store_dir' => sys_get_temp_dir(),
+            'pre_fetch_count' => 1,
+            'chmod' => 0600,
         ]], $factory->getArguments());
     }
 
@@ -88,23 +80,20 @@ class AmqpTransportFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory();
+        $transport = new FsTransportFactory();
 
         $serviceId = $transport->createContext($container, [
-            'host' => 'localhost',
-            'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
-            'vhost' => '/',
-            'persisted' => false,
+            'store_dir' => sys_get_temp_dir(),
+            'pre_fetch_count' => 1,
+            'chmod' => 0600,
         ]);
 
-        $this->assertEquals('enqueue.transport.amqp.context', $serviceId);
+        $this->assertEquals('enqueue.transport.fs.context', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
-        $context = $container->getDefinition('enqueue.transport.amqp.context');
+        $context = $container->getDefinition('enqueue.transport.fs.context');
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
-        $this->assertEquals('enqueue.transport.amqp.connection_factory', (string) $context->getFactory()[0]);
+        $this->assertEquals('enqueue.transport.fs.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
     }
 
@@ -112,18 +101,18 @@ class AmqpTransportFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory();
+        $transport = new FsTransportFactory();
 
         $serviceId = $transport->createDriver($container, []);
 
-        $this->assertEquals('enqueue.client.amqp.driver', $serviceId);
+        $this->assertEquals('enqueue.client.fs.driver', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
         $driver = $container->getDefinition($serviceId);
-        $this->assertSame(AmqpDriver::class, $driver->getClass());
+        $this->assertSame(FsDriver::class, $driver->getClass());
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(0));
-        $this->assertEquals('enqueue.transport.amqp.context', (string) $driver->getArgument(0));
+        $this->assertEquals('enqueue.transport.fs.context', (string) $driver->getArgument(0));
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
         $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
