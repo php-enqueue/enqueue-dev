@@ -1,7 +1,8 @@
 version: '2'
 services:
   dev:
-    build: { context: docker, dockerfile: Dockerfile }
+    image: enqueue/dev:latest
+    # build: { context: docker, dockerfile: Dockerfile }
     depends_on:
       - rabbitmq
       - mysql
