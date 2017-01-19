@@ -13,7 +13,7 @@ fi
 
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
-for REMOTE in origin psr-queue enqueue amqp-ext enqueue-bundle job-queue stomp test
+for REMOTE in origin psr-queue enqueue amqp-ext fs enqueue-bundle job-queue stomp test
 do
 	TMP_DIR="/tmp/enqueue-repo"
     REMOTE_URL=`git remote get-url $REMOTE`
