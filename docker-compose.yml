@@ -23,24 +23,22 @@ services:
       - SYMFONY__DB__PASSWORD=rootpass
 
   rabbitmq:
-    build: { context: docker, dockerfile: Dockerfile.rabbitmq }
-    ports:
-      - "15672:15672"
+    image: enqueue/rabbitmq:latest
+    # build: { context: docker, dockerfile: Dockerfile.rabbitmq }
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
       - RABBITMQ_DEFAULT_VHOST=mqdev
   mysql:
     image: mariadb:10
-    ports:
-      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
 
   generate-changelog:
-    build: { context: docker, dockerfile: Dockerfile.generate-changelog }
+    image: enqueue/generate-changelog:latest
+    # build: { context: docker, dockerfile: Dockerfile.generate-changelog }
     volumes:
       - ./:/mqdev
 
