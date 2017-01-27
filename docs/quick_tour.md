@@ -58,9 +58,9 @@ $consumer->acknowledge($message);
 ## Consumption 
 
 Consumption is a layer build on top of a transport functionality. 
-The goal of the component is to simply message consumption. 
-The `QueueConsumer` is main piece of the component it allows bind message processors (or callbacks) to queues. 
-The `consume` method starts the consumption process which last as long as it is interrupted.
+The goal of the component is to simply consume messages. 
+The `QueueConsumer` is main piece of the component it allows binding of message processors (or callbacks) to queues. 
+The `consume` method starts the consumption process which last as long as it is not interrupted.
 
 ```php
 <?php
