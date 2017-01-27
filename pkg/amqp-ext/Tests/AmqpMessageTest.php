@@ -170,6 +170,15 @@ class AmqpMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('theDeliveryTag', $message->getDeliveryTag());
     }
 
+    public function testShouldReturnPreviouslySetConsumerTag()
+    {
+        $message = new AmqpMessage();
+
+        $message->setConsumerTag('theConsumerTag');
+
+        $this->assertSame('theConsumerTag', $message->getConsumerTag());
+    }
+
     public function testShouldAllowAddFlags()
     {
         $message = new AmqpMessage();

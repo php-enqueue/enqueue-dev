@@ -7,11 +7,11 @@ class Buffer
     /**
      * @var array ['aTag' => [AmqpMessage, AmqpMessage ...]]
      */
-    private $buffer;
+    private $messages;
 
     public function __construct()
     {
-        $this->buffer = [];
+        $this->messages = [];
     }
 
     /**
@@ -20,11 +20,11 @@ class Buffer
      */
     public function push($consumerTag, AmqpMessage $message)
     {
-        if (false == array_key_exists($consumerTag, $this->buffer)) {
-            $this->buffer[$consumerTag] = [];
+        if (false == array_key_exists($consumerTag, $this->messages)) {
+            $this->messages[$consumerTag] = [];
         }
 
-        $this->buffer[$consumerTag][] = $message;
+        $this->messages[$consumerTag][] = $message;
     }
 
     /**
@@ -34,8 +34,8 @@ class Buffer
      */
     public function pop($consumerTag)
     {
-        if (false == empty($this->buffer[$consumerTag])) {
-            return array_shift($this->buffer[$consumerTag]);
+        if (false == empty($this->messages[$consumerTag])) {
+            return array_shift($this->messages[$consumerTag]);
         }
     }
 }
