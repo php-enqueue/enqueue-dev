@@ -8,6 +8,7 @@ use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
+use Enqueue\AmqpExt\Buffer;
 use Enqueue\Psr\Context;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Test\ClassExtensionTrait;
@@ -33,6 +34,15 @@ class AmqpContextTest extends \PHPUnit_Framework_TestCase
         new AmqpContext(function () {
             return $this->createExtChannelMock();
         });
+    }
+
+    public function testShouldCreateNewBufferOnConstruct()
+    {
+        $context = new AmqpContext(function () {
+            return $this->createExtChannelMock();
+        });
+
+        $this->assertAttributeInstanceOf(Buffer::class, 'buffer', $context);
     }
 
     public function testThrowIfNeitherCallbackNorExtChannelAsFirstArgument()
@@ -143,6 +153,8 @@ class AmqpContextTest extends \PHPUnit_Framework_TestCase
     {
         $context = new AmqpContext($this->createExtChannelMock());
 
+        $buffer = $this->readAttribute($context, 'buffer');
+
         $queue = new AmqpQueue('aName');
 
         $consumer = $context->createConsumer($queue);
@@ -150,6 +162,8 @@ class AmqpContextTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(AmqpConsumer::class, $consumer);
         $this->assertAttributeSame($context, 'context', $consumer);
         $this->assertAttributeSame($queue, 'queue', $consumer);
+        $this->assertAttributeSame($queue, 'queue', $consumer);
+        $this->assertAttributeSame($buffer, 'buffer', $consumer);
     }
 
     public function testShouldThrowIfNotAmqpQueueGivenOnCreateConsumerCall()

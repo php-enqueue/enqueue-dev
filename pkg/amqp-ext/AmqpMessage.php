@@ -27,6 +27,11 @@ class AmqpMessage implements Message
     private $deliveryTag;
 
     /**
+     * @var string|null
+     */
+    private $consumerTag;
+
+    /**
      * @var bool
      */
     private $redelivered;
@@ -225,6 +230,22 @@ class AmqpMessage implements Message
     public function setDeliveryTag($deliveryTag)
     {
         $this->deliveryTag = $deliveryTag;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getConsumerTag()
+    {
+        return $this->consumerTag;
+    }
+
+    /**
+     * @param string|null $consumerTag
+     */
+    public function setConsumerTag($consumerTag)
+    {
+        $this->consumerTag = $consumerTag;
     }
 
     public function clearFlags()

@@ -21,6 +21,11 @@ class AmqpContext implements Context
     private $extChannelFactory;
 
     /**
+     * @var Buffer
+     */
+    private $buffer;
+
+    /**
      * Callable must return instance of \AMQPChannel once called.
      *
      * @param \AMQPChannel|callable $extChannel
@@ -34,6 +39,8 @@ class AmqpContext implements Context
         } else {
             throw new \InvalidArgumentException('The extChannel argument must be either AMQPChannel or callable that return AMQPChannel.');
         }
+
+        $this->buffer = new Buffer();
     }
 
     /**
@@ -170,10 +177,10 @@ class AmqpContext implements Context
             $queue = $this->createTemporaryQueue();
             $this->bind($destination, $queue);
 
-            return new AmqpConsumer($this, $queue);
+            return new AmqpConsumer($this, $queue, $this->buffer);
         }
 
-        return new AmqpConsumer($this, $destination);
+        return new AmqpConsumer($this, $destination, $this->buffer);
     }
 
     public function close()
