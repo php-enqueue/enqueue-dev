@@ -3,6 +3,7 @@
 Implements [AMQP specifications](https://www.rabbitmq.com/specification.html).
 Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 
+* [Installation](#installation)
 * [Create context](#create-context)
 * [Declare topic](#declare-topic)
 * [Declare queue](#decalre-queue)
@@ -11,6 +12,12 @@ Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)
 * [Purge queue messages](#purge-queue-messages)
+
+## Installation
+
+```bash
+$ composer require enqueue/amqp-ext
+```
 
 ## Create context
 

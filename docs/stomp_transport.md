@@ -1,8 +1,16 @@
 # STOMP transport
 
+* [Installation](#installation)
+* [Create context](#create-context)
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)
+
+## Installation
+
+```bash
+$ composer require enqueue/stomp
+```
 
 ## Create context
 
