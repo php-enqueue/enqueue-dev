@@ -9,6 +9,33 @@ It adds easy to use [configuration layer](config_reference.md), register service
 $ composer require enqueue/enqueue-bundle enqueue/amqp-ext
 ```
 
+## Enable the Bundle
+
+Then, enable the bundle by adding `new Enqueue\Bundle\EnqueueBundle()` to the bundles array of the registerBundles method in your project's `app/AppKernel.php` file:
+
+```php
+<?php
+
+// app/AppKernel.php
+
+// ...
+class AppKernel extends Kernel
+{
+    public function registerBundles()
+    {
+        $bundles = array(
+            // ...
+
+            new Enqueue\Bundle\EnqueueBundle(),
+        );
+
+        // ...
+    }
+
+    // ...
+}
+```
+
 ## Usage
 
 First, you have to configure a transport layer and set one to be default.
