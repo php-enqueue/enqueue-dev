@@ -15,7 +15,7 @@ services:
   app.async.say_hello_processor:
     class: 'AppBundle\Async\SayHelloProcessor'
     tags:
-        - { name: 'enqueue.client.message_processor', topicName: 'aTopic' }
+        - { name: 'enqueue.client.processor', topicName: 'aTopic' }
         
 ```
 
@@ -74,7 +74,7 @@ services:
   app.async.say_hello_processor:
     class: 'AppBundle\Async\SayHelloProcessor'
     tags:
-        - { name: 'enqueue.client.message_processor'}
+        - { name: 'enqueue.client.processor'}
 
 ```
 
