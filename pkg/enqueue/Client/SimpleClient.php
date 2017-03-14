@@ -72,11 +72,11 @@ final class SimpleClient
 
     /**
      * @param string $topic
-     * @param callback
+     * @param string $processorName
+     * @param callback $processor
      */
-    public function bind($topic, callable $processor)
+    public function bind($topic, $processorName, callable $processor)
     {
-        $processorName = uniqid('', true);
         $queueName = $this->config->getDefaultProcessorQueueName();
 
         $this->topicsMetaRegistry->addProcessor($topic, $processorName);
@@ -97,9 +97,7 @@ final class SimpleClient
 
         $processor = $this->getProcessor();
 
-        $queueConsumer = new QueueConsumer($this->context, new ChainExtension([
-            new SetRouterPropertiesExtension($this->driver),
-        ]));
+        $queueConsumer = $this->getQueueConsumer();
 
         $defaultQueueName = $this->config->getDefaultProcessorQueueName();
         $defaultTransportQueueName = $this->config->createTransportQueueName($defaultQueueName);
@@ -115,9 +113,43 @@ final class SimpleClient
     }
 
     /**
+     * @return QueueConsumer
+     */
+    public function getQueueConsumer()
+    {
+        return new QueueConsumer($this->context, new ChainExtension([
+            new SetRouterPropertiesExtension($this->driver),
+        ]));
+    }
+
+    /**
+     * @return DriverInterface
+     */
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
+    /**
+     * @return TopicMetaRegistry
+     */
+    public function getTopicMetaRegistry()
+    {
+        return $this->topicsMetaRegistry;
+    }
+
+    /**
+     * @return QueueMetaRegistry
+     */
+    public function getQueueMetaRegistry()
+    {
+        return $this->queueMetaRegistry;
+    }
+
+    /**
      * @return MessageProducerInterface
      */
-    private function getProducer()
+    public function getProducer()
     {
         $this->driver->setupBroker();
 
@@ -127,7 +159,7 @@ final class SimpleClient
     /**
      * @return DelegateProcessor
      */
-    private function getProcessor()
+    public function getProcessor()
     {
         return new DelegateProcessor($this->processorsRegistry);
     }

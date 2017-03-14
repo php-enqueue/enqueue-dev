@@ -173,7 +173,7 @@ use Enqueue\Psr\Processor;
 /** @var \Enqueue\Psr\Context $psrContext */
 
 $client = new SimpleClient($psrContext);
-$client->bind('foo_topic', function (Message $message) {
+$client->bind('foo_topic', 'processor_name', function (Message $message) {
     // process message
 
     return Processor::ACK;
