@@ -34,7 +34,7 @@ class SimpleClientTest extends \PHPUnit_Framework_TestCase
         $actualMessage = null;
 
         $client = new SimpleClient($this->context);
-        $client->bind('foo_topic', function (Message $message) use (&$actualMessage) {
+        $client->bind('foo_topic', 'foo_processor', function (Message $message) use (&$actualMessage) {
             $actualMessage = $message;
 
             return Result::ACK;
@@ -56,12 +56,12 @@ class SimpleClientTest extends \PHPUnit_Framework_TestCase
         $received = 0;
 
         $client = new SimpleClient($this->context);
-        $client->bind('foo_topic', function () use (&$received) {
+        $client->bind('foo_topic', 'foo_processor1', function () use (&$received) {
             ++$received;
 
             return Result::ACK;
         });
-        $client->bind('foo_topic', function () use (&$received) {
+        $client->bind('foo_topic', 'foo_processor2', function () use (&$received) {
             ++$received;
 
             return Result::ACK;
