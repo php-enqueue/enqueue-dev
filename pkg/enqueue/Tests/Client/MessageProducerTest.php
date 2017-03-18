@@ -298,7 +298,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer = new MessageProducer($driver);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The message\'s body must be either null, scalar or array. Got: stdClass');
+        $this->expectExceptionMessage('The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: stdClass');
 
         $producer->send('topic', new \stdClass());
     }
@@ -339,6 +339,66 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer->send($queue, ['foo' => ['bar' => new \stdClass()]]);
     }
 
+    public function testShouldSendJsonSerializableObjectAsJsonString()
+    {
+        $object = new JsonSerializableObject();
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToRouter')
+            ->willReturnCallback(function (Message $message) {
+                self::assertSame('{"foo":"fooVal"}', $message->getBody());
+                self::assertSame('application/json', $message->getContentType());
+            })
+        ;
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $object);
+    }
+
+    public function testShouldSendMessageJsonSerializableBodyAsJsonString()
+    {
+        $object = new JsonSerializableObject();
+
+        $message = new Message();
+        $message->setBody($object);
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToRouter')
+            ->willReturnCallback(function (Message $message) {
+                self::assertSame('{"foo":"fooVal"}', $message->getBody());
+                self::assertSame('application/json', $message->getContentType());
+            })
+        ;
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $message);
+    }
+
+    public function testThrowIfNotApplicationJsonContentTypeSetWithJsonSerializableBody()
+    {
+        $object = new JsonSerializableObject();
+
+        $message = new Message();
+        $message->setBody($object);
+        $message->setContentType('foo/bar');
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('sendToRouter')
+        ;
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Content type "application/json" only allowed when body is array');
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $message);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
      */
@@ -347,3 +407,11 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         return $this->createMock(DriverInterface::class);
     }
 }
+
+class JsonSerializableObject implements \JsonSerializable
+{
+    public function jsonSerialize()
+    {
+        return ['foo' => 'fooVal'];
+    }
+};
