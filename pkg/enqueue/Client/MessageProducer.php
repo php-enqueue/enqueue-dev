@@ -62,9 +62,6 @@ class MessageProducer implements MessageProducerInterface
             $contentType = $contentType ?: 'text/plain';
             $body = (string) $body;
         } elseif (is_array($body)) {
-            $body = $message->getBody();
-            $contentType = $message->getContentType();
-
             if ($contentType && $contentType !== 'application/json') {
                 throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
             }
@@ -78,6 +75,13 @@ class MessageProducer implements MessageProducerInterface
                     ));
                 }
             });
+
+            $contentType = 'application/json';
+            $body = JSON::encode($body);
+        } elseif ($body instanceof \JsonSerializable) {
+            if ($contentType && $contentType !== 'application/json') {
+                throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
+            }
 
             $contentType = 'application/json';
             $body = JSON::encode($body);

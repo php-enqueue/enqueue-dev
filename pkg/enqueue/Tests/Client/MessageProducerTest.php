@@ -339,6 +339,81 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer->send($queue, ['foo' => ['bar' => new \stdClass()]]);
     }
 
+    public function testShouldSendJsonSerializableObjectAsJsonString()
+    {
+        $object = new class implements \JsonSerializable {
+            public function jsonSerialize()
+            {
+                return ['foo' => 'fooVal'];
+            }
+        };
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToRouter')
+            ->willReturnCallback(function (Message $message) {
+                self::assertSame('{"foo":"fooVal"}', $message->getBody());
+                self::assertSame('application/json', $message->getContentType());
+            })
+        ;
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $object);
+    }
+
+    public function testShouldSendMessageJsonSerializableBodyAsJsonString()
+    {
+        $object = new class implements \JsonSerializable {
+            public function jsonSerialize()
+            {
+                return ['foo' => 'fooVal'];
+            }
+        };
+
+        $message = new Message();
+        $message->setBody($object);
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToRouter')
+            ->willReturnCallback(function (Message $message) {
+                self::assertSame('{"foo":"fooVal"}', $message->getBody());
+                self::assertSame('application/json', $message->getContentType());
+            })
+        ;
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $message);
+    }
+
+    public function testThrowIfNotApplicationJsonContentTypeSetWithJsonSerializableBody()
+    {
+        $object = new class implements \JsonSerializable {
+            public function jsonSerialize()
+            {
+                return ['foo' => 'fooVal'];
+            }
+        };
+
+        $message = new Message();
+        $message->setBody($object);
+        $message->setContentType('foo/bar');
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('sendToRouter')
+        ;
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Content type "application/json" only allowed when body is array');
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $message);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
      */
