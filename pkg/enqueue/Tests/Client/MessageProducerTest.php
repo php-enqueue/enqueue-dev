@@ -341,12 +341,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSendJsonSerializableObjectAsJsonString()
     {
-        $object = new class implements \JsonSerializable {
-            public function jsonSerialize()
-            {
-                return ['foo' => 'fooVal'];
-            }
-        };
+        $object = new JsonSerializableObject();
 
         $driver = $this->createDriverStub();
         $driver
@@ -364,12 +359,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSendMessageJsonSerializableBodyAsJsonString()
     {
-        $object = new class implements \JsonSerializable {
-            public function jsonSerialize()
-            {
-                return ['foo' => 'fooVal'];
-            }
-        };
+        $object = new JsonSerializableObject();
 
         $message = new Message();
         $message->setBody($object);
@@ -390,12 +380,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testThrowIfNotApplicationJsonContentTypeSetWithJsonSerializableBody()
     {
-        $object = new class implements \JsonSerializable {
-            public function jsonSerialize()
-            {
-                return ['foo' => 'fooVal'];
-            }
-        };
+        $object = new JsonSerializableObject();
 
         $message = new Message();
         $message->setBody($object);
@@ -422,3 +407,11 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         return $this->createMock(DriverInterface::class);
     }
 }
+
+class JsonSerializableObject implements \JsonSerializable
+{
+    public function jsonSerialize()
+    {
+        return ['foo' => 'fooVal'];
+    }
+};
