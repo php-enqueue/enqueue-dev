@@ -1,5 +1,10 @@
 # Change Log
 
+## [](https://github.com/php-enqueue/enqueue-dev/tree/) (2017-03-18)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.6...)
+
+- \[client\] Allow send objects that implements \JsonSerializable interface. [\#30](https://github.com/php-enqueue/enqueue-dev/pull/30) ([makasim](https://github.com/makasim))
+
 ## [0.2.6](https://github.com/php-enqueue/enqueue-dev/tree/0.2.6) (2017-03-14)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.5...0.2.6)
 
