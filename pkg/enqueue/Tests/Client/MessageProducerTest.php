@@ -298,7 +298,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer = new MessageProducer($driver);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The message\'s body must be either null, scalar or array. Got: stdClass');
+        $this->expectExceptionMessage('The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: stdClass');
 
         $producer->send('topic', new \stdClass());
     }

@@ -87,7 +87,7 @@ class MessageProducer implements MessageProducerInterface
             $body = JSON::encode($body);
         } else {
             throw new \InvalidArgumentException(sprintf(
-                'The message\'s body must be either null, scalar or array. Got: %s',
+                'The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: %s',
                 is_object($body) ? get_class($body) : gettype($body)
             ));
         }
