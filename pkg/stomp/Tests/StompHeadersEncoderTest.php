@@ -32,6 +32,7 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider headerValuesDataProvider
+     *
      * @param mixed $originalValue
      * @param mixed $encodedValue
      */
@@ -42,6 +43,7 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider propertyValuesDataProvider
+     *
      * @param mixed $originalValue
      * @param mixed $encodedValue
      */
@@ -52,6 +54,7 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider headerValuesDataProvider
+     *
      * @param mixed $originalValue
      * @param mixed $encodedValue
      */
@@ -62,6 +65,7 @@ class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider propertyValuesDataProvider
+     *
      * @param mixed $originalValue
      * @param mixed $encodedValue
      */

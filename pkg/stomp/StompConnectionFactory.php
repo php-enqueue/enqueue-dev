@@ -43,7 +43,7 @@ class StompConnectionFactory implements ConnectionFactory
     public function createContext()
     {
         if ($this->config['lazy']) {
-            return new StompContext(function() {
+            return new StompContext(function () {
                 return $this->establishConnection();
             });
         }

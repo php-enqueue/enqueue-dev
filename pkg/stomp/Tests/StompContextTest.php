@@ -29,7 +29,7 @@ class StompContextTest extends \PHPUnit_Framework_TestCase
 
     public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
     {
-        new StompContext(function() {
+        new StompContext(function () {
             return $this->createStompClientMock();
         });
     }

@@ -55,7 +55,7 @@ class AmqpConnectionFactory implements ConnectionFactory
     public function createContext()
     {
         if ($this->config['lazy']) {
-            return new AmqpContext(function() {
+            return new AmqpContext(function () {
                 return new \AMQPChannel($this->establishConnection());
             });
         }
