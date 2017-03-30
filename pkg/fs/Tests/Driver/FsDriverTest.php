@@ -145,6 +145,18 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     {
         $topic = new FsDestination(TempFile::generate());
         $transportMessage = new FsMessage();
+        $config = $this->createConfigMock();
+
+        $config
+            ->expects($this->once())
+            ->method('getRouterTopicName')
+            ->willReturn('topicName');
+
+        $config
+            ->expects($this->once())
+            ->method('createTransportQueueName')
+            ->with('topicName')
+            ->willReturn('app.topicName');
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -156,6 +168,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
         $context
             ->expects($this->once())
             ->method('createTopic')
+            ->with('app.topicName')
             ->willReturn($topic)
         ;
         $context
@@ -171,7 +184,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new FsDriver(
             $context,
-            new Config('', '', '', '', '', ''),
+            $config,
             $this->createQueueMetaRegistryMock()
         );
 
@@ -343,5 +356,13 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     private function createQueueMetaRegistryMock()
     {
         return $this->createMock(QueueMetaRegistry::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Config
+     */
+    private function createConfigMock()
+    {
+        return $this->createMock(Config::class);
     }
 }
