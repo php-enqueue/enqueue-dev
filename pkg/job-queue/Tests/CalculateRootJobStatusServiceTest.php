@@ -24,6 +24,7 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider stopStatusProvider
+     *
      * @param mixed $status
      */
     public function testShouldDoNothingIfRootJobHasStopState($status)
@@ -73,6 +74,7 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider stopStatusProvider
+     *
      * @param mixed $stopStatus
      */
     public function testShouldCalculateRootJobStatusAndSetStoppedAtTimeIfGotStopStatus($stopStatus)

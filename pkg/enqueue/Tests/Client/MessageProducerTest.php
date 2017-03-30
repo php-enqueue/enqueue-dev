@@ -414,4 +414,4 @@ class JsonSerializableObject implements \JsonSerializable
     {
         return ['foo' => 'fooVal'];
     }
-};
+}

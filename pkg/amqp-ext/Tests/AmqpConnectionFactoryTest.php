@@ -61,6 +61,6 @@ class AmqpConnectionFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(AmqpContext::class, $context);
 
         $this->assertAttributeEquals(null, 'extChannel', $context);
-        $this->assertTrue(is_callable($this->readAttribute($context, 'extChannelFactory')));
+        $this->assertInternalType('callable', $this->readAttribute($context, 'extChannelFactory'));
     }
 }

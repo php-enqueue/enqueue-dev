@@ -37,6 +37,7 @@ class JSONTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider nonStringDataProvider
+     *
      * @param mixed $value
      */
     public function testShouldThrowExceptionIfInputIsNotString($value)
