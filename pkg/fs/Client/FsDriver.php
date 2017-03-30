@@ -173,7 +173,7 @@ class FsDriver implements DriverInterface
     private function createRouterTopic()
     {
         return $this->context->createTopic(
-            $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())
+            $this->config->createTransportQueueName($this->config->getRouterTopicName())
         );
     }
 }
