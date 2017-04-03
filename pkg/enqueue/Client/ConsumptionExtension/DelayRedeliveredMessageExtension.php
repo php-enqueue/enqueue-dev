@@ -45,6 +45,9 @@ class DelayRedeliveredMessageExtension implements ExtensionInterface
         if (false == $message->isRedelivered()) {
             return;
         }
+        if (false != $context->getResult()) {
+            return;
+        }
 
         $delayedMessage = $this->driver->createClientMessage($message);
 
