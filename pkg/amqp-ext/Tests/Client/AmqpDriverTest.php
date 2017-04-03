@@ -10,7 +10,6 @@ use Enqueue\AmqpExt\Client\AmqpDriver;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
-use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Psr\Producer;
 use Enqueue\Test\ClassExtensionTrait;
@@ -60,7 +59,7 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($expectedQueue, $queue);
         $this->assertSame('queue-name', $queue->getQueueName());
-        $this->assertSame(['x-max-priority' => 4], $queue->getArguments());
+        $this->assertSame([], $queue->getArguments());
         $this->assertSame(2, $queue->getFlags());
         $this->assertNull($queue->getConsumerTag());
         $this->assertSame([], $queue->getBindArguments());
@@ -74,7 +73,6 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setProperties(['key' => 'val']);
         $transportMessage->setHeader('content_type', 'ContentType');
         $transportMessage->setHeader('expiration', '12345000');
-        $transportMessage->setHeader('priority', 3);
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
 
@@ -92,7 +90,6 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
             'hkey' => 'hval',
             'content_type' => 'ContentType',
             'expiration' => '12345000',
-            'priority' => 3,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
         ], $clientMessage->getHeaders());
@@ -103,7 +100,6 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(12345, $clientMessage->getExpire());
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
-        $this->assertSame(MessagePriority::HIGH, $clientMessage->getPriority());
     }
 
     public function testShouldThrowExceptionIfExpirationIsNotNumeric()
@@ -123,40 +119,6 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
         $driver->createClientMessage($transportMessage);
     }
 
-    public function testShouldThrowExceptionIfCantConvertTransportPriorityToClientPriority()
-    {
-        $transportMessage = new AmqpMessage();
-        $transportMessage->setHeader('priority', 'unknown');
-
-        $driver = new AmqpDriver(
-            $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Cant convert transport priority to client: "unknown"');
-
-        $driver->createClientMessage($transportMessage);
-    }
-
-    public function testShouldThrowExceptionIfCantConvertClientPriorityToTransportPriority()
-    {
-        $clientMessage = new Message();
-        $clientMessage->setPriority('unknown');
-
-        $driver = new AmqpDriver(
-            $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Given priority could not be converted to client\'s one. Got: unknown');
-
-        $driver->createTransportMessage($clientMessage);
-    }
-
     public function testShouldConvertClientMessageToTransportMessage()
     {
         $clientMessage = new Message();
@@ -165,7 +127,6 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setProperties(['key' => 'val']);
         $clientMessage->setContentType('ContentType');
         $clientMessage->setExpire(123);
-        $clientMessage->setPriority(MessagePriority::VERY_HIGH);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
 
@@ -190,7 +151,6 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
             'hkey' => 'hval',
             'content_type' => 'ContentType',
             'expiration' => '123000',
-            'priority' => 4,
             'delivery_mode' => 2,
             'message_id' => 'MessageId',
             'timestamp' => 1000,

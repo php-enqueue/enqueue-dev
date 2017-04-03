@@ -9,9 +9,8 @@ use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
-use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\DeliveryMode;
+use Enqueue\AmqpExt\DeliveryMode;
 use Enqueue\Psr\Message as TransportMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -34,11 +33,6 @@ class AmqpDriver implements DriverInterface
     private $queueMetaRegistry;
 
     /**
-     * @var array
-     */
-    private $priorityMap;
-
-    /**
      * @param AmqpContext       $context
      * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
@@ -48,14 +42,6 @@ class AmqpDriver implements DriverInterface
         $this->context = $context;
         $this->config = $config;
         $this->queueMetaRegistry = $queueMetaRegistry;
-
-        $this->priorityMap = [
-            MessagePriority::VERY_LOW => 0,
-            MessagePriority::LOW => 1,
-            MessagePriority::NORMAL => 2,
-            MessagePriority::HIGH => 3,
-            MessagePriority::VERY_HIGH => 4,
-        ];
     }
 
     /**
@@ -131,7 +117,6 @@ class AmqpDriver implements DriverInterface
     {
         $queue = $this->context->createQueue($this->config->createTransportQueueName($queueName));
         $queue->addFlag(AMQP_DURABLE);
-        $queue->setArguments(['x-max-priority' => 4]);
 
         return $queue;
     }
@@ -150,17 +135,6 @@ class AmqpDriver implements DriverInterface
 
         if ($message->getExpire()) {
             $headers['expiration'] = (string) ($message->getExpire() * 1000);
-        }
-
-        if ($priority = $message->getPriority()) {
-            if (false == array_key_exists($priority, $this->priorityMap)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Given priority could not be converted to client\'s one. Got: %s',
-                    $priority
-                ));
-            }
-
-            $headers['priority'] = $this->priorityMap[$priority];
         }
 
         $headers['delivery_mode'] = DeliveryMode::PERSISTENT;
@@ -196,14 +170,6 @@ class AmqpDriver implements DriverInterface
             }
 
             $clientMessage->setExpire((int) ((int) $expiration) / 1000);
-        }
-
-        if ($priority = $message->getHeader('priority')) {
-            if (false === $clientPriority = array_search($priority, $this->priorityMap, true)) {
-                throw new \LogicException(sprintf('Cant convert transport priority to client: "%s"', $priority));
-            }
-
-            $clientMessage->setPriority($clientPriority);
         }
 
         $clientMessage->setMessageId($message->getMessageId());

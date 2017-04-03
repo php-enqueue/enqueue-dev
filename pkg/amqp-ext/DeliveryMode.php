@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Psr;
+namespace Enqueue\AmqpExt;
 
 final class DeliveryMode
 {

@@ -24,8 +24,8 @@ interface ExtensionInterface
     /**
      * Executed when a new message is received from a broker but before it was passed to processor
      * The context contains a message.
-     * The extension may set a status.
-     * The consumption could be interrupted at this step but it will done only after the message is processed.
+     * The extension may set a status. If the status is set the exception is thrown
+     * The consumption could be interrupted at this step but it exits after the message is processed.
      *
      * @param Context $context
      */
@@ -33,8 +33,8 @@ interface ExtensionInterface
 
     /**
      * Executed when a message is processed by a processor.
-     * The context contains a message status and could be changed
-     * The consumption could be interrupted at this step but it will done only after the message is processed.
+     * The context contains a status, which could not be changed.
+     * The consumption could be interrupted at this step but it exits after the message is processed.
      *
      * @param Context $context
      */

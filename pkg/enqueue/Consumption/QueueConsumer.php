@@ -222,8 +222,6 @@ class QueueConsumer
 
             $extension->onPostReceived($context);
         } else {
-            $logger->debug(sprintf('Idle'));
-
             usleep($this->idleMicroseconds);
             $extension->onIdle($context);
         }

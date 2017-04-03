@@ -97,6 +97,25 @@ class DelayRedeliveredMessageExtensionTest extends \PHPUnit_Framework_TestCase
         self::assertNull($context->getResult());
     }
 
+    public function testShouldDoNothingIfMessageIsRedeliveredButResultWasAlreadySetOnContext()
+    {
+        $message = new NullMessage();
+        $message->setRedelivered(true);
+
+        $driver = $this->createDriverMock();
+        $driver
+            ->expects(self::never())
+            ->method('sendToProcessor')
+        ;
+
+        $context = new Context($this->createPsrContextMock());
+        $context->setPsrMessage($message);
+        $context->setResult('aStatus');
+
+        $extension = new DelayRedeliveredMessageExtension($driver, 12345);
+        $extension->onPreReceived($context);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
      */
