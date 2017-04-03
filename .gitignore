@@ -7,3 +7,4 @@ bin/sql-formatter
 vendor
 .php_cs
 .php_cs.cache
+composer.lock
