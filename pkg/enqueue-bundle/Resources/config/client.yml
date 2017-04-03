@@ -50,7 +50,7 @@ services:
         arguments:
             - '@enqueue.client.driver'
         tags:
-            - { name: 'enqueue.consumption.extension', priority: 5 }
+            - { name: 'enqueue.consumption.extension', priority: 100 }
 
     enqueue.client.queue_consumer:
         class: 'Enqueue\Consumption\QueueConsumer'
