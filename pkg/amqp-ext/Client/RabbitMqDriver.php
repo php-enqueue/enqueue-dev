@@ -8,6 +8,7 @@ use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\Client\Config;
 use Enqueue\Client\Message;
+use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Psr\Message as TransportMessage;
@@ -32,6 +33,11 @@ class RabbitMqDriver extends AmqpDriver
     private $queueMetaRegistry;
 
     /**
+     * @var array
+     */
+    private $priorityMap;
+
+    /**
      * @param AmqpContext       $context
      * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
@@ -43,6 +49,14 @@ class RabbitMqDriver extends AmqpDriver
         $this->config = $config;
         $this->context = $context;
         $this->queueMetaRegistry = $queueMetaRegistry;
+
+        $this->priorityMap = [
+            MessagePriority::VERY_LOW => 0,
+            MessagePriority::LOW => 1,
+            MessagePriority::NORMAL => 2,
+            MessagePriority::HIGH => 3,
+            MessagePriority::VERY_HIGH => 4,
+        ];
     }
 
     /**
@@ -71,11 +85,35 @@ class RabbitMqDriver extends AmqpDriver
     /**
      * {@inheritdoc}
      *
+     * @return AmqpQueue
+     */
+    public function createQueue($queueName)
+    {
+        $queue = parent::createQueue($queueName);
+        $queue->setArguments(['x-max-priority' => 4]);
+
+        return $queue;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * @return AmqpMessage
      */
     public function createTransportMessage(Message $message)
     {
         $transportMessage = parent::createTransportMessage($message);
+
+        if ($priority = $message->getPriority()) {
+            if (false == array_key_exists($priority, $this->priorityMap)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Given priority could not be converted to client\'s one. Got: %s',
+                    $priority
+                ));
+            }
+
+            $transportMessage->setHeader('priority', $this->priorityMap[$priority]);
+        }
 
         if ($message->getDelay()) {
             if (false == $this->config->getTransportOption('delay_plugin_installed', false)) {
@@ -84,6 +122,7 @@ class RabbitMqDriver extends AmqpDriver
 
             $transportMessage->setProperty('x-delay', (string) ($message->getDelay() * 1000));
         }
+
 
         return $transportMessage;
     }
@@ -96,6 +135,14 @@ class RabbitMqDriver extends AmqpDriver
     public function createClientMessage(TransportMessage $message)
     {
         $clientMessage = parent::createClientMessage($message);
+
+        if ($priority = $message->getHeader('priority')) {
+            if (false === $clientPriority = array_search($priority, $this->priorityMap, true)) {
+                throw new \LogicException(sprintf('Cant convert transport priority to client: "%s"', $priority));
+            }
+
+            $clientMessage->setPriority($clientPriority);
+        }
 
         if ($delay = $message->getProperty('x-delay')) {
             if (false == is_numeric($delay)) {

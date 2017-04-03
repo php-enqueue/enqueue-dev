@@ -171,8 +171,15 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage = new Message();
         $clientMessage->setPriority('unknown');
 
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn(new AmqpMessage())
+        ;
+
         $driver = new RabbitMqDriver(
-            $this->createPsrContextMock(),
+            $context,
             new Config('', '', '', '', '', ''),
             $this->createQueueMetaRegistryMock()
         );
@@ -217,10 +224,10 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
             'hkey' => 'hval',
             'content_type' => 'ContentType',
             'expiration' => '123000',
-            'priority' => 4,
             'delivery_mode' => 2,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'priority' => 4,
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
