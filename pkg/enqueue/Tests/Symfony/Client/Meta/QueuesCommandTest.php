@@ -90,8 +90,9 @@ class QueuesCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param mixed $destinations
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
-     * @param  mixed                                                      $destinations
      */
     protected function createQueueMetaRegistryStub($destinations = [])
     {

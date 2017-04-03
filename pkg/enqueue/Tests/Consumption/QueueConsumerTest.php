@@ -955,8 +955,9 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param null|mixed $message
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
-     * @param  null|mixed                                        $message
      */
     protected function createMessageConsumerStub($message = null)
     {
@@ -971,8 +972,9 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param null|mixed $messageConsumer
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
-     * @param  null|mixed                                          $messageConsumer
      */
     protected function createPsrContextStub($messageConsumer = null)
     {

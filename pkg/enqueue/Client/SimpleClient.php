@@ -71,8 +71,8 @@ final class SimpleClient
     }
 
     /**
-     * @param string $topic
-     * @param string $processorName
+     * @param string   $topic
+     * @param string   $processorName
      * @param callback $processor
      */
     public function bind($topic, $processorName, callable $processor)

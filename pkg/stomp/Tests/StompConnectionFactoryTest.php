@@ -59,6 +59,6 @@ class StompConnectionFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(StompContext::class, $context);
 
         $this->assertAttributeEquals(null, 'stomp', $context);
-        $this->assertTrue(is_callable($this->readAttribute($context, 'stompFactory')));
+        $this->assertInternalType('callable', $this->readAttribute($context, 'stompFactory'));
     }
 }

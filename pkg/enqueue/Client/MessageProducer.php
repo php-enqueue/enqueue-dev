@@ -58,7 +58,7 @@ class MessageProducer implements MessageProducerInterface
         $body = $message->getBody();
         $contentType = $message->getContentType();
 
-        if (is_scalar($body) || is_null($body)) {
+        if (is_scalar($body) || null === $body) {
             $contentType = $contentType ?: 'text/plain';
             $body = (string) $body;
         } elseif (is_array($body)) {
@@ -68,7 +68,7 @@ class MessageProducer implements MessageProducerInterface
 
             // only array of scalars is allowed.
             array_walk_recursive($body, function ($value) {
-                if (!is_scalar($value) && !is_null($value)) {
+                if (!is_scalar($value) && null !== $value) {
                     throw new \LogicException(sprintf(
                         'The message\'s body must be an array of scalars. Found not scalar in the array: %s',
                         is_object($value) ? get_class($value) : gettype($value)

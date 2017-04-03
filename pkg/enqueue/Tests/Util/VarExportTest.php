@@ -13,6 +13,7 @@ class VarExportTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideValues
+     *
      * @param mixed $value
      * @param mixed $expected
      */
