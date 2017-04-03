@@ -73,9 +73,9 @@ class BuildExtensionsPassTest extends \PHPUnit_Framework_TestCase
 
         $orderedExtensions = $extensions->getArgument(0);
 
-        $this->assertEquals(new Reference('bar_extension'), $orderedExtensions[0]);
+        $this->assertEquals(new Reference('foo_extension'), $orderedExtensions[0]);
         $this->assertEquals(new Reference('baz_extension'), $orderedExtensions[1]);
-        $this->assertEquals(new Reference('foo_extension'), $orderedExtensions[2]);
+        $this->assertEquals(new Reference('bar_extension'), $orderedExtensions[2]);
     }
 
     public function testShouldAssumePriorityZeroIfPriorityIsNotSet()
@@ -103,8 +103,8 @@ class BuildExtensionsPassTest extends \PHPUnit_Framework_TestCase
 
         $orderedExtensions = $extensions->getArgument(0);
 
-        $this->assertEquals(new Reference('baz_extension'), $orderedExtensions[0]);
+        $this->assertEquals(new Reference('bar_extension'), $orderedExtensions[0]);
         $this->assertEquals(new Reference('foo_extension'), $orderedExtensions[1]);
-        $this->assertEquals(new Reference('bar_extension'), $orderedExtensions[2]);
+        $this->assertEquals(new Reference('baz_extension'), $orderedExtensions[2]);
     }
 }

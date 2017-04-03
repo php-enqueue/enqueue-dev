@@ -24,7 +24,7 @@ class BuildExtensionsPass implements CompilerPassInterface
             }
         }
 
-        ksort($groupByPriority);
+        krsort($groupByPriority, SORT_NUMERIC);
 
         $flatExtensions = [];
         foreach ($groupByPriority as $extension) {
