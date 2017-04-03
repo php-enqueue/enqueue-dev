@@ -25,7 +25,7 @@ do
         cd $TMP_DIR;
         git clone $REMOTE_URL . --depth=10
         git checkout $CURRENT_BRANCH;
-        git tag $1 -m "Release $1"
+        git tag $1 -s -m "Release $1"
         git push origin --tags
     )
 done
