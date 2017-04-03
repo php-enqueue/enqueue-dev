@@ -68,7 +68,7 @@ class Message
     }
 
     /**
-     * @param null|string $body
+     * @param null|string|number|array|\JsonSerializable $body
      */
     public function setBody($body)
     {
