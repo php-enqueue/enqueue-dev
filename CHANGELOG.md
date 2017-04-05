@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.2.11](https://github.com/php-enqueue/enqueue-dev/tree/0.2.11) (2017-04-05)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.10...0.2.11)
+
+- \[client\] Add ability to define scope of send message. [\#40](https://github.com/php-enqueue/enqueue-dev/pull/40) ([makasim](https://github.com/makasim))
+
+## [0.2.10](https://github.com/php-enqueue/enqueue-dev/tree/0.2.10) (2017-04-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.9...0.2.10)
+
+## [0.2.9](https://github.com/php-enqueue/enqueue-dev/tree/0.2.9) (2017-04-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.8...0.2.9)
+
+- \[bundle\] Fix extensions priority ordering. Must be from high to low. [\#38](https://github.com/php-enqueue/enqueue-dev/pull/38) ([makasim](https://github.com/makasim))
+
 ## [0.2.8](https://github.com/php-enqueue/enqueue-dev/tree/0.2.8) (2017-04-03)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.7...0.2.8)
 
