@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client;
 
+use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
@@ -294,6 +295,10 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('sendToRouter')
         ;
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
+        ;
 
         $producer = new MessageProducer($driver);
 
@@ -311,6 +316,10 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $driver
             ->expects($this->never())
             ->method('sendToRouter')
+        ;
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
         ;
 
         $producer = new MessageProducer($driver);
@@ -330,6 +339,10 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('sendToRouter')
         ;
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
+        ;
 
         $producer = new MessageProducer($driver);
 
@@ -339,7 +352,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer->send($queue, ['foo' => ['bar' => new \stdClass()]]);
     }
 
-    public function testShouldSendJsonSerializableObjectAsJsonString()
+    public function testShouldSendJsonSerializableObjectAsJsonStringToMessageBus()
     {
         $object = new JsonSerializableObject();
 
@@ -357,7 +370,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer->send('topic', $object);
     }
 
-    public function testShouldSendMessageJsonSerializableBodyAsJsonString()
+    public function testShouldSendMessageJsonSerializableBodyAsJsonStringToMessageBus()
     {
         $object = new JsonSerializableObject();
 
@@ -378,6 +391,56 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer->send('topic', $message);
     }
 
+    public function testThrowIfTryToSendMessageToMessageBusWithProcessorNamePropertySet()
+    {
+        $object = new JsonSerializableObject();
+
+        $message = new Message();
+        $message->setBody($object);
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aProcessor');
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('sendToRouter')
+        ;
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
+        ;
+
+        $producer = new MessageProducer($driver);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The enqueue.processor_name property must not be set for messages that are sent to message bus.');
+        $producer->send('topic', $message);
+    }
+
+    public function testThrowIfTryToSendMessageToMessageBusWithProcessorQueueNamePropertySet()
+    {
+        $object = new JsonSerializableObject();
+
+        $message = new Message();
+        $message->setBody($object);
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aProcessorQueue');
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('sendToRouter')
+        ;
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
+        ;
+
+        $producer = new MessageProducer($driver);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The enqueue.processor_queue_name property must not be set for messages that are sent to message bus.');
+        $producer->send('topic', $message);
+    }
+
     public function testThrowIfNotApplicationJsonContentTypeSetWithJsonSerializableBody()
     {
         $object = new JsonSerializableObject();
@@ -391,6 +454,10 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('sendToRouter')
         ;
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
+        ;
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Content type "application/json" only allowed when body is array');
@@ -399,12 +466,102 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $producer->send('topic', $message);
     }
 
+    public function testShouldSendMessageToApplicationRouter()
+    {
+        $message = new Message();
+        $message->setBody('aBody');
+        $message->setScope(Message::SCOPE_APP);
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('sendToRouter')
+        ;
+        $driver
+            ->expects($this->once())
+            ->method('sendToProcessor')
+            ->willReturnCallback(function (Message $message) {
+                self::assertSame('aBody', $message->getBody());
+                self::assertSame('a_router_processor_name', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
+                self::assertSame('a_router_queue', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME));
+            })
+        ;
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $message);
+    }
+
+    public function testShouldSendToCustomMessageToApplicationRouter()
+    {
+        $message = new Message();
+        $message->setBody('aBody');
+        $message->setScope(Message::SCOPE_APP);
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aCustomProcessor');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aCustomProcessorQueue');
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('sendToRouter')
+        ;
+        $driver
+            ->expects($this->once())
+            ->method('sendToProcessor')
+            ->willReturnCallback(function (Message $message) {
+                self::assertSame('aBody', $message->getBody());
+                self::assertSame('aCustomProcessor', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
+                self::assertSame('aCustomProcessorQueue', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME));
+            })
+        ;
+
+        $producer = new MessageProducer($driver);
+        $producer->send('topic', $message);
+    }
+
+    public function testThrowIfUnSupportedScopeGivenOnSend()
+    {
+        $message = new Message();
+        $message->setScope('iDontKnowScope');
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('sendToRouter')
+        ;
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
+        ;
+
+        $producer = new MessageProducer($driver);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The message scope "iDontKnowScope" is not supported.');
+        $producer->send('topic', $message);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
      */
     protected function createDriverStub()
     {
-        return $this->createMock(DriverInterface::class);
+        $config = new Config(
+            'a_prefix',
+            'an_app',
+            'a_router_topic',
+            'a_router_queue',
+            'a_default_processor_queue',
+            'a_router_processor_name'
+        );
+
+        $driverMock = $this->createMock(DriverInterface::class);
+        $driverMock
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        return $driverMock;
     }
 }
 

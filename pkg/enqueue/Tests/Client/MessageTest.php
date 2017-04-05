@@ -38,6 +38,15 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         self::assertSame('theDelay', $message->getDelay());
     }
 
+    public function testShouldAllowGetPreviouslySetScope()
+    {
+        $message = new Message();
+
+        $message->setScope('theScope');
+
+        self::assertSame('theScope', $message->getScope());
+    }
+
     public function testShouldAllowGetPreviouslySetExpire()
     {
         $message = new Message();
@@ -79,6 +88,13 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $message = new Message();
 
         self::assertSame([], $message->getHeaders());
+    }
+
+    public function testShouldSetMessageBusScopeInConstructor()
+    {
+        $message = new Message();
+
+        self::assertSame(Message::SCOPE_MESSAGE_BUS, $message->getScope());
     }
 
     public function testShouldAllowGetPreviouslySetHeaders()
