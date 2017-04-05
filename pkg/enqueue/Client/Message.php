@@ -5,6 +5,16 @@ namespace Enqueue\Client;
 class Message
 {
     /**
+     * @const string
+     */
+    const SCOPE_MESSAGE_BUS = 'enqueue.scope.message_bus';
+
+    /**
+     * @const string
+     */
+    const SCOPE_APP = 'enqueue.scope.app';
+
+    /**
      * @var string|null
      */
     private $body;
@@ -57,6 +67,7 @@ class Message
     {
         $this->headers = [];
         $this->properties = [];
+        $this->scope = static::SCOPE_MESSAGE_BUS;
     }
 
     /**
@@ -175,6 +186,22 @@ class Message
     public function setDelay($delay)
     {
         $this->delay = $delay;
+    }
+
+    /**
+     * @param string $scope
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScope()
+    {
+        return $this->scope;
     }
 
     /**
