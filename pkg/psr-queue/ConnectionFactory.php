@@ -2,10 +2,9 @@
 
 namespace Enqueue\Psr;
 
-interface ConnectionFactory
+/**
+ * @deprecated use PsrConnectionFactory
+ */
+interface ConnectionFactory extends PsrConnectionFactory
 {
-    /**
-     * @return Context
-     */
-    public function createContext();
 }
