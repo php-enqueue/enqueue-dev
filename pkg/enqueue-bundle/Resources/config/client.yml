@@ -3,12 +3,20 @@ services:
         class: 'Enqueue\Client\Config'
         public: false
 
+    # deprecated use enqueue.client.producer
     enqueue.client.message_producer:
         class: 'Enqueue\Client\MessageProducer'
         arguments: ['@enqueue.client.driver']
 
-    enqueue.message_producer:
+    enqueue.client.producer:
         alias: 'enqueue.client.message_producer'
+
+    # deprecated use enqueue.producer
+    enqueue.message_producer:
+        alias: 'enqueue.client.producer'
+
+    enqueue.producer:
+        alias: 'enqueue.client.producer'
 
     enqueue.client.router_processor:
         class: 'Enqueue\Client\RouterProcessor'

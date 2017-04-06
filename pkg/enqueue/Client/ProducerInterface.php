@@ -2,10 +2,7 @@
 
 namespace Enqueue\Client;
 
-/**
- * @deprecated use ProducerInterface
- */
-interface MessageProducerInterface
+interface ProducerInterface
 {
     /**
      * Sends a message to a topic. There are some message processor may be subscribed to a topic.
