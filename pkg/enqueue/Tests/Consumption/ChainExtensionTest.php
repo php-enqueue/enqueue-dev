@@ -7,7 +7,7 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 
-class ExtensionsTest extends \PHPUnit_Framework_TestCase
+class ChainExtensionTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
@@ -85,6 +85,28 @@ class ExtensionsTest extends \PHPUnit_Framework_TestCase
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
         $extensions->onPreReceived($context);
+    }
+
+    public function testShouldProxyOnResultToAllInternalExtensions()
+    {
+        $context = $this->createContextMock();
+
+        $fooExtension = $this->createExtension();
+        $fooExtension
+            ->expects($this->once())
+            ->method('onResult')
+            ->with($this->identicalTo($context))
+        ;
+        $barExtension = $this->createExtension();
+        $barExtension
+            ->expects($this->once())
+            ->method('onResult')
+            ->with($this->identicalTo($context))
+        ;
+
+        $extensions = new ChainExtension([$fooExtension, $barExtension]);
+
+        $extensions->onResult($context);
     }
 
     public function testShouldProxyOnPostReceiveToAllInternalExtensions()

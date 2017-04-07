@@ -32,6 +32,15 @@ interface ExtensionInterface
     public function onPreReceived(Context $context);
 
     /**
+     * Executed when a message is processed by a processor or a result was set in onPreReceived method.
+     * BUT before the message status was sent to the broker
+     * The consumption could be interrupted at this step but it exits after the message is processed.
+     *
+     * @param Context $context
+     */
+    public function onResult(Context $context);
+
+    /**
      * Executed when a message is processed by a processor.
      * The context contains a status, which could not be changed.
      * The consumption could be interrupted at this step but it exits after the message is processed.

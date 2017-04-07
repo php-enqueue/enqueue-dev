@@ -2,7 +2,7 @@
 
 namespace Enqueue\JobQueue\Tests;
 
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\CalculateRootJobStatusProcessor;
 use Enqueue\JobQueue\CalculateRootJobStatusService;
@@ -175,11 +175,11 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MessageProducerInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
      */
     private function createMessageProducerMock()
     {
-        return $this->createMock(MessageProducerInterface::class);
+        return $this->createMock(ProducerInterface::class);
     }
 
     /**

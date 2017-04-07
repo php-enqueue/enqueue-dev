@@ -59,12 +59,12 @@ Once you configured everything you can start producing messages:
 
 ```php
 <?php
-use Enqueue\Client\MessageProducer;
+use Enqueue\Client\Producer;
 
-/** @var MessageProducer $messageProducer **/
-$messageProducer = $container->get('enqueue.message_producer');
+/** @var Producer $producer **/
+$producer = $container->get('enqueue.producer');
 
-$messageProducer->send('aFooTopic', 'Something has happened');
+$producer->send('aFooTopic', 'Something has happened');
 ```
 
 To consume messages you have to first create a message processor:

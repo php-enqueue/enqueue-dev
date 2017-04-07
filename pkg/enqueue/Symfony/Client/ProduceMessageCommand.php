@@ -2,7 +2,7 @@
 
 namespace Enqueue\Symfony\Client;
 
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,14 +11,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ProduceMessageCommand extends Command
 {
     /**
-     * @var MessageProducerInterface
+     * @var ProducerInterface
      */
     private $producer;
 
     /**
-     * @param MessageProducerInterface $producer
+     * @param ProducerInterface $producer
      */
-    public function __construct(MessageProducerInterface $producer)
+    public function __construct(ProducerInterface $producer)
     {
         parent::__construct(null);
 
