@@ -12,7 +12,7 @@ class NullProducerTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementMessageProducerInterface()
+    public function testShouldImplementProducerInterface()
     {
         $this->assertClassImplements(PsrProducer::class, NullProducer::class);
     }

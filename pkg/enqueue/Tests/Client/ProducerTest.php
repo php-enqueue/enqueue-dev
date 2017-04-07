@@ -15,7 +15,7 @@ class ProducerTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementMessageProducerInterface()
+    public function testShouldImplementProducerInterface()
     {
         self::assertClassImplements(ProducerInterface::class, Producer::class);
     }

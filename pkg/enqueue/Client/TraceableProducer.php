@@ -2,14 +2,14 @@
 
 namespace Enqueue\Client;
 
-class TraceableProducer implements MessageProducerInterface
+class TraceableProducer implements ProducerInterface
 {
     /**
      * @var array
      */
     protected $traces = [];
     /**
-     * @var MessageProducerInterface
+     * @var ProducerInterface
      */
     private $producer;
 
