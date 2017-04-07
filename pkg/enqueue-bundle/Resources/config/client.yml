@@ -3,16 +3,16 @@ services:
         class: 'Enqueue\Client\Config'
         public: false
 
-    # deprecated use enqueue.client.producer
     enqueue.client.message_producer:
+        deprecated: 'The "%service_id%" service is deprecated. Use "enqueue.client.producer" instead'
         class: 'Enqueue\Client\MessageProducer'
         arguments: ['@enqueue.client.driver']
 
     enqueue.client.producer:
         alias: 'enqueue.client.message_producer'
 
-    # deprecated use enqueue.producer
     enqueue.message_producer:
+        deprecated: 'The "%service_id%" service is deprecated. Use "enqueue.producer" instead'
         alias: 'enqueue.client.producer'
 
     enqueue.producer:
