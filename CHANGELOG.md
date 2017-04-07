@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.3.0](https://github.com/php-enqueue/enqueue-dev/tree/0.3.0) (2017-04-07)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.12...0.3.0)
+
+- Remove deprecated stuff [\#48](https://github.com/php-enqueue/enqueue-dev/pull/48) ([makasim](https://github.com/makasim))
+
 ## [0.2.12](https://github.com/php-enqueue/enqueue-dev/tree/0.2.12) (2017-04-07)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.11...0.2.12)
 
