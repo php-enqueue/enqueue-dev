@@ -2,7 +2,7 @@
 
 namespace Enqueue\JobQueue;
 
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Psr\Context;
@@ -24,7 +24,7 @@ class CalculateRootJobStatusProcessor implements Processor, TopicSubscriberInter
     private $calculateRootJobStatusService;
 
     /**
-     * @var MessageProducerInterface
+     * @var ProducerInterface
      */
     private $producer;
 
@@ -36,13 +36,13 @@ class CalculateRootJobStatusProcessor implements Processor, TopicSubscriberInter
     /**
      * @param JobStorage                    $jobStorage
      * @param CalculateRootJobStatusService $calculateRootJobStatusCase
-     * @param MessageProducerInterface      $producer
+     * @param ProducerInterface      $producer
      * @param LoggerInterface               $logger
      */
     public function __construct(
         JobStorage $jobStorage,
         CalculateRootJobStatusService $calculateRootJobStatusCase,
-        MessageProducerInterface $producer,
+        ProducerInterface $producer,
         LoggerInterface $logger
     ) {
         $this->jobStorage = $jobStorage;

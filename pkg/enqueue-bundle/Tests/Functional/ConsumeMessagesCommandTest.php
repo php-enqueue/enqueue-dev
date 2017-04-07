@@ -4,6 +4,7 @@ namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\Bundle\Tests\Functional\App\AmqpAppKernel;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -98,8 +99,11 @@ class ConsumeMessagesCommandTest extends WebTestCase
         return AmqpAppKernel::class;
     }
 
+    /**
+     * @return ProducerInterface|object
+     */
     private function getMessageProducer()
     {
-        return $this->container->get('enqueue.client.message_producer');
+        return $this->container->get('enqueue.client.producer');
     }
 }

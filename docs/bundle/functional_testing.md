@@ -42,7 +42,7 @@ If you did so, you can use its methods `getTraces`, `getTopicTraces` or `clearTr
 ```php
 <?php
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Enqueue\Client\TraceableMessageProducer;
+use Enqueue\Client\TraceableProducer;
 
 class FooTest extends WebTestCase
 {
@@ -61,18 +61,18 @@ class FooTest extends WebTestCase
         // the method calls inside $producer->send('fooTopic', 'messageBody');
         $service->do();
         
-        $traces = $this->getMessageProducer()->getTopicTraces('fooTopic');
+        $traces = $this->getProducer()->getTopicTraces('fooTopic');
         
         $this->assertCount(1, $traces);
         $this->assertEquals('messageBody', $traces[0]['message']);
     }
     
     /**
-     * @return TraceableMessageProducer 
+     * @return TraceableProducer 
      */
-    private function getMessageProducer()
+    private function getProducer()
     {
-        return $this->client->getContainer()->get('enqueue.client.message_producer');
+        return $this->client->getContainer()->get('enqueue.producer');
     }
 }
 ```

@@ -3,8 +3,8 @@
 namespace Enqueue\Bundle\Profiler;
 
 use Enqueue\Client\MessagePriority;
-use Enqueue\Client\MessageProducerInterface;
-use Enqueue\Client\TraceableMessageProducer;
+use Enqueue\Client\ProducerInterface;
+use Enqueue\Client\TraceableProducer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -12,16 +12,16 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 class MessageQueueCollector extends DataCollector
 {
     /**
-     * @var MessageProducerInterface
+     * @var ProducerInterface
      */
-    private $messageProducer;
+    private $producer;
 
     /**
-     * @param MessageProducerInterface $messageProducer
+     * @param ProducerInterface $producer
      */
-    public function __construct(MessageProducerInterface $messageProducer)
+    public function __construct(ProducerInterface $producer)
     {
-        $this->messageProducer = $messageProducer;
+        $this->producer = $producer;
     }
 
     /**
@@ -33,8 +33,8 @@ class MessageQueueCollector extends DataCollector
             'sent_messages' => [],
         ];
 
-        if ($this->messageProducer instanceof TraceableMessageProducer) {
-            $this->data['sent_messages'] = $this->messageProducer->getTraces();
+        if ($this->producer instanceof TraceableProducer) {
+            $this->data['sent_messages'] = $this->producer->getTraces();
         }
     }
 

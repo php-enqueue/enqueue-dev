@@ -5,8 +5,8 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
-use Enqueue\Client\MessageProducer;
-use Enqueue\Client\TraceableMessageProducer;
+use Enqueue\Client\Producer;
+use Enqueue\Client\TraceableProducer;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
@@ -157,10 +157,10 @@ class EnqueueExtensionTest extends \PHPUnit_Framework_TestCase
         ]], $container);
 
         self::assertTrue($container->hasDefinition('enqueue.client.config'));
-        self::assertTrue($container->hasDefinition('enqueue.client.message_producer'));
+        self::assertTrue($container->hasDefinition('enqueue.client.producer'));
     }
 
-    public function testShouldUseMessageProducerByDefault()
+    public function testShouldUseProducerByDefault()
     {
         $container = new ContainerBuilder();
         $container->setParameter('kernel.debug', false);
@@ -179,8 +179,8 @@ class EnqueueExtensionTest extends \PHPUnit_Framework_TestCase
             ],
         ]], $container);
 
-        $messageProducer = $container->getDefinition('enqueue.client.message_producer');
-        self::assertEquals(MessageProducer::class, $messageProducer->getClass());
+        $producer = $container->getDefinition('enqueue.client.producer');
+        self::assertEquals(Producer::class, $producer->getClass());
     }
 
     public function testShouldUseMessageProducerIfTraceableProducerOptionSetToFalseExplicitly()
@@ -204,8 +204,8 @@ class EnqueueExtensionTest extends \PHPUnit_Framework_TestCase
             ],
         ]], $container);
 
-        $messageProducer = $container->getDefinition('enqueue.client.message_producer');
-        self::assertEquals(MessageProducer::class, $messageProducer->getClass());
+        $producer = $container->getDefinition('enqueue.client.producer');
+        self::assertEquals(Producer::class, $producer->getClass());
     }
 
     public function testShouldUseTraceableMessageProducerIfTraceableProducerOptionSetToTrueExplicitly()
@@ -229,17 +229,17 @@ class EnqueueExtensionTest extends \PHPUnit_Framework_TestCase
             ],
         ]], $container);
 
-        $messageProducer = $container->getDefinition('enqueue.client.traceable_message_producer');
-        self::assertEquals(TraceableMessageProducer::class, $messageProducer->getClass());
+        $producer = $container->getDefinition('enqueue.client.traceable_message_producer');
+        self::assertEquals(TraceableProducer::class, $producer->getClass());
         self::assertEquals(
-            ['enqueue.client.message_producer', null, 0],
-            $messageProducer->getDecoratedService()
+            ['enqueue.client.producer', null, 0],
+            $producer->getDecoratedService()
         );
 
-        self::assertInstanceOf(Reference::class, $messageProducer->getArgument(0));
+        self::assertInstanceOf(Reference::class, $producer->getArgument(0));
         self::assertEquals(
             'enqueue.client.traceable_message_producer.inner',
-            (string) $messageProducer->getArgument(0)
+            (string) $producer->getArgument(0)
         );
     }
 
