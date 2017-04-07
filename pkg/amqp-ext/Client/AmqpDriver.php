@@ -11,7 +11,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\AmqpExt\DeliveryMode;
-use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Psr\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -154,7 +154,7 @@ class AmqpDriver implements DriverInterface
      *
      * {@inheritdoc}
      */
-    public function createClientMessage(TransportMessage $message)
+    public function createClientMessage(PsrMessage $message)
     {
         $clientMessage = new Message();
 

@@ -2,10 +2,10 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrMessage;
 
-class FsConsumer implements Consumer
+class FsConsumer implements PsrConsumer
 {
     /**
      * @var FsDestination
@@ -108,7 +108,7 @@ class FsConsumer implements Consumer
     /**
      * {@inheritdoc}
      */
-    public function acknowledge(Message $message)
+    public function acknowledge(PsrMessage $message)
     {
         // do nothing. fs transport always works in auto ack mode
     }
@@ -116,7 +116,7 @@ class FsConsumer implements Consumer
     /**
      * {@inheritdoc}
      */
-    public function reject(Message $message, $requeue = false)
+    public function reject(PsrMessage $message, $requeue = false)
     {
         // do nothing on reject. fs transport always works in auto ack mode
 

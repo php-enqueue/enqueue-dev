@@ -6,8 +6,8 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
@@ -167,10 +167,10 @@ class LoggerExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
      */
     protected function createConsumerMock()
     {
-        return $this->createMock(Consumer::class);
+        return $this->createMock(PsrConsumer::class);
     }
 }

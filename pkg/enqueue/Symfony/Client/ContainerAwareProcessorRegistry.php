@@ -3,7 +3,7 @@
 namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\ProcessorRegistryInterface;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -12,7 +12,7 @@ class ContainerAwareProcessorRegistry implements ProcessorRegistryInterface, Con
     use ContainerAwareTrait;
 
     /**
-     * @var Processor[]
+     * @var PsrProcessor[]
      */
     protected $processors;
 
@@ -48,10 +48,10 @@ class ContainerAwareProcessorRegistry implements ProcessorRegistryInterface, Con
 
         $processor = $this->container->get($this->processors[$processorName]);
 
-        if (false == $processor instanceof Processor) {
+        if (false == $processor instanceof PsrProcessor) {
             throw new \LogicException(sprintf(
                 'Invalid instance of message processor. expected: "%s", got: "%s"',
-                Processor::class,
+                PsrProcessor::class,
                 is_object($processor) ? get_class($processor) : gettype($processor)
             ));
         }

@@ -2,8 +2,8 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\Message as TransportMessage;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrQueue;
 use Psr\Log\LoggerInterface;
 
 interface DriverInterface
@@ -11,16 +11,16 @@ interface DriverInterface
     /**
      * @param Message $message
      *
-     * @return TransportMessage
+     * @return PsrMessage
      */
     public function createTransportMessage(Message $message);
 
     /**
-     * @param TransportMessage $message
+     * @param PsrMessage $message
      *
      * @return Message
      */
-    public function createClientMessage(TransportMessage $message);
+    public function createClientMessage(PsrMessage $message);
 
     /**
      * @param Message $message
@@ -35,7 +35,7 @@ interface DriverInterface
     /**
      * @param string $queueName
      *
-     * @return Queue
+     * @return PsrQueue
      */
     public function createQueue($queueName);
 

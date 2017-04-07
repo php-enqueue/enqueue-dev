@@ -2,11 +2,11 @@
 
 namespace Enqueue\Router;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 
-class RouteRecipientListProcessor implements Processor
+class RouteRecipientListProcessor implements PsrProcessor
 {
     /**
      * @var RecipientListRouterInterface
@@ -24,7 +24,7 @@ class RouteRecipientListProcessor implements Processor
     /**
      * {@inheritdoc}
      */
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $producer = $context->createProducer();
         foreach ($this->router->route($message) as $recipient) {

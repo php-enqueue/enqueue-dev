@@ -4,10 +4,10 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 use Psr\Log\NullLogger;
@@ -97,8 +97,8 @@ class ContextTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAllowGetPreviouslySetMessage()
     {
-        /** @var Message $message */
-        $message = $this->createMock(Message::class);
+        /** @var PsrMessage $message */
+        $message = $this->createMock(PsrMessage::class);
 
         $context = new Context($this->createPsrContext());
 
@@ -109,8 +109,8 @@ class ContextTest extends \PHPUnit_Framework_TestCase
 
     public function testThrowOnTryToChangeMessageIfAlreadySet()
     {
-        /** @var Message $message */
-        $message = $this->createMock(Message::class);
+        /** @var PsrMessage $message */
+        $message = $this->createMock(PsrMessage::class);
 
         $context = new Context($this->createPsrContext());
 
@@ -240,18 +240,18 @@ class ContextTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
      */
     protected function createPsrConsumer()
     {
-        return $this->createMock(Consumer::class);
+        return $this->createMock(PsrConsumer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
      */
     protected function createProcessorMock()
     {
-        return $this->createMock(Processor::class);
+        return $this->createMock(PsrProcessor::class);
     }
 }

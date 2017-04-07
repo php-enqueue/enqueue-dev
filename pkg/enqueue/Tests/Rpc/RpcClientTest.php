@@ -2,9 +2,9 @@
 
 namespace Enqueue\Tests\Rpc;
 
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
 use Enqueue\Transport\Null\NullContext;
@@ -90,7 +90,7 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Promise::class, $promise);
         $this->assertAttributeEquals('theCorrelationId', 'correlationId', $promise);
         $this->assertAttributeEquals(123, 'timeout', $promise);
-        $this->assertAttributeInstanceOf(Consumer::class, 'consumer', $promise);
+        $this->assertAttributeInstanceOf(PsrConsumer::class, 'consumer', $promise);
     }
 
     public function testShouldProduceMessageToQueueAndCreateConsumerForReplyQueue()
@@ -160,26 +160,26 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Context|\PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return PsrContext|\PHPUnit_Framework_MockObject_MockObject|PsrProducer
      */
     private function createPsrProducerMock()
     {
-        return $this->createMock(Producer::class);
+        return $this->createMock(PsrProducer::class);
     }
 
     /**
-     * @return \Enqueue\Psr\Context|\PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
      */
     private function createPsrConsumerMock()
     {
-        return $this->createMock(Consumer::class);
+        return $this->createMock(PsrConsumer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     private function createPsrContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 }

@@ -2,14 +2,14 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrProcessor;
 
 interface ProcessorRegistryInterface
 {
     /**
      * @param string $processorName
      *
-     * @return Processor
+     * @return PsrProcessor
      */
     public function get($processorName);
 }

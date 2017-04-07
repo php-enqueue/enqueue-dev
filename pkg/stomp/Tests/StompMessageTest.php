@@ -2,7 +2,7 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Stomp\Transport\Frame;
@@ -13,7 +13,7 @@ class StompMessageTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementMessageInterface()
     {
-        $this->assertClassImplements(Message::class, StompMessage::class);
+        $this->assertClassImplements(PsrMessage::class, StompMessage::class);
     }
 
     public function testCouldConstructMessageWithBody()

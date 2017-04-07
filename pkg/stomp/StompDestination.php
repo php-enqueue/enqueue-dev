@@ -2,10 +2,10 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\Queue;
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrQueue;
+use Enqueue\Psr\PsrTopic;
 
-class StompDestination implements Topic, Queue
+class StompDestination implements PsrTopic, PsrQueue
 {
     const TYPE_TOPIC = 'topic';
     const TYPE_EXCHANGE = 'exchange';

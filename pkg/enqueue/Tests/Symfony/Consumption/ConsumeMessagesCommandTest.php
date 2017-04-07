@@ -4,7 +4,7 @@ namespace Enqueue\Tests\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -70,11 +70,11 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     private function createContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 
     /**

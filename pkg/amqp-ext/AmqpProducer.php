@@ -2,14 +2,14 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\Destination;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Producer;
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrDestination;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProducer;
+use Enqueue\Psr\PsrTopic;
 
-class AmqpProducer implements Producer
+class AmqpProducer implements PsrProducer
 {
     /**
      * @var \AMQPChannel
@@ -30,9 +30,9 @@ class AmqpProducer implements Producer
      * @param AmqpTopic|AmqpQueue $destination
      * @param AmqpMessage         $message
      */
-    public function send(Destination $destination, Message $message)
+    public function send(PsrDestination $destination, PsrMessage $message)
     {
-        $destination instanceof Topic
+        $destination instanceof PsrTopic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class)
             : InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class)
         ;

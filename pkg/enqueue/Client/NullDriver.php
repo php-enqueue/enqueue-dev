@@ -2,7 +2,7 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
@@ -58,7 +58,7 @@ class NullDriver implements DriverInterface
      *
      * @param NullMessage $message
      */
-    public function createClientMessage(TransportMessage $message)
+    public function createClientMessage(PsrMessage $message)
     {
         $clientMessage = new Message();
         $clientMessage->setBody($message->getBody());

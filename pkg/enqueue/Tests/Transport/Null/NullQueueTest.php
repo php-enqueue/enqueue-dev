@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Transport\Null;
 
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 
@@ -12,7 +12,7 @@ class NullQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementQueueInterface()
     {
-        $this->assertClassImplements(Queue::class, NullQueue::class);
+        $this->assertClassImplements(PsrQueue::class, NullQueue::class);
     }
 
     public function testCouldBeConstructedWithNameAsArgument()

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional;
 
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 
 /**
  * @group functional
@@ -13,6 +13,6 @@ class ContextTest extends WebTestCase
     {
         $connection = $this->container->get('enqueue.transport.context');
 
-        $this->assertInstanceOf(Context::class, $connection);
+        $this->assertInstanceOf(PsrContext::class, $connection);
     }
 }

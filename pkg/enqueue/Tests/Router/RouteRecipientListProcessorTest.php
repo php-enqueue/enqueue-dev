@@ -3,9 +3,9 @@
 namespace Enqueue\Tests\Router;
 
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Router\Recipient;
 use Enqueue\Router\RecipientListRouterInterface;
 use Enqueue\Router\RouteRecipientListProcessor;
@@ -19,7 +19,7 @@ class RouteRecipientListProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementProcessorInterface()
     {
-        $this->assertClassImplements(Processor::class, RouteRecipientListProcessor::class);
+        $this->assertClassImplements(PsrProcessor::class, RouteRecipientListProcessor::class);
     }
 
     public function testCouldBeConstructedWithRouterAsFirstArgument()
@@ -69,19 +69,19 @@ class RouteRecipientListProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProducer
      */
     protected function createProducerMock()
     {
-        return $this->createMock(Producer::class);
+        return $this->createMock(PsrProducer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     protected function createPsrContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 
     /**

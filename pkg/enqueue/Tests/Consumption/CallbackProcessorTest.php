@@ -3,7 +3,7 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\CallbackProcessor;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
@@ -14,7 +14,7 @@ class CallbackProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementProcessorInterface()
     {
-        $this->assertClassImplements(Processor::class, CallbackProcessor::class);
+        $this->assertClassImplements(PsrProcessor::class, CallbackProcessor::class);
     }
 
     public function testCouldBeConstructedWithCallableAsArgument()

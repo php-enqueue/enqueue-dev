@@ -20,9 +20,9 @@ Produce a message:
 
 ```php
 <?php
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 
-/** @var ConnectionFactory $connectionFactory **/
+/** @var PsrConnectionFactory $connectionFactory **/
 $psrContext = $connectionFactory->createContext();
 
 $destination = $psrContext->createQueue('foo');
@@ -37,9 +37,9 @@ Consume a message:
 
 ```php
 <?php
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 
-/** @var ConnectionFactory $connectionFactory **/
+/** @var PsrConnectionFactory $connectionFactory **/
 $psrContext = $connectionFactory->createContext();
 
 $destination = $psrContext->createQueue('foo');
@@ -64,23 +64,24 @@ The `consume` method starts the consumption process which last as long as it is 
 
 ```php
 <?php
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Consumption\QueueConsumer;
 
-/** @var \Enqueue\Psr\Context $psrContext */
+/** @var PsrContext $psrContext */
 
 $queueConsumer = new QueueConsumer($psrContext);
 
-$queueConsumer->bind('foo_queue', function(Message $message) {
+$queueConsumer->bind('foo_queue', function(PsrMessage $message) {
     // process messsage
     
-    return Processor::ACK;
+    return PsrProcessor::ACK;
 });
-$queueConsumer->bind('bar_queue', function(Message $message) {
+$queueConsumer->bind('bar_queue', function(PsrMessage $message) {
     // process messsage
     
-    return Processor::ACK;
+    return PsrProcessor::ACK;
 });
 
 $queueConsumer->consume();
@@ -98,7 +99,7 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\SignalExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 
-/** @var \Enqueue\Psr\Context $psrContext */
+/** @var \Enqueue\Psr\PsrContext $psrContext */
 
 $queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
     new SignalExtension(),
@@ -115,7 +116,7 @@ You can do several calls asynchronously. This is how you can send a RPC message 
 <?php
 use Enqueue\Rpc\RpcClient;
 
-/** @var \Enqueue\Psr\Context $psrContext */
+/** @var \Enqueue\Psr\PsrContext $psrContext */
 
 $queue = $psrContext->createQueue('foo');
 $message = $psrContext->createMessage('Hi there!');
@@ -131,20 +132,20 @@ It simplifies a server side of RPC.
 
 ```php
 <?php
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 
-/** @var \Enqueue\Psr\Context $psrContext */
+/** @var \Enqueue\Psr\PsrContext $psrContext */
 
 $queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
     new ReplyExtension()
 ]));
 
-$queueConsumer->bind('foo', function(Message $message, Context $context) {
+$queueConsumer->bind('foo', function(PsrMessage $message, PsrContext $context) {
     $replyMessage = $context->createMessage('Hello');
     
     return Result::reply($replyMessage);
@@ -167,16 +168,16 @@ Here's an example of how you can send and consume messages.
 ```php
 <?php
 use Enqueue\Client\SimpleClient;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 
-/** @var \Enqueue\Psr\Context $psrContext */
+/** @var \Enqueue\Psr\PsrContext $psrContext */
 
 $client = new SimpleClient($psrContext);
-$client->bind('foo_topic', 'processor_name', function (Message $message) {
+$client->bind('foo_topic', 'processor_name', function (PsrMessage $message) {
     // process message
 
-    return Processor::ACK;
+    return PsrProcessor::ACK;
 });
 
 $client->send('foo_topic', 'Hello there!');
@@ -199,13 +200,13 @@ Let's see how you can use consumption one:
 // app.php
 
 use Symfony\Component\Console\Application;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 
 /** @var QueueConsumer $queueConsumer */
 
-$queueConsumer->bind('a_queue', function(Message $message) {
+$queueConsumer->bind('a_queue', function(PsrMessage $message) {
     // process message    
 });
 

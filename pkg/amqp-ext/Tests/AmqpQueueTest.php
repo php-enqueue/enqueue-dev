@@ -3,7 +3,7 @@
 namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpQueue;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrQueue;
 use Enqueue\Test\ClassExtensionTrait;
 
 class AmqpQueueTest extends \PHPUnit_Framework_TestCase
@@ -12,7 +12,7 @@ class AmqpQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementQueueInterface()
     {
-        $this->assertClassImplements(Queue::class, AmqpQueue::class);
+        $this->assertClassImplements(PsrQueue::class, AmqpQueue::class);
     }
 
     public function testCouldBeConstructedWithQueueNameArgument()

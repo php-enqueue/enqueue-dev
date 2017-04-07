@@ -2,11 +2,11 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\Consumer;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrMessage;
 
-class AmqpConsumer implements Consumer
+class AmqpConsumer implements PsrConsumer
 {
     /**
      * @var AmqpContext
@@ -129,7 +129,7 @@ class AmqpConsumer implements Consumer
      *
      * @param AmqpMessage $message
      */
-    public function acknowledge(Message $message)
+    public function acknowledge(PsrMessage $message)
     {
         InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
 
@@ -141,7 +141,7 @@ class AmqpConsumer implements Consumer
      *
      * @param AmqpMessage $message
      */
-    public function reject(Message $message, $requeue = false)
+    public function reject(PsrMessage $message, $requeue = false)
     {
         InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
 

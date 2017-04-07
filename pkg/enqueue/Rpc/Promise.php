@@ -2,12 +2,12 @@
 
 namespace Enqueue\Rpc;
 
-use Enqueue\Psr\Consumer;
+use Enqueue\Psr\PsrConsumer;
 
 class Promise
 {
     /**
-     * @var Consumer
+     * @var PsrConsumer
      */
     private $consumer;
 
@@ -21,11 +21,11 @@ class Promise
     private $correlationId;
 
     /**
-     * @param Consumer $consumer
+     * @param PsrConsumer $consumer
      * @param string   $correlationId
      * @param int      $timeout
      */
-    public function __construct(Consumer $consumer, $correlationId, $timeout)
+    public function __construct(PsrConsumer $consumer, $correlationId, $timeout)
     {
         $this->consumer = $consumer;
         $this->timeout = $timeout;

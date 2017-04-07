@@ -6,8 +6,8 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
@@ -110,7 +110,7 @@ class ReplyExtensionTest extends \PHPUnit_Framework_TestCase
 
         $replyQueue = new NullQueue('aReplyName');
 
-        $producerMock = $this->createMock(Producer::class);
+        $producerMock = $this->createMock(PsrProducer::class);
         $producerMock
             ->expects($this->once())
             ->method('send')

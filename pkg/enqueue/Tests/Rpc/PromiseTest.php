@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Rpc;
 
-use Enqueue\Psr\Consumer;
+use Enqueue\Psr\PsrConsumer;
 use Enqueue\Rpc\Promise;
 use Enqueue\Transport\Null\NullMessage;
 
@@ -131,10 +131,10 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
      */
     private function createPsrConsumerMock()
     {
-        return $this->createMock(Consumer::class);
+        return $this->createMock(PsrConsumer::class);
     }
 }

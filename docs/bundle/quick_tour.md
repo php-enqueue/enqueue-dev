@@ -71,14 +71,14 @@ To consume messages you have to first create a message processor:
 
 ```php
 <?php
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Client\TopicSubscriberInterface;
 
-class FooProcessor implements Processor, TopicSubscriberInterface
+class FooProcessor implements PsrProcessor, TopicSubscriberInterface
 {
-    public function process(Message $message, Context $session)
+    public function process(PsrMessage $message, PsrContext $session)
     {
         echo $message->getBody();
 

@@ -2,9 +2,9 @@
 
 namespace Enqueue\Transport\Null;
 
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 
-class NullConnectionFactory implements ConnectionFactory
+class NullConnectionFactory implements PsrConnectionFactory
 {
     /**
      * {@inheritdoc}

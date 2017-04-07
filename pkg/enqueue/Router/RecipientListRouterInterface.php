@@ -2,14 +2,14 @@
 
 namespace Enqueue\Router;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 
 interface RecipientListRouterInterface
 {
     /**
-     * @param Message $message
+     * @param PsrMessage $message
      *
      * @return \Traversable|Recipient[]
      */
-    public function route(Message $message);
+    public function route(PsrMessage $message);
 }

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Transport\Null;
 
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullTopic;
 
@@ -12,7 +12,7 @@ class NullTopicTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementTopicInterface()
     {
-        $this->assertClassImplements(Topic::class, NullTopic::class);
+        $this->assertClassImplements(PsrTopic::class, NullTopic::class);
     }
 
     public function testCouldBeConstructedWithNameAsArgument()

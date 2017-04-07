@@ -2,9 +2,9 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 
-class AmqpMessage implements Message
+class AmqpMessage implements PsrMessage
 {
     /**
      * @var string

@@ -7,14 +7,14 @@ They will be executed in parallel.
 ```php
 <?php
 use Enqueue\Client\ProducerInterface;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Util\JSON;
 
-class RootJobProcessor implements Processor
+class RootJobProcessor implements PsrProcessor
 {
     /** @var JobRunner */
     private $jobRunner;
@@ -22,7 +22,7 @@ class RootJobProcessor implements Processor
     /** @var  ProducerInterface */
     private $producer;
 
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $result = $this->jobRunner->runUnique($message->getMessageId(), 'aJobName', function (JobRunner $runner) {
             $runner->createDelayed('aSubJobName1', function (JobRunner $runner, Job $childJob) {
@@ -39,12 +39,12 @@ class RootJobProcessor implements Processor
     }
 }
 
-class SubJobProcessor implements Processor
+class SubJobProcessor implements PsrProcessor
 {
     /** @var JobRunner */
     private $jobRunner;
 
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -54,7 +54,7 @@ class SubJobProcessor implements Processor
             return true;
         });
 
-        return $result ? Result::ACK : Result::REJECT;
+        return $result ? self::ACK : self::REJECT;
     }
 }
 ```

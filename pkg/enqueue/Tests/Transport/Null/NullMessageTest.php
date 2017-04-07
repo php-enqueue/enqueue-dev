@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Transport\Null;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 
@@ -12,7 +12,7 @@ class NullMessageTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementMessageInterface()
     {
-        $this->assertClassImplements(Message::class, NullMessage::class);
+        $this->assertClassImplements(PsrMessage::class, NullMessage::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()

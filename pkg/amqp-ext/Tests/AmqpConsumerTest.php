@@ -6,7 +6,7 @@ use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\Buffer;
-use Enqueue\Psr\Consumer;
+use Enqueue\Psr\PsrConsumer;
 use Enqueue\Test\ClassExtensionTrait;
 
 class AmqpConsumerTest extends \PHPUnit_Framework_TestCase
@@ -15,7 +15,7 @@ class AmqpConsumerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(Consumer::class, AmqpConsumer::class);
+        $this->assertClassImplements(PsrConsumer::class, AmqpConsumer::class);
     }
 
     public function testCouldBeConstructedWithContextAndQueueAndBufferAsArguments()

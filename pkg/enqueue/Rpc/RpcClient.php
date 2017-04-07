@@ -2,46 +2,46 @@
 
 namespace Enqueue\Rpc;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Destination;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrDestination;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Util\UUID;
 
 class RpcClient
 {
     /**
-     * @var Context
+     * @var PsrContext
      */
     private $context;
 
     /**
-     * @param Context $context
+     * @param PsrContext $context
      */
-    public function __construct(Context $context)
+    public function __construct(PsrContext $context)
     {
         $this->context = $context;
     }
 
     /**
-     * @param Destination $destination
-     * @param Message     $message
+     * @param PsrDestination $destination
+     * @param PsrMessage     $message
      * @param $timeout
      *
-     * @return Message
+     * @return PsrMessage
      */
-    public function call(Destination $destination, Message $message, $timeout)
+    public function call(PsrDestination $destination, PsrMessage $message, $timeout)
     {
         return $this->callAsync($destination, $message, $timeout)->getMessage();
     }
 
     /**
-     * @param Destination $destination
-     * @param Message     $message
+     * @param PsrDestination $destination
+     * @param PsrMessage     $message
      * @param $timeout
      *
      * @return Promise
      */
-    public function callAsync(Destination $destination, Message $message, $timeout)
+    public function callAsync(PsrDestination $destination, PsrMessage $message, $timeout)
     {
         if ($timeout < 1) {
             throw new \InvalidArgumentException(sprintf('Timeout must be positive not zero integer. Got %s', $timeout));

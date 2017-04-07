@@ -2,10 +2,10 @@
 
 namespace Enqueue\Transport\Null;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Destination;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrDestination;
 
-class NullContext implements Context
+class NullContext implements PsrContext
 {
     /**
      * {@inheritdoc}
@@ -55,7 +55,7 @@ class NullContext implements Context
      *
      * @return NullConsumer
      */
-    public function createConsumer(Destination $destination)
+    public function createConsumer(PsrDestination $destination)
     {
         return new NullConsumer($destination);
     }
@@ -66,27 +66,6 @@ class NullContext implements Context
     public function createProducer()
     {
         return new NullProducer();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function declareTopic(Destination $destination)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function declareQueue(Destination $destination)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function declareBind(Destination $source, Destination $target)
-    {
     }
 
     /**

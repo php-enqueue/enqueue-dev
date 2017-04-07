@@ -7,8 +7,8 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
-use Enqueue\Psr\Context;
 use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 use Makasim\File\TempFile;
@@ -19,7 +19,7 @@ class FsContextTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementContextInterface()
     {
-        $this->assertClassImplements(Context::class, FsContext::class);
+        $this->assertClassImplements(PsrContext::class, FsContext::class);
     }
 
     public function testCouldBeConstructedWithExpectedArguments()

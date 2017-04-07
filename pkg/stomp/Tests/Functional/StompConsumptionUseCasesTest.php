@@ -8,9 +8,9 @@ use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use Enqueue\Test\RabbitmqStompExtension;
@@ -57,7 +57,7 @@ class StompConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
 
         $queueConsumer->consume();
 
-        $this->assertInstanceOf(Message::class, $processor->lastProcessedMessage);
+        $this->assertInstanceOf(PsrMessage::class, $processor->lastProcessedMessage);
         $this->assertEquals(__METHOD__, $processor->lastProcessedMessage->getBody());
     }
 
@@ -88,22 +88,22 @@ class StompConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
         $queueConsumer->bind($replyQueue, $replyProcessor);
         $queueConsumer->consume();
 
-        $this->assertInstanceOf(Message::class, $processor->lastProcessedMessage);
+        $this->assertInstanceOf(PsrMessage::class, $processor->lastProcessedMessage);
         $this->assertEquals(__METHOD__, $processor->lastProcessedMessage->getBody());
 
-        $this->assertInstanceOf(Message::class, $replyProcessor->lastProcessedMessage);
+        $this->assertInstanceOf(PsrMessage::class, $replyProcessor->lastProcessedMessage);
         $this->assertEquals(__METHOD__.'.reply', $replyProcessor->lastProcessedMessage->getBody());
     }
 }
 
-class StubProcessor implements Processor
+class StubProcessor implements PsrProcessor
 {
-    public $result = Result::ACK;
+    public $result = self::ACK;
 
-    /** @var Message */
+    /** @var PsrMessage */
     public $lastProcessedMessage;
 
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $this->lastProcessedMessage = $message;
 

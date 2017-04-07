@@ -4,9 +4,9 @@ namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Message as PsrMessage;
-use Enqueue\Psr\Producer;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProducer;
+use Enqueue\Psr\PsrQueue;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
@@ -20,7 +20,7 @@ class StompProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementMessageProducerInterface()
     {
-        $this->assertClassImplements(Producer::class, StompProducer::class);
+        $this->assertClassImplements(PsrProducer::class, StompProducer::class);
     }
 
     public function testShouldThrowInvalidDestinationExceptionWhenDestinationIsWrongType()
@@ -30,7 +30,7 @@ class StompProducerTest extends \PHPUnit_Framework_TestCase
 
         $producer = new StompProducer($this->createStompClientMock());
 
-        $producer->send($this->createMock(Queue::class), new StompMessage());
+        $producer->send($this->createMock(PsrQueue::class), new StompMessage());
     }
 
     public function testShouldThrowInvalidMessageExceptionWhenMessageIsWrongType()

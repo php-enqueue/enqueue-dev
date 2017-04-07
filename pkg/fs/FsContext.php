@@ -2,14 +2,14 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Destination;
 use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrDestination;
+use Enqueue\Psr\PsrQueue;
 use Makasim\File\TempFile;
 use Symfony\Component\Filesystem\LockHandler;
 
-class FsContext implements Context
+class FsContext implements PsrContext
 {
     /**
      * @var string
@@ -76,9 +76,9 @@ class FsContext implements Context
     }
 
     /**
-     * @param Destination|FsDestination $destination
+     * @param PsrDestination|FsDestination $destination
      */
-    public function declareDestination(Destination $destination)
+    public function declareDestination(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
@@ -148,11 +148,11 @@ class FsContext implements Context
     /**
      * {@inheritdoc}
      *
-     * @param FsDestination $destination
+     * @param FsDestination|PsrDestination $destination
      *
      * @return FsConsumer
      */
-    public function createConsumer(Destination $destination)
+    public function createConsumer(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
@@ -169,9 +169,9 @@ class FsContext implements Context
     }
 
     /**
-     * @param Queue|FsDestination $queue
+     * @param PsrQueue|FsDestination $queue
      */
-    public function purge(Queue $queue)
+    public function purge(PsrQueue $queue)
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, FsDestination::class);
 

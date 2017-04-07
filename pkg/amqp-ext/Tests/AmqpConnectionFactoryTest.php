@@ -4,7 +4,7 @@ namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
 
 class AmqpConnectionFactoryTest extends \PHPUnit_Framework_TestCase
@@ -13,7 +13,7 @@ class AmqpConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementConnectionFactoryInterface()
     {
-        $this->assertClassImplements(ConnectionFactory::class, AmqpConnectionFactory::class);
+        $this->assertClassImplements(PsrConnectionFactory::class, AmqpConnectionFactory::class);
     }
 
     public function testCouldBeConstructedWithEmptyConfiguration()

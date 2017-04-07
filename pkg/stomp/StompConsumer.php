@@ -2,13 +2,13 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\Consumer;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Message;
 use Stomp\Client;
 use Stomp\Transport\Frame;
 
-class StompConsumer implements Consumer
+class StompConsumer implements PsrConsumer
 {
     const ACK_AUTO = 'auto';
     const ACK_CLIENT = 'client';
@@ -144,7 +144,7 @@ class StompConsumer implements Consumer
      *
      * @param StompMessage $message
      */
-    public function acknowledge(Message $message)
+    public function acknowledge(PsrMessage $message)
     {
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
 
@@ -158,7 +158,7 @@ class StompConsumer implements Consumer
      *
      * @param StompMessage $message
      */
-    public function reject(Message $message, $requeue = false)
+    public function reject(PsrMessage $message, $requeue = false)
     {
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
 

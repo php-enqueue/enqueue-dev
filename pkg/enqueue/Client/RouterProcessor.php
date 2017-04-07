@@ -2,11 +2,11 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Message as PsrMessage;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 
-class RouterProcessor implements Processor
+class RouterProcessor implements PsrProcessor
 {
     /**
      * @var DriverInterface

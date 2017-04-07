@@ -2,13 +2,13 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Destination;
 use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\Queue;
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrDestination;
+use Enqueue\Psr\PsrQueue;
+use Enqueue\Psr\PsrTopic;
 
-class AmqpContext implements Context
+class AmqpContext implements PsrContext
 {
     /**
      * @var \AMQPChannel
@@ -64,9 +64,9 @@ class AmqpContext implements Context
     }
 
     /**
-     * @param AmqpTopic|Destination $destination
+     * @param AmqpTopic|PsrDestination $destination
      */
-    public function deleteTopic(Destination $destination)
+    public function deleteTopic(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
 
@@ -75,9 +75,9 @@ class AmqpContext implements Context
     }
 
     /**
-     * @param AmqpTopic|Destination $destination
+     * @param AmqpTopic|PsrDestination $destination
      */
-    public function declareTopic(Destination $destination)
+    public function declareTopic(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
 
@@ -101,9 +101,9 @@ class AmqpContext implements Context
     }
 
     /**
-     * @param AmqpQueue|Destination $destination
+     * @param AmqpQueue|PsrDestination $destination
      */
-    public function deleteQueue(Destination $destination)
+    public function deleteQueue(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
 
@@ -113,9 +113,9 @@ class AmqpContext implements Context
     }
 
     /**
-     * @param AmqpQueue|Destination $destination
+     * @param AmqpQueue|PsrDestination $destination
      */
-    public function declareQueue(Destination $destination)
+    public function declareQueue(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
 
@@ -162,13 +162,13 @@ class AmqpContext implements Context
     /**
      * {@inheritdoc}
      *
-     * @param Destination|AmqpQueue $destination
+     * @param PsrDestination|AmqpQueue $destination
      *
      * @return AmqpConsumer
      */
-    public function createConsumer(Destination $destination)
+    public function createConsumer(PsrDestination $destination)
     {
-        $destination instanceof Topic
+        $destination instanceof PsrTopic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class)
             : InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class)
         ;
@@ -192,10 +192,10 @@ class AmqpContext implements Context
     }
 
     /**
-     * @param AmqpTopic|Destination $source
-     * @param AmqpQueue|Destination $target
+     * @param AmqpTopic|PsrDestination $source
+     * @param AmqpQueue|PsrDestination $target
      */
-    public function bind(Destination $source, Destination $target)
+    public function bind(PsrDestination $source, PsrDestination $target)
     {
         InvalidDestinationException::assertDestinationInstanceOf($source, AmqpTopic::class);
         InvalidDestinationException::assertDestinationInstanceOf($target, AmqpQueue::class);
@@ -236,9 +236,9 @@ class AmqpContext implements Context
     /**
      * Purge all messages from the given queue.
      *
-     * @param Queue $queue
+     * @param PsrQueue $queue
      */
-    public function purge(Queue $queue)
+    public function purge(PsrQueue $queue)
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, AmqpQueue::class);
 

@@ -5,10 +5,10 @@ namespace Enqueue\Consumption;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrQueue;
 use Enqueue\Util\VarExport;
 use Psr\Log\NullLogger;
 
@@ -26,7 +26,7 @@ class QueueConsumer
 
     /**
      * [
-     *   [Queue, Processor],
+     *   [PsrQueue, PsrProcessor],
      * ].
      *
      * @var array
@@ -64,8 +64,8 @@ class QueueConsumer
     }
 
     /**
-     * @param Queue|string       $queue
-     * @param Processor|callable $processor
+     * @param PsrQueue|string       $queue
+     * @param PsrProcessor|callable $processor
      *
      * @return QueueConsumer
      */
@@ -78,8 +78,8 @@ class QueueConsumer
             $processor = new CallbackProcessor($processor);
         }
 
-        InvalidArgumentException::assertInstanceOf($queue, Queue::class);
-        InvalidArgumentException::assertInstanceOf($processor, Processor::class);
+        InvalidArgumentException::assertInstanceOf($queue, PsrQueue::class);
+        InvalidArgumentException::assertInstanceOf($processor, PsrProcessor::class);
 
         if (empty($queue->getQueueName())) {
             throw new LogicException('The queue name must be not empty.');
@@ -103,11 +103,11 @@ class QueueConsumer
      */
     public function consume(ExtensionInterface $runtimeExtension = null)
     {
-        /** @var Consumer[] $messageConsumers */
-        $messageConsumers = [];
-        /** @var \Enqueue\Psr\Queue $queue */
+        /** @var PsrConsumer[] $consumers */
+        $consumers = [];
+        /** @var PsrQueue $queue */
         foreach ($this->boundProcessors as list($queue, $processor)) {
-            $messageConsumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
+            $consumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
         }
 
         $extension = $this->extension ?: new ChainExtension([]);
@@ -121,23 +121,23 @@ class QueueConsumer
         $logger = $context->getLogger() ?: new NullLogger();
         $logger->info('Start consuming');
 
-        /** @var Queue|null $previousQueue */
+        /** @var PsrQueue|null $previousQueue */
         $previousQueue = null;
 
         while (true) {
             try {
-                /** @var Queue $queue */
+                /** @var PsrQueue $queue */
                 foreach ($this->boundProcessors as list($queue, $processor)) {
                     if (false == $previousQueue || $previousQueue->getQueueName() != $queue->getQueueName()) {
                         $logger->debug(sprintf('Switch to a queue %s', $queue->getQueueName()));
                     }
 
-                    $messageConsumer = $messageConsumers[$queue->getQueueName()];
+                    $consumer = $consumers[$queue->getQueueName()];
 
                     $context = new Context($this->psrContext);
                     $context->setLogger($logger);
                     $context->setPsrQueue($queue);
-                    $context->setPsrConsumer($messageConsumer);
+                    $context->setPsrConsumer($consumer);
                     $context->setPsrProcessor($processor);
 
                     $this->doConsume($extension, $context);

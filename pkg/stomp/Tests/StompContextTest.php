@@ -2,9 +2,9 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrQueue;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompContext;
@@ -19,7 +19,7 @@ class StompContextTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementSessionInterface()
     {
-        $this->assertClassImplements(Context::class, StompContext::class);
+        $this->assertClassImplements(PsrContext::class, StompContext::class);
     }
 
     public function testCouldBeCreatedWithRequiredArguments()
@@ -110,7 +110,7 @@ class StompContextTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('The destination must be an instance of');
 
         $session = new StompContext($this->createStompClientMock());
-        $session->createConsumer($this->createMock(Queue::class));
+        $session->createConsumer($this->createMock(PsrQueue::class));
     }
 
     public function testShouldCreateMessageConsumerInstance()
