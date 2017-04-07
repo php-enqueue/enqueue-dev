@@ -3,16 +3,6 @@ services:
         class: 'Enqueue\Client\Config'
         public: false
 
-    #deprecated
-    enqueue.client.message_producer:
-        deprecated: 'The "%service_id%" service is deprecated. Use "enqueue.client.producer" instead'
-        class: 'Enqueue\Client\MessageProducer'
-        arguments: ['@enqueue.client.driver']
-
-    #deprecated
-    enqueue.message_producer:
-        alias: 'enqueue.client.producer'
-
     enqueue.client.producer:
         class: 'Enqueue\Client\Producer'
         arguments: ['@enqueue.client.driver']
@@ -84,7 +74,7 @@ services:
         class: 'Enqueue\Symfony\Client\ProduceMessageCommand'
         public: true
         arguments:
-            - '@enqueue.client.message_producer'
+            - '@enqueue.client.producer'
         tags:
             - { name: 'console.command' }
 
@@ -113,7 +103,7 @@ services:
     enqueue.profiler.message_queue_collector:
         class: 'Enqueue\Bundle\Profiler\MessageQueueCollector'
         public: false
-        arguments: ['@enqueue.message_producer']
+        arguments: ['@enqueue.client.producer']
         tags:
             -
               name: 'data_collector'

@@ -3,7 +3,7 @@
 namespace Enqueue\JobQueue\Tests;
 
 use Enqueue\Client\Message;
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\DependentJobProcessor;
 use Enqueue\JobQueue\Job;
@@ -27,7 +27,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $jobStorage = $this->createJobStorageMock();
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
 
         $logger = $this->createLoggerMock();
         $logger
@@ -55,7 +55,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(12345)
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
 
         $logger = $this->createLoggerMock();
         $logger
@@ -87,7 +87,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($job))
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
 
         $logger = $this->createLoggerMock();
         $logger
@@ -118,7 +118,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($job))
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
             ->method('send')
@@ -154,7 +154,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($job))
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
             ->method('send')
@@ -197,7 +197,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($job))
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
             ->method('send')
@@ -243,7 +243,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
         ;
 
         $expectedMessage = null;
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
@@ -291,7 +291,7 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
         ;
 
         $expectedMessage = null;
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
@@ -333,11 +333,11 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MessageProducerInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
      */
-    private function createMessageProducerMock()
+    private function createProducerMock()
     {
-        return $this->createMock(MessageProducerInterface::class);
+        return $this->createMock(ProducerInterface::class);
     }
 
     /**

@@ -20,7 +20,7 @@ class ProducerTest extends WebTestCase
     public function testCouldBeGetFromContainerAsShortenAlias()
     {
         $messageProducer = $this->container->get('enqueue.client.producer');
-        $aliasMessageProducer = $this->container->get('enqueue.message_producer');
+        $aliasMessageProducer = $this->container->get('enqueue.producer');
 
         $this->assertSame($messageProducer, $aliasMessageProducer);
     }
