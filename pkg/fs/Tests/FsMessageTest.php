@@ -3,7 +3,7 @@
 namespace Enqueue\Fs\Tests;
 
 use Enqueue\Fs\FsMessage;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
 
 class FsMessageTest extends \PHPUnit_Framework_TestCase
@@ -12,7 +12,7 @@ class FsMessageTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementMessageInterface()
     {
-        $this->assertClassImplements(Message::class, FsMessage::class);
+        $this->assertClassImplements(PsrMessage::class, FsMessage::class);
     }
 
     public function testShouldImplementJsonSerializableInterface()

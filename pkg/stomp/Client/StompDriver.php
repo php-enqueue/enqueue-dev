@@ -5,7 +5,7 @@ namespace Enqueue\Stomp\Client;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
-use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
@@ -109,7 +109,7 @@ class StompDriver implements DriverInterface
      *
      * {@inheritdoc}
      */
-    public function createClientMessage(TransportMessage $message)
+    public function createClientMessage(PsrMessage $message)
     {
         $clientMessage = new Message();
 

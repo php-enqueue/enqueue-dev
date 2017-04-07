@@ -5,13 +5,13 @@ Here's example:
 
 ```php
 <?php
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
 
-class SendMailProcessor implements Processor
+class SendMailProcessor implements PsrProcessor
 {
-    public function process(Message $message, Context $context) 
+    public function process(PsrMessage $message, PsrContext $context) 
     {
         $this->mailer->send('foo@example.com', $message->getBody());
         
@@ -26,14 +26,14 @@ Sometimes you have to reject messages explicitly.
 
 ```php
 <?php
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Util\JSON;
 
-class SendMailProcessor implements Processor
+class SendMailProcessor implements PsrProcessor
 {
-    public function process(Message $message, Context $context) 
+    public function process(PsrMessage $message, PsrContext $context) 
     {
         $data = JSON::decode($message->getBody());
         if ($user  = $this->userRepository->find($data['userId'])) {
@@ -53,13 +53,13 @@ If it returns true than there was attempt to process message.
    
 ```php
 <?php
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
 
-class SendMailProcessor implements Processor
+class SendMailProcessor implements PsrProcessor
 {
-    public function process(Message $message, Context $context) 
+    public function process(PsrMessage $message, PsrContext $context) 
     {
         if ($message->isRedelivered()) {
             return self::REQUEUE;
@@ -76,13 +76,13 @@ The second argument is your context. You can use it to send messages to other qu
  
 ```php
 <?php
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
 
-class SendMailProcessor implements Processor
+class SendMailProcessor implements PsrProcessor
 {
-    public function process(Message $message, Context $context) 
+    public function process(PsrMessage $message, PsrContext $context) 
     {
         $this->mailer->send('foo@example.com', $message->getBody());
         
@@ -99,17 +99,17 @@ The consumption component provide some useful extensions, for example there is a
  
 ```php
 <?php
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 
-class SendMailProcessor implements Processor
+class SendMailProcessor implements PsrProcessor
 {
-    public function process(Message $message, Context $context) 
+    public function process(PsrMessage $message, PsrContext $context) 
     {
         $this->mailer->send('foo@example.com', $message->getBody());
         
@@ -119,7 +119,7 @@ class SendMailProcessor implements Processor
     }
 }
 
-/** @var \Enqueue\Psr\Context $psrContext */
+/** @var \Enqueue\Psr\PsrContext $psrContext */
 
 $queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
     new ReplyExtension()

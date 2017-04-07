@@ -2,9 +2,9 @@
 
 namespace Enqueue\Transport\Null;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 
-class NullMessage implements Message
+class NullMessage implements PsrMessage
 {
     /**
      * @var string

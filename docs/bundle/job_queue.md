@@ -14,21 +14,21 @@ Guaranty that there is only single job running with such name.
 
 ```php
 <?php 
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Util\JSON;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 
-class ReindexProcessor implements Processor
+class ReindexProcessor implements PsrProcessor
 {
     /**
      * @var JobRunner
      */
     private $jobRunner;
 
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -57,11 +57,11 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Util\JSON;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
 
-class Step1Processor implements Processor 
+class Step1Processor implements PsrProcessor 
 {
     /**
      * @var JobRunner
@@ -73,7 +73,7 @@ class Step1Processor implements Processor
      */
     private $producer;
 
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -104,14 +104,14 @@ class Step1Processor implements Processor
     }
 }
 
-class Step2Processor implements Processor 
+class Step2Processor implements PsrProcessor 
 {
     /**
      * @var JobRunner
      */
     private $jobRunner;
 
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -124,7 +124,7 @@ class Step2Processor implements Processor
             }
         );
 
-        return $result ? Result::ACK : Result::REJECT;
+        return $result ? self::ACK : self::REJECT;
     }
 }
 ```
@@ -140,11 +140,11 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\DependentJobService;
 use Enqueue\Util\JSON;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
 
-class ReindexProcessor implements Processor 
+class ReindexProcessor implements PsrProcessor 
 {
     /**
      * @var JobRunner
@@ -156,7 +156,7 @@ class ReindexProcessor implements Processor
      */
     private $dependentJob;
 
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
 

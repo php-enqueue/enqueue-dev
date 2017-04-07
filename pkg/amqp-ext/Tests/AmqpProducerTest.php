@@ -3,7 +3,7 @@
 namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpProducer;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 
 class AmqpProducerTest extends \PHPUnit_Framework_TestCase
@@ -12,6 +12,6 @@ class AmqpProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementProducerInterface()
     {
-        $this->assertClassImplements(Producer::class, AmqpProducer::class);
+        $this->assertClassImplements(PsrProducer::class, AmqpProducer::class);
     }
 }

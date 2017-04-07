@@ -13,7 +13,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 
 class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
@@ -571,11 +571,11 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProducer
      */
     private function createPsrProducerMock()
     {
-        return $this->createMock(Producer::class);
+        return $this->createMock(PsrProducer::class);
     }
 
     /**

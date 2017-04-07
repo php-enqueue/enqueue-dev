@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Transport\Null;
 
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullProducer;
@@ -14,7 +14,7 @@ class NullProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementMessageProducerInterface()
     {
-        $this->assertClassImplements(Producer::class, NullProducer::class);
+        $this->assertClassImplements(PsrProducer::class, NullProducer::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()

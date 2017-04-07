@@ -8,7 +8,7 @@ use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
@@ -20,7 +20,7 @@ class FsProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementProducerInterface()
     {
-        $this->assertClassImplements(Producer::class, FsProducer::class);
+        $this->assertClassImplements(PsrProducer::class, FsProducer::class);
     }
 
     public function testCouldBeConstructedWithContextAsFirstArgument()

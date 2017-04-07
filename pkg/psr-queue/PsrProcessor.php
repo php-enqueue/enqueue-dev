@@ -27,10 +27,10 @@ interface PsrProcessor
      * The method also can return an object.
      * It must implement __toString method and the method must return one of the constants from above.
      *
-     * @param Message $message
-     * @param Context $context
+     * @param PsrMessage $message
+     * @param PsrContext $context
      *
-     * @return string|object
+     * @return string|object with __toString method implemented
      */
-    public function process(Message $message, Context $context);
+    public function process(PsrMessage $message, PsrContext $context);
 }

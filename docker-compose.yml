@@ -7,7 +7,7 @@ services:
       - rabbitmq
       - mysql
     volumes:
-      - ./:/mqdev
+      - ./:/mqdev:cached
     environment:
       - SYMFONY__RABBITMQ__HOST=rabbitmq
       - SYMFONY__RABBITMQ__USER=guest
@@ -32,7 +32,7 @@ services:
   mysql:
     image: mariadb:10
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql:cached
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
 

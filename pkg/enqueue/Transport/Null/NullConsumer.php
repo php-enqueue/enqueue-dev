@@ -2,21 +2,21 @@
 
 namespace Enqueue\Transport\Null;
 
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Destination;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrDestination;
+use Enqueue\Psr\PsrMessage;
 
-class NullConsumer implements Consumer
+class NullConsumer implements PsrConsumer
 {
     /**
-     * @var Destination
+     * @var PsrDestination
      */
     private $queue;
 
     /**
-     * @param Destination $queue
+     * @param PsrDestination $queue
      */
-    public function __construct(Destination $queue)
+    public function __construct(PsrDestination $queue)
     {
         $this->queue = $queue;
     }
@@ -48,14 +48,14 @@ class NullConsumer implements Consumer
     /**
      * {@inheritdoc}
      */
-    public function acknowledge(Message $message)
+    public function acknowledge(PsrMessage $message)
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function reject(Message $message, $requeue = false)
+    public function reject(PsrMessage $message, $requeue = false)
     {
     }
 }

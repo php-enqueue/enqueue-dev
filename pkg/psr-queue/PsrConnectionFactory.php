@@ -5,7 +5,7 @@ namespace Enqueue\Psr;
 interface PsrConnectionFactory
 {
     /**
-     * @return Context
+     * @return PsrContext
      */
     public function createContext();
 }

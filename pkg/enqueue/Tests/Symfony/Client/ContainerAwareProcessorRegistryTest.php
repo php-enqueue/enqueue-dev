@@ -3,7 +3,7 @@
 namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\ProcessorRegistryInterface;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Symfony\Client\ContainerAwareProcessorRegistry;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\Container;
@@ -74,10 +74,10 @@ class ContainerAwareProcessorRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
      */
     protected function createProcessorMock()
     {
-        return $this->createMock(Processor::class);
+        return $this->createMock(PsrProcessor::class);
     }
 }

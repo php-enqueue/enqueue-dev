@@ -2,11 +2,11 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message as PsrMessage;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 
-class DelegateProcessor implements Processor
+class DelegateProcessor implements PsrProcessor
 {
     /**
      * @var ProcessorRegistryInterface
@@ -24,7 +24,7 @@ class DelegateProcessor implements Processor
     /**
      * {@inheritdoc}
      */
-    public function process(PsrMessage $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $processorName = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME);
         if (false == $processorName) {

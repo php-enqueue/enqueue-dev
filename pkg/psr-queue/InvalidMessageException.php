@@ -5,12 +5,12 @@ namespace Enqueue\Psr;
 class InvalidMessageException extends Exception
 {
     /**
-     * @param Message $message
+     * @param PsrMessage $message
      * @param string  $class
      *
      * @throws static
      */
-    public static function assertMessageInstanceOf(Message $message, $class)
+    public static function assertMessageInstanceOf(PsrMessage $message, $class)
     {
         if (!$message instanceof $class) {
             throw new static(sprintf(

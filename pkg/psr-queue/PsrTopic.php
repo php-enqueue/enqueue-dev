@@ -9,7 +9,7 @@ namespace Enqueue\Psr;
  *
  * @see https://docs.oracle.com/javaee/7/api/javax/jms/Topic.html
  */
-interface PsrTopic extends Destination
+interface PsrTopic extends PsrDestination
 {
     /**
      * Gets the name of this topic. This is a destination one sends messages to.

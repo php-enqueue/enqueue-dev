@@ -9,7 +9,7 @@ use Enqueue\JobQueue\DependentJobProcessor;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobStorage;
 use Enqueue\JobQueue\Topics;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
 
@@ -317,11 +317,11 @@ class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     private function createContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 
     /**

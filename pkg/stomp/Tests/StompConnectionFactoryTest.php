@@ -2,7 +2,7 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\ClassExtensionTrait;
@@ -13,7 +13,7 @@ class StompConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementConnectionFactoryInterface()
     {
-        $this->assertClassImplements(ConnectionFactory::class, StompConnectionFactory::class);
+        $this->assertClassImplements(PsrConnectionFactory::class, StompConnectionFactory::class);
     }
 
     public function testCouldBeConstructedWithEmptyConfiguration()

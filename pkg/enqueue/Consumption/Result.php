@@ -2,25 +2,25 @@
 
 namespace Enqueue\Consumption;
 
-use Enqueue\Psr\Message as PsrMessage;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 
 class Result
 {
     /**
-     * @see Processor::ACK for more details
+     * @see PsrProcessor::ACK for more details
      */
-    const ACK = Processor::ACK;
+    const ACK = PsrProcessor::ACK;
 
     /**
-     * @see Processor::ACK for more details
+     * @see PsrProcessor::ACK for more details
      */
-    const REJECT = Processor::REJECT;
+    const REJECT = PsrProcessor::REJECT;
 
     /**
-     * @see Processor::ACK for more details
+     * @see PsrProcessor::ACK for more details
      */
-    const REQUEUE = Processor::REQUEUE;
+    const REQUEUE = PsrProcessor::REQUEUE;
 
     /**
      * @var string

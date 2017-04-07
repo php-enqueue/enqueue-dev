@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Transport\Null;
 
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullConsumer;
 use Enqueue\Transport\Null\NullContext;
@@ -17,7 +17,7 @@ class NullContextTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementSessionInterface()
     {
-        $this->assertClassImplements(Context::class, NullContext::class);
+        $this->assertClassImplements(PsrContext::class, NullContext::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
@@ -87,31 +87,6 @@ class NullContextTest extends \PHPUnit_Framework_TestCase
         $producer = $context->createProducer();
 
         $this->assertInstanceOf(NullProducer::class, $producer);
-    }
-
-    public function testShouldDoNothingOnDeclareQueue()
-    {
-        $queue = new NullQueue('theQueueName');
-
-        $context = new NullContext();
-        $context->declareQueue($queue);
-    }
-
-    public function testShouldDoNothingOnDeclareTopic()
-    {
-        $topic = new NullTopic('theTopicName');
-
-        $context = new NullContext();
-        $context->declareTopic($topic);
-    }
-
-    public function testShouldDoNothingOnDeclareBind()
-    {
-        $topic = new NullTopic('theTopicName');
-        $queue = new NullQueue('theQueueName');
-
-        $context = new NullContext();
-        $context->declareBind($topic, $queue);
     }
 
     public function testShouldCreateTempraryQueueWithUnqiueName()

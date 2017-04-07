@@ -2,17 +2,17 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrProcessor;
 
 class ArrayProcessorRegistry implements ProcessorRegistryInterface
 {
     /**
-     * @var Processor[]
+     * @var PsrProcessor[]
      */
     private $processors;
 
     /**
-     * @param Processor[] $processors
+     * @param PsrProcessor[] $processors
      */
     public function __construct(array $processors = [])
     {
@@ -21,9 +21,9 @@ class ArrayProcessorRegistry implements ProcessorRegistryInterface
 
     /**
      * @param string    $name
-     * @param Processor $processor
+     * @param PsrProcessor $processor
      */
-    public function add($name, Processor $processor)
+    public function add($name, PsrProcessor $processor)
     {
         $this->processors[$name] = $processor;
     }

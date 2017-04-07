@@ -5,9 +5,9 @@ namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 use Doctrine\Common\Persistence\ObjectManager;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
 use Enqueue\Consumption\Context;
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -51,8 +51,8 @@ class DoctrineClearIdentityMapExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $context = new Context($this->createMock(PsrContext::class));
         $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setPsrConsumer($this->createMock(Consumer::class));
-        $context->setPsrProcessor($this->createMock(Processor::class));
+        $context->setPsrConsumer($this->createMock(PsrConsumer::class));
+        $context->setPsrProcessor($this->createMock(PsrProcessor::class));
 
         return $context;
     }

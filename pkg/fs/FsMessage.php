@@ -2,9 +2,9 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 
-class FsMessage implements Message, \JsonSerializable
+class FsMessage implements PsrMessage, \JsonSerializable
 {
     /**
      * @var string

@@ -2,11 +2,11 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Destination;
 use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrDestination;
 
-class StompContext implements Context
+class StompContext implements PsrContext
 {
     /**
      * @var BufferedStompClient
@@ -161,7 +161,7 @@ class StompContext implements Context
      *
      * @return StompConsumer
      */
-    public function createConsumer(Destination $destination)
+    public function createConsumer(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
 

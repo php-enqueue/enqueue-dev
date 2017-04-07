@@ -11,7 +11,7 @@ use Enqueue\Fs\Client\FsDriver;
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Makasim\File\TempFile;
 
@@ -343,11 +343,11 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProducer
      */
     private function createPsrProducerMock()
     {
-        return $this->createMock(Producer::class);
+        return $this->createMock(PsrProducer::class);
     }
 
     /**

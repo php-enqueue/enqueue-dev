@@ -2,10 +2,10 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\Queue;
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrQueue;
+use Enqueue\Psr\PsrTopic;
 
-class FsDestination implements Queue, Topic
+class FsDestination implements PsrQueue, PsrTopic
 {
     /**
      * @var \SplFileInfo

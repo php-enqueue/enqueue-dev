@@ -3,11 +3,11 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrQueue;
 use Psr\Log\LoggerInterface;
 
 class Context
@@ -18,12 +18,12 @@ class Context
     private $psrContext;
 
     /**
-     * @var \Enqueue\Psr\Consumer
+     * @var PsrConsumer
      */
     private $psrConsumer;
 
     /**
-     * @var Processor
+     * @var PsrProcessor
      */
     private $psrProcessor;
 
@@ -33,7 +33,7 @@ class Context
     private $logger;
 
     /**
-     * @var Message
+     * @var PsrMessage
      */
     private $psrMessage;
 
@@ -48,7 +48,7 @@ class Context
     private $result;
 
     /**
-     * @var \Enqueue\Psr\Queue
+     * @var PsrQueue
      */
     private $psrQueue;
 
@@ -68,7 +68,7 @@ class Context
     }
 
     /**
-     * @return \Enqueue\Psr\Message
+     * @return PsrMessage
      */
     public function getPsrMessage()
     {
@@ -76,9 +76,9 @@ class Context
     }
 
     /**
-     * @param Message $psrMessage
+     * @param PsrMessage $psrMessage
      */
-    public function setPsrMessage(Message $psrMessage)
+    public function setPsrMessage(PsrMessage $psrMessage)
     {
         if ($this->psrMessage) {
             throw new IllegalContextModificationException('The message could be set once');
@@ -96,7 +96,7 @@ class Context
     }
 
     /**
-     * @return Consumer
+     * @return PsrConsumer
      */
     public function getPsrConsumer()
     {
@@ -104,9 +104,9 @@ class Context
     }
 
     /**
-     * @param Consumer $psrConsumer
+     * @param PsrConsumer $psrConsumer
      */
-    public function setPsrConsumer(Consumer $psrConsumer)
+    public function setPsrConsumer(PsrConsumer $psrConsumer)
     {
         if ($this->psrConsumer) {
             throw new IllegalContextModificationException('The message consumer could be set once');
@@ -116,7 +116,7 @@ class Context
     }
 
     /**
-     * @return Processor
+     * @return PsrProcessor
      */
     public function getPsrProcessor()
     {
@@ -124,9 +124,9 @@ class Context
     }
 
     /**
-     * @param Processor $psrProcessor
+     * @param PsrProcessor $psrProcessor
      */
-    public function setPsrProcessor(Processor $psrProcessor)
+    public function setPsrProcessor(PsrProcessor $psrProcessor)
     {
         if ($this->psrProcessor) {
             throw new IllegalContextModificationException('The message processor could be set once');
@@ -212,7 +212,7 @@ class Context
     }
 
     /**
-     * @return \Enqueue\Psr\Queue
+     * @return PsrQueue
      */
     public function getPsrQueue()
     {
@@ -220,9 +220,9 @@ class Context
     }
 
     /**
-     * @param \Enqueue\Psr\Queue $psrQueue
+     * @param PsrQueue $psrQueue
      */
-    public function setPsrQueue(Queue $psrQueue)
+    public function setPsrQueue(PsrQueue $psrQueue)
     {
         if ($this->psrQueue) {
             throw new IllegalContextModificationException('The queue modification is not allowed');

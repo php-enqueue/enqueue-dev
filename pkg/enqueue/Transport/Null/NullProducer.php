@@ -2,16 +2,16 @@
 
 namespace Enqueue\Transport\Null;
 
-use Enqueue\Psr\Destination;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrDestination;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProducer;
 
-class NullProducer implements Producer
+class NullProducer implements PsrProducer
 {
     /**
      * {@inheritdoc}
      */
-    public function send(Destination $destination, Message $message)
+    public function send(PsrDestination $destination, PsrMessage $message)
     {
     }
 }

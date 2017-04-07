@@ -2,9 +2,9 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrTopic;
 
-class AmqpTopic implements Topic
+class AmqpTopic implements PsrTopic
 {
     /**
      * @var string

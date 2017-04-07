@@ -6,13 +6,13 @@ use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message as PsrMessage;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class DependentJobProcessor implements Processor, TopicSubscriberInterface
+class DependentJobProcessor implements PsrProcessor, TopicSubscriberInterface
 {
     /**
      * @var JobStorage
@@ -44,7 +44,7 @@ class DependentJobProcessor implements Processor, TopicSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public function process(PsrMessage $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
 

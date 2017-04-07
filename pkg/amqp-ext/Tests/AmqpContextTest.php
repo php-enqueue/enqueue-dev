@@ -9,7 +9,7 @@ use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\AmqpExt\Buffer;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
@@ -21,7 +21,7 @@ class AmqpContextTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementPsrContextInterface()
     {
-        $this->assertClassImplements(Context::class, AmqpContext::class);
+        $this->assertClassImplements(PsrContext::class, AmqpContext::class);
     }
 
     public function testCouldBeConstructedWithExtChannelAsFirstArgument()

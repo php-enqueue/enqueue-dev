@@ -35,9 +35,9 @@ It allows to keep subscription login and process logic closer to each other.
 namespace AppBundle\Async;
 
 use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrProcessor;
 
-class SayHelloProcessor implements Processor, TopicSubscriberInterface
+class SayHelloProcessor implements PsrProcessor, TopicSubscriberInterface
 {
     public static function getSubscribedTopics()
     {
@@ -51,9 +51,9 @@ On the topic subscriber you can also define queue and processor name:
 ```php
 <?php
 use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrProcessor;
 
-class SayHelloProcessor implements Processor, TopicSubscriberInterface
+class SayHelloProcessor implements PsrProcessor, TopicSubscriberInterface
 {
     public static function getSubscribedTopics()
     {

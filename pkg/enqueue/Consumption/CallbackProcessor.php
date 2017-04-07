@@ -2,11 +2,11 @@
 
 namespace Enqueue\Consumption;
 
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 
-class CallbackProcessor implements Processor
+class CallbackProcessor implements PsrProcessor
 {
     /**
      * @var callable
@@ -24,7 +24,7 @@ class CallbackProcessor implements Processor
     /**
      * {@inheritdoc}
      */
-    public function process(Message $message, PsrContext $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         return call_user_func($this->callback, $message, $context);
     }

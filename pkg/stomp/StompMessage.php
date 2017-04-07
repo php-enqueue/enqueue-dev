@@ -2,10 +2,10 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Stomp\Transport\Frame;
 
-class StompMessage implements Message
+class StompMessage implements PsrMessage
 {
     /**
      * @var string

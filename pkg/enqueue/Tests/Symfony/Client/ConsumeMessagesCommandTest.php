@@ -8,7 +8,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Enqueue\Transport\Null\NullQueue;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -198,11 +198,11 @@ class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     private function createPsrContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 
     /**

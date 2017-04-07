@@ -10,7 +10,7 @@ use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
-use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Psr\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -143,7 +143,7 @@ class FsDriver implements DriverInterface
      *
      * {@inheritdoc}
      */
-    public function createClientMessage(TransportMessage $message)
+    public function createClientMessage(PsrMessage $message)
     {
         $clientMessage = new Message();
 

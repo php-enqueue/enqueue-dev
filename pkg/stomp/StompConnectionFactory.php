@@ -2,10 +2,10 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 use Stomp\Network\Connection;
 
-class StompConnectionFactory implements ConnectionFactory
+class StompConnectionFactory implements PsrConnectionFactory
 {
     /**
      * @var array

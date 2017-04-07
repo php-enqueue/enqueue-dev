@@ -3,8 +3,8 @@
 namespace Enqueue\Fs\Tests;
 
 use Enqueue\Fs\FsDestination;
-use Enqueue\Psr\Queue;
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrQueue;
+use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Makasim\File\TempFile;
 
@@ -14,8 +14,8 @@ class FsDestinationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsTopicAndQueueInterfaces()
     {
-        $this->assertClassImplements(Topic::class, FsDestination::class);
-        $this->assertClassImplements(Queue::class, FsDestination::class);
+        $this->assertClassImplements(PsrTopic::class, FsDestination::class);
+        $this->assertClassImplements(PsrQueue::class, FsDestination::class);
     }
 
     public function testCouldBeConstructedWithSplFileAsFirstArgument()

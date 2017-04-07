@@ -5,13 +5,13 @@ namespace Enqueue\JobQueue;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class CalculateRootJobStatusProcessor implements Processor, TopicSubscriberInterface
+class CalculateRootJobStatusProcessor implements PsrProcessor, TopicSubscriberInterface
 {
     /**
      * @var JobStorage
@@ -54,7 +54,7 @@ class CalculateRootJobStatusProcessor implements Processor, TopicSubscriberInter
     /**
      * {@inheritdoc}
      */
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
 

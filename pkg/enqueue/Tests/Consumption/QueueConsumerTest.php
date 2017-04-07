@@ -9,11 +9,11 @@ use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Consumer;
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrQueue;
 use Enqueue\Tests\Consumption\Mock\BreakCycleExtension;
 use Enqueue\Transport\Null\NullQueue;
 use Psr\Log\NullLogger;
@@ -94,7 +94,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The argument must be an instance of Enqueue\Psr\Queue but got stdClass.');
+        $this->expectExceptionMessage('The argument must be an instance of Enqueue\Psr\PsrQueue but got stdClass.');
         $consumer->bind(new \stdClass(), $processorMock);
     }
 
@@ -103,7 +103,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The argument must be an instance of Enqueue\Psr\Processor but got stdClass.');
+        $this->expectExceptionMessage('The argument must be an instance of Enqueue\Psr\PsrProcessor but got stdClass.');
         $consumer->bind(new NullQueue(''), new \stdClass());
     }
 
@@ -152,7 +152,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
     {
         $expectedQueue = new NullQueue('theQueueName');
 
-        $messageConsumerMock = $this->createMock(Consumer::class);
+        $messageConsumerMock = $this->createMock(PsrConsumer::class);
         $messageConsumerMock
             ->expects($this->exactly(5))
             ->method('receive')
@@ -1069,11 +1069,11 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param null|mixed $message
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
      */
     protected function createMessageConsumerStub($message = null)
     {
-        $messageConsumerMock = $this->createMock(Consumer::class);
+        $messageConsumerMock = $this->createMock(PsrConsumer::class);
         $messageConsumerMock
             ->expects($this->any())
             ->method('receive')
@@ -1099,7 +1099,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
         $context
             ->expects($this->any())
             ->method('createQueue')
-            ->willReturn($this->createMock(Queue::class))
+            ->willReturn($this->createMock(PsrQueue::class))
         ;
         $context
             ->expects($this->any())
@@ -1110,15 +1110,15 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
      */
     protected function createProcessorMock()
     {
-        return $this->createMock(Processor::class);
+        return $this->createMock(PsrProcessor::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
      */
     protected function createProcessorStub()
     {
@@ -1133,11 +1133,11 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Message
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrMessage
      */
     protected function createMessageMock()
     {
-        return $this->createMock(Message::class);
+        return $this->createMock(PsrMessage::class);
     }
 
     /**

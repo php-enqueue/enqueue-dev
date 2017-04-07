@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Transport\Null;
 
-use Enqueue\Psr\Consumer;
+use Enqueue\Psr\PsrConsumer;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullConsumer;
 use Enqueue\Transport\Null\NullMessage;
@@ -14,7 +14,7 @@ class NullConsumerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementMessageConsumerInterface()
     {
-        $this->assertClassImplements(Consumer::class, NullConsumer::class);
+        $this->assertClassImplements(PsrConsumer::class, NullConsumer::class);
     }
 
     public function testCouldBeConstructedWithQueueAsArgument()

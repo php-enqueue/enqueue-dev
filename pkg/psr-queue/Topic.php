@@ -7,6 +7,6 @@ namespace Enqueue\Psr;
 /**
  * @deprecated use PsrTopic
  */
-interface Topic extends PsrTopic
+interface Topic extends PsrTopic, Destination
 {
 }

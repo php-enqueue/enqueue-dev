@@ -9,7 +9,7 @@ namespace Enqueue\Psr;
  *
  * @see https://docs.oracle.com/javaee/7/api/javax/jms/Queue.html
  */
-interface PsrQueue extends Destination
+interface PsrQueue extends PsrDestination
 {
     /**
      * Gets the name of this queue. This is a destination one consumes messages from.

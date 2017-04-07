@@ -9,7 +9,7 @@ use Enqueue\JobQueue\CalculateRootJobStatusService;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobStorage;
 use Enqueue\JobQueue\Topics;
-use Enqueue\Psr\Context;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
 
@@ -20,7 +20,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
         new CalculateRootJobStatusProcessor(
             $this->createJobStorageMock(),
             $this->createCalculateRootJobStatusCaseMock(),
-            $this->createMessageProducerMock(),
+            $this->createProducerMock(),
             $this->createLoggerMock()
         );
     }
@@ -48,7 +48,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
         $processor = new CalculateRootJobStatusProcessor(
             $this->createJobStorageMock(),
             $this->createCalculateRootJobStatusCaseMock(),
-            $this->createMessageProducerMock(),
+            $this->createProducerMock(),
             $logger
         );
         $result = $processor->process($message, $this->createContextMock());
@@ -78,7 +78,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('calculate')
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
             ->method('send')
@@ -118,7 +118,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($this->identicalTo($job))
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
             ->method('send')
@@ -158,7 +158,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true))
         ;
 
-        $producer = $this->createMessageProducerMock();
+        $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
@@ -177,17 +177,17 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
      */
-    private function createMessageProducerMock()
+    private function createProducerMock()
     {
         return $this->createMock(ProducerInterface::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     private function createContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 
     /**

@@ -4,9 +4,9 @@ namespace Enqueue\Tests\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Processor;
-use Enqueue\Psr\Queue;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Psr\PsrQueue;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
@@ -51,7 +51,7 @@ class ContainerAwareConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCa
     public function testShouldThrowExceptionIfProcessorInstanceHasWrongClass()
     {
         $this->setExpectedException(\LogicException::class, 'Invalid message processor service given.'.
-            ' It must be an instance of Enqueue\Psr\Processor but stdClass');
+            ' It must be an instance of Enqueue\Psr\PsrProcessor but stdClass');
 
         $container = new Container();
         $container->set('processor-service', new \stdClass());
@@ -114,27 +114,27 @@ class ContainerAwareConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     protected function createContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Queue
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrQueue
      */
     protected function createQueueMock()
     {
-        return $this->createMock(Queue::class);
+        return $this->createMock(PsrQueue::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
      */
     protected function createProcessor()
     {
-        return $this->createMock(Processor::class);
+        return $this->createMock(PsrProcessor::class);
     }
 
     /**

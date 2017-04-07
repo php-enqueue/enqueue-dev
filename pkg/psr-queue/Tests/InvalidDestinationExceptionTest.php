@@ -2,9 +2,9 @@
 
 namespace Enqueue\Psr\Tests;
 
-use Enqueue\Psr\Destination;
 use Enqueue\Psr\Exception as ExceptionInterface;
 use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Psr\PsrDestination;
 use Enqueue\Test\ClassExtensionTrait;
 
 class InvalidDestinationExceptionTest extends \PHPUnit_Framework_TestCase
@@ -38,10 +38,10 @@ class InvalidDestinationExceptionTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class DestinationBar implements Destination
+class DestinationBar implements PsrDestination
 {
 }
 
-class DestinationFoo implements Destination
+class DestinationFoo implements PsrDestination
 {
 }

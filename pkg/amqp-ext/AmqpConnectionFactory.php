@@ -2,9 +2,9 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 
-class AmqpConnectionFactory implements ConnectionFactory
+class AmqpConnectionFactory implements PsrConnectionFactory
 {
     /**
      * @var array

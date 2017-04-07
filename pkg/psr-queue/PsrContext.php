@@ -9,21 +9,21 @@ interface PsrContext
      * @param array  $properties
      * @param array  $headers
      *
-     * @return Message
+     * @return PsrMessage
      */
     public function createMessage($body = '', array $properties = [], array $headers = []);
 
     /**
      * @param string $topicName
      *
-     * @return Topic
+     * @return PsrTopic
      */
     public function createTopic($topicName);
 
     /**
      * @param string $queueName
      *
-     * @return Queue
+     * @return PsrQueue
      */
     public function createQueue($queueName);
 
@@ -32,21 +32,21 @@ interface PsrContext
      * The queue is visible by this connection only.
      * It will be deleted once the connection is closed.
      *
-     * @return Queue
+     * @return PsrQueue
      */
     public function createTemporaryQueue();
 
     /**
-     * @return Producer
+     * @return PsrProducer
      */
     public function createProducer();
 
     /**
-     * @param Destination $destination
+     * @param PsrDestination $destination
      *
-     * @return Consumer
+     * @return PsrConsumer
      */
-    public function createConsumer(Destination $destination);
+    public function createConsumer(PsrDestination $destination);
 
     public function close();
 }

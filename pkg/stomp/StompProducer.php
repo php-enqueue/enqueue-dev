@@ -2,15 +2,15 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\Destination;
+use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProducer;
 use Stomp\Client;
 use Stomp\Transport\Message as StompLibMessage;
 
-class StompProducer implements Producer
+class StompProducer implements PsrProducer
 {
     /**
      * @var Client
@@ -31,7 +31,7 @@ class StompProducer implements Producer
      * @param StompDestination $destination
      * @param StompMessage     $message
      */
-    public function send(Destination $destination, Message $message)
+    public function send(PsrDestination $destination, PsrMessage $message)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
 

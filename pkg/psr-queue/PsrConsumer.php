@@ -14,7 +14,7 @@ interface PsrConsumer
     /**
      * Gets the Queue associated with this queue receiver.
      *
-     * @return Queue
+     * @return PsrQueue
      */
     public function getQueue();
 
@@ -25,29 +25,29 @@ interface PsrConsumer
      *
      * @param int $timeout the timeout value (in milliseconds)
      *
-     * @return Message|null
+     * @return PsrMessage|null
      */
     public function receive($timeout = 0);
 
     /**
      * Receives the next message if one is immediately available.
      *
-     * @return Message|null
+     * @return PsrMessage|null
      */
     public function receiveNoWait();
 
     /**
      * Tell the MQ broker that the message was processed successfully.
      *
-     * @param Message $message
+     * @param PsrMessage $message
      */
-    public function acknowledge(Message $message);
+    public function acknowledge(PsrMessage $message);
 
     /**
      * Tell the MQ broker that the message was rejected.
      *
-     * @param Message $message
+     * @param PsrMessage $message
      * @param bool    $requeue
      */
-    public function reject(Message $message, $requeue = false);
+    public function reject(PsrMessage $message, $requeue = false);
 }

@@ -5,8 +5,8 @@ namespace Enqueue\Tests\Client;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\ProcessorRegistryInterface;
-use Enqueue\Psr\Context;
-use Enqueue\Psr\Processor;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Transport\Null\NullMessage;
 
 class DelegateProcessorTest extends \PHPUnit_Framework_TestCase
@@ -66,18 +66,18 @@ class DelegateProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
     protected function createPsrContextMock()
     {
-        return $this->createMock(Context::class);
+        return $this->createMock(PsrContext::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
      */
     protected function createProcessorMock()
     {
-        return $this->createMock(Processor::class);
+        return $this->createMock(PsrProcessor::class);
     }
 }

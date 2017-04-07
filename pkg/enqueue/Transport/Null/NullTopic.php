@@ -2,9 +2,9 @@
 
 namespace Enqueue\Transport\Null;
 
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrTopic;
 
-class NullTopic implements Topic
+class NullTopic implements PsrTopic
 {
     /**
      * @var string

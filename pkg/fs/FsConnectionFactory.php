@@ -2,9 +2,9 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 
-class FsConnectionFactory implements ConnectionFactory
+class FsConnectionFactory implements PsrConnectionFactory
 {
     /**
      * @var string

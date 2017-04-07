@@ -2,9 +2,9 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\Consumer;
+use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
@@ -19,7 +19,7 @@ class StompConsumerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementMessageConsumerInterface()
     {
-        $this->assertClassImplements(Consumer::class, StompConsumer::class);
+        $this->assertClassImplements(PsrConsumer::class, StompConsumer::class);
     }
 
     public function testCouldBeConstructedWithRequiredAttributes()
@@ -79,7 +79,7 @@ class StompConsumerTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('The message must be an instance of');
 
         $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
-        $consumer->acknowledge($this->createMock(Message::class));
+        $consumer->acknowledge($this->createMock(PsrMessage::class));
     }
 
     public function testShouldAcknowledgeMessage()
@@ -116,7 +116,7 @@ class StompConsumerTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('The message must be an instance of');
 
         $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
-        $consumer->reject($this->createMock(Message::class));
+        $consumer->reject($this->createMock(PsrMessage::class));
     }
 
     public function testShouldRejectMessage()

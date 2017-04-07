@@ -6,7 +6,7 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Psr\Log\LoggerInterface;
 
 class LoggerExtension implements ExtensionInterface
@@ -67,11 +67,11 @@ class LoggerExtension implements ExtensionInterface
     }
 
     /**
-     * @param Message $message
+     * @param PsrMessage $message
      *
      * @return array
      */
-    private function messageToLogContext(Message $message)
+    private function messageToLogContext(PsrMessage $message)
     {
         return [
             'body' => $message->getBody(),

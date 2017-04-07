@@ -3,7 +3,7 @@
 namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpTopic;
-use Enqueue\Psr\Topic;
+use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
 
 class AmqpTopicTest extends \PHPUnit_Framework_TestCase
@@ -12,7 +12,7 @@ class AmqpTopicTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementTopicInterface()
     {
-        $this->assertClassImplements(Topic::class, AmqpTopic::class);
+        $this->assertClassImplements(PsrTopic::class, AmqpTopic::class);
     }
 
     public function testCouldBeConstructedWithTopicNameAsArgument()

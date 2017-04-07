@@ -2,14 +2,14 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\Destination;
+use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\Message;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProducer;
 use Makasim\File\TempFile;
 
-class FsProducer implements Producer
+class FsProducer implements PsrProducer
 {
     /**
      * @var FsContext
@@ -30,7 +30,7 @@ class FsProducer implements Producer
      * @param FsDestination $destination
      * @param FsMessage     $message
      */
-    public function send(Destination $destination, Message $message)
+    public function send(PsrDestination $destination, PsrMessage $message)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, FsMessage::class);

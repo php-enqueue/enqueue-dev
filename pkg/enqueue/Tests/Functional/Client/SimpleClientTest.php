@@ -8,7 +8,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\Message;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 
@@ -34,7 +34,7 @@ class SimpleClientTest extends \PHPUnit_Framework_TestCase
         $actualMessage = null;
 
         $client = new SimpleClient($this->context);
-        $client->bind('foo_topic', 'foo_processor', function (Message $message) use (&$actualMessage) {
+        $client->bind('foo_topic', 'foo_processor', function (PsrMessage $message) use (&$actualMessage) {
             $actualMessage = $message;
 
             return Result::ACK;
@@ -47,7 +47,7 @@ class SimpleClientTest extends \PHPUnit_Framework_TestCase
             new LimitConsumedMessagesExtension(2),
         ]));
 
-        $this->assertInstanceOf(Message::class, $actualMessage);
+        $this->assertInstanceOf(PsrMessage::class, $actualMessage);
         $this->assertSame('Hello there!', $actualMessage->getBody());
     }
 

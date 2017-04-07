@@ -11,7 +11,7 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\Producer;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 
 class AmqpDriverTest extends \PHPUnit_Framework_TestCase
@@ -356,11 +356,11 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProducer
      */
     private function createPsrProducerMock()
     {
-        return $this->createMock(Producer::class);
+        return $this->createMock(PsrProducer::class);
     }
 
     /**

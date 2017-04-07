@@ -7,6 +7,6 @@ namespace Enqueue\Psr;
 /**
  * @deprecated use PsrQueue
  */
-interface Queue extends PsrQueue
+interface Queue extends PsrQueue, Destination
 {
 }

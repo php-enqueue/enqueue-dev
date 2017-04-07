@@ -6,7 +6,7 @@ use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\Message as TransportMessage;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
@@ -101,7 +101,7 @@ class RabbitMqStompDriver extends StompDriver
      *
      * {@inheritdoc}
      */
-    public function createClientMessage(TransportMessage $message)
+    public function createClientMessage(PsrMessage $message)
     {
         $clientMessage = parent::createClientMessage($message);
 

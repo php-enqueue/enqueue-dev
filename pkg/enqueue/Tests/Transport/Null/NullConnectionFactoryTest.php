@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Transport\Null;
 
-use Enqueue\Psr\ConnectionFactory;
+use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullConnectionFactory;
 use Enqueue\Transport\Null\NullContext;
@@ -13,7 +13,7 @@ class NullConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementConnectionFactoryInterface()
     {
-        $this->assertClassImplements(ConnectionFactory::class, NullConnectionFactory::class);
+        $this->assertClassImplements(PsrConnectionFactory::class, NullConnectionFactory::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
