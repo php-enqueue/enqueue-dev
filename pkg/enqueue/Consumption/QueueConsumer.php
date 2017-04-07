@@ -204,6 +204,8 @@ class QueueConsumer
                 $context->setResult($result);
             }
 
+            $extension->onResult($context);
+
             switch ($context->getResult()) {
                 case Result::ACK:
                     $consumer->acknowledge($message);

@@ -28,6 +28,13 @@ trait EmptyExtensionTrait
     /**
      * @param Context $context
      */
+    public function onResult(Context $context)
+    {
+    }
+
+    /**
+     * @param Context $context
+     */
     public function onPostReceived(Context $context)
     {
     }
