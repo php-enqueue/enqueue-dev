@@ -52,6 +52,16 @@ class ChainExtension implements ExtensionInterface
     /**
      * @param Context $context
      */
+    public function onResult(Context $context)
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->onResult($context);
+        }
+    }
+
+    /**
+     * @param Context $context
+     */
     public function onPostReceived(Context $context)
     {
         foreach ($this->extensions as $extension) {

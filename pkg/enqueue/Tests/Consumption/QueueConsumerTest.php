@@ -467,7 +467,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
         $queueConsumer->consume();
     }
 
-    public function testShouldCallOnPreReceivedAndPostReceivedExtensionMethods()
+    public function testShouldCallOnPreReceivedExtensionMethodWithExpectedContext()
     {
         $expectedMessage = $this->createMessageMock();
         $messageConsumerStub = $this->createMessageConsumerStub($expectedMessage);
@@ -497,6 +497,62 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
                 $this->assertFalse($context->isExecutionInterrupted());
             })
         ;
+
+        $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
+        $queueConsumer = new QueueConsumer($contextStub, $chainExtensions, 0);
+        $queueConsumer->bind(new NullQueue('aQueueName'), $processorMock);
+
+        $queueConsumer->consume();
+    }
+
+    public function testShouldCallOnResultExtensionMethodWithExpectedContext()
+    {
+        $expectedMessage = $this->createMessageMock();
+        $messageConsumerStub = $this->createMessageConsumerStub($expectedMessage);
+
+        $contextStub = $this->createPsrContextStub($messageConsumerStub);
+
+        $processorMock = $this->createProcessorStub();
+
+        $extension = $this->createExtension();
+        $extension
+            ->expects($this->once())
+            ->method('onResult')
+            ->with($this->isInstanceOf(Context::class))
+            ->willReturnCallback(function (Context $context) use (
+                $contextStub,
+                $messageConsumerStub,
+                $processorMock,
+                $expectedMessage
+            ) {
+                $this->assertSame($contextStub, $context->getPsrContext());
+                $this->assertSame($messageConsumerStub, $context->getPsrConsumer());
+                $this->assertSame($processorMock, $context->getPsrProcessor());
+                $this->assertSame($expectedMessage, $context->getPsrMessage());
+                $this->assertInstanceOf(NullLogger::class, $context->getLogger());
+                $this->assertNull($context->getException());
+                $this->assertSame(Result::ACK, $context->getResult());
+                $this->assertFalse($context->isExecutionInterrupted());
+            })
+        ;
+
+        $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
+        $queueConsumer = new QueueConsumer($contextStub, $chainExtensions, 0);
+        $queueConsumer->bind(new NullQueue('aQueueName'), $processorMock);
+
+        $queueConsumer->consume();
+    }
+
+    public function testShouldCallOnPostReceivedExtensionMethodWithExpectedContext()
+    {
+        $expectedMessage = $this->createMessageMock();
+        $messageConsumerStub = $this->createMessageConsumerStub($expectedMessage);
+
+        $contextStub = $this->createPsrContextStub($messageConsumerStub);
+
+        $processorMock = $this->createProcessorStub();
+
+        $extension = $this->createExtension();
         $extension
             ->expects($this->once())
             ->method('onPostReceived')
@@ -722,6 +778,57 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
         $queueConsumer->consume();
     }
 
+    public function testShouldAllowInterruptConsumingOnResult()
+    {
+        $expectedMessage = $this->createMessageMock();
+        $messageConsumerStub = $this->createMessageConsumerStub($expectedMessage);
+
+        $contextStub = $this->createPsrContextStub($messageConsumerStub);
+
+        $processorMock = $this->createProcessorMock();
+        $processorMock
+            ->expects($this->once())
+            ->method('process')
+            ->willReturn(Result::ACK)
+        ;
+
+        $extension = $this->createExtension();
+        $extension
+            ->expects($this->once())
+            ->method('onResult')
+            ->with($this->isInstanceOf(Context::class))
+            ->willReturnCallback(function (Context $context) {
+                $context->setExecutionInterrupted(true);
+            })
+        ;
+        $extension
+            ->expects($this->atLeastOnce())
+            ->method('onInterrupted')
+            ->with($this->isInstanceOf(Context::class))
+            ->willReturnCallback(function (Context $context) use (
+                $contextStub,
+                $messageConsumerStub,
+                $processorMock,
+                $expectedMessage
+            ) {
+                $this->assertSame($contextStub, $context->getPsrContext());
+                $this->assertSame($messageConsumerStub, $context->getPsrConsumer());
+                $this->assertSame($processorMock, $context->getPsrProcessor());
+                $this->assertSame($expectedMessage, $context->getPsrMessage());
+                $this->assertInstanceOf(NullLogger::class, $context->getLogger());
+                $this->assertNull($context->getException());
+                $this->assertSame(Result::ACK, $context->getResult());
+                $this->assertTrue($context->isExecutionInterrupted());
+            })
+        ;
+
+        $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
+        $queueConsumer = new QueueConsumer($contextStub, $chainExtensions, 0);
+        $queueConsumer->bind(new NullQueue('aQueueName'), $processorMock);
+
+        $queueConsumer->consume();
+    }
+
     public function testShouldAllowInterruptConsumingOnPostReceive()
     {
         $expectedMessage = $this->createMessageMock();
@@ -852,6 +959,11 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
         ;
         $runtimeExtension
             ->expects($this->once())
+            ->method('onResult')
+            ->with($this->isInstanceOf(Context::class))
+        ;
+        $runtimeExtension
+            ->expects($this->once())
             ->method('onPostReceived')
             ->with($this->isInstanceOf(Context::class))
         ;
@@ -936,7 +1048,7 @@ class QueueConsumerTest extends \PHPUnit_Framework_TestCase
             })
         ;
         $extension
-            ->expects($this->at(4))
+            ->expects($this->at(5))
             ->method('onBeforeReceive')
             ->with($this->isInstanceOf(Context::class))
             ->willReturnCallback(function (Context $context) use ($anotherProcessorMock, $queue2) {
