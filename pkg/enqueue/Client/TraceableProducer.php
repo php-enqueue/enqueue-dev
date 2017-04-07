@@ -11,14 +11,14 @@ class TraceableProducer implements MessageProducerInterface
     /**
      * @var MessageProducerInterface
      */
-    private $messageProducer;
+    private $producer;
 
     /**
-     * @param MessageProducerInterface $messageProducer
+     * @param ProducerInterface $producer
      */
-    public function __construct(MessageProducerInterface $messageProducer)
+    public function __construct(ProducerInterface $producer)
     {
-        $this->messageProducer = $messageProducer;
+        $this->producer = $producer;
     }
 
     /**
@@ -26,7 +26,7 @@ class TraceableProducer implements MessageProducerInterface
      */
     public function send($topic, $message)
     {
-        $this->messageProducer->send($topic, $message);
+        $this->producer->send($topic, $message);
 
         $trace = [
             'topic' => $topic,

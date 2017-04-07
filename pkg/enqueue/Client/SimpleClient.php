@@ -147,13 +147,13 @@ final class SimpleClient
     }
 
     /**
-     * @return MessageProducerInterface
+     * @return ProducerInterface
      */
     public function getProducer()
     {
         $this->driver->setupBroker();
 
-        return new MessageProducer($this->driver);
+        return new Producer($this->driver);
     }
 
     /**

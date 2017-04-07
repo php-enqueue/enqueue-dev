@@ -6,7 +6,7 @@ They will be executed in parallel.
 
 ```php
 <?php
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Psr\Message;
 use Enqueue\Psr\Context;
 use Enqueue\Psr\Processor;
@@ -19,7 +19,7 @@ class RootJobProcessor implements Processor
     /** @var JobRunner */
     private $jobRunner;
     
-    /** @var  MessageProducerInterface */
+    /** @var  ProducerInterface */
     private $producer;
 
     public function process(Message $message, Context $context)

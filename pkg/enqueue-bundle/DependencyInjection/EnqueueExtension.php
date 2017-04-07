@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
-use Enqueue\Client\TraceableMessageProducer;
+use Enqueue\Client\TraceableProducer;
 use Enqueue\JobQueue\Job;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\FileLocator;
@@ -83,8 +83,8 @@ class EnqueueExtension extends Extension
 
             if (false == empty($config['client']['traceable_producer'])) {
                 $producerId = 'enqueue.client.traceable_message_producer';
-                $container->register($producerId, TraceableMessageProducer::class)
-                    ->setDecoratedService('enqueue.client.message_producer')
+                $container->register($producerId, TraceableProducer::class)
+                    ->setDecoratedService('enqueue.client.producer')
                     ->addArgument(new Reference('enqueue.client.traceable_message_producer.inner'))
                 ;
             }

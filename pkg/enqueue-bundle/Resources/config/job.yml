@@ -13,7 +13,7 @@ services:
         class: 'Enqueue\JobQueue\JobProcessor'
         arguments:
             - '@enqueue.job.storage'
-            - '@enqueue.client.message_producer'
+            - '@enqueue.client.producer'
 
     enqueue.job.runner:
         class: 'Enqueue\JobQueue\JobRunner'
@@ -30,7 +30,7 @@ services:
         arguments:
             - '@enqueue.job.storage'
             - '@enqueue.job.calculate_root_job_status_service'
-            - '@enqueue.client.message_producer'
+            - '@enqueue.client.producer'
             - '@logger'
         tags:
             - { name: 'enqueue.client.processor' }
@@ -39,7 +39,7 @@ services:
         class: 'Enqueue\JobQueue\DependentJobProcessor'
         arguments:
             - '@enqueue.job.storage'
-            - '@enqueue.client.message_producer'
+            - '@enqueue.client.producer'
             - '@logger'
         tags:
             - { name: 'enqueue.client.processor' }

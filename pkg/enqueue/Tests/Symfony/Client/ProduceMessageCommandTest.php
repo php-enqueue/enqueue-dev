@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Symfony\Client;
 
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Symfony\Client\ProduceMessageCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -65,10 +65,10 @@ class ProduceMessageCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MessageProducerInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
      */
     private function createProducerMock()
     {
-        return $this->createMock(MessageProducerInterface::class);
+        return $this->createMock(ProducerInterface::class);
     }
 }

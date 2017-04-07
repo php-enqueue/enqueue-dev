@@ -6,23 +6,23 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
-use Enqueue\Client\MessageProducer;
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\Producer;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 
-class MessageProducerTest extends \PHPUnit_Framework_TestCase
+class ProducerTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementMessageProducerInterface()
     {
-        self::assertClassImplements(MessageProducerInterface::class, MessageProducer::class);
+        self::assertClassImplements(ProducerInterface::class, Producer::class);
     }
 
     public function testCouldBeConstructedWithDriverAsFirstArgument()
     {
-        new MessageProducer($this->createDriverStub());
+        new Producer($this->createDriverStub());
     }
 
     public function testShouldSendMessageToRouter()
@@ -36,7 +36,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
 
         $expectedProperties = [
@@ -57,7 +57,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
 
         self::assertSame(MessagePriority::NORMAL, $message->getPriority());
@@ -75,7 +75,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
 
         self::assertSame(MessagePriority::HIGH, $message->getPriority());
@@ -92,7 +92,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
 
         self::assertNotEmpty($message->getMessageId());
@@ -110,7 +110,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
 
         self::assertSame('theCustomMessageId', $message->getMessageId());
@@ -127,7 +127,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
 
         self::assertNotEmpty($message->getTimestamp());
@@ -145,7 +145,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
 
         self::assertSame('theCustomTimestamp', $message->getTimestamp());
@@ -163,7 +163,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', 'theStringMessage');
     }
 
@@ -179,7 +179,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', ['foo' => 'fooVal']);
     }
 
@@ -198,7 +198,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
     }
 
@@ -218,7 +218,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send($queue, 12345);
     }
 
@@ -241,7 +241,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send($queue, $message);
     }
 
@@ -261,7 +261,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send($queue, null);
     }
 
@@ -284,7 +284,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send($queue, $message);
     }
 
@@ -300,7 +300,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: stdClass');
@@ -322,7 +322,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The message\'s body must be an array of scalars. Found not scalar in the array: stdClass');
@@ -344,7 +344,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The message\'s body must be an array of scalars. Found not scalar in the array: stdClass');
@@ -366,7 +366,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $object);
     }
 
@@ -387,7 +387,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
     }
 
@@ -409,7 +409,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The enqueue.processor_name property must not be set for messages that are sent to message bus.');
@@ -434,7 +434,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The enqueue.processor_queue_name property must not be set for messages that are sent to message bus.');
@@ -462,7 +462,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Content type "application/json" only allowed when body is array');
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
     }
 
@@ -487,7 +487,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
     }
 
@@ -514,7 +514,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
         $producer->send('topic', $message);
     }
 
@@ -533,7 +533,7 @@ class MessageProducerTest extends \PHPUnit_Framework_TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new MessageProducer($driver);
+        $producer = new Producer($driver);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The message scope "iDontKnowScope" is not supported.');

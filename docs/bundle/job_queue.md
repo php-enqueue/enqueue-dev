@@ -55,7 +55,7 @@ Run several sub jobs in parallel.
 <?php
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Util\JSON;
 use Enqueue\Psr\Message;
 use Enqueue\Psr\Context;
@@ -69,7 +69,7 @@ class Step1Processor implements Processor
     private $jobRunner;
 
     /**
-     * @var MessageProducerInterface
+     * @var ProducerInterface
      */
     private $producer;
 

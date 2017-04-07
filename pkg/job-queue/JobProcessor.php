@@ -2,7 +2,7 @@
 
 namespace Enqueue\JobQueue;
 
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 
 class JobProcessor
 {
@@ -12,15 +12,15 @@ class JobProcessor
     private $jobStorage;
 
     /**
-     * @var MessageProducerInterface
+     * @var ProducerInterface
      */
     private $producer;
 
     /**
      * @param JobStorage               $jobStorage
-     * @param MessageProducerInterface $producer
+     * @param ProducerInterface $producer
      */
-    public function __construct(JobStorage $jobStorage, MessageProducerInterface $producer)
+    public function __construct(JobStorage $jobStorage, ProducerInterface $producer)
     {
         $this->jobStorage = $jobStorage;
         $this->producer = $producer;

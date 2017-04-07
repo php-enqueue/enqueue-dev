@@ -14,7 +14,7 @@ use Enqueue\Client\Message;
 $message = new Message();
 $message->setDelay(60); // seconds
 
-/** @var \Enqueue\Client\MessageProducerInterface $producer */
+/** @var \Enqueue\Client\ProducerInterface $producer */
 $producer->send('aTopic', $message);
 ```
 
@@ -32,7 +32,7 @@ use Enqueue\Client\Message;
 $message = new Message();
 $message->setExpire(60); // seconds
 
-/** @var \Enqueue\Client\MessageProducerInterface $producer */
+/** @var \Enqueue\Client\ProducerInterface $producer */
 $producer->send('aTopic', $message);
 ```
 
@@ -51,7 +51,7 @@ use Enqueue\Client\MessagePriority;
 $message = new Message();
 $message->setPriority(MessagePriority::HIGH);
 
-/** @var \Enqueue\Client\MessageProducerInterface $producer */
+/** @var \Enqueue\Client\ProducerInterface $producer */
 $producer->send('aTopic', $message);
 ```
 
@@ -71,7 +71,7 @@ $message->setMessageId('aCustomMessageId');
 $message->setTimestamp(time());
 $message->setContentType('text/plain');
 
-/** @var \Enqueue\Client\MessageProducerInterface $producer */
+/** @var \Enqueue\Client\ProducerInterface $producer */
 $producer->send('aTopic', $message);
 ```
 

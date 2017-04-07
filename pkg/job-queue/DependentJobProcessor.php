@@ -3,7 +3,7 @@
 namespace Enqueue\JobQueue;
 
 use Enqueue\Client\Message;
-use Enqueue\Client\MessageProducerInterface;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Psr\Context;
@@ -20,7 +20,7 @@ class DependentJobProcessor implements Processor, TopicSubscriberInterface
     private $jobStorage;
 
     /**
-     * @var MessageProducerInterface
+     * @var ProducerInterface
      */
     private $producer;
 
@@ -31,10 +31,10 @@ class DependentJobProcessor implements Processor, TopicSubscriberInterface
 
     /**
      * @param JobStorage               $jobStorage
-     * @param MessageProducerInterface $producer
+     * @param ProducerInterface $producer
      * @param LoggerInterface          $logger
      */
-    public function __construct(JobStorage $jobStorage, MessageProducerInterface $producer, LoggerInterface $logger)
+    public function __construct(JobStorage $jobStorage, ProducerInterface $producer, LoggerInterface $logger)
     {
         $this->jobStorage = $jobStorage;
         $this->producer = $producer;
