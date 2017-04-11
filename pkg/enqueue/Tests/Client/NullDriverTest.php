@@ -95,16 +95,18 @@ class NullDriverTest extends \PHPUnit_Framework_TestCase
     {
         $config = new Config('', '', '', '', '', '');
 
-        $message = new Message();
-        $message->setBody('theBody');
-        $message->setContentType('theContentType');
-        $message->setMessageId('theMessageId');
-        $message->setTimestamp(12345);
-        $message->setDelay(123);
-        $message->setExpire(345);
-        $message->setPriority(MessagePriority::LOW);
-        $message->setHeaders(['theHeaderFoo' => 'theFoo']);
-        $message->setProperties(['thePropertyBar' => 'theBar']);
+        $clientMessage = new Message();
+        $clientMessage->setBody('theBody');
+        $clientMessage->setContentType('theContentType');
+        $clientMessage->setMessageId('theMessageId');
+        $clientMessage->setTimestamp(12345);
+        $clientMessage->setDelay(123);
+        $clientMessage->setExpire(345);
+        $clientMessage->setPriority(MessagePriority::LOW);
+        $clientMessage->setHeaders(['theHeaderFoo' => 'theFoo']);
+        $clientMessage->setProperties(['thePropertyBar' => 'theBar']);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
 
         $transportMessage = new NullMessage();
 
@@ -117,7 +119,7 @@ class NullDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new NullDriver($context, $config);
 
-        $transportMessage = $driver->createTransportMessage($message);
+        $transportMessage = $driver->createTransportMessage($clientMessage);
 
         self::assertSame('theBody', $transportMessage->getBody());
         self::assertSame([
@@ -128,30 +130,39 @@ class NullDriverTest extends \PHPUnit_Framework_TestCase
             'priority' => MessagePriority::LOW,
             'timestamp' => 12345,
             'message_id' => 'theMessageId',
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $transportMessage->getHeaders());
         self::assertSame([
             'thePropertyBar' => 'theBar',
         ], $transportMessage->getProperties());
+
+        $this->assertSame('theMessageId', $transportMessage->getMessageId());
+        $this->assertSame(12345, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
     {
         $config = new Config('', '', '', '', '', '');
 
-        $message = new NullMessage();
-        $message->setBody('theBody');
-        $message->setHeaders(['theHeaderFoo' => 'theFoo']);
-        $message->setTimestamp(12345);
-        $message->setMessageId('theMessageId');
-        $message->setHeader('priority', MessagePriority::LOW);
-        $message->setHeader('content_type', 'theContentType');
-        $message->setHeader('delay', 123);
-        $message->setHeader('expiration', 345);
-        $message->setProperties(['thePropertyBar' => 'theBar']);
+        $transportMessage = new NullMessage();
+        $transportMessage->setBody('theBody');
+        $transportMessage->setHeaders(['theHeaderFoo' => 'theFoo']);
+        $transportMessage->setTimestamp(12345);
+        $transportMessage->setMessageId('theMessageId');
+        $transportMessage->setHeader('priority', MessagePriority::LOW);
+        $transportMessage->setHeader('content_type', 'theContentType');
+        $transportMessage->setHeader('delay', 123);
+        $transportMessage->setHeader('expiration', 345);
+        $transportMessage->setProperties(['thePropertyBar' => 'theBar']);
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
 
         $driver = new NullDriver($this->createContextMock(), $config);
 
-        $clientMessage = $driver->createClientMessage($message);
+        $clientMessage = $driver->createClientMessage($transportMessage);
 
         self::assertSame('theBody', $clientMessage->getBody());
         self::assertSame(MessagePriority::LOW, $clientMessage->getPriority());
@@ -166,10 +177,15 @@ class NullDriverTest extends \PHPUnit_Framework_TestCase
             'priority' => MessagePriority::LOW,
             'timestamp' => 12345,
             'message_id' => 'theMessageId',
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $clientMessage->getHeaders());
         self::assertSame([
             'thePropertyBar' => 'theBar',
         ], $clientMessage->getProperties());
+
+        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
     }
 
     public function testShouldReturnConfigInstance()

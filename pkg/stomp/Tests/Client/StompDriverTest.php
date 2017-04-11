@@ -72,6 +72,8 @@ class StompDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setHeader('content-type', 'ContentType');
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
 
         $driver = new StompDriver($this->createPsrContextMock(), new Config('', '', '', '', '', ''));
 
@@ -84,6 +86,8 @@ class StompDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('MessageId', $clientMessage->getMessageId());
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
     }
 
     public function testShouldConvertClientMessageToTransportMessage()
@@ -95,6 +99,8 @@ class StompDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setContentType('ContentType');
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
 
         $context = $this->createPsrContextMock();
         $context
@@ -115,10 +121,14 @@ class StompDriverTest extends \PHPUnit_Framework_TestCase
             'persistent' => true,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply-to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $transportMessage->getHeaders());
         $this->assertSame(['key' => 'val'], $transportMessage->getProperties());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
     }
 
     public function testShouldSendMessageToRouter()

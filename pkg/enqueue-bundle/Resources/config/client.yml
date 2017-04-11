@@ -13,7 +13,6 @@ services:
     enqueue.client.rpc_client:
         class: 'Enqueue\Client\RpcClient'
         arguments:
-            - '@enqueue.client.driver'
             - '@enqueue.client.producer'
             - '@enqueue.transport.context'
 

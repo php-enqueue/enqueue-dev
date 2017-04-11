@@ -84,6 +84,8 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setHeader('priority', 3);
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
 
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
@@ -102,6 +104,8 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
             'priority' => 3,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $clientMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
@@ -113,6 +117,8 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
         $this->assertSame(MessagePriority::HIGH, $clientMessage->getPriority());
+        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
     }
 
     public function testShouldThrowExceptionIfXDelayIsNotNumeric()
@@ -202,6 +208,8 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setDelay(432);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
 
         $context = $this->createPsrContextMock();
         $context
@@ -227,6 +235,8 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
             'delivery_mode' => 2,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
             'priority' => 4,
         ], $transportMessage->getHeaders());
         $this->assertSame([
@@ -235,6 +245,8 @@ class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
         ], $transportMessage->getProperties());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
     }
 
     public function testThrowIfDelayNotSupportedOnConvertClientMessageToTransportMessage()

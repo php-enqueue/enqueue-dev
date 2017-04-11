@@ -9,11 +9,6 @@ use Enqueue\Util\UUID;
 class RpcClient
 {
     /**
-     * @var DriverInterface
-     */
-    private $driver;
-
-    /**
      * @var ProducerInterface
      */
     private $producer;
@@ -24,13 +19,11 @@ class RpcClient
     private $context;
 
     /**
-     * @param DriverInterface $driver
      * @param ProducerInterface $producer
      * @param PsrContext $context
      */
-    public function __construct(DriverInterface $driver, ProducerInterface $producer, PsrContext $context)
+    public function __construct(ProducerInterface $producer, PsrContext $context)
     {
-        $this->driver = $driver;
         $this->context = $context;
         $this->producer = $producer;
     }
@@ -66,25 +59,22 @@ class RpcClient
             $message->setBody($body);
         }
 
-        $transportMessage = $this->driver->createTransportMessage($message);
-        if ($transportMessage->getReplyTo()) {
-            $replyQueue = $this->context->createQueue($transportMessage->getReplyTo());
+        if ($message->getReplyTo()) {
+            $replyQueue = $this->context->createQueue($message->getReplyTo());
         } else {
             $replyQueue = $this->context->createTemporaryQueue();
-            $transportMessage->setReplyTo($replyQueue->getQueueName());
+            $message->setReplyTo($replyQueue->getQueueName());
         }
 
-        if (false == $transportMessage->getCorrelationId()) {
-            $transportMessage->setCorrelationId(UUID::generate());
+        if (false == $message->getCorrelationId()) {
+            $message->setCorrelationId(UUID::generate());
         }
-
-        $message = $this->driver->createClientMessage($transportMessage);
 
         $this->producer->send($topic, $message);
 
         return new Promise(
             $this->context->createConsumer($replyQueue),
-            $transportMessage->getCorrelationId(),
+            $message->getCorrelationId(),
             $timeout
         );
     }

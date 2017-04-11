@@ -101,6 +101,14 @@ class StompDriver implements DriverInterface
             $transportMessage->setTimestamp($message->getTimestamp());
         }
 
+        if ($message->getReplyTo()) {
+            $transportMessage->setReplyTo($message->getReplyTo());
+        }
+
+        if ($message->getCorrelationId()) {
+            $transportMessage->setCorrelationId($message->getCorrelationId());
+        }
+
         return $transportMessage;
     }
 
@@ -117,7 +125,9 @@ class StompDriver implements DriverInterface
         unset(
             $headers['content-type'],
             $headers['message_id'],
-            $headers['timestamp']
+            $headers['timestamp'],
+            $headers['reply-to'],
+            $headers['correlation_id']
         );
 
         $clientMessage->setHeaders($headers);
@@ -128,6 +138,8 @@ class StompDriver implements DriverInterface
 
         $clientMessage->setMessageId($message->getMessageId());
         $clientMessage->setTimestamp($message->getTimestamp());
+        $clientMessage->setReplyTo($message->getReplyTo());
+        $clientMessage->setCorrelationId($message->getCorrelationId());
 
         return $clientMessage;
     }

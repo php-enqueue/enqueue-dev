@@ -2,9 +2,7 @@
 
 namespace Enqueue\Tests\Client;
 
-use Enqueue\Client\Config;
 use Enqueue\Client\Message;
-use Enqueue\Client\NullDriver;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\RpcClient;
 use Enqueue\Psr\PsrConsumer;
@@ -18,7 +16,6 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
     public function testCouldBeConstructedWithPsrContextDriverAndProducerAsArguments()
     {
         new RpcClient(
-            new NullDriver(new NullContext(), Config::create()),
             $this->createProducerMock(),
             $this->createPsrContextMock()
         );
@@ -33,17 +30,16 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('send')
             ->willReturnCallback(function($topic, Message $message) {
-                $this->assertNotEmpty($message->getHeader('correlation_id'));
+                $this->assertNotEmpty($message->getReplyTo());
             })
         ;
 
         $rpc = new RpcClient(
-            new NullDriver($context, Config::create()),
             $producerMock,
             $context
         );
 
-        $rpc->callAsync('aTopic', 'aMessage', 2);
+        $rpc->callAsync('aTopic', new Message(), 2);
     }
 
     public function testShouldNotSetReplyToIfSet()
@@ -51,24 +47,44 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
         $context = new NullContext();
 
         $message = new Message();
-        $message->setHeader('reply_to', 'rpc.reply');
+        $message->setReplyTo('theReplyTo');
 
         $producerMock = $this->createProducerMock();
         $producerMock
             ->expects($this->once())
             ->method('send')
             ->willReturnCallback(function($topic, Message $message) {
-                $this->assertEquals('rpc.reply', $message->getHeader('reply_to'));
+                $this->assertEquals('theReplyTo', $message->getReplyTo());
             })
         ;
 
         $rpc = new RpcClient(
-            new NullDriver($context, Config::create()),
             $producerMock,
             $context
         );
 
         $rpc->callAsync('aTopic', $message, 2);
+    }
+
+    public function testShouldUseSameTopicOnProducerSendCall()
+    {
+        $context = new NullContext();
+
+        $producerMock = $this->createProducerMock();
+        $producerMock
+            ->expects($this->once())
+            ->method('send')
+            ->willReturnCallback(function($topic) {
+                $this->assertEquals('theTopic', $topic);
+            })
+        ;
+
+        $rpc = new RpcClient(
+            $producerMock,
+            $context
+        );
+
+        $rpc->callAsync('theTopic', new Message(), 2);
     }
 
     public function testShouldSetCorrelationIdIfNotSet()
@@ -80,17 +96,16 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('send')
             ->willReturnCallback(function($topic, Message $message) {
-                $this->assertNotEmpty($message->getHeader('correlation_id'));
+                $this->assertNotEmpty($message->getCorrelationId());
             })
         ;
 
         $rpc = new RpcClient(
-            new NullDriver($context, Config::create()),
             $producerMock,
             $context
         );
 
-        $rpc->callAsync('aTopic', 'aMessage', 2);
+        $rpc->callAsync('aTopic', new Message(), 2);
     }
 
     public function testShouldNotSetCorrelationIdIfSet()
@@ -98,19 +113,18 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
         $context = new NullContext();
 
         $message = new Message();
-        $message->setHeader('correlation_id', 'theCorrelationId');
+        $message->setCorrelationId('theCorrelationId');
 
         $producerMock = $this->createProducerMock();
         $producerMock
             ->expects($this->once())
             ->method('send')
             ->willReturnCallback(function($topic, Message $message) {
-                $this->assertEquals('theCorrelationId', $message->getHeader('correlation_id'));
+                $this->assertEquals('theCorrelationId', $message->getCorrelationId());
             })
         ;
 
         $rpc = new RpcClient(
-            new NullDriver($context, Config::create()),
             $producerMock,
             $context
         );
@@ -123,13 +137,11 @@ class RpcClientTest extends \PHPUnit_Framework_TestCase
         $context = new NullContext();
 
         $message = new Message();
-        $message->setHeader('correlation_id', 'theCorrelationId');
-        $message->getHeader('reply_to', 'theReplyTo');
+        $message->setCorrelationId('theCorrelationId');
 
         $timeout = 123;
 
         $rpc = new RpcClient(
-            new NullDriver($context, Config::create()),
             $this->createProducerMock(),
             $context
         );

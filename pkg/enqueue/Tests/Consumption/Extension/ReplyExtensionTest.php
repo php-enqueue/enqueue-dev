@@ -31,69 +31,65 @@ class ReplyExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $extension = new ReplyExtension();
 
-        $extension->onPreReceived(new Context(new NullContext()));
+        $extension->onPreReceived(new Context($this->createNeverUsedContextMock()));
     }
 
     public function testShouldDoNothingOnStart()
     {
         $extension = new ReplyExtension();
 
-        $extension->onStart(new Context(new NullContext()));
+        $extension->onStart(new Context($this->createNeverUsedContextMock()));
     }
 
     public function testShouldDoNothingOnBeforeReceive()
     {
         $extension = new ReplyExtension();
 
-        $extension->onBeforeReceive(new Context(new NullContext()));
+        $extension->onBeforeReceive(new Context($this->createNeverUsedContextMock()));
     }
 
     public function testShouldDoNothingOnInterrupted()
     {
         $extension = new ReplyExtension();
 
-        $extension->onInterrupted(new Context(new NullContext()));
+        $extension->onInterrupted(new Context($this->createNeverUsedContextMock()));
     }
 
     public function testShouldDoNothingIfReceivedMessageNotHaveReplyToSet()
     {
         $extension = new ReplyExtension();
 
-        $context = new Context(new NullContext());
+        $context = new Context($this->createNeverUsedContextMock());
         $context->setPsrMessage(new NullMessage());
 
         $extension->onPostReceived($context);
     }
 
-    public function testThrowIfResultNotInstanceOfResult()
+    public function testShouldDoNothingIfContextResultIsNotInstanceOfResult()
     {
         $extension = new ReplyExtension();
 
         $message = new NullMessage();
         $message->setReplyTo('aReplyToQueue');
 
-        $context = new Context(new NullContext());
+        $context = new Context($this->createNeverUsedContextMock());
         $context->setPsrMessage($message);
         $context->setResult('notInstanceOfResult');
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('To send a reply an instance of Result class has to returned from a Processor.');
         $extension->onPostReceived($context);
     }
 
-    public function testThrowIfResultInstanceOfResultButReplyMessageNotSet()
+    public function testShouldDoNothingIfResultInstanceOfResultButReplyMessageNotSet()
     {
         $extension = new ReplyExtension();
 
         $message = new NullMessage();
         $message->setReplyTo('aReplyToQueue');
 
-        $context = new Context(new NullContext());
+        $context = new Context($this->createNeverUsedContextMock());
         $context->setPsrMessage($message);
         $context->setResult(Result::ack());
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('To send a reply the Result must contain a reply message.');
         $extension->onPostReceived($context);
     }
 
@@ -117,6 +113,7 @@ class ReplyExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($replyQueue, $replyMessage)
         ;
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PsrContext $contextMock */
         $contextMock = $this->createMock(PsrContext::class);
         $contextMock
             ->expects($this->once())
@@ -135,4 +132,19 @@ class ReplyExtensionTest extends \PHPUnit_Framework_TestCase
 
         $extension->onPostReceived($context);
     }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     */
+    private function createNeverUsedContextMock()
+    {
+        $contextMock = $this->createMock(PsrContext::class);
+        $contextMock
+            ->expects($this->never())
+            ->method('createProducer')
+        ;
+
+        return $contextMock;
+    }
+
 }
