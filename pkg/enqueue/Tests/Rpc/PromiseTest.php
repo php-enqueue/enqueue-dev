@@ -4,6 +4,7 @@ namespace Enqueue\Tests\Rpc;
 
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Rpc\Promise;
+use Enqueue\Rpc\TimeoutException;
 use Enqueue\Transport\Null\NullMessage;
 
 class PromiseTest extends \PHPUnit_Framework_TestCase
@@ -24,8 +25,8 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
 
         $promise = new Promise($psrConsumerMock, 'aCorrelationId', 2);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Time outed without receiving reply message. Timeout: 2, CorrelationId: aCorrelationId');
+        $this->expectException(TimeoutException::class);
+        $this->expectExceptionMessage('Rpc call timeout is reached without receiving a reply message. Timeout: 2, CorrelationId: aCorrelationId');
         $promise->getMessage();
     }
 

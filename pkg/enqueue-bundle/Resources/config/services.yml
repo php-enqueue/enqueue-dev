@@ -17,3 +17,8 @@ services:
             - '@enqueue.consumption.queue_consumer'
         tags:
             - { name: 'console.command' }
+
+    enqueue.transport.rpc_client:
+        class: 'Enqueue\Rpc\RpcClient'
+        arguments:
+            - '@enqueue.transport.context'

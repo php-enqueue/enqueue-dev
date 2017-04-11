@@ -3,6 +3,7 @@
 namespace Enqueue\Rpc;
 
 use Enqueue\Psr\PsrConsumer;
+use Enqueue\Psr\PsrMessage;
 
 class Promise
 {
@@ -15,6 +16,7 @@ class Promise
      * @var int
      */
     private $timeout;
+
     /**
      * @var string
      */
@@ -32,6 +34,11 @@ class Promise
         $this->correlationId = $correlationId;
     }
 
+    /**
+     * @throws TimeoutException if the wait timeout is reached
+     *
+     * @return PsrMessage
+     */
     public function getMessage()
     {
         $endTime = time() + $this->timeout;
@@ -47,7 +54,7 @@ class Promise
             }
         }
 
-        throw new \LogicException(sprintf('Time outed without receiving reply message. Timeout: %s, CorrelationId: %s', $this->timeout, $this->correlationId));
+        throw TimeoutException::create($this->timeout, $this->correlationId);
     }
 
     /**

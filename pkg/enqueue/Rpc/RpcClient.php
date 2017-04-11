@@ -25,7 +25,9 @@ class RpcClient
     /**
      * @param PsrDestination $destination
      * @param PsrMessage     $message
-     * @param $timeout
+     * @param int            $timeout
+     *
+     * @throws TimeoutException if the wait timeout is reached
      *
      * @return PsrMessage
      */
@@ -37,7 +39,7 @@ class RpcClient
     /**
      * @param PsrDestination $destination
      * @param PsrMessage     $message
-     * @param $timeout
+     * @param int            $timeout
      *
      * @return Promise
      */

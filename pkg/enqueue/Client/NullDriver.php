@@ -21,12 +21,12 @@ class NullDriver implements DriverInterface
     protected $config;
 
     /**
-     * @param NullContext $session
+     * @param NullContext $context
      * @param Config      $config
      */
-    public function __construct(NullContext $session, Config $config)
+    public function __construct(NullContext $context, Config $config)
     {
-        $this->context = $session;
+        $this->context = $context;
         $this->config = $config;
     }
 
