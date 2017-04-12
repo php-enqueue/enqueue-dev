@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.3.1](https://github.com/php-enqueue/enqueue-dev/tree/0.3.1) (2017-04-12)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.0...0.3.1)
+
+- \[client\] Rename MessageProducer to Producer. To be similar what Psr has [\#42](https://github.com/php-enqueue/enqueue-dev/issues/42)
+
+- \[transport\] Add Psr prefix to transport interfaces.  [\#44](https://github.com/php-enqueue/enqueue-dev/issues/44)
+
+- \[client\] Add RpcClient on client level. [\#50](https://github.com/php-enqueue/enqueue-dev/pull/50) ([makasim](https://github.com/makasim))
+
 ## [0.3.0](https://github.com/php-enqueue/enqueue-dev/tree/0.3.0) (2017-04-07)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.2.12...0.3.0)
 
