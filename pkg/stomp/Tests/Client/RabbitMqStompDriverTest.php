@@ -97,6 +97,8 @@ class RabbitMqStompDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setHeader('x-delay', '5678000');
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
 
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
@@ -117,6 +119,8 @@ class RabbitMqStompDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
         $this->assertSame(MessagePriority::HIGH, $clientMessage->getPriority());
+        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
     }
 
     public function testShouldThrowExceptionIfXDelayIsNotNumeric()
@@ -212,6 +216,8 @@ class RabbitMqStompDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setDelay(432);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
 
         $context = $this->createPsrContextMock();
         $context
@@ -237,6 +243,8 @@ class RabbitMqStompDriverTest extends \PHPUnit_Framework_TestCase
             'persistent' => true,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply-to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
             'expiration' => '123000',
             'priority' => 4,
             'x-delay' => '432000',
@@ -244,6 +252,8 @@ class RabbitMqStompDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['key' => 'val'], $transportMessage->getProperties());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
     }
 
     public function testShouldThrowExceptionIfDelayIsSetButDelayPluginInstalledOptionIsFalse()

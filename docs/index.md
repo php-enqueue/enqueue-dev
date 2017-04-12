@@ -13,6 +13,7 @@
     - [Message examples](client/message_examples.md)
     - [Supported brokers](client/supported_brokers.md)
     - [Message bus](client/message_bus.md)
+    - [RPC call](client/rpc_call.md)
 * Job queue
     - [Run unique job](job_queue/run_unique_job.md)
     - [Run sub job(s)](job_queue/run_sub_job.md)

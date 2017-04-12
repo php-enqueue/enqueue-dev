@@ -54,6 +54,16 @@ class Message
     private $delay;
 
     /**
+     * @var string
+     */
+    private $replyTo;
+
+    /**
+     * @var string
+     */
+    private $correlationId;
+
+    /**
      * @var array
      */
     private $headers = [];
@@ -202,6 +212,38 @@ class Message
     public function getScope()
     {
         return $this->scope;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReplyTo()
+    {
+        return $this->replyTo;
+    }
+
+    /**
+     * @param string $replyTo
+     */
+    public function setReplyTo($replyTo)
+    {
+        $this->replyTo = $replyTo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCorrelationId()
+    {
+        return $this->correlationId;
+    }
+
+    /**
+     * @param string $correlationId
+     */
+    public function setCorrelationId($correlationId)
+    {
+        $this->correlationId = $correlationId;
     }
 
     /**

@@ -10,6 +10,12 @@ services:
     enqueue.producer:
         alias: 'enqueue.client.producer'
 
+    enqueue.client.rpc_client:
+        class: 'Enqueue\Client\RpcClient'
+        arguments:
+            - '@enqueue.client.producer'
+            - '@enqueue.transport.context'
+
     enqueue.client.router_processor:
         class: 'Enqueue\Client\RouterProcessor'
         public: true

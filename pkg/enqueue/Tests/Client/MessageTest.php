@@ -97,6 +97,24 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         self::assertSame(Message::SCOPE_MESSAGE_BUS, $message->getScope());
     }
 
+    public function testShouldAllowGetPreviouslySetReplyTo()
+    {
+        $message = new Message();
+
+        $message->setReplyTo('theReplyTo');
+
+        self::assertSame('theReplyTo', $message->getReplyTo());
+    }
+
+    public function testShouldAllowGetPreviouslySetCorrelationId()
+    {
+        $message = new Message();
+
+        $message->setCorrelationId('theCorrelationId');
+
+        self::assertSame('theCorrelationId', $message->getCorrelationId());
+    }
+
     public function testShouldAllowGetPreviouslySetHeaders()
     {
         $message = new Message();

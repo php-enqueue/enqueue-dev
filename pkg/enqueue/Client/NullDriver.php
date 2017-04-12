@@ -21,12 +21,12 @@ class NullDriver implements DriverInterface
     protected $config;
 
     /**
-     * @param NullContext $session
+     * @param NullContext $context
      * @param Config      $config
      */
-    public function __construct(NullContext $session, Config $config)
+    public function __construct(NullContext $context, Config $config)
     {
-        $this->context = $session;
+        $this->context = $context;
         $this->config = $config;
     }
 
@@ -49,6 +49,8 @@ class NullDriver implements DriverInterface
         $transportMessage->setProperties($message->getProperties());
         $transportMessage->setTimestamp($message->getTimestamp());
         $transportMessage->setMessageId($message->getMessageId());
+        $transportMessage->setReplyTo($message->getReplyTo());
+        $transportMessage->setCorrelationId($message->getCorrelationId());
 
         return $transportMessage;
     }
@@ -66,6 +68,8 @@ class NullDriver implements DriverInterface
         $clientMessage->setProperties($message->getProperties());
         $clientMessage->setTimestamp($message->getTimestamp());
         $clientMessage->setMessageId($message->getMessageId());
+        $clientMessage->setReplyTo($message->getReplyTo());
+        $clientMessage->setCorrelationId($message->getCorrelationId());
 
         if ($contentType = $message->getHeader('content_type')) {
             $clientMessage->setContentType($contentType);

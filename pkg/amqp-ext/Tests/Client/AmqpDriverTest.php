@@ -75,6 +75,8 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setHeader('expiration', '12345000');
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
 
         $driver = new AmqpDriver(
             $this->createPsrContextMock(),
@@ -92,6 +94,8 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
             'expiration' => '12345000',
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $clientMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
@@ -100,6 +104,8 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(12345, $clientMessage->getExpire());
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
     }
 
     public function testShouldThrowExceptionIfExpirationIsNotNumeric()
@@ -129,6 +135,8 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setExpire(123);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
 
         $context = $this->createPsrContextMock();
         $context
@@ -154,12 +162,16 @@ class AmqpDriverTest extends \PHPUnit_Framework_TestCase
             'delivery_mode' => 2,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
         ], $transportMessage->getProperties());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
     }
 
     public function testShouldSendMessageToRouter()

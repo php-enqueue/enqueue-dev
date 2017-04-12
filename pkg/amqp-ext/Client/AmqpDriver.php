@@ -145,6 +145,8 @@ class AmqpDriver implements DriverInterface
         $transportMessage->setProperties($properties);
         $transportMessage->setMessageId($message->getMessageId());
         $transportMessage->setTimestamp($message->getTimestamp());
+        $transportMessage->setReplyTo($message->getReplyTo());
+        $transportMessage->setCorrelationId($message->getCorrelationId());
 
         return $transportMessage;
     }
@@ -174,6 +176,8 @@ class AmqpDriver implements DriverInterface
 
         $clientMessage->setMessageId($message->getMessageId());
         $clientMessage->setTimestamp($message->getTimestamp());
+        $clientMessage->setReplyTo($message->getReplyTo());
+        $clientMessage->setCorrelationId($message->getCorrelationId());
 
         return $clientMessage;
     }

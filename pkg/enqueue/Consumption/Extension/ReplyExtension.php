@@ -17,7 +17,6 @@ class ReplyExtension implements ExtensionInterface
     public function onPostReceived(Context $context)
     {
         $replyTo = $context->getPsrMessage()->getReplyTo();
-        $correlationId = $context->getPsrMessage()->getCorrelationId();
         if (false == $replyTo) {
             return;
         }
@@ -25,13 +24,14 @@ class ReplyExtension implements ExtensionInterface
         /** @var Result $result */
         $result = $context->getResult();
         if (false == $result instanceof Result) {
-            throw new \LogicException('To send a reply an instance of Result class has to returned from a Processor.');
+            return;
         }
 
         if (false == $result->getReply()) {
-            throw new \LogicException('To send a reply the Result must contain a reply message.');
+            return;
         }
 
+        $correlationId = $context->getPsrMessage()->getCorrelationId();
         $replyMessage = clone $result->getReply();
         $replyMessage->setCorrelationId($correlationId);
 

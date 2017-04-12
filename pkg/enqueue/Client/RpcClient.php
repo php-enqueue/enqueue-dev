@@ -1,52 +1,62 @@
 <?php
-
-namespace Enqueue\Rpc;
+namespace Enqueue\Client;
 
 use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\PsrMessage;
+use Enqueue\Rpc\Promise;
 use Enqueue\Util\UUID;
 
 class RpcClient
 {
+    /**
+     * @var ProducerInterface
+     */
+    private $producer;
+
     /**
      * @var PsrContext
      */
     private $context;
 
     /**
+     * @param ProducerInterface $producer
      * @param PsrContext $context
      */
-    public function __construct(PsrContext $context)
+    public function __construct(ProducerInterface $producer, PsrContext $context)
     {
         $this->context = $context;
+        $this->producer = $producer;
     }
 
     /**
-     * @param PsrDestination $destination
-     * @param PsrMessage     $message
-     * @param int            $timeout
-     *
-     * @throws TimeoutException if the wait timeout is reached
+     * @param string $topic
+     * @param string|array|Message $message
+     * @param int $timeout
      *
      * @return PsrMessage
      */
-    public function call(PsrDestination $destination, PsrMessage $message, $timeout)
+    public function call($topic, $message, $timeout)
     {
-        return $this->callAsync($destination, $message, $timeout)->getMessage();
+        return $this->callAsync($topic, $message, $timeout)->getMessage();
     }
 
     /**
-     * @param PsrDestination $destination
-     * @param PsrMessage     $message
-     * @param int            $timeout
+     * @param string $topic
+     * @param string|array|Message $message $message
+     * @param int $timeout
      *
      * @return Promise
      */
-    public function callAsync(PsrDestination $destination, PsrMessage $message, $timeout)
+    public function callAsync($topic, $message, $timeout)
     {
         if ($timeout < 1) {
             throw new \InvalidArgumentException(sprintf('Timeout must be positive not zero integer. Got %s', $timeout));
+        }
+
+        if (false == $message instanceof Message) {
+            $body = $message;
+            $message = new Message();
+            $message->setBody($body);
         }
 
         if ($message->getReplyTo()) {
@@ -60,7 +70,7 @@ class RpcClient
             $message->setCorrelationId(UUID::generate());
         }
 
-        $this->context->createProducer()->send($destination, $message);
+        $this->producer->send($topic, $message);
 
         return new Promise(
             $this->context->createConsumer($replyQueue),
