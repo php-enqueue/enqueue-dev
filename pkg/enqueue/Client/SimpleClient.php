@@ -113,6 +113,14 @@ final class SimpleClient
     }
 
     /**
+     * @return AmqpContext
+     */
+    public function getContext()
+    {
+       return $this->context;
+    }
+
+    /**
      * @return QueueConsumer
      */
     public function getQueueConsumer()
