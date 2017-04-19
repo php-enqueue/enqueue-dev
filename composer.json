@@ -9,6 +9,7 @@
     "enqueue/stomp": "*@dev",
     "enqueue/amqp-ext": "*@dev",
     "enqueue/fs": "*@dev",
+    "enqueue/dbal": "*@dev",
     "enqueue/enqueue-bundle": "*@dev",
     "enqueue/job-queue": "*@dev",
     "enqueue/test": "*@dev"
@@ -57,6 +58,10 @@
     {
       "type": "path",
       "url": "pkg/fs"
+    },
+    {
+      "type": "path",
+      "url": "pkg/dbal"
     }
   ]
 }
