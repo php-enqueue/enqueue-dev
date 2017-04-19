@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.3.2](https://github.com/php-enqueue/enqueue-dev/tree/0.3.2) (2017-04-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.1...0.3.2)
+
+- share simple client context [\#52](https://github.com/php-enqueue/enqueue-dev/pull/52) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.3.1](https://github.com/php-enqueue/enqueue-dev/tree/0.3.1) (2017-04-12)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.0...0.3.1)
 
