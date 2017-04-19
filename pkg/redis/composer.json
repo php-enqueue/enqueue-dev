@@ -1,0 +1,43 @@
+{
+    "name": "enqueue/redis",
+    "type": "library",
+    "description": "Message Queue Redis Transport",
+    "keywords": ["messaging", "queue", "redis"],
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:php-enqueue/test.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "enqueue/psr-queue": "^0.3",
+        "psr/log": "^1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.4.0",
+        "predis/predis": "^1.1",
+        "enqueue/test": "^0.3",
+        "enqueue/enqueue": "^0.3",
+        "symfony/dependency-injection": "^2.8|^3",
+        "symfony/config": "^2.8|^3"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\Redis\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "suggest": {
+        "enqueue/enqueue": "If you'd like to use advanced features like Client abstract layer or Symfony integration features",
+        "predis/predis": "Either this PHP library or redis extension has to be installed.",
+        "ext-redis": "Either this PHP extension or predis/predis extension has to be installed."
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.3.x-dev"
+        }
+    }
+}

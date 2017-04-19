@@ -4,7 +4,7 @@ FROM ubuntu:16.04
 RUN set -x && \
     apt-get update && \
     apt-get install -y --no-install-recommends wget curl openssl ca-certificates nano netcat && \
-    apt-get install -y --no-install-recommends php php-mysql php-curl php-intl php-mbstring php-zip php-mcrypt php-xdebug php-bcmath php-xml php-amqp
+    apt-get install -y --no-install-recommends php php-mysql php-redis php-curl php-intl php-mbstring php-zip php-mcrypt php-xdebug php-bcmath php-xml php-amqp
 
 ## confis
 

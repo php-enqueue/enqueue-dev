@@ -1,0 +1,93 @@
+<?php
+namespace Enqueue\Redis;
+
+class PhpRedis implements Redis
+{
+    /**
+     * @var \Redis
+     */
+    private $redis;
+
+    /**
+     * @var array
+     */
+    private $config;
+
+    /**
+     * @param \Redis $redis
+     * @param array $config
+     */
+    public function __construct(\Redis $redis, array $config)
+    {
+        $this->redis = $redis;
+
+        $this->config = array_replace([
+            'host' => null,
+            'port' => null,
+            'timeout' => null,
+            'reserved' => null,
+            'retry_interval' => null,
+            'persisted' => false,
+        ], $config);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function lpush($key, $value)
+    {
+        if (false == $this->redis->lPush($key, $value)) {
+            throw new ServerException($this->redis->getLastError());
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function brpop($key, $timeout)
+    {
+        if ($result = $this->redis->brPop([$key], $timeout)) {
+            return $result[1];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rpop($key)
+    {
+        return $this->redis->rPop($key);
+    }
+
+    public function connect()
+    {
+        if (false == $this->redis) {
+            $this->redis = new \Redis();
+
+            if ($this->config['persisted']) {
+                $this->redis->pconnect(
+                    $this->config['host'],
+                    $this->config['port'],
+                    $this->config['timeout']
+                );
+            } else {
+                $this->redis->connect(
+                    $this->config['host'],
+                    $this->config['port'],
+                    $this->config['timeout'],
+                    $this->config['reserved'],
+                    $this->config['retry_interval']
+                );
+            }
+        }
+
+        return $this->redis;
+    }
+
+    public function disconnect()
+    {
+        if ($this->redis) {
+            $this->redis->close();
+        }
+    }
+}

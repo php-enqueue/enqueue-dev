@@ -6,6 +6,7 @@ services:
     depends_on:
       - rabbitmq
       - mysql
+      - redis
     volumes:
       - ./:/mqdev
     environment:
@@ -29,6 +30,11 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
       - RABBITMQ_DEFAULT_VHOST=mqdev
+  redis:
+    image: 'redis:3'
+    ports:
+      - "6379:6379"
+
   mysql:
     image: mariadb:10
     volumes:

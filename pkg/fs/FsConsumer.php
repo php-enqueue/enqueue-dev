@@ -2,6 +2,7 @@
 
 namespace Enqueue\Fs;
 
+use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrMessage;
 
@@ -118,6 +119,8 @@ class FsConsumer implements PsrConsumer
      */
     public function reject(PsrMessage $message, $requeue = false)
     {
+        InvalidMessageException::assertMessageInstanceOf($message, FsMessage::class);
+
         // do nothing on reject. fs transport always works in auto ack mode
 
         if ($requeue) {

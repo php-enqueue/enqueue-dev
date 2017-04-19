@@ -33,6 +33,10 @@
             <directory>pkg/fs/Tests</directory>
         </testsuite>
 
+        <testsuite name="redis-ext">
+            <directory>pkg/redis-ext/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>
