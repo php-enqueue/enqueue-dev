@@ -6,11 +6,6 @@ use Enqueue\Psr\PsrMessage;
 class DbalMessage implements PsrMessage
 {
     /**
-     * @var int
-     */
-    private $id;
-
-    /**
      * @var string
      */
     private $body;
@@ -40,29 +35,19 @@ class DbalMessage implements PsrMessage
      */
     private $delay;
 
-    public function __construct()
+    /**
+     * @param string $body
+     * @param array  $properties
+     * @param array  $headers
+     */
+    public function __construct($body = null, array $properties = [], array $headers = [])
     {
-        $this->properties = [];
-        $this->headers = [];
+        $this->body = $body;
+        $this->properties = $properties;
+        $this->headers = $headers;
         $this->redelivered = false;
         $this->priority = 0;
         $this->delay = null;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -166,7 +151,7 @@ class DbalMessage implements PsrMessage
      */
     public function setReplyTo($replyTo)
     {
-        $this->setHeader('reply-to', $replyTo);
+        $this->setHeader('reply_to', $replyTo);
     }
 
     /**
@@ -174,7 +159,7 @@ class DbalMessage implements PsrMessage
      */
     public function getReplyTo()
     {
-        return $this->getHeader('reply-to');
+        return $this->getHeader('reply_to');
     }
 
     /**

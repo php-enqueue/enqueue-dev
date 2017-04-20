@@ -11,6 +11,8 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
+use Enqueue\Dbal\DbalContext;
+use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Stomp\StompContext;
@@ -51,6 +53,10 @@ class EnqueueBundle extends Bundle
 
         if (class_exists(FsContext::class)) {
             $extension->addTransportFactory(new FsTransportFactory());
+        }
+
+        if (class_exists(DbalContext::class)) {
+            $extension->addTransportFactory(new DbalTransportFactory());
         }
     }
 }

@@ -27,12 +27,10 @@ class DbalConnectionFactory implements PsrConnectionFactory
      *
      * @param $config
      */
-    public function __construct(ManagerRegistry $registry, array $config)
+    public function __construct(ManagerRegistry $registry, array $config = [])
     {
         $this->config = array_replace([
             'connectionName' => null,
-            'tableName' => 'enqueue',
-            'pollingInterval' => null,
             'lazy' => true,
         ], $config);
 

@@ -11,6 +11,7 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\EnqueueBundle;
+use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
@@ -151,6 +152,23 @@ class EnqueueBundleTest extends \PHPUnit_Framework_TestCase
             ->expects($this->at(6))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(FsTransportFactory::class))
+        ;
+
+        $bundle = new EnqueueBundle();
+        $bundle->build($container);
+    }
+
+    public function testShouldRegisterDbalTransportFactory()
+    {
+        $extensionMock = $this->createEnqueueExtensionMock();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extensionMock);
+
+        $extensionMock
+            ->expects($this->at(7))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(DbalTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();

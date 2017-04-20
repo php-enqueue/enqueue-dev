@@ -122,6 +122,7 @@ class DbalConsumer implements PsrConsumer
      */
     public function acknowledge(PsrMessage $message)
     {
+        // does nothing
     }
 
     /**
@@ -191,26 +192,25 @@ class DbalConsumer implements PsrConsumer
                 ]
             )->fetch();
 
-            if ($dbalMessage) {
-                $message = $this->convertMessage($dbalMessage);
-
-                $affectedRows = $this->dbal->delete($this->context->getTableName(), ['id' => $message->getId()], [
-                    'id' => Type::INTEGER,
-                ]);
-
-                if (1 !== $affectedRows) {
-                    throw new \LogicException(sprintf(
-                        'Expected record was removed but it is not. id: "%s"',
-                        $message->getId()
-                    ));
-                }
-
+            if (false == $dbalMessage) {
                 $this->dbal->commit();
 
-                return $message;
+                return;
+            }
+
+            // remove message
+            $affectedRows = $this->dbal->delete($this->context->getTableName(), ['id' => $dbalMessage['id']], [
+                'id' => Type::INTEGER,
+            ]);
+
+            if (1 !== $affectedRows) {
+                throw new \LogicException(sprintf('Expected record was removed but it is not. id: "%s"', $dbalMessage['id']));
             }
 
             $this->dbal->commit();
+
+            return $this->convertMessage($dbalMessage);
+
         } catch (\LogicException $e) {
             $this->dbal->rollBack();
             throw $e;
@@ -228,7 +228,6 @@ class DbalConsumer implements PsrConsumer
     {
         $message = $this->context->createMessage();
 
-        $message->setId($dbalMessage['id']);
         $message->setBody($dbalMessage['body']);
         $message->setPriority((int) $dbalMessage['priority']);
         $message->setRedelivered((bool) $dbalMessage['redelivered']);

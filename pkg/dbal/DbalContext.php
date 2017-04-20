@@ -27,9 +27,15 @@ class DbalContext implements PsrContext
      * Callable must return instance of Doctrine\DBAL\Connection once called.
      *
      * @param Connection|callable $connection
+     * @param array               $config
      */
     public function __construct($connection, array $config = [])
     {
+        $this->config = array_replace([
+            'tableName' => 'enqueue',
+            'pollingInterval' => null,
+        ], $config);
+
         if ($connection instanceof Connection) {
             $this->connection = $connection;
         } elseif (is_callable($connection)) {
@@ -37,8 +43,6 @@ class DbalContext implements PsrContext
         } else {
             throw new \InvalidArgumentException('The connection argument must be either Doctrine\DBAL\Connection or callable that returns Doctrine\DBAL\Connection.');
         }
-
-        $this->config = $config;
     }
 
     /**
