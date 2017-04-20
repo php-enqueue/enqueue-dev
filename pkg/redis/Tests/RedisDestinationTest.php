@@ -6,8 +6,9 @@ use Enqueue\Psr\PsrQueue;
 use Enqueue\Psr\PsrTopic;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class RedisDestinationTest extends \PHPUnit_Framework_TestCase
+class RedisDestinationTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

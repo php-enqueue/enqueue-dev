@@ -8,7 +8,7 @@ services:
       - mysql
       - redis
     volumes:
-      - ./:/mqdev
+      - './:/mqdev:cached'
     environment:
       - SYMFONY__RABBITMQ__HOST=rabbitmq
       - SYMFONY__RABBITMQ__USER=guest
@@ -22,6 +22,8 @@ services:
       - SYMFONY__DB__NAME=mqdev
       - SYMFONY__DB__USER=root
       - SYMFONY__DB__PASSWORD=rootpass
+      - SYMFONY__REDIS__HOST=redis
+      - SYMFONY__REDIS__PORT=6379
 
   rabbitmq:
     image: enqueue/rabbitmq:latest

@@ -14,13 +14,10 @@ class PhpRedis implements Redis
     private $config;
 
     /**
-     * @param \Redis $redis
      * @param array $config
      */
-    public function __construct(\Redis $redis, array $config)
+    public function __construct(array $config)
     {
-        $this->redis = $redis;
-
         $this->config = array_replace([
             'host' => null,
             'port' => null,
@@ -59,6 +56,9 @@ class PhpRedis implements Redis
         return $this->redis->rPop($key);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function connect()
     {
         if (false == $this->redis) {
@@ -84,10 +84,21 @@ class PhpRedis implements Redis
         return $this->redis;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function disconnect()
     {
         if ($this->redis) {
             $this->redis->close();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function del($key)
+    {
+        $this->redis->del($key);
     }
 }

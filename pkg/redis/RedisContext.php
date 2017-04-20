@@ -5,6 +5,8 @@ namespace Enqueue\Redis;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrDestination;
+use Enqueue\Psr\PsrQueue;
+use Enqueue\Psr\PsrTopic;
 
 class RedisContext implements PsrContext
 {
@@ -69,6 +71,26 @@ class RedisContext implements PsrContext
     }
 
     /**
+     * @param RedisDestination|PsrQueue $queue
+     */
+    public function deleteQueue(PsrQueue $queue)
+    {
+        InvalidDestinationException::assertDestinationInstanceOf($queue, RedisDestination::class);
+
+        $this->getRedis()->del($queue->getName());
+    }
+
+    /**
+     * @param RedisDestination|PsrTopic $topic
+     */
+    public function deleteTopic(PsrTopic $topic)
+    {
+        InvalidDestinationException::assertDestinationInstanceOf($topic, RedisDestination::class);
+
+        $this->getRedis()->del($topic->getName());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function createTemporaryQueue()
@@ -102,7 +124,7 @@ class RedisContext implements PsrContext
 
     public function close()
     {
-        $this->getRedis()->close();
+        $this->getRedis()->disconnect();
     }
 
     /**

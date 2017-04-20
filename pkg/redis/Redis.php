@@ -29,4 +29,9 @@ interface Redis
     public function connect();
 
     public function disconnect();
+
+    /**
+     * @param string $key
+     */
+    public function del($key);
 }

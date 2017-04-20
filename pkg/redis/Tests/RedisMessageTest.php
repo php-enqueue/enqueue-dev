@@ -5,8 +5,9 @@ namespace Enqueue\Redis\Tests;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class RedisMessageTest extends \PHPUnit_Framework_TestCase
+class RedisMessageTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

@@ -63,10 +63,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
     {
         if ($this->config['lazy']) {
             return new RedisContext(function () {
-                $redis = $this->createRedis();
-                $redis->connect();
-
-                return $redis;
+                return $this->createRedis();
             });
         }
 
@@ -78,12 +75,16 @@ class RedisConnectionFactory implements PsrConnectionFactory
      */
     private function createRedis()
     {
-        if ('phpredis' == $this->config['vendor'] && false == $this->redis) {
-            $this->redis = new PhpRedis(new \Redis(), $this->config);
-        }
+        if (false == $this->redis) {
+            if ('phpredis' == $this->config['vendor'] && false == $this->redis) {
+                $this->redis = new PhpRedis($this->config);
+            }
 
-        if ('predis' == $this->config['vendor'] && false == $this->redis) {
-            $this->redis = new PRedis(new Client($this->config, ['exceptions' => true]));
+            if ('predis' == $this->config['vendor'] && false == $this->redis) {
+                $this->redis = new PRedis(new Client($this->config, ['exceptions' => true]));
+            }
+
+            $this->redis->connect();
         }
 
         return $this->redis;

@@ -37,7 +37,9 @@ class PRedis implements Redis
     public function brpop($key, $timeout)
     {
         try {
-            return $this->brpop($key, (int) $timeout / 1000);
+            if ($result = $this->redis->brpop($key, $timeout)) {
+                return $result[1];
+            }
         } catch (PRedisServerException $e) {
             throw new ServerException('brpop command has failed', null, $e);
         }
@@ -48,19 +50,33 @@ class PRedis implements Redis
      */
     public function rpop($key)
     {   try {
-           return $this->rpop($key);
+           return $this->redis->rpop($key);
         } catch (PRedisServerException $e) {
             throw new ServerException('rpop command has failed', null, $e);
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function connect()
     {
         $this->redis->connect();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function disconnect()
     {
         $this->redis->disconnect();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function del($key)
+    {
+        $this->redis->del([$key]);
     }
 }

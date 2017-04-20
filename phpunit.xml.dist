@@ -29,12 +29,12 @@
             <directory>pkg/amqp-ext/Tests</directory>
         </testsuite>
 
-        <testsuite name="fs">
+        <testsuite name="fs transport">
             <directory>pkg/fs/Tests</directory>
         </testsuite>
 
-        <testsuite name="redis-ext">
-            <directory>pkg/redis-ext/Tests</directory>
+        <testsuite name="redis transport">
+            <directory>pkg/redis/Tests</directory>
         </testsuite>
 
         <testsuite name="enqueue-bundle">

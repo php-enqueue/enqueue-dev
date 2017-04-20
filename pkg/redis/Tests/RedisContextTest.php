@@ -2,6 +2,7 @@
 
 namespace Enqueue\Redis\Tests;
 
+use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisConsumer;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
@@ -11,9 +12,10 @@ use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
-use Makasim\File\TempFile;
+use Enqueue\Transport\Null\NullTopic;
+use PHPUnit\Framework\TestCase;
 
-class RedisContextTest extends \PHPUnit_Framework_TestCase
+class RedisContextTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 
@@ -22,223 +24,189 @@ class RedisContextTest extends \PHPUnit_Framework_TestCase
         $this->assertClassImplements(PsrContext::class, RedisContext::class);
     }
 
-    public function testCouldBeConstructedWithExpectedArguments()
+    public function testCouldBeConstructedWithRedisAsFirstArgument()
     {
         new RedisContext($this->createRedisMock());
     }
 
-//    public function testShouldAllowCreateEmptyMessage()
-//    {
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $message = $context->createMessage();
-//
-//        $this->assertInstanceOf(RedisMessage::class, $message);
-//
-//        $this->assertSame('', $message->getBody());
-//        $this->assertSame([], $message->getProperties());
-//        $this->assertSame([], $message->getHeaders());
-//    }
-//
-//    public function testShouldAllowCreateCustomMessage()
-//    {
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $message = $context->createMessage('theBody', ['aProp' => 'aPropVal'], ['aHeader' => 'aHeaderVal']);
-//
-//        $this->assertInstanceOf(RedisMessage::class, $message);
-//
-//        $this->assertSame('theBody', $message->getBody());
-//        $this->assertSame(['aProp' => 'aPropVal'], $message->getProperties());
-//        $this->assertSame(['aHeader' => 'aHeaderVal'], $message->getHeaders());
-//    }
-//
-//    public function testShouldCreateQueue()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $queue = $context->createQueue($tmpFile->getFilename());
-//
-//        $this->assertInstanceOf(RedisDestination::class, $queue);
-//        $this->assertInstanceOf(\SplFileInfo::class, $queue->getFileInfo());
-//        $this->assertSame((string) $tmpFile, (string) $queue->getFileInfo());
-//
-//        $this->assertSame($tmpFile->getFilename(), $queue->getTopicName());
-//    }
-//
-//    public function testShouldAllowCreateTopic()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $topic = $context->createTopic($tmpFile->getFilename());
-//
-//        $this->assertInstanceOf(RedisDestination::class, $topic);
-//        $this->assertInstanceOf(\SplFileInfo::class, $topic->getFileInfo());
-//        $this->assertSame((string) $tmpFile, (string) $topic->getFileInfo());
-//
-//        $this->assertSame($tmpFile->getFilename(), $topic->getTopicName());
-//    }
-//
-//    public function testShouldAllowCreateTmpQueue()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $queue = $context->createTemporaryQueue();
-//
-//        $this->assertInstanceOf(RedisDestination::class, $queue);
-//        $this->assertInstanceOf(TempFile::class, $queue->getFileInfo());
-//        $this->assertNotEmpty($queue->getQueueName());
-//    }
-//
-//    public function testShouldCreateProducer()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $producer = $context->createProducer();
-//
-//        $this->assertInstanceOf(RedisProducer::class, $producer);
-//    }
-//
-//    public function testShouldThrowIfNotRedisDestinationGivenOnCreateConsumer()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $this->expectException(InvalidDestinationException::class);
-//        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Transport\Null\NullQueue.');
-//        $consumer = $context->createConsumer(new NullQueue('aQueue'));
-//
-//        $this->assertInstanceOf(RedisConsumer::class, $consumer);
-//    }
-//
-//    public function testShouldCreateConsumer()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $queue = $context->createQueue($tmpFile->getFilename());
-//
-//        $context->createConsumer($queue);
-//    }
-//
-//    public function testShouldPropagatePreFetchCountToCreatedConsumer()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $queue = $context->createQueue($tmpFile->getFilename());
-//
-//        $consumer = $context->createConsumer($queue);
-//
-//        // guard
-//        $this->assertInstanceOf(RedisConsumer::class, $consumer);
-//
-//        $this->assertAttributeSame(123, 'preFetchCount', $consumer);
-//    }
-//
-//    public function testShouldAllowGetPreFetchCountSetInConstructor()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $this->assertSame(123, $context->getPreFetchCount());
-//    }
-//
-//    public function testShouldAllowGetPreviouslySetPreFetchCount()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $context->setPreFetchCount(456);
-//
-//        $this->assertSame(456, $context->getPreFetchCount());
-//    }
-//
-//    public function testShouldAllowPurgeMessagesFromQueue()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
-//
-//        file_put_contents($tmpFile, 'foo');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $queue = $context->createQueue($tmpFile->getFilename());
-//
-//        $context->purge($queue);
-//
-//        $this->assertEmpty(file_get_contents($tmpFile));
-//    }
-//
-//    public function testShouldReleaseAllLocksOnClose()
-//    {
-//        new TempFile(sys_get_temp_dir().'/foo');
-//        new TempFile(sys_get_temp_dir().'/bar');
-//
-//        $context = new RedisContext($this->createRedisMock());
-//
-//        $fooQueue = $context->createQueue('foo');
-//        $barQueue = $context->createTopic('bar');
-//
-//        $this->assertAttributeCount(0, 'lockHandlers', $context);
-//
-//        $context->workWithFile($fooQueue, 'r+', function () {
-//        });
-//        $context->workWithFile($barQueue, 'r+', function () {
-//        });
-//        $context->workWithFile($fooQueue, 'c+', function () {
-//        });
-//        $context->workWithFile($barQueue, 'c+', function () {
-//        });
-//
-//        $this->assertAttributeCount(2, 'lockHandlers', $context);
-//
-//        $context->close();
-//
-//        $this->assertAttributeCount(0, 'lockHandlers', $context);
-//    }
-//
-//    public function testShouldCreateFileOnFilesystemIfNotExistOnDeclareDestination()
-//    {
-//        $tmpFile = new TempFile(sys_get_temp_dir().'/'.uniqid());
-//
-//        $context = new RedisContext(sys_get_temp_dir(), 1, 0666);
-//
-//        $queue = $context->createQueue($tmpFile->getFilename());
-//
-//        $this->assertFileNotExists((string) $tmpFile);
-//
-//        $context->declareDestination($queue);
-//
-//        $this->assertFileExists((string) $tmpFile);
-//        $this->assertTrue(is_readable($tmpFile));
-//        $this->assertTrue(is_writable($tmpFile));
-//
-//        // do nothing if file already exists
-//        $context->declareDestination($queue);
-//
-//        $this->assertFileExists((string) $tmpFile);
-//
-//        unlink($tmpFile);
-//    }
+    public function testCouldBeConstructedWithRedisFactoryAsFirstArgument()
+    {
+        new RedisContext(function() {
+            return $this->createRedisMock();
+        });
+    }
+
+    public function testThrowIfNeitherRedisNorFactoryGiven()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The $redis argument must be either Enqueue\Redis\Redis or callable that returns $s once called.');
+        new RedisContext(new \stdClass());
+    }
+
+    public function testShouldAllowCreateEmptyMessage()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $message = $context->createMessage();
+
+        $this->assertInstanceOf(RedisMessage::class, $message);
+
+        $this->assertSame('', $message->getBody());
+        $this->assertSame([], $message->getProperties());
+        $this->assertSame([], $message->getHeaders());
+    }
+
+    public function testShouldAllowCreateCustomMessage()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $message = $context->createMessage('theBody', ['aProp' => 'aPropVal'], ['aHeader' => 'aHeaderVal']);
+
+        $this->assertInstanceOf(RedisMessage::class, $message);
+
+        $this->assertSame('theBody', $message->getBody());
+        $this->assertSame(['aProp' => 'aPropVal'], $message->getProperties());
+        $this->assertSame(['aHeader' => 'aHeaderVal'], $message->getHeaders());
+    }
+
+    public function testShouldCreateQueue()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $queue = $context->createQueue('aQueue');
+
+        $this->assertInstanceOf(RedisDestination::class, $queue);
+        $this->assertSame('aQueue', $queue->getQueueName());
+    }
+
+    public function testShouldAllowCreateTopic()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $topic = $context->createTopic('aTopic');
+
+        $this->assertInstanceOf(RedisDestination::class, $topic);
+        $this->assertSame('aTopic', $topic->getTopicName());
+    }
+
+    public function testThrowNotImplementedOnCreateTmpQueueCall()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Not implemented');
+        $context->createTemporaryQueue();
+    }
+
+    public function testShouldCreateProducer()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $producer = $context->createProducer();
+
+        $this->assertInstanceOf(RedisProducer::class, $producer);
+    }
+
+    public function testShouldThrowIfNotRedisDestinationGivenOnCreateConsumer()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $this->expectException(InvalidDestinationException::class);
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Transport\Null\NullQueue.');
+        $consumer = $context->createConsumer(new NullQueue('aQueue'));
+
+        $this->assertInstanceOf(RedisConsumer::class, $consumer);
+    }
+
+    public function testShouldCreateConsumer()
+    {
+        $context = new RedisContext($this->createRedisMock());
+
+        $queue = $context->createQueue('aQueue');
+
+        $consumer = $context->createConsumer($queue);
+
+        $this->assertInstanceOf(RedisConsumer::class, $consumer);
+    }
+
+    public function testShouldCallRedisDisconnectOnClose()
+    {
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->once())
+            ->method('disconnect')
+        ;
+
+        $context = new RedisContext($redisMock);
+
+        $context->close();
+    }
+
+    public function testThrowIfNotRedisDestinationGivenOnDeleteQueue()
+    {
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->never())
+            ->method('del')
+        ;
+
+        $context = new RedisContext($redisMock);
+
+        $this->expectException(InvalidDestinationException::class);
+        $context->deleteQueue(new NullQueue('aQueue'));
+    }
+
+    public function testShouldAllowDeleteQueue()
+    {
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->once())
+            ->method('del')
+            ->with('aQueueName')
+        ;
+
+        $context = new RedisContext($redisMock);
+
+        $queue = $context->createQueue('aQueueName');
+
+        $context->deleteQueue($queue);
+    }
+
+    public function testThrowIfNotRedisDestinationGivenOnDeleteTopic()
+    {
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->never())
+            ->method('del')
+        ;
+
+        $context = new RedisContext($redisMock);
+
+        $this->expectException(InvalidDestinationException::class);
+        $context->deleteTopic(new NullTopic('aTopic'));
+    }
+
+    public function testShouldAllowDeleteTopic()
+    {
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->once())
+            ->method('del')
+            ->with('aTopicName')
+        ;
+
+        $context = new RedisContext($redisMock);
+
+        $topic = $context->createTopic('aTopicName');
+
+        $context->deleteQueue($topic);
+    }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Redis
+     * @return \PHPUnit_Framework_MockObject_MockObject|Redis
      */
     private function createRedisMock()
     {
-        return $this->createMock(\Redis::class);
+        return $this->createMock(Redis::class);
     }
 }

@@ -1,13 +1,14 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests;
+namespace Enqueue\Redis\Tests;
 
 use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class RedisConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class RedisConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 
@@ -28,6 +29,7 @@ class RedisConnectionFactoryTest extends \PHPUnit_Framework_TestCase
             'retry_interval' => null,
             'persisted' => false,
             'lazy' => true,
+            'vendor' => 'phpredis'
         ], 'config', $factory);
     }
 
@@ -43,6 +45,7 @@ class RedisConnectionFactoryTest extends \PHPUnit_Framework_TestCase
             'retry_interval' => null,
             'persisted' => false,
             'lazy' => true,
+            'vendor' => 'phpredis'
         ], 'config', $factory);
     }
 
