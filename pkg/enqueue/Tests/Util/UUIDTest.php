@@ -3,8 +3,9 @@
 namespace Enqueue\Tests\Util;
 
 use Enqueue\Util\UUID;
+use PHPUnit\Framework\TestCase;
 
-class UUIDTest extends \PHPUnit_Framework_TestCase
+class UUIDTest extends TestCase
 {
     public function testShouldGenerateUniqueId()
     {

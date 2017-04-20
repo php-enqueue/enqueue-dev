@@ -12,7 +12,7 @@ use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobStorage;
 
-class JobStorageTest extends \PHPUnit_Framework_TestCase
+class JobStorageTest extends \PHPUnit\Framework\TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

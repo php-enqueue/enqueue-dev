@@ -12,11 +12,11 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
-use Enqueue\Symfony\Client\SetupBrokerCommand;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class RpcClientTest extends \PHPUnit_Framework_TestCase
+class RpcClientTest extends TestCase
 {
     use RabbitmqAmqpExtension;
     use RabbitmqManagmentExtensionTrait;

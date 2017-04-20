@@ -7,7 +7,7 @@ use Enqueue\Psr\PsrTopic;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Test\ClassExtensionTrait;
 
-class StompDestinationTest extends \PHPUnit_Framework_TestCase
+class StompDestinationTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

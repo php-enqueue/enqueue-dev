@@ -4,8 +4,9 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\Result;
 use Enqueue\Transport\Null\NullMessage;
+use PHPUnit\Framework\TestCase;
 
-class ResultTest extends \PHPUnit_Framework_TestCase
+class ResultTest extends TestCase
 {
     public function testCouldBeConstructedWithExpectedArguments()
     {

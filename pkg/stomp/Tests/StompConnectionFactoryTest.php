@@ -7,7 +7,7 @@ use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\ClassExtensionTrait;
 
-class StompConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

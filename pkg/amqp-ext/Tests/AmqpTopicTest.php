@@ -5,8 +5,9 @@ namespace Enqueue\AmqpExt\Tests;
 use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class AmqpTopicTest extends \PHPUnit_Framework_TestCase
+class AmqpTopicTest extends TestCase
 {
     use ClassExtensionTrait;
 

@@ -13,7 +13,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RabbitMqStompTransportFactoryTest extends \PHPUnit_Framework_TestCase
+class RabbitMqStompTransportFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

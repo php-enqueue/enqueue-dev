@@ -7,7 +7,7 @@ use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\PsrDestination;
 use Enqueue\Test\ClassExtensionTrait;
 
-class InvalidDestinationExceptionTest extends \PHPUnit_Framework_TestCase
+class InvalidDestinationExceptionTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

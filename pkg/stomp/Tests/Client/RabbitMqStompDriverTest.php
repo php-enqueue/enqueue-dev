@@ -17,7 +17,7 @@ use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Psr\Log\LoggerInterface;
 
-class RabbitMqStompDriverTest extends \PHPUnit_Framework_TestCase
+class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

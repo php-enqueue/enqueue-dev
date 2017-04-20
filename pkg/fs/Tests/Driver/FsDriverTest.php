@@ -15,7 +15,7 @@ use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Makasim\File\TempFile;
 
-class FsDriverTest extends \PHPUnit_Framework_TestCase
+class FsDriverTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

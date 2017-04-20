@@ -8,8 +8,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use PHPUnit\Framework\TestCase;
 
-class BuildExtensionsPassTest extends \PHPUnit_Framework_TestCase
+class BuildExtensionsPassTest extends TestCase
 {
     use ClassExtensionTrait;
 

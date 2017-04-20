@@ -18,7 +18,7 @@ use Enqueue\Test\RabbitmqStompExtension;
 /**
  * @group functional
  */
-class StompConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
+class StompConsumptionUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     use RabbitmqStompExtension;
     use RabbitmqManagmentExtensionTrait;

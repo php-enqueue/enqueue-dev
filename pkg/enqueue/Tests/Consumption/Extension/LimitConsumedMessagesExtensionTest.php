@@ -8,8 +8,9 @@ use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\TestCase;
 
-class LimitConsumedMessagesExtensionTest extends \PHPUnit_Framework_TestCase
+class LimitConsumedMessagesExtensionTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

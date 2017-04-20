@@ -14,8 +14,9 @@ use Enqueue\Transport\Null\NullContext;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use PHPUnit\Framework\TestCase;
 
-class EnqueueExtensionTest extends \PHPUnit_Framework_TestCase
+class EnqueueExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 

@@ -7,8 +7,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use PHPUnit\Framework\TestCase;
 
-class AddTopicMetaPassTest extends \PHPUnit_Framework_TestCase
+class AddTopicMetaPassTest extends TestCase
 {
     use ClassExtensionTrait;
 

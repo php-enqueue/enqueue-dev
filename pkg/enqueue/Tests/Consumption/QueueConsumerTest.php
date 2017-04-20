@@ -17,8 +17,9 @@ use Enqueue\Psr\PsrQueue;
 use Enqueue\Tests\Consumption\Mock\BreakCycleExtension;
 use Enqueue\Transport\Null\NullQueue;
 use Psr\Log\NullLogger;
+use PHPUnit\Framework\TestCase;
 
-class QueueConsumerTest extends \PHPUnit_Framework_TestCase
+class QueueConsumerTest extends TestCase
 {
     public function testCouldBeConstructedWithConnectionAndExtensionsAsArguments()
     {

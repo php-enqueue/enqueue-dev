@@ -13,8 +13,9 @@ use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class AmqpDriverTest extends \PHPUnit_Framework_TestCase
+class AmqpDriverTest extends TestCase
 {
     use ClassExtensionTrait;
 

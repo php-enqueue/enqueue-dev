@@ -8,8 +8,9 @@ use Enqueue\Symfony\Client\Meta\QueuesCommand;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class QueuesCommandTest extends \PHPUnit_Framework_TestCase
+class QueuesCommandTest extends TestCase
 {
     use ClassExtensionTrait;
 

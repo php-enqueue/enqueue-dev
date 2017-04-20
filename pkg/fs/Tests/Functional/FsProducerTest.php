@@ -6,7 +6,7 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
 use Makasim\File\TempFile;
 
-class FsProducerTest extends \PHPUnit_Framework_TestCase
+class FsProducerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FsContext

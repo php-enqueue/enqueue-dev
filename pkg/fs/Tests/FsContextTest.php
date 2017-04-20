@@ -13,7 +13,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 use Makasim\File\TempFile;
 
-class FsContextTest extends \PHPUnit_Framework_TestCase
+class FsContextTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

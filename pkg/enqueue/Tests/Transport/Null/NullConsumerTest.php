@@ -7,8 +7,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullConsumer;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
+use PHPUnit\Framework\TestCase;
 
-class NullConsumerTest extends \PHPUnit_Framework_TestCase
+class NullConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 

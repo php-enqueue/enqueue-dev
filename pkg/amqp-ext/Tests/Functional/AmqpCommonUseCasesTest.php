@@ -6,11 +6,12 @@ use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group functional
  */
-class AmqpCommonUseCasesTest extends \PHPUnit_Framework_TestCase
+class AmqpCommonUseCasesTest extends TestCase
 {
     use RabbitmqAmqpExtension;
     use RabbitmqManagmentExtensionTrait;

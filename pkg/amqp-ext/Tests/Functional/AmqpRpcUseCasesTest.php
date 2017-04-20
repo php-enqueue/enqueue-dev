@@ -8,11 +8,12 @@ use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group functional
  */
-class AmqpRpcUseCasesTest extends \PHPUnit_Framework_TestCase
+class AmqpRpcUseCasesTest extends TestCase
 {
     use RabbitmqAmqpExtension;
     use RabbitmqManagmentExtensionTrait;

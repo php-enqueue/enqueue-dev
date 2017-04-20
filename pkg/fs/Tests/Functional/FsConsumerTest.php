@@ -7,7 +7,7 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsMessage;
 use Makasim\File\TempFile;
 
-class FsConsumerTest extends \PHPUnit_Framework_TestCase
+class FsConsumerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FsContext

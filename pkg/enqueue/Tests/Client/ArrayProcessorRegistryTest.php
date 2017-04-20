@@ -6,8 +6,9 @@ use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class ArrayProcessorRegistryTest extends \PHPUnit_Framework_TestCase
+class ArrayProcessorRegistryTest extends TestCase
 {
     use ClassExtensionTrait;
 

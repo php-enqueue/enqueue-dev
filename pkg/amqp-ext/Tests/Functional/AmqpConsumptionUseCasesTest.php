@@ -14,11 +14,12 @@ use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group functional
  */
-class AmqpConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
+class AmqpConsumptionUseCasesTest extends TestCase
 {
     use RabbitmqAmqpExtension;
     use RabbitmqManagmentExtensionTrait;

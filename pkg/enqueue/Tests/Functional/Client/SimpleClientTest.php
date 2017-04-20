@@ -11,8 +11,9 @@ use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class SimpleClientTest extends \PHPUnit_Framework_TestCase
+class SimpleClientTest extends TestCase
 {
     use RabbitmqAmqpExtension;
     use RabbitmqManagmentExtensionTrait;

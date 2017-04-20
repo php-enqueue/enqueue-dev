@@ -13,7 +13,7 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
 
-class CalculateRootJobStatusProcessorTest extends \PHPUnit_Framework_TestCase
+class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\Exception\ExceptionInterface;
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class IllegalContextModificationExceptionTest extends \PHPUnit_Framework_TestCase
+class IllegalContextModificationExceptionTest extends TestCase
 {
     use ClassExtensionTrait;
 

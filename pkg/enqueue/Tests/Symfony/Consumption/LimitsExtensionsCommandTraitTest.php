@@ -7,8 +7,9 @@ use Enqueue\Consumption\Extension\LimitConsumerMemoryExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Tests\Symfony\Consumption\Mock\LimitsExtensionsCommand;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class LimitsExtensionsCommandTraitTest extends \PHPUnit_Framework_TestCase
+class LimitsExtensionsCommandTraitTest extends TestCase
 {
     public function testShouldAddExtensionsOptions()
     {

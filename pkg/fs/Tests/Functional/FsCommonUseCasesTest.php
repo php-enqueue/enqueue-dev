@@ -10,7 +10,7 @@ use Makasim\File\TempFile;
 /**
  * @group functional
  */
-class FsCommonUseCasesTest extends \PHPUnit_Framework_TestCase
+class FsCommonUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FsContext

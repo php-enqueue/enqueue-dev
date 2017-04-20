@@ -7,8 +7,9 @@ use Enqueue\Symfony\Client\Meta\TopicsCommand;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class TopicsCommandTest extends \PHPUnit_Framework_TestCase
+class TopicsCommandTest extends TestCase
 {
     use ClassExtensionTrait;
 

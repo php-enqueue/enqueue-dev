@@ -8,8 +8,9 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTop
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use PHPUnit\Framework\TestCase;
 
-class BuildProcessorRegistryPassTest extends \PHPUnit_Framework_TestCase
+class BuildProcessorRegistryPassTest extends TestCase
 {
     public function testCouldBeConstructedWithoutAnyArguments()
     {
