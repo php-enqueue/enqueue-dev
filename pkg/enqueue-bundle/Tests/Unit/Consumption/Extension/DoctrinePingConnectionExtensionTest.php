@@ -10,8 +10,9 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use PHPUnit\Framework\TestCase;
 
-class DoctrinePingConnectionExtensionTest extends \PHPUnit_Framework_TestCase
+class DoctrinePingConnectionExtensionTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredAttributes()
     {

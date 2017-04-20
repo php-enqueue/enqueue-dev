@@ -3,8 +3,9 @@
 namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Message;
+use PHPUnit\Framework\TestCase;
 
-class MessageTest extends \PHPUnit_Framework_TestCase
+class MessageTest extends TestCase
 {
     public function testCouldBeConstructedWithoutAnyArguments()
     {

@@ -12,8 +12,9 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use PHPUnit\Framework\TestCase;
 
-class NullTransportFactoryTest extends \PHPUnit_Framework_TestCase
+class NullTransportFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 

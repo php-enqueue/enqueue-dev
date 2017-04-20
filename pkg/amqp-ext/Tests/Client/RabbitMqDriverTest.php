@@ -15,8 +15,9 @@ use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class RabbitMqDriverTest extends \PHPUnit_Framework_TestCase
+class RabbitMqDriverTest extends TestCase
 {
     use ClassExtensionTrait;
 

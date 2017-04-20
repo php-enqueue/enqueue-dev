@@ -3,8 +3,9 @@
 namespace Enqueue\Tests\Client\Meta;
 
 use Enqueue\Client\Meta\QueueMeta;
+use PHPUnit\Framework\TestCase;
 
-class QueueMetaTest extends \PHPUnit_Framework_TestCase
+class QueueMetaTest extends TestCase
 {
     public function testCouldBeConstructedWithExpectedArguments()
     {

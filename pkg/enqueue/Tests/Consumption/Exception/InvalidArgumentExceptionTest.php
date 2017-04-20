@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\Exception\ExceptionInterface;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class InvalidArgumentExceptionTest extends \PHPUnit_Framework_TestCase
+class InvalidArgumentExceptionTest extends TestCase
 {
     use ClassExtensionTrait;
 

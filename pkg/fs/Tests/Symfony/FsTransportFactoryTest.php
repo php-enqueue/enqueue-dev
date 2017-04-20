@@ -12,7 +12,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class FsTransportFactoryTest extends \PHPUnit_Framework_TestCase
+class FsTransportFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

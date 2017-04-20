@@ -4,7 +4,7 @@ namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\StompHeadersEncoder;
 
-class StompHeadersEncoderTest extends \PHPUnit_Framework_TestCase
+class StompHeadersEncoderTest extends \PHPUnit\Framework\TestCase
 {
     public function headerValuesDataProvider()
     {

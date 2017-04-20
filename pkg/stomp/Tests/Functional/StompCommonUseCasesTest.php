@@ -10,7 +10,7 @@ use Enqueue\Test\RabbitmqStompExtension;
 /**
  * @group functional
  */
-class StompCommonUseCasesTest extends \PHPUnit_Framework_TestCase
+class StompCommonUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     use RabbitmqStompExtension;
     use RabbitmqManagmentExtensionTrait;

@@ -3,8 +3,9 @@
 namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\MessagePriority;
+use PHPUnit\Framework\TestCase;
 
-class MessagePriorityTest extends \PHPUnit_Framework_TestCase
+class MessagePriorityTest extends TestCase
 {
     public function testShouldVeryLowPriorityHasExpectedValue()
     {

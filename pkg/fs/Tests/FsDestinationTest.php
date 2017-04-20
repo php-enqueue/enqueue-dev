@@ -8,7 +8,7 @@ use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Makasim\File\TempFile;
 
-class FsDestinationTest extends \PHPUnit_Framework_TestCase
+class FsDestinationTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

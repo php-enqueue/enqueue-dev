@@ -3,8 +3,9 @@
 namespace Enqueue\Tests\Util;
 
 use Enqueue\Util\VarExport;
+use PHPUnit\Framework\TestCase;
 
-class VarExportTest extends \PHPUnit_Framework_TestCase
+class VarExportTest extends TestCase
 {
     public function testCouldBeConstructedWithValueAsArgument()
     {

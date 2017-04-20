@@ -19,8 +19,9 @@ use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use PHPUnit\Framework\TestCase;
 
-class EnqueueBundleTest extends \PHPUnit_Framework_TestCase
+class EnqueueBundleTest extends TestCase
 {
     use ClassExtensionTrait;
 

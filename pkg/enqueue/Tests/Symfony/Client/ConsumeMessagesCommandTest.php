@@ -12,8 +12,9 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Enqueue\Transport\Null\NullQueue;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
+class ConsumeMessagesCommandTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredAttributes()
     {

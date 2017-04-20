@@ -13,7 +13,7 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Transport\Null\NullMessage;
 use Psr\Log\LoggerInterface;
 
-class DependentJobProcessorTest extends \PHPUnit_Framework_TestCase
+class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
 {
     public function testShouldReturnSubscribedTopicNames()
     {

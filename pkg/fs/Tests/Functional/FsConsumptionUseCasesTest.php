@@ -18,7 +18,7 @@ use Makasim\File\TempFile;
 /**
  * @group functional
  */
-class FsConsumptionUseCasesTest extends \PHPUnit_Framework_TestCase
+class FsConsumptionUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FsContext

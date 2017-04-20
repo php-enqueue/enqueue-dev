@@ -11,8 +11,9 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\TestCase;
 
-class DelayRedeliveredMessageExtensionTest extends \PHPUnit_Framework_TestCase
+class DelayRedeliveredMessageExtensionTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

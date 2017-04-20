@@ -7,8 +7,9 @@ use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
+use PHPUnit\Framework\TestCase;
 
-class CallbackProcessorTest extends \PHPUnit_Framework_TestCase
+class CallbackProcessorTest extends TestCase
 {
     use ClassExtensionTrait;
 

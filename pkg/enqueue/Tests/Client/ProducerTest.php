@@ -10,8 +10,9 @@ use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
+use PHPUnit\Framework\TestCase;
 
-class ProducerTest extends \PHPUnit_Framework_TestCase
+class ProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 

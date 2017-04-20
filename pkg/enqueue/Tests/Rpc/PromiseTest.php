@@ -6,8 +6,9 @@ use Enqueue\Psr\PsrConsumer;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\TimeoutException;
 use Enqueue\Transport\Null\NullMessage;
+use PHPUnit\Framework\TestCase;
 
-class PromiseTest extends \PHPUnit_Framework_TestCase
+class PromiseTest extends TestCase
 {
     public function testCouldBeConstructedWithExpectedSetOfArguments()
     {

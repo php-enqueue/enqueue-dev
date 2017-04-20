@@ -6,8 +6,9 @@ use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class TraceableProducerTest extends \PHPUnit_Framework_TestCase
+class TraceableProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 

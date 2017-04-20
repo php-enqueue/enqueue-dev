@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Symfony\Client;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Symfony\Client\ProduceMessageCommand;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class ProduceMessageCommandTest extends \PHPUnit_Framework_TestCase
+class ProduceMessageCommandTest extends TestCase
 {
     public function testCouldBeConstructedWithMessageProducerAsFirstArgument()
     {

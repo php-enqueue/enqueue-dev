@@ -14,7 +14,7 @@ use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
 use Makasim\File\TempFile;
 
-class FsProducerTest extends \PHPUnit_Framework_TestCase
+class FsProducerTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

@@ -7,7 +7,7 @@ use Enqueue\JobQueue\DependentJobService;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobStorage;
 
-class DependentJobServiceTest extends \PHPUnit_Framework_TestCase
+class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

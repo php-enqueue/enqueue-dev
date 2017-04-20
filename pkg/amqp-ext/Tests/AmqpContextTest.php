@@ -14,8 +14,9 @@ use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 use Enqueue\Transport\Null\NullTopic;
+use PHPUnit\Framework\TestCase;
 
-class AmqpContextTest extends \PHPUnit_Framework_TestCase
+class AmqpContextTest extends TestCase
 {
     use ClassExtensionTrait;
 

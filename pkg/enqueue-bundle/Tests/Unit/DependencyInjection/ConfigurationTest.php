@@ -10,8 +10,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
+use PHPUnit\Framework\TestCase;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends TestCase
 {
     use ClassExtensionTrait;
 

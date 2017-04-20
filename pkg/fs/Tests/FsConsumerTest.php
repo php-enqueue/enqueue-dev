@@ -11,7 +11,7 @@ use Enqueue\Psr\PsrConsumer;
 use Enqueue\Test\ClassExtensionTrait;
 use Makasim\File\TempFile;
 
-class FsConsumerTest extends \PHPUnit_Framework_TestCase
+class FsConsumerTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

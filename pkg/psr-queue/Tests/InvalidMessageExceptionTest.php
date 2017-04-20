@@ -6,7 +6,7 @@ use Enqueue\Psr\Exception as ExceptionInterface;
 use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Test\ClassExtensionTrait;
 
-class InvalidMessageExceptionTest extends \PHPUnit_Framework_TestCase
+class InvalidMessageExceptionTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

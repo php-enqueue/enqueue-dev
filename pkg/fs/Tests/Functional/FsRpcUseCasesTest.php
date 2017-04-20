@@ -12,7 +12,7 @@ use Makasim\File\TempFile;
 /**
  * @group functional
  */
-class FsRpcUseCasesTest extends \PHPUnit_Framework_TestCase
+class FsRpcUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FsContext

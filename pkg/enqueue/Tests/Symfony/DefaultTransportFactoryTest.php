@@ -8,8 +8,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use PHPUnit\Framework\TestCase;
 
-class DefaultTransportFactoryTest extends \PHPUnit_Framework_TestCase
+class DefaultTransportFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 

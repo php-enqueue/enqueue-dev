@@ -9,7 +9,7 @@ use Enqueue\JobQueue\JobProcessor;
 use Enqueue\JobQueue\JobStorage;
 use Enqueue\JobQueue\Topics;
 
-class JobProcessorTest extends \PHPUnit_Framework_TestCase
+class JobProcessorTest extends \PHPUnit\Framework\TestCase
 {
     public function testCouldBeCreatedWithRequiredArguments()
     {

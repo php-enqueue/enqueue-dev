@@ -4,8 +4,9 @@ namespace Enqueue\Tests\Client\Meta;
 
 use Enqueue\Client\Meta\TopicMeta;
 use Enqueue\Client\Meta\TopicMetaRegistry;
+use PHPUnit\Framework\TestCase;
 
-class TopicMetaRegistryTest extends \PHPUnit_Framework_TestCase
+class TopicMetaRegistryTest extends TestCase
 {
     public function testCouldBeConstructedWithTopics()
     {

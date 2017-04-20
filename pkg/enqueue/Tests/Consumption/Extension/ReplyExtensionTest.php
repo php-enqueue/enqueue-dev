@@ -9,11 +9,11 @@ use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
+use PHPUnit\Framework\TestCase;
 
-class ReplyExtensionTest extends \PHPUnit_Framework_TestCase
+class ReplyExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 

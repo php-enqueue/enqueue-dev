@@ -9,8 +9,9 @@ use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\Result;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
+use PHPUnit\Framework\TestCase;
 
-class RouterProcessorTest extends \PHPUnit_Framework_TestCase
+class RouterProcessorTest extends TestCase
 {
     public function testCouldBeConstructedWithDriverAsFirstArgument()
     {

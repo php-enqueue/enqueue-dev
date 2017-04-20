@@ -7,8 +7,9 @@ use Enqueue\Psr\PsrProcessor;
 use Enqueue\Symfony\Client\ContainerAwareProcessorRegistry;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\Container;
+use PHPUnit\Framework\TestCase;
 
-class ContainerAwareProcessorRegistryTest extends \PHPUnit_Framework_TestCase
+class ContainerAwareProcessorRegistryTest extends TestCase
 {
     use ClassExtensionTrait;
 

@@ -5,8 +5,9 @@ namespace Enqueue\AmqpExt\Tests;
 use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class AmqpProducerTest extends \PHPUnit_Framework_TestCase
+class AmqpProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 

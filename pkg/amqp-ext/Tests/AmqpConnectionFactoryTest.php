@@ -6,8 +6,9 @@ use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class AmqpConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class AmqpConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 

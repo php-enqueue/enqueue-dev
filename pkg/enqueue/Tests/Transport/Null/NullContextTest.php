@@ -10,8 +10,9 @@ use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullProducer;
 use Enqueue\Transport\Null\NullQueue;
 use Enqueue\Transport\Null\NullTopic;
+use PHPUnit\Framework\TestCase;
 
-class NullContextTest extends \PHPUnit_Framework_TestCase
+class NullContextTest extends TestCase
 {
     use ClassExtensionTrait;
 

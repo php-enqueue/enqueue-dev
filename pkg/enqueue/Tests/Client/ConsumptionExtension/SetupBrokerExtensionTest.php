@@ -9,8 +9,9 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Psr\Log\NullLogger;
+use PHPUnit\Framework\TestCase;
 
-class SetupBrokerExtensionTest extends \PHPUnit_Framework_TestCase
+class SetupBrokerExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 

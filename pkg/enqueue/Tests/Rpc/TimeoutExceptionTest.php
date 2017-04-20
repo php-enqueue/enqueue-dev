@@ -2,8 +2,9 @@
 namespace Enqueue\Tests\Rpc;
 
 use Enqueue\Rpc\TimeoutException;
+use PHPUnit\Framework\TestCase;
 
-class TimeoutExceptionTest extends \PHPUnit_Framework_TestCase
+class TimeoutExceptionTest extends TestCase
 {
     public function testShouldBeSubClassOfLogicException()
     {

@@ -14,7 +14,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Stomp\Client;
 use Stomp\Transport\Message;
 
-class StompProducerTest extends \PHPUnit_Framework_TestCase
+class StompProducerTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

@@ -6,7 +6,7 @@ use Enqueue\JobQueue\CalculateRootJobStatusService;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobStorage;
 
-class CalculateRootJobStatusServiceTest extends \PHPUnit_Framework_TestCase
+class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {
