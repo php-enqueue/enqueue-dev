@@ -8,7 +8,7 @@ services:
       - mysql
       - redis
     volumes:
-      - './:/mqdev:cached'
+      - './:/mqdev'
     environment:
       - SYMFONY__RABBITMQ__HOST=rabbitmq
       - SYMFONY__RABBITMQ__USER=guest
