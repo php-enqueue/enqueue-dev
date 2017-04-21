@@ -144,7 +144,7 @@ class FsMessageTest extends \PHPUnit\Framework\TestCase
         $message = new FsMessage();
         $message->setReplyTo('theQueueName');
 
-        $this->assertSame(['reply-to' => 'theQueueName'], $message->getHeaders());
+        $this->assertSame(['reply_to' => 'theQueueName'], $message->getHeaders());
     }
 
     public function testColdBeSerializedToJson()

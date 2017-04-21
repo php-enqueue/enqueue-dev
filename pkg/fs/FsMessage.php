@@ -190,7 +190,7 @@ class FsMessage implements PsrMessage, \JsonSerializable
      */
     public function setReplyTo($replyTo)
     {
-        $this->setHeader('reply-to', $replyTo);
+        $this->setHeader('reply_to', $replyTo);
     }
 
     /**
@@ -198,7 +198,7 @@ class FsMessage implements PsrMessage, \JsonSerializable
      */
     public function getReplyTo()
     {
-        return $this->getHeader('reply-to');
+        return $this->getHeader('reply_to');
     }
 
     /**

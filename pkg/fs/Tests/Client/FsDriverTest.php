@@ -71,6 +71,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
         $transportMessage->setHeader('content_type', 'ContentType');
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
 
         $driver = new FsDriver(
             $this->createPsrContextMock(),
@@ -87,6 +89,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
             'content_type' => 'ContentType',
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $clientMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
@@ -94,6 +98,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('MessageId', $clientMessage->getMessageId());
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
 
         $this->assertNull($clientMessage->getExpire());
         $this->assertSame(MessagePriority::NORMAL, $clientMessage->getPriority());
@@ -110,6 +116,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
         $clientMessage->setPriority(MessagePriority::VERY_HIGH);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
 
         $context = $this->createPsrContextMock();
         $context
@@ -133,12 +141,16 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
             'content_type' => 'ContentType',
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
         ], $transportMessage->getProperties());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
     }
 
     public function testShouldSendMessageToRouter()
