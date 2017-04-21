@@ -6,8 +6,9 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class ChainExtensionTest extends \PHPUnit_Framework_TestCase
+class ChainExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 

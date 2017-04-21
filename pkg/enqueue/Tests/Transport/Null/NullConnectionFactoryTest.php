@@ -6,8 +6,9 @@ use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullConnectionFactory;
 use Enqueue\Transport\Null\NullContext;
+use PHPUnit\Framework\TestCase;
 
-class NullConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class NullConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 

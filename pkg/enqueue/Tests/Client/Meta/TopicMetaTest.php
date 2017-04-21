@@ -3,8 +3,9 @@
 namespace Enqueue\Tests\Client\Meta;
 
 use Enqueue\Client\Meta\TopicMeta;
+use PHPUnit\Framework\TestCase;
 
-class TopicMetaTest extends \PHPUnit_Framework_TestCase
+class TopicMetaTest extends TestCase
 {
     public function testCouldBeConstructedWithNameOnly()
     {

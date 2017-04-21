@@ -4,8 +4,9 @@ namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\Buffer;
+use PHPUnit\Framework\TestCase;
 
-class BufferTest extends \PHPUnit_Framework_TestCase
+class BufferTest extends TestCase
 {
     public function testCouldBeConstructedWithoutAnyArguments()
     {

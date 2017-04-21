@@ -7,7 +7,7 @@ use Enqueue\Stomp\StompMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Stomp\Transport\Frame;
 
-class StompMessageTest extends \PHPUnit_Framework_TestCase
+class StompMessageTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

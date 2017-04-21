@@ -1,18 +1,19 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests\Symfony;
+namespace Enqueue\Fs\Tests\Symfony;
 
 use Enqueue\Fs\Client\FsDriver;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class FsTransportFactoryTest extends \PHPUnit_Framework_TestCase
+class FsTransportFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 

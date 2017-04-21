@@ -25,7 +25,12 @@
     "suggest": {
         "symfony/console": "^2.8|^3 If you want to use li commands",
         "symfony/dependency-injection": "^2.8|^3",
-        "symfony/config": "^2.8|^3"
+        "symfony/config": "^2.8|^3",
+        "enqueue/amqp-ext": "AMQP transport (based on php extension)",
+        "enqueue/stomp": "STOMP transport",
+        "enqueue/fs": "Filesystem transport",
+        "enqueue/redis": "Redis transport",
+        "enqueue/dbal": "Doctrine DBAL transport"
     },
     "autoload": {
         "psr-4": { "Enqueue\\": "" },

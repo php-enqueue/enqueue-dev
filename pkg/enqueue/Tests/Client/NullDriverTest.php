@@ -11,8 +11,9 @@ use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullProducer;
 use Enqueue\Transport\Null\NullQueue;
 use Enqueue\Transport\Null\NullTopic;
+use PHPUnit\Framework\TestCase;
 
-class NullDriverTest extends \PHPUnit_Framework_TestCase
+class NullDriverTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

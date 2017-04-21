@@ -26,7 +26,8 @@ class AmqpConnectionFactory implements PsrConnectionFactory
      *     'read_timeout'  => Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
      *     'write_timeout' => Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
      *     'connect_timeout' => Connection timeout. Note: 0 or greater seconds. May be fractional.
-     *     'persisted' => bool
+     *     'persisted' => bool, Whether it use single persisted connection or open a new one for every context
+     *     'lazy' => the connection will be performed as later as possible, if the option set to true
      * ].
      *
      * @param $config

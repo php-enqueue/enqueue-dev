@@ -5,7 +5,7 @@ namespace Enqueue\JobQueue\Tests;
 use Enqueue\JobQueue\DependentJobContext;
 use Enqueue\JobQueue\Job;
 
-class DependentJobContextTest extends \PHPUnit_Framework_TestCase
+class DependentJobContextTest extends \PHPUnit\Framework\TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

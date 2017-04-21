@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Router;
 use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Router\Recipient;
+use PHPUnit\Framework\TestCase;
 
-class RecipientTest extends \PHPUnit_Framework_TestCase
+class RecipientTest extends TestCase
 {
     public function testShouldAllowGetMessageSetInConstructor()
     {

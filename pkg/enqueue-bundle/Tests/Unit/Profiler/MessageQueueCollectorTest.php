@@ -10,8 +10,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use PHPUnit\Framework\TestCase;
 
-class MessageQueueCollectorTest extends \PHPUnit_Framework_TestCase
+class MessageQueueCollectorTest extends TestCase
 {
     use ClassExtensionTrait;
 

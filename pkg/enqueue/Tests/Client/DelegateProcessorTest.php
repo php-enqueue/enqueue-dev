@@ -8,8 +8,9 @@ use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Transport\Null\NullMessage;
+use PHPUnit\Framework\TestCase;
 
-class DelegateProcessorTest extends \PHPUnit_Framework_TestCase
+class DelegateProcessorTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {

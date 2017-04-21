@@ -13,7 +13,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Stomp\Protocol\Protocol;
 use Stomp\Transport\Frame;
 
-class StompConsumerTest extends \PHPUnit_Framework_TestCase
+class StompConsumerTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

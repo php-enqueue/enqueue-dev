@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Util;
 use Enqueue\Tests\Util\Fixtures\JsonSerializableClass;
 use Enqueue\Tests\Util\Fixtures\SimpleClass;
 use Enqueue\Util\JSON;
+use PHPUnit\Framework\TestCase;
 
-class JSONTest extends \PHPUnit_Framework_TestCase
+class JSONTest extends TestCase
 {
     public function testShouldDecodeString()
     {

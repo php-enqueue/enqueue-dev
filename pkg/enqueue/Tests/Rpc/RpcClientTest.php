@@ -10,8 +10,9 @@ use Enqueue\Rpc\RpcClient;
 use Enqueue\Transport\Null\NullContext;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
+use PHPUnit\Framework\TestCase;
 
-class RpcClientTest extends \PHPUnit_Framework_TestCase
+class RpcClientTest extends TestCase
 {
     public function testCouldBeConstructedWithPsrContextAsFirstArgument()
     {

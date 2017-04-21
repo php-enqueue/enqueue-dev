@@ -6,7 +6,7 @@ use Enqueue\Fs\FsMessage;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
 
-class FsMessageTest extends \PHPUnit_Framework_TestCase
+class FsMessageTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 
@@ -144,7 +144,7 @@ class FsMessageTest extends \PHPUnit_Framework_TestCase
         $message = new FsMessage();
         $message->setReplyTo('theQueueName');
 
-        $this->assertSame(['reply-to' => 'theQueueName'], $message->getHeaders());
+        $this->assertSame(['reply_to' => 'theQueueName'], $message->getHeaders());
     }
 
     public function testColdBeSerializedToJson()

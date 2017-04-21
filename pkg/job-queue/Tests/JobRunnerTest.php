@@ -6,7 +6,7 @@ use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobProcessor;
 use Enqueue\JobQueue\JobRunner;
 
-class JobRunnerTest extends \PHPUnit_Framework_TestCase
+class JobRunnerTest extends \PHPUnit\Framework\TestCase
 {
     public function testRunUniqueShouldCreateRootAndChildJobAndCallCallback()
     {

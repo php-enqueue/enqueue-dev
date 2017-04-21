@@ -13,7 +13,7 @@ use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Psr\Log\LoggerInterface;
 
-class StompDriverTest extends \PHPUnit_Framework_TestCase
+class StompDriverTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

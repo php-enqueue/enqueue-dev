@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Client\Meta;
 use Enqueue\Client\Config;
 use Enqueue\Client\Meta\QueueMeta;
 use Enqueue\Client\Meta\QueueMetaRegistry;
+use PHPUnit\Framework\TestCase;
 
-class QueueMetaRegistryTest extends \PHPUnit_Framework_TestCase
+class QueueMetaRegistryTest extends TestCase
 {
     public function testCouldBeConstructedWithQueues()
     {

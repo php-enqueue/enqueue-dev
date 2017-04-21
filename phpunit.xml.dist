@@ -29,11 +29,15 @@
             <directory>pkg/amqp-ext/Tests</directory>
         </testsuite>
 
-        <testsuite name="fs">
+        <testsuite name="fs transport">
             <directory>pkg/fs/Tests</directory>
         </testsuite>
 
-        <testsuite name="dbal">
+        <testsuite name="redis transport">
+            <directory>pkg/redis/Tests</directory>
+        </testsuite>
+
+        <testsuite name="dbal transport">
             <directory>pkg/dbal/Tests</directory>
         </testsuite>
 

@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\Exception\ExceptionInterface;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class LogicExceptionTest extends \PHPUnit_Framework_TestCase
+class LogicExceptionTest extends TestCase
 {
     use ClassExtensionTrait;
 

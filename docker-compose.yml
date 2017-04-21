@@ -6,8 +6,9 @@ services:
     depends_on:
       - rabbitmq
       - mysql
+      - redis
     volumes:
-      - ./:/mqdev
+      - './:/mqdev'
     environment:
       - SYMFONY__RABBITMQ__HOST=rabbitmq
       - SYMFONY__RABBITMQ__USER=guest
@@ -21,6 +22,8 @@ services:
       - SYMFONY__DB__NAME=mqdev
       - SYMFONY__DB__USER=root
       - SYMFONY__DB__PASSWORD=rootpass
+      - SYMFONY__REDIS__HOST=redis
+      - SYMFONY__REDIS__PORT=6379
 
   rabbitmq:
     image: enqueue/rabbitmq:latest
@@ -29,6 +32,11 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
       - RABBITMQ_DEFAULT_VHOST=mqdev
+  redis:
+    image: 'redis:3'
+    ports:
+      - "6379:6379"
+
   mysql:
     image: mariadb:10
     volumes:

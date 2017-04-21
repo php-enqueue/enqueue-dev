@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests\Functional;
+namespace Enqueue\Fs\Tests\Functional;
 
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
@@ -8,11 +8,12 @@ use Enqueue\Fs\FsMessage;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
 use Makasim\File\TempFile;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group functional
  */
-class FsRpcUseCasesTest extends \PHPUnit_Framework_TestCase
+class FsRpcUseCasesTest extends TestCase
 {
     /**
      * @var FsContext

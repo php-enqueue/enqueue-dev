@@ -13,7 +13,7 @@ use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
 
-class StompContextTest extends \PHPUnit_Framework_TestCase
+class StompContextTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

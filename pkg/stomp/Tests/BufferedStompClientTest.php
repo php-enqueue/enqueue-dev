@@ -9,7 +9,7 @@ use Stomp\Client;
 use Stomp\Network\Connection;
 use Stomp\Transport\Frame;
 
-class BufferedStompClientTest extends \PHPUnit_Framework_TestCase
+class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
     use WriteAttributeTrait;

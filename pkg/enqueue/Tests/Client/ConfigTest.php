@@ -3,8 +3,9 @@
 namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Config;
+use PHPUnit\Framework\TestCase;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     public function testShouldReturnRouterProcessorNameSetInConstructor()
     {
@@ -88,6 +89,48 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals('aprefix.aapp.aname', $config->createTransportQueueName('aName'));
+    }
+
+    public function testShouldCreateProcessorQueueNameWithoutAppName()
+    {
+        $config = new Config(
+            'aPrefix',
+            '',
+            'aRouterTopicName',
+            'aRouterQueueName',
+            'aDefaultQueueName',
+            'aRouterProcessorName'
+        );
+
+        $this->assertEquals('aprefix.aname', $config->createTransportQueueName('aName'));
+    }
+
+    public function testShouldCreateProcessorQueueNameWithoutPrefix()
+    {
+        $config = new Config(
+            '',
+            'aApp',
+            'aRouterTopicName',
+            'aRouterQueueName',
+            'aDefaultQueueName',
+            'aRouterProcessorName'
+        );
+
+        $this->assertEquals('aapp.aname', $config->createTransportQueueName('aName'));
+    }
+
+    public function testShouldCreateProcessorQueueNameWithoutPrefixAndAppName()
+    {
+        $config = new Config(
+            '',
+            '',
+            'aRouterTopicName',
+            'aRouterQueueName',
+            'aDefaultQueueName',
+            'aRouterProcessorName'
+        );
+
+        $this->assertEquals('aname', $config->createTransportQueueName('aName'));
     }
 
     public function testShouldCreateDefaultConfig()

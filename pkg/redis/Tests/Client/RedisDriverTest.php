@@ -1,50 +1,50 @@
 <?php
 
-namespace Enqueue\Fs\Tests\Client;
+namespace Enqueue\Redis\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Fs\Client\FsDriver;
-use Enqueue\Fs\FsContext;
-use Enqueue\Fs\FsDestination;
-use Enqueue\Fs\FsMessage;
 use Enqueue\Psr\PsrProducer;
+use Enqueue\Redis\Client\RedisDriver;
+use Enqueue\Redis\RedisContext;
+use Enqueue\Redis\RedisDestination;
+use Enqueue\Redis\RedisMessage;
 use Enqueue\Test\ClassExtensionTrait;
-use Makasim\File\TempFile;
+use PHPUnit\Framework\TestCase;
 
-class FsDriverTest extends \PHPUnit_Framework_TestCase
+class RedisDriverTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementsDriverInterface()
     {
-        $this->assertClassImplements(DriverInterface::class, FsDriver::class);
+        $this->assertClassImplements(DriverInterface::class, RedisDriver::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new FsDriver(
+        new RedisDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $this->createQueueMetaRegistryMock()
         );
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();;
 
-        $driver = new FsDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
+        $driver = new RedisDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
 
         $this->assertSame($config, $driver->getConfig());
     }
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new FsDestination(new TempFile(sys_get_temp_dir().'/queue-name'));
+        $expectedQueue = new RedisDestination('aQueueName');
 
         $context = $this->createPsrContextMock();
         $context
@@ -54,27 +54,31 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expectedQueue))
         ;
 
-        $driver = new FsDriver($context, new Config('', '', '', '', '', ''), $this->createQueueMetaRegistryMock());
+        $driver = new RedisDriver($context, Config::create(), $this->createQueueMetaRegistryMock());
 
         $queue = $driver->createQueue('name');
 
         $this->assertSame($expectedQueue, $queue);
-        $this->assertSame('queue-name', $queue->getQueueName());
+        $this->assertSame('aQueueName', $queue->getQueueName());
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
     {
-        $transportMessage = new FsMessage();
+        $transportMessage = new RedisMessage();
         $transportMessage->setBody('body');
         $transportMessage->setHeaders(['hkey' => 'hval']);
         $transportMessage->setProperties(['key' => 'val']);
         $transportMessage->setHeader('content_type', 'ContentType');
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
+        $transportMessage->setReplyTo('theReplyTo');
+        $transportMessage->setCorrelationId('theCorrelationId');
 
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $this->createQueueMetaRegistryMock()
         );
 
@@ -87,6 +91,8 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
             'content_type' => 'ContentType',
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $clientMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
@@ -94,6 +100,8 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('MessageId', $clientMessage->getMessageId());
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
 
         $this->assertNull($clientMessage->getExpire());
         $this->assertSame(MessagePriority::NORMAL, $clientMessage->getPriority());
@@ -110,53 +118,59 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setPriority(MessagePriority::VERY_HIGH);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
 
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createMessage')
-            ->willReturn(new FsMessage())
+            ->willReturn(new RedisMessage())
         ;
 
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $context,
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $this->createQueueMetaRegistryMock()
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
 
-        $this->assertInstanceOf(FsMessage::class, $transportMessage);
+        $this->assertInstanceOf(RedisMessage::class, $transportMessage);
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertSame([
             'hkey' => 'hval',
             'content_type' => 'ContentType',
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => 'theReplyTo',
+            'correlation_id' => 'theCorrelationId',
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
         ], $transportMessage->getProperties());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
     }
 
-    public function testShouldSendMessageToRouter()
+    public function testShouldSendMessageToRouterQueue()
     {
-        $topic = new FsDestination(TempFile::generate());
-        $transportMessage = new FsMessage();
+        $topic = new RedisDestination('aDestinationName');
+        $transportMessage = new RedisMessage();
         $config = $this->createConfigMock();
 
         $config
             ->expects($this->once())
-            ->method('getRouterTopicName')
-            ->willReturn('topicName');
+            ->method('getRouterQueueName')
+            ->willReturn('queueName');
 
         $config
             ->expects($this->once())
             ->method('createTransportQueueName')
-            ->with('topicName')
-            ->willReturn('app.topicName');
+            ->with('queueName')
+            ->willReturn('app.queueName');
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -167,8 +181,8 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
-            ->method('createTopic')
-            ->with('app.topicName')
+            ->method('createQueue')
+            ->with('app.queueName')
             ->willReturn($topic)
         ;
         $context
@@ -182,7 +196,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($transportMessage)
         ;
 
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $context,
             $config,
             $this->createQueueMetaRegistryMock()
@@ -196,9 +210,9 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionIfTopicParameterIsNotSet()
     {
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $this->createQueueMetaRegistryMock()
         );
 
@@ -210,8 +224,8 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSendMessageToProcessor()
     {
-        $queue = new FsDestination(TempFile::generate());
-        $transportMessage = new FsMessage();
+        $queue = new RedisDestination('aDestinationName');
+        $transportMessage = new RedisMessage();
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -236,9 +250,9 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($transportMessage)
         ;
 
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $context,
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $this->createQueueMetaRegistryMock()
         );
 
@@ -251,9 +265,9 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionIfProcessorNameParameterIsNotSet()
     {
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $this->createQueueMetaRegistryMock()
         );
 
@@ -265,9 +279,9 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionIfProcessorQueueNameParameterIsNotSet()
     {
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $this->createQueueMetaRegistryMock()
         );
 
@@ -280,54 +294,26 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
         $driver->sendToProcessor($message);
     }
 
-    public function testShouldSetupBroker()
+    public function testShouldDoNothingOnSetupBroker()
     {
-        $routerTopic = new FsDestination(TempFile::generate());
-        $routerQueue = new FsDestination(TempFile::generate());
-
-        $processorQueue = new FsDestination(TempFile::generate());
-
         $context = $this->createPsrContextMock();
         // setup router
         $context
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('createTopic')
-            ->willReturn($routerTopic)
         ;
         $context
-            ->expects($this->at(1))
+            ->expects($this->never())
             ->method('createQueue')
-            ->willReturn($routerQueue)
-        ;
-        $context
-            ->expects($this->at(2))
-            ->method('declareDestination')
-            ->with($this->identicalTo($routerTopic))
-        ;
-        $context
-            ->expects($this->at(3))
-            ->method('declareDestination')
-            ->with($this->identicalTo($routerQueue))
-        ;
-        // setup processor queue
-        $context
-            ->expects($this->at(4))
-            ->method('createQueue')
-            ->willReturn($processorQueue)
-        ;
-        $context
-            ->expects($this->at(5))
-            ->method('declareDestination')
-            ->with($this->identicalTo($processorQueue))
         ;
 
-        $meta = new QueueMetaRegistry(new Config('', '', '', '', '', ''), [
+        $meta = new QueueMetaRegistry(Config::create(), [
             'default' => [],
         ], 'default');
 
-        $driver = new FsDriver(
+        $driver = new RedisDriver(
             $context,
-            new Config('', '', '', '', '', ''),
+            Config::create(),
             $meta
         );
 
@@ -335,11 +321,11 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FsContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|RedisContext
      */
     private function createPsrContextMock()
     {
-        return $this->createMock(FsContext::class);
+        return $this->createMock(RedisContext::class);
     }
 
     /**

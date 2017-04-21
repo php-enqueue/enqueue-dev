@@ -12,7 +12,7 @@ use Enqueue\Test\RabbitmqStompExtension;
 /**
  * @group functional
  */
-class StompRpcUseCasesTest extends \PHPUnit_Framework_TestCase
+class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     use RabbitmqStompExtension;
     use RabbitmqManagmentExtensionTrait;

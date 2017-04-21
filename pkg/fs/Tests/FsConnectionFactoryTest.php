@@ -7,7 +7,7 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
 
-class FsConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class FsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 

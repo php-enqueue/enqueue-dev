@@ -7,8 +7,9 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class ConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
+class ConsumeMessagesCommandTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredAttributes()
     {

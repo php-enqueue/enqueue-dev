@@ -1,13 +1,14 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests\Functional;
+namespace Enqueue\Fs\Tests\Functional;
 
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsMessage;
 use Makasim\File\TempFile;
+use PHPUnit\Framework\TestCase;
 
-class FsConsumerTest extends \PHPUnit_Framework_TestCase
+class FsConsumerTest extends TestCase
 {
     /**
      * @var FsContext

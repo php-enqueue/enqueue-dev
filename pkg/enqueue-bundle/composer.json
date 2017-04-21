@@ -21,15 +21,12 @@
         "enqueue/amqp-ext": "^0.2@dev",
         "enqueue/job-queue": "^0.3@dev",
         "enqueue/fs": "^0.3",
+        "enqueue/redis": "^0.3",
         "enqueue/test": "^0.3@dev",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/monolog-bundle": "^2.8|^3",
         "symfony/browser-kit": "^2.8|^3",
         "symfony/expression-language": "^2.8|^3"
-    },
-    "suggest": {
-        "enqueue/amqp-ext": "Message queue AMQP transport",
-        "enqueue/stomp": "Message queue STOMP transport"
     },
     "autoload": {
         "psr-4": { "Enqueue\\Bundle\\": "" },

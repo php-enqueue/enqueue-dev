@@ -103,7 +103,7 @@ class Config
      */
     public function createTransportRouterTopicName($name)
     {
-        return trim(strtolower(trim($this->prefix).'.'.trim($name)), '.');
+        return strtolower(implode('.', array_filter([trim($this->prefix), trim($name)])));
     }
 
     /**
@@ -113,7 +113,7 @@ class Config
      */
     public function createTransportQueueName($name)
     {
-        return trim(strtolower(trim($this->prefix).'.'.trim($this->appName).'.'.trim($name)), '.');
+        return strtolower(implode('.', array_filter([trim($this->prefix), trim($this->appName), trim($name)])));
     }
 
     /**

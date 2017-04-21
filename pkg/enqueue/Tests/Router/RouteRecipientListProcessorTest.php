@@ -12,8 +12,9 @@ use Enqueue\Router\RouteRecipientListProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
+use PHPUnit\Framework\TestCase;
 
-class RouteRecipientListProcessorTest extends \PHPUnit_Framework_TestCase
+class RouteRecipientListProcessorTest extends TestCase
 {
     use ClassExtensionTrait;
 

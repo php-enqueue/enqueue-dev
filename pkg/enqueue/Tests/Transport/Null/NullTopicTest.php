@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Transport\Null;
 use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullTopic;
+use PHPUnit\Framework\TestCase;
 
-class NullTopicTest extends \PHPUnit_Framework_TestCase
+class NullTopicTest extends TestCase
 {
     use ClassExtensionTrait;
 

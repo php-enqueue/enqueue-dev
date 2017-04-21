@@ -8,8 +8,9 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTop
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use PHPUnit\Framework\TestCase;
 
-class BuildQueueMetaRegistryPassTest extends \PHPUnit_Framework_TestCase
+class BuildQueueMetaRegistryPassTest extends TestCase
 {
     public function testCouldBeConstructedWithoutAnyArguments()
     {

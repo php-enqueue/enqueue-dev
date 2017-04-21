@@ -2,8 +2,9 @@
 
 * [Quick tour](quick_tour.md)
 * Transports
-    - [Amqp](amqp_transport.md)
-    - [Stomp](stomp_transport.md)
+    - [Amqp (RabbitMQ, ActiveMQ)](amqp_transport.md)
+    - [Stomp (RabbitMQ, ActiveMQ)](stomp_transport.md)
+    - [Redis](redis_transport.md)
     - [Filesystem](filesystem_transport.md)
     - [Null](null_transport.md)
 * Consumption

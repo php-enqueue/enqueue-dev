@@ -10,8 +10,9 @@ use Enqueue\Psr\PsrQueue;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
+use PHPUnit\Framework\TestCase;
 
-class ContainerAwareConsumeMessagesCommandTest extends \PHPUnit_Framework_TestCase
+class ContainerAwareConsumeMessagesCommandTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredAttributes()
     {

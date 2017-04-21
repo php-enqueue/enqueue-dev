@@ -8,7 +8,7 @@ use RabbitMq\ManagementApi\Api\Exchange;
 use RabbitMq\ManagementApi\Api\Queue;
 use RabbitMq\ManagementApi\Client;
 
-class ManagementClientTest extends \PHPUnit_Framework_TestCase
+class ManagementClientTest extends \PHPUnit\Framework\TestCase
 {
     public function testCouldDeclareExchange()
     {

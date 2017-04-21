@@ -11,8 +11,9 @@ use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullQueue;
 use Psr\Log\NullLogger;
+use PHPUnit\Framework\TestCase;
 
-class ContextTest extends \PHPUnit_Framework_TestCase
+class ContextTest extends TestCase
 {
     use ClassExtensionTrait;
 

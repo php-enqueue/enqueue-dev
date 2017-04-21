@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Symfony\Client;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Symfony\Client\SetupBrokerCommand;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class SetupBrokerCommandTest extends \PHPUnit_Framework_TestCase
+class SetupBrokerCommandTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredAttributes()
     {

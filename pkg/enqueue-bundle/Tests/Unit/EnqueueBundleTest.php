@@ -13,6 +13,7 @@ use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\EnqueueBundle;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
@@ -20,8 +21,9 @@ use Enqueue\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use PHPUnit\Framework\TestCase;
 
-class EnqueueBundleTest extends \PHPUnit_Framework_TestCase
+class EnqueueBundleTest extends TestCase
 {
     use ClassExtensionTrait;
 
@@ -152,6 +154,23 @@ class EnqueueBundleTest extends \PHPUnit_Framework_TestCase
             ->expects($this->at(6))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(FsTransportFactory::class))
+        ;
+
+        $bundle = new EnqueueBundle();
+        $bundle->build($container);
+    }
+
+    public function testShouldRegisterRedisTransportFactory()
+    {
+        $extensionMock = $this->createEnqueueExtensionMock();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extensionMock);
+
+        $extensionMock
+            ->expects($this->at(7))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(RedisTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();

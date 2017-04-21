@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\ExceptionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class ConsumptionInterruptedExceptionTest extends \PHPUnit_Framework_TestCase
+class ConsumptionInterruptedExceptionTest extends TestCase
 {
     use ClassExtensionTrait;
 
