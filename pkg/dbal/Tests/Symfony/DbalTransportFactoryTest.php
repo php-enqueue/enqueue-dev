@@ -3,6 +3,7 @@ namespace Enqueue\Dbal\Tests\Symfony;
 
 use Enqueue\Dbal\Client\DbalDriver;
 use Enqueue\Dbal\DbalConnectionFactory;
+use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
@@ -42,15 +43,15 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), [
+        $config = $processor->process($tb->buildTree(),[[
             'connection' => [
                 'key' => 'value'
             ],
-        ]);
+        ]]);
 
         $this->assertEquals([
             'connection' => [
-                'dbname' => 'theDbName',
+                'key' => 'value',
             ],
             'lazy' => true,
             'table_name' => 'enqueue',
@@ -59,15 +60,17 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
         ], $config);
     }
 
-    public function testShouldCreateConnectionFactory()
+    public function testShouldCreateDbalConnectionFactory()
     {
         $container = new ContainerBuilder();
 
         $transport = new DbalTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
+            'connection' => [
+                'dbname' => 'theDbName',
+            ],
             'lazy' => true,
-            'connectionName' => null,
             'table_name' => 'enqueue',
             'polling_interval' => 1000,
         ]);
@@ -75,11 +78,37 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
         $this->assertEquals(DbalConnectionFactory::class, $factory->getClass());
+        $this->assertSame([
+            'connection' => [
+                'dbname' => 'theDbName',
+            ],
+            'lazy' => true,
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
+        ], $factory->getArgument(0));
+    }
+
+    public function testShouldCreateManagerRegistryConnectionFactory()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new DbalTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'dbal_connection_name' => 'default',
+            'lazy' => true,
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(ManagerRegistryConnectionFactory::class, $factory->getClass());
         $this->assertInstanceOf(Reference::class, $factory->getArgument(0));
         $this->assertSame('doctrine', (string) $factory->getArgument(0));
         $this->assertSame([
+            'dbal_connection_name' => 'default',
             'lazy' => true,
-            'connectionName' => null,
             'table_name' => 'enqueue',
             'polling_interval' => 1000,
         ], $factory->getArgument(1));

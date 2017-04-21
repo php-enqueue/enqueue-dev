@@ -34,7 +34,7 @@ class DbalTransportFactory implements TransportFactoryInterface
         $builder
             ->children()
                 ->variableNode('connection')
-//                    ->treatNullLike([])
+                    ->treatNullLike([])
                     ->info('Doctrine DBAL connection options. See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html')
                 ->end()
                 ->scalarNode('dbal_connection_name')
