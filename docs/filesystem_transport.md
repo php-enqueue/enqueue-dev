@@ -3,13 +3,10 @@
 Use files on local filesystem as queues. 
 It creates a file per queue\topic. 
 A message is a line inside the file.
-**Limitations** It works only in auto ack mode. Local by nature therefor messages are not visible on other servers.  
+**Limitations** It works only in auto ack mode hence If consumer crashes the message is lost. Local by nature therefor messages are not visible on other servers.  
 
 * [Installation](#installation)
 * [Create context](#create-context)
-* [Declare topic](#declare-topic)
-* [Declare queue](#decalre-queue)
-* [Bind queue to topic](#bind-queue-to-topic)
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)

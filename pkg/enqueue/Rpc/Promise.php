@@ -50,6 +50,7 @@ class Promise
 
                     return $message;
                 }
+
                 $this->consumer->reject($message, true);
             }
         }
