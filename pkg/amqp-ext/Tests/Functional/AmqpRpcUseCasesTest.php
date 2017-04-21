@@ -53,7 +53,7 @@ class AmqpRpcUseCasesTest extends TestCase
         $this->assertInstanceOf(Promise::class, $promise);
 
         $consumer = $this->amqpContext->createConsumer($queue);
-        $message = $consumer->receive(1);
+        $message = $consumer->receive(1000);
         $this->assertInstanceOf(AmqpMessage::class, $message);
         $this->assertNotNull($message->getReplyTo());
         $this->assertNotNull($message->getCorrelationId());
@@ -82,7 +82,7 @@ class AmqpRpcUseCasesTest extends TestCase
         $this->assertInstanceOf(Promise::class, $promise);
 
         $consumer = $this->amqpContext->createConsumer($queue);
-        $receivedMessage = $consumer->receive(1);
+        $receivedMessage = $consumer->receive(1000);
 
         $this->assertInstanceOf(AmqpMessage::class, $receivedMessage);
         $this->assertNotNull($receivedMessage->getReplyTo());
