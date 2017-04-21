@@ -26,13 +26,13 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();
 
         $driver = new DbalDriver($this->createPsrContextMock(), $config);
 
@@ -51,7 +51,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expectedQueue))
         ;
 
-        $driver = new DbalDriver($context, new Config('', '', '', '', '', ''));
+        $driver = new DbalDriver($context, Config::create());
 
         $queue = $driver->createQueue('name');
 
@@ -72,7 +72,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
 
         $clientMessage = $driver->createClientMessage($transportMessage);
@@ -118,7 +118,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
@@ -130,6 +130,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
             'content_type' => 'ContentType',
             'message_id' => 'MessageId',
             'timestamp' => 1000,
+            'reply_to' => null,
+            'correlation_id' => null
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
@@ -146,7 +148,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $config
             ->expects($this->once())
-            ->method('getRouterTopicName')
+            ->method('getRouterQueueName')
             ->willReturn('topicName');
 
         $config
@@ -164,7 +166,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
-            ->method('createTopic')
+            ->method('createQueue')
             ->with('app.topicName')
             ->willReturn($topic)
         ;
@@ -194,7 +196,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
 
         $this->expectException(\LogicException::class);
@@ -233,7 +235,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
 
         $message = new Message();
@@ -247,7 +249,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
 
         $this->expectException(\LogicException::class);
@@ -260,7 +262,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
 
         $this->expectException(\LogicException::class);
@@ -286,7 +288,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            new Config('', '', '', '', '', '')
+            Config::create()
         );
 
         $driver->setupBroker();

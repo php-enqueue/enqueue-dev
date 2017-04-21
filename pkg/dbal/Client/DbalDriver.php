@@ -6,7 +6,6 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Dbal\DbalContext;
-use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Psr\PsrMessage;
 use Psr\Log\LoggerInterface;
@@ -53,6 +52,8 @@ class DbalDriver implements DriverInterface
         $transportMessage->setMessageId($message->getMessageId());
         $transportMessage->setTimestamp($message->getTimestamp());
         $transportMessage->setDelay($message->getDelay());
+        $transportMessage->setReplyTo($message->getReplyTo());
+        $transportMessage->setCorrelationId($message->getCorrelationId());
 
         return $transportMessage;
     }
@@ -75,6 +76,8 @@ class DbalDriver implements DriverInterface
         $clientMessage->setTimestamp($message->getTimestamp());
         $clientMessage->setPriority(MessagePriority::NORMAL);
         $clientMessage->setDelay($message->getDelay());
+        $clientMessage->setReplyTo($message->getReplyTo());
+        $clientMessage->setCorrelationId($message->getCorrelationId());
 
         return $clientMessage;
     }
@@ -88,10 +91,10 @@ class DbalDriver implements DriverInterface
             throw new \LogicException('Topic name parameter is required but is not set');
         }
 
-        $topic = $this->createRouterTopic();
+        $queue = $this->createQueue($this->config->getRouterQueueName());
         $transportMessage = $this->createTransportMessage($message);
 
-        $this->context->createProducer()->send($topic, $transportMessage);
+        $this->context->createProducer()->send($queue, $transportMessage);
     }
 
     /**
@@ -141,15 +144,5 @@ class DbalDriver implements DriverInterface
     public function getConfig()
     {
         return $this->config;
-    }
-
-    /**
-     * @return DbalDestination
-     */
-    private function createRouterTopic()
-    {
-        return $this->context->createTopic(
-            $this->config->createTransportQueueName($this->config->getRouterTopicName())
-        );
     }
 }

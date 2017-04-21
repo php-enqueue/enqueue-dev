@@ -2,7 +2,7 @@
     "name": "enqueue/dbal",
     "type": "library",
     "description": "Message Queue Doctrine DBAL Transport",
-    "keywords": ["messaging", "queue", "dbal"],
+    "keywords": ["messaging", "queue", "doctrine", "dbal"],
     "license": "MIT",
     "repositories": [
         {
