@@ -48,6 +48,7 @@ remote enqueue git@github.com:php-enqueue/enqueue.git
 remote stomp git@github.com:php-enqueue/stomp.git
 remote amqp-ext git@github.com:php-enqueue/amqp-ext.git
 remote fs git@github.com:php-enqueue/fs.git
+remote redis git@github.com:php-enqueue/redis.git
 remote enqueue-bundle git@github.com:php-enqueue/enqueue-bundle.git
 remote job-queue git@github.com:php-enqueue/job-queue.git
 remote test git@github.com:php-enqueue/test.git
@@ -57,6 +58,7 @@ split 'pkg/enqueue' enqueue
 split 'pkg/stomp' stomp
 split 'pkg/amqp-ext' amqp-ext
 split 'pkg/fs' fs
+split 'pkg/redis' redis
 split 'pkg/enqueue-bundle' enqueue-bundle
 split 'pkg/job-queue' job-queue
 split 'pkg/test' test
