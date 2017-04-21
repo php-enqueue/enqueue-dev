@@ -72,7 +72,20 @@ class UseCasesTest extends WebTestCase
                         'store_dir' => sys_get_temp_dir(),
                     ]
                 ]
-            ]]
+            ]],
+            ['dbal' => [
+                'transport' => [
+                    'default' => 'dbal',
+                    'dbal' => [
+                        'dbname' => getenv('SYMFONY__DB__NAME'),
+                        'user' => getenv('SYMFONY__DB__USER'),
+                        'password' => getenv('SYMFONY__DB__PASSWORD'),
+                        'host' => getenv('SYMFONY__DB__HOST'),
+                        'port' => getenv('SYMFONY__DB__PORT'),
+                        'driver' => getenv('SYMFONY__DB__DRIVER'),
+                    ]
+                ]
+            ]],
         ];
     }
 
