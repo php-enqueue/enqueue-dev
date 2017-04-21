@@ -1,10 +1,10 @@
 <?php
 
-namespace Enqueue\Fs\Tests\Symfony;
+namespace Enqueue\Redis\Tests\Symfony;
 
-use Enqueue\Fs\Client\FsDriver;
-use Enqueue\Fs\FsConnectionFactory;
-use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Redis\Client\RedisDriver;
+use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
@@ -13,45 +13,51 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class FsTransportFactoryTest extends TestCase
+class RedisTransportFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementTransportFactoryInterface()
     {
-        $this->assertClassImplements(TransportFactoryInterface::class, FsTransportFactory::class);
+        $this->assertClassImplements(TransportFactoryInterface::class, RedisTransportFactory::class);
     }
 
     public function testCouldBeConstructedWithDefaultName()
     {
-        $transport = new FsTransportFactory();
+        $transport = new RedisTransportFactory();
 
-        $this->assertEquals('fs', $transport->getName());
+        $this->assertEquals('redis', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
     {
-        $transport = new FsTransportFactory('theCustomName');
+        $transport = new RedisTransportFactory('theCustomName');
 
         $this->assertEquals('theCustomName', $transport->getName());
     }
 
     public function testShouldAllowAddConfiguration()
     {
-        $transport = new FsTransportFactory();
+        $transport = new RedisTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
         $config = $processor->process($tb->buildTree(), [[
-            'store_dir' => sys_get_temp_dir(),
+            'host' => 'localhost',
+            'port' => 123,
+            'vendor' => 'phpredis',
+            'persisted' => true,
+            'lazy' => false,
         ]]);
 
         $this->assertEquals([
-            'store_dir' => sys_get_temp_dir(),
-            'pre_fetch_count' => 1,
-            'chmod' => 0600,
+            'host' => 'localhost',
+            'port' => 123,
+            'vendor' => 'phpredis',
+            'persisted' => true,
+            'lazy' => false,
         ], $config);
     }
 
@@ -59,21 +65,21 @@ class FsTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new FsTransportFactory();
+        $transport = new RedisTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
-            'store_dir' => sys_get_temp_dir(),
-            'pre_fetch_count' => 1,
-            'chmod' => 0600,
+            'host' => 'localhost',
+            'port' => 123,
+            'vendor' => 'phpredis',
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals(FsConnectionFactory::class, $factory->getClass());
+        $this->assertEquals(RedisConnectionFactory::class, $factory->getClass());
         $this->assertSame([[
-            'store_dir' => sys_get_temp_dir(),
-            'pre_fetch_count' => 1,
-            'chmod' => 0600,
+            'host' => 'localhost',
+            'port' => 123,
+            'vendor' => 'phpredis',
         ]], $factory->getArguments());
     }
 
@@ -81,20 +87,20 @@ class FsTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new FsTransportFactory();
+        $transport = new RedisTransportFactory();
 
         $serviceId = $transport->createContext($container, [
-            'store_dir' => sys_get_temp_dir(),
-            'pre_fetch_count' => 1,
-            'chmod' => 0600,
+            'host' => 'localhost',
+            'port' => 123,
+            'vendor' => 'predis',
         ]);
 
-        $this->assertEquals('enqueue.transport.fs.context', $serviceId);
+        $this->assertEquals('enqueue.transport.redis.context', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
-        $context = $container->getDefinition('enqueue.transport.fs.context');
+        $context = $container->getDefinition('enqueue.transport.redis.context');
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
-        $this->assertEquals('enqueue.transport.fs.connection_factory', (string) $context->getFactory()[0]);
+        $this->assertEquals('enqueue.transport.redis.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
     }
 
@@ -102,18 +108,18 @@ class FsTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new FsTransportFactory();
+        $transport = new RedisTransportFactory();
 
         $serviceId = $transport->createDriver($container, []);
 
-        $this->assertEquals('enqueue.client.fs.driver', $serviceId);
+        $this->assertEquals('enqueue.client.redis.driver', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
         $driver = $container->getDefinition($serviceId);
-        $this->assertSame(FsDriver::class, $driver->getClass());
+        $this->assertSame(RedisDriver::class, $driver->getClass());
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(0));
-        $this->assertEquals('enqueue.transport.fs.context', (string) $driver->getArgument(0));
+        $this->assertEquals('enqueue.transport.redis.context', (string) $driver->getArgument(0));
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
         $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
