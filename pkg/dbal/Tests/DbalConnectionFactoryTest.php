@@ -1,7 +1,6 @@
 <?php
 namespace Enqueue\Dbal\Tests;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
@@ -42,23 +41,6 @@ class DbalConnectionFactoryTest extends \PHPUnit_Framework_TestCase
                 'dbname' => 'theDbName',
             ],
         ], 'config', $factory);
-    }
-
-    public function testShouldCreateContext()
-    {
-        $factory = new DbalConnectionFactory([
-            'connection' => [
-                'driver' => 'pdo_sqlite',
-            ],
-            'lazy' => false,
-        ]);
-
-        $context = $factory->createContext();
-
-        $this->assertInstanceOf(DbalContext::class, $context);
-
-        $this->assertAttributeInstanceOf(Connection::class, 'connection', $context);
-        $this->assertAttributeSame(null, 'connectionFactory', $context);
     }
 
     public function testShouldCreateLazyContext()
