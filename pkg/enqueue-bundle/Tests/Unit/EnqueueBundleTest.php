@@ -185,7 +185,7 @@ class EnqueueBundleTest extends TestCase
         $container->registerExtension($extensionMock);
 
         $extensionMock
-            ->expects($this->at(7))
+            ->expects($this->at(8))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(DbalTransportFactory::class))
         ;
