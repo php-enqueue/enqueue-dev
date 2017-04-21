@@ -12,6 +12,7 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\EnqueueBundle;
 use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
@@ -152,6 +153,23 @@ class EnqueueBundleTest extends TestCase
             ->expects($this->at(6))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(FsTransportFactory::class))
+        ;
+
+        $bundle = new EnqueueBundle();
+        $bundle->build($container);
+    }
+
+    public function testShouldRegisterRedisTransportFactory()
+    {
+        $extensionMock = $this->createEnqueueExtensionMock();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extensionMock);
+
+        $extensionMock
+            ->expects($this->at(7))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(RedisTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();

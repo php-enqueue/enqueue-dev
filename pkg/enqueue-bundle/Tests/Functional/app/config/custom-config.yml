@@ -21,21 +21,6 @@ monolog:
             type: 'null'
             level: 'error'
 
-enqueue:
-    transport:
-        default: 'amqp'
-        amqp:
-            host: '%rabbitmq.host%'
-            port: '%rabbitmq.amqp.port%'
-            login: '%rabbitmq.user%'
-            password: '%rabbitmq.password%'
-            vhost: '%rabbitmq.vhost%'
-    client:
-        prefix: 'amqp'
-        router_topic: 'test'
-        router_queue: 'test'
-        default_processor_queue: 'test'
-
 services:
     test.message.processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'

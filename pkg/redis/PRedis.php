@@ -37,7 +37,7 @@ class PRedis implements Redis
     public function brpop($key, $timeout)
     {
         try {
-            if ($result = $this->redis->brpop($key, $timeout)) {
+            if ($result = $this->redis->brpop([$key], $timeout)) {
                 return $result[1];
             }
         } catch (PRedisServerException $e) {
