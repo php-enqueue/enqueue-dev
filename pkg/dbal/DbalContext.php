@@ -2,6 +2,7 @@
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\Table;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrDestination;
@@ -32,8 +33,8 @@ class DbalContext implements PsrContext
     public function __construct($connection, array $config = [])
     {
         $this->config = array_replace([
-            'tableName' => 'enqueue',
-            'pollingInterval' => null,
+            'table_name' => 'enqueue',
+            'polling_interval' => null,
         ], $config);
 
         if ($connection instanceof Connection) {
@@ -125,7 +126,7 @@ class DbalContext implements PsrContext
      */
     public function getTableName()
     {
-        return $this->config['tableName'];
+        return $this->config['table_name'];
     }
 
     /**
@@ -154,5 +155,31 @@ class DbalContext implements PsrContext
         }
 
         return $this->connection;
+    }
+
+    public function createDataBaseTable()
+    {
+        $sm = $this->getDbalConnection()->getSchemaManager();
+
+        if ($sm->tablesExist([$this->getTableName()])) {
+            return;
+        }
+
+        $table = new Table($this->getTableName());
+        $table->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true,]);
+        $table->addColumn('body', 'text', ['notnull' => false,]);
+        $table->addColumn('headers', 'text', ['notnull' => false,]);
+        $table->addColumn('properties', 'text', ['notnull' => false,]);
+        $table->addColumn('redelivered', 'boolean', ['notnull' => false,]);
+        $table->addColumn('queue', 'string');
+        $table->addColumn('priority', 'smallint');
+        $table->addColumn('delayed_until', 'integer', ['notnull' => false,]);
+
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['queue']);
+        $table->addIndex(['priority']);
+        $table->addIndex(['delayed_until']);
+
+        $sm->createTable($table);
     }
 }

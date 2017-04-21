@@ -26,11 +26,6 @@ class DbalConsumer implements PsrConsumer
     private $queue;
 
     /**
-     * @var string
-     */
-    private $consumerId;
-
-    /**
      * @var int microseconds
      */
     private $pollingInterval = 1000000;
@@ -44,7 +39,6 @@ class DbalConsumer implements PsrConsumer
         $this->context = $context;
         $this->queue = $queue;
         $this->dbal = $this->context->getDbalConnection();
-        $this->consumerId = uniqid('', true);
     }
 
     /**
@@ -174,7 +168,7 @@ class DbalConsumer implements PsrConsumer
             $now = time();
 
             $sql = sprintf(
-                'SELECT id FROM %s WHERE queue=:queue AND consumer_id IS NULL AND ' .
+                'SELECT * FROM %s WHERE queue=:queue AND ' .
                 '(delayed_until IS NULL OR delayed_until<=:delayedUntil) ' .
                 'ORDER BY priority DESC, id ASC LIMIT 1 FOR UPDATE',
                 $this->context->getTableName()
@@ -211,11 +205,9 @@ class DbalConsumer implements PsrConsumer
 
             return $this->convertMessage($dbalMessage);
 
-        } catch (\LogicException $e) {
-            $this->dbal->rollBack();
-            throw $e;
         } catch (\Exception $e) {
             $this->dbal->rollBack();
+            throw $e;
         }
     }
 
@@ -241,13 +233,5 @@ class DbalConsumer implements PsrConsumer
         }
 
         return $message;
-    }
-
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->consumerId;
     }
 }

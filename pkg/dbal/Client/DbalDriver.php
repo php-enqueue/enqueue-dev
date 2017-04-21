@@ -5,12 +5,12 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
-use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Psr\PsrMessage;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class DbalDriver implements DriverInterface
 {
@@ -25,20 +25,13 @@ class DbalDriver implements DriverInterface
     private $config;
 
     /**
-     * @var QueueMetaRegistry
+     * @param DbalContext $context
+     * @param Config      $config
      */
-    private $queueMetaRegistry;
-
-    /**
-     * @param DbalContext       $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
-    public function __construct(DbalContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
+    public function __construct(DbalContext $context, Config $config)
     {
         $this->context = $context;
         $this->config = $config;
-        $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
     /**
@@ -133,7 +126,13 @@ class DbalDriver implements DriverInterface
      */
     public function setupBroker(LoggerInterface $logger = null)
     {
-        // TODO: Implement setupBroker() method.
+        $logger = $logger ?: new NullLogger();
+        $log = function ($text, ...$args) use ($logger) {
+            $logger->debug(sprintf('[DbalDriver] '.$text, ...$args));
+        };
+
+        $log('Creating database table: "%s"', $this->context->getTableName());
+        $this->context->createDataBaseTable();
     }
 
     /**

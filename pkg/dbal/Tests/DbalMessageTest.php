@@ -5,7 +5,7 @@ use Enqueue\Dbal\DbalMessage;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
 
-class AmqpMessageTest extends \PHPUnit_Framework_TestCase
+class DbalMessageTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 

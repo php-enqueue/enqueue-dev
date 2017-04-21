@@ -4,6 +4,7 @@ namespace Enqueue\Dbal\Symfony;
 use Enqueue\Dbal\Client\DbalDriver;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
+use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -32,16 +33,20 @@ class DbalTransportFactory implements TransportFactoryInterface
     {
         $builder
             ->children()
-                ->scalarNode('connectionName')
-                    ->defaultNull()
-                    ->info('Doctrine DBAL connection name.')
+                ->variableNode('connection')
+//                    ->treatNullLike([])
+                    ->info('Doctrine DBAL connection options. See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html')
                 ->end()
-                ->scalarNode('tableName')
+                ->scalarNode('dbal_connection_name')
+                    ->defaultNull()
+                    ->info('Doctrine dbal connection name.')
+                ->end()
+                ->scalarNode('table_name')
                     ->defaultValue('enqueue')
                     ->cannotBeEmpty()
                     ->info('Database table name.')
                 ->end()
-                ->integerNode('pollingInterval')
+                ->integerNode('polling_interval')
                     ->defaultValue(1000)
                     ->min(100)
                     ->info('How often query for new messages.')
@@ -57,8 +62,15 @@ class DbalTransportFactory implements TransportFactoryInterface
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
-        $factory = new Definition(DbalConnectionFactory::class);
-        $factory->setArguments([new Reference('doctrine'), $config]);
+        if (false == empty($config['dbal_connection_name'])) {
+            $factory = new Definition(ManagerRegistryConnectionFactory::class);
+            $factory->setArguments([new Reference('doctrine'), $config]);
+        } elseif (false == empty($config['connection'])) {
+            $factory = new Definition(DbalConnectionFactory::class);
+            $factory->setArguments([$config]);
+        } else {
+            throw new \LogicException('Set "dbal_connection_name" options when you want ot use doctrine registry, or use "connection" options to setup direct dbal connection.');
+        }
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);
@@ -91,7 +103,6 @@ class DbalTransportFactory implements TransportFactoryInterface
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),
-            new Reference('enqueue.client.meta.queue_meta_registry'),
         ]);
 
         $driverId = sprintf('enqueue.client.%s.driver', $this->getName());

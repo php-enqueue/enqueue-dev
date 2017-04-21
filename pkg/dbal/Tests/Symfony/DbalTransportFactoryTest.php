@@ -42,13 +42,20 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), []);
+        $config = $processor->process($tb->buildTree(), [
+            'connection' => [
+                'key' => 'value'
+            ],
+        ]);
 
         $this->assertEquals([
+            'connection' => [
+                'dbname' => 'theDbName',
+            ],
             'lazy' => true,
-            'connectionName' => null,
-            'tableName' => 'enqueue',
-            'pollingInterval' => 1000,
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
+            'dbal_connection_name' => null,
         ], $config);
     }
 
@@ -61,8 +68,8 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
         $serviceId = $transport->createConnectionFactory($container, [
             'lazy' => true,
             'connectionName' => null,
-            'tableName' => 'enqueue',
-            'pollingInterval' => 1000,
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
@@ -73,8 +80,8 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([
             'lazy' => true,
             'connectionName' => null,
-            'tableName' => 'enqueue',
-            'pollingInterval' => 1000,
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
         ], $factory->getArgument(1));
     }
 
@@ -114,8 +121,5 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
         $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
-
-        $this->assertInstanceOf(Reference::class, $driver->getArgument(2));
-        $this->assertEquals('enqueue.client.meta.queue_meta_registry', (string) $driver->getArgument(2));
     }
 }

@@ -6,7 +6,6 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
-use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dbal\Client\DbalDriver;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
@@ -14,7 +13,7 @@ use Enqueue\Dbal\DbalMessage;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 
-class FsDriverTest extends \PHPUnit_Framework_TestCase
+class DbalDriverTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
@@ -27,8 +26,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     {
         new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            new Config('', '', '', '', '', '')
         );
     }
 
@@ -36,7 +34,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     {
         $config = new Config('', '', '', '', '', '');
 
-        $driver = new DbalDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
+        $driver = new DbalDriver($this->createPsrContextMock(), $config);
 
         $this->assertSame($config, $driver->getConfig());
     }
@@ -53,7 +51,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expectedQueue))
         ;
 
-        $driver = new DbalDriver($context, new Config('', '', '', '', '', ''), $this->createQueueMetaRegistryMock());
+        $driver = new DbalDriver($context, new Config('', '', '', '', '', ''));
 
         $queue = $driver->createQueue('name');
 
@@ -74,8 +72,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            new Config('', '', '', '', '', '')
         );
 
         $clientMessage = $driver->createClientMessage($transportMessage);
@@ -121,8 +118,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            new Config('', '', '', '', '', '')
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
@@ -185,8 +181,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            $config,
-            $this->createQueueMetaRegistryMock()
+            $config
         );
 
         $message = new Message();
@@ -199,8 +194,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            new Config('', '', '', '', '', '')
         );
 
         $this->expectException(\LogicException::class);
@@ -239,8 +233,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            new Config('', '', '', '', '', '')
         );
 
         $message = new Message();
@@ -254,8 +247,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            new Config('', '', '', '', '', '')
         );
 
         $this->expectException(\LogicException::class);
@@ -268,8 +260,7 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            new Config('', '', '', '', '', '')
         );
 
         $this->expectException(\LogicException::class);
@@ -283,7 +274,22 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSetupBroker()
     {
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getTableName')
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createDataBaseTable')
+        ;
 
+        $driver = new DbalDriver(
+            $context,
+            new Config('', '', '', '', '', '')
+        );
+
+        $driver->setupBroker();
     }
 
     /**
@@ -300,14 +306,6 @@ class FsDriverTest extends \PHPUnit_Framework_TestCase
     private function createPsrProducerMock()
     {
         return $this->createMock(PsrProducer::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
-     */
-    private function createQueueMetaRegistryMock()
-    {
-        return $this->createMock(QueueMetaRegistry::class);
     }
 
     /**

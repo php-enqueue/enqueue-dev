@@ -1,38 +1,41 @@
 <?php
 namespace Enqueue\Dbal;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Enqueue\Psr\PsrConnectionFactory;
 
-class DbalConnectionFactory implements PsrConnectionFactory
+class ManagerRegistryConnectionFactory implements PsrConnectionFactory
 {
+    /**
+     * @var ManagerRegistry
+     */
+    private $registry;
+
     /**
      * @var array
      */
     private $config;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * $config = [
-     *   'connection' => []             - dbal connection options. see http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
+     *   'connection_name' => null,     - doctrine dbal connection name
      *   'table_name' => 'enqueue',     - database table name.
-     *   'polling_interval' => '1000',  - How often query for new messages (milliseconds)
+     *   'polling_interval' => 1000,    - How often query for new messages (milliseconds)
      *   'lazy' => true,                - Use lazy database connection (boolean)
      * ]
      *
-     * @param $config
+     * @param ManagerRegistry $registry
+     * @param array           $config
      */
-    public function __construct(array $config = [])
+    public function __construct(ManagerRegistry $registry, array $config = [])
     {
         $this->config = array_replace([
-            'connection' => [],
+            'connection_name' => null,
             'lazy' => true,
         ], $config);
+
+        $this->registry = $registry;
     }
 
     /**
@@ -56,12 +59,10 @@ class DbalConnectionFactory implements PsrConnectionFactory
      */
     private function establishConnection()
     {
-        if (false == $this->connection) {
-            $this->connection = DriverManager::getConnection($this->config['connection']);
-            $this->connection->connect();
-        }
+        $connection = $this->registry->getConnection($this->config['connection_name']);
+        $connection->connect();
 
-        return $this->connection;
+        return $connection;
     }
 
     /**
@@ -69,8 +70,5 @@ class DbalConnectionFactory implements PsrConnectionFactory
      */
     public function close()
     {
-        if ($this->connection) {
-            $this->connection->close();
-        }
     }
 }

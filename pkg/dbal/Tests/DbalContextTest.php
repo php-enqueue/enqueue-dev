@@ -31,21 +31,21 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
         $factory = new DbalContext($this->createConnectionMock(), []);
 
         $this->assertAttributeEquals([
-            'tableName' => 'enqueue',
-            'pollingInterval' => null,
+            'table_name' => 'enqueue',
+            'polling_interval' => null,
         ], 'config', $factory);
     }
 
     public function testCouldBeConstructedWithCustomConfiguration()
     {
         $factory = new DbalContext($this->createConnectionMock(), [
-            'tableName' => 'theTableName',
-            'pollingInterval' => 12345,
+            'table_name' => 'theTableName',
+            'polling_interval' => 12345,
         ]);
 
         $this->assertAttributeEquals([
-            'tableName' => 'theTableName',
-            'pollingInterval' => 12345,
+            'table_name' => 'theTableName',
+            'polling_interval' => 12345,
         ], 'config', $factory);
     }
 
