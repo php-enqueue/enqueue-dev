@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.3.3](https://github.com/php-enqueue/enqueue-dev/tree/0.3.3) (2017-04-21)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.2...0.3.3)
+
+- \[client\] Redis driver [\#59](https://github.com/php-enqueue/enqueue-dev/pull/59) ([makasim](https://github.com/makasim))
+- Redis transport. [\#55](https://github.com/php-enqueue/enqueue-dev/pull/55) ([makasim](https://github.com/makasim))
+
+- Move some dependencies to dev section [\#57](https://github.com/php-enqueue/enqueue-dev/issues/57)
+
 ## [0.3.2](https://github.com/php-enqueue/enqueue-dev/tree/0.3.2) (2017-04-19)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.1...0.3.2)
 
