@@ -12,10 +12,9 @@ use Enqueue\Redis\RedisProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Transport\Null\NullMessage;
 use Enqueue\Transport\Null\NullQueue;
-use Makasim\File\TempFile;
 use PHPUnit\Framework\TestCase;
 
-class RedisProducerTest extends \PHPUnit\Framework\TestCase
+class RedisProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 
@@ -44,7 +43,7 @@ class RedisProducerTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(InvalidMessageException::class);
         $this->expectExceptionMessage('The message must be an instance of Enqueue\Redis\RedisMessage but it is Enqueue\Transport\Null\NullMessage.');
-        $producer->send(new RedisDestination(TempFile::generate()), new NullMessage());
+        $producer->send(new RedisDestination('aQueue'), new NullMessage());
     }
 
     public function testShouldCallLPushOnSend()
