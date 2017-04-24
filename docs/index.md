@@ -5,6 +5,7 @@
     - [Amqp (RabbitMQ, ActiveMQ)](amqp_transport.md)
     - [Stomp (RabbitMQ, ActiveMQ)](stomp_transport.md)
     - [Redis](redis_transport.md)
+    - [Doctrine DBAL](dbal_transport.md)
     - [Filesystem](filesystem_transport.md)
     - [Null](null_transport.md)
 * Consumption
