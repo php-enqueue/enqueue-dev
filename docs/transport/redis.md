@@ -122,4 +122,4 @@ $fooTopic = $psrContext->createTopic('aTopic');
 $psrContext->deleteTopic($fooTopic);
 ```
 
-[back to index](index.md)
+[back to index](../index.md)

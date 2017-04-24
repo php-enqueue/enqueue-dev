@@ -2,12 +2,12 @@
 
 * [Quick tour](quick_tour.md)
 * Transports
-    - [Amqp (RabbitMQ, ActiveMQ)](amqp_transport.md)
-    - [Stomp (RabbitMQ, ActiveMQ)](stomp_transport.md)
-    - [Redis](redis_transport.md)
-    - [Doctrine DBAL](dbal_transport.md)
-    - [Filesystem](filesystem_transport.md)
-    - [Null](null_transport.md)
+    - [Amqp (RabbitMQ, ActiveMQ)](transport/amqp.md)
+    - [Stomp (RabbitMQ, ActiveMQ)](transport/stomp.md)
+    - [Redis](transport/redis.md)
+    - [Doctrine DBAL](transport/dbal.md)
+    - [Filesystem](transport/filesystem.md)
+    - [Null](transport/null.md)
 * Consumption
     - [Extensions](consumption/extensions.md)
     - [Message processor](consumption/message_processor.md)

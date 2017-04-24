@@ -24,4 +24,4 @@ $connectionFactory = new NullConnectionFactory();
 $psrContext = $connectionFactory->createContext();
 ```
 
-[back to index](index.md)
+[back to index](../index.md)

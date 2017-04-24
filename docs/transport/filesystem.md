@@ -83,4 +83,4 @@ $fooQueue = $psrContext->createQueue('aQueue');
 $psrContext->purge($fooQueue);
 ```
 
-[back to index](index.md)
+[back to index](../index.md)

@@ -107,4 +107,4 @@ $message = $consumer->receive();
 // process a message
 ```
 
-[back to index](index.md)
+[back to index](../index.md)

@@ -9,7 +9,7 @@ Features:
 
 * [JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) like transport [abstraction](https://github.com/php-enqueue/psr-queue).
 * Feature rich.
-* Supports [AMQP](docs/amqp_transport.md) (RabbitMQ, ActiveMQ and others), [STOMP](docs/stomp_transport.md) (RabbitMQ, ActiveMQ and others), [Redis](docs/redis_transport.md), Doctrine DBAL, [Filesystem](docs/filesystem_transport.md), [Null](docs/null_transport.md) transports.
+* Supports [AMQP](docs/transport/amqp.md) (RabbitMQ, ActiveMQ and others), [STOMP](docs/transport/stomp.md) (RabbitMQ, ActiveMQ and others), [Redis](docs/transport/redis.md), [Doctrine DBAL](docs/transport/dbal.md), [Filesystem](docs/transport/filesystem.md), [Null](docs/transport/null.md) transports.
 * Generic purpose abstraction level (the transport level).
 * "Opinionated" easy to use abstraction level (the client level).
 * [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
