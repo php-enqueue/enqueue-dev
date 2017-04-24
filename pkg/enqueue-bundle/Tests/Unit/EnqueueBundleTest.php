@@ -11,6 +11,7 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\EnqueueBundle;
+use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
@@ -170,6 +171,23 @@ class EnqueueBundleTest extends TestCase
             ->expects($this->at(7))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(RedisTransportFactory::class))
+        ;
+
+        $bundle = new EnqueueBundle();
+        $bundle->build($container);
+    }
+
+    public function testShouldRegisterDbalTransportFactory()
+    {
+        $extensionMock = $this->createEnqueueExtensionMock();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extensionMock);
+
+        $extensionMock
+            ->expects($this->at(8))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(DbalTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();
