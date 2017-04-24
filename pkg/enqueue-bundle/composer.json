@@ -22,6 +22,7 @@
         "enqueue/job-queue": "^0.3@dev",
         "enqueue/fs": "^0.3",
         "enqueue/redis": "^0.3",
+        "enqueue/dbal": "^0.3",
         "enqueue/test": "^0.3@dev",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/monolog-bundle": "^2.8|^3",
