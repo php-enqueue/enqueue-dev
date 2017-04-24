@@ -41,6 +41,10 @@
             <directory>pkg/dbal/Tests</directory>
         </testsuite>
 
+        <testsuite name="sqs transport">
+            <directory>pkg/sqs/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>

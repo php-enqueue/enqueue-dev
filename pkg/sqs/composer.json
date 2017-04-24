@@ -1,0 +1,41 @@
+{
+    "name": "enqueue/sqs",
+    "type": "library",
+    "description": "Message Queue Amazon SQS Transport",
+    "keywords": ["messaging", "queue", "amazon", "sqs"],
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:php-enqueue/test.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "enqueue/psr-queue": "^0.3",
+        "aws/aws-sdk-php": "~3.26",
+        "psr/log": "^1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.4.0",
+        "enqueue/test": "^0.3",
+        "enqueue/enqueue": "^0.3",
+        "symfony/dependency-injection": "^2.8|^3",
+        "symfony/config": "^2.8|^3"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\Sqs\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "suggest": {
+        "enqueue/enqueue": "If you'd like to use advanced features like Client abstract layer or Symfony integration features"
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.3.x-dev"
+        }
+    }
+}
