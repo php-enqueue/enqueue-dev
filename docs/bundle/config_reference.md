@@ -102,6 +102,34 @@ enqueue:
 
             # The queue files are created with this given permissions if not exist.
             chmod:                384
+        redis:
+
+            # can be a host, or the path to a unix domain socket
+            host:                 ~ # Required
+            port:                 ~
+
+            # The library used internally to interact with Redis server
+            vendor:               ~ # One of "phpredis"; "predis", Required
+
+            # bool, Whether it use single persisted connection or open a new one for every context
+            persisted:            false
+
+            # the connection will be performed as later as possible, if the option set to true
+            lazy:                 true
+        dbal:
+
+            # Doctrine DBAL connection options. See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
+            connection:           ~
+
+            # Doctrine dbal connection name.
+            dbal_connection_name: null
+
+            # Database table name.
+            table_name:           enqueue
+
+            # How often query for new messages.
+            polling_interval:     1000
+            lazy:                 true
     client:
         traceable_producer:   false
         prefix:               enqueue
