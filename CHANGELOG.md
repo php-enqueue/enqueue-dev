@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.3.4](https://github.com/php-enqueue/enqueue-dev/tree/0.3.4) (2017-04-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.3...0.3.4)
+
+- DBAL Transport [\#54](https://github.com/php-enqueue/enqueue-dev/pull/54) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.3.3](https://github.com/php-enqueue/enqueue-dev/tree/0.3.3) (2017-04-21)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.2...0.3.3)
 
