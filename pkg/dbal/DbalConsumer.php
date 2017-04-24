@@ -78,6 +78,7 @@ class DbalConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
+        $timeout /= 1000;
         $startAt = microtime(true);
 
         while (true) {
