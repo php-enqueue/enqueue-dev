@@ -29,6 +29,7 @@ class SqsDestination implements PsrTopic, PsrQueue
     public function __construct($name)
     {
         $this->name = $name;
+        $this->attributes = [];
     }
 
     /**
@@ -45,6 +46,14 @@ class SqsDestination implements PsrTopic, PsrQueue
     public function getTopicName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
     /**

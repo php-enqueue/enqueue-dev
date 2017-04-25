@@ -41,6 +41,11 @@ class SqsMessage implements PsrMessage
     private $messageGroupId;
 
     /**
+     * @var string
+     */
+    private $receiptHandle;
+
+    /**
      * @param string $body
      * @param array  $properties
      * @param array  $headers
@@ -281,5 +286,27 @@ class SqsMessage implements PsrMessage
     public function getMessageGroupId()
     {
         return $this->messageGroupId;
+    }
+
+    /**
+     * This handle is associated with the action of receiving the message, not with the message itself.
+     * To delete the message or to change the message visibility, you must provide the receipt handle (not the message ID).
+     *
+     * If you receive a message more than once, each time you receive it, you get a different receipt handle.
+     * You must provide the most recently received receipt handle when you request to delete the message (otherwise, the message might not be deleted).
+     *
+     * @param string $receipt
+     */
+    public function setReceiptHandle($receipt)
+    {
+        $this->receiptHandle = $receipt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReceiptHandle()
+    {
+        return $this->receiptHandle;
     }
 }
