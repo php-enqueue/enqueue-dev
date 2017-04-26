@@ -8,8 +8,8 @@ use Enqueue\Client\RpcClient;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Rpc\Promise;
-use Enqueue\Transport\Null\NullContext;
-use Enqueue\Transport\Null\NullMessage;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class RpcClientTest extends TestCase

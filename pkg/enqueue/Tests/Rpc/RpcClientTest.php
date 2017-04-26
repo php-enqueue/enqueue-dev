@@ -7,9 +7,9 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
-use Enqueue\Transport\Null\NullContext;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use PHPUnit\Framework\TestCase;
 
 class RpcClientTest extends TestCase

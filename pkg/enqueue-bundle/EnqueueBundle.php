@@ -21,7 +21,7 @@ use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Symfony\NullTransportFactory;
+use Enqueue\Null\Symfony\NullTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

@@ -5,6 +5,7 @@ namespace Enqueue\Stomp\Client;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
+use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
@@ -25,13 +26,20 @@ class StompDriver implements DriverInterface
     private $config;
 
     /**
-     * @param StompContext $context
-     * @param Config       $config
+     * @var QueueMetaRegistry
      */
-    public function __construct(StompContext $context, Config $config)
+    private $queueMetaRegistry;
+
+    /**
+     * @param StompContext $context
+     * @param Config $config
+     * @param QueueMetaRegistry $queueMetaRegistry
+     */
+    public function __construct(StompContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
         $this->config = $config;
+        $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
     /**
@@ -149,7 +157,9 @@ class StompDriver implements DriverInterface
      */
     public function createQueue($queueName)
     {
-        $queue = $this->context->createQueue($this->config->createTransportQueueName($queueName));
+        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
+
+        $queue = $this->context->createQueue($transportName);
         $queue->setDurable(true);
         $queue->setAutoDelete(false);
         $queue->setExclusive(false);

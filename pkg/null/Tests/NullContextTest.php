@@ -1,15 +1,15 @@
 <?php
 
-namespace Enqueue\Tests\Transport\Null;
+namespace Enqueue\Null\Tests;
 
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullConsumer;
-use Enqueue\Transport\Null\NullContext;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullProducer;
-use Enqueue\Transport\Null\NullQueue;
-use Enqueue\Transport\Null\NullTopic;
+use Enqueue\Null\NullConsumer;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullProducer;
+use Enqueue\Null\NullQueue;
+use Enqueue\Null\NullTopic;
 use PHPUnit\Framework\TestCase;
 
 class NullContextTest extends TestCase

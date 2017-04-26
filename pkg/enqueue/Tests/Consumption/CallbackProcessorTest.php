@@ -5,8 +5,8 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullContext;
-use Enqueue\Transport\Null\NullMessage;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class CallbackProcessorTest extends TestCase

@@ -5,6 +5,7 @@ namespace Enqueue\Stomp\Tests\Client;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
+use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Stomp\Client\StompDriver;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
@@ -24,33 +25,33 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new StompDriver($this->createPsrContextMock(), new Config('', '', '', '', '', ''));
+        new StompDriver($this->createPsrContextMock(), $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = $this->createDummyConfig();
 
-        $driver = new StompDriver($this->createPsrContextMock(), $config);
+        $driver = new StompDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
 
         $this->assertSame($config, $driver->getConfig());
     }
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new StompDestination();
+        $expectedQueue = new StompDestination('aName');
 
-        $session = $this->createPsrContextMock();
-        $session
+        $context = $this->createPsrContextMock();
+        $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
         ;
 
-        $driver = new StompDriver($session, new Config('', '', '', '', '', ''));
+        $driver = new StompDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
-        $queue = $driver->createQueue('name');
+        $queue = $driver->createQueue('aFooQueue');
 
         $this->assertSame($expectedQueue, $queue);
         $this->assertTrue($queue->isDurable());
@@ -61,6 +62,25 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
             'auto-delete' => false,
             'exclusive' => false,
         ], $queue->getHeaders());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new StompDestination('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new StompDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -75,7 +95,7 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
         $transportMessage->setReplyTo('theReplyTo');
         $transportMessage->setCorrelationId('theCorrelationId');
 
-        $driver = new StompDriver($this->createPsrContextMock(), new Config('', '', '', '', '', ''));
+        $driver = new StompDriver($this->createPsrContextMock(), $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
         $clientMessage = $driver->createClientMessage($transportMessage);
 
@@ -109,7 +129,7 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new StompMessage())
         ;
 
-        $driver = new StompDriver($context, new Config('', '', '', '', '', ''));
+        $driver = new StompDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
 
@@ -161,7 +181,8 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new StompDriver(
             $context,
-            new Config('', '', '', '', '', '')
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
@@ -174,7 +195,8 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new StompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -213,12 +235,13 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new StompDriver(
             $context,
-            new Config('', '', '', '', '', '')
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
 
         $driver->sendToProcessor($message);
     }
@@ -227,7 +250,8 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new StompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -240,7 +264,8 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new StompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -256,7 +281,8 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new StompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '')
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $logger = $this->createLoggerMock();
@@ -291,5 +317,26 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
     private function createLoggerMock()
     {
         return $this->createMock(LoggerInterface::class);
+    }
+
+    /**
+     * @return QueueMetaRegistry
+     */
+    private function createDummyQueueMetaRegistry()
+    {
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
+    }
+
+    /**
+     * @return Config
+     */
+    private function createDummyConfig()
+    {
+        return Config::create('aPrefix');
     }
 }

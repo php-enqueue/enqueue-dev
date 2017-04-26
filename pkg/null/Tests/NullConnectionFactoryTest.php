@@ -1,11 +1,11 @@
 <?php
 
-namespace Enqueue\Tests\Transport\Null;
+namespace Enqueue\Null\Tests;
 
 use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullConnectionFactory;
-use Enqueue\Transport\Null\NullContext;
+use Enqueue\Null\NullConnectionFactory;
+use Enqueue\Null\NullContext;
 use PHPUnit\Framework\TestCase;
 
 class NullConnectionFactoryTest extends TestCase

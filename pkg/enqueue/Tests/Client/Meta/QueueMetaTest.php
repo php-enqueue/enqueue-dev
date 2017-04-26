@@ -9,31 +9,31 @@ class QueueMetaTest extends TestCase
 {
     public function testCouldBeConstructedWithExpectedArguments()
     {
-        $destination = new QueueMeta('aClientName', 'aTransportName');
+        $meta = new QueueMeta('aClientName', 'aTransportName');
 
-        $this->assertAttributeEquals('aClientName', 'clientName', $destination);
-        $this->assertAttributeEquals('aTransportName', 'transportName', $destination);
-        $this->assertAttributeEquals([], 'processors', $destination);
+        $this->assertAttributeEquals('aClientName', 'clientName', $meta);
+        $this->assertAttributeEquals('aTransportName', 'transportName', $meta);
+        $this->assertAttributeEquals([], 'processors', $meta);
     }
 
     public function testShouldAllowGetClientNameSetInConstructor()
     {
-        $destination = new QueueMeta('theClientName', 'aTransportName');
+        $meta = new QueueMeta('theClientName', 'aTransportName');
 
-        $this->assertSame('theClientName', $destination->getClientName());
+        $this->assertSame('theClientName', $meta->getClientName());
     }
 
     public function testShouldAllowGetTransportNameSetInConstructor()
     {
-        $destination = new QueueMeta('aClientName', 'theTransportName');
+        $meta = new QueueMeta('aClientName', 'theTransportName');
 
-        $this->assertSame('theTransportName', $destination->getTransportName());
+        $this->assertSame('theTransportName', $meta->getTransportName());
     }
 
     public function testShouldAllowGetSubscribersSetInConstructor()
     {
-        $destination = new QueueMeta('aClientName', 'aTransportName', ['aSubscriber']);
+        $meta = new QueueMeta('aClientName', 'aTransportName', ['aSubscriber']);
 
-        $this->assertSame(['aSubscriber'], $destination->getProcessors());
+        $this->assertSame(['aSubscriber'], $meta->getProcessors());
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Transport\Null;
+namespace Enqueue\Null;
 
 use Enqueue\Psr\PsrQueue;
 

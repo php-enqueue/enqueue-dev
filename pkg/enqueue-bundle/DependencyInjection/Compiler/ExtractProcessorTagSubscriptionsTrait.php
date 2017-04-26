@@ -38,6 +38,7 @@ trait ExtractProcessorTagSubscriptionsTrait
         $subscriptionPrototype = [
             'topicName' => null,
             'queueName' => null,
+            'queueNameHardcoded' => false,
             'processorName' => null,
         ];
 
@@ -48,6 +49,7 @@ trait ExtractProcessorTagSubscriptionsTrait
                     $data[] = [
                         'topicName' => $params,
                         'queueName' => $defaultQueueName,
+                        'queueNameHardcoded' => false,
                         'processorName' => $processorServiceId,
                     ];
                 } elseif (is_array($params)) {
@@ -56,6 +58,7 @@ trait ExtractProcessorTagSubscriptionsTrait
                     $data[] = [
                         'topicName' => $topicName,
                         'queueName' => $resolve($params['queueName']) ?: $defaultQueueName,
+                        'queueNameHardcoded' => $resolve($params['queueNameHardcoded']),
                         'processorName' => $resolve($params['processorName']) ?: $processorServiceId,
                     ];
                 } else {
@@ -76,6 +79,7 @@ trait ExtractProcessorTagSubscriptionsTrait
                 $data[] = [
                     'topicName' => $resolve($tagAttribute['topicName']),
                     'queueName' => $resolve($tagAttribute['queueName']) ?: $defaultQueueName,
+                    'queueNameHardcoded' => $resolve($tagAttribute['queueNameHardcoded']),
                     'processorName' => $resolve($tagAttribute['processorName']) ?: $processorServiceId,
                 ];
             }

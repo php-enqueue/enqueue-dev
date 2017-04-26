@@ -10,8 +10,8 @@ use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Redis\RedisProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use PHPUnit\Framework\TestCase;
 
 class RedisProducerTest extends TestCase
@@ -33,7 +33,7 @@ class RedisProducerTest extends TestCase
         $producer = new RedisProducer($this->createRedisMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Transport\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Null\NullQueue.');
         $producer->send(new NullQueue('aQueue'), new RedisMessage());
     }
 
@@ -42,7 +42,7 @@ class RedisProducerTest extends TestCase
         $producer = new RedisProducer($this->createRedisMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Redis\RedisMessage but it is Enqueue\Transport\Null\NullMessage.');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Redis\RedisMessage but it is Enqueue\Null\NullMessage.');
         $producer->send(new RedisDestination('aQueue'), new NullMessage());
     }
 

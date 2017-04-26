@@ -9,8 +9,8 @@ use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use PHPUnit\Framework\TestCase;
 
 class ReplyExtensionTest extends TestCase

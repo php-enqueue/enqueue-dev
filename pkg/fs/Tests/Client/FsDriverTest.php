@@ -28,16 +28,16 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
     {
         new FsDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = $this->createDummyConfig();
 
-        $driver = new FsDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
+        $driver = new FsDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
 
         $this->assertSame($config, $driver->getConfig());
     }
@@ -50,16 +50,34 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
         ;
 
-        $driver = new FsDriver($context, new Config('', '', '', '', '', ''), $this->createQueueMetaRegistryMock());
+        $driver = new FsDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
-        $queue = $driver->createQueue('name');
+        $queue = $driver->createQueue('aFooQueue');
 
         $this->assertSame($expectedQueue, $queue);
-        $this->assertSame('queue-name', $queue->getQueueName());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new FsDestination(new TempFile(sys_get_temp_dir().'/queue-name'));
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new FsDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -76,8 +94,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new FsDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $clientMessage = $driver->createClientMessage($transportMessage);
@@ -128,8 +146,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new FsDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
@@ -157,18 +175,7 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
     {
         $topic = new FsDestination(TempFile::generate());
         $transportMessage = new FsMessage();
-        $config = $this->createConfigMock();
-
-        $config
-            ->expects($this->once())
-            ->method('getRouterTopicName')
-            ->willReturn('topicName');
-
-        $config
-            ->expects($this->once())
-            ->method('createTransportQueueName')
-            ->with('topicName')
-            ->willReturn('app.topicName');
+        $config = $this->createDummyConfig();
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -180,7 +187,7 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
         $context
             ->expects($this->once())
             ->method('createTopic')
-            ->with('app.topicName')
+            ->with('aprefix.router')
             ->willReturn($topic)
         ;
         $context
@@ -197,7 +204,7 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
         $driver = new FsDriver(
             $context,
             $config,
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
@@ -210,8 +217,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new FsDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -250,13 +257,13 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new FsDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
 
         $driver->sendToProcessor($message);
     }
@@ -265,8 +272,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new FsDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -279,8 +286,8 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new FsDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -333,13 +340,13 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($processorQueue))
         ;
 
-        $meta = new QueueMetaRegistry(new Config('', '', '', '', '', ''), [
+        $meta = new QueueMetaRegistry($this->createDummyConfig(), [
             'default' => [],
         ], 'default');
 
         $driver = new FsDriver(
             $context,
-            new Config('', '', '', '', '', ''),
+            $this->createDummyConfig(),
             $meta
         );
 
@@ -363,18 +370,23 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
+     * @return QueueMetaRegistry
      */
-    private function createQueueMetaRegistryMock()
+    private function createDummyQueueMetaRegistry()
     {
-        return $this->createMock(QueueMetaRegistry::class);
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Config
+     * @return Config
      */
-    private function createConfigMock()
+    private function createDummyConfig()
     {
-        return $this->createMock(Config::class);
+        return Config::create('aPrefix');
     }
 }

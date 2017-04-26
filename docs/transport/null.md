@@ -10,14 +10,14 @@ Useful in tests for example.
 ## Installation
 
 ```bash
-$ composer require enqueue/enqueue
+$ composer require enqueue/null
 ```
 
 ## Create context
 
 ```php
 <?php
-use Enqueue\Transport\Null\NullConnectionFactory;
+use Enqueue\Null\NullConnectionFactory;
 
 $connectionFactory = new NullConnectionFactory();
 

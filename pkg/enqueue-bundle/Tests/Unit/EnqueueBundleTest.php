@@ -17,7 +17,7 @@ use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Symfony\NullTransportFactory;
+use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

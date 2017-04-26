@@ -15,7 +15,7 @@ use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Psr\PsrQueue;
 use Enqueue\Tests\Consumption\Mock\BreakCycleExtension;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullQueue;
 use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 

@@ -28,42 +28,60 @@ class AmqpDriverTest extends TestCase
     {
         new AmqpDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = $this->createDummyConfig();
 
-        $driver = new AmqpDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
+        $driver = new AmqpDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
 
         $this->assertSame($config, $driver->getConfig());
     }
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new AmqpQueue('queue-name');
+        $expectedQueue = new AmqpQueue('aName');
 
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
         ;
 
-        $driver = new AmqpDriver($context, new Config('', '', '', '', '', ''), $this->createQueueMetaRegistryMock());
+        $driver = new AmqpDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
-        $queue = $driver->createQueue('name');
+        $queue = $driver->createQueue('aFooQueue');
 
         $this->assertSame($expectedQueue, $queue);
-        $this->assertSame('queue-name', $queue->getQueueName());
         $this->assertSame([], $queue->getArguments());
         $this->assertSame(2, $queue->getFlags());
         $this->assertNull($queue->getConsumerTag());
         $this->assertSame([], $queue->getBindArguments());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new AmqpQueue('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new AmqpDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -81,8 +99,8 @@ class AmqpDriverTest extends TestCase
 
         $driver = new AmqpDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $clientMessage = $driver->createClientMessage($transportMessage);
@@ -116,8 +134,8 @@ class AmqpDriverTest extends TestCase
 
         $driver = new AmqpDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -148,8 +166,8 @@ class AmqpDriverTest extends TestCase
 
         $driver = new AmqpDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
@@ -205,8 +223,8 @@ class AmqpDriverTest extends TestCase
 
         $driver = new AmqpDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
@@ -219,8 +237,8 @@ class AmqpDriverTest extends TestCase
     {
         $driver = new AmqpDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -259,13 +277,13 @@ class AmqpDriverTest extends TestCase
 
         $driver = new AmqpDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
 
         $driver->sendToProcessor($message);
     }
@@ -274,8 +292,8 @@ class AmqpDriverTest extends TestCase
     {
         $driver = new AmqpDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -288,8 +306,8 @@ class AmqpDriverTest extends TestCase
     {
         $driver = new AmqpDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -347,13 +365,13 @@ class AmqpDriverTest extends TestCase
             ->with($this->identicalTo($processorQueue))
         ;
 
-        $meta = new QueueMetaRegistry(new Config('', '', '', '', '', ''), [
+        $meta = new QueueMetaRegistry($this->createDummyConfig(), [
             'default' => [],
         ], 'default');
 
         $driver = new AmqpDriver(
             $context,
-            new Config('', '', '', '', '', ''),
+            $this->createDummyConfig(),
             $meta
         );
 
@@ -377,10 +395,23 @@ class AmqpDriverTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
+     * @return QueueMetaRegistry
      */
-    private function createQueueMetaRegistryMock()
+    private function createDummyQueueMetaRegistry()
     {
-        return $this->createMock(QueueMetaRegistry::class);
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
+    }
+
+    /**
+     * @return Config
+     */
+    private function createDummyConfig()
+    {
+        return Config::create('aPrefix');
     }
 }

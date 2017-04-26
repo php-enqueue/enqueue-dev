@@ -17,7 +17,7 @@ class QueuesCommandTest extends WebTestCase
         $this->assertInstanceOf(QueuesCommand::class, $command);
     }
 
-    public function testShouldDisplayRegisteredDestionations()
+    public function testShouldDisplayRegisteredQueues()
     {
         $command = $this->container->get('enqueue.client.meta.queues_command');
 

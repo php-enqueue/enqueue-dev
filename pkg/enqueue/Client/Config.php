@@ -134,6 +134,7 @@ class Config
      * @param string|null $routerQueueName
      * @param string|null $defaultProcessorQueueName
      * @param string|null $routerProcessorName
+     * @param array $transportConfig
      *
      * @return static
      */
@@ -143,7 +144,8 @@ class Config
         $routerTopicName = null,
         $routerQueueName = null,
         $defaultProcessorQueueName = null,
-        $routerProcessorName = null
+        $routerProcessorName = null,
+        array $transportConfig = []
     ) {
         return new static(
             $prefix ?: '',
@@ -151,7 +153,8 @@ class Config
             $routerTopicName ?: 'router',
             $routerQueueName ?: 'default',
             $defaultProcessorQueueName ?: 'default',
-            $routerProcessorName ?: 'router'
+            $routerProcessorName ?: 'router',
+            $transportConfig
         );
     }
 }
