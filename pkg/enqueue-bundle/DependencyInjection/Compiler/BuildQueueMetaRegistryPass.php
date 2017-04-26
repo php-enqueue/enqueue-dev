@@ -28,6 +28,10 @@ class BuildQueueMetaRegistryPass implements CompilerPassInterface
 
             foreach ($subscriptions as $subscription) {
                 $configs[$subscription['queueName']]['processors'][] = $subscription['processorName'];
+
+                if ($subscription['queueNameHardcoded']) {
+                    $configs[$subscription['queueName']]['transportName'] = $subscription['queueName'];
+                }
             }
         }
 

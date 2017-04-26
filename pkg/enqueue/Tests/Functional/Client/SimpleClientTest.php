@@ -13,6 +13,9 @@ use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group functional
+ */
 class SimpleClientTest extends TestCase
 {
     use RabbitmqAmqpExtension;

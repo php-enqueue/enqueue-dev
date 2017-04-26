@@ -30,20 +30,20 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     {
         new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = $this->createDummyConfig();
 
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
             $config,
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -52,24 +52,24 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new StompDestination();
+        $expectedQueue = new StompDestination('aName');
 
-        $session = $this->createPsrContextMock();
-        $session
+        $context = $this->createPsrContextMock();
+        $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
         ;
 
         $driver = new RabbitMqStompDriver(
-            $session,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $context,
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
-        $queue = $driver->createQueue('name');
+        $queue = $driver->createQueue('aFooQueue');
 
         $expectedHeaders = [
             'durable' => true,
@@ -83,6 +83,30 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($queue->isAutoDelete());
         $this->assertFalse($queue->isExclusive());
         $this->assertSame($expectedHeaders, $queue->getHeaders());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new StompDestination('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new RabbitMqStompDriver(
+            $context,
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
+            $this->createManagementClientMock()
+        );
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -102,8 +126,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -130,8 +154,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -148,8 +172,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -166,8 +190,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -193,8 +217,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new RabbitMqStompDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -229,7 +253,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $driver = new RabbitMqStompDriver(
             $context,
             new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -271,7 +295,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $driver = new RabbitMqStompDriver(
             $context,
             new Config('', '', '', '', '', '', ['delay_plugin_installed' => false]),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -311,8 +335,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new RabbitMqStompDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -326,8 +350,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -352,6 +376,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $context
             ->expects($this->once())
             ->method('createQueue')
+            ->with('aprefix.afooqueue')
             ->willReturn($queue)
         ;
         $context
@@ -367,14 +392,14 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $driver = new RabbitMqStompDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
 
         $driver->sendToProcessor($message);
     }
@@ -416,13 +441,13 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $driver = new RabbitMqStompDriver(
             $context,
             new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
         $message->setDelay(10);
 
         $driver->sendToProcessor($message);
@@ -432,8 +457,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -447,8 +472,8 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     {
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -466,7 +491,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $driver = new RabbitMqStompDriver(
             $this->createPsrContextMock(),
             new Config('', '', '', '', '', '', ['management_plugin_installed' => false]),
-            $this->createQueueMetaRegistryMock(),
+            $this->createDummyQueueMetaRegistry(),
             $this->createManagementClientMock()
         );
 
@@ -482,12 +507,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldSetupBroker()
     {
-        $metaRegistry = $this->createQueueMetaRegistryMock();
-        $metaRegistry
-            ->expects($this->once())
-            ->method('getQueuesMeta')
-            ->willReturn([new QueueMeta('processorQueue', '')])
-        ;
+        $metaRegistry = $this->createDummyQueueMetaRegistry();
 
         $managementClient = $this->createManagementClientMock();
         $managementClient
@@ -518,7 +538,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $managementClient
             ->expects($this->at(3))
             ->method('declareQueue')
-            ->with('prefix.app.processorqueue', [
+            ->with('prefix.app.default', [
                 'durable' => true,
                 'auto_delete' => false,
                 'arguments' => [
@@ -553,7 +573,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $logger
             ->expects($this->at(3))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare processor queue: prefix.app.processorqueue')
+            ->with('[RabbitMqStompDriver] Declare processor queue: prefix.app.default')
         ;
 
         $driver->setupBroker($logger);
@@ -561,18 +581,13 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testSetupBrokerShouldCreateDelayExchangeIfEnabled()
     {
-        $metaRegistry = $this->createQueueMetaRegistryMock();
-        $metaRegistry
-            ->expects($this->exactly(2))
-            ->method('getQueuesMeta')
-            ->willReturn([new QueueMeta('processorQueue', '')])
-        ;
+        $metaRegistry = $this->createDummyQueueMetaRegistry();
 
         $managementClient = $this->createManagementClientMock();
         $managementClient
-            ->expects($this->at(4))
+            ->expects($this->at(6))
             ->method('declareExchange')
-            ->with('prefix.app.processorqueue.delayed', [
+            ->with('prefix.app.default.delayed', [
                 'type' => 'x-delayed-message',
                 'durable' => true,
                 'auto_delete' => false,
@@ -582,9 +597,9 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
             ])
         ;
         $managementClient
-            ->expects($this->at(5))
+            ->expects($this->at(7))
             ->method('bind')
-            ->with('prefix.app.processorqueue.delayed', 'prefix.app.processorqueue', 'prefix.app.processorqueue')
+            ->with('prefix.app.default.delayed', 'prefix.app.default', 'prefix.app.default')
         ;
 
         $driver = new RabbitMqStompDriver(
@@ -596,14 +611,14 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $logger = $this->createLoggerMock();
         $logger
-            ->expects($this->at(4))
+            ->expects($this->at(6))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare delay exchange: prefix.app.processorqueue.delayed')
+            ->with('[RabbitMqStompDriver] Declare delay exchange: prefix.app.default.delayed')
         ;
         $logger
-            ->expects($this->at(5))
+            ->expects($this->at(7))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: prefix.app.processorqueue -> prefix.app.processorqueue.delayed')
+            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: prefix.app.default -> prefix.app.default.delayed')
         ;
 
         $driver->setupBroker($logger);
@@ -626,14 +641,6 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
-     */
-    private function createQueueMetaRegistryMock()
-    {
-        return $this->createMock(QueueMetaRegistry::class);
-    }
-
-    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ManagementClient
      */
     private function createManagementClientMock()
@@ -647,5 +654,26 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     private function createLoggerMock()
     {
         return $this->createMock(LoggerInterface::class);
+    }
+
+    /**
+     * @return QueueMetaRegistry
+     */
+    private function createDummyQueueMetaRegistry()
+    {
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
+    }
+
+    /**
+     * @return Config
+     */
+    private function createDummyConfig()
+    {
+        return Config::create('aPrefix');
     }
 }

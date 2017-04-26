@@ -11,8 +11,8 @@ use Enqueue\Redis\RedisProducer;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullQueue;
-use Enqueue\Transport\Null\NullTopic;
+use Enqueue\Null\NullQueue;
+use Enqueue\Null\NullTopic;
 use PHPUnit\Framework\TestCase;
 
 class RedisContextTest extends \PHPUnit\Framework\TestCase
@@ -112,7 +112,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
         $context = new RedisContext($this->createRedisMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Transport\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Null\NullQueue.');
         $consumer = $context->createConsumer(new NullQueue('aQueue'));
 
         $this->assertInstanceOf(RedisConsumer::class, $consumer);

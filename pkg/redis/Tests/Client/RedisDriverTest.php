@@ -29,7 +29,7 @@ class RedisDriverTest extends TestCase
         new RedisDriver(
             $this->createPsrContextMock(),
             Config::create(),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
     }
 
@@ -37,29 +37,47 @@ class RedisDriverTest extends TestCase
     {
         $config = Config::create();;
 
-        $driver = new RedisDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
+        $driver = new RedisDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
 
         $this->assertSame($config, $driver->getConfig());
     }
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new RedisDestination('aQueueName');
+        $expectedQueue = new RedisDestination('aName');
 
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
         ;
 
-        $driver = new RedisDriver($context, Config::create(), $this->createQueueMetaRegistryMock());
+        $driver = new RedisDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
-        $queue = $driver->createQueue('name');
+        $queue = $driver->createQueue('aFooQueue');
 
         $this->assertSame($expectedQueue, $queue);
-        $this->assertSame('aQueueName', $queue->getQueueName());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new RedisDestination('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new RedisDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -79,7 +97,7 @@ class RedisDriverTest extends TestCase
         $driver = new RedisDriver(
             $this->createPsrContextMock(),
             Config::create(),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $clientMessage = $driver->createClientMessage($transportMessage);
@@ -131,7 +149,7 @@ class RedisDriverTest extends TestCase
         $driver = new RedisDriver(
             $context,
             Config::create(),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
@@ -159,18 +177,7 @@ class RedisDriverTest extends TestCase
     {
         $topic = new RedisDestination('aDestinationName');
         $transportMessage = new RedisMessage();
-        $config = $this->createConfigMock();
-
-        $config
-            ->expects($this->once())
-            ->method('getRouterQueueName')
-            ->willReturn('queueName');
-
-        $config
-            ->expects($this->once())
-            ->method('createTransportQueueName')
-            ->with('queueName')
-            ->willReturn('app.queueName');
+        $config = $this->createDummyConfig();
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -182,7 +189,7 @@ class RedisDriverTest extends TestCase
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('app.queueName')
+            ->with('aprefix.default')
             ->willReturn($topic)
         ;
         $context
@@ -199,7 +206,7 @@ class RedisDriverTest extends TestCase
         $driver = new RedisDriver(
             $context,
             $config,
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
@@ -213,7 +220,7 @@ class RedisDriverTest extends TestCase
         $driver = new RedisDriver(
             $this->createPsrContextMock(),
             Config::create(),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -253,12 +260,12 @@ class RedisDriverTest extends TestCase
         $driver = new RedisDriver(
             $context,
             Config::create(),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
 
         $driver->sendToProcessor($message);
     }
@@ -268,7 +275,7 @@ class RedisDriverTest extends TestCase
         $driver = new RedisDriver(
             $this->createPsrContextMock(),
             Config::create(),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -282,7 +289,7 @@ class RedisDriverTest extends TestCase
         $driver = new RedisDriver(
             $this->createPsrContextMock(),
             Config::create(),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -337,18 +344,23 @@ class RedisDriverTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
+     * @return QueueMetaRegistry
      */
-    private function createQueueMetaRegistryMock()
+    private function createDummyQueueMetaRegistry()
     {
-        return $this->createMock(QueueMetaRegistry::class);
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Config
+     * @return Config
      */
-    private function createConfigMock()
+    private function createDummyConfig()
     {
-        return $this->createMock(Config::class);
+        return Config::create('aPrefix');
     }
 }

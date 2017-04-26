@@ -10,8 +10,8 @@ use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Makasim\File\TempFile;
 
 class FsProducerTest extends \PHPUnit\Framework\TestCase
@@ -33,7 +33,7 @@ class FsProducerTest extends \PHPUnit\Framework\TestCase
         $producer = new FsProducer($this->createContextMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Transport\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Null\NullQueue.');
         $producer->send(new NullQueue('aQueue'), new FsMessage());
     }
 
@@ -42,7 +42,7 @@ class FsProducerTest extends \PHPUnit\Framework\TestCase
         $producer = new FsProducer($this->createContextMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Fs\FsMessage but it is Enqueue\Transport\Null\NullMessage.');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Fs\FsMessage but it is Enqueue\Null\NullMessage.');
         $producer->send(new FsDestination(TempFile::generate()), new NullMessage());
     }
 

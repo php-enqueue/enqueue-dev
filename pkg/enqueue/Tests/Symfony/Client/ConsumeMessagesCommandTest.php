@@ -10,7 +10,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullQueue;
 use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\TestCase;
 

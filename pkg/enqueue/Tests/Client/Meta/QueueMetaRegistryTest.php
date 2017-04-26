@@ -100,6 +100,17 @@ class QueueMetaRegistryTest extends TestCase
         $this->assertSame(['theSubscriber'], $queue->getProcessors());
     }
 
+    public function testShouldNotAllowToOverwriteDefaultTransportNameByEmptyValue()
+    {
+        $registry = new QueueMetaRegistry($this->createConfig(), [
+            'theClientQueueName' => ['transportName' => null, 'processors' => []],
+        ]);
+
+        $queue = $registry->getQueueMeta('theClientQueueName');
+        $this->assertInstanceOf(QueueMeta::class, $queue);
+        $this->assertSame('aprefix.anappname.theclientqueuename', $queue->getTransportName());
+    }
+
     public function testShouldAllowGetAllQueues()
     {
         $queues = [

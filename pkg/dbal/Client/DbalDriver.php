@@ -5,6 +5,7 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
+use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Psr\PsrMessage;
@@ -24,13 +25,20 @@ class DbalDriver implements DriverInterface
     private $config;
 
     /**
-     * @param DbalContext $context
-     * @param Config      $config
+     * @var QueueMetaRegistry
      */
-    public function __construct(DbalContext $context, Config $config)
+    private $queueMetaRegistry;
+
+    /**
+     * @param DbalContext $context
+     * @param Config $config
+     * @param QueueMetaRegistry $queueMetaRegistry
+     */
+    public function __construct(DbalContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
         $this->config = $config;
+        $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
     /**
@@ -121,7 +129,9 @@ class DbalDriver implements DriverInterface
      */
     public function createQueue($queueName)
     {
-        return $this->context->createQueue($this->config->createTransportQueueName($queueName));
+        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
+
+        return $this->context->createQueue($transportName);
     }
 
     /**

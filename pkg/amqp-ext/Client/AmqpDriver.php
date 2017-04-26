@@ -115,7 +115,9 @@ class AmqpDriver implements DriverInterface
      */
     public function createQueue($queueName)
     {
-        $queue = $this->context->createQueue($this->config->createTransportQueueName($queueName));
+        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
+
+        $queue = $this->context->createQueue($transportName);
         $queue->addFlag(AMQP_DURABLE);
 
         return $queue;

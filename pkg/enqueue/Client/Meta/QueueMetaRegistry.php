@@ -73,12 +73,14 @@ class QueueMetaRegistry
             ));
         }
 
+
+
         $transportName = $this->config->createTransportQueueName($queueName);
 
         $meta = array_replace([
             'processors' => [],
             'transportName' => $transportName,
-        ], $this->meta[$queueName]);
+        ], array_filter($this->meta[$queueName]));
 
         return new QueueMeta($queueName, $meta['transportName'], $meta['processors']);
     }

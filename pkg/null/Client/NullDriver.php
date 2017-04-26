@@ -1,10 +1,14 @@
 <?php
 
-namespace Enqueue\Client;
+namespace Enqueue\Null\Client;
 
+use Enqueue\Client\Config;
+use Enqueue\Client\DriverInterface;
+use Enqueue\Client\Message;
+use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Psr\PsrMessage;
-use Enqueue\Transport\Null\NullContext;
-use Enqueue\Transport\Null\NullMessage;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -21,13 +25,20 @@ class NullDriver implements DriverInterface
     protected $config;
 
     /**
-     * @param NullContext $context
-     * @param Config      $config
+     * @var QueueMetaRegistry
      */
-    public function __construct(NullContext $context, Config $config)
+    private $queueMetaRegistry;
+
+    /**
+     * @param NullContext $context
+     * @param Config $config
+     * @param QueueMetaRegistry $queueMetaRegistry
+     */
+    public function __construct(NullContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
         $this->config = $config;
+        $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
     /**
@@ -95,7 +106,9 @@ class NullDriver implements DriverInterface
      */
     public function createQueue($queueName)
     {
-        return $this->context->createQueue($queueName);
+        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
+
+        return $this->context->createQueue($transportName);
     }
 
     /**

@@ -20,6 +20,7 @@
         "symfony/console": "^2.8|^3",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3",
+        "enqueue/null": "^0.3",
         "enqueue/test": "^0.3"
     },
     "suggest": {
