@@ -46,15 +46,22 @@ class SqsDriverTest extends TestCase
     {
         $expectedQueue = new SqsDestination('aQueueName');
 
+        $meta = $this->createQueueMetaRegistryMock();
+        $meta
+            ->expects($this->once())
+            ->method('getQueueMeta')
+            ->willReturn(new QueueMeta('theClientName', 'theTransportName'))
+        ;
+
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
+            ->with('theTransportName')
             ->will($this->returnValue($expectedQueue))
         ;
 
-        $driver = new SqsDriver($context, Config::create(), $this->createQueueMetaRegistryMock());
+        $driver = new SqsDriver($context, Config::create(), $meta);
 
         $queue = $driver->createQueue('name');
 
@@ -161,17 +168,6 @@ class SqsDriverTest extends TestCase
         $transportMessage = new SqsMessage();
         $config = $this->createConfigMock();
 
-        $config
-            ->expects($this->once())
-            ->method('getRouterQueueName')
-            ->willReturn('queueName');
-
-        $config
-            ->expects($this->once())
-            ->method('createTransportQueueName')
-            ->with('queueName')
-            ->willReturn('app.queueName');
-
         $producer = $this->createPsrProducerMock();
         $producer
             ->expects($this->once())
@@ -182,7 +178,7 @@ class SqsDriverTest extends TestCase
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('app.queueName')
+            ->with('theTransportName')
             ->willReturn($topic)
         ;
         $context
@@ -196,11 +192,14 @@ class SqsDriverTest extends TestCase
             ->willReturn($transportMessage)
         ;
 
-        $driver = new SqsDriver(
-            $context,
-            $config,
-            $this->createQueueMetaRegistryMock()
-        );
+        $meta = $this->createQueueMetaRegistryMock();
+        $meta
+            ->expects($this->once())
+            ->method('getQueueMeta')
+            ->willReturn(new QueueMeta('theClientName', 'theTransportName'))
+        ;
+
+        $driver = new SqsDriver($context, $config, $meta);
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
@@ -250,11 +249,14 @@ class SqsDriverTest extends TestCase
             ->willReturn($transportMessage)
         ;
 
-        $driver = new SqsDriver(
-            $context,
-            Config::create(),
-            $this->createQueueMetaRegistryMock()
-        );
+        $meta = $this->createQueueMetaRegistryMock();
+        $meta
+            ->expects($this->once())
+            ->method('getQueueMeta')
+            ->willReturn(new QueueMeta('theClientName', 'theTransportName'))
+        ;
+
+        $driver = new SqsDriver($context, Config::create(), $meta);
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
@@ -328,6 +330,11 @@ class SqsDriverTest extends TestCase
             ->expects($this->once())
             ->method('getQueuesMeta')
             ->willReturn([new QueueMeta('theClientName', 'theTransportName')])
+        ;
+        $metaRegistry
+            ->expects($this->exactly(2))
+            ->method('getQueueMeta')
+            ->willReturn(new QueueMeta('theClientName', 'theTransportName'))
         ;
 
         $driver = new SqsDriver($context, $this->createConfigMock(), $metaRegistry);
