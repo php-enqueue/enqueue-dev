@@ -86,6 +86,16 @@ class UseCasesTest extends WebTestCase
                     ]
                 ]
             ]],
+            ['sqs' => [
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'key' => getenv('AWS__SQS__KEY'),
+                        'secret' => getenv('AWS__SQS__SECRET'),
+                        'region' => getenv('AWS__SQS__REGION'),
+                    ]
+                ]
+            ]],
         ];
     }
 

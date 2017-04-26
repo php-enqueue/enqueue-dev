@@ -14,6 +14,7 @@ use Enqueue\Bundle\EnqueueBundle;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
+use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
@@ -188,6 +189,23 @@ class EnqueueBundleTest extends TestCase
             ->expects($this->at(8))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(DbalTransportFactory::class))
+        ;
+
+        $bundle = new EnqueueBundle();
+        $bundle->build($container);
+    }
+
+    public function testShouldRegisterSqsTransportFactory()
+    {
+        $extensionMock = $this->createEnqueueExtensionMock();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extensionMock);
+
+        $extensionMock
+            ->expects($this->at(9))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(SqsTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();

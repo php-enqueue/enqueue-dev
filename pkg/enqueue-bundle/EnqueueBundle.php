@@ -17,6 +17,8 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
+use Enqueue\Sqs\SqsContext;
+use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
@@ -63,6 +65,10 @@ class EnqueueBundle extends Bundle
 
         if (class_exists(DbalContext::class)) {
             $extension->addTransportFactory(new DbalTransportFactory());
+        }
+
+        if (class_exists(SqsContext::class)) {
+            $extension->addTransportFactory(new SqsTransportFactory());
         }
     }
 }
