@@ -134,25 +134,25 @@ class SqsContext implements PsrContext
     }
 
     /**
-     * @param string $queueName
+     * @param SqsDestination $destination
      *
      * @return string
      */
-    public function getQueueUrl($queueName)
+    public function getQueueUrl(SqsDestination $destination)
     {
-        if (isset($this->queueUrls[$queueName])) {
-            return $this->queueUrls[$queueName];
+        if (isset($this->queueUrls[$destination->getQueueName()])) {
+            return $this->queueUrls[$destination->getQueueName()];
         }
 
         $result = $this->getClient()->getQueueUrl([
-            'QueueName' => $queueName,
+            'QueueName' => $destination->getQueueName(),
         ]);
 
         if (false == $result->hasKey('QueueUrl')) {
-            throw new \RuntimeException(sprintf('QueueUrl cannot be resolved. queueName: "%s"', $queueName));
+            throw new \RuntimeException(sprintf('QueueUrl cannot be resolved. queueName: "%s"', $destination->getQueueName()));
         }
 
-        return $this->queueUrls[$queueName] = $result->get('QueueUrl');
+        return $this->queueUrls[$destination->getQueueName()] = $result->get('QueueUrl');
     }
 
     /**
@@ -178,7 +178,7 @@ class SqsContext implements PsrContext
     public function deleteQueue(SqsDestination $dest)
     {
         $this->getClient()->deleteQueue([
-            'QueueUrl' => $this->getQueueUrl($dest->getQueueName()),
+            'QueueUrl' => $this->getQueueUrl($dest),
         ]);
 
         unset($this->queueUrls[$dest->getQueueName()]);
@@ -190,7 +190,7 @@ class SqsContext implements PsrContext
     public function purgeQueue(SqsDestination $dest)
     {
         $this->getClient()->purgeQueue([
-            'QueueUrl' => $this->getQueueUrl($dest->getQueueName()),
+            'QueueUrl' => $this->getQueueUrl($dest),
         ]);
     }
 }

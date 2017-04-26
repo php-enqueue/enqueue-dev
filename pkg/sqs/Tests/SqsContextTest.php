@@ -201,7 +201,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
         $context = new SqsContext($sqsClient);
 
-        $context->getQueueUrl('aQueueName');
+        $context->getQueueUrl(new SqsDestination('aQueueName'));
     }
 
     public function testShouldThrowExceptionIfGetQueueUrlResultHasNoQueueUrlProperty()
@@ -219,7 +219,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('QueueUrl cannot be resolved. queueName: "aQueueName"');
 
-        $context->getQueueUrl('aQueueName');
+        $context->getQueueUrl(new SqsDestination('aQueueName'));
     }
 
     /**
