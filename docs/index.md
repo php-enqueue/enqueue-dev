@@ -36,4 +36,6 @@
 
 * [Getting Started with RabbitMQ in PHP](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-php-84d331e20a66)
 * [Getting Started with RabbitMQ in Symfony](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-symfony-cb06e0b674f1)
+* [RabbitMQ redelivery pitfalls](https://blog.forma-pro.com/rabbitmq-redelivery-pitfalls-440e0347f4e0)
+* [LiipImagineBundle. Resolve cache and apply filter in backgroung job.](https://github.com/php-enqueue/enqueue-sandbox/pull/3)
 * [FOSElasticaBundle. Improve performance of fos:elastica:populate command](https://github.com/php-enqueue/enqueue-elastica-bundle)
