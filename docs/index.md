@@ -31,4 +31,9 @@
     - [Functional testing](bundle/functional_testing.md)
 * Development
     - [Contribution](contribution.md)
-    
+
+# Blogs
+
+* [Getting Started with RabbitMQ in PHP](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-php-84d331e20a66)
+* [Getting Started with RabbitMQ in Symfony](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-symfony-cb06e0b674f1)
+* [FOSElasticaBundle. Improve performance of fos:elastica:populate command](https://github.com/php-enqueue/enqueue-elastica-bundle)
