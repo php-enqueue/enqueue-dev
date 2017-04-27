@@ -46,27 +46,37 @@ class SqsDriverTest extends TestCase
     {
         $expectedQueue = new SqsDestination('aQueueName');
 
-        $meta = $this->createQueueMetaRegistryMock();
-        $meta
+        $context = $this->createPsrContextMock();
+        $context
             ->expects($this->once())
-            ->method('getQueueMeta')
-            ->willReturn(new QueueMeta('theClientName', 'theTransportName'))
+            ->method('createQueue')
+            ->with('aprefix_dot_afooqueue')
+            ->willReturn($expectedQueue)
         ;
+
+        $driver = new SqsDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+        $queue = $driver->createQueue('aFooQueue');
+
+        $this->assertSame($expectedQueue, $queue);
+        $this->assertSame('aQueueName', $queue->getQueueName());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new SqsDestination('aQueueName');
 
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('theTransportName')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
         ;
 
-        $driver = new SqsDriver($context, Config::create(), $meta);
+        $driver = new SqsDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
-        $queue = $driver->createQueue('name');
-
+        $queue = $driver->createQueue('aBarQueue');
         $this->assertSame($expectedQueue, $queue);
-        $this->assertSame('aQueueName', $queue->getQueueName());
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -372,5 +382,26 @@ class SqsDriverTest extends TestCase
     private function createConfigMock()
     {
         return $this->createMock(Config::class);
+    }
+
+    /**
+     * @return Config
+     */
+    private function createDummyConfig()
+    {
+        return Config::create('aPrefix');
+    }
+
+    /**
+     * @return QueueMetaRegistry
+     */
+    private function createDummyQueueMetaRegistry()
+    {
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
     }
 }
