@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.3.5](https://github.com/php-enqueue/enqueue-dev/tree/0.3.5) (2017-04-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.4...0.3.5)
+
+- \[client\] Queue subscriber interface. [\#53](https://github.com/php-enqueue/enqueue-dev/issues/53)
+- Additional drivers [\#32](https://github.com/php-enqueue/enqueue-dev/issues/32)
+- \[consumption\] Add support of QueueSubscriberInterface to transport consume command. [\#63](https://github.com/php-enqueue/enqueue-dev/pull/63) ([makasim](https://github.com/makasim))
+- \[client\] Add ability to hardcode queue name. It is used as is and not adjusted or modified in any way [\#61](https://github.com/php-enqueue/enqueue-dev/pull/61) ([makasim](https://github.com/makasim))
+
+- Multiple consumer handling one message [\#62](https://github.com/php-enqueue/enqueue-dev/issues/62)
+
 ## [0.3.4](https://github.com/php-enqueue/enqueue-dev/tree/0.3.4) (2017-04-24)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.3...0.3.4)
 
