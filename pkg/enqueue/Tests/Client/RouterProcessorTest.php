@@ -7,8 +7,8 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\Result;
-use Enqueue\Transport\Null\NullContext;
-use Enqueue\Transport\Null\NullMessage;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class RouterProcessorTest extends TestCase

@@ -10,6 +10,7 @@
     "enqueue/amqp-ext": "*@dev",
     "enqueue/redis": "*@dev",
     "enqueue/fs": "*@dev",
+    "enqueue/null": "*@dev",
     "enqueue/dbal": "*@dev",
     "enqueue/sqs": "*@dev",
     "enqueue/enqueue-bundle": "*@dev",
@@ -64,6 +65,10 @@
     {
       "type": "path",
       "url": "pkg/fs"
+    },
+    {
+      "type": "path",
+      "url": "pkg/null"
     },
     {
       "type": "path",

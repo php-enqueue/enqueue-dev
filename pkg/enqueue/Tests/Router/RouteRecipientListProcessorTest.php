@@ -10,8 +10,8 @@ use Enqueue\Router\Recipient;
 use Enqueue\Router\RecipientListRouterInterface;
 use Enqueue\Router\RouteRecipientListProcessor;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use PHPUnit\Framework\TestCase;
 
 class RouteRecipientListProcessorTest extends TestCase

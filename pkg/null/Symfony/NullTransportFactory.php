@@ -1,10 +1,11 @@
 <?php
 
-namespace Enqueue\Symfony;
+namespace Enqueue\Null\Symfony;
 
-use Enqueue\Client\NullDriver;
-use Enqueue\Transport\Null\NullConnectionFactory;
-use Enqueue\Transport\Null\NullContext;
+use Enqueue\Null\Client\NullDriver;
+use Enqueue\Null\NullConnectionFactory;
+use Enqueue\Null\NullContext;
+use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -71,6 +72,7 @@ class NullTransportFactory implements TransportFactoryInterface
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),
+            new Reference('enqueue.client.meta.queue_meta_registry'),
         ]);
 
         $driverId = sprintf('enqueue.client.%s.driver', $this->getName());

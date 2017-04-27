@@ -1,0 +1,37 @@
+{
+    "name": "enqueue/null",
+    "type": "library",
+    "description": "Enqueue Null transport",
+    "keywords": ["messaging", "queue", "testing"],
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:php-enqueue/test.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "enqueue/psr-queue": "^0.3",
+        "psr/log": "^1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.5",
+        "enqueue/enqueue": "^0.3",
+        "enqueue/test": "^0.3",
+        "symfony/dependency-injection": "^2.8|^3",
+        "symfony/config": "^2.8|^3"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\Null\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.3.x-dev"
+        }
+    }
+}

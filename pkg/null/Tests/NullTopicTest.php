@@ -1,10 +1,10 @@
 <?php
 
-namespace Enqueue\Tests\Transport\Null;
+namespace Enqueue\Null\Tests;
 
 use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullTopic;
+use Enqueue\Null\NullTopic;
 use PHPUnit\Framework\TestCase;
 
 class NullTopicTest extends TestCase

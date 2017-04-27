@@ -113,7 +113,9 @@ class FsDriver implements DriverInterface
      */
     public function createQueue($queueName)
     {
-        return $this->context->createQueue($this->config->createTransportQueueName($queueName));
+        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
+
+        return $this->context->createQueue($transportName);
     }
 
     /**

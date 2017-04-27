@@ -8,8 +8,8 @@ use Enqueue\Client\Message;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
 

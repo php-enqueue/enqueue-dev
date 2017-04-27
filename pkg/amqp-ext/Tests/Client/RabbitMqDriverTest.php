@@ -35,42 +35,60 @@ class RabbitMqDriverTest extends TestCase
     {
         new RabbitMqDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();
 
-        $driver = new RabbitMqDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
+        $driver = new RabbitMqDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
 
         $this->assertSame($config, $driver->getConfig());
     }
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new AmqpQueue('queue-name');
+        $expectedQueue = new AmqpQueue('aName');
 
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
         ;
 
-        $driver = new RabbitMqDriver($context, new Config('', '', '', '', '', ''), $this->createQueueMetaRegistryMock());
+        $driver = new AmqpDriver($context, Config::create(), $this->createDummyQueueMetaRegistry());
 
-        $queue = $driver->createQueue('name');
+        $queue = $driver->createQueue('aFooQueue');
 
         $this->assertSame($expectedQueue, $queue);
-        $this->assertSame('queue-name', $queue->getQueueName());
-        $this->assertSame(['x-max-priority' => 4], $queue->getArguments());
+        $this->assertSame([], $queue->getArguments());
         $this->assertSame(2, $queue->getFlags());
         $this->assertNull($queue->getConsumerTag());
         $this->assertSame([], $queue->getBindArguments());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new AmqpQueue('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new AmqpDriver($context, Config::create(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -91,7 +109,7 @@ class RabbitMqDriverTest extends TestCase
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
             new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $clientMessage = $driver->createClientMessage($transportMessage);
@@ -129,8 +147,8 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -146,8 +164,8 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -163,8 +181,8 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -187,8 +205,8 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -222,7 +240,7 @@ class RabbitMqDriverTest extends TestCase
         $driver = new RabbitMqDriver(
             $context,
             new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
@@ -265,7 +283,7 @@ class RabbitMqDriverTest extends TestCase
         $driver = new RabbitMqDriver(
             $context,
             new Config('', '', '', '', '', '', ['delay_plugin_installed' => false]),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -303,8 +321,8 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
@@ -317,8 +335,8 @@ class RabbitMqDriverTest extends TestCase
     {
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -357,13 +375,13 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $context,
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
 
         $driver->sendToProcessor($message);
     }
@@ -405,12 +423,12 @@ class RabbitMqDriverTest extends TestCase
         $driver = new RabbitMqDriver(
             $context,
             new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
-            $this->createQueueMetaRegistryMock()
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
         $message->setDelay(10);
 
         $driver->sendToProcessor($message);
@@ -420,8 +438,8 @@ class RabbitMqDriverTest extends TestCase
     {
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -434,8 +452,8 @@ class RabbitMqDriverTest extends TestCase
     {
         $driver = new RabbitMqDriver(
             $this->createPsrContextMock(),
-            new Config('', '', '', '', '', ''),
-            $this->createQueueMetaRegistryMock()
+            Config::create(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -489,7 +507,7 @@ class RabbitMqDriverTest extends TestCase
             ->willReturn($processorQueue)
         ;
 
-        $config = new Config('', '', '', '', '', '', ['delay_plugin_installed' => false]);
+        $config = Config::create('', '', '', '', '', '', ['delay_plugin_installed' => false]);
 
         $meta = new QueueMetaRegistry($config, ['default' => []]);
 
@@ -566,7 +584,7 @@ class RabbitMqDriverTest extends TestCase
             ->with($this->identicalTo($delayTopic), $this->identicalTo($processorQueue))
         ;
 
-        $config = new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]);
+        $config = Config::create('', '', '', '', '', '', ['delay_plugin_installed' => true]);
 
         $meta = new QueueMetaRegistry($config, ['default' => []]);
 
@@ -592,10 +610,14 @@ class RabbitMqDriverTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueMetaRegistry
+     * @return QueueMetaRegistry
      */
-    private function createQueueMetaRegistryMock()
+    private function createDummyQueueMetaRegistry()
     {
-        return $this->createMock(QueueMetaRegistry::class);
+        $registry = new QueueMetaRegistry(Config::create('aPrefix'), []);
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
     }
 }

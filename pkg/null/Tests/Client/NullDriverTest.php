@@ -1,28 +1,67 @@
 <?php
 
-namespace Enqueue\Tests\Client;
+namespace Enqueue\Null\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
-use Enqueue\Client\NullDriver;
-use Enqueue\Transport\Null\NullContext;
-use Enqueue\Transport\Null\NullMessage;
-use Enqueue\Transport\Null\NullProducer;
-use Enqueue\Transport\Null\NullQueue;
-use Enqueue\Transport\Null\NullTopic;
+use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Null\Client\NullDriver;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullProducer;
+use Enqueue\Null\NullQueue;
+use Enqueue\Null\NullTopic;
 use PHPUnit\Framework\TestCase;
 
 class NullDriverTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new NullDriver(new NullContext(), new Config('', '', '', '', '', ''));
+        new NullDriver(new NullContext(), Config::create(), $this->createDummyQueueMetaRegistry());
+    }
+
+    public function testShouldCreateAndReturnQueueInstance()
+    {
+        $expectedQueue = new NullQueue('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new NullDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aFooQueue');
+
+        $this->assertSame($expectedQueue, $queue);
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new NullQueue('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new NullDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldSendMessageToRouter()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();
         $topic = new NullTopic('topic');
 
         $transportMessage = new NullMessage();
@@ -34,7 +73,7 @@ class NullDriverTest extends TestCase
             ->with(self::identicalTo($topic), self::identicalTo($transportMessage))
         ;
 
-        $context = $this->createContextMock();
+        $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createTopic')
@@ -51,14 +90,14 @@ class NullDriverTest extends TestCase
             ->willReturn($producer)
         ;
 
-        $driver = new NullDriver($context, $config);
+        $driver = new NullDriver($context, $config, $this->createDummyQueueMetaRegistry());
 
         $driver->sendToRouter(new Message());
     }
 
     public function testShouldSendMessageToProcessor()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();
         $queue = new NullQueue('');
 
         $transportMessage = new NullMessage();
@@ -70,7 +109,7 @@ class NullDriverTest extends TestCase
             ->with(self::identicalTo($queue), self::identicalTo($transportMessage))
         ;
 
-        $context = $this->createContextMock();
+        $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
@@ -87,14 +126,14 @@ class NullDriverTest extends TestCase
             ->willReturn($producer)
         ;
 
-        $driver = new NullDriver($context, $config);
+        $driver = new NullDriver($context, $config, $this->createDummyQueueMetaRegistry());
 
         $driver->sendToProcessor(new Message());
     }
 
     public function testShouldConvertClientMessageToTransportMessage()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();
 
         $clientMessage = new Message();
         $clientMessage->setBody('theBody');
@@ -111,14 +150,14 @@ class NullDriverTest extends TestCase
 
         $transportMessage = new NullMessage();
 
-        $context = $this->createContextMock();
+        $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createMessage')
             ->willReturn($transportMessage)
         ;
 
-        $driver = new NullDriver($context, $config);
+        $driver = new NullDriver($context, $config, $this->createDummyQueueMetaRegistry());
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
 
@@ -146,7 +185,7 @@ class NullDriverTest extends TestCase
 
     public function testShouldConvertTransportMessageToClientMessage()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();
 
         $transportMessage = new NullMessage();
         $transportMessage->setBody('theBody');
@@ -161,7 +200,7 @@ class NullDriverTest extends TestCase
         $transportMessage->setReplyTo('theReplyTo');
         $transportMessage->setCorrelationId('theCorrelationId');
 
-        $driver = new NullDriver($this->createContextMock(), $config);
+        $driver = new NullDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
 
         $clientMessage = $driver->createClientMessage($transportMessage);
 
@@ -191,9 +230,9 @@ class NullDriverTest extends TestCase
 
     public function testShouldReturnConfigInstance()
     {
-        $config = new Config('', '', '', '', '', '');
+        $config = Config::create();
 
-        $driver = new NullDriver($this->createContextMock(), $config);
+        $driver = new NullDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
         $result = $driver->getConfig();
 
         self::assertSame($config, $result);
@@ -202,7 +241,7 @@ class NullDriverTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|NullContext
      */
-    private function createContextMock()
+    private function createPsrContextMock()
     {
         return $this->createMock(NullContext::class);
     }
@@ -213,5 +252,26 @@ class NullDriverTest extends TestCase
     private function createMessageProducer()
     {
         return $this->createMock(NullProducer::class);
+    }
+
+    /**
+     * @return QueueMetaRegistry
+     */
+    private function createDummyQueueMetaRegistry()
+    {
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
+    }
+
+    /**
+     * @return Config
+     */
+    private function createDummyConfig()
+    {
+        return Config::create('aPrefix');
     }
 }

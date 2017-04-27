@@ -12,7 +12,6 @@ use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class RedisDriver implements DriverInterface
 {
@@ -91,7 +90,9 @@ class RedisDriver implements DriverInterface
      */
     public function createQueue($queueName)
     {
-        return $this->context->createQueue($this->config->createTransportQueueName($queueName));
+        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
+
+        return $this->context->createQueue($transportName);
     }
 
     /**

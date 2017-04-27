@@ -150,5 +150,8 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
         $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
+
+        $this->assertInstanceOf(Reference::class, $driver->getArgument(2));
+        $this->assertEquals('enqueue.client.meta.queue_meta_registry', (string) $driver->getArgument(2));
     }
 }

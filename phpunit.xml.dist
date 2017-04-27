@@ -21,11 +21,11 @@
             <directory>pkg/enqueue/Tests</directory>
         </testsuite>
 
-        <testsuite name="stomp">
+        <testsuite name="stomp transport">
             <directory>pkg/stomp/Tests</directory>
         </testsuite>
 
-        <testsuite name="amqp-ext">
+        <testsuite name="amqp-ext transport">
             <directory>pkg/amqp-ext/Tests</directory>
         </testsuite>
 
@@ -39,6 +39,10 @@
 
         <testsuite name="dbal transport">
             <directory>pkg/dbal/Tests</directory>
+        </testsuite>
+
+        <testsuite name="null transport">
+            <directory>pkg/null/Tests</directory>
         </testsuite>
 
         <testsuite name="sqs transport">

@@ -1,13 +1,13 @@
 <?php
 
-namespace Enqueue\Tests\Symfony;
+namespace Enqueue\Null\Tests\Symfony;
 
-use Enqueue\Client\NullDriver;
-use Enqueue\Symfony\NullTransportFactory;
+use Enqueue\Null\Client\NullDriver;
+use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullConnectionFactory;
-use Enqueue\Transport\Null\NullContext;
+use Enqueue\Null\NullConnectionFactory;
+use Enqueue\Null\NullContext;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -94,8 +94,17 @@ class NullTransportFactoryTest extends TestCase
         $this->assertEquals('enqueue.client.null.driver', $driverId);
         $this->assertTrue($container->hasDefinition($driverId));
 
-        $context = $container->getDefinition($driverId);
-        $this->assertEquals(NullDriver::class, $context->getClass());
-        $this->assertNull($context->getFactory());
+        $driver = $container->getDefinition($driverId);
+        $this->assertEquals(NullDriver::class, $driver->getClass());
+        $this->assertNull($driver->getFactory());
+
+        $this->assertInstanceOf(Reference::class, $driver->getArgument(0));
+        $this->assertEquals('enqueue.transport.null.context', (string) $driver->getArgument(0));
+
+        $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
+        $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
+
+        $this->assertInstanceOf(Reference::class, $driver->getArgument(2));
+        $this->assertEquals('enqueue.client.meta.queue_meta_registry', (string) $driver->getArgument(2));
     }
 }

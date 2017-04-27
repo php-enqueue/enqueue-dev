@@ -14,7 +14,7 @@ class QueuesCommand extends Command
     /**
      * @var QueueMetaRegistry
      */
-    private $destinationRegistry;
+    private $queueMetaRegistry;
 
     /**
      * @param QueueMetaRegistry $queueRegistry
@@ -23,7 +23,7 @@ class QueuesCommand extends Command
     {
         parent::__construct(null);
 
-        $this->destinationRegistry = $queueRegistry;
+        $this->queueMetaRegistry = $queueRegistry;
     }
 
     /**
@@ -51,15 +51,15 @@ class QueuesCommand extends Command
 
         $count = 0;
         $firstRow = true;
-        foreach ($this->destinationRegistry->getQueuesMeta() as $destination) {
+        foreach ($this->queueMetaRegistry->getQueuesMeta() as $queueMeta) {
             if (false == $firstRow) {
                 $table->addRow(new TableSeparator());
             }
 
             $table->addRow([
-                $destination->getClientName(),
-                $destination->getTransportName(),
-                implode(PHP_EOL, $destination->getProcessors()),
+                $queueMeta->getClientName(),
+                $queueMeta->getClientName() == $queueMeta->getTransportName() ? '(same)' : $queueMeta->getTransportName(),
+                implode(PHP_EOL, $queueMeta->getProcessors()),
             ]);
 
             ++$count;

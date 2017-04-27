@@ -10,7 +10,7 @@ use Enqueue\Fs\FsProducer;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Transport\Null\NullQueue;
+use Enqueue\Null\NullQueue;
 use Makasim\File\TempFile;
 
 class FsContextTest extends \PHPUnit\Framework\TestCase
@@ -114,7 +114,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
         $context = new FsContext(sys_get_temp_dir(), 1, 0666);
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Transport\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Null\NullQueue.');
         $consumer = $context->createConsumer(new NullQueue('aQueue'));
 
         $this->assertInstanceOf(FsConsumer::class, $consumer);

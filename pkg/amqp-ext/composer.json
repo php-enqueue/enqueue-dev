@@ -20,6 +20,7 @@
         "phpunit/phpunit": "~5.4.0",
         "enqueue/test": "^0.3",
         "enqueue/enqueue": "^0.3",
+        "enqueue/null": "^0.3",
         "empi89/php-amqp-stubs": "*@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"

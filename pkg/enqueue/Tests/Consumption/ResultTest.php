@@ -3,7 +3,7 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\Result;
-use Enqueue\Transport\Null\NullMessage;
+use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class ResultTest extends TestCase

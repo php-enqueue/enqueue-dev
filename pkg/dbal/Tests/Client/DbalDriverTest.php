@@ -6,6 +6,7 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
+use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dbal\Client\DbalDriver;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
@@ -26,37 +27,60 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         new DbalDriver(
             $this->createPsrContextMock(),
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
     }
 
     public function testShouldReturnConfigObject()
     {
-        $config = Config::create();
+        $config = $this->createDummyConfig();
 
-        $driver = new DbalDriver($this->createPsrContextMock(), $config);
+        $driver = new DbalDriver(
+            $this->createPsrContextMock(),
+            $config,
+            $this->createDummyQueueMetaRegistry()
+        );
 
         $this->assertSame($config, $driver->getConfig());
     }
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new DbalDestination('queue-name');
+        $expectedQueue = new DbalDestination('aName');
 
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('name')
-            ->will($this->returnValue($expectedQueue))
+            ->with('aprefix.afooqueue')
+            ->willReturn($expectedQueue)
         ;
 
-        $driver = new DbalDriver($context, Config::create());
+        $driver = new DbalDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
-        $queue = $driver->createQueue('name');
+        $queue = $driver->createQueue('aFooQueue');
 
         $this->assertSame($expectedQueue, $queue);
-        $this->assertSame('queue-name', $queue->getQueueName());
+    }
+
+    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
+    {
+        $expectedQueue = new DbalDestination('aName');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aBarQueue')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new DbalDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+
+        $queue = $driver->createQueue('aBarQueue');
+
+        $this->assertSame($expectedQueue, $queue);
     }
 
     public function testShouldConvertTransportMessageToClientMessage()
@@ -72,7 +96,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $clientMessage = $driver->createClientMessage($transportMessage);
@@ -118,7 +143,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
@@ -144,18 +170,6 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         $topic = new DbalDestination('queue-name');
         $transportMessage = new DbalMessage();
-        $config = $this->createConfigMock();
-
-        $config
-            ->expects($this->once())
-            ->method('getRouterQueueName')
-            ->willReturn('topicName');
-
-        $config
-            ->expects($this->once())
-            ->method('createTransportQueueName')
-            ->with('topicName')
-            ->willReturn('app.topicName');
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -167,7 +181,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('app.topicName')
+            ->with('aprefix.default')
             ->willReturn($topic)
         ;
         $context
@@ -183,7 +197,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            $config
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
@@ -196,7 +211,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -235,12 +251,13 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'queue');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
 
         $driver->sendToProcessor($message);
     }
@@ -249,7 +266,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -262,7 +280,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
@@ -288,7 +307,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
 
         $driver = new DbalDriver(
             $context,
-            Config::create()
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
         );
 
         $driver->setupBroker();
@@ -311,10 +331,23 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Config
+     * @return QueueMetaRegistry
      */
-    private function createConfigMock()
+    private function createDummyQueueMetaRegistry()
     {
-        return $this->createMock(Config::class);
+        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
+        $registry->add('default');
+        $registry->add('aFooQueue');
+        $registry->add('aBarQueue', 'aBarQueue');
+
+        return $registry;
+    }
+
+    /**
+     * @return Config
+     */
+    private function createDummyConfig()
+    {
+        return Config::create('aPrefix');
     }
 }

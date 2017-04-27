@@ -5,7 +5,7 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Symfony\NullTransportFactory;
+use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
