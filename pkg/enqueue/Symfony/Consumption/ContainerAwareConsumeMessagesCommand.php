@@ -5,10 +5,12 @@ namespace Enqueue\Symfony\Consumption;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueSubscriberInterface;
 use Enqueue\Psr\PsrProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -48,8 +50,8 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
             ->setDescription('A worker that consumes message from a broker. '.
                 'To use this broker you have to explicitly set a queue to consume from '.
                 'and a message processor service')
-            ->addArgument('queue', InputArgument::REQUIRED, 'Queues to consume from')
             ->addArgument('processor-service', InputArgument::REQUIRED, 'A message processor service')
+            ->addOption('queue', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Queues to consume from', [])
         ;
     }
 
@@ -58,15 +60,25 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $queueName = $input->getArgument('queue');
-
         /** @var PsrProcessor $processor */
         $processor = $this->container->get($input->getArgument('processor-service'));
-        if (!$processor instanceof  PsrProcessor) {
+        if (false == $processor instanceof  PsrProcessor) {
             throw new \LogicException(sprintf(
                 'Invalid message processor service given. It must be an instance of %s but %s',
                 PsrProcessor::class,
                 get_class($processor)
+            ));
+        }
+
+        $queues = $input->getOption('queue');
+        if (empty($queues) && $processor instanceof QueueSubscriberInterface) {
+            $queues = $processor::getSubscribedQueues();
+        }
+
+        if (empty($queues)) {
+            throw new \LogicException(sprintf(
+                'The queues are not provided. The processor must implement "%s" interface and it must return not empty array of queues or queues set using --queue option.',
+                QueueSubscriberInterface::class
             ));
         }
 
@@ -76,10 +88,10 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
         $runtimeExtensions = new ChainExtension($extensions);
 
         try {
-            $queue = $this->consumer->getPsrContext()->createQueue($queueName);
-            // @todo set additional queue options
+            foreach($queues as $queue) {
+                $this->consumer->bind($queue, $processor);
+            }
 
-            $this->consumer->bind($queue, $processor);
             $this->consumer->consume($runtimeExtensions);
         } finally {
             $this->consumer->getPsrContext()->close();

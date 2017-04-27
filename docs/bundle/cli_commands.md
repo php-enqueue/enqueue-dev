@@ -138,18 +138,18 @@ Help:
 ## enqueue:transport:consume
  
 ```
-./bin/console enqueue:transport:consume   --help
+./bin/console enqueue:transport:consume --help
 Usage:
-  enqueue:transport:consume [options] [--] <queue> <processor-service>
+  enqueue:transport:consume [options] [--] <processor-service>
 
 Arguments:
-  queue                              Queues to consume from
   processor-service                  A message processor service
 
 Options:
       --message-limit=MESSAGE-LIMIT  Consume n messages and exit
       --time-limit=TIME-LIMIT        Consume messages during this time
       --memory-limit=MEMORY-LIMIT    Consume messages until process reaches this memory limit in MB
+      --queue[=QUEUE]                Queues to consume from (multiple values allowed)
   -h, --help                         Display this help message
   -q, --quiet                        Do not output any message
   -V, --version                      Display this application version
