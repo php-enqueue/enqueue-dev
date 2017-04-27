@@ -148,7 +148,7 @@ class UseCasesTest extends WebTestCase
         $tester->execute([
             '--message-limit' => 1,
             '--time-limit' => '+10sec',
-            'queue' => 'enqueue.test',
+            '--queue' => ['enqueue.test'],
             'processor-service' => 'test.message.processor',
         ]);
 

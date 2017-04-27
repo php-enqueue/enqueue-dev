@@ -8,6 +8,7 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Psr\PsrQueue;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
+use Enqueue\Tests\Symfony\Consumption\Mock\QueueSubscriberProcessor;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
 use PHPUnit\Framework\TestCase;
@@ -32,10 +33,11 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(3, $options);
+        $this->assertCount(4, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
+        $this->assertArrayHasKey('queue', $options);
     }
 
     public function testShouldHaveExpectedAttributes()
@@ -44,16 +46,12 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
 
         $arguments = $command->getDefinition()->getArguments();
 
-        $this->assertCount(2, $arguments);
+        $this->assertCount(1, $arguments);
         $this->assertArrayHasKey('processor-service', $arguments);
-        $this->assertArrayHasKey('queue', $arguments);
     }
 
     public function testShouldThrowExceptionIfProcessorInstanceHasWrongClass()
     {
-        $this->setExpectedException(\LogicException::class, 'Invalid message processor service given.'.
-            ' It must be an instance of Enqueue\Psr\PsrProcessor but stdClass');
-
         $container = new Container();
         $container->set('processor-service', new \stdClass());
 
@@ -61,24 +59,50 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
         $command->setContainer($container);
 
         $tester = new CommandTester($command);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Invalid message processor service given. It must be an instance of Enqueue\Psr\PsrProcessor but stdClass');
         $tester->execute([
-            'queue' => 'queue-name',
+            'processor-service' => 'processor-service',
+            '--queue' => ['queue-name'],
+        ]);
+    }
+
+    public function testThrowIfNeitherQueueOptionNorProcessorImplementsQueueSubscriberInterface()
+    {
+        $processor = $this->createProcessor();
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->never())
+            ->method('bind')
+        ;
+        $consumer
+            ->expects($this->never())
+            ->method('consume')
+        ;
+
+        $container = new Container();
+        $container->set('processor-service', $processor);
+
+        $command = new ContainerAwareConsumeMessagesCommand($consumer);
+        $command->setContainer($container);
+
+        $tester = new CommandTester($command);
+
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The queues are not provided. The processor must implement "Enqueue\Consumption\QueueSubscriberInterface" interface and it must return not empty array of queues or queues set using --queue option.');
+        $tester->execute([
             'processor-service' => 'processor-service',
         ]);
     }
 
-    public function testShouldExecuteConsumption()
+    public function testShouldExecuteConsumptionWithExplisitlySetQueueViaQueueOption()
     {
         $processor = $this->createProcessor();
 
-        $queue = $this->createQueueMock();
-
         $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createQueue')
-            ->willReturn($queue)
-        ;
         $context
             ->expects($this->once())
             ->method('close')
@@ -88,7 +112,7 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
         $consumer
             ->expects($this->once())
             ->method('bind')
-            ->with($this->identicalTo($queue), $this->identicalTo($processor))
+            ->with('queue-name', $this->identicalTo($processor))
         ;
         $consumer
             ->expects($this->once())
@@ -96,7 +120,7 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
         $consumer
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('getPsrContext')
             ->will($this->returnValue($context))
         ;
@@ -109,8 +133,52 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
 
         $tester = new CommandTester($command);
         $tester->execute([
-            'queue' => 'queue-name',
             'processor-service' => 'processor-service',
+            '--queue' => ['queue-name'],
+        ]);
+    }
+
+    public function testShouldExecuteConsumptionWhenProcessorImplementsQueueSubscriberInterface()
+    {
+        $processor = new QueueSubscriberProcessor();
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('close')
+        ;
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->at(0))
+            ->method('bind')
+            ->with('fooSubscribedQueues', $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(1))
+            ->method('bind')
+            ->with('barSubscribedQueues', $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(2))
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+        $consumer
+            ->expects($this->at(3))
+            ->method('getPsrContext')
+            ->will($this->returnValue($context))
+        ;
+
+        $container = new Container();
+        $container->set('processor-service', $processor);
+
+        $command = new ContainerAwareConsumeMessagesCommand($consumer);
+        $command->setContainer($container);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'processor-service' => 'processor-service'
         ]);
     }
 
