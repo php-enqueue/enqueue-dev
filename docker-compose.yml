@@ -24,6 +24,9 @@ services:
       - SYMFONY__DB__PASSWORD=rootpass
       - SYMFONY__REDIS__HOST=redis
       - SYMFONY__REDIS__PORT=6379
+      - AWS__SQS__KEY=$ENQUEUE_AWS__SQS__KEY
+      - AWS__SQS__SECRET=$ENQUEUE_AWS__SQS__SECRET
+      - AWS__SQS__REGION=$ENQUEUE_AWS__SQS__REGION
 
   rabbitmq:
     image: enqueue/rabbitmq:latest

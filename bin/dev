@@ -3,7 +3,7 @@
 set -x
 set -e
 
-while getopts "bustefc" OPTION; do
+while getopts "bustefcd" OPTION; do
   case $OPTION in
     b)
       COMPOSE_PROJECT_NAME=mqdev docker-compose build
@@ -27,6 +27,8 @@ while getopts "bustefc" OPTION; do
       COMPOSE_PROJECT_NAME=mqdev docker-compose run -e CHANGELOG_GITHUB_TOKEN=${CHANGELOG_GITHUB_TOKEN:-""} --workdir="/mqdev" --rm generate-changelog github_changelog_generator --future-release "$2" --simple-list
       ;;
 
+    d) COMPOSE_PROJECT_NAME=mqdev docker-compose run --workdir="/mqdev" --rm dev php pkg/enqueue-bundle/Tests/Functional/app/console.php config:dump-reference enqueue
+      ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1

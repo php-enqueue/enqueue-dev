@@ -3,7 +3,8 @@
 * [Quick tour](quick_tour.md)
 * Transports
     - [Amqp (RabbitMQ, ActiveMQ)](transport/amqp.md)
-    - [Stomp (RabbitMQ, ActiveMQ)](transport/stomp.md)
+    - [Amazon SQS](transport/sqs.md)
+    - [Stomp](transport/stomp.md)
     - [Redis](transport/redis.md)
     - [Doctrine DBAL](transport/dbal.md)
     - [Filesystem](transport/filesystem.md)
