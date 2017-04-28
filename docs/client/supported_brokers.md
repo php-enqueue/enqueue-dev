@@ -11,6 +11,7 @@ Here's the list of protocols and Client features supported by them
 | Filesystem     |   No     |    No    |    No      |     Yes      |     No      |
 | Redis          |   No     |    No    |    No      |  Not needed  |     No      |
 | Doctrine DBAL  |   Yes    |    Yes   |    No      |     Yes      |     No      |
+| AWS SQS        |   No     |    Yes   |    No      |     Yes      |     No      |
 
 * \* Possible if a RabbitMQ delay plugin is installed.
 * \*\* Possible if topics (exchanges) are configured on broker side manually.
