@@ -130,6 +130,16 @@ enqueue:
             # How often query for new messages.
             polling_interval:     1000
             lazy:                 true
+        sqs:
+            key:                  null
+            secret:               null
+            token:                null
+            region:               ~ # Required
+            retries:              3
+            version:              '2012-11-05'
+
+            # the connection will be performed as later as possible, if the option set to true
+            lazy:                 true
     client:
         traceable_producer:   false
         prefix:               enqueue
