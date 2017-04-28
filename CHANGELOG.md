@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.3.6](https://github.com/php-enqueue/enqueue-dev/tree/0.3.6) (2017-04-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.5...0.3.6)
+
+- Amazon SQS Transport [\#60](https://github.com/php-enqueue/enqueue-dev/pull/60) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.3.5](https://github.com/php-enqueue/enqueue-dev/tree/0.3.5) (2017-04-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.4...0.3.5)
 
