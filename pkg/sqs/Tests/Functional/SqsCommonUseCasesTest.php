@@ -2,6 +2,7 @@
 namespace Enqueue\Sqs\Tests\Functional;
 
 use Enqueue\Sqs\SqsContext;
+use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Enqueue\Test\SqsExtension;
 use PHPUnit\Framework\TestCase;
@@ -15,23 +16,40 @@ class SqsCommonUseCasesTest extends TestCase
      */
     private $context;
 
+    /**
+     * @var SqsDestination
+     */
+    private $queue;
+
+    /**
+     * @var string
+     */
+    private $queueName;
+
     protected function setUp()
     {
         parent::setUp();
 
         $this->context = $this->buildSqsContext();
 
-        $queue = $this->context->createQueue('enqueue_test_queue');
-        $this->context->declareQueue($queue);
+        $this->queue = $this->context->createQueue(uniqid('enqueue_test_queue_'));
+        $this->queueName = $this->queue->getQueueName();
 
-        try {
-            $this->context->purge($queue);
-        } catch (\Exception $e) {}
+        $this->context->declareQueue($this->queue);
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        if ($this->context && $this->queue) {
+            $this->context->deleteQueue($this->queue);
+        }
     }
 
     public function testWaitsForTwoSecondsAndReturnNullOnReceive()
     {
-        $queue = $this->context->createQueue('enqueue_test_queue');
+        $queue = $this->context->createQueue($this->queueName);
 
         $startAt = microtime(true);
 
@@ -48,7 +66,7 @@ class SqsCommonUseCasesTest extends TestCase
 
     public function testReturnNullImmediatelyOnReceiveNoWait()
     {
-        $queue = $this->context->createQueue('enqueue_test_queue');
+        $queue = $this->context->createQueue($this->queueName);
 
         $startAt = microtime(true);
 
@@ -64,7 +82,7 @@ class SqsCommonUseCasesTest extends TestCase
 
     public function testProduceAndReceiveOneMessageSentDirectlyToQueue()
     {
-        $queue = $this->context->createQueue('enqueue_test_queue');
+        $queue = $this->context->createQueue($this->queueName);
 
         $message = $this->context->createMessage(
             __METHOD__,
@@ -88,7 +106,7 @@ class SqsCommonUseCasesTest extends TestCase
 
     public function testProduceAndReceiveOneMessageSentDirectlyToTopic()
     {
-        $topic = $this->context->createTopic('enqueue_test_queue');
+        $topic = $this->context->createTopic($this->queueName);
 
         $message = $this->context->createMessage(__METHOD__);
 
@@ -106,7 +124,7 @@ class SqsCommonUseCasesTest extends TestCase
 
     public function testConsumerReceiveMessageWithZeroTimeout()
     {
-        $topic = $this->context->createTopic('enqueue_test_queue');
+        $topic = $this->context->createTopic($this->queueName);
 
         $consumer = $this->context->createConsumer($topic);
 
