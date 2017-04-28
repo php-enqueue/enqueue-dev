@@ -32,8 +32,8 @@ class SqsCommonUseCasesTest extends TestCase
 
         $this->context = $this->buildSqsContext();
 
-        $this->queue = $this->context->createQueue(uniqid('enqueue_test_queue_'));
-        $this->queueName = $this->queue->getQueueName();
+        $this->queueName = str_replace('.', '_dot_', uniqid('enqueue_test_queue_', true));;
+        $this->queue = $this->context->createQueue($this->queueName);
 
         $this->context->declareQueue($this->queue);
     }
@@ -118,28 +118,6 @@ class SqsCommonUseCasesTest extends TestCase
 
         $this->assertInstanceOf(SqsMessage::class, $message);
         $consumer->acknowledge($message);
-
-        $this->assertEquals(__METHOD__, $message->getBody());
-    }
-
-    public function testConsumerReceiveMessageWithZeroTimeout()
-    {
-        $topic = $this->context->createTopic($this->queueName);
-
-        $consumer = $this->context->createConsumer($topic);
-
-        //guard
-        $this->assertNull($consumer->receive(1000));
-
-        $message = $this->context->createMessage(__METHOD__);
-
-        $producer = $this->context->createProducer();
-        $producer->send($topic, $message);
-        usleep(1000);
-        $actualMessage = $consumer->receive(0);
-
-        $this->assertInstanceOf(SqsMessage::class, $actualMessage);
-        $consumer->acknowledge($actualMessage);
 
         $this->assertEquals(__METHOD__, $message->getBody());
     }
