@@ -59,7 +59,7 @@ class SqsCommonUseCasesTest extends TestCase
 
         $this->assertNull($message);
 
-        $this->assertLessThan(0.5, $endAt - $startAt);
+        $this->assertLessThan(2, $endAt - $startAt);
     }
 
     public function testProduceAndReceiveOneMessageSentDirectlyToQueue()
