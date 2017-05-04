@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.3.7](https://github.com/php-enqueue/enqueue-dev/tree/0.3.7) (2017-05-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.6...0.3.7)
+
+- \[rpc\] RpcClient must check existence of createTemporaryQueue. It is not part of transport interface [\#49](https://github.com/php-enqueue/enqueue-dev/issues/49)
+
+- JobQueue/Job shouldn't be required when Doctrine schema update [\#67](https://github.com/php-enqueue/enqueue-dev/issues/67)
+- JobQueue/Job shouldn't be required when Doctrine schema update [\#71](https://github.com/php-enqueue/enqueue-dev/pull/71) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.3.6](https://github.com/php-enqueue/enqueue-dev/tree/0.3.6) (2017-04-28)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.5...0.3.6)
 
