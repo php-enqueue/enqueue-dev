@@ -434,4 +434,47 @@ class EnqueueExtensionTest extends TestCase
 
         self::assertFalse($container->hasDefinition('enqueue.consumption.signal_extension'));
     }
+
+    public function testShouldAddJobQueueEntityMapping()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.bundles', ['DoctrineBundle' => true]);
+        $container->prependExtensionConfig('doctrine', ['dbal' => true]);
+
+        $extension = new EnqueueExtension();
+
+        $extension->prepend($container);
+
+        $expectedConfig = [
+            [
+                'orm' => [
+                    'mappings' => [
+                        'enqueue_job_queue' => [
+                            'is_bundle' => false,
+                            'type' => 'xml',
+                            'dir' => '/mqdev/pkg/job-queue/Doctrine/mapping',
+                            'prefix' => 'Enqueue\JobQueue\Doctrine\Entity',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'dbal' => true,
+            ],
+        ];
+
+        $this->assertSame($expectedConfig, $container->getExtensionConfig('doctrine'));
+    }
+
+    public function testShouldNotAddJobQueueEntityMappingIfDoctrineBundleIsNotRegistered()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.bundles', []);
+
+        $extension = new EnqueueExtension();
+
+        $extension->prepend($container);
+
+        $this->assertSame([], $container->getExtensionConfig('doctrine'));
+    }
 }

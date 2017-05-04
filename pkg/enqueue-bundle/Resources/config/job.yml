@@ -3,10 +3,10 @@ parameters:
 
 services:
     enqueue.job.storage:
-        class: 'Enqueue\JobQueue\JobStorage'
+        class: 'Enqueue\JobQueue\Doctrine\JobStorage'
         arguments:
             - '@doctrine'
-            - 'Enqueue\Bundle\Entity\Job'
+            - 'Enqueue\JobQueue\Doctrine\Entity\Job'
             - '%enqueue.job.unique_job_table_name%'
 
     enqueue.job.processor:

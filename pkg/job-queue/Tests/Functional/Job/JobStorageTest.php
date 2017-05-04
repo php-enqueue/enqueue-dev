@@ -3,7 +3,7 @@
 namespace Enqueue\JobQueue\Tests\Functional\Job;
 
 use Enqueue\JobQueue\DuplicateJobException;
-use Enqueue\JobQueue\JobStorage;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Tests\Functional\Entity\Job;
 use Enqueue\JobQueue\Tests\Functional\WebTestCase;
 
@@ -142,7 +142,7 @@ class JobStorageTest extends WebTestCase
     }
 
     /**
-     * @return \Enqueue\JobQueue\JobStorage
+     * @return \Enqueue\JobQueue\Doctrine\JobStorage
      */
     private function getJobStorage()
     {

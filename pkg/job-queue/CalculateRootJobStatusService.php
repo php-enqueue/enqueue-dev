@@ -3,6 +3,7 @@
 namespace Enqueue\JobQueue;
 
 use Doctrine\Common\Collections\Collection;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 
 class CalculateRootJobStatusService
 {

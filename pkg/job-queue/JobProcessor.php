@@ -3,6 +3,7 @@
 namespace Enqueue\JobQueue;
 
 use Enqueue\Client\ProducerInterface;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 
 class JobProcessor
 {

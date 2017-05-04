@@ -4,7 +4,7 @@ namespace Enqueue\JobQueue\Tests;
 
 use Enqueue\JobQueue\CalculateRootJobStatusService;
 use Enqueue\JobQueue\Job;
-use Enqueue\JobQueue\JobStorage;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 
 class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -356,7 +356,7 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|JobStorage
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
      */
     private function createJobStorageMock()
     {
