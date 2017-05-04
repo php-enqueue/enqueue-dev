@@ -445,25 +445,10 @@ class EnqueueExtensionTest extends TestCase
 
         $extension->prepend($container);
 
-        $expectedConfig = [
-            [
-                'orm' => [
-                    'mappings' => [
-                        'enqueue_job_queue' => [
-                            'is_bundle' => false,
-                            'type' => 'xml',
-                            'dir' => '/mqdev/pkg/job-queue/Doctrine/mapping',
-                            'prefix' => 'Enqueue\JobQueue\Doctrine\Entity',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'dbal' => true,
-            ],
-        ];
+        $config =  $container->getExtensionConfig('doctrine');
 
-        $this->assertSame($expectedConfig, $container->getExtensionConfig('doctrine'));
+        $this->assertSame(['dbal' => true], $config[1]);
+        $this->assertNotEmpty($config[0]['orm']['mappings']['enqueue_job_queue']);
     }
 
     public function testShouldNotAddJobQueueEntityMappingIfDoctrineBundleIsNotRegistered()
