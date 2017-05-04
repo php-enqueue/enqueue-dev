@@ -2,6 +2,8 @@
 
 namespace Enqueue\JobQueue;
 
+use Enqueue\JobQueue\Doctrine\JobStorage;
+
 class DependentJobService
 {
     /**

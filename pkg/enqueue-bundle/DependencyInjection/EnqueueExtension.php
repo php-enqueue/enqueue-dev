@@ -8,11 +8,12 @@ use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class EnqueueExtension extends Extension
+class EnqueueExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * @var TransportFactoryInterface[]
@@ -131,5 +132,44 @@ class EnqueueExtension extends Extension
         $container->addResource(new FileResource($rc->getFileName()));
 
         return new Configuration($this->factories);
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+        $this->registerJobQueueDoctrineEntityMapping($container);
+    }
+
+    private function registerJobQueueDoctrineEntityMapping(ContainerBuilder $container)
+    {
+        if (false == class_exists(Job::class)) {
+            return;
+        }
+
+        $bundles = $container->getParameter('kernel.bundles');
+
+        if (false == isset($bundles['DoctrineBundle'])) {
+            return;
+        }
+
+        foreach ($container->getExtensionConfig('doctrine') as $config) {
+            // do not register mappings if dbal not configured.
+            if (false == empty($config['dbal'])) {
+                $rc = new \ReflectionClass(Job::class);
+                $jobQueueRootDir = dirname($rc->getFileName());
+                $container->prependExtensionConfig('doctrine', [
+                    'orm' => [
+                        'mappings' => [
+                            'enqueue_job_queue' => [
+                                'is_bundle' => false,
+                                'type' => 'xml',
+                                'dir' => $jobQueueRootDir.'/Doctrine/mapping',
+                                'prefix' => 'Enqueue\JobQueue\Doctrine\Entity',
+                            ],
+                        ],
+                    ],
+                ]);
+                break;
+            }
+        }
     }
 }

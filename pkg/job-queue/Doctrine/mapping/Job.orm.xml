@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Enqueue\JobQueue\Doctrine\Entity\Job" table="enqueue_job">
+        <id name="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+        <field name="ownerId" column="owner_id" type="string" nullable="true" />
+        <field name="name" column="name" type="string" nullable="false" />
+        <field name="status" column="status" type="string" nullable="false" />
+        <field name="interrupted" column="interrupted" type="boolean" />
+        <field name="unique" column="`unique`" type="boolean" />
+        <field name="createdAt" column="created_at" type="datetime" nullable="false" />
+        <field name="startedAt" column="started_at" type="datetime" nullable="true" />
+        <field name="stoppedAt" column="stopped_at" type="datetime" nullable="true" />
+        <field name="data" column="data" type="json_array" nullable="true" />
+        <many-to-one field="rootJob" target-entity="Enqueue\JobQueue\Doctrine\Entity\Job" inversed-by="childJobs">
+            <join-column name="root_job_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
+        <one-to-many field="childJobs" target-entity="Enqueue\JobQueue\Doctrine\Entity\Job" mapped-by="rootJob" />
+    </entity>
+</doctrine-mapping>

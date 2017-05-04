@@ -6,7 +6,7 @@ use Enqueue\Client\Producer;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobProcessor;
-use Enqueue\JobQueue\JobStorage;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Topics;
 
 class JobProcessorTest extends \PHPUnit\Framework\TestCase

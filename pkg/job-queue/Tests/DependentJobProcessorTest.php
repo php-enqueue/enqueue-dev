@@ -7,7 +7,7 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\DependentJobProcessor;
 use Enqueue\JobQueue\Job;
-use Enqueue\JobQueue\JobStorage;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Topics;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Null\NullMessage;
@@ -325,7 +325,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|JobStorage
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
      */
     private function createJobStorageMock()
     {

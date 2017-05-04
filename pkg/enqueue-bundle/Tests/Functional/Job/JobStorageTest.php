@@ -3,7 +3,7 @@
 namespace Enqueue\Bundle\Tests\Functional\Job;
 
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
-use Enqueue\JobQueue\JobStorage;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 
 /**
  * @group functional

@@ -434,4 +434,32 @@ class EnqueueExtensionTest extends TestCase
 
         self::assertFalse($container->hasDefinition('enqueue.consumption.signal_extension'));
     }
+
+    public function testShouldAddJobQueueEntityMapping()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.bundles', ['DoctrineBundle' => true]);
+        $container->prependExtensionConfig('doctrine', ['dbal' => true]);
+
+        $extension = new EnqueueExtension();
+
+        $extension->prepend($container);
+
+        $config =  $container->getExtensionConfig('doctrine');
+
+        $this->assertSame(['dbal' => true], $config[1]);
+        $this->assertNotEmpty($config[0]['orm']['mappings']['enqueue_job_queue']);
+    }
+
+    public function testShouldNotAddJobQueueEntityMappingIfDoctrineBundleIsNotRegistered()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.bundles', []);
+
+        $extension = new EnqueueExtension();
+
+        $extension->prepend($container);
+
+        $this->assertSame([], $container->getExtensionConfig('doctrine'));
+    }
 }

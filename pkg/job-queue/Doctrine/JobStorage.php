@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\JobQueue;
+namespace Enqueue\JobQueue\Doctrine;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
@@ -8,6 +8,8 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Enqueue\JobQueue\DuplicateJobException;
+use Enqueue\JobQueue\Job;
 
 class JobStorage
 {

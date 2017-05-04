@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\JobQueue\Tests;
+namespace Enqueue\JobQueue\Tests\Doctrine;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
-use Enqueue\JobQueue\JobStorage;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 
 class JobStorageTest extends \PHPUnit\Framework\TestCase
 {
