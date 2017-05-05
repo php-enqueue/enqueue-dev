@@ -2,6 +2,7 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrQueue;
 use Psr\Log\LoggerInterface;
@@ -50,4 +51,9 @@ interface DriverInterface
      * @return Config
      */
     public function getConfig();
+
+    /**
+     * @return PsrContext
+     */
+    public function getContext();
 }

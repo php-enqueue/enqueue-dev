@@ -2,6 +2,9 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Psr\PsrContext;
+use Psr\Log\LoggerInterface;
+
 class ChainExtension implements ExtensionInterface
 {
     /**
@@ -34,6 +37,16 @@ class ChainExtension implements ExtensionInterface
     {
         foreach ($this->extensions as $extension) {
             $extension->onPostSend($topic, $message);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onPostSetupBroker(PsrContext $context, LoggerInterface $logger = null)
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->onPostSetupBroker($context, $logger);
         }
     }
 }

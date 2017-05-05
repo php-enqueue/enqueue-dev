@@ -11,6 +11,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\AmqpExt\DeliveryMode;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -190,6 +191,14 @@ class AmqpDriver implements DriverInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContext()
+    {
+        return $this->context;
     }
 
     /**

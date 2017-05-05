@@ -1,6 +1,9 @@
 <?php
 namespace Enqueue\Client;
 
+use Enqueue\Psr\PsrContext;
+use Psr\Log\LoggerInterface;
+
 interface ExtensionInterface
 {
     /**
@@ -17,5 +20,10 @@ interface ExtensionInterface
      */
     public function onPostSend($topic, Message $message);
 
-    public function onInterrupted($topic, Message $message);
+
+    /**
+     * @param PsrContext           $context
+     * @param LoggerInterface|null $logger
+     */
+    public function onPostSetupBroker(PsrContext $context, LoggerInterface $logger = null);
 }
