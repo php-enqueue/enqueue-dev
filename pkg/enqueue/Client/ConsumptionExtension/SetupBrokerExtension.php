@@ -2,8 +2,6 @@
 
 namespace Enqueue\Client\ConsumptionExtension;
 
-use Enqueue\Client\ChainExtension;
-use Enqueue\Client\ExtensionInterface as ClientExtensionInterface;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;
@@ -19,11 +17,6 @@ class SetupBrokerExtension implements ExtensionInterface
     private $driver;
 
     /**
-     * @var ClientExtensionInterface
-     */
-    private $extension;
-
-    /**
      * @var bool
      */
     private $isDone;
@@ -31,10 +24,9 @@ class SetupBrokerExtension implements ExtensionInterface
     /**
      * @param DriverInterface $driver
      */
-    public function __construct(DriverInterface $driver, ClientExtensionInterface $extension = null)
+    public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;
-        $this->extension = $extension ?: new ChainExtension([]);
         $this->isDone = false;
     }
 
@@ -46,7 +38,6 @@ class SetupBrokerExtension implements ExtensionInterface
         if (false == $this->isDone) {
             $this->isDone = true;
             $this->driver->setupBroker($context->getLogger());
-            $this->extension->onPostSetupBroker($this->driver->getContext(), $context->getLogger());
         }
     }
 }

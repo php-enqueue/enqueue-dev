@@ -2,9 +2,7 @@
 
 namespace Enqueue\Symfony\Client;
 
-use Enqueue\Client\ChainExtension;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Client\ExtensionInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -18,19 +16,13 @@ class SetupBrokerCommand extends Command
     private $driver;
 
     /**
-     * @var ExtensionInterface
-     */
-    private $extension;
-
-    /**
      * @param DriverInterface $driver
      */
-    public function __construct(DriverInterface $driver, ExtensionInterface $extension = null)
+    public function __construct(DriverInterface $driver)
     {
         parent::__construct(null);
 
         $this->driver = $driver;
-        $this->extension = $extension ?: new ChainExtension([]);
     }
 
     /**
@@ -53,6 +45,5 @@ class SetupBrokerCommand extends Command
         $output->writeln('Setup Broker');
 
         $this->driver->setupBroker($logger = new ConsoleLogger($output));
-        $this->extension->onPostSetupBroker($this->driver->getContext(), $logger);
     }
 }

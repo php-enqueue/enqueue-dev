@@ -5,8 +5,9 @@ namespace Enqueue\Bundle;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
-use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
@@ -34,11 +35,12 @@ class EnqueueBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new BuildExtensionsPass());
+        $container->addCompilerPass(new BuildConsumptionExtensionsPass());
         $container->addCompilerPass(new BuildClientRoutingPass());
         $container->addCompilerPass(new BuildProcessorRegistryPass());
         $container->addCompilerPass(new BuildTopicMetaSubscribersPass());
         $container->addCompilerPass(new BuildQueueMetaRegistryPass());
+        $container->addCompilerPass(new BuildClientExtensionsPass());
 
         /** @var EnqueueExtension $extension */
         $extension = $container->getExtension('enqueue');

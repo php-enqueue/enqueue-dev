@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -10,18 +10,18 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use PHPUnit\Framework\TestCase;
 
-class BuildExtensionsPassTest extends TestCase
+class BuildConsumptionExtensionsPassTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementCompilerPass()
     {
-        $this->assertClassImplements(CompilerPassInterface::class, BuildExtensionsPass::class);
+        $this->assertClassImplements(CompilerPassInterface::class, BuildConsumptionExtensionsPass::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
     {
-        new BuildExtensionsPass();
+        new BuildConsumptionExtensionsPass();
     }
 
     public function testShouldReplaceFirstArgumentOfExtensionsServiceConstructorWithTaggsExtensions()
@@ -40,7 +40,7 @@ class BuildExtensionsPassTest extends TestCase
         $extension->addTag('enqueue.consumption.extension');
         $container->setDefinition('bar_extension', $extension);
 
-        $pass = new BuildExtensionsPass();
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $this->assertEquals(
@@ -69,7 +69,7 @@ class BuildExtensionsPassTest extends TestCase
         $extension->addTag('enqueue.consumption.extension', ['priority' => 2]);
         $container->setDefinition('baz_extension', $extension);
 
-        $pass = new BuildExtensionsPass();
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $orderedExtensions = $extensions->getArgument(0);
@@ -99,7 +99,7 @@ class BuildExtensionsPassTest extends TestCase
         $extension->addTag('enqueue.consumption.extension', ['priority' => -1]);
         $container->setDefinition('baz_extension', $extension);
 
-        $pass = new BuildExtensionsPass();
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $orderedExtensions = $extensions->getArgument(0);
