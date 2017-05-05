@@ -4,6 +4,7 @@ namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Producer;
@@ -538,6 +539,62 @@ class ProducerTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The message scope "iDontKnowScope" is not supported.');
+        $producer->send('topic', $message);
+    }
+
+    public function testShouldCallPreSendPostSendExtensionMethodsWhenSendToRouter()
+    {
+        $message = new Message();
+        $message->setBody('aBody');
+        $message->setScope(Message::SCOPE_MESSAGE_BUS);
+
+        $extension = $this->createMock(ExtensionInterface::class);
+        $extension
+            ->expects($this->at(0))
+            ->method('onPreSend')
+            ->with($this->identicalTo('topic'), $this->identicalTo($message))
+        ;
+        $extension
+            ->expects($this->at(1))
+            ->method('onPostSend')
+            ->with($this->identicalTo('topic'), $this->identicalTo($message))
+        ;
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToRouter')
+        ;
+
+        $producer = new Producer($driver, $extension);
+        $producer->send('topic', $message);
+    }
+
+    public function testShouldCallPreSendPostSendExtensionMethodsWhenSendToProcessor()
+    {
+        $message = new Message();
+        $message->setBody('aBody');
+        $message->setScope(Message::SCOPE_APP);
+
+        $extension = $this->createMock(ExtensionInterface::class);
+        $extension
+            ->expects($this->at(0))
+            ->method('onPreSend')
+            ->with($this->identicalTo('topic'), $this->identicalTo($message))
+        ;
+        $extension
+            ->expects($this->at(1))
+            ->method('onPostSend')
+            ->with($this->identicalTo('topic'), $this->identicalTo($message))
+        ;
+
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToProcessor')
+        ;
+
+        $producer = new Producer($driver, $extension);
         $producer->send('topic', $message);
     }
 

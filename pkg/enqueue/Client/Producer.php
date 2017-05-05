@@ -13,11 +13,17 @@ class Producer implements ProducerInterface
     protected $driver;
 
     /**
+     * @var ExtensionInterface
+     */
+    private $extension;
+
+    /**
      * @param DriverInterface $driver
      */
-    public function __construct(DriverInterface $driver)
+    public function __construct(DriverInterface $driver, ExtensionInterface $extension = null)
     {
         $this->driver = $driver;
+        $this->extension = $extension ?: new ChainExtension([]);
     }
 
     /**
@@ -55,7 +61,9 @@ class Producer implements ProducerInterface
                 throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_NAME));
             }
 
+            $this->extension->onPreSend($topic, $message);
             $this->driver->sendToRouter($message);
+            $this->extension->onPostSend($topic, $message);
         } elseif (Message::SCOPE_APP == $message->getScope()) {
             if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
                 $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->driver->getConfig()->getRouterProcessorName());
@@ -64,7 +72,9 @@ class Producer implements ProducerInterface
                 $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->driver->getConfig()->getRouterQueueName());
             }
 
+            $this->extension->onPreSend($topic, $message);
             $this->driver->sendToProcessor($message);
+            $this->extension->onPostSend($topic, $message);
         } else {
             throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));
         }

@@ -4,8 +4,9 @@ namespace Enqueue\Bundle\Tests\Unit;
 
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
-use Enqueue\Bundle\DependencyInjection\Compiler\BuildExtensionsPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
@@ -46,7 +47,7 @@ class EnqueueBundleTest extends TestCase
         $container
             ->expects($this->at(0))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildExtensionsPass::class))
+            ->with($this->isInstanceOf(BuildConsumptionExtensionsPass::class))
         ;
         $container
             ->expects($this->at(1))
@@ -70,6 +71,11 @@ class EnqueueBundleTest extends TestCase
         ;
         $container
             ->expects($this->at(5))
+            ->method('addCompilerPass')
+            ->with($this->isInstanceOf(BuildClientExtensionsPass::class))
+        ;
+        $container
+            ->expects($this->at(6))
             ->method('getExtension')
             ->willReturn($extensionMock)
         ;

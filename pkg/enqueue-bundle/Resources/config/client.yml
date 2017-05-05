@@ -5,7 +5,15 @@ services:
 
     enqueue.client.producer:
         class: 'Enqueue\Client\Producer'
-        arguments: ['@enqueue.client.driver']
+        arguments:
+            - '@enqueue.client.driver'
+            - '@enqueue.client.extensions'
+
+    enqueue.client.extensions:
+        class: 'Enqueue\Client\ChainExtension'
+        public: false
+        arguments:
+            - []
 
     enqueue.producer:
         alias: 'enqueue.client.producer'
