@@ -44,6 +44,6 @@ class SetupBrokerCommand extends Command
     {
         $output->writeln('Setup Broker');
 
-        $this->driver->setupBroker($logger = new ConsoleLogger($output));
+        $this->driver->setupBroker(new ConsoleLogger($output));
     }
 }
