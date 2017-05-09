@@ -1,73 +1,133 @@
 <?php
-
 namespace Enqueue\Client;
 
-use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\Client\AmqpDriver;
-use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
+use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
+use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Consumption\CallbackProcessor;
-use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Symfony\DefaultTransportFactory;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Experimental class. Use it speedup setup process and learning but consider to switch to custom soltion (build your own client).
+ * Experimental class. Use it speedup setup process and learning but consider to switch to custom solution (build your own client).
  */
 final class SimpleClient
 {
     /**
-     * @var AmqpContext
+     * @var ContainerBuilder
      */
-    private $context;
+    private $container;
 
     /**
-     * @var DriverInterface
+     * $config = [
+     *   'transport' => [
+     *     'rabbitmq_amqp' => [],
+     *     'amqp'          => [],
+     *     ....
+     *   ],
+     *   'client' => [
+     *     'prefix'                   => 'enqueue',
+     *     'app_name'                 => 'app',
+     *     'router_topic'             => 'router',
+     *     'router_queue'             => 'default',
+     *     'default_processor_queue'  => 'default',
+     *     'redelivered_delay_time'   => 0
+     *   ],
+     *   'extensions' => [
+     *     'signal_extension' => true,
+     *   ]
+     * ]
+     *
+     *
+     * @param string|array $config
      */
-    private $driver;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var ArrayProcessorRegistry
-     */
-    private $processorsRegistry;
-
-    /**
-     * @var TopicMetaRegistry
-     */
-    private $topicsMetaRegistry;
-
-    /**
-     * @var RouterProcessor
-     */
-    private $routerProcessor;
-
-    /**
-     * @param AmqpContext $context
-     * @param Config|null $config
-     */
-    public function __construct(AmqpContext $context, Config $config = null)
+    public function __construct($config)
     {
-        $this->context = $context;
-        $this->config = $config ?: Config::create();
+        $this->container = $this->buildContainer($config);
+    }
 
-        $this->queueMetaRegistry = new QueueMetaRegistry($this->config, []);
-        $this->queueMetaRegistry->add($this->config->getDefaultProcessorQueueName());
-        $this->queueMetaRegistry->add($this->config->getRouterQueueName());
+    /**
+     * @param array|string $config
+     *
+     * @return ContainerBuilder
+     */
+    private function buildContainer($config)
+    {
+        $config = $this->buildConfig($config);
+        $extension = $this->buildContainerExtension($config);
 
-        $this->topicsMetaRegistry = new TopicMetaRegistry([]);
-        $this->processorsRegistry = new ArrayProcessorRegistry();
+        $container = new ContainerBuilder();
+        $container->registerExtension($extension);
+        $container->loadFromExtension($extension->getAlias(), $config);
 
-        $this->driver = new AmqpDriver($context, $this->config, $this->queueMetaRegistry);
-        $this->routerProcessor = new RouterProcessor($this->driver, []);
+        $container->compile();
 
-        $this->processorsRegistry->add($this->config->getRouterProcessorName(), $this->routerProcessor);
-        $this->queueMetaRegistry->addProcessor($this->config->getRouterQueueName(), $this->routerProcessor);
+        return $container;
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return SimpleClientContainerExtension
+     */
+    private function buildContainerExtension($config)
+    {
+        $map = [
+            'default' => DefaultTransportFactory::class,
+            'amqp' => AmqpTransportFactory::class,
+            'rabbitmq_amqp' => RabbitMqAmqpTransportFactory::class,
+        ];
+
+        $extension = new SimpleClientContainerExtension();
+
+        foreach (array_keys($config['transport']) as $transport) {
+            if (false == isset($map[$transport])) {
+                throw new \LogicException(sprintf('Transport is not supported: "%s"', $transport));
+            }
+
+            $extension->addTransportFactory(new $map[$transport]);
+        }
+
+        return $extension;
+    }
+
+    /**
+     * @param array|string $config
+     *
+     * @return array
+     */
+    private function buildConfig($config)
+    {
+        if (is_string($config)) {
+            $extConfig = [
+                'client' => [],
+                'transport' => [
+                    'default' => $config,
+                    $config => [],
+                ],
+            ];
+        } elseif (is_array($config)) {
+            $extConfig = array_merge_recursive([
+                'client' => [],
+                'transport' => [],
+            ], $config);
+
+            $transport = current(array_keys($extConfig['transport']));
+
+            if (false == $transport) {
+                throw new \LogicException('There is no transport configured');
+            }
+
+            $extConfig['transport']['default'] = $transport;
+        } else {
+            throw new \LogicException('Expects config is string or array');
+        }
+
+        return $extConfig;
     }
 
     /**
@@ -77,34 +137,39 @@ final class SimpleClient
      */
     public function bind($topic, $processorName, callable $processor)
     {
-        $queueName = $this->config->getDefaultProcessorQueueName();
+        $queueName = $this->getConfig()->getDefaultProcessorQueueName();
 
-        $this->topicsMetaRegistry->addProcessor($topic, $processorName);
-        $this->queueMetaRegistry->addProcessor($queueName, $processorName);
-        $this->processorsRegistry->add($processorName, new CallbackProcessor($processor));
-
-        $this->routerProcessor->add($topic, $queueName, $processorName);
+        $this->getTopicMetaRegistry()->addProcessor($topic, $processorName);
+        $this->getQueueMetaRegistry()->addProcessor($queueName, $processorName);
+        $this->getProcessorRegistry()->add($processorName, new CallbackProcessor($processor));
+        $this->getRouterProcessor()->add($topic, $queueName, $processorName);
     }
 
-    public function send($topic, $message)
+    /**
+     * @param string       $topic
+     * @param string|array $message
+     * @param bool         $setupBroker
+     */
+    public function send($topic, $message, $setupBroker = false)
     {
-        $this->getProducer()->send($topic, $message);
+        $this->getProducer($setupBroker)->send($topic, $message);
     }
 
+    /**
+     * @param ExtensionInterface|null $runtimeExtension
+     */
     public function consume(ExtensionInterface $runtimeExtension = null)
     {
-        $this->driver->setupBroker();
-
-        $processor = $this->getProcessor();
-
+        $this->setupBroker();
+        $processor = $this->getDelegateProcessor();
         $queueConsumer = $this->getQueueConsumer();
 
-        $defaultQueueName = $this->config->getDefaultProcessorQueueName();
-        $defaultTransportQueueName = $this->config->createTransportQueueName($defaultQueueName);
+        $defaultQueueName = $this->getConfig()->getDefaultProcessorQueueName();
+        $defaultTransportQueueName = $this->getConfig()->createTransportQueueName($defaultQueueName);
 
         $queueConsumer->bind($defaultTransportQueueName, $processor);
-        if ($this->config->getRouterQueueName() != $defaultQueueName) {
-            $routerTransportQueueName = $this->config->createTransportQueueName($this->config->getRouterQueueName());
+        if ($this->getConfig()->getRouterQueueName() != $defaultQueueName) {
+            $routerTransportQueueName = $this->getConfig()->createTransportQueueName($this->getConfig()->getRouterQueueName());
 
             $queueConsumer->bind($routerTransportQueueName, $processor);
         }
@@ -113,11 +178,11 @@ final class SimpleClient
     }
 
     /**
-     * @return AmqpContext
+     * @return PsrContext
      */
     public function getContext()
     {
-       return $this->context;
+       return $this->container->get('enqueue.transport.context');
     }
 
     /**
@@ -125,9 +190,15 @@ final class SimpleClient
      */
     public function getQueueConsumer()
     {
-        return new QueueConsumer($this->context, new ChainExtension([
-            new SetRouterPropertiesExtension($this->driver),
-        ]));
+        return $this->container->get('enqueue.client.queue_consumer');
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->container->get('enqueue.client.config');
     }
 
     /**
@@ -135,7 +206,7 @@ final class SimpleClient
      */
     public function getDriver()
     {
-        return $this->driver;
+        return $this->container->get('enqueue.client.driver');
     }
 
     /**
@@ -143,7 +214,7 @@ final class SimpleClient
      */
     public function getTopicMetaRegistry()
     {
-        return $this->topicsMetaRegistry;
+        return $this->container->get('enqueue.client.meta.topic_meta_registry');
     }
 
     /**
@@ -151,24 +222,47 @@ final class SimpleClient
      */
     public function getQueueMetaRegistry()
     {
-        return $this->queueMetaRegistry;
+        return $this->container->get('enqueue.client.meta.queue_meta_registry');
     }
 
     /**
+     * @param bool $setupBroker
+     *
      * @return ProducerInterface
      */
-    public function getProducer()
+    public function getProducer($setupBroker = false)
     {
-        $this->driver->setupBroker();
+        $setupBroker && $this->setupBroker();
 
-        return new Producer($this->driver);
+        return $this->container->get('enqueue.client.producer');
+    }
+
+    public function setupBroker()
+    {
+        $this->getDriver()->setupBroker();
+    }
+
+    /**
+     * @return ArrayProcessorRegistry
+     */
+    public function getProcessorRegistry()
+    {
+        return $this->container->get('enqueue.client.processor_registry');
     }
 
     /**
      * @return DelegateProcessor
      */
-    public function getProcessor()
+    public function getDelegateProcessor()
     {
-        return new DelegateProcessor($this->processorsRegistry);
+        return $this->container->get('enqueue.client.delegate_processor');
+    }
+
+    /**
+     * @return RouterProcessor
+     */
+    public function getRouterProcessor()
+    {
+        return $this->container->get('enqueue.client.router_processor');
     }
 }
