@@ -24,9 +24,6 @@ use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-/**
- * Use it speedup setup process and learning but consider to switch to custom solution (build your own client).
- */
 final class SimpleClient
 {
     /**

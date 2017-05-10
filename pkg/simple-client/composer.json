@@ -21,14 +21,6 @@
         "phpunit/phpunit": "~5.5",
         "enqueue/test": "^0.3"
     },
-    "suggest": {
-        "enqueue/amqp-ext": "AMQP transport (based on php extension)",
-        "enqueue/stomp": "STOMP transport",
-        "enqueue/fs": "Filesystem transport",
-        "enqueue/redis": "Redis transport",
-        "enqueue/dbal": "Doctrine DBAL transport",
-        "enqueue/sqs": "Amazon AWS SQS transport"
-    },
     "autoload": {
         "psr-4": { "Enqueue\\SimpleClient\\": "" },
         "exclude-from-classmap": [
