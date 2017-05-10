@@ -34,7 +34,7 @@ final class SimpleClient
     /**
      * $config = [
      *   'transport' => [
-     *     'rabbitmq_amqp' => [],
+     *     'default' => 'amqp',
      *     'amqp'          => [],
      *     ....
      *   ],
