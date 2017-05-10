@@ -1,14 +1,20 @@
 <?php
-namespace Enqueue\Client;
+namespace Enqueue\SimpleClient;
 
+use Enqueue\Client\ArrayProcessorRegistry;
+use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
+use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
+use Enqueue\Client\Producer;
+use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\NodeInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -35,9 +41,9 @@ class SimpleClientContainerExtension extends Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @return NodeInterface
      */
-    private function getConfigTreeBuilder()
+    private function createConfiguration()
     {
         $tb = new TreeBuilder();
         $rootNode = $tb->root('enqueue');
@@ -65,7 +71,7 @@ class SimpleClientContainerExtension extends Extension
             ->end()->end()
         ;
 
-        return $tb;
+        return $tb->buildTree();
     }
 
     /**
@@ -91,7 +97,7 @@ class SimpleClientContainerExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configProcessor = new Processor();
-        $config = $configProcessor->process($this->getConfigTreeBuilder()->buildTree(), $configs);
+        $config = $configProcessor->process($this->createConfiguration(), $configs);
 
         foreach ($config['transport'] as $name => $transportConfig) {
             $this->factories[$name]->createConnectionFactory($container, $transportConfig);

@@ -1,19 +1,31 @@
 <?php
-namespace Enqueue\Client;
+namespace Enqueue\SimpleClient;
 
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
+use Enqueue\Client\ArrayProcessorRegistry;
+use Enqueue\Client\Config;
+use Enqueue\Client\DelegateProcessor;
+use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
+use Enqueue\Client\ProducerInterface;
+use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Dbal\Symfony\DbalTransportFactory;
+use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Psr\PsrContext;
+use Enqueue\Redis\Symfony\RedisTransportFactory;
+use Enqueue\Sqs\Symfony\SqsTransportFactory;
+use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
+use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Experimental class. Use it speedup setup process and learning but consider to switch to custom solution (build your own client).
+ * Use it speedup setup process and learning but consider to switch to custom solution (build your own client).
  */
 final class SimpleClient
 {
@@ -80,6 +92,12 @@ final class SimpleClient
             'default' => DefaultTransportFactory::class,
             'amqp' => AmqpTransportFactory::class,
             'rabbitmq_amqp' => RabbitMqAmqpTransportFactory::class,
+            'dbal' => DbalTransportFactory::class,
+            'fs' => FsTransportFactory::class,
+            'redis' => RedisTransportFactory::class,
+            'stomp' => StompTransportFactory::class,
+            'rabbitmq_stomp' => RabbitMqStompTransportFactory::class,
+            'sqs' => SqsTransportFactory::class,
         ];
 
         $extension = new SimpleClientContainerExtension();

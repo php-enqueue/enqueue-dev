@@ -4,7 +4,7 @@ namespace Enqueue\Tests\Functional\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Client\RpcClient;
-use Enqueue\Client\SimpleClient;
+use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
@@ -39,14 +39,27 @@ class RpcClientTest extends TestCase
         $this->context = $this->buildAmqpContext();
         $this->replyContext = $this->buildAmqpContext();
 
-        $this->removeQueue('default');
+        $this->removeQueue('enqueue.app.default');
     }
 
     public function testProduceAndConsumeOneMessage()
     {
+        $config = [
+            'transport' => [
+                'rabbitmq_amqp' => [
+                    'host' => getenv('SYMFONY__RABBITMQ__HOST'),
+                    'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
+                    'login' => getenv('SYMFONY__RABBITMQ__USER'),
+                    'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
+                    'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+                ],
+            ],
+        ];
+
         $requestMessage = null;
 
-        $client = new SimpleClient($this->context);
+        $client = new SimpleClient($config);
+        $client->setupBroker();
         $client->bind('foo_topic', 'foo_processor', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
             $requestMessage = $message;
 

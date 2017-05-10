@@ -84,6 +84,7 @@ class StompTransportFactory implements TransportFactoryInterface
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),
+            new Reference('enqueue.client.meta.queue_meta_registry'),
         ]);
 
         $driverId = sprintf('enqueue.client.%s.driver', $this->getName());
