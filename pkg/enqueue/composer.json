@@ -21,7 +21,8 @@
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3",
         "enqueue/null": "^0.3",
-        "enqueue/test": "^0.3"
+        "enqueue/test": "^0.3",
+        "enqueue/simple-client": "^0.3"
     },
     "suggest": {
         "symfony/console": "^2.8|^3 If you want to use li commands",
@@ -31,7 +32,8 @@
         "enqueue/stomp": "STOMP transport",
         "enqueue/fs": "Filesystem transport",
         "enqueue/redis": "Redis transport",
-        "enqueue/dbal": "Doctrine DBAL transport"
+        "enqueue/dbal": "Doctrine DBAL transport",
+        "enqueue/sqs": "Amazon AWS SQS transport"
     },
     "autoload": {
         "psr-4": { "Enqueue\\": "" },

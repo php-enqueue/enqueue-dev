@@ -13,6 +13,7 @@
     - [Extensions](consumption/extensions.md)
     - [Message processor](consumption/message_processor.md)
 * Client
+    - [Quick tour](client/quick_tour.md)
     - [Message examples](client/message_examples.md)
     - [Supported brokers](client/supported_brokers.md)
     - [Message bus](client/message_bus.md)

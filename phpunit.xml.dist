@@ -56,6 +56,10 @@
         <testsuite name="job-queue">
             <directory>pkg/job-queue/Tests</directory>
         </testsuite>
+
+        <testsuite name="simple-client">
+            <directory>pkg/simple-client/Tests</directory>
+        </testsuite>
     </testsuites>
 
     <filter>

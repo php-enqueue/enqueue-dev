@@ -167,20 +167,30 @@ Here's an example of how you can send and consume messages.
  
 ```php
 <?php
-use Enqueue\Client\SimpleClient;
+use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
 
-/** @var \Enqueue\Psr\PsrContext $psrContext */
+$client = new SimpleClient([
+    'transport' => [
+        'default' => 'amqp',
+        'amqp' => [
+            'host'  => 'localhost',
+            'port'  => 5672,
+            'vhost' => '/',
+            'login' => 'guest',
+            'password' => 'guest',
+        ],
+    ],
+    'client' => true,
+]);
 
-$client = new SimpleClient($psrContext);
-$client->bind('foo_topic', 'processor_name', function (PsrMessage $message) {
-    // process message
+$client->setupBroker();
 
-    return PsrProcessor::ACK;
+$client->bind('a_foo_topic', 'fooProcessor', function(PsrMessage $message) {
+    // your processing logic here
 });
 
-$client->send('foo_topic', 'Hello there!');
+$client->send('a_bar_topic', 'aMessageData');
 
 // in another process you can consume messages. 
 $client->consume();

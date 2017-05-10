@@ -15,6 +15,7 @@
     "enqueue/sqs": "*@dev",
     "enqueue/enqueue-bundle": "*@dev",
     "enqueue/job-queue": "*@dev",
+    "enqueue/simple-client": "*@dev",
     "enqueue/test": "*@dev",
 
     "phpunit/phpunit": "^5",
@@ -77,6 +78,10 @@
     {
       "type": "path",
       "url": "pkg/sqs"
+    },
+    {
+      "type": "path",
+      "url": "pkg/simple-client"
     }
   ]
 }
