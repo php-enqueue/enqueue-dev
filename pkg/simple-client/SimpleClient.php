@@ -133,16 +133,26 @@ final class SimpleClient
                 'client' => [],
                 'transport' => [],
             ], $config);
+        } else {
+            throw new \LogicException('Expects config is string or array');
+        }
 
-            $transport = current(array_keys($extConfig['transport']));
+        if (empty($extConfig['transport']['default'])) {
+            $defaultTransport = null;
+            foreach ($extConfig['transport'] as $transport => $config) {
+                if ('default' === $transport) {
+                    continue;
+                }
 
-            if (false == $transport) {
+                $defaultTransport = $transport;
+                break;
+            }
+
+            if (false == $defaultTransport) {
                 throw new \LogicException('There is no transport configured');
             }
 
-            $extConfig['transport']['default'] = $transport;
-        } else {
-            throw new \LogicException('Expects config is string or array');
+            $extConfig['transport']['default'] = $defaultTransport;
         }
 
         return $extConfig;
