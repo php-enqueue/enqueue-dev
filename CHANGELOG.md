@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.3.8](https://github.com/php-enqueue/enqueue-dev/tree/0.3.8) (2017-05-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.7...0.3.8)
+
+- Add support for production extensions [\#70](https://github.com/php-enqueue/enqueue-dev/issues/70)
+
+- Multi Transport Simple Client [\#75](https://github.com/php-enqueue/enqueue-dev/pull/75) ([ASKozienko](https://github.com/ASKozienko))
+- Client Extensions [\#72](https://github.com/php-enqueue/enqueue-dev/pull/72) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.3.7](https://github.com/php-enqueue/enqueue-dev/tree/0.3.7) (2017-05-04)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.6...0.3.7)
 
