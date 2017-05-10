@@ -1,5 +1,7 @@
 # Client. RPC call
 
+The client's [quick tour](quick_tour.md) describes how to get the client object. 
+We use you followed instructions there and have instance of `Enqueue\SimpleClient\SimpleClient` in `$client` var. 
 
 ## The client side
 
@@ -8,13 +10,10 @@ It allows you to easily send a message and wait for a reply.
  
 ```php
 <?php
-use Enqueue\Client\SimpleClient;
 use Enqueue\Client\RpcClient;
 
-/** @var \Enqueue\Psr\PsrContext $context */
+/** @var \Enqueue\SimpleClient\SimpleClient $client */
 
-
-$client = new SimpleClient($context);
 $rpcClient = new RpcClient($client->getProducer(), $context);
 
 $replyMessage = $rpcClient->call('greeting_topic', 'Hi Thomas!', 5);
@@ -24,13 +23,10 @@ You can perform several requests asynchronously with `callAsync` and request rep
  
 ```php
 <?php
-use Enqueue\Client\SimpleClient;
 use Enqueue\Client\RpcClient;
 
-/** @var \Enqueue\Psr\PsrContext $context */
+/** @var \Enqueue\SimpleClient\SimpleClient $client */
 
-
-$client = new SimpleClient($context);
 $rpcClient = new RpcClient($client->getProducer(), $context);
 
 $promises = [];
@@ -53,7 +49,6 @@ Of course it is possible to implement rpc server side based on transport classes
 ```php
 <?php
 
-use Enqueue\Client\SimpleClient;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Consumption\Result;
@@ -62,7 +57,8 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 
 /** @var \Enqueue\Psr\PsrContext $context */
 
-$client = new SimpleClient($this->context);
+/** @var \Enqueue\SimpleClient\SimpleClient $client */
+
 $client->bind('greeting_topic', 'greeting_processor', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
     echo $message->getBody();
     
