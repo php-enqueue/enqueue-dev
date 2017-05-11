@@ -9,6 +9,7 @@ use Enqueue\Client\Producer;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullContext;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -28,6 +29,25 @@ class EnqueueExtensionTest extends TestCase
     public function testCouldBeConstructedWithoutAnyArguments()
     {
         new EnqueueExtension();
+    }
+
+    public function testShouldRegisterDefaultAndNullTransportFactoriesInConstructor()
+    {
+        $extension = new EnqueueExtension();
+
+        /** @var TransportFactoryInterface[] $factories */
+        $factories = $this->readAttribute($extension, 'factories');
+
+        $this->assertInternalType('array', $factories);
+        $this->assertCount(2, $factories);
+
+        $this->assertArrayHasKey('default', $factories);
+        $this->assertInstanceOf(DefaultTransportFactory::class, $factories['default']);
+        $this->assertEquals('default', $factories['default']->getName());
+
+        $this->assertArrayHasKey('null', $factories);
+        $this->assertInstanceOf(NullTransportFactory::class, $factories['null']);
+        $this->assertEquals('null', $factories['null']->getName());
     }
 
     public function testThrowIfTransportFactoryNameEmpty()
@@ -52,31 +72,32 @@ class EnqueueExtensionTest extends TestCase
         $extension->addTransportFactory(new FooTransportFactory('foo'));
     }
 
-    public function testShouldConfigureNullTransport()
+    public function testShouldEnabledNullTransportAndSetItAsDefault()
     {
         $container = new ContainerBuilder();
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new NullTransportFactory());
 
         $extension->load([[
             'transport' => [
+                'default' => 'null',
                 'null' => true,
             ],
         ]], $container);
+
+        self::assertTrue($container->hasAlias('enqueue.transport.default.context'));
+        self::assertEquals('enqueue.transport.null.context', (string) $container->getAlias('enqueue.transport.default.context'));
 
         self::assertTrue($container->hasDefinition('enqueue.transport.null.context'));
         $context = $container->getDefinition('enqueue.transport.null.context');
         self::assertEquals(NullContext::class, $context->getClass());
     }
 
-    public function testShouldUseNullTransportAsDefault()
+    public function testShouldUseNullTransportAsDefaultWhenExplicitlyConfigured()
     {
         $container = new ContainerBuilder();
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new NullTransportFactory());
-        $extension->addTransportFactory(new DefaultTransportFactory());
 
         $extension->load([[
             'transport' => [
@@ -120,7 +141,6 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-        $extension->addTransportFactory(new DefaultTransportFactory());
 
         $extension->load([[
             'transport' => [
@@ -144,7 +164,6 @@ class EnqueueExtensionTest extends TestCase
         $container = new ContainerBuilder();
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new DefaultTransportFactory());
         $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
@@ -167,7 +186,6 @@ class EnqueueExtensionTest extends TestCase
         $container->setParameter('kernel.debug', false);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new DefaultTransportFactory());
         $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
@@ -190,7 +208,6 @@ class EnqueueExtensionTest extends TestCase
         $container->setParameter('kernel.debug', false);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new DefaultTransportFactory());
         $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
@@ -215,7 +232,6 @@ class EnqueueExtensionTest extends TestCase
         $container->setParameter('kernel.debug', true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new DefaultTransportFactory());
         $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
@@ -250,7 +266,6 @@ class EnqueueExtensionTest extends TestCase
         $container->setParameter('kernel.debug', true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new DefaultTransportFactory());
         $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
@@ -276,7 +291,6 @@ class EnqueueExtensionTest extends TestCase
         $container->setParameter('kernel.debug', true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new DefaultTransportFactory());
         $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[

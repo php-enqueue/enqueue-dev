@@ -84,7 +84,7 @@ class EnqueueBundleTest extends TestCase
         $bundle->build($container);
     }
 
-    public function testShouldRegisterDefaultAndNullTransportFactories()
+    public function testShouldRegisterStompAndRabbitMqStompTransportFactories()
     {
         $extensionMock = $this->createEnqueueExtensionMock();
 
@@ -94,32 +94,10 @@ class EnqueueBundleTest extends TestCase
         $extensionMock
             ->expects($this->at(0))
             ->method('addTransportFactory')
-            ->with($this->isInstanceOf(DefaultTransportFactory::class))
-        ;
-        $extensionMock
-            ->expects($this->at(1))
-            ->method('addTransportFactory')
-            ->with($this->isInstanceOf(NullTransportFactory::class))
-        ;
-
-        $bundle = new EnqueueBundle();
-        $bundle->build($container);
-    }
-
-    public function testShouldRegisterStompAndRabbitMqStompTransportFactories()
-    {
-        $extensionMock = $this->createEnqueueExtensionMock();
-
-        $container = new ContainerBuilder();
-        $container->registerExtension($extensionMock);
-
-        $extensionMock
-            ->expects($this->at(2))
-            ->method('addTransportFactory')
             ->with($this->isInstanceOf(StompTransportFactory::class))
         ;
         $extensionMock
-            ->expects($this->at(3))
+            ->expects($this->at(1))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(RabbitMqStompTransportFactory::class))
         ;
@@ -136,12 +114,12 @@ class EnqueueBundleTest extends TestCase
         $container->registerExtension($extensionMock);
 
         $extensionMock
-            ->expects($this->at(4))
+            ->expects($this->at(2))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(AmqpTransportFactory::class))
         ;
         $extensionMock
-            ->expects($this->at(5))
+            ->expects($this->at(3))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(RabbitMqAmqpTransportFactory::class))
         ;
@@ -158,7 +136,7 @@ class EnqueueBundleTest extends TestCase
         $container->registerExtension($extensionMock);
 
         $extensionMock
-            ->expects($this->at(6))
+            ->expects($this->at(4))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(FsTransportFactory::class))
         ;
@@ -175,7 +153,7 @@ class EnqueueBundleTest extends TestCase
         $container->registerExtension($extensionMock);
 
         $extensionMock
-            ->expects($this->at(7))
+            ->expects($this->at(5))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(RedisTransportFactory::class))
         ;
@@ -192,7 +170,7 @@ class EnqueueBundleTest extends TestCase
         $container->registerExtension($extensionMock);
 
         $extensionMock
-            ->expects($this->at(8))
+            ->expects($this->at(6))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(DbalTransportFactory::class))
         ;
@@ -209,7 +187,7 @@ class EnqueueBundleTest extends TestCase
         $container->registerExtension($extensionMock);
 
         $extensionMock
-            ->expects($this->at(9))
+            ->expects($this->at(7))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(SqsTransportFactory::class))
         ;

@@ -44,8 +44,6 @@ class EnqueueBundle extends Bundle
 
         /** @var EnqueueExtension $extension */
         $extension = $container->getExtension('enqueue');
-        $extension->addTransportFactory(new DefaultTransportFactory());
-        $extension->addTransportFactory(new NullTransportFactory());
 
         if (class_exists(StompContext::class)) {
             $extension->addTransportFactory(new StompTransportFactory());
