@@ -14,7 +14,7 @@ composer require "enqueue/magento-enqueue:*@dev" "enqueue/amqp-ext"
 ## Configuration
 
 At this stage we have configure the Enqueue extension in Magento backend. 
-The config is here: System -> Configuration -> Enqueue Message Queue.
+The config is here: `System -> Configuration -> Enqueue Message Queue`.
 Here's the example of Amqp transport that connects to RabbitMQ broker on localhost:
  
 
