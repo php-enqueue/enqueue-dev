@@ -17,8 +17,8 @@ At this stage we have configure the Enqueue extension in Magento backend.
 The config is here: System -> Configuration -> Enqueue Message Queue.
 Here's the example of Amqp transport that connects to RabbitMQ broker on localhost:
  
- 
-![Сonfiguration](../images/magento_enqueue_configu)
+
+![Сonfiguration](../images/magento_enqueue_configuration.jpeg)
 
 ## Publish Message
 
