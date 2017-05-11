@@ -1,6 +1,6 @@
 # Cli commands
 
-The EnqueueBundle provides several commands. 
+The enqueue Magento extension provides several commands. 
 The most useful one `enqueue:consume` connects to the broker and process the messages.
 Other commands could be useful during debugging (like `enqueue:topics`) or deployment (like `enqueue:setup-broker`).
 
@@ -9,12 +9,11 @@ Other commands could be useful during debugging (like `enqueue:topics`) or deplo
 * [enqueue:setup-broker](#enqueuesetup-broker)
 * [enqueue:queues](#enqueuequeues)
 * [enqueue:topics](#enqueuetopics)
-* [enqueue:transport:consume](#enqueuetransportconsume)
 
 ## enqueue:consume
 
 ```
-./bin/console enqueue:consume --help
+php shell/enqueue.php enqueue:consume --help
 Usage:
   enqueue:consume [options] [--] [<client-queue-names>]...
   enq:c
@@ -44,7 +43,7 @@ Help:
 ## enqueue:produce
 
 ```
-./bin/console enqueue:produce --help
+php shell/enqueue.php enqueue:produce --help
 Usage:
   enqueue:produce <topic> <message>
   enq:p
@@ -71,7 +70,7 @@ Help:
 ## enqueue:setup-broker
 
 ```
-./bin/console enqueue:setup-broker --help
+php shell/enqueue.php enqueue:setup-broker --help
 Usage:
   enqueue:setup-broker
   enq:sb
@@ -118,7 +117,7 @@ Help:
 ## enqueue:topics
 
 ```
-./bin/console enqueue:topics --help
+php shell/enqueue.php enqueue:topics --help
 Usage:
   enqueue:topics
   enq:m:t
@@ -139,33 +138,5 @@ Help:
   A command shows all available topics and some information about them.
 ```
 
-## enqueue:transport:consume
- 
-```
-./bin/console enqueue:transport:consume --help
-Usage:
-  enqueue:transport:consume [options] [--] <processor-service>
-
-Arguments:
-  processor-service                  A message processor service
-
-Options:
-      --message-limit=MESSAGE-LIMIT  Consume n messages and exit
-      --time-limit=TIME-LIMIT        Consume messages during this time
-      --memory-limit=MEMORY-LIMIT    Consume messages until process reaches this memory limit in MB
-      --queue[=QUEUE]                Queues to consume from (multiple values allowed)
-  -h, --help                         Display this help message
-  -q, --quiet                        Do not output any message
-  -V, --version                      Display this application version
-      --ansi                         Force ANSI output
-      --no-ansi                      Disable ANSI output
-  -n, --no-interaction               Do not ask any interactive question
-  -e, --env=ENV                      The environment name [default: "dev"]
-      --no-debug                     Switches off debug mode
-  -v|vv|vvv, --verbose               Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
-
-Help:
-  A worker that consumes message from a broker. To use this broker you have to explicitly set a queue to consume from and a message processor service
-```
-
 [back to index](../index.md)
+
