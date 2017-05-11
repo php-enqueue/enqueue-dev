@@ -31,6 +31,9 @@
     - [Production settings](bundle/production_settings.md)
     - [Debuging](bundle/debuging.md)
     - [Functional testing](bundle/functional_testing.md)
+* Magento
+    - [Quick tour](magento/quick_tour.md)
+    - [Cli commands](magento/cli_commands.md) 
 * Development
     - [Contribution](contribution.md)
 
