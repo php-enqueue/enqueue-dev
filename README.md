@@ -18,12 +18,14 @@ Features:
     - [Filesystem](docs/transport/filesystem.md)
     - [Null](docs/transport/null.md).
 * Generic purpose abstraction level (the transport level).
-* "Opinionated" easy to use abstraction level (the client level).
+* Easy to use abstraction level (the client level).
+* [Symfony bundle](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
+* [Magento1 extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/magento/quick_tour.md)
 * [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
 * [RPC over MQ](https://www.rabbitmq.com/tutorials/tutorial-one-php.html) support.
 * Temporary queues support.
-* Well designed components (decoupled, reusable,).
-* Tested with unit and functional tests.
+* Well designed components decoupled and reusable.
+* Carefully tested including unit and functional tests.
 * For more visit [quick tour](docs/quick_tour.md).
 
 ## Resources
