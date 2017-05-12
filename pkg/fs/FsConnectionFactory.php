@@ -12,15 +12,33 @@ class FsConnectionFactory implements PsrConnectionFactory
     private $config;
 
     /**
-     * @param array $config
+     * The config could be an array, string DSN or null. In case of null it will attempt to store files in /tmp/enqueue folder.
+     *
+     * [
+     *   'path' => 'the directory where all queue\topic files remain. For example /home/foo/enqueue',
+     *   'pre_fetch_count' => 'Integer. Defines how many messages to fetch from the file.',
+     *   'chmod' => 'Defines a mode the files are created with',
+     * ]
+     *
+     * or
+     *
+     * file://home/foo/enqueue
+     * file://home/foo/enqueue?pre_fetch_count=20&chmod=0777
+     *
+     * @param array|string|null $config
      */
-    public function __construct(array $config)
+    public function __construct($config = 'file://')
     {
-        $this->config = array_replace([
-            'store_dir' => null,
-            'pre_fetch_count' => 1,
-            'chmod' => 0600,
-        ], $config);
+        if (empty($config) || 'file://' === $config) {
+            $config = ['path' => sys_get_temp_dir().'/enqueue'];
+        } elseif (is_string($config)) {
+            $config = $this->parseDsn($config);
+        } elseif (is_array($config)) {
+        } else {
+            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+        }
+
+        $this->config = array_replace($this->defaultConfig(), $config);
     }
 
     /**
@@ -30,6 +48,56 @@ class FsConnectionFactory implements PsrConnectionFactory
      */
     public function createContext()
     {
-        return new FsContext($this->config['store_dir'], $this->config['pre_fetch_count'], $this->config['chmod']);
+        return new FsContext($this->config['path'], $this->config['pre_fetch_count'], $this->config['chmod']);
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return array
+     */
+    private function parseDsn($dsn)
+    {
+        if ($dsn && '/' === $dsn[0]) {
+            return ['path' => $dsn];
+        }
+
+        $scheme = parse_url($dsn, PHP_URL_SCHEME);
+        $path = parse_url($dsn, PHP_URL_PATH);
+        $host = parse_url($dsn, PHP_URL_HOST);
+        $query = parse_url($dsn, PHP_URL_QUERY);
+        if (false === $scheme) {
+            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        }
+
+        if ('file' !== $scheme) {
+            throw new \LogicException('The given DSN scheme "%s" is not supported. Could be "file" only.');
+        }
+
+        if ($query) {
+            $config = [];
+            parse_str($query, $config);
+        }
+
+        if (isset($config['pre_fetch_count'])) {
+            $config['pre_fetch_count'] = (int) $config['pre_fetch_count'];
+        }
+
+        if (isset($config['chmod'])) {
+            $config['chmod'] = intval($config['chmod'], 8);
+        }
+
+        $config['path'] = sprintf('/%s%s', $host, $path);
+
+        return $config;
+    }
+
+    private function defaultConfig()
+    {
+        return [
+            'path' => null,
+            'pre_fetch_count' => 1,
+            'chmod' => 0600,
+        ];
     }
 }

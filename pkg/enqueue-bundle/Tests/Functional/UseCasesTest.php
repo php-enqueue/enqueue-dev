@@ -85,8 +85,15 @@ class UseCasesTest extends WebTestCase
             'transport' => [
                 'default' => 'fs',
                 'fs' => [
-                    'store_dir' => sys_get_temp_dir(),
+                    'path' => sys_get_temp_dir(),
                 ],
+            ],
+        ]];
+
+        yield 'fs_dsn' => [[
+            'transport' => [
+                'default' => 'fs',
+                'fs' => 'file:/'.sys_get_temp_dir(),
             ],
         ]];
 

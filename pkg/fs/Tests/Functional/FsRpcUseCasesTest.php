@@ -22,7 +22,7 @@ class FsRpcUseCasesTest extends TestCase
 
     public function setUp()
     {
-        $this->fsContext = (new FsConnectionFactory(['store_dir' => sys_get_temp_dir()]))->createContext();
+        $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir()]))->createContext();
 
         new TempFile(sys_get_temp_dir().'/fs_rpc_queue');
         new TempFile(sys_get_temp_dir().'/fs_reply_queue');

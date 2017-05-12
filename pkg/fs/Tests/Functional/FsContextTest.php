@@ -19,7 +19,7 @@ class FsContextTest extends TestCase
         $fs = new Filesystem();
         $fs->remove(sys_get_temp_dir().'/enqueue');
 
-        $this->fsContext = (new FsConnectionFactory(['store_dir' => sys_get_temp_dir().'/enqueue/dir/notexiststest']))->createContext();
+        $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir().'/enqueue/dir/notexiststest']))->createContext();
 
         $this->assertDirectoryExists(sys_get_temp_dir().'/enqueue/dir/notexiststest');
     }

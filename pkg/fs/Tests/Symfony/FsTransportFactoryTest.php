@@ -45,11 +45,28 @@ class FsTransportFactoryTest extends TestCase
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
         $config = $processor->process($tb->buildTree(), [[
-            'store_dir' => sys_get_temp_dir(),
+            'path' => sys_get_temp_dir(),
         ]]);
 
         $this->assertEquals([
-            'store_dir' => sys_get_temp_dir(),
+            'path' => sys_get_temp_dir(),
+            'pre_fetch_count' => 1,
+            'chmod' => 0600,
+        ], $config);
+    }
+
+    public function testShouldAllowAddConfigurationAsString()
+    {
+        $transport = new FsTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), ['fileDSN']);
+
+        $this->assertEquals([
+            'dsn' => 'fileDSN',
             'pre_fetch_count' => 1,
             'chmod' => 0600,
         ], $config);
@@ -62,7 +79,7 @@ class FsTransportFactoryTest extends TestCase
         $transport = new FsTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
-            'store_dir' => sys_get_temp_dir(),
+            'path' => sys_get_temp_dir(),
             'pre_fetch_count' => 1,
             'chmod' => 0600,
         ]);
@@ -71,10 +88,26 @@ class FsTransportFactoryTest extends TestCase
         $factory = $container->getDefinition($serviceId);
         $this->assertEquals(FsConnectionFactory::class, $factory->getClass());
         $this->assertSame([[
-            'store_dir' => sys_get_temp_dir(),
+            'path' => sys_get_temp_dir(),
             'pre_fetch_count' => 1,
             'chmod' => 0600,
         ]], $factory->getArguments());
+    }
+
+    public function testShouldCreateConnectionFactoryFromDsnString()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new FsTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'dsn' => 'theFileDSN',
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(FsConnectionFactory::class, $factory->getClass());
+        $this->assertSame(['theFileDSN'], $factory->getArguments());
     }
 
     public function testShouldCreateContext()
@@ -84,7 +117,7 @@ class FsTransportFactoryTest extends TestCase
         $transport = new FsTransportFactory();
 
         $serviceId = $transport->createContext($container, [
-            'store_dir' => sys_get_temp_dir(),
+            'path' => sys_get_temp_dir(),
             'pre_fetch_count' => 1,
             'chmod' => 0600,
         ]);
