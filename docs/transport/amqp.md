@@ -45,7 +45,7 @@ $connectionFactory = new AmqpConnectionFactory([
 ]);
 
 // same as above but given as DSN string
-$connectionFactory = new AmqpConnectionFactory('amqp://user:pass:10000@example.com/%2f');
+$connectionFactory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
 $psrContext = $connectionFactory->createContext();
 ```
