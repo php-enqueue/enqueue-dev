@@ -43,11 +43,11 @@ enqueue:
             # Port on the host.
             port:                 5672
 
-            # The login name to use. Note: Max 128 characters.
-            login:                guest
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
 
             # Password. Note: Max 128 characters.
-            password:             guest
+            pass:                 guest
 
             # The virtual host on the host. Note: Max 128 characters.
             vhost:                /
@@ -70,11 +70,11 @@ enqueue:
             # Port on the host.
             port:                 5672
 
-            # The login name to use. Note: Max 128 characters.
-            login:                guest
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
 
             # Password. Note: Max 128 characters.
-            password:             guest
+            pass:                 guest
 
             # The virtual host on the host. Note: Max 128 characters.
             vhost:                /

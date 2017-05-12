@@ -1,5 +1,4 @@
 <?php
-
 namespace Enqueue\Bundle\Tests\Functional;
 
 /**

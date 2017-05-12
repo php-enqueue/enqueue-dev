@@ -19,8 +19,8 @@ trait RabbitmqAmqpExtension
         $config = [
             'host' => getenv('SYMFONY__RABBITMQ__HOST'),
             'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
-            'login' => getenv('SYMFONY__RABBITMQ__USER'),
-            'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
+            'user' => getenv('SYMFONY__RABBITMQ__USER'),
+            'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
             'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
         ];
 

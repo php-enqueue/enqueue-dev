@@ -46,12 +46,7 @@ First, you have to configure a transport layer and set one to be default.
 enqueue:
     transport:
         default: 'amqp'
-        amqp:
-            host: 'localhost'
-            port: 5672
-            login: 'guest'
-            password: 'guest'
-            vhost: '/'
+        amqp: "amqp://"
     client: ~
 ```
 
