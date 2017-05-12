@@ -24,8 +24,25 @@ $ composer require enqueue/fs
 <?php
 use Enqueue\Fs\FsConnectionFactory;
 
+// stores messages in /tmp/enqueue folder
+$connectionFactory = new FsConnectionFactory();
+
+// same as above
+$connectionFactory = new FsConnectionFactory('file://');
+
+// stores in custom folder
+$connectionFactory = new FsConnectionFactory('/path/to/queue/dir');
+
+// same as above
+$connectionFactory = new FsConnectionFactory('file://path/to/queue/dir');
+
+// with options
+$connectionFactory = new FsConnectionFactory('file://path/to/queue/dir?pre_fetch_count=1');
+
+// as an array
 $connectionFactory = new FsConnectionFactory([
-    'store_dir' => '/tmp'
+    'path' => '/path/to/queue/dir',
+    'pre_fetch_count' => 1,
 ]);
 
 $psrContext = $connectionFactory->createContext();
