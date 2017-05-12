@@ -49,8 +49,30 @@ class AmqpTransportFactoryTest extends TestCase
         $this->assertEquals([
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+            'persisted' => false,
+            'lazy' => true,
+        ], $config);
+    }
+
+    public function testShouldAllowAddConfigurationAsString()
+    {
+        $transport = new AmqpTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), ['amqpDSN']);
+
+        $this->assertEquals([
+            'dsn' => 'amqpDSN',
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
             'lazy' => true,
@@ -66,8 +88,8 @@ class AmqpTransportFactoryTest extends TestCase
         $serviceId = $transport->createConnectionFactory($container, [
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
         ]);
@@ -78,11 +100,33 @@ class AmqpTransportFactoryTest extends TestCase
         $this->assertSame([[
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
         ]], $factory->getArguments());
+    }
+
+    public function testShouldCreateConnectionFactoryFromDsnString()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new AmqpTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'dsn' => 'theConnectionDSN',
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+            'persisted' => false,
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+        $this->assertSame(['theConnectionDSN'], $factory->getArguments());
     }
 
     public function testShouldCreateContext()
@@ -94,8 +138,8 @@ class AmqpTransportFactoryTest extends TestCase
         $serviceId = $transport->createContext($container, [
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
         ]);

@@ -17,42 +17,6 @@ class AmqpConnectionFactoryTest extends TestCase
         $this->assertClassImplements(PsrConnectionFactory::class, AmqpConnectionFactory::class);
     }
 
-    public function testCouldBeConstructedWithEmptyConfiguration()
-    {
-        $factory = new AmqpConnectionFactory([]);
-
-        $this->assertAttributeEquals([
-            'host' => null,
-            'port' => null,
-            'vhost' => null,
-            'login' => null,
-            'password' => null,
-            'read_timeout' => null,
-            'write_timeout' => null,
-            'connect_timeout' => null,
-            'persisted' => false,
-            'lazy' => true,
-        ], 'config', $factory);
-    }
-
-    public function testCouldBeConstructedWithCustomConfiguration()
-    {
-        $factory = new AmqpConnectionFactory(['host' => 'theCustomHost']);
-
-        $this->assertAttributeEquals([
-            'host' => 'theCustomHost',
-            'port' => null,
-            'vhost' => null,
-            'login' => null,
-            'password' => null,
-            'read_timeout' => null,
-            'write_timeout' => null,
-            'connect_timeout' => null,
-            'persisted' => false,
-            'lazy' => true,
-        ], 'config', $factory);
-    }
-
     public function testShouldCreateLazyContext()
     {
         $factory = new AmqpConnectionFactory(['lazy' => true]);

@@ -32,7 +32,16 @@ class AmqpTransportFactory implements TransportFactoryInterface
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
         $builder
+            ->beforeNormalization()
+            ->ifString()
+            ->then(function ($v) {
+                return ['dsn' => $v];
+            })
+            ->end()
             ->children()
+                ->scalarNode('dsn')
+                    ->info('The connection to AMQP broker set as a string. Other parameters are ignored if set')
+                ->end()
                 ->scalarNode('host')
                     ->defaultValue('localhost')
                     ->cannotBeEmpty()
@@ -43,12 +52,12 @@ class AmqpTransportFactory implements TransportFactoryInterface
                     ->cannotBeEmpty()
                     ->info('Port on the host.')
                 ->end()
-                ->scalarNode('login')
+                ->scalarNode('user')
                     ->defaultValue('guest')
                     ->cannotBeEmpty()
-                    ->info('The login name to use. Note: Max 128 characters.')
+                    ->info('The user name to use. Note: Max 128 characters.')
                 ->end()
-                ->scalarNode('password')
+                ->scalarNode('pass')
                     ->defaultValue('guest')
                     ->cannotBeEmpty()
                     ->info('Password. Note: Max 128 characters.')
@@ -85,7 +94,7 @@ class AmqpTransportFactory implements TransportFactoryInterface
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
         $factory = new Definition(AmqpConnectionFactory::class);
-        $factory->setArguments([$config]);
+        $factory->setArguments(isset($config['dsn']) ? [$config['dsn']] : [$config]);
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);

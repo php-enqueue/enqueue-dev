@@ -31,6 +31,16 @@ class NullTransportFactory implements TransportFactoryInterface
      */
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
+        $builder
+            ->beforeNormalization()
+                ->ifString()->then(function ($v) {
+                    return ['dsn' => $v];
+                })
+            ->end()
+            ->children()
+                ->scalarNode('dsn')->end()
+            ->end()
+        ;
     }
 
     /**
