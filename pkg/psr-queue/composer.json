@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",
-        "enqueue/test": "^0.3"
+        "enqueue/test": "^0.3|0.4@dev"
     },
     "autoload": {
         "psr-4": { "Enqueue\\Psr\\": "" },
