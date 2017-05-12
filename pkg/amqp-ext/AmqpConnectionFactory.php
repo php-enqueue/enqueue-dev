@@ -17,7 +17,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
     private $connection;
 
     /**
-     * The config could be an array, string DSN or null. In case of null it will attempt to connect to localhost with default credentials
+     * The config could be an array, string DSN or null. In case of null it will attempt to connect to localhost with default credentials.
      *
      * [
      *     'host'  => amqp.host The host to connect too. Note: Max 1024 characters.
@@ -42,9 +42,9 @@ class AmqpConnectionFactory implements PsrConnectionFactory
     {
         if (empty($config)) {
             $config = [];
-        } else if (is_string($config)) {
+        } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
-        } else if (is_array($config)) {
+        } elseif (is_array($config)) {
         } else {
             throw new \LogicException('The config must be eaither an array of options, a DSN string or null');
         }
@@ -68,14 +68,18 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         return new AmqpContext(new \AMQPChannel($this->establishConnection()));
     }
 
+    /**
+     * @return \AMQPConnection
+     */
     private function establishConnection()
     {
         if (false == $this->connection) {
-            $this->connection = new \AMQPConnection($this->config);
-
+            $config = $this->config;
+            $config['login'] = $this->config['user'];
+            $config['password'] = $this->config['pass'];
+            $this->connection = new \AMQPConnection($config);
             $this->config['persisted'] ? $this->connection->pconnect() : $this->connection->connect();
         }
-
         if (false == $this->connection->isConnected()) {
             $this->config['persisted'] ? $this->connection->preconnect() : $this->connection->reconnect();
         }
@@ -123,9 +127,8 @@ class AmqpConnectionFactory implements PsrConnectionFactory
 
         unset($dsnConfig['scheme'], $dsnConfig['query'], $dsnConfig['fragment'], $dsnConfig['path']);
 
-
         $config = array_replace($this->defaultConfig(), $dsnConfig);
-        $config = array_map(function($value) {
+        $config = array_map(function ($value) {
             return urldecode($value);
         }, $config);
 
