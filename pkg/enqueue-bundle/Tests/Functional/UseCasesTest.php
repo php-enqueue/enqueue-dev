@@ -16,105 +16,87 @@ class UseCasesTest extends WebTestCase
 {
     public function provideEnqueueConfigs()
     {
-        yield 'amqp' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
-                    'host' => getenv('SYMFONY__RABBITMQ__HOST'),
-                    'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
-                    'user' => getenv('SYMFONY__RABBITMQ__USER'),
-                    'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
-                    'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
-                    'lazy' => false,
+        return [
+            ['amqp' => [
+                'transport' => [
+                    'default' => 'amqp',
+                    'amqp' => [
+                        'host' => getenv('SYMFONY__RABBITMQ__HOST'),
+                        'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
+                        'user' => getenv('SYMFONY__RABBITMQ__USER'),
+                        'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
+                        'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+                        'lazy' => false,
+                    ]
                 ]
-            ]
-        ]];
-
-        yield 'amqp_dsn' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => getenv('AMQP_DSN'),
-            ]
-        ]];
-
-        yield 'dsn_amqp' => [[
-            'transport' => [
-                'default' => 'dsn',
-                'dsn' => getenv('AMQP_DSN'),
-            ]
-        ]];
-
-        yield 'stomp' => [[
-            'transport' => [
-                'default' => 'stomp',
-                'stomp' => [
-                    'host' => getenv('SYMFONY__RABBITMQ__HOST'),
-                    'port' => getenv('SYMFONY__RABBITMQ__STOMP__PORT'),
-                    'login' => getenv('SYMFONY__RABBITMQ__USER'),
-                    'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
-                    'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
-                    'lazy' => false,
+            ]],
+            ['stomp' => [
+                'transport' => [
+                    'default' => 'stomp',
+                    'stomp' => [
+                        'host' => getenv('SYMFONY__RABBITMQ__HOST'),
+                        'port' => getenv('SYMFONY__RABBITMQ__STOMP__PORT'),
+                        'login' => getenv('SYMFONY__RABBITMQ__USER'),
+                        'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
+                        'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+                        'lazy' => false,
+                    ]
                 ]
-            ]
-        ]];
-
-        yield 'predis' => [[
-            'transport' => [
-                'default' => 'redis',
-                'redis' => [
-                    'host' => getenv('SYMFONY__REDIS__HOST'),
-                    'port' => (int) getenv('SYMFONY__REDIS__PORT'),
-                    'vendor' => 'predis',
-                    'lazy' => false,
+            ]],
+            ['predis' => [
+                'transport' => [
+                    'default' => 'redis',
+                    'redis' => [
+                        'host' => getenv('SYMFONY__REDIS__HOST'),
+                        'port' => (int) getenv('SYMFONY__REDIS__PORT'),
+                        'vendor' => 'predis',
+                        'lazy' => false,
+                    ]
                 ]
-            ]
-        ]];
-
-        yield 'phpredis' => [[
-            'transport' => [
-                'default' => 'redis',
-                'redis' => [
-                    'host' => getenv('SYMFONY__REDIS__HOST'),
-                    'port' => (int) getenv('SYMFONY__REDIS__PORT'),
-                    'vendor' => 'phpredis',
-                    'lazy' => false,
+            ]],
+            ['phpredis' => [
+                'transport' => [
+                    'default' => 'redis',
+                    'redis' => [
+                        'host' => getenv('SYMFONY__REDIS__HOST'),
+                        'port' => (int) getenv('SYMFONY__REDIS__PORT'),
+                        'vendor' => 'phpredis',
+                        'lazy' => false,
+                    ]
                 ]
-            ]
-        ]];
-
-        yield 'fs' => [[
-            'transport' => [
-                'default' => 'fs',
-                'fs' => [
-                    'store_dir' => sys_get_temp_dir(),
+            ]],
+            ['fs' => [
+                'transport' => [
+                    'default' => 'fs',
+                    'fs' => [
+                        'store_dir' => sys_get_temp_dir(),
+                    ]
                 ]
-            ]
-        ]];
-
-        yield 'dbal' => [[
-            'transport' => [
-                'default' => 'dbal',
-                'dbal' => [
-                    'dbname' => getenv('SYMFONY__DB__NAME'),
-                    'user' => getenv('SYMFONY__DB__USER'),
-                    'password' => getenv('SYMFONY__DB__PASSWORD'),
-                    'host' => getenv('SYMFONY__DB__HOST'),
-                    'port' => getenv('SYMFONY__DB__PORT'),
-                    'driver' => getenv('SYMFONY__DB__DRIVER'),
+            ]],
+            ['dbal' => [
+                'transport' => [
+                    'default' => 'dbal',
+                    'dbal' => [
+                        'dbname' => getenv('SYMFONY__DB__NAME'),
+                        'user' => getenv('SYMFONY__DB__USER'),
+                        'password' => getenv('SYMFONY__DB__PASSWORD'),
+                        'host' => getenv('SYMFONY__DB__HOST'),
+                        'port' => getenv('SYMFONY__DB__PORT'),
+                        'driver' => getenv('SYMFONY__DB__DRIVER'),
+                    ]
                 ]
-            ]
-        ]];
-
-        yield 'sqs' => [[
-            'transport' => [
-                'default' => 'sqs',
-                'sqs' => [
-                    'key' => getenv('AWS__SQS__KEY'),
-                    'secret' => getenv('AWS__SQS__SECRET'),
-                    'region' => getenv('AWS__SQS__REGION'),
+            ]],
+            ['sqs' => [
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'key' => getenv('AWS__SQS__KEY'),
+                        'secret' => getenv('AWS__SQS__SECRET'),
+                        'region' => getenv('AWS__SQS__REGION'),
+                    ]
                 ]
-            ]
-        ]];
+            ]],
+        ];
     }
 
     /**

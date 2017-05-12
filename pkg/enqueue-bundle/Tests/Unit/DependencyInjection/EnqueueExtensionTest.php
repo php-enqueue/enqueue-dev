@@ -95,31 +95,6 @@ class EnqueueExtensionTest extends TestCase
         );
     }
 
-    public function testShouldUseNullTransportAsDefaultConfiguredViaDSN()
-    {
-        $container = new ContainerBuilder();
-
-        $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new NullTransportFactory());
-        $extension->addTransportFactory(new DefaultTransportFactory());
-
-        $extension->load([[
-            'transport' => [
-                'default' => 'dsn',
-                'dsn' => 'null://',
-            ],
-        ]], $container);
-
-        self::assertEquals(
-            'enqueue.transport.default.context',
-            (string) $container->getAlias('enqueue.transport.context')
-        );
-        self::assertEquals(
-            'enqueue.transport.dsn.context',
-            (string) $container->getAlias('enqueue.transport.default.context')
-        );
-    }
-
     public function testShouldConfigureFooTransport()
     {
         $container = new ContainerBuilder();

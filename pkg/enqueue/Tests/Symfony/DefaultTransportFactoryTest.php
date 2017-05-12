@@ -46,29 +46,6 @@ class DefaultTransportFactoryTest extends TestCase
         $this->assertEquals(['alias' => 'the_alias'], $config);
     }
 
-    public function testShouldCreateConnectionFactory()
-    {
-        $container = new ContainerBuilder();
-
-        $transport = new DefaultTransportFactory();
-
-        $serviceId = $transport->createConnectionFactory($container, ['alias' => 'foo']);
-
-        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
-
-        $this->assertTrue($container->hasAlias('enqueue.transport.default.connection_factory'));
-        $this->assertEquals(
-            'enqueue.transport.foo.connection_factory',
-            (string) $container->getAlias('enqueue.transport.default.connection_factory')
-        );
-
-        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
-        $this->assertEquals(
-            'enqueue.transport.default.connection_factory',
-            (string) $container->getAlias('enqueue.transport.connection_factory')
-        );
-    }
-
     public function testShouldCreateContext()
     {
         $container = new ContainerBuilder();

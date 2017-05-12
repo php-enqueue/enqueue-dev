@@ -50,32 +50,6 @@ class NullTransportFactoryTest extends TestCase
         $this->assertEquals([], $config);
     }
 
-    public function testShouldAllowAddConfigurationWithDsnString()
-    {
-        $transport = new NullTransportFactory();
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
-
-        $transport->addConfiguration($rootNode);
-        $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), ['aStringDSN']);
-
-        $this->assertEquals(['dsn' => 'aStringDSN'], $config);
-    }
-
-    public function testShouldAllowAddConfigurationWithDsnStringOption()
-    {
-        $transport = new NullTransportFactory();
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
-
-        $transport->addConfiguration($rootNode);
-        $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), [['dsn' => 'aStringDSN']]);
-
-        $this->assertEquals(['dsn' => 'aStringDSN'], $config);
-    }
-
     public function testShouldCreateConnectionFactory()
     {
         $container = new ContainerBuilder();
