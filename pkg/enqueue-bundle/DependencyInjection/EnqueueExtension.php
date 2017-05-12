@@ -4,6 +4,7 @@ namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\Client\TraceableProducer;
 use Enqueue\JobQueue\Job;
+use Enqueue\Symfony\DsnTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -47,6 +48,8 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $this->factories['dsn'] = new DsnTransportFactory($this->factories);
+
         $config = $this->processConfiguration(new Configuration($this->factories), $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

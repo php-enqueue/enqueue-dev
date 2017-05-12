@@ -68,10 +68,17 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         return new AmqpContext(new \AMQPChannel($this->establishConnection()));
     }
 
+    /**
+     * @return \AMQPConnection
+     */
     private function establishConnection()
     {
         if (false == $this->connection) {
-            $this->connection = new \AMQPConnection($this->config);
+            $config = $this->config;
+            $config['login'] = $this->config['user'];
+            $config['password'] = $this->config['pass'];
+
+            $this->connection = new \AMQPConnection($config);
 
             $this->config['persisted'] ? $this->connection->pconnect() : $this->connection->connect();
         }
