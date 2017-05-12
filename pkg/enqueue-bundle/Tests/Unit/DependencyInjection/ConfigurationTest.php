@@ -6,6 +6,7 @@ use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\Symfony\DsnTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -28,10 +29,8 @@ class ConfigurationTest extends TestCase
 
     public function testThrowIfTransportNotConfigured()
     {
-        $this->setExpectedException(
-            InvalidConfigurationException::class,
-            'The child node "transport" at path "enqueue" must be configured.'
-        );
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child node "transport" at path "enqueue" must be configured.');
 
         $configuration = new Configuration([]);
 
@@ -59,10 +58,8 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
 
-        $this->setExpectedException(
-            InvalidConfigurationException::class,
-            'The path "enqueue.transport.foo.foo_param" cannot contain an empty value, but got null.'
-        );
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The path "enqueue.transport.foo.foo_param" cannot contain an empty value, but got null.');
 
         $processor->processConfiguration($configuration, [[
             'transport' => [
@@ -99,6 +96,31 @@ class ConfigurationTest extends TestCase
         $this->assertArraySubset([
             'transport' => [
                 'null' => [],
+            ],
+        ], $config);
+    }
+
+    public function testShouldAllowConfigureNullTransportViaDsnTransport()
+    {
+        $nullFactory = new NullTransportFactory();
+
+        $configuration = new Configuration([
+            $nullFactory,
+            new DsnTransportFactory([$nullFactory])
+        ]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [
+                'dsn' => 'null://',
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'transport' => [
+                'dsn' => [
+                    'dsn' => 'null://'
+                ],
             ],
         ], $config);
     }
@@ -160,10 +182,8 @@ class ConfigurationTest extends TestCase
 
     public function testThrowExceptionIfRouterTopicIsEmpty()
     {
-        $this->setExpectedException(
-            InvalidConfigurationException::class,
-            'The path "enqueue.client.router_topic" cannot contain an empty value, but got "".'
-        );
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The path "enqueue.client.router_topic" cannot contain an empty value, but got "".');
 
         $configuration = new Configuration([new DefaultTransportFactory()]);
 
@@ -180,10 +200,8 @@ class ConfigurationTest extends TestCase
 
     public function testThrowExceptionIfRouterQueueIsEmpty()
     {
-        $this->setExpectedException(
-            InvalidConfigurationException::class,
-            'The path "enqueue.client.router_queue" cannot contain an empty value, but got "".'
-        );
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The path "enqueue.client.router_queue" cannot contain an empty value, but got "".');
 
         $configuration = new Configuration([new DefaultTransportFactory()]);
 
