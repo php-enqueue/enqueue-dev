@@ -21,6 +21,8 @@
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3",
         "enqueue/null": "^0.4",
+        "enqueue/amqp-ext": "^0.4",
+        "enqueue/fs": "^0.4",
         "enqueue/test": "^0.4",
         "enqueue/simple-client": "^0.4"
     },
@@ -37,6 +39,7 @@
     },
     "autoload": {
         "psr-4": { "Enqueue\\": "" },
+        "files": ["functions_include.php"],
         "exclude-from-classmap": [
             "/Tests/"
         ]
