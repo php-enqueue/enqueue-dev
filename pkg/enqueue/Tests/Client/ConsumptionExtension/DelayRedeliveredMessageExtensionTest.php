@@ -7,11 +7,11 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Psr\Log\LoggerInterface;
+use Enqueue\Psr\PsrContext;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class DelayRedeliveredMessageExtensionTest extends TestCase
 {

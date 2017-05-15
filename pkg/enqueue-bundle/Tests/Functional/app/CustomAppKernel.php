@@ -19,7 +19,7 @@ class CustomAppKernel extends Kernel
             'router_topic' => 'test',
             'router_queue' => 'test',
             'default_processor_queue' => 'test',
-        ]
+        ],
     ];
 
     public function setEnqueueConfig(array $config)

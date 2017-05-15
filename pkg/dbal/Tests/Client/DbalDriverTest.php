@@ -157,7 +157,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
             'message_id' => 'MessageId',
             'timestamp' => 1000,
             'reply_to' => null,
-            'correlation_id' => null
+            'correlation_id' => null,
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',

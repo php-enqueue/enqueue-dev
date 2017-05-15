@@ -6,7 +6,6 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
-use Enqueue\Client\Meta\QueueMeta;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Stomp\Client\ManagementClient;
 use Enqueue\Stomp\Client\RabbitMqStompDriver;

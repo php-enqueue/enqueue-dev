@@ -20,7 +20,7 @@ class ArrayProcessorRegistry implements ProcessorRegistryInterface
     }
 
     /**
-     * @param string    $name
+     * @param string       $name
      * @param PsrProcessor $processor
      */
     public function add($name, PsrProcessor $processor)

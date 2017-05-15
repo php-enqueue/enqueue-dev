@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalMessage;

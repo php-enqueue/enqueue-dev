@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Client;
 
 use Enqueue\Client\Config;

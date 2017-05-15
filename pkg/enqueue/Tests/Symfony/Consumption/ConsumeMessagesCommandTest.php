@@ -6,8 +6,8 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
-use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class ConsumeMessagesCommandTest extends TestCase
 {

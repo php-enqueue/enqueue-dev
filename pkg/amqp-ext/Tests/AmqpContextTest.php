@@ -9,11 +9,11 @@ use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\AmqpExt\Buffer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
+use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase

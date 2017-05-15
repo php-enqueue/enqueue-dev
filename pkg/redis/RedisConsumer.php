@@ -12,14 +12,14 @@ class RedisConsumer implements PsrConsumer
      * @var RedisDestination
      */
     private $queue;
-    
+
     /**
      * @var RedisContext
      */
     private $context;
 
     /**
-     * @param RedisContext $context
+     * @param RedisContext     $context
      * @param RedisDestination $queue
      */
     public function __construct(RedisContext $context, RedisDestination $queue)
@@ -47,7 +47,7 @@ class RedisConsumer implements PsrConsumer
     {
         $timeout = (int) ($timeout / 1000);
         if (empty($timeout)) {
-//            Caused by
+            //            Caused by
 //            Predis\Response\ServerException: ERR timeout is not an integer or out of range
 //            /mqdev/vendor/predis/predis/src/Client.php:370
 

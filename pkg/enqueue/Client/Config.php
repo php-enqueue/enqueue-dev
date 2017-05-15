@@ -134,7 +134,7 @@ class Config
      * @param string|null $routerQueueName
      * @param string|null $defaultProcessorQueueName
      * @param string|null $routerProcessorName
-     * @param array $transportConfig
+     * @param array       $transportConfig
      *
      * @return static
      */

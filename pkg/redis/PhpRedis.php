@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Redis;
 
 class PhpRedis implements Redis

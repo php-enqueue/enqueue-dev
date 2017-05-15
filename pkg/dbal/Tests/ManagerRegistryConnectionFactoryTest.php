@@ -1,8 +1,9 @@
 <?php
+
 namespace Enqueue\Dbal\Tests;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Connection;;
+use Doctrine\DBAL\Connection;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Psr\PsrConnectionFactory;
@@ -49,7 +50,7 @@ class ManagerRegistryConnectionFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->createConnectionMock())
         ;
 
-        $factory = new ManagerRegistryConnectionFactory($registry, ['lazy' => false,]);
+        $factory = new ManagerRegistryConnectionFactory($registry, ['lazy' => false]);
 
         $context = $factory->createContext();
 

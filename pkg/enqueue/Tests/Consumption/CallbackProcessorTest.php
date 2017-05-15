@@ -3,10 +3,10 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\CallbackProcessor;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
+use Enqueue\Psr\PsrProcessor;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 class CallbackProcessorTest extends TestCase

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal;
 
 use Enqueue\Psr\PsrQueue;

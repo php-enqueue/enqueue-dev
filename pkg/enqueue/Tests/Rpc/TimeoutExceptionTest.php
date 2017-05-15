@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Rpc;
 
 use Enqueue\Rpc\TimeoutException;

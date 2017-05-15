@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
@@ -166,14 +167,14 @@ class DbalContext implements PsrContext
         }
 
         $table = new Table($this->getTableName());
-        $table->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true,]);
-        $table->addColumn('body', 'text', ['notnull' => false,]);
-        $table->addColumn('headers', 'text', ['notnull' => false,]);
-        $table->addColumn('properties', 'text', ['notnull' => false,]);
-        $table->addColumn('redelivered', 'boolean', ['notnull' => false,]);
+        $table->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
+        $table->addColumn('body', 'text', ['notnull' => false]);
+        $table->addColumn('headers', 'text', ['notnull' => false]);
+        $table->addColumn('properties', 'text', ['notnull' => false]);
+        $table->addColumn('redelivered', 'boolean', ['notnull' => false]);
         $table->addColumn('queue', 'string');
         $table->addColumn('priority', 'smallint');
-        $table->addColumn('delayed_until', 'integer', ['notnull' => false,]);
+        $table->addColumn('delayed_until', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['queue']);

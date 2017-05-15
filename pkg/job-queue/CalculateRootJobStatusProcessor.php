@@ -37,7 +37,7 @@ class CalculateRootJobStatusProcessor implements PsrProcessor, TopicSubscriberIn
     /**
      * @param JobStorage                    $jobStorage
      * @param CalculateRootJobStatusService $calculateRootJobStatusCase
-     * @param ProducerInterface      $producer
+     * @param ProducerInterface             $producer
      * @param LoggerInterface               $logger
      */
     public function __construct(

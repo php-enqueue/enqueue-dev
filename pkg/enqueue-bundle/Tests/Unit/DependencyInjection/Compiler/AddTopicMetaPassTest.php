@@ -4,10 +4,10 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\AddTopicMetaPass;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use PHPUnit\Framework\TestCase;
 
 class AddTopicMetaPassTest extends TestCase
 {

@@ -2,9 +2,9 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
+use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProducer;
 use Stomp\Client;

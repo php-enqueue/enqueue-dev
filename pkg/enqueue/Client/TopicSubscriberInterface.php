@@ -5,7 +5,7 @@ namespace Enqueue\Client;
 interface TopicSubscriberInterface
 {
     /**
-     * The result maybe either:
+     * The result maybe either:.
      *
      * ['aTopicName']
      *

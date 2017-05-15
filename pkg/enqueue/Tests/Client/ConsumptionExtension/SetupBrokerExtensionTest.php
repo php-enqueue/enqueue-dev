@@ -8,8 +8,8 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class SetupBrokerExtensionTest extends TestCase
 {

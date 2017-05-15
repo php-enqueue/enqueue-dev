@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
@@ -25,7 +26,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
      *   'retries' => 3,            - (int, default=int(3)) Configures the maximum number of allowed retries for a client (pass 0 to disable retries).
      *   'version' => '2012-11-05', - (string, required) The version of the webservice to utilize
      *   'lazy' => true,            - Enable lazy connection (boolean)
-     * ]
+     * ].
      *
      * @param $config
      */
@@ -59,6 +60,13 @@ class SqsConnectionFactory implements PsrConnectionFactory
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function close()
+    {
+    }
+
+    /**
      * @return SqsClient
      */
     private function establishConnection()
@@ -87,12 +95,5 @@ class SqsConnectionFactory implements PsrConnectionFactory
         $this->client = new SqsClient($config);
 
         return $this->client;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
-    {
     }
 }

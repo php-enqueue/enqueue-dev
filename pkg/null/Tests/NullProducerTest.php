@@ -2,11 +2,11 @@
 
 namespace Enqueue\Null\Tests;
 
-use Enqueue\Psr\PsrProducer;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullProducer;
 use Enqueue\Null\NullTopic;
+use Enqueue\Psr\PsrProducer;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 class NullProducerTest extends TestCase

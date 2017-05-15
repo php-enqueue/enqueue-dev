@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs;
 
 use Enqueue\Psr\InvalidDestinationException;
@@ -34,7 +35,7 @@ class SqsProducer implements PsrProducer
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
         $body = $message->getBody();
-        if (is_scalar($body) || is_null($body)) {
+        if (is_scalar($body) || null === $body) {
             $body = (string) $body;
         } else {
             throw new InvalidMessageException(sprintf(

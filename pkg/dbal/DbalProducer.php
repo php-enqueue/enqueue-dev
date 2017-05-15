@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
@@ -38,8 +39,8 @@ class DbalProducer implements PsrProducer
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
 
         $body = $message->getBody();
-        if (is_scalar($body) || is_null($body)) {
-            $body = (string)$body;
+        if (is_scalar($body) || null === $body) {
+            $body = (string) $body;
         } else {
             throw new InvalidMessageException(sprintf(
                 'The message body must be a scalar or null. Got: %s',
@@ -57,7 +58,7 @@ class DbalProducer implements PsrProducer
 
         $delay = $message->getDelay();
         if ($delay) {
-            if (! is_int($delay)) {
+            if (!is_int($delay)) {
                 throw new \LogicException(sprintf(
                     'Delay must be integer but got: "%s"',
                     is_object($delay) ? get_class($delay) : gettype($delay)

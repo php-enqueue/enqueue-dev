@@ -73,4 +73,3 @@ trait ConsumptionUseCasesTrait
      */
     abstract protected function getContext();
 }
-

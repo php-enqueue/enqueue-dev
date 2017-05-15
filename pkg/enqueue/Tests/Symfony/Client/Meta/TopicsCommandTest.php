@@ -5,9 +5,9 @@ namespace Enqueue\Tests\Symfony\Client\Meta;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Symfony\Client\Meta\TopicsCommand;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit\Framework\TestCase;
 
 class TopicsCommandTest extends TestCase
 {

@@ -4,8 +4,8 @@ namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Symfony\Client\ProduceMessageCommand;
-use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class ProduceMessageCommandTest extends TestCase
 {

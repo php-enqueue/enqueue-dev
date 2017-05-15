@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs;
 
 use Enqueue\Psr\InvalidMessageException;
@@ -33,7 +34,7 @@ class SqsConsumer implements PsrConsumer
     private $messages;
 
     /**
-     * @param SqsContext $context
+     * @param SqsContext     $context
      * @param SqsDestination $queue
      */
     public function __construct(SqsContext $context, SqsDestination $queue)
@@ -60,7 +61,7 @@ class SqsConsumer implements PsrConsumer
      */
     public function setVisibilityTimeout($visibilityTimeout)
     {
-        $this->visibilityTimeout = is_null($visibilityTimeout) ? null : (int) $visibilityTimeout;
+        $this->visibilityTimeout = null === $visibilityTimeout ? null : (int) $visibilityTimeout;
     }
 
     /**

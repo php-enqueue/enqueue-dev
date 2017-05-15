@@ -4,14 +4,14 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullQueue;
-use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class ContextTest extends TestCase
 {

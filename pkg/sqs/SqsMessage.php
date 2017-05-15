@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs;
 
 use Enqueue\Psr\PsrMessage;
@@ -21,7 +22,7 @@ class SqsMessage implements PsrMessage
     private $headers;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $redelivered;
 
@@ -136,7 +137,7 @@ class SqsMessage implements PsrMessage
      */
     public function getHeader($name, $default = null)
     {
-        return array_key_exists($name, $this->headers) ?$this->headers[$name] : $default;
+        return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
     /**
@@ -243,7 +244,7 @@ class SqsMessage implements PsrMessage
     }
 
     /**
-     * Only FIFO
+     * Only FIFO.
      *
      * The token used for deduplication of sent messages. If a message with a particular MessageDeduplicationId is sent successfully,
      * any messages sent with the same MessageDeduplicationId are accepted successfully but aren't delivered during the 5-minute
@@ -265,7 +266,7 @@ class SqsMessage implements PsrMessage
     }
 
     /**
-     * Only FIFO
+     * Only FIFO.
      *
      * The tag that specifies that a message belongs to a specific message group. Messages that belong to the same message group
      * are processed in a FIFO manner (however, messages in different message groups might be processed out of order).

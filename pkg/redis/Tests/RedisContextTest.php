@@ -2,18 +2,17 @@
 
 namespace Enqueue\Redis\Tests;
 
+use Enqueue\Null\NullQueue;
+use Enqueue\Null\NullTopic;
+use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisConsumer;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Redis\RedisProducer;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullQueue;
-use Enqueue\Null\NullTopic;
-use PHPUnit\Framework\TestCase;
 
 class RedisContextTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,7 +30,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCouldBeConstructedWithRedisFactoryAsFirstArgument()
     {
-        new RedisContext(function() {
+        new RedisContext(function () {
             return $this->createRedisMock();
         });
     }

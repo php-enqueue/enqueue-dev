@@ -6,12 +6,12 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
 use Makasim\File\TempFile;
 
 class FsProducerTest extends \PHPUnit\Framework\TestCase

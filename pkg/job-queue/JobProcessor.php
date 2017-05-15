@@ -18,7 +18,7 @@ class JobProcessor
     private $producer;
 
     /**
-     * @param JobStorage               $jobStorage
+     * @param JobStorage        $jobStorage
      * @param ProducerInterface $producer
      */
     public function __construct(JobStorage $jobStorage, ProducerInterface $producer)

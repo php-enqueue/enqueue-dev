@@ -5,9 +5,9 @@ namespace Enqueue\Tests\Client;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\ProcessorRegistryInterface;
+use Enqueue\Null\NullMessage;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
-use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class DelegateProcessorTest extends TestCase

@@ -4,8 +4,8 @@ namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\ConsumptionExtension\SetupBrokerExtension;
 use Enqueue\Tests\Symfony\Client\Mock\SetupBrokerExtensionCommand;
-use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class SetupBrokerExtensionCommandTraitTest extends TestCase
 {

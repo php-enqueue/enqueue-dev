@@ -2,8 +2,8 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\InvalidDestinationException;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrQueue;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;

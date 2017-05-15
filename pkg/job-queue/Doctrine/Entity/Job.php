@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\JobQueue\Doctrine\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;

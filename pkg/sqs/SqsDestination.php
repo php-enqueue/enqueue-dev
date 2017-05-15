@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs;
 
 use Enqueue\Psr\PsrQueue;
@@ -144,7 +145,7 @@ class SqsDestination implements PsrTopic, PsrQueue
     }
 
     /**
-     * Only FIFO
+     * Only FIFO.
      *
      * Designates a queue as FIFO. You can provide this attribute only during queue creation.
      * You can't change it for an existing queue. When you set this attribute, you must provide a MessageGroupId explicitly.
@@ -162,7 +163,7 @@ class SqsDestination implements PsrTopic, PsrQueue
     }
 
     /**
-     * Only FIFO
+     * Only FIFO.
      *
      *  Enables content-based deduplication.
      *  For more information, see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing.

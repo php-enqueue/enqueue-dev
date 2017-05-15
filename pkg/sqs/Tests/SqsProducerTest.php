@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests;
 
 use Aws\Result;

@@ -6,9 +6,9 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use PHPUnit\Framework\TestCase;
 
 class BuildProcessorRegistryPassTest extends TestCase
 {

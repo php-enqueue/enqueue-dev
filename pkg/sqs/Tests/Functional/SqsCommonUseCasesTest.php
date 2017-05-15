@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests\Functional;
 
 use Enqueue\Sqs\SqsContext;
@@ -32,7 +33,7 @@ class SqsCommonUseCasesTest extends TestCase
 
         $this->context = $this->buildSqsContext();
 
-        $this->queueName = str_replace('.', '_dot_', uniqid('enqueue_test_queue_', true));;
+        $this->queueName = str_replace('.', '_dot_', uniqid('enqueue_test_queue_', true));
         $this->queue = $this->context->createQueue($this->queueName);
 
         $this->context->declareQueue($this->queue);

@@ -5,11 +5,11 @@ namespace Enqueue\Tests\Client;
 use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\RpcClient;
+use Enqueue\Null\NullContext;
+use Enqueue\Null\NullMessage;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Rpc\Promise;
-use Enqueue\Null\NullContext;
-use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class RpcClientTest extends TestCase
@@ -30,7 +30,7 @@ class RpcClientTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function($topic, Message $message) {
+            ->willReturnCallback(function ($topic, Message $message) {
                 $this->assertNotEmpty($message->getReplyTo());
             })
         ;
@@ -54,7 +54,7 @@ class RpcClientTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function($topic, Message $message) {
+            ->willReturnCallback(function ($topic, Message $message) {
                 $this->assertEquals('theReplyTo', $message->getReplyTo());
             })
         ;
@@ -75,7 +75,7 @@ class RpcClientTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function($topic) {
+            ->willReturnCallback(function ($topic) {
                 $this->assertEquals('theTopic', $topic);
             })
         ;
@@ -96,7 +96,7 @@ class RpcClientTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function($topic, Message $message) {
+            ->willReturnCallback(function ($topic, Message $message) {
                 $this->assertNotEmpty($message->getCorrelationId());
             })
         ;
@@ -120,7 +120,7 @@ class RpcClientTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function($topic, Message $message) {
+            ->willReturnCallback(function ($topic, Message $message) {
                 $this->assertEquals('theCorrelationId', $message->getCorrelationId());
             })
         ;

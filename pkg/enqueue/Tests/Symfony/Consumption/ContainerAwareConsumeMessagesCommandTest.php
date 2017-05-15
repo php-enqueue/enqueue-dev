@@ -9,9 +9,9 @@ use Enqueue\Psr\PsrProcessor;
 use Enqueue\Psr\PsrQueue;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Enqueue\Tests\Symfony\Consumption\Mock\QueueSubscriberProcessor;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
-use PHPUnit\Framework\TestCase;
 
 class ContainerAwareConsumeMessagesCommandTest extends TestCase
 {
@@ -89,7 +89,6 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
         $command->setContainer($container);
 
         $tester = new CommandTester($command);
-
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The queues are not provided. The processor must implement "Enqueue\Consumption\QueueSubscriberInterface" interface and it must return not empty array of queues or queues set using --queue option.');
@@ -178,7 +177,7 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
 
         $tester = new CommandTester($command);
         $tester->execute([
-            'processor-service' => 'processor-service'
+            'processor-service' => 'processor-service',
         ]);
     }
 

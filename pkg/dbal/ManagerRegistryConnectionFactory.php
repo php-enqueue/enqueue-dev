@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -23,7 +24,7 @@ class ManagerRegistryConnectionFactory implements PsrConnectionFactory
      *   'table_name' => 'enqueue',     - database table name.
      *   'polling_interval' => 1000,    - How often query for new messages (milliseconds)
      *   'lazy' => true,                - Use lazy database connection (boolean)
-     * ]
+     * ].
      *
      * @param ManagerRegistry $registry
      * @param array           $config
@@ -55,6 +56,13 @@ class ManagerRegistryConnectionFactory implements PsrConnectionFactory
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function close()
+    {
+    }
+
+    /**
      * @return Connection
      */
     private function establishConnection()
@@ -63,12 +71,5 @@ class ManagerRegistryConnectionFactory implements PsrConnectionFactory
         $connection->connect();
 
         return $connection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
-    {
     }
 }

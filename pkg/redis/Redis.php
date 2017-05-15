@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Redis;
 
 interface Redis
@@ -13,7 +14,7 @@ interface Redis
 
     /**
      * @param string $key
-     * @param int $timeout in seconds
+     * @param int    $timeout in seconds
      *
      * @return string|null
      */

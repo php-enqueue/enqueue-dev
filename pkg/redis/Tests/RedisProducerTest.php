@@ -2,6 +2,8 @@
 
 namespace Enqueue\Redis\Tests;
 
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\PsrProducer;
@@ -10,8 +12,6 @@ use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Redis\RedisProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
 use PHPUnit\Framework\TestCase;
 
 class RedisProducerTest extends TestCase

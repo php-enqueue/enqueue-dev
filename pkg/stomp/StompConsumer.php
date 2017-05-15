@@ -2,9 +2,9 @@
 
 namespace Enqueue\Stomp;
 
+use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\InvalidMessageException;
 use Stomp\Client;
 use Stomp\Transport\Frame;
 

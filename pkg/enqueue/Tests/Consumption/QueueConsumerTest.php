@@ -9,15 +9,15 @@ use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Psr\PsrQueue;
 use Enqueue\Tests\Consumption\Mock\BreakCycleExtension;
-use Enqueue\Null\NullQueue;
-use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class QueueConsumerTest extends TestCase
 {

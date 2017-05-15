@@ -2,8 +2,8 @@
 
 namespace Enqueue\JobQueue\Tests\Functional\Job;
 
-use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Doctrine\JobStorage;
+use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Tests\Functional\Entity\Job;
 use Enqueue\JobQueue\Tests\Functional\WebTestCase;
 

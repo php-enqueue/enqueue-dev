@@ -6,7 +6,7 @@ class InvalidMessageException extends Exception
 {
     /**
      * @param PsrMessage $message
-     * @param string  $class
+     * @param string     $class
      *
      * @throws static
      */

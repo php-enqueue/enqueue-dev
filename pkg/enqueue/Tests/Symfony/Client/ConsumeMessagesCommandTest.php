@@ -8,11 +8,11 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
-use Enqueue\Null\NullQueue;
-use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class ConsumeMessagesCommandTest extends TestCase
 {

@@ -6,11 +6,11 @@ use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\DependentJobProcessor;
-use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Doctrine\JobStorage;
+use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Null\NullMessage;
+use Enqueue\Psr\PsrContext;
 use Psr\Log\LoggerInterface;
 
 class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase

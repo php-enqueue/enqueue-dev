@@ -4,11 +4,11 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use PHPUnit\Framework\TestCase;
 
 class BuildConsumptionExtensionsPassTest extends TestCase
 {

@@ -6,7 +6,6 @@ use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Test\ClassExtensionTrait;
-use PHPUnit\Framework\TestCase;
 
 class RedisConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +28,7 @@ class RedisConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'retry_interval' => null,
             'persisted' => false,
             'lazy' => true,
-            'vendor' => 'phpredis'
+            'vendor' => 'phpredis',
         ], 'config', $factory);
     }
 
@@ -45,7 +44,7 @@ class RedisConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'retry_interval' => null,
             'persisted' => false,
             'lazy' => true,
-            'vendor' => 'phpredis'
+            'vendor' => 'phpredis',
         ], 'config', $factory);
     }
 

@@ -17,7 +17,7 @@ if ($autoload) {
 
 use Enqueue\Dbal\DbalConnectionFactory;
 
-$config = array(
+$config = [
     'connection' => [
         'dbname' => getenv('SYMFONY__DB__NAME'),
         'user' => getenv('SYMFONY__DB__USER'),
@@ -26,7 +26,7 @@ $config = array(
         'port' => getenv('SYMFONY__DB__PORT'),
         'driver' => getenv('SYMFONY__DB__DRIVER'),
     ],
-);
+];
 
 $factory = new DbalConnectionFactory($config);
 $context = $factory->createContext();

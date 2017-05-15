@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests;
 
 use Aws\Result;
@@ -29,7 +30,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCouldBeConstructedWithSqsClientFactoryAsFirstArgument()
     {
-        new SqsContext(function() {
+        new SqsContext(function () {
             return $this->createSqsClientMock();
         });
     }

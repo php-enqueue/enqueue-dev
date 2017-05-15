@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal\Symfony;
 
 use Enqueue\Dbal\Client\DbalDriver;

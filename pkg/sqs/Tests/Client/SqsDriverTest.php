@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests\Client;
 
 use Enqueue\Client\Config;
@@ -35,7 +36,7 @@ class SqsDriverTest extends TestCase
 
     public function testShouldReturnConfigObject()
     {
-        $config = Config::create();;
+        $config = Config::create();
 
         $driver = new SqsDriver($this->createPsrContextMock(), $config, $this->createQueueMetaRegistryMock());
 

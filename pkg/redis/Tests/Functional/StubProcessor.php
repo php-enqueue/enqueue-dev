@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Redis\Tests\Functional;
 
 use Enqueue\Psr\PsrContext;

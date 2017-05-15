@@ -6,9 +6,9 @@ use Enqueue\Client\Meta\QueueMeta;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Symfony\Client\Meta\QueuesCommand;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit\Framework\TestCase;
 
 class QueuesCommandTest extends TestCase
 {

@@ -7,10 +7,10 @@ use Enqueue\Client\MessagePriority;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use PHPUnit\Framework\TestCase;
 
 class MessageQueueCollectorTest extends TestCase
 {

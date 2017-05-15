@@ -9,8 +9,8 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullQueue;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 class ProducerTest extends TestCase

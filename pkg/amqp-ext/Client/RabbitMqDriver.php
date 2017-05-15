@@ -123,7 +123,6 @@ class RabbitMqDriver extends AmqpDriver
             $transportMessage->setProperty('x-delay', (string) ($message->getDelay() * 1000));
         }
 
-
         return $transportMessage;
     }
 

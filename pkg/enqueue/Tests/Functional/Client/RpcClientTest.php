@@ -4,7 +4,6 @@ namespace Enqueue\Tests\Functional\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Client\RpcClient;
-use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
@@ -12,6 +11,7 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
+use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use PHPUnit\Framework\TestCase;

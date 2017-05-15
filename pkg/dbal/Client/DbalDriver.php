@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal\Client;
 
 use Enqueue\Client\Config;
@@ -30,8 +31,8 @@ class DbalDriver implements DriverInterface
     private $queueMetaRegistry;
 
     /**
-     * @param DbalContext $context
-     * @param Config $config
+     * @param DbalContext       $context
+     * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      */
     public function __construct(DbalContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)

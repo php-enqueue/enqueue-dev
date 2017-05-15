@@ -6,12 +6,12 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Null\NullMessage;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullMessage;
-use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class LoggerExtensionTest extends TestCase
 {

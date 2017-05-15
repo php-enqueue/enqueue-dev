@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Redis;
 
 use Predis\ClientInterface;
@@ -49,8 +50,9 @@ class PRedis implements Redis
      * {@inheritdoc}
      */
     public function rpop($key)
-    {   try {
-           return $this->redis->rpop($key);
+    {
+        try {
+            return $this->redis->rpop($key);
         } catch (PRedisServerException $e) {
             throw new ServerException('rpop command has failed', null, $e);
         }

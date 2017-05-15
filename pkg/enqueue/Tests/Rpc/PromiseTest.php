@@ -2,10 +2,10 @@
 
 namespace Enqueue\Tests\Rpc;
 
+use Enqueue\Null\NullMessage;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\TimeoutException;
-use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class PromiseTest extends TestCase

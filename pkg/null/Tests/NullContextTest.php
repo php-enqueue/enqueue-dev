@@ -2,14 +2,14 @@
 
 namespace Enqueue\Null\Tests;
 
-use Enqueue\Psr\PsrContext;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullConsumer;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullProducer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 class NullContextTest extends TestCase

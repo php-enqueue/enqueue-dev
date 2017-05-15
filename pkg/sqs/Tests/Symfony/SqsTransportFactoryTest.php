@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests\Symfony;
 
 use Enqueue\Sqs\Client\SqsDriver;

@@ -45,7 +45,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         ], $config);
 
         $supportedVendors = ['predis', 'phpredis'];
-        if (false == in_array($this->config['vendor'], $supportedVendors)) {
+        if (false == in_array($this->config['vendor'], $supportedVendors, true)) {
             throw new \LogicException(sprintf(
                 'Unsupported redis vendor given. It must be either "%s". Got "%s"',
                 implode('", "', $supportedVendors),

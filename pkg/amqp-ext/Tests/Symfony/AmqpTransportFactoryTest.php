@@ -7,11 +7,11 @@ use Enqueue\AmqpExt\Client\AmqpDriver;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use PHPUnit\Framework\TestCase;
 
 class AmqpTransportFactoryTest extends TestCase
 {

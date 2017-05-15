@@ -2,8 +2,8 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\InvalidMessageException;
+use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;

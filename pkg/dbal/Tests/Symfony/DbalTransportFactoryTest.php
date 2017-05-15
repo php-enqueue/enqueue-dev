@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal\Tests\Symfony;
 
 use Enqueue\Dbal\Client\DbalDriver;
@@ -43,9 +44,9 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
-        $config = $processor->process($tb->buildTree(),[[
+        $config = $processor->process($tb->buildTree(), [[
             'connection' => [
-                'key' => 'value'
+                'key' => 'value',
             ],
         ]]);
 

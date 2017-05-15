@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests\Functional;
 
 use Enqueue\Consumption\ChainExtension;
@@ -14,7 +15,7 @@ use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\SqsExtension;
 use PHPUnit\Framework\TestCase;
 
-class SqsConsumptionUseCasesTest  extends TestCase
+class SqsConsumptionUseCasesTest extends TestCase
 {
     use SqsExtension;
 
@@ -38,7 +39,8 @@ class SqsConsumptionUseCasesTest  extends TestCase
         try {
             $this->context->purge($queue);
             $this->context->purge($replyQueue);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
     }
 
     public function testConsumeOneMessageAndExit()

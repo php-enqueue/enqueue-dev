@@ -33,7 +33,7 @@ $context->declareQueue($queue);
 
 while (true) {
     $context->createProducer()->send($queue, $message);
-    echo 'Sent message: ' . $message->getBody() . PHP_EOL;
+    echo 'Sent message: '.$message->getBody().PHP_EOL;
     sleep(1);
 }
 

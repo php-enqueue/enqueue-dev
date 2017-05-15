@@ -24,8 +24,8 @@ class Promise
 
     /**
      * @param PsrConsumer $consumer
-     * @param string   $correlationId
-     * @param int      $timeout
+     * @param string      $correlationId
+     * @param int         $timeout
      */
     public function __construct(PsrConsumer $consumer, $correlationId, $timeout)
     {

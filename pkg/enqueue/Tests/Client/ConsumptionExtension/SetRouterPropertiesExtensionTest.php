@@ -7,9 +7,9 @@ use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Null\NullMessage;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullMessage;
 use PHPUnit\Framework\TestCase;
 
 class SetRouterPropertiesExtensionTest extends TestCase

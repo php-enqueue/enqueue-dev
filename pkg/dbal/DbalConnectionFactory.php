@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
@@ -23,7 +24,7 @@ class DbalConnectionFactory implements PsrConnectionFactory
      *   'table_name' => 'enqueue',     - database table name.
      *   'polling_interval' => '1000',  - How often query for new messages (milliseconds)
      *   'lazy' => true,                - Use lazy database connection (boolean)
-     * ]
+     * ].
      *
      * @param $config
      */
@@ -52,6 +53,16 @@ class DbalConnectionFactory implements PsrConnectionFactory
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function close()
+    {
+        if ($this->connection) {
+            $this->connection->close();
+        }
+    }
+
+    /**
      * @return Connection
      */
     private function establishConnection()
@@ -62,15 +73,5 @@ class DbalConnectionFactory implements PsrConnectionFactory
         }
 
         return $this->connection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
-    {
-        if ($this->connection) {
-            $this->connection->close();
-        }
     }
 }

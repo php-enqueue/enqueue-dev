@@ -8,9 +8,9 @@ use Enqueue\Consumption\Context;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use PHPUnit\Framework\TestCase;
 
 class DoctrinePingConnectionExtensionTest extends TestCase
 {

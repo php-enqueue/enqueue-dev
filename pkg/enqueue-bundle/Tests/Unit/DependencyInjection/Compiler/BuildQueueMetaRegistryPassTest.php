@@ -6,9 +6,9 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use PHPUnit\Framework\TestCase;
 
 class BuildQueueMetaRegistryPassTest extends TestCase
 {

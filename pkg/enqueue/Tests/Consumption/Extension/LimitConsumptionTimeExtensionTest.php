@@ -7,8 +7,8 @@ use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
-use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class LimitConsumptionTimeExtensionTest extends TestCase
 {

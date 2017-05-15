@@ -4,8 +4,8 @@ namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\DriverInterface;
 use Enqueue\Symfony\Client\SetupBrokerCommand;
-use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class SetupBrokerCommandTest extends TestCase
 {

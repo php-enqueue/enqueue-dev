@@ -35,7 +35,7 @@ class RedisDriverTest extends TestCase
 
     public function testShouldReturnConfigObject()
     {
-        $config = Config::create();;
+        $config = Config::create();
 
         $driver = new RedisDriver($this->createPsrContextMock(), $config, $this->createDummyQueueMetaRegistry());
 

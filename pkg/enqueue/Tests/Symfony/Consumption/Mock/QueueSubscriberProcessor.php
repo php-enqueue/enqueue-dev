@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Tests\Symfony\Consumption\Mock;
 
 use Enqueue\Consumption\QueueSubscriberInterface;

@@ -1,10 +1,11 @@
 <?php
+
 namespace Enqueue\Rpc;
 
 class TimeoutException extends \LogicException
 {
     /**
-     * @param int $timeout
+     * @param int    $timeout
      * @param string $correlationId
      *
      * @return static

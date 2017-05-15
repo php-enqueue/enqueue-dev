@@ -4,8 +4,8 @@ namespace Enqueue\JobQueue\Tests;
 
 use Enqueue\JobQueue\DependentJobContext;
 use Enqueue\JobQueue\DependentJobService;
-use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Doctrine\JobStorage;
+use Enqueue\JobQueue\Job;
 
 class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
 {

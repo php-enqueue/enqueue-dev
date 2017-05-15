@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal\Tests;
 
 use Doctrine\DBAL\Connection;
@@ -321,24 +322,83 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
 
 class InvalidMessage implements PsrMessage
 {
-    public function getBody(){}
-    public function setBody($body){}
-    public function setProperties(array $properties){}
-    public function getProperties(){}
-    public function setProperty($name, $value){}
-    public function getProperty($name, $default = null){}
-    public function setHeaders(array $headers){}
-    public function getHeaders(){}
-    public function setHeader($name, $value){}
-    public function getHeader($name, $default = null){}
-    public function setRedelivered($redelivered){}
-    public function isRedelivered(){}
-    public function setCorrelationId($correlationId){}
-    public function getCorrelationId(){}
-    public function setMessageId($messageId){}
-    public function getMessageId(){}
-    public function getTimestamp(){}
-    public function setTimestamp($timestamp){}
-    public function setReplyTo($replyTo){}
-    public function getReplyTo(){}
+    public function getBody()
+    {
+    }
+
+    public function setBody($body)
+    {
+    }
+
+    public function setProperties(array $properties)
+    {
+    }
+
+    public function getProperties()
+    {
+    }
+
+    public function setProperty($name, $value)
+    {
+    }
+
+    public function getProperty($name, $default = null)
+    {
+    }
+
+    public function setHeaders(array $headers)
+    {
+    }
+
+    public function getHeaders()
+    {
+    }
+
+    public function setHeader($name, $value)
+    {
+    }
+
+    public function getHeader($name, $default = null)
+    {
+    }
+
+    public function setRedelivered($redelivered)
+    {
+    }
+
+    public function isRedelivered()
+    {
+    }
+
+    public function setCorrelationId($correlationId)
+    {
+    }
+
+    public function getCorrelationId()
+    {
+    }
+
+    public function setMessageId($messageId)
+    {
+    }
+
+    public function getMessageId()
+    {
+    }
+
+    public function getTimestamp()
+    {
+    }
+
+    public function setTimestamp($timestamp)
+    {
+    }
+
+    public function setReplyTo($replyTo)
+    {
+    }
+
+    public function getReplyTo()
+    {
+    }
 }

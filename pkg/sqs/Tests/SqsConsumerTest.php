@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests;
 
 use Aws\Result;
@@ -175,9 +176,9 @@ class SqsConsumerTest extends \PHPUnit_Framework_TestCase
             'MessageAttributes' => [
                 'Headers' => [
                     'StringValue' => json_encode([['hkey' => 'hvalue'], ['key' => 'value']]),
-                    'DataType' => 'String'
+                    'DataType' => 'String',
                 ],
-            ]
+            ],
         ];
 
         $client = $this->createSqsClientMock();

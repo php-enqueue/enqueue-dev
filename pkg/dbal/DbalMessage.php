@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal;
 
 use Enqueue\Psr\PsrMessage;
@@ -21,7 +22,7 @@ class DbalMessage implements PsrMessage
     private $headers;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $redelivered;
 
@@ -127,7 +128,7 @@ class DbalMessage implements PsrMessage
      */
     public function getHeader($name, $default = null)
     {
-        return array_key_exists($name, $this->headers) ?$this->headers[$name] : $default;
+        return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
     /**
@@ -187,7 +188,7 @@ class DbalMessage implements PsrMessage
     }
 
     /**
-     * Set delay in seconds
+     * Set delay in seconds.
      *
      * @param int $delay
      */

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
@@ -42,7 +43,7 @@ class DbalConsumer implements PsrConsumer
     }
 
     /**
-     * Set polling interval in milliseconds
+     * Set polling interval in milliseconds.
      *
      * @param int $msec
      */
@@ -52,7 +53,7 @@ class DbalConsumer implements PsrConsumer
     }
 
     /**
-     * Get polling interval in milliseconds
+     * Get polling interval in milliseconds.
      *
      * @return int
      */
@@ -169,8 +170,8 @@ class DbalConsumer implements PsrConsumer
             $now = time();
 
             $sql = sprintf(
-                'SELECT * FROM %s WHERE queue=:queue AND ' .
-                '(delayed_until IS NULL OR delayed_until<=:delayedUntil) ' .
+                'SELECT * FROM %s WHERE queue=:queue AND '.
+                '(delayed_until IS NULL OR delayed_until<=:delayedUntil) '.
                 'ORDER BY priority DESC, id ASC LIMIT 1 FOR UPDATE',
                 $this->context->getTableName()
             );
@@ -205,7 +206,6 @@ class DbalConsumer implements PsrConsumer
             $this->dbal->commit();
 
             return $this->convertMessage($dbalMessage);
-
         } catch (\Exception $e) {
             $this->dbal->rollBack();
             throw $e;

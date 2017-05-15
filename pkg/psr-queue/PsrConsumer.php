@@ -47,7 +47,7 @@ interface PsrConsumer
      * Tell the MQ broker that the message was rejected.
      *
      * @param PsrMessage $message
-     * @param bool    $requeue
+     * @param bool       $requeue
      */
     public function reject(PsrMessage $message, $requeue = false);
 }

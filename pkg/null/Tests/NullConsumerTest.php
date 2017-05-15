@@ -2,11 +2,11 @@
 
 namespace Enqueue\Null\Tests;
 
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullConsumer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
+use Enqueue\Psr\PsrConsumer;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 class NullConsumerTest extends TestCase

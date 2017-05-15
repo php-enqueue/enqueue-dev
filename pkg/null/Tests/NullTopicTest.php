@@ -2,9 +2,9 @@
 
 namespace Enqueue\Null\Tests;
 
+use Enqueue\Null\NullTopic;
 use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullTopic;
 use PHPUnit\Framework\TestCase;
 
 class NullTopicTest extends TestCase

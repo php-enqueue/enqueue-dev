@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Client;
 
 use Enqueue\Psr\PsrContext;
@@ -20,7 +21,7 @@ class RpcClient
 
     /**
      * @param ProducerInterface $producer
-     * @param PsrContext $context
+     * @param PsrContext        $context
      */
     public function __construct(ProducerInterface $producer, PsrContext $context)
     {
@@ -29,9 +30,9 @@ class RpcClient
     }
 
     /**
-     * @param string $topic
+     * @param string               $topic
      * @param string|array|Message $message
-     * @param int $timeout
+     * @param int                  $timeout
      *
      * @return PsrMessage
      */
@@ -41,9 +42,9 @@ class RpcClient
     }
 
     /**
-     * @param string $topic
+     * @param string               $topic
      * @param string|array|Message $message $message
-     * @param int $timeout
+     * @param int                  $timeout
      *
      * @return Promise
      */

@@ -31,8 +31,8 @@ class StompDriver implements DriverInterface
     private $queueMetaRegistry;
 
     /**
-     * @param StompContext $context
-     * @param Config $config
+     * @param StompContext      $context
+     * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      */
     public function __construct(StompContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)

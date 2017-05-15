@@ -8,9 +8,9 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
-use Enqueue\JobQueue\Doctrine\JobStorage;
 
 class JobStorageTest extends \PHPUnit\Framework\TestCase
 {

@@ -73,8 +73,6 @@ class QueueMetaRegistry
             ));
         }
 
-
-
         $transportName = $this->config->createTransportQueueName($queueName);
 
         $meta = array_replace([

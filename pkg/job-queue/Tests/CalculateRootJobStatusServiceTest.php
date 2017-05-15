@@ -3,8 +3,8 @@
 namespace Enqueue\JobQueue\Tests;
 
 use Enqueue\JobQueue\CalculateRootJobStatusService;
-use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Doctrine\JobStorage;
+use Enqueue\JobQueue\Job;
 
 class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 {

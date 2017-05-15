@@ -3,6 +3,8 @@
 namespace Enqueue\Tests\Router;
 
 use Enqueue\Consumption\Result;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Psr\PsrProducer;
@@ -10,8 +12,6 @@ use Enqueue\Router\Recipient;
 use Enqueue\Router\RecipientListRouterInterface;
 use Enqueue\Router\RouteRecipientListProcessor;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
 use PHPUnit\Framework\TestCase;
 
 class RouteRecipientListProcessorTest extends TestCase

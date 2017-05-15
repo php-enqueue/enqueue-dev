@@ -6,11 +6,11 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
 use PHPUnit\Framework\TestCase;
 
 class ReplyExtensionTest extends TestCase
@@ -146,5 +146,4 @@ class ReplyExtensionTest extends TestCase
 
         return $contextMock;
     }
-
 }

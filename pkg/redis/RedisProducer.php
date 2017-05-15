@@ -27,7 +27,7 @@ class RedisProducer implements PsrProducer
      * {@inheritdoc}
      *
      * @param RedisDestination $destination
-     * @param RedisMessage $message
+     * @param RedisMessage     $message
      */
     public function send(PsrDestination $destination, PsrMessage $message)
     {

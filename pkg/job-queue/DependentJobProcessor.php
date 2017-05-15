@@ -31,9 +31,9 @@ class DependentJobProcessor implements PsrProcessor, TopicSubscriberInterface
     private $logger;
 
     /**
-     * @param JobStorage               $jobStorage
+     * @param JobStorage        $jobStorage
      * @param ProducerInterface $producer
-     * @param LoggerInterface          $logger
+     * @param LoggerInterface   $logger
      */
     public function __construct(JobStorage $jobStorage, ProducerInterface $producer, LoggerInterface $logger)
     {

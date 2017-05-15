@@ -6,9 +6,9 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
+use Enqueue\Psr\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -30,8 +30,8 @@ class NullDriver implements DriverInterface
     private $queueMetaRegistry;
 
     /**
-     * @param NullContext $context
-     * @param Config $config
+     * @param NullContext       $context
+     * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      */
     public function __construct(NullContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
