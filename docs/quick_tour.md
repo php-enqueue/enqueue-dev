@@ -170,19 +170,11 @@ Here's an example of how you can send and consume messages.
 use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Psr\PsrMessage;
 
-$client = new SimpleClient([
-    'transport' => [
-        'default' => 'amqp',
-        'amqp' => [
-            'host'  => 'localhost',
-            'port'  => 5672,
-            'vhost' => '/',
-            'user' => 'guest',
-            'pass' => 'guest',
-        ],
-    ],
-    'client' => true,
-]);
+// composer require enqueue/amqp-ext
+$client = new SimpleClient('amqp://');
+
+// composer require enqueue/fs
+$client = new SimpleClient('file://foo/bar');
 
 $client->setupBroker();
 

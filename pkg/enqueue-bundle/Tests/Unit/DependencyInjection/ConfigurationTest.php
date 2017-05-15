@@ -5,7 +5,6 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
-use Enqueue\Symfony\DsnTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
@@ -96,31 +95,6 @@ class ConfigurationTest extends TestCase
         $this->assertArraySubset([
             'transport' => [
                 'null' => [],
-            ],
-        ], $config);
-    }
-
-    public function testShouldAllowConfigureNullTransportViaDsnTransport()
-    {
-        $nullFactory = new NullTransportFactory();
-
-        $configuration = new Configuration([
-            $nullFactory,
-            new DsnTransportFactory([$nullFactory])
-        ]);
-
-        $processor = new Processor();
-        $config = $processor->processConfiguration($configuration, [[
-            'transport' => [
-                'dsn' => 'null://',
-            ],
-        ]]);
-
-        $this->assertArraySubset([
-            'transport' => [
-                'dsn' => [
-                    'dsn' => 'null://'
-                ],
             ],
         ], $config);
     }

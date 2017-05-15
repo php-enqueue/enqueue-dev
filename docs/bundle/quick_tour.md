@@ -45,8 +45,7 @@ First, you have to configure a transport layer and set one to be default.
 
 enqueue:
     transport:
-        default: 'amqp'
-        amqp: "amqp://"
+        default: "amqp://"
     client: ~
 ```
 

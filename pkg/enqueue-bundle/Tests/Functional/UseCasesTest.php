@@ -43,6 +43,12 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
+        yield 'default_amqp_as_dsn' => [[
+            'transport' => [
+                'default' => getenv('AMQP_DSN'),
+            ],
+        ]];
+
         yield 'stomp' => [[
             'transport' => [
                 'default' => 'stomp',
@@ -94,6 +100,12 @@ class UseCasesTest extends WebTestCase
             'transport' => [
                 'default' => 'fs',
                 'fs' => 'file:/'.sys_get_temp_dir(),
+            ],
+        ]];
+
+        yield 'default_fs_as_dsn' => [[
+            'transport' => [
+                'default' => 'file:/'.sys_get_temp_dir(),
             ],
         ]];
 

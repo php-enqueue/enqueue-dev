@@ -7,14 +7,14 @@ use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Client\Producer;
 use Enqueue\Client\TraceableProducer;
-use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Null\Symfony\NullTransportFactory;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Null\NullContext;
+use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use PHPUnit\Framework\TestCase;
 
 class EnqueueExtensionTest extends TestCase
 {
@@ -105,8 +105,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension->load([[
             'transport' => [
-                'default' => 'dsn',
-                'dsn' => 'null://',
+                'default' => 'null://',
             ],
         ]], $container);
 
@@ -115,7 +114,7 @@ class EnqueueExtensionTest extends TestCase
             (string) $container->getAlias('enqueue.transport.context')
         );
         self::assertEquals(
-            'enqueue.transport.dsn.context',
+            'enqueue.transport.default_null.context',
             (string) $container->getAlias('enqueue.transport.default.context')
         );
     }
@@ -470,7 +469,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension->prepend($container);
 
-        $config =  $container->getExtensionConfig('doctrine');
+        $config = $container->getExtensionConfig('doctrine');
 
         $this->assertSame(['dbal' => true], $config[1]);
         $this->assertNotEmpty($config[0]['orm']['mappings']['enqueue_job_queue']);
