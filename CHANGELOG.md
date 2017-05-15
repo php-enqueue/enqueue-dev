@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.4.2](https://github.com/php-enqueue/enqueue-dev/tree/0.4.2) (2017-05-15)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.1...0.4.2)
+
+- Add dsn\_to\_connection\_factory and dsn\_to\_context functions. [\#84](https://github.com/php-enqueue/enqueue-dev/pull/84) ([makasim](https://github.com/makasim))
+- \[bundle\] Set null transport as default. Prevent errors on bundle install. [\#77](https://github.com/php-enqueue/enqueue-dev/pull/77) ([makasim](https://github.com/makasim))
+
+- Add ability to set transport DSN directly to default transport factory. [\#81](https://github.com/php-enqueue/enqueue-dev/pull/81) ([makasim](https://github.com/makasim))
+
+## [0.4.1](https://github.com/php-enqueue/enqueue-dev/tree/0.4.1) (2017-05-12)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.0...0.4.1)
+
 ## [0.4.0](https://github.com/php-enqueue/enqueue-dev/tree/0.4.0) (2017-05-12)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.8...0.4.0)
 
