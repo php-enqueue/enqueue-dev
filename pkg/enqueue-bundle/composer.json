@@ -24,6 +24,7 @@
         "enqueue/fs": "^0.4",
         "enqueue/redis": "^0.4",
         "enqueue/dbal": "^0.4",
+        "enqueue/sqs": "^0.4",
         "enqueue/test": "^0.3@dev|0.4@dev",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/monolog-bundle": "^2.8|^3",
