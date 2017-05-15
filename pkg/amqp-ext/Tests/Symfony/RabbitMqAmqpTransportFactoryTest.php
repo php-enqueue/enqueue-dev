@@ -55,8 +55,8 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
         $this->assertEquals([
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
             'delay_plugin_installed' => false,
@@ -73,8 +73,8 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
         $serviceId = $transport->createConnectionFactory($container, [
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
             'delay_plugin_installed' => false,
@@ -86,8 +86,8 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
         $this->assertSame([[
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
             'delay_plugin_installed' => false,
@@ -103,8 +103,8 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
         $serviceId = $transport->createContext($container, [
             'host' => 'localhost',
             'port' => 5672,
-            'login' => 'guest',
-            'password' => 'guest',
+            'user' => 'guest',
+            'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
             'delay_plugin_installed' => false,

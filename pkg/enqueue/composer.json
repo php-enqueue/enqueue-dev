@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": ">=5.6",
-        "enqueue/psr-queue": "^0.3",
+        "enqueue/psr-queue": "^0.4",
         "ramsey/uuid": "^2|^3.5"
     },
     "require-dev": {
@@ -20,9 +20,11 @@
         "symfony/console": "^2.8|^3",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3",
-        "enqueue/null": "^0.3",
-        "enqueue/test": "^0.3",
-        "enqueue/simple-client": "^0.3"
+        "enqueue/null": "^0.4",
+        "enqueue/amqp-ext": "^0.4",
+        "enqueue/fs": "^0.4",
+        "enqueue/test": "^0.4",
+        "enqueue/simple-client": "^0.4"
     },
     "suggest": {
         "symfony/console": "^2.8|^3 If you want to use li commands",
@@ -37,6 +39,7 @@
     },
     "autoload": {
         "psr-4": { "Enqueue\\": "" },
+        "files": ["functions_include.php"],
         "exclude-from-classmap": [
             "/Tests/"
         ]
@@ -44,7 +47,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.3.x-dev"
+            "dev-master": "0.4.x-dev"
         }
     }
 }

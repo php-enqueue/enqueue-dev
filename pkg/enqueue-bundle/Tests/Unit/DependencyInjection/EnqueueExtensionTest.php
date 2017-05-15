@@ -7,15 +7,15 @@ use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Client\Producer;
 use Enqueue\Client\TraceableProducer;
-use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Null\NullContext;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
+use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullContext;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use PHPUnit\Framework\TestCase;
 
 class EnqueueExtensionTest extends TestCase
 {
@@ -112,6 +112,30 @@ class EnqueueExtensionTest extends TestCase
         );
         self::assertEquals(
             'enqueue.transport.null.context',
+            (string) $container->getAlias('enqueue.transport.default.context')
+        );
+    }
+
+    public function testShouldUseNullTransportAsDefaultConfiguredViaDSN()
+    {
+        $container = new ContainerBuilder();
+
+        $extension = new EnqueueExtension();
+        $extension->addTransportFactory(new NullTransportFactory());
+        $extension->addTransportFactory(new DefaultTransportFactory());
+
+        $extension->load([[
+            'transport' => [
+                'default' => 'null://',
+            ],
+        ]], $container);
+
+        self::assertEquals(
+            'enqueue.transport.default.context',
+            (string) $container->getAlias('enqueue.transport.context')
+        );
+        self::assertEquals(
+            'enqueue.transport.default_null.context',
             (string) $container->getAlias('enqueue.transport.default.context')
         );
     }
@@ -459,7 +483,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension->prepend($container);
 
-        $config =  $container->getExtensionConfig('doctrine');
+        $config = $container->getExtensionConfig('doctrine');
 
         $this->assertSame(['dbal' => true], $config[1]);
         $this->assertNotEmpty($config[0]['orm']['mappings']['enqueue_job_queue']);

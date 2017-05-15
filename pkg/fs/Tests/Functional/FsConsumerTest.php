@@ -17,7 +17,7 @@ class FsConsumerTest extends TestCase
 
     public function setUp()
     {
-        $this->fsContext = (new FsConnectionFactory(['store_dir' => sys_get_temp_dir()]))->createContext();
+        $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir()]))->createContext();
 
         new TempFile(sys_get_temp_dir().'/fs_test_queue');
         file_put_contents(sys_get_temp_dir().'/fs_test_queue', '');

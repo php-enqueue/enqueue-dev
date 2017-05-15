@@ -1,12 +1,13 @@
 <?php
+
 namespace Enqueue\SimpleClient\Tests\Functional;
 
-use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrMessage;
+use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use PHPUnit\Framework\TestCase;
@@ -30,35 +31,52 @@ class SimpleClientTest extends TestCase
 
     public function transportConfigDataProvider()
     {
-        $amqp = [
+        yield 'amqp' => [[
             'transport' => [
+                'default' => 'amqp',
                 'amqp' => [
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
-                    'login' => getenv('SYMFONY__RABBITMQ__USER'),
-                    'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
+                    'user' => getenv('SYMFONY__RABBITMQ__USER'),
+                    'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
                     'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
                 ],
             ],
-        ];
+        ]];
 
-        $rabbitmqAmqp = [
+        yield 'config_as_dsn_string' => [getenv('AMQP_DSN')];
+
+        yield 'amqp_dsn' => [[
             'transport' => [
+                'default' => 'amqp',
+                'amqp' => getenv('AMQP_DSN'),
+            ],
+        ]];
+
+        yield 'default_amqp_as_dsn' => [[
+            'transport' => [
+                'default' => getenv('AMQP_DSN'),
+            ],
+        ]];
+
+        yield [[
+            'transport' => [
+                'default' => 'rabbitmq_amqp',
                 'rabbitmq_amqp' => [
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
-                    'login' => getenv('SYMFONY__RABBITMQ__USER'),
-                    'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
+                    'user' => getenv('SYMFONY__RABBITMQ__USER'),
+                    'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
                     'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
                 ],
             ],
-        ];
-
-        return [[$amqp, $rabbitmqAmqp]];
+        ]];
     }
 
     /**
      * @dataProvider transportConfigDataProvider
+     *
+     * @param mixed $config
      */
     public function testProduceAndConsumeOneMessage($config)
     {
@@ -84,6 +102,8 @@ class SimpleClientTest extends TestCase
 
     /**
      * @dataProvider transportConfigDataProvider
+     *
+     * @param mixed $config
      */
     public function testProduceAndRouteToTwoConsumes($config)
     {

@@ -25,14 +25,27 @@ $ composer require enqueue/amqp-ext
 <?php
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 
+// connects to localhost
+$connectionFactory = new AmqpConnectionFactory();
+
+// same as above
+$connectionFactory = new AmqpConnectionFactory('amqp://');
+
+// same as above
+$connectionFactory = new AmqpConnectionFactory([]);
+
+// connect to AMQP broker at example.com
 $connectionFactory = new AmqpConnectionFactory([
-    'host' => '127.0.0.1',
-    'port' => 5672,
+    'host' => 'example.com',
+    'port' => 1000,
     'vhost' => '/',
-    'login' => 'guest',
-    'password' => 'guest',
+    'user' => 'user',
+    'pass' => 'pass',
     'persisted' => false,
 ]);
+
+// same as above but given as DSN string
+$connectionFactory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
 $psrContext = $connectionFactory->createContext();
 ```

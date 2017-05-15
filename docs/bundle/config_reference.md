@@ -43,11 +43,11 @@ enqueue:
             # Port on the host.
             port:                 5672
 
-            # The login name to use. Note: Max 128 characters.
-            login:                guest
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
 
             # Password. Note: Max 128 characters.
-            password:             guest
+            pass:                 guest
 
             # The virtual host on the host. Note: Max 128 characters.
             vhost:                /
@@ -70,11 +70,11 @@ enqueue:
             # Port on the host.
             port:                 5672
 
-            # The login name to use. Note: Max 128 characters.
-            login:                guest
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
 
             # Password. Note: Max 128 characters.
-            password:             guest
+            pass:                 guest
 
             # The virtual host on the host. Note: Max 128 characters.
             vhost:                /
@@ -95,7 +95,7 @@ enqueue:
         fs:
 
             # The store directory where all queue\topics files will be created and messages are stored
-            store_dir:            ~ # Required
+            path:            ~ # Required
 
             # The option tells how many messages should be read from file at once. The feature save resources but could lead to bigger messages lose.
             pre_fetch_count:      1

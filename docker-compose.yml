@@ -10,6 +10,7 @@ services:
     volumes:
       - './:/mqdev'
     environment:
+      - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
       - SYMFONY__RABBITMQ__HOST=rabbitmq
       - SYMFONY__RABBITMQ__USER=guest
       - SYMFONY__RABBITMQ__PASSWORD=guest

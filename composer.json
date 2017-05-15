@@ -27,6 +27,9 @@
     "friendsofphp/php-cs-fixer": "^2",
     "empi89/php-amqp-stubs": "*@dev"
   },
+  "autoload": {
+    "files": ["pkg/enqueue/functions_include.php"]
+  },
   "config": {
     "bin-dir": "bin"
   },

@@ -7,6 +7,7 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\PsrQueue;
 use Makasim\File\TempFile;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\LockHandler;
 
 class FsContext implements PsrContext
@@ -38,6 +39,9 @@ class FsContext implements PsrContext
      */
     public function __construct($storeDir, $preFetchCount, $chmod)
     {
+        $fs = new Filesystem();
+        $fs->mkdir($storeDir);
+
         $this->storeDir = $storeDir;
         $this->preFetchCount = $preFetchCount;
         $this->chmod = $chmod;
