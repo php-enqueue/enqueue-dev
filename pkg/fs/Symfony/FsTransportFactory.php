@@ -32,9 +32,17 @@ class FsTransportFactory implements TransportFactoryInterface
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
         $builder
+            ->beforeNormalization()
+                ->ifString()
+                ->then(function ($v) {
+                    return ['dsn' => $v];
+                })
+            ->end()
             ->children()
-                ->scalarNode('store_dir')
-                    ->isRequired()
+                ->scalarNode('dsn')
+                    ->info('The path to a directory where to store messages given as DSN. For example file://tmp/foo')
+                ->end()
+                ->scalarNode('path')
                     ->cannotBeEmpty()
                     ->info('The store directory where all queue\topics files will be created and messages are stored')
                 ->end()
@@ -56,7 +64,7 @@ class FsTransportFactory implements TransportFactoryInterface
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
         $factory = new Definition(FsConnectionFactory::class);
-        $factory->setArguments([$config]);
+        $factory->setArguments(isset($config['dsn']) ? [$config['dsn']] : [$config]);
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);

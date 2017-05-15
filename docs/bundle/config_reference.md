@@ -95,7 +95,7 @@ enqueue:
         fs:
 
             # The store directory where all queue\topics files will be created and messages are stored
-            store_dir:            ~ # Required
+            path:            ~ # Required
 
             # The option tells how many messages should be read from file at once. The feature save resources but could lead to bigger messages lose.
             pre_fetch_count:      1

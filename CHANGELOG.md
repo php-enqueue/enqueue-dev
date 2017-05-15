@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.4.0](https://github.com/php-enqueue/enqueue-dev/tree/0.4.0) (2017-05-12)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.8...0.4.0)
+
+- \[fs\] add DSN support [\#82](https://github.com/php-enqueue/enqueue-dev/pull/82) ([makasim](https://github.com/makasim))
+- \[amqp\] Configure by string DSN. [\#80](https://github.com/php-enqueue/enqueue-dev/pull/80) ([makasim](https://github.com/makasim))
+
+- \[Extensions\] extensions priority [\#79](https://github.com/php-enqueue/enqueue-dev/issues/79)
+
+- \[fs\] Filesystem transport must create a storage dir if it does not exists. [\#78](https://github.com/php-enqueue/enqueue-dev/pull/78) ([makasim](https://github.com/makasim))
+- \[magento\] Add basic docs for enqueue magento extension. [\#76](https://github.com/php-enqueue/enqueue-dev/pull/76) ([makasim](https://github.com/makasim))
+
 ## [0.3.8](https://github.com/php-enqueue/enqueue-dev/tree/0.3.8) (2017-05-10)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.3.7...0.3.8)
 

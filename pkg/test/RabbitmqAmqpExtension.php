@@ -26,4 +26,16 @@ trait RabbitmqAmqpExtension
 
         return (new AmqpConnectionFactory($config))->createContext();
     }
+
+    /**
+     * @return AmqpContext
+     */
+    private function buildAmqpContextFromDsn()
+    {
+        if (false == $dsn = getenv('AMQP_DSN')) {
+            throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
+        }
+
+        return (new AmqpConnectionFactory($dsn))->createContext();
+    }
 }

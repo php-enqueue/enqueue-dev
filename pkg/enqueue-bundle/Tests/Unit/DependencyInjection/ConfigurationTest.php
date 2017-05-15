@@ -4,14 +4,14 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
-use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\DsnTransportFactory;
+use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
-use PHPUnit\Framework\TestCase;
 
 class ConfigurationTest extends TestCase
 {

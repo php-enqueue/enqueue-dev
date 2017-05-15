@@ -5,10 +5,10 @@ namespace Enqueue\Tests\Symfony;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use PHPUnit\Framework\TestCase;
 
 class DefaultTransportFactoryTest extends TestCase
 {

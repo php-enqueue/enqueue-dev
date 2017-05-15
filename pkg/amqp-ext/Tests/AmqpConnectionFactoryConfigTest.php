@@ -3,12 +3,11 @@
 namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The class contains the factory tests dedicated to configuration
+ * The class contains the factory tests dedicated to configuration.
  */
 class AmqpConnectionFactoryConfigTest extends TestCase
 {
@@ -17,7 +16,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The config must be eaither an array of options, a DSN string or null');
+        $this->expectExceptionMessage('The config must be either an array of options, a DSN string or null');
 
         new AmqpConnectionFactory(new \stdClass());
     }
@@ -40,6 +39,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
 
     /**
      * @dataProvider provideConfigs
+     *
+     * @param mixed $config
+     * @param mixed $expectedConfig
      */
     public function testShouldParseConfigurationAsExpected($config, $expectedConfig)
     {
@@ -63,13 +65,13 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
-            ]
+            ],
         ];
 
         // some examples from Appendix A: Examples (https://www.rabbitmq.com/uri-spec.html)
 
         yield [
-            "amqp://user:pass@host:10000/vhost",
+            'amqp://user:pass@host:10000/vhost',
             [
                 'host' => 'host',
                 'port' => 10000,
@@ -81,11 +83,11 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
-            ]
+            ],
         ];
 
         yield [
-            "amqp://user%61:%61pass@ho%61st:10000/v%2fhost",
+            'amqp://user%61:%61pass@ho%61st:10000/v%2fhost',
             [
                 'host' => 'hoast',
                 'port' => 10000,
@@ -97,11 +99,11 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
-            ]
+            ],
         ];
 
         yield [
-            "amqp://",
+            'amqp://',
             [
                 'host' => 'localhost',
                 'port' => 5672,
@@ -113,11 +115,11 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
-            ]
+            ],
         ];
 
         yield [
-            "amqp://user:pass@host:10000/vhost?connect_timeout=2&lazy=",
+            'amqp://user:pass@host:10000/vhost?connect_timeout=2&lazy=',
             [
                 'host' => 'host',
                 'port' => 10000,
@@ -129,7 +131,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => '2',
                 'persisted' => false,
                 'lazy' => '',
-            ]
+            ],
         ];
 
         yield [
@@ -145,7 +147,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
-            ]
+            ],
         ];
 
         yield [
@@ -161,7 +163,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => false,
-            ]
+            ],
         ];
     }
 }

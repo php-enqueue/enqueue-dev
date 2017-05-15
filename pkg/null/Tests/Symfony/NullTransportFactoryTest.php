@@ -3,16 +3,16 @@
 namespace Enqueue\Null\Tests\Symfony;
 
 use Enqueue\Null\Client\NullDriver;
+use Enqueue\Null\NullConnectionFactory;
+use Enqueue\Null\NullContext;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
-use Enqueue\Null\NullConnectionFactory;
-use Enqueue\Null\NullContext;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use PHPUnit\Framework\TestCase;
 
 class NullTransportFactoryTest extends TestCase
 {

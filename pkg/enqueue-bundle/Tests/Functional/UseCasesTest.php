@@ -14,6 +14,12 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class UseCasesTest extends WebTestCase
 {
+    public function setUp()
+    {
+        // do not call parent::setUp.
+        // parent::setUp();
+    }
+
     public function provideEnqueueConfigs()
     {
         yield 'amqp' => [[
@@ -26,22 +32,15 @@ class UseCasesTest extends WebTestCase
                     'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
                     'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
                     'lazy' => false,
-                ]
-            ]
+                ],
+            ],
         ]];
 
         yield 'amqp_dsn' => [[
             'transport' => [
                 'default' => 'amqp',
                 'amqp' => getenv('AMQP_DSN'),
-            ]
-        ]];
-
-        yield 'dsn_amqp' => [[
-            'transport' => [
-                'default' => 'dsn',
-                'dsn' => getenv('AMQP_DSN'),
-            ]
+            ],
         ]];
 
         yield 'stomp' => [[
@@ -54,8 +53,8 @@ class UseCasesTest extends WebTestCase
                     'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
                     'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
                     'lazy' => false,
-                ]
-            ]
+                ],
+            ],
         ]];
 
         yield 'predis' => [[
@@ -66,8 +65,8 @@ class UseCasesTest extends WebTestCase
                     'port' => (int) getenv('SYMFONY__REDIS__PORT'),
                     'vendor' => 'predis',
                     'lazy' => false,
-                ]
-            ]
+                ],
+            ],
         ]];
 
         yield 'phpredis' => [[
@@ -78,17 +77,24 @@ class UseCasesTest extends WebTestCase
                     'port' => (int) getenv('SYMFONY__REDIS__PORT'),
                     'vendor' => 'phpredis',
                     'lazy' => false,
-                ]
-            ]
+                ],
+            ],
         ]];
 
         yield 'fs' => [[
             'transport' => [
                 'default' => 'fs',
                 'fs' => [
-                    'store_dir' => sys_get_temp_dir(),
-                ]
-            ]
+                    'path' => sys_get_temp_dir(),
+                ],
+            ],
+        ]];
+
+        yield 'fs_dsn' => [[
+            'transport' => [
+                'default' => 'fs',
+                'fs' => 'file:/'.sys_get_temp_dir(),
+            ],
         ]];
 
         yield 'dbal' => [[
@@ -101,8 +107,8 @@ class UseCasesTest extends WebTestCase
                     'host' => getenv('SYMFONY__DB__HOST'),
                     'port' => getenv('SYMFONY__DB__PORT'),
                     'driver' => getenv('SYMFONY__DB__DRIVER'),
-                ]
-            ]
+                ],
+            ],
         ]];
 
         yield 'sqs' => [[
@@ -112,8 +118,8 @@ class UseCasesTest extends WebTestCase
                     'key' => getenv('AWS__SQS__KEY'),
                     'secret' => getenv('AWS__SQS__SECRET'),
                     'region' => getenv('AWS__SQS__REGION'),
-                ]
-            ]
+                ],
+            ],
         ]];
     }
 
@@ -185,19 +191,13 @@ class UseCasesTest extends WebTestCase
     }
 
     /**
-     * @return ProducerInterface|object
+     * @return string
      */
-    private function getMessageProducer()
+    public static function getKernelClass()
     {
-        return $this->container->get('enqueue.client.producer');
-    }
+        include_once __DIR__.'/app/CustomAppKernel.php';
 
-    /**
-     * @return PsrContext|object
-     */
-    private function getPsrContext()
-    {
-        return $this->container->get('enqueue.transport.context');
+        return CustomAppKernel::class;
     }
 
     protected function customSetUp(array $enqueueConfig)
@@ -227,7 +227,7 @@ class UseCasesTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createKernel(array $options = array())
+    protected static function createKernel(array $options = [])
     {
         /** @var CustomAppKernel $kernel */
         $kernel = parent::createKernel($options);
@@ -238,18 +238,18 @@ class UseCasesTest extends WebTestCase
     }
 
     /**
-     * @return string
+     * @return ProducerInterface|object
      */
-    public static function getKernelClass()
+    private function getMessageProducer()
     {
-        include_once __DIR__.'/app/CustomAppKernel.php';
-
-        return CustomAppKernel::class;
+        return $this->container->get('enqueue.client.producer');
     }
 
-    public function setUp()
+    /**
+     * @return PsrContext|object
+     */
+    private function getPsrContext()
     {
-        // do not call parent::setUp.
-        // parent::setUp();
+        return $this->container->get('enqueue.transport.context');
     }
 }

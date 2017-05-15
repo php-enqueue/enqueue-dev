@@ -34,9 +34,9 @@ class AmqpTransportFactory implements TransportFactoryInterface
         $builder
             ->beforeNormalization()
             ->ifString()
-            ->then(function ($v) {
-                return ['dsn' => $v];
-            })
+                ->then(function ($v) {
+                    return ['dsn' => $v];
+                })
             ->end()
             ->children()
                 ->scalarNode('dsn')

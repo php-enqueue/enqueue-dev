@@ -1,6 +1,6 @@
 # EnqueueBundle. Quick tour.
 
-The bundle integrates enqueue library.
+The [EnqueueBundle](https://github.com/php-enqueue/enqueue-bundle) integrates enqueue library.
 It adds easy to use [configuration layer](config_reference.md), register services, adds handy [cli commands](cli_commands.md).
 
 ## Install
