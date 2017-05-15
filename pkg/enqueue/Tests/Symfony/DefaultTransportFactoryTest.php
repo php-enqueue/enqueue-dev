@@ -72,7 +72,7 @@ class DefaultTransportFactoryTest extends TestCase
         $this->assertEquals(['dsn' => 'dsn://'], $config);
     }
 
-    public function testThrowIfNeitherDsnNorAliasConfiguredOnCreateConnectionFactory()
+    public function testShouldSetNullTransportByDefault()
     {
         $transport = new DefaultTransportFactory();
         $tb = new TreeBuilder();
@@ -80,17 +80,15 @@ class DefaultTransportFactoryTest extends TestCase
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), [[]]);
 
-        // guard
-        $this->assertEquals([], $config);
+        $config = $processor->process($tb->buildTree(), [null]);
+        $this->assertEquals(['dsn' => 'null://'], $config);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Either dsn or alias option must be set');
-        $transport->createConnectionFactory(new ContainerBuilder(), $config);
+        $config = $processor->process($tb->buildTree(), ['']);
+        $this->assertEquals(['dsn' => 'null://'], $config);
     }
 
-    public function testThrowIfNeitherDsnNorAliasConfiguredOnCreateContext()
+    public function testThrowIfNeitherDsnNorAliasConfigured()
     {
         $transport = new DefaultTransportFactory();
         $tb = new TreeBuilder();
@@ -98,32 +96,10 @@ class DefaultTransportFactoryTest extends TestCase
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), [[]]);
-
-        // guard
-        $this->assertEquals([], $config);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Either dsn or alias option must be set');
-        $transport->createContext(new ContainerBuilder(), $config);
-    }
-
-    public function testThrowIfNeitherDsnNorAliasConfiguredOnCreateDriver()
-    {
-        $transport = new DefaultTransportFactory();
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
-
-        $transport->addConfiguration($rootNode);
-        $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), [[]]);
-
-        // guard
-        $this->assertEquals([], $config);
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Either dsn or alias option must be set');
-        $transport->createDriver(new ContainerBuilder(), $config);
+        $processor->process($tb->buildTree(), [[]]);
     }
 
     public function testShouldCreateConnectionFactoryFromAlias()

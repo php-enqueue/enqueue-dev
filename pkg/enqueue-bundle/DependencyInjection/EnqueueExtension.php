@@ -52,13 +52,6 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        // enable null transport by default.
-        array_unshift($configs, [
-            'transport' => [
-                'default' => 'null://',
-            ],
-        ]);
-
         $config = $this->processConfiguration(new Configuration($this->factories), $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

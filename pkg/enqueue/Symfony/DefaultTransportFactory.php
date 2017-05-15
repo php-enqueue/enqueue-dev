@@ -34,29 +34,40 @@ class DefaultTransportFactory implements TransportFactoryInterface
     {
         $builder
             ->beforeNormalization()
-                ->ifString()
-                ->then(function ($v) {
-                    if (false === strpos($v, '://')) {
-                        return ['alias' => $v];
+                ->always(function ($v) {
+                    if (is_array($v)) {
+                        if (empty($v['dsn']) && empty($v['alias'])) {
+                            throw new \LogicException('Either dsn or alias option must be set');
+                        }
+
+                        return $v;
                     }
 
-                    return ['dsn' => $v];
+                    if (empty($v)) {
+                        return ['dsn' => 'null://'];
+                    }
+
+                    if (is_string($v)) {
+                        return false !== strpos($v, '://') ?
+                            ['dsn' => $v] :
+                            ['alias' => $v];
+                    }
                 })
             ->end()
             ->children()
                 ->scalarNode('alias')->cannotBeEmpty()->end()
                 ->scalarNode('dsn')->cannotBeEmpty()->end()
-            ;
+            ->end()
+        ->end()
+        ;
     }
 
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
         if (isset($config['alias'])) {
             $aliasId = sprintf('enqueue.transport.%s.connection_factory', $config['alias']);
-        } elseif (isset($config['dsn'])) {
-            $aliasId = $this->findFactory($config['dsn'])->createConnectionFactory($container, $config);
         } else {
-            throw new \LogicException('Either dsn or alias option must be set.');
+            $aliasId = $this->findFactory($config['dsn'])->createConnectionFactory($container, $config);
         }
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
@@ -74,10 +85,8 @@ class DefaultTransportFactory implements TransportFactoryInterface
     {
         if (isset($config['alias'])) {
             $aliasId = sprintf('enqueue.transport.%s.context', $config['alias']);
-        } elseif (isset($config['dsn'])) {
-            $aliasId = $this->findFactory($config['dsn'])->createContext($container, $config);
         } else {
-            throw new \LogicException('Either dsn or alias option must be set.');
+            $aliasId = $this->findFactory($config['dsn'])->createContext($container, $config);
         }
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
@@ -95,10 +104,8 @@ class DefaultTransportFactory implements TransportFactoryInterface
     {
         if (isset($config['alias'])) {
             $aliasId = sprintf('enqueue.client.%s.driver', $config['alias']);
-        } elseif (isset($config['dsn'])) {
-            $aliasId = $this->findFactory($config['dsn'])->createDriver($container, $config);
         } else {
-            throw new \LogicException('Either dsn or alias option must be set.');
+            $aliasId = $this->findFactory($config['dsn'])->createDriver($container, $config);
         }
 
         $driverId = sprintf('enqueue.client.%s.driver', $this->getName());

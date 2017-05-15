@@ -9,8 +9,8 @@ use Enqueue\Client\Producer;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\Symfony\NullTransportFactory;
-use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -112,30 +112,6 @@ class EnqueueExtensionTest extends TestCase
         );
         self::assertEquals(
             'enqueue.transport.null.context',
-            (string) $container->getAlias('enqueue.transport.default.context')
-        );
-    }
-
-    public function testShouldUseNullTransportAsDefaultConfiguredViaDSN()
-    {
-        $container = new ContainerBuilder();
-
-        $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new NullTransportFactory());
-        $extension->addTransportFactory(new DefaultTransportFactory());
-
-        $extension->load([[
-            'transport' => [
-                'default' => 'null://',
-            ],
-        ]], $container);
-
-        self::assertEquals(
-            'enqueue.transport.default.context',
-            (string) $container->getAlias('enqueue.transport.context')
-        );
-        self::assertEquals(
-            'enqueue.transport.default_null.context',
             (string) $container->getAlias('enqueue.transport.default.context')
         );
     }
