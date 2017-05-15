@@ -1,18 +1,23 @@
 # Client. RPC call
 
 The client's [quick tour](quick_tour.md) describes how to get the client object. 
-We use you followed instructions there and have instance of `Enqueue\SimpleClient\SimpleClient` in `$client` var. 
+Here we'll use `Enqueue\SimpleClient\SimpleClient` though it is not required.
+You can get all that stuff from manually built client or get objects from a container (Symfony).
+
+The simple client could be created like this:
 
 ## The client side
 
 There is a handy class RpcClient shipped with the client component. 
-It allows you to easily send a message and wait for a reply.
+It allows you to easily perform [RPC calls](https://en.wikipedia.org/wiki/Remote_procedure_call).
+It send a message and wait for a reply.
  
 ```php
 <?php
 use Enqueue\Client\RpcClient;
+use Enqueue\SimpleClient\SimpleClient;
 
-/** @var \Enqueue\SimpleClient\SimpleClient $client */
+$client = new SimpleClient('amqp://');
 
 $rpcClient = new RpcClient($client->getProducer(), $context);
 
@@ -24,8 +29,9 @@ You can perform several requests asynchronously with `callAsync` and request rep
 ```php
 <?php
 use Enqueue\Client\RpcClient;
+use Enqueue\SimpleClient\SimpleClient;
 
-/** @var \Enqueue\SimpleClient\SimpleClient $client */
+$client = new SimpleClient('amqp://');
 
 $rpcClient = new RpcClient($client->getProducer(), $context);
 
@@ -54,10 +60,11 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Consumption\Result;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
+use Enqueue\SimpleClient\SimpleClient;
 
 /** @var \Enqueue\Psr\PsrContext $context */
 
-/** @var \Enqueue\SimpleClient\SimpleClient $client */
+$client = new SimpleClient('amqp://');
 
 $client->bind('greeting_topic', 'greeting_processor', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
     echo $message->getBody();

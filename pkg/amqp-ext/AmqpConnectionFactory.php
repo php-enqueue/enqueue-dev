@@ -77,7 +77,9 @@ class AmqpConnectionFactory implements PsrConnectionFactory
             $config = $this->config;
             $config['login'] = $this->config['user'];
             $config['password'] = $this->config['pass'];
+
             $this->connection = new \AMQPConnection($config);
+
             $this->config['persisted'] ? $this->connection->pconnect() : $this->connection->connect();
         }
         if (false == $this->connection->isConnected()) {

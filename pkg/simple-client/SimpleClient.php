@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\SimpleClient;
 
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
@@ -32,6 +33,24 @@ final class SimpleClient
     private $container;
 
     /**
+     * The config could be a transport DSN (string) or an array, here's an example of a few DSNs:.
+     *
+     * amqp://
+     * amqp://guest:guest@localhost:5672/%2f?lazy=1&persisted=1
+     * file://foo/bar/
+     * null://
+     *
+     * or an array, the most simple:
+     *
+     *$config = [
+     *   'transport' => [
+     *     'default' => 'amqp',
+     *     'amqp'          => [], // amqp options here
+     *   ],
+     * ]
+     *
+     * or a with all details:
+     *
      * $config = [
      *   'transport' => [
      *     'default' => 'amqp',
@@ -57,102 +76,6 @@ final class SimpleClient
     public function __construct($config)
     {
         $this->container = $this->buildContainer($config);
-    }
-
-    /**
-     * @param array|string $config
-     *
-     * @return ContainerBuilder
-     */
-    private function buildContainer($config)
-    {
-        $config = $this->buildConfig($config);
-        $extension = $this->buildContainerExtension($config);
-
-        $container = new ContainerBuilder();
-        $container->registerExtension($extension);
-        $container->loadFromExtension($extension->getAlias(), $config);
-
-        $container->compile();
-
-        return $container;
-    }
-
-    /**
-     * @param array $config
-     *
-     * @return SimpleClientContainerExtension
-     */
-    private function buildContainerExtension($config)
-    {
-        $map = [
-            'default' => DefaultTransportFactory::class,
-            'amqp' => AmqpTransportFactory::class,
-            'rabbitmq_amqp' => RabbitMqAmqpTransportFactory::class,
-            'dbal' => DbalTransportFactory::class,
-            'fs' => FsTransportFactory::class,
-            'redis' => RedisTransportFactory::class,
-            'stomp' => StompTransportFactory::class,
-            'rabbitmq_stomp' => RabbitMqStompTransportFactory::class,
-            'sqs' => SqsTransportFactory::class,
-        ];
-
-        $extension = new SimpleClientContainerExtension();
-
-        foreach (array_keys($config['transport']) as $transport) {
-            if (false == isset($map[$transport])) {
-                throw new \LogicException(sprintf('Transport is not supported: "%s"', $transport));
-            }
-
-            $extension->addTransportFactory(new $map[$transport]);
-        }
-
-        return $extension;
-    }
-
-    /**
-     * @param array|string $config
-     *
-     * @return array
-     */
-    private function buildConfig($config)
-    {
-        if (is_string($config)) {
-            $extConfig = [
-                'client' => [],
-                'transport' => [
-                    'default' => $config,
-                    $config => [],
-                ],
-            ];
-        } elseif (is_array($config)) {
-            $extConfig = array_merge_recursive([
-                'client' => [],
-                'transport' => [],
-            ], $config);
-        } else {
-            throw new \LogicException('Expects config is string or array');
-        }
-
-        if (empty($extConfig['transport']['default'])) {
-            $defaultTransport = null;
-            foreach ($extConfig['transport'] as $transport => $config) {
-                if ('default' === $transport) {
-                    continue;
-                }
-
-                $defaultTransport = $transport;
-                break;
-            }
-
-            if (false == $defaultTransport) {
-                throw new \LogicException('There is no transport configured');
-            }
-
-            $extConfig['transport']['default'] = $defaultTransport;
-        }
-
-        return $extConfig;
     }
 
     /**
@@ -207,7 +130,7 @@ final class SimpleClient
      */
     public function getContext()
     {
-       return $this->container->get('enqueue.transport.context');
+        return $this->container->get('enqueue.transport.context');
     }
 
     /**
@@ -289,5 +212,104 @@ final class SimpleClient
     public function getRouterProcessor()
     {
         return $this->container->get('enqueue.client.router_processor');
+    }
+
+    /**
+     * @param array|string $config
+     *
+     * @return ContainerBuilder
+     */
+    private function buildContainer($config)
+    {
+        $config = $this->buildConfig($config);
+        $extension = $this->buildContainerExtension();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extension);
+        $container->loadFromExtension($extension->getAlias(), $config);
+
+        $container->compile();
+
+        return $container;
+    }
+
+    /**
+     * @return SimpleClientContainerExtension
+     */
+    private function buildContainerExtension()
+    {
+        $map = [
+            'default' => DefaultTransportFactory::class,
+            'amqp' => AmqpTransportFactory::class,
+            'rabbitmq_amqp' => RabbitMqAmqpTransportFactory::class,
+            'dbal' => DbalTransportFactory::class,
+            'fs' => FsTransportFactory::class,
+            'redis' => RedisTransportFactory::class,
+            'stomp' => StompTransportFactory::class,
+            'rabbitmq_stomp' => RabbitMqStompTransportFactory::class,
+            'sqs' => SqsTransportFactory::class,
+        ];
+
+        $extension = new SimpleClientContainerExtension();
+
+        foreach ($map as $name => $factoryClass) {
+            if (class_exists($factoryClass)) {
+                $extension->addTransportFactory(new $factoryClass($name));
+            }
+        }
+
+        return $extension;
+    }
+
+    /**
+     * @param array|string $config
+     *
+     * @return array
+     */
+    private function buildConfig($config)
+    {
+        if (is_string($config) && false !== strpos($config, '://')) {
+            $extConfig = [
+                'client' => [],
+                'transport' => [
+                    'default' => $config,
+                ],
+            ];
+        } elseif (is_string($config)) {
+            $extConfig = [
+                'client' => [],
+                'transport' => [
+                    'default' => $config,
+                    $config => [],
+                ],
+            ];
+        } elseif (is_array($config)) {
+            $extConfig = array_merge_recursive([
+                'client' => [],
+                'transport' => [],
+            ], $config);
+        } else {
+            throw new \LogicException('Expects config is string or array');
+        }
+
+        if (empty($extConfig['transport']['default'])) {
+            $defaultTransport = null;
+            foreach ($extConfig['transport'] as $transport => $config) {
+                if ('default' === $transport) {
+                    continue;
+                }
+
+                $defaultTransport = $transport;
+                break;
+            }
+
+            if (false == $defaultTransport) {
+                throw new \LogicException('There is no transport configured');
+            }
+
+            $extConfig['transport']['default'] = $defaultTransport;
+        }
+
+        return $extConfig;
     }
 }

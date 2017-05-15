@@ -19,7 +19,10 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",
-        "enqueue/test": "^0.4"
+        "enqueue/test": "^0.4",
+        "enqueue/amqp-ext": "^0.4",
+        "enqueue/fs": "^0.4",
+        "enqueue/null": "^0.4"
     },
     "autoload": {
         "psr-4": { "Enqueue\\SimpleClient\\": "" },
