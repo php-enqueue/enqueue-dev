@@ -35,6 +35,7 @@ install:
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
     - composer install --ignore-platform-reqs # ext-amqp is not installed
+    - ./bin/phpstan analyse -l 1 -c phpstan.neon pkg/enqueue
     - if [ "$FUNCTIONAL_TESTS" = true ]; then docker --version; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then docker-compose --version; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/dev -b; fi

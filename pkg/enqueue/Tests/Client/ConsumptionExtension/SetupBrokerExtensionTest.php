@@ -27,7 +27,7 @@ class SetupBrokerExtensionTest extends TestCase
 
     public function testShouldSetupBroker()
     {
-        $logger = new NullLogger('');
+        $logger = new NullLogger();
 
         $driver = $this->createDriverMock();
         $driver
@@ -45,7 +45,7 @@ class SetupBrokerExtensionTest extends TestCase
 
     public function testShouldSetupBrokerOnlyOnce()
     {
-        $logger = new NullLogger('');
+        $logger = new NullLogger();
 
         $driver = $this->createDriverMock();
         $driver

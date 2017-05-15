@@ -25,7 +25,8 @@
     "symfony/browser-kit": "^2.8|^3",
     "symfony/expression-language": "^2.8|^3",
     "friendsofphp/php-cs-fixer": "^2",
-    "empi89/php-amqp-stubs": "*@dev"
+    "empi89/php-amqp-stubs": "*@dev",
+    "phpstan/phpstan": "^0.7.0"
   },
   "autoload": {
     "files": ["pkg/enqueue/functions_include.php"]

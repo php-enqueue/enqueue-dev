@@ -195,7 +195,7 @@ class ConsumeMessagesCommandTest extends TestCase
             'aRouterProcessorName'
         );
 
-        return new QueueMetaRegistry($config, $destinationNames, 'default');
+        return new QueueMetaRegistry($config, $destinationNames);
     }
 
     /**

@@ -366,11 +366,7 @@ class QueueConsumerTest extends TestCase
             ->expects($this->once())
             ->method('onStart')
             ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use (
-                $contextStub,
-                $messageConsumerStub,
-                $processorMock
-            ) {
+            ->willReturnCallback(function (Context $context) use ($contextStub) {
                 $this->assertSame($contextStub, $context->getPsrContext());
                 $this->assertNull($context->getPsrConsumer());
                 $this->assertNull($context->getPsrProcessor());
@@ -446,7 +442,6 @@ class QueueConsumerTest extends TestCase
                 $contextStub,
                 $messageConsumerStub,
                 $processorMock,
-                $expectedMessage,
                 $queue
             ) {
                 $this->assertSame($contextStub, $context->getPsrContext());
