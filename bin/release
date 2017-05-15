@@ -9,6 +9,8 @@ then
     exit 1
 fi
 
+./bin/dev -c $1 && git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin master
+
 ./bin/subtree-split
 
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
