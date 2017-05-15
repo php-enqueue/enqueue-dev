@@ -55,9 +55,8 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         // enable null transport by default.
         array_unshift($configs, [
             'transport' => [
-                'default' => 'null',
-                'null' => [],
-            ]
+                'default' => 'null://',
+            ],
         ]);
 
         $config = $this->processConfiguration(new Configuration($this->factories), $configs);
