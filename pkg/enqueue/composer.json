@@ -13,6 +13,7 @@
     "require": {
         "php": ">=5.6",
         "enqueue/psr-queue": "^0.4",
+        "enqueue/null": "^0.4",
         "ramsey/uuid": "^2|^3.5"
     },
     "require-dev": {
@@ -20,7 +21,6 @@
         "symfony/console": "^2.8|^3",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3",
-        "enqueue/null": "^0.4",
         "enqueue/amqp-ext": "^0.4",
         "enqueue/fs": "^0.4",
         "enqueue/test": "^0.4",
