@@ -15,7 +15,7 @@ cache:
 
 install:
     - composer self-update
-    - composer install --prefer-source
+    - composer install --prefer-source --ignore-platform-reqs
 
 script:
     - vendor/bin/phpunit --exclude-group=functional

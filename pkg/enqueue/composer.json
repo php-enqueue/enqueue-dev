@@ -24,7 +24,8 @@
         "enqueue/amqp-ext": "^0.4",
         "enqueue/fs": "^0.4",
         "enqueue/test": "^0.4",
-        "enqueue/simple-client": "^0.4"
+        "enqueue/simple-client": "^0.4",
+        "empi89/php-amqp-stubs": "*@dev"
     },
     "suggest": {
         "symfony/console": "^2.8|^3 If you want to use li commands",
