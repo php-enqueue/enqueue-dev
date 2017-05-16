@@ -51,6 +51,7 @@ class Configuration implements ConfigurationInterface
                 ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
             ->end()->end()
             ->booleanNode('job')->defaultFalse()->end()
+            ->booleanNode('async_events')->defaultFalse()->end()
             ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                 ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
                 ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
