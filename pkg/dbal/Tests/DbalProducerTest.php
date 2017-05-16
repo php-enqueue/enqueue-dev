@@ -51,7 +51,7 @@ class DbalProducerTest extends \PHPUnit_Framework_TestCase
 
         $producer = new DbalProducer($this->createContextMock());
 
-        $producer->send(new NotSupportedDestination1(''), new DbalMessage());
+        $producer->send(new NotSupportedDestination1(), new DbalMessage());
     }
 
     public function testShouldThrowIfInsertMessageFailed()

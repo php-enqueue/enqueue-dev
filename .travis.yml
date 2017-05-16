@@ -43,6 +43,8 @@ install:
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/dev -b; fi
 
 script:
-    - if [ "PHPSTAN" = true ]; then ./bin/phpstan analyse -l 1 -c phpstan.neon pkg/enqueue; fi
+    # misssing pkg/amqp-ext pkg/job-queue pkg/redis
+    - if [ "PHPSTAN" = true ]; then ./bin/phpstan analyse -l 1 -c phpstan.neon pkg/enqueue pkg/psr-queue pkg/fs pkg/simple-client; fi
+    - if [ "PHPSTAN" = true ]; then ./bin/phpstan analyse -l 1 -c phpstan.neon pkg/stomp pkg/dbal pkg/enqueue-bundle pkg/null pkg/sqs pkg/test; fi
     - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/dev -t; fi

@@ -20,7 +20,7 @@ class AddTopicMetaPassTest extends TestCase
 
     public function testCouldBeConstructedWithoutAntArguments()
     {
-        new AddTopicMetaPass([]);
+        new AddTopicMetaPass();
     }
 
     public function testCouldBeConstructedByCreateFactoryMethod()
