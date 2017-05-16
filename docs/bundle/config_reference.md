@@ -3,11 +3,14 @@
 You can get this info by running `./bin/console config:dump-reference enqueue` command.
 
 ```yaml
+# Default configuration for extension with alias: "enqueue"
 enqueue:
     transport:            # Required
         default:
-            alias:                ~ # Required
-        null:                 []
+            alias:                ~
+            dsn:                  ~
+        null:
+            dsn:                  ~
         stomp:
             host:                 localhost
             port:                 61613
@@ -37,6 +40,9 @@ enqueue:
             delay_plugin_installed: false
         amqp:
 
+            # The connection to AMQP broker set as a string. Other parameters are ignored if set
+            dsn:                  ~
+
             # The host to connect too. Note: Max 1024 characters
             host:                 localhost
 
@@ -63,6 +69,9 @@ enqueue:
             persisted:            false
             lazy:                 true
         rabbitmq_amqp:
+
+            # The connection to AMQP broker set as a string. Other parameters are ignored if set
+            dsn:                  ~
 
             # The host to connect too. Note: Max 1024 characters
             host:                 localhost
@@ -94,8 +103,11 @@ enqueue:
             delay_plugin_installed: false
         fs:
 
+            # The path to a directory where to store messages given as DSN. For example file://tmp/foo
+            dsn:                  ~
+
             # The store directory where all queue\topics files will be created and messages are stored
-            path:            ~ # Required
+            path:                 ~
 
             # The option tells how many messages should be read from file at once. The feature save resources but could lead to bigger messages lose.
             pre_fetch_count:      1
