@@ -342,7 +342,7 @@ class FsDriverTest extends \PHPUnit\Framework\TestCase
 
         $meta = new QueueMetaRegistry($this->createDummyConfig(), [
             'default' => [],
-        ], 'default');
+        ]);
 
         $driver = new FsDriver(
             $context,

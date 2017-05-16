@@ -4,6 +4,9 @@ bin/doctrine*
 bin/php-cs-fixer
 bin/phpunit
 bin/sql-formatter
+bin/phpstan
+bin/jp.php
+bin/php-parse
 vendor
 .php_cs
 .php_cs.cache

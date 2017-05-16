@@ -179,7 +179,7 @@ class FsContext implements PsrContext
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, FsDestination::class);
 
-        $this->workWithFile($queue, 'c', function (FsDestination $destination, $file) use ($queue) {
+        $this->workWithFile($queue, 'c', function (FsDestination $destination, $file) {
             ftruncate($file, 0);
         });
     }

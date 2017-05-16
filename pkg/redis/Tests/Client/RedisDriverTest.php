@@ -316,7 +316,7 @@ class RedisDriverTest extends TestCase
 
         $meta = new QueueMetaRegistry(Config::create(), [
             'default' => [],
-        ], 'default');
+        ]);
 
         $driver = new RedisDriver(
             $context,

@@ -38,7 +38,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     public function testThrowIfNeitherRedisNorFactoryGiven()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The $redis argument must be either Enqueue\Redis\Redis or callable that returns $s once called.');
+        $this->expectExceptionMessage('The $redis argument must be either Enqueue\Redis\Redis or callable that returns Enqueue\Redis\Redis once called.');
         new RedisContext(new \stdClass());
     }
 

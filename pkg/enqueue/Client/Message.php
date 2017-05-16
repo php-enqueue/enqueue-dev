@@ -64,6 +64,11 @@ class Message
     private $correlationId;
 
     /**
+     * @var string
+     */
+    private $scope;
+
+    /**
      * @var array
      */
     private $headers = [];
@@ -89,7 +94,7 @@ class Message
     }
 
     /**
-     * @param null|string|number|array|\JsonSerializable $body
+     * @param null|string|int|float|array|\JsonSerializable $body
      */
     public function setBody($body)
     {

@@ -38,8 +38,8 @@ class Result
     private $reply;
 
     /**
-     * @param string $status
-     * @param string $reason
+     * @param mixed $status
+     * @param mixed $reason
      */
     public function __construct($status, $reason = '')
     {

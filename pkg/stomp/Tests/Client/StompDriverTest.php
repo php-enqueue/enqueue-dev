@@ -39,7 +39,7 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new StompDestination('aName');
+        $expectedQueue = new StompDestination();
 
         $context = $this->createPsrContextMock();
         $context
@@ -66,7 +66,7 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
     {
-        $expectedQueue = new StompDestination('aName');
+        $expectedQueue = new StompDestination();
 
         $context = $this->createPsrContextMock();
         $context
@@ -153,7 +153,7 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldSendMessageToRouter()
     {
-        $topic = new StompDestination('');
+        $topic = new StompDestination();
         $transportMessage = new StompMessage();
 
         $producer = $this->createPsrProducerMock();
@@ -207,7 +207,7 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldSendMessageToProcessor()
     {
-        $queue = new StompDestination('');
+        $queue = new StompDestination();
         $transportMessage = new StompMessage();
 
         $producer = $this->createPsrProducerMock();

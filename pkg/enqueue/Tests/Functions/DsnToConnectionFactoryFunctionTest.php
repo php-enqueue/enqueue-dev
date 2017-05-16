@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Tests\Router;
+namespace Enqueue\Tests\Functions;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;

@@ -29,7 +29,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
     {
         $destination = new RedisDestination('aQueue');
 
-        $consumer = new RedisConsumer($this->createContextMock(), $destination, 1);
+        $consumer = new RedisConsumer($this->createContextMock(), $destination);
 
         $this->assertSame($destination, $consumer->getQueue());
     }

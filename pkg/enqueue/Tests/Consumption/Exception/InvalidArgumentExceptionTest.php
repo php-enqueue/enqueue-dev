@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Tests\Consumption;
+namespace Enqueue\Tests\Consumption\Exception;
 
 use Enqueue\Consumption\Exception\ExceptionInterface;
 use Enqueue\Consumption\Exception\InvalidArgumentException;

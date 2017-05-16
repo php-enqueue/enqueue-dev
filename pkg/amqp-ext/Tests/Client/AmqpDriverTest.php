@@ -367,7 +367,7 @@ class AmqpDriverTest extends TestCase
 
         $meta = new QueueMetaRegistry($this->createDummyConfig(), [
             'default' => [],
-        ], 'default');
+        ]);
 
         $driver = new AmqpDriver(
             $context,

@@ -3,11 +3,17 @@
 namespace Enqueue\Fs\Tests\Functional;
 
 use Enqueue\Fs\FsConnectionFactory;
+use Enqueue\Fs\FsContext;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
 class FsContextTest extends TestCase
 {
+    /**
+     * @var FsContext|null
+     */
+    private $fsContext;
+
     public function tearDown()
     {
         $fs = new Filesystem();

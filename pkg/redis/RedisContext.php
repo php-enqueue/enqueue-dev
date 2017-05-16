@@ -33,7 +33,7 @@ class RedisContext implements PsrContext
             $this->redisFactory = $redis;
         } else {
             throw new \InvalidArgumentException(sprintf(
-                'The $redis argument must be either %s or callable that returns $s once called.',
+                'The $redis argument must be either %s or callable that returns %s once called.',
                 Redis::class,
                 Redis::class
             ));
