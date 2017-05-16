@@ -207,7 +207,7 @@ class UseCasesTest extends WebTestCase
      */
     public static function getKernelClass()
     {
-        include_once __DIR__.'/app/CustomAppKernel.php';
+        include_once __DIR__.'/App/CustomAppKernel.php';
 
         return CustomAppKernel::class;
     }
