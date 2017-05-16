@@ -7,27 +7,27 @@ matrix:
   include:
     - php: 5.6
       sudo: false
-      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=false
+      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=false UNIT_TESTS=true
     - php: 7.1
       sudo: false
-      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=false PHPSTAN=true
+      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=false UNIT_TESTS=false PHPSTAN=true
     - php: 7.0
       sudo: false
-      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=false
+      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=false UNIT_TESTS=true
     - php: 5.6
       sudo: false
-      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=false SYMFONY_DEPRECATIONS_HELPER=weak
+      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=false UNIT_TESTS=true SYMFONY_DEPRECATIONS_HELPER=weak
     - php: 7.0
       sudo: false
-      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=false SYMFONY_DEPRECATIONS_HELPER=weak
+      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=false UNIT_TESTS=true SYMFONY_DEPRECATIONS_HELPER=weak
     - php: 7.0
       sudo: required
       services: docker
-      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true
+      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true UNIT_TESTS=false
     - php: 7.0
       sudo: required
       services: docker
-      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true
+      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true UNIT_TESTS=false
 
 cache:
     directories:
@@ -38,11 +38,11 @@ install:
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
     - composer install --ignore-platform-reqs # ext-amqp is not installed
-    - if [ "PHPSTAN" = true ]; then ./bin/phpstan analyse -l 1 -c phpstan.neon pkg/enqueue; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then docker --version; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then docker-compose --version; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/dev -b; fi
 
 script:
-    - if [ "$FUNCTIONAL_TESTS" = false ]; then bin/phpunit --exclude-group=functional; fi
+    - if [ "PHPSTAN" = true ]; then ./bin/phpstan analyse -l 1 -c phpstan.neon pkg/enqueue; fi
+    - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/dev -t; fi
