@@ -25,7 +25,14 @@
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td>{{ sentMessage.topic }}</td>
-                    <td><pre>{{ collector.prettyPrintMessage(sentMessage.body)|raw }}</pre></td>
+                    <td style="width: 70%">
+                        <span class="metadata">
+                            <span>{{ sentMessage.body[0:40] }}... </span><a class="btn btn-link text-small sf-toggle" data-toggle-selector="#message-body-{{ loop.index }}" data-toggle-alt-content="Hide trace">Show trace</a>
+
+                            <div id="message-body-{{ loop.index }}" class="context sf-toggle-content sf-toggle-hidden">
+                                {{ profiler_dump(sentMessage.body, maxDepth=1) }}
+                            </div>
+                        </span>
                     <td><span title="{{ sentMessage.priority }}">{{ collector.prettyPrintPriority(sentMessage.priority) }}</span></td>
                 </tr>
             {% endfor %}
