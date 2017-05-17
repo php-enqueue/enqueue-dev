@@ -12,27 +12,71 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
     /**
      * @var string[]
      */
-    private $transformersMap;
+    private $eventNamesMap;
 
     /**
-     * @param string[] $transformersMap
+     * @var string[]
      */
-    public function __construct(array $transformersMap)
+    private $transformerIdsMap;
+
+    /**
+     * @param string[] $eventNamesMap
+     * @param string[] $transformerIdsMap
+     */
+    public function __construct(array $eventNamesMap, array $transformerIdsMap)
     {
-        $this->transformersMap = $transformersMap;
+        $this->eventNamesMap = $eventNamesMap;
+        $this->transformerIdsMap = $transformerIdsMap;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getTransformer($eventName)
+    public function getTransformerNameForEvent($eventName)
     {
-        if (false == array_key_exists($eventName, $this->transformersMap)) {
+        $transformerName = null;
+        if (array_key_exists($eventName, $this->eventNamesMap)) {
+            $transformerName = $this->eventNamesMap[$eventName];
+        } else {
+            foreach ($this->eventNamesMap as $eventNamePattern => $name) {
+                if ('/' != $eventNamePattern[0]) {
+                    continue;
+                }
+
+                if (preg_match($eventNamePattern, $eventName)) {
+                    $transformerName = $name;
+
+                    break;
+                }
+            }
+        }
+
+        if (empty($transformerName)) {
             throw new \LogicException(sprintf('There is no transformer registered for the given event %s', $eventName));
         }
 
-        // TODO add check container returns instance of EventTransformer interface.
+        return $transformerName;
+    }
 
-        return $this->container->get($this->transformersMap[$eventName]);
+    /**
+     * {@inheritdoc}
+     */
+    public function getTransformer($name)
+    {
+        if (false == array_key_exists($name, $this->transformerIdsMap)) {
+            throw new \LogicException(sprintf('There is no transformer named %s', $name));
+        }
+
+        $transformer = $this->container->get($this->transformerIdsMap[$name]);
+
+        if (false == $transformer instanceof  EventTransformer) {
+            throw new \LogicException(sprintf(
+                'The container must return instance of %s but got %s',
+                EventTransformer::class,
+                is_object($transformer) ? get_class($transformer) : gettype($transformer)
+            ));
+        }
+
+        return $transformer;
     }
 }

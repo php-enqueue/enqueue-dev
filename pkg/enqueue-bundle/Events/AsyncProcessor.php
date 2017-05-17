@@ -2,12 +2,11 @@
 
 namespace Enqueue\Bundle\Events;
 
-use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProcessor;
 
-class AsyncProcessor implements PsrProcessor, TopicSubscriberInterface
+class AsyncProcessor implements PsrProcessor
 {
     /**
      * @var Registry
@@ -37,22 +36,15 @@ class AsyncProcessor implements PsrProcessor, TopicSubscriberInterface
         if (false == $eventName = $message->getProperty('event_name')) {
             return self::REJECT;
         }
+        if (false == $transformerName = $message->getProperty('transformer_name')) {
+            return self::REJECT;
+        }
 
-        // TODO set transformer's name explicitly when sending a message.
-
-        $event = $this->registry->getTransformer($eventName)->toEvent($eventName, $message);
+        $event = $this->registry->getTransformer($transformerName)->toEvent($eventName, $message);
 
         $this->eventDispatcher->syncMode($eventName);
         $this->eventDispatcher->dispatch($eventName, $event);
 
         return self::ACK;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
-    {
-        return ['symfony_events'];
     }
 }

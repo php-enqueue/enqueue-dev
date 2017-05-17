@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\DependencyInjection\Compiler;
+namespace Enqueue\Bundle\Events\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -14,6 +14,10 @@ class AsyncEventsPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (false == $container->hasDefinition('enqueue.events.async_listener')) {
+            return;
+        }
+
+        if (false == $container->hasDefinition('enqueue.events.registry')) {
             return;
         }
 
@@ -34,6 +38,12 @@ class AsyncEventsPass implements CompilerPassInterface
                         ->addTag('kernel.event_listener', [
                             'event' => $tagAttribute['event'],
                             'method' => 'onEvent',
+                        ])
+                    ;
+
+                    $container->getDefinition('enqueue.events.async_processor')
+                        ->addTag('enqueue.client.processor', [
+                            'topicName' => 'event.'.$tagAttribute['event'],
                         ])
                     ;
 

@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Events;
 
+use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -40,10 +41,14 @@ class AsyncListener
     public function onEvent(Event $event, $eventName)
     {
         if (false == isset($this->syncMode[$eventName])) {
-            $message = $this->registry->getTransformer($eventName)->toMessage($eventName, $event);
-            $message->setProperty('event_name', $eventName);
+            $transformerName = $this->registry->getTransformerNameForEvent($eventName);
 
-            $this->producer->send('symfony_events', $message);
+            $message = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
+            $message->setScope(Message::SCOPE_APP);
+            $message->setProperty('event_name', $eventName);
+            $message->setProperty('transformer_name', $transformerName);
+
+            $this->producer->send('event.'.$eventName, $message);
         }
     }
 }
