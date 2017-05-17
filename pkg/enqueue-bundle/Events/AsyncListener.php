@@ -33,11 +33,23 @@ class AsyncListener
         $this->registry = $registry;
     }
 
+    public function resetSyncMode()
+    {
+        $this->syncMode = [];
+    }
+
+    /**
+     * @param string $eventName
+     */
     public function syncMode($eventName)
     {
         $this->syncMode[$eventName] = true;
     }
 
+    /**
+     * @param Event  $event
+     * @param string $eventName
+     */
     public function onEvent(Event $event, $eventName)
     {
         if (false == isset($this->syncMode[$eventName])) {

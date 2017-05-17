@@ -28,6 +28,11 @@ class ProxyEventDispatcher extends EventDispatcher
         $this->asyncListener = $asyncListener;
     }
 
+    public function resetSyncMode()
+    {
+        $this->asyncListener->resetSyncMode();
+    }
+
     /**
      * @param string $eventName
      */
@@ -42,6 +47,7 @@ class ProxyEventDispatcher extends EventDispatcher
     public function dispatch($eventName, Event $event = null)
     {
         parent::dispatch($eventName, $event);
+
         $this->trueEventDispatcher->dispatch($eventName, $event);
     }
 }
