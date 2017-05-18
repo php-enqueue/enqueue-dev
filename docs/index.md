@@ -25,6 +25,7 @@
     - [Quick tour](bundle/quick_tour.md)
     - [Config reference](bundle/config_reference.md)
     - [Cli commands](bundle/cli_commands.md)
+    - [Message producer](bundle/message_producer.md)
     - [Message processor](bundle/message_processor.md)
     - [Job queue](bundle/job_queue.md)
     - [Consumption extension](bundle/consumption_extension.md)
