@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Tests\Symfony;
+namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Symfony\Client\FlushSpoolProducerListener;
