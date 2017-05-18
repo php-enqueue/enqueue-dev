@@ -28,17 +28,18 @@ class ProxyEventDispatcher extends EventDispatcher
         $this->asyncListener = $asyncListener;
     }
 
-    public function resetSyncMode()
+    /**
+     * This method dispatches only those listeners that were marked as async.
+     *
+     * @param string     $eventName
+     * @param Event|null $event
+     */
+    public function dispatchAsyncListenersOnly($eventName, Event $event = null)
     {
         $this->asyncListener->resetSyncMode();
-    }
-
-    /**
-     * @param string $eventName
-     */
-    public function syncMode($eventName)
-    {
         $this->asyncListener->syncMode($eventName);
+
+        parent::dispatch($eventName, $event);
     }
 
     /**

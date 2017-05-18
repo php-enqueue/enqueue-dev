@@ -42,10 +42,7 @@ class AsyncProcessor implements PsrProcessor
 
         $event = $this->registry->getTransformer($transformerName)->toEvent($eventName, $message);
 
-        $this->eventDispatcher->resetSyncMode();
-        $this->eventDispatcher->syncMode($eventName);
-
-        $this->eventDispatcher->dispatch($eventName, $event);
+        $this->eventDispatcher->dispatchAsyncListenersOnly($eventName, $event);
 
         return self::ACK;
     }
