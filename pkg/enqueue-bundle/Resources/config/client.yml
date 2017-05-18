@@ -9,6 +9,11 @@ services:
             - '@enqueue.client.driver'
             - '@enqueue.client.extensions'
 
+    enqueue.client.spool_producer:
+        class: 'Enqueue\Client\SpoolProducer'
+        arguments:
+            - '@enqueue.client.producer'
+
     enqueue.client.extensions:
         class: 'Enqueue\Client\ChainExtension'
         public: false
@@ -17,6 +22,9 @@ services:
 
     enqueue.producer:
         alias: 'enqueue.client.producer'
+
+    enqueue.spool_producer:
+        alias: 'enqueue.client.spool_producer'
 
     enqueue.client.rpc_client:
         class: 'Enqueue\Client\RpcClient'
@@ -123,3 +131,10 @@ services:
               name: 'data_collector'
               template: 'EnqueueBundle:Profiler:panel.html.twig'
               id: 'enqueue.message_queue'
+
+    enqueue.flush_spool_producer_listener:
+        class: 'Enqueue\Symfony\Client\FlushSpoolProducerListener'
+        arguments:
+            - '@enqueue.client.spool_producer'
+        tags:
+            - { name: 'kernel.event_subscriber' }

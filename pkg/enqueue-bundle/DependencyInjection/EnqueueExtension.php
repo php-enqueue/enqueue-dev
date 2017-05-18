@@ -64,6 +64,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
 
         if (isset($config['client'])) {
             $loader->load('client.yml');
+            $loader->load('extensions/flush_spool_producer_extension.yml');
 
             foreach ($config['transport'] as $name => $transportConfig) {
                 $this->factories[$name]->createDriver($container, $transportConfig);
@@ -88,10 +89,10 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             $container->setParameter('enqueue.client.default_queue_name', $config['client']['default_processor_queue']);
 
             if (false == empty($config['client']['traceable_producer'])) {
-                $producerId = 'enqueue.client.traceable_message_producer';
+                $producerId = 'enqueue.client.traceable_producer';
                 $container->register($producerId, TraceableProducer::class)
                     ->setDecoratedService('enqueue.client.producer')
-                    ->addArgument(new Reference('enqueue.client.traceable_message_producer.inner'))
+                    ->addArgument(new Reference('enqueue.client.traceable_producer.inner'))
                 ;
             }
 
