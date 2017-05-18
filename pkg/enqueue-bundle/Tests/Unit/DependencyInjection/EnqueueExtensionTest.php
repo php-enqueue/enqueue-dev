@@ -246,7 +246,7 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
-        $producer = $container->getDefinition('enqueue.client.traceable_message_producer');
+        $producer = $container->getDefinition('enqueue.client.traceable_producer');
         self::assertEquals(TraceableProducer::class, $producer->getClass());
         self::assertEquals(
             ['enqueue.client.producer', null, 0],
@@ -255,7 +255,7 @@ class EnqueueExtensionTest extends TestCase
 
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
         self::assertEquals(
-            'enqueue.client.traceable_message_producer.inner',
+            'enqueue.client.traceable_producer.inner',
             (string) $producer->getArgument(0)
         );
     }

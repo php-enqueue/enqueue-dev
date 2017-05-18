@@ -1,0 +1,8 @@
+services:
+    enqueue.client.flush_spool_producer_extension:
+        class: 'Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension'
+        public: false
+        arguments:
+            - '@enqueue.client.spool_producer'
+        tags:
+            - { name: 'enqueue.consumption.extension', priority: -100 }

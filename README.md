@@ -8,7 +8,7 @@ This is where all development happens. The repository provides a friendly enviro
 Features:
 
 * [JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) like transport [abstraction](https://github.com/php-enqueue/psr-queue).
-* Feature rich.
+* [Feature rich](docs/quick_tour.md).
 * Supports  transports:
     - [AMQP](docs/transport/amqp.md) (RabbitMQ, ActiveMQ and others), 
     - [STOMP](docs/transport/stomp.md)
@@ -18,7 +18,56 @@ Features:
     - [Filesystem](docs/transport/filesystem.md)
     - [Null](docs/transport/null.md).
 * Generic purpose abstraction level (the transport level).
+
+    ```php
+    <?php
+    use function Enqueue\dsn_to_context;
+    use function Enqueue\send_queue;
+    use function Enqueue\consume;
+    use Enqueue\Psr\PsrMessage;
+    use Enqueue\Consumption\Result;
+
+    // composer require enqueue/enqueue enqueue/amqp-ext
+        
+    $c = dsn_to_context('amqp:://');
+  
+    send_queue($c, 'a_queue', 'Hello there');
+       
+    consume($c, 'a_queue', function(PsrMessage $message) {
+       $body = $message->getBody();
+      
+       // to stop consumption: throw new \Enqueue\Consumption\Exception\ConsumptionInterruptedException;  
+      
+       return Result::ACK;
+    });
+    ```
+
 * Easy to use abstraction level (the client level).
+
+    ```php
+    <?php
+    use Enqueue\SimpleClient\SimpleClient;
+    use Enqueue\Psr\PsrMessage;
+    use Enqueue\Consumption\Result;
+    
+    // composer require enqueue/simple-client enqueue/fs
+    
+    $client = new SimpleClient('file://');
+    $client->bind('a_topic', 'a_processor', function(PsrMessage $message) {
+        $body = $message->getBody();
+        
+        // to stop consumption: throw new \Enqueue\Consumption\Exception\ConsumptionInterruptedException;
+        
+        return Result::ACK;
+    });
+    
+    $client->setupBroker();
+    
+    $client->send('a_topic', 'Hello there');
+    
+    $client->consume();
+    ```
+
 * [Symfony bundle](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
 * [Magento1 extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/magento/quick_tour.md)
 * [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
@@ -30,6 +79,7 @@ Features:
 
 ## Resources
 
+* [Quick tour](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/quick_tour.md)
 * [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
