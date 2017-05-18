@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.4.3](https://github.com/php-enqueue/enqueue-dev/tree/0.4.3) (2017-05-18)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.2...0.4.3)
+
+- \[client\] SpoolProducer [\#93](https://github.com/php-enqueue/enqueue-dev/pull/93) ([makasim](https://github.com/makasim))
+
+- \[Performance, DX\] Add a message pool [\#91](https://github.com/php-enqueue/enqueue-dev/issues/91)
+- \[bundle\] Show only part of the message body. Add a button show the whole message body. [\#90](https://github.com/php-enqueue/enqueue-dev/issues/90)
+
+- Add some handy functions. Improve READMEs [\#92](https://github.com/php-enqueue/enqueue-dev/pull/92) ([makasim](https://github.com/makasim))
+- Run phpstan and php-cs-fixer on travis  [\#85](https://github.com/php-enqueue/enqueue-dev/pull/85) ([makasim](https://github.com/makasim))
+
 ## [0.4.2](https://github.com/php-enqueue/enqueue-dev/tree/0.4.2) (2017-05-15)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.1...0.4.2)
 
