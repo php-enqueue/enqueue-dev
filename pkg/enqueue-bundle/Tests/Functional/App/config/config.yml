@@ -35,5 +35,14 @@ enqueue:
     transport:
         default: 'null'
         'null': ~
-    client: ~
+    client:
+        traceable_producer: true
     job: true
+    async_events: true
+
+
+services:
+    test_async_listener:
+        class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncListener'
+        tags:
+            - { name: 'kernel.event_listener', async: true, event: 'test_async', method: 'onEvent' }

@@ -34,7 +34,7 @@ To make your listener async you have add `async: true` attribute to the tag `ker
 ```yaml
 # app/config/config.yml
 
-service:
+services:
     acme.foo_listener:
         class: 'AcmeBundle\Listener\FooListener'
         tags:
@@ -50,7 +50,7 @@ You can also add an async listener directly and register a custom message proces
 ```yaml
 # app/config/config.yml
 
-service:
+services:
     acme.async_foo_listener:
         class: 'Enqueue\Bundle\Events\AsyncListener'
         public: false
@@ -189,7 +189,7 @@ and register it:
 ```yaml
 # app/config/config.yml
 
-service:
+services:
     acme.foo_event_transofrmer:
         class: 'AcmeBundle\Listener\FooEventTransformer'
         arguments: ['@doctrine']

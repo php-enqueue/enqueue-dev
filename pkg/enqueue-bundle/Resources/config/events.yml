@@ -8,13 +8,11 @@ services:
 
     enqueue.events.async_listener:
         class: 'Enqueue\Bundle\Events\AsyncListener'
-        public: false
         arguments: ['@enqueue.client.producer', '@enqueue.events.registry']
 
 
     enqueue.events.event_dispatcher:
         class: 'Enqueue\Bundle\Events\ProxyEventDispatcher'
-        public: false
         arguments:
             - '@event_dispatcher'
             - '@enqueue.events.async_listener'
