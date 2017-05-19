@@ -118,7 +118,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
 
             if (isset($config['async_events']['spool_producer'])) {
                 $container->getDefinition('enqueue.events.async_listener')
-                    ->replaceArgument(1, new Reference('enqueue.client.spool_producer'))
+                    ->replaceArgument(0, new Reference('enqueue.client.spool_producer'))
                 ;
             }
         }

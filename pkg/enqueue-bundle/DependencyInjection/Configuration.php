@@ -56,6 +56,7 @@ class Configuration implements ConfigurationInterface
                 ->children()
                     ->booleanNode('spool_producer')->defaultFalse()->end()
                 ->end()
+            ->end()
             ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                 ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
                 ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
