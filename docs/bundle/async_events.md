@@ -11,6 +11,8 @@ Async listeners benefits:
 * Better fault tolerance. Bugs in async listener does not affect user. Messages will wait till you fix bugs.
 * Better scaling. Add more consumers to meet the load.
 
+_**Note**: The php serializer transformer (the default one) does not work on Symfony prior 3.0. The event contains eventDispatcher and therefor could not be serialized. You have to register a transformer for every async event. Read the [event transformer](#event-transformer)._
+
 ## Configuration
 
 I suppose you already [installed the bundle](quick_tour.md#install). 

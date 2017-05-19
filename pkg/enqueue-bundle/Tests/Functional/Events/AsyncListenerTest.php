@@ -55,7 +55,7 @@ class AsyncListenerTest extends WebTestCase
         $this->assertCount(1, $traces);
 
         $this->assertEquals('event.test_async', $traces[0]['topic']);
-        $this->assertEquals(serialize($event), $traces[0]['body']);
+        $this->assertEquals('{"subject":"theSubject","arguments":{"fooArg":"fooVal"}}', $traces[0]['body']);
     }
 
     public function testShouldSendMessageForEveryDispatchCall()

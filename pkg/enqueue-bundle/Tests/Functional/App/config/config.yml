@@ -46,3 +46,8 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncListener'
         tags:
             - { name: 'kernel.event_listener', async: true, event: 'test_async', method: 'onEvent' }
+
+    test_async_event_transformer:
+        class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncEventTransformer'
+        tags:
+            - {name: 'enqueue.event_transformer', eventName: 'test_async', transformerName: 'test_async' }

@@ -9,6 +9,7 @@ use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Psr\PsrProcessor;
+use Enqueue\Util\JSON;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -60,12 +61,13 @@ class AsyncProcessorTest extends WebTestCase
         /** @var AsyncProcessor $processor */
         $processor = $this->container->get('enqueue.events.async_processor');
 
-        $event = new GenericEvent('theSubject', ['fooArg' => 'fooVal']);
-
         $message = new NullMessage();
         $message->setProperty('event_name', 'test_async');
-        $message->setProperty('transformer_name', 'php_serializer');
-        $message->setBody(serialize($event));
+        $message->setProperty('transformer_name', 'test_async');
+        $message->setBody(JSON::encode([
+            'subject' => 'theSubject',
+            'arguments' => ['fooArg' => 'fooVal'],
+        ]));
 
         $this->assertEquals(PsrProcessor::ACK, $processor->process($message, new NullContext()));
 
@@ -74,7 +76,9 @@ class AsyncProcessorTest extends WebTestCase
 
         $this->assertNotEmpty($listener->calls);
 
-        $this->assertEquals($event, $listener->calls[0][0]);
+        $this->assertInstanceOf(GenericEvent::class, $listener->calls[0][0]);
+        $this->assertEquals('theSubject', $listener->calls[0][0]->getSubject());
+        $this->assertEquals(['fooArg' => 'fooVal'], $listener->calls[0][0]->getArguments());
         $this->assertEquals('test_async', $listener->calls[0][1]);
 
         $this->assertSame(
