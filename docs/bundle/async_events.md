@@ -21,14 +21,10 @@ If you do not enable it, events will be processed as before: synchronously.
 # app/config/config.yml
 
 enqueue:
-   async_events: true
-
-# if you'd like to send send messages onTerminate use spool_producer (it makes response time even lesser):
-
-enqueue:
-   async_events: 
-       enabled: true
-       spool_producer: true
+   async_events:
+      enabled: true
+      # if you'd like to send send messages onTerminate use spool_producer (it makes response time even lesser):
+      # spool_producer: true
 ```
 
 ## Usage
@@ -44,6 +40,10 @@ service:
         tags:
             - { name: 'kernel.event_listener', async: true, event: 'foo', method: 'onEvent' }
 ```
+
+That's basically it. The rest of the doc describes advanced features. 
+
+## Advanced Usage.
 
 You can also add an async listener directly and register a custom message processor for it:
 
@@ -113,7 +113,7 @@ class FooEventProcessor implements PsrProcessor, TopicSubscriberInterface
 
 The bundle uses [php serializer](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue-bundle/Events/PhpSerializerEventTransformer.php) transformer by default to pass events through MQ.
 You could create a transformer for the given event type. The transformer must implement `Enqueue\Bundle\Events\EventTransformer` interface.
-Consider the next example. It shows how to send an event that contains Doctrine entity as subject  
+Consider the next example. It shows how to send an event that contains Doctrine entity as a subject  
  
 ```php
 <?php
