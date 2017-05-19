@@ -10,6 +10,9 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
+/**
+ * @group functional
+ */
 class AsyncListenerTest extends WebTestCase
 {
     public function setUp()
@@ -29,10 +32,10 @@ class AsyncListenerTest extends WebTestCase
 
         $dispatcher->dispatch('test_async', new GenericEvent('aSubject'));
 
-        /** @var TestAsyncListener $listner */
-        $listner = $this->container->get('test_async_listener');
+        /** @var TestAsyncListener $listener */
+        $listener = $this->container->get('test_async_listener');
 
-        $this->assertEmpty($listner->calls);
+        $this->assertEmpty($listener->calls);
     }
 
     public function testShouldSendMessageToExpectedTopicInsteadOfCallingRealListener()
