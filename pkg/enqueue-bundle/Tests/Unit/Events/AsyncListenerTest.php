@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\Tests\Events;
+namespace Enqueue\Bundle\Tests\Unit\Events;
 
 use Enqueue\Bundle\Events\AsyncListener;
 use Enqueue\Bundle\Events\EventTransformer;

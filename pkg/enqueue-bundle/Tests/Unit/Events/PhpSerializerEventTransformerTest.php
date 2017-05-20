@@ -33,10 +33,13 @@ class PhpSerializerEventTransformerTest extends TestCase
 
         $transformer = new PhpSerializerEventTransformer();
 
-        $message = $transformer->toMessage(new GenericEvent('theSubject'));
+        $event = new GenericEvent('theSubject');
+        $expectedBody = serialize($event);
+
+        $message = $transformer->toMessage($event, 'fooEvent');
 
         $this->assertInstanceOf(Message::class, $message);
-        $this->assertEquals(serialize(new GenericEvent('theSubject')), $message->getBody());
+        $this->assertEquals($expectedBody, $message->getBody());
     }
 
     public function testShouldReturnEventUnserializedFromMessageBodyOnToEvent()
@@ -53,7 +56,7 @@ class PhpSerializerEventTransformerTest extends TestCase
         $event = $transformer->toEvent('anEventName', $message);
 
         $this->assertInstanceOf(GenericEvent::class, $event);
-        $this->assertEquals('tehSubject', $event->getSubject());
+        $this->assertEquals('theSubject', $event->getSubject());
     }
 
     public function testThrowNotSupportedExceptionOnSymfonyPrior30OnToMessage()
