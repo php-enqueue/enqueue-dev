@@ -12,6 +12,8 @@ use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
+use Enqueue\Bundle\Events\DependencyInjection\AsyncEventsPass;
+use Enqueue\Bundle\Events\DependencyInjection\AsyncTransformersPass;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsContext;
@@ -23,6 +25,7 @@ use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -68,5 +71,8 @@ class EnqueueBundle extends Bundle
         if (class_exists(SqsContext::class)) {
             $extension->addTransportFactory(new SqsTransportFactory());
         }
+
+        $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+        $container->addCompilerPass(new AsyncTransformersPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
     }
 }

@@ -113,6 +113,16 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             $loader->load('job.yml');
         }
 
+        if (isset($config['async_events']['enabled'])) {
+            $loader->load('events.yml');
+
+            if (false == empty($config['async_events']['spool_producer'])) {
+                $container->getDefinition('enqueue.events.async_listener')
+                    ->replaceArgument(0, new Reference('enqueue.client.spool_producer'))
+                ;
+            }
+        }
+
         if ($config['extensions']['doctrine_ping_connection_extension']) {
             $loader->load('extensions/doctrine_ping_connection_extension.yml');
         }
