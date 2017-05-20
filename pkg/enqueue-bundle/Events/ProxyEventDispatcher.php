@@ -40,10 +40,13 @@ class ProxyEventDispatcher extends ContainerAwareEventDispatcher
      */
     public function dispatchAsyncListenersOnly($eventName, Event $event = null)
     {
-        $this->asyncListener->resetSyncMode();
-        $this->asyncListener->syncMode($eventName);
+        try {
+            $this->asyncListener->syncMode($eventName);
 
-        parent::dispatch($eventName, $event);
+            parent::dispatch($eventName, $event);
+        } finally {
+            $this->asyncListener->resetSyncMode();
+        }
     }
 
     /**

@@ -50,7 +50,7 @@ class AsyncListener
      * @param Event  $event
      * @param string $eventName
      */
-    public function onEvent(Event $event, $eventName)
+    public function onEvent(Event $event = null, $eventName)
     {
         if (false == isset($this->syncMode[$eventName])) {
             $transformerName = $this->registry->getTransformerNameForEvent($eventName);
