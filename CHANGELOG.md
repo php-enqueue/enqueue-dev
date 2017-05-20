@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.4.4](https://github.com/php-enqueue/enqueue-dev/tree/0.4.4) (2017-05-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.3...0.4.4)
+
+- Symfony. Async event dispatching  [\#86](https://github.com/php-enqueue/enqueue-dev/pull/86) ([makasim](https://github.com/makasim))
+
 ## [0.4.3](https://github.com/php-enqueue/enqueue-dev/tree/0.4.3) (2017-05-18)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.2...0.4.3)
 
