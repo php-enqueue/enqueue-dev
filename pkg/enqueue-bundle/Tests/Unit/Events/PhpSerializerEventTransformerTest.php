@@ -36,7 +36,7 @@ class PhpSerializerEventTransformerTest extends TestCase
         $event = new GenericEvent('theSubject');
         $expectedBody = serialize($event);
 
-        $message = $transformer->toMessage($event, 'fooEvent');
+        $message = $transformer->toMessage('fooEvent', $event);
 
         $this->assertInstanceOf(Message::class, $message);
         $this->assertEquals($expectedBody, $message->getBody());
