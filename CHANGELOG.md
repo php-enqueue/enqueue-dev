@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.4.5](https://github.com/php-enqueue/enqueue-dev/tree/0.4.5) (2017-05-22)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.4...0.4.5)
+
+- Symfony async events. Support event subscribers. [\#94](https://github.com/php-enqueue/enqueue-dev/issues/94)
+
+- Symfony. Async event subscriber. [\#95](https://github.com/php-enqueue/enqueue-dev/pull/95) ([makasim](https://github.com/makasim))
+
 ## [0.4.4](https://github.com/php-enqueue/enqueue-dev/tree/0.4.4) (2017-05-20)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.3...0.4.4)
 
