@@ -43,6 +43,18 @@ services:
             - { name: 'kernel.event_listener', async: true, event: 'foo', method: 'onEvent' }
 ```
 
+or to `kernel.event_subscriber`:
+
+```yaml
+# app/config/config.yml
+
+services: 
+    test_async_subscriber:
+        class: 'AcmeBundle\Listener\TestAsyncSubscriber'
+        tags:
+            - { name: 'kernel.event_subscriber', async: true }
+```
+
 That's basically it. The rest of the doc describes advanced features. 
 
 ## Advanced Usage.

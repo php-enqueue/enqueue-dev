@@ -5,6 +5,7 @@ namespace Enqueue\Bundle\Tests\Functional\Events;
 use Enqueue\Bundle\Events\AsyncListener;
 use Enqueue\Bundle\Events\AsyncProcessor;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
+use Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
@@ -84,6 +85,37 @@ class AsyncProcessorTest extends WebTestCase
         $this->assertSame(
             $this->container->get('enqueue.events.event_dispatcher'),
             $listener->calls[0][2]
+        );
+    }
+
+    public function testShouldCallRealSubscriber()
+    {
+        /** @var AsyncProcessor $processor */
+        $processor = $this->container->get('enqueue.events.async_processor');
+
+        $message = new NullMessage();
+        $message->setProperty('event_name', 'test_async_subscriber');
+        $message->setProperty('transformer_name', 'test_async');
+        $message->setBody(JSON::encode([
+            'subject' => 'theSubject',
+            'arguments' => ['fooArg' => 'fooVal'],
+        ]));
+
+        $this->assertEquals(PsrProcessor::ACK, $processor->process($message, new NullContext()));
+
+        /** @var TestAsyncSubscriber $subscriber */
+        $subscriber = $this->container->get('test_async_subscriber');
+
+        $this->assertNotEmpty($subscriber->calls);
+
+        $this->assertInstanceOf(GenericEvent::class, $subscriber->calls[0][0]);
+        $this->assertEquals('theSubject', $subscriber->calls[0][0]->getSubject());
+        $this->assertEquals(['fooArg' => 'fooVal'], $subscriber->calls[0][0]->getArguments());
+        $this->assertEquals('test_async_subscriber', $subscriber->calls[0][1]);
+
+        $this->assertSame(
+            $this->container->get('enqueue.events.event_dispatcher'),
+            $subscriber->calls[0][2]
         );
     }
 }
