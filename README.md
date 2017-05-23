@@ -81,6 +81,7 @@ Features:
 
 * [Quick tour](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/quick_tour.md)
 * [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
+* [Blog](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md#blogs)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
