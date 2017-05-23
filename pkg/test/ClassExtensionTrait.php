@@ -10,7 +10,7 @@ trait ClassExtensionTrait
 
         $this->assertTrue(
             $rc->isSubclassOf($expected),
-            sprintf('Failed assert that class %s extends %s class.', $actual, $expected)
+            sprintf('Failed assert that class %s extends %s class', $actual, $expected)
         );
     }
 
