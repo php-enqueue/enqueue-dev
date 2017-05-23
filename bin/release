@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
 
 if (( "$#" != 1 ))
 then
@@ -17,6 +16,10 @@ CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 for REMOTE in origin psr-queue stomp amqp-ext sqs fs redis dbal null enqueue simple-client enqueue-bundle job-queue test
 do
+    echo ""
+    echo ""
+    echo "Releasing $REMOTE";
+
 	TMP_DIR="/tmp/enqueue-repo"
     REMOTE_URL=`git remote get-url $REMOTE`
 
@@ -25,9 +28,20 @@ do
 
     (
         cd $TMP_DIR;
-        git clone $REMOTE_URL . --depth=10
+        git clone $REMOTE_URL . --depth=200
         git checkout $CURRENT_BRANCH;
-        git tag $1 -s -m "Release $1"
-        git push origin --tags
+        LAST_RELEASE=$(git tag -l [0-9].* | tail -n1)
+
+        echo "Last release $LAST_RELEASE";
+
+        CHANGES_SINCE_LAST_RELEASE=$(git log $LAST_RELEASE...master | xargs echo -n)
+        if [[ ! -z "$CHANGES_SINCE_LAST_RELEASE" ]]; then
+            echo "There are changes since last release. Releasing $1";
+
+            git tag $1 -s -m "Release $1"
+            git push origin --tags
+        else
+            echo "No change since last release.";
+        fi
     )
 done
