@@ -2,6 +2,7 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProcessor;
@@ -45,7 +46,7 @@ class RouterProcessor implements PsrProcessor
     {
         $topicName = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
         if (false == $topicName) {
-            throw new \LogicException(sprintf(
+            return Result::reject(sprintf(
                 'Got message without required parameter: "%s"',
                 Config::PARAMETER_TOPIC_NAME
             ));
