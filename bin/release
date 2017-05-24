@@ -34,7 +34,8 @@ do
 
         echo "Last release $LAST_RELEASE";
 
-        CHANGES_SINCE_LAST_RELEASE=$(git log $LAST_RELEASE...master | xargs echo -n)
+        CHANGES_SINCE_LAST_RELEASE=$(git log "$LAST_RELEASE"...master)
+        CHANGES_SINCE_LAST_RELEASE="$CHANGES_SINCE_LAST_RELEASE" | xargs echo -n
         if [[ ! -z "$CHANGES_SINCE_LAST_RELEASE" ]]; then
             echo "There are changes since last release. Releasing $1";
 
