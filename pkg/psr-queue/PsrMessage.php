@@ -175,4 +175,14 @@ interface PsrMessage
      * @return string|null
      */
     public function getReplyTo();
+
+    /**
+     * @return PsrDestination|null
+     */
+    public function getDestination();
+
+    /**
+     * @param PsrDestination|null $destination
+     */
+    public function setDestination(PsrDestination $destination = null);
 }

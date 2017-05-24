@@ -3,23 +3,11 @@
 namespace Enqueue\AmqpExt;
 
 use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrMessageTrait;
 
 class AmqpMessage implements PsrMessage
 {
-    /**
-     * @var string
-     */
-    private $body;
-
-    /**
-     * @var array
-     */
-    private $properties;
-
-    /**
-     * @var array
-     */
-    private $headers;
+    use PsrMessageTrait;
 
     /**
      * @var string|null
@@ -32,11 +20,6 @@ class AmqpMessage implements PsrMessage
     private $consumerTag;
 
     /**
-     * @var bool
-     */
-    private $redelivered;
-
-    /**
      * @var int
      */
     private $flags;
@@ -46,7 +29,7 @@ class AmqpMessage implements PsrMessage
      * @param array  $properties
      * @param array  $headers
      */
-    public function __construct($body = null, array $properties = [], array $headers = [])
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -54,102 +37,6 @@ class AmqpMessage implements PsrMessage
 
         $this->redelivered = false;
         $this->flags = AMQP_NOPARAM;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBody()
-    {
-        return $this->body;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setBody($body)
-    {
-        $this->body = $body;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(array $properties)
-    {
-        $this->properties = $properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
-    {
-        return $this->properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $value)
-    {
-        $this->properties[$name] = $value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $default = null)
-    {
-        return array_key_exists($name, $this->properties) ? $this->properties[$name] : $default;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeaders(array $headers)
-    {
-        $this->headers = $headers;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
-    {
-        return $this->headers;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeader($name, $value)
-    {
-        $this->headers[$name] = $value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
-    {
-        return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRedelivered($redelivered)
-    {
-        $this->redelivered = (bool) $redelivered;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isRedelivered()
-    {
-        return $this->redelivered;
     }
 
     /**
