@@ -162,10 +162,14 @@ enqueue:
         default_processor_queue: default
         redelivered_delay_time: 0
     job:                  false
+    async_events:
+        enabled:              false
+        spool_producer:       false
     extensions:
         doctrine_ping_connection_extension: false
         doctrine_clear_identity_map_extension: false
         signal_extension:     true
+        reply_extension:      true
 ```
 
 [back to index](../index.md)

@@ -134,6 +134,10 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         if ($config['extensions']['signal_extension']) {
             $loader->load('extensions/signal_extension.yml');
         }
+
+        if ($config['extensions']['reply_extension']) {
+            $loader->load('extensions/reply_extension.yml');
+        }
     }
 
     /**

@@ -341,4 +341,39 @@ class ConfigurationTest extends TestCase
             ],
         ], $config);
     }
+
+    public function testReplyExtensionShouldBeEnabledByDefault()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+        ]]);
+
+        $this->assertArraySubset([
+            'extensions' => [
+                'reply_extension' => true,
+            ],
+        ], $config);
+    }
+
+    public function testReplyExtensionCouldBeDisabled()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+            'extensions' => [
+                'reply_extension' => false,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'extensions' => [
+                'reply_extension' => false,
+            ],
+        ], $config);
+    }
 }
