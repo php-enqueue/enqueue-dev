@@ -8,6 +8,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
@@ -26,13 +27,13 @@ class SetRouterPropertiesExtensionTest extends TestCase
         new SetRouterPropertiesExtension($this->createDriverMock());
     }
 
-    public function testShouldSetRouterProcessorPropertyIfNotSet()
+    public function testShouldSetRouterProcessorPropertyIfNotSetAndOnRouterQueue()
     {
-        $config = new Config('', '', '', 'router-queue', '', 'router-processor-name');
+        $config = Config::create('test', '', '', 'router-queue', '', 'router-processor-name');
 
         $driver = $this->createDriverMock();
         $driver
-            ->expects(self::exactly(2))
+            ->expects($this->once())
             ->method('getConfig')
             ->willReturn($config)
         ;
@@ -41,6 +42,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $context = new Context($this->createPsrContextMock());
         $context->setPsrMessage($message);
+        $context->setPsrQueue(new NullQueue('test.router-queue'));
 
         $extension = new SetRouterPropertiesExtension($driver);
         $extension->onPreReceived($context);
@@ -51,11 +53,34 @@ class SetRouterPropertiesExtensionTest extends TestCase
         ], $message->getProperties());
     }
 
+    public function testShouldNotSetRouterProcessorPropertyIfNotSetAndNotOnRouterQueue()
+    {
+        $config = Config::create('test', '', '', 'router-queue', '', 'router-processor-name');
+
+        $driver = $this->createDriverMock();
+        $driver
+            ->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $message = new NullMessage();
+
+        $context = new Context($this->createPsrContextMock());
+        $context->setPsrMessage($message);
+        $context->setPsrQueue(new NullQueue('test.another-queue'));
+
+        $extension = new SetRouterPropertiesExtension($driver);
+        $extension->onPreReceived($context);
+
+        $this->assertEquals([], $message->getProperties());
+    }
+
     public function testShouldNotSetAnyPropertyIfProcessorNamePropertyAlreadySet()
     {
         $driver = $this->createDriverMock();
         $driver
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('getConfig')
         ;
 

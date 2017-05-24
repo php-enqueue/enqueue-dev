@@ -30,14 +30,15 @@ class RouterProcessorTest extends TestCase
         $this->assertAttributeEquals($routes, 'routes', $router);
     }
 
-    public function testShouldThrowExceptionIfTopicNameParameterIsNotSet()
+    public function testShouldRejectIfTopicNameParameterIsNotSet()
     {
         $router = new RouterProcessor($this->createDriverMock());
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Got message without required parameter: "enqueue.topic_name"');
+        $result = $router->process(new NullMessage(), new NullContext());
 
-        $router->process(new NullMessage(), new NullContext());
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(Result::REJECT, $result->getStatus());
+        $this->assertEquals('Got message without required parameter: "enqueue.topic_name"', $result->getReason());
     }
 
     public function testShouldRouteOriginalMessageToRecipient()
