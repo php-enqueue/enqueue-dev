@@ -37,6 +37,7 @@ class ReplyExtension implements ExtensionInterface
 
         $replyQueue = $context->getPsrContext()->createQueue($replyTo);
 
+        $context->getLogger()->debug(sprintf('[ReplyExtension] Send reply to "%s"', $replyTo));
         $context->getPsrContext()->createProducer()->send($replyQueue, $replyMessage);
     }
 }

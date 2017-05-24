@@ -12,6 +12,7 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class ReplyExtensionTest extends TestCase
 {
@@ -129,6 +130,7 @@ class ReplyExtensionTest extends TestCase
         $context = new Context($contextMock);
         $context->setPsrMessage($message);
         $context->setResult(Result::reply($replyMessage));
+        $context->setLogger(new NullLogger());
 
         $extension->onPostReceived($context);
     }

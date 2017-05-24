@@ -449,6 +449,40 @@ class EnqueueExtensionTest extends TestCase
         self::assertFalse($container->hasDefinition('enqueue.consumption.signal_extension'));
     }
 
+    public function testShouldLoadReplyExtensionServiceIfEnabled()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.debug', true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'transport' => [],
+            'extensions' => [
+                'reply_extension' => true,
+            ],
+        ]], $container);
+
+        self::assertTrue($container->hasDefinition('enqueue.consumption.reply_extension'));
+    }
+
+    public function testShouldNotLoadReplyExtensionServiceIfDisabled()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.debug', true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'transport' => [],
+            'extensions' => [
+                'reply_extension' => false,
+            ],
+        ]], $container);
+
+        self::assertFalse($container->hasDefinition('enqueue.consumption.reply_extension'));
+    }
+
     public function testShouldAddJobQueueEntityMapping()
     {
         $container = new ContainerBuilder();

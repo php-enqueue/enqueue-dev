@@ -1,0 +1,6 @@
+services:
+    enqueue.consumption.reply_extension:
+        class: 'Enqueue\Consumption\Extension\ReplyExtension'
+        public: false
+        tags:
+            - { name: 'enqueue.consumption.extension' }
