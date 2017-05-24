@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.4.7](https://github.com/php-enqueue/enqueue-dev/tree/0.4.7) (2017-05-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.6...0.4.7)
+
+- \[client\] Fixes edge cases in client's routing logic. [\#101](https://github.com/php-enqueue/enqueue-dev/pull/101) ([makasim](https://github.com/makasim))
+- \[bundle\] Auto register reply extension. [\#100](https://github.com/php-enqueue/enqueue-dev/pull/100) ([makasim](https://github.com/makasim))
+
+- Do pkg release if there are changes in it. [\#98](https://github.com/php-enqueue/enqueue-dev/pull/98) ([makasim](https://github.com/makasim))
+
+## [0.4.6](https://github.com/php-enqueue/enqueue-dev/tree/0.4.6) (2017-05-23)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.5...0.4.6)
+
 ## [0.4.5](https://github.com/php-enqueue/enqueue-dev/tree/0.4.5) (2017-05-22)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.4...0.4.5)
 
