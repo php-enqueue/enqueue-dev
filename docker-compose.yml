@@ -11,6 +11,7 @@ services:
       - './:/mqdev'
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
+      - DOCTINE_DSN=mysql+doctrine://root:rootpass@mysql/mqdev
       - SYMFONY__RABBITMQ__HOST=rabbitmq
       - SYMFONY__RABBITMQ__USER=guest
       - SYMFONY__RABBITMQ__PASSWORD=guest
