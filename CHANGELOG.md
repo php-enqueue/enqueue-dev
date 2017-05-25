@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.4.9](https://github.com/php-enqueue/enqueue-dev/tree/0.4.9) (2017-05-25)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.8...0.4.9)
+
+- \[client\]\[dx\] Message constructor must accept body, properties and headers.` [\#88](https://github.com/php-enqueue/enqueue-dev/issues/88)
+- Add message spec test case [\#102](https://github.com/php-enqueue/enqueue-dev/pull/102) ([makasim](https://github.com/makasim))
+
+- filesystem dsn must have one more /  [\#99](https://github.com/php-enqueue/enqueue-dev/issues/99)
+
+- Code duplication inside messages [\#96](https://github.com/php-enqueue/enqueue-dev/issues/96)
+
+- \[transport\] Fs transport dsn must contain one extra "/" [\#103](https://github.com/php-enqueue/enqueue-dev/pull/103) ([makasim](https://github.com/makasim))
+
 ## [0.4.8](https://github.com/php-enqueue/enqueue-dev/tree/0.4.8) (2017-05-24)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.6...0.4.8)
 
