@@ -12,7 +12,7 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
      */
     public static function assertInstanceOf($argument, $class)
     {
-        if (!$argument instanceof $class) {
+        if (false == $argument instanceof $class) {
             throw new static(sprintf(
                 'The argument must be an instance of %s but got %s.',
                 $class,

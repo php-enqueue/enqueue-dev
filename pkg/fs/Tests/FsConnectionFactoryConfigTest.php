@@ -24,7 +24,7 @@ class FsConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotAmqp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN scheme "%s" is not supported. Could be "file" only.');
+        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "file://');
 
         new FsConnectionFactory('http://example.com');
     }
@@ -32,7 +32,7 @@ class FsConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN "file://:@/"');
+        $this->expectExceptionMessage('Failed to parse DSN path ":@/". The path must start with "/"');
 
         new FsConnectionFactory('file://:@/');
     }
@@ -89,27 +89,27 @@ class FsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            __DIR__,
+            '/foo/bar/baz',
             [
-                'path' => __DIR__,
+                'path' => '/foo/bar/baz',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
             ],
         ];
 
         yield [
-            'file:/'.__DIR__,
+            'file:///foo/bar/baz',
             [
-                'path' => __DIR__,
+                'path' => '/foo/bar/baz',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
             ],
         ];
 
         yield [
-            'file:/'.__DIR__.'?pre_fetch_count=100&chmod=0666',
+            'file:///foo/bar/baz?pre_fetch_count=100&chmod=0666',
             [
-                'path' => __DIR__,
+                'path' => '/foo/bar/baz',
                 'pre_fetch_count' => 100,
                 'chmod' => 0666,
             ],
