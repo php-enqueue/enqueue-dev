@@ -2,7 +2,6 @@
 
 namespace Enqueue\Redis\Tests;
 
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Test\ClassExtensionTrait;
 
@@ -10,78 +9,27 @@ class RedisMessageTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementMessageInterface()
-    {
-        $this->assertClassImplements(PsrMessage::class, RedisMessage::class);
-    }
-
     public function testShouldImplementJsonSerializableInterface()
     {
         $this->assertClassImplements(\JsonSerializable::class, RedisMessage::class);
     }
 
-    public function testCouldConstructMessageWithBody()
-    {
-        $message = new RedisMessage('body');
-
-        $this->assertSame('body', $message->getBody());
-    }
-
-    public function testCouldConstructMessageWithProperties()
-    {
-        $message = new RedisMessage('', ['key' => 'value']);
-
-        $this->assertSame(['key' => 'value'], $message->getProperties());
-    }
-
-    public function testCouldConstructMessageWithHeaders()
-    {
-        $message = new RedisMessage('', [], ['key' => 'value']);
-
-        $this->assertSame(['key' => 'value'], $message->getHeaders());
-    }
-
-    public function testCouldSetGetBody()
-    {
-        $message = new RedisMessage();
-        $message->setBody('body');
-
-        $this->assertSame('body', $message->getBody());
-    }
-
-    public function testCouldSetGetProperties()
-    {
-        $message = new RedisMessage();
-        $message->setProperties(['key' => 'value']);
-
-        $this->assertSame(['key' => 'value'], $message->getProperties());
-    }
-
-    public function testCouldSetGetHeaders()
-    {
-        $message = new RedisMessage();
-        $message->setHeaders(['key' => 'value']);
-
-        $this->assertSame(['key' => 'value'], $message->getHeaders());
-    }
-
-    public function testCouldSetGetRedelivered()
+    public function testCouldConstructMessageWithoutArguments()
     {
         $message = new RedisMessage();
 
-        $message->setRedelivered(true);
-        $this->assertTrue($message->isRedelivered());
-
-        $message->setRedelivered(false);
-        $this->assertFalse($message->isRedelivered());
+        $this->assertSame('', $message->getBody());
+        $this->assertSame([], $message->getProperties());
+        $this->assertSame([], $message->getHeaders());
     }
 
-    public function testCouldSetGetCorrelationId()
+    public function testCouldBeConstructedWithOptionalArguments()
     {
-        $message = new RedisMessage();
-        $message->setCorrelationId('the-correlation-id');
+        $message = new RedisMessage('theBody', ['barProp' => 'barPropVal'], ['fooHeader' => 'fooHeaderVal']);
 
-        $this->assertSame('the-correlation-id', $message->getCorrelationId());
+        $this->assertSame('theBody', $message->getBody());
+        $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());
+        $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
     }
 
     public function testShouldSetCorrelationIdAsHeader()
@@ -92,28 +40,12 @@ class RedisMessageTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(['correlation_id' => 'the-correlation-id'], $message->getHeaders());
     }
 
-    public function testCouldSetGetMessageId()
-    {
-        $message = new RedisMessage();
-        $message->setMessageId('the-message-id');
-
-        $this->assertSame('the-message-id', $message->getMessageId());
-    }
-
     public function testCouldSetMessageIdAsHeader()
     {
         $message = new RedisMessage();
         $message->setMessageId('the-message-id');
 
         $this->assertSame(['message_id' => 'the-message-id'], $message->getHeaders());
-    }
-
-    public function testCouldSetGetTimestamp()
-    {
-        $message = new RedisMessage();
-        $message->setTimestamp(12345);
-
-        $this->assertSame(12345, $message->getTimestamp());
     }
 
     public function testCouldSetTimestampAsHeader()
@@ -124,22 +56,7 @@ class RedisMessageTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(['timestamp' => 12345], $message->getHeaders());
     }
 
-    public function testShouldReturnNullAsDefaultReplyTo()
-    {
-        $message = new RedisMessage();
-
-        $this->assertSame(null, $message->getReplyTo());
-    }
-
-    public function testShouldAllowGetPreviouslySetReplyTo()
-    {
-        $message = new RedisMessage();
-        $message->setReplyTo('theQueueName');
-
-        $this->assertSame('theQueueName', $message->getReplyTo());
-    }
-
-    public function testShouldAllowGetPreviouslySetReplyToAsHeader()
+    public function testShouldSetReplyToAsHeader()
     {
         $message = new RedisMessage();
         $message->setReplyTo('theQueueName');

@@ -6,8 +6,9 @@ use Enqueue\Psr\Exception as ExceptionInterface;
 use Enqueue\Psr\InvalidDestinationException;
 use Enqueue\Psr\PsrDestination;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class InvalidDestinationExceptionTest extends \PHPUnit\Framework\TestCase
+class InvalidDestinationExceptionTest extends TestCase
 {
     use ClassExtensionTrait;
 

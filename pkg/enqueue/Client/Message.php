@@ -78,10 +78,12 @@ class Message
      */
     private $properties = [];
 
-    public function __construct()
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
-        $this->headers = [];
-        $this->properties = [];
+        $this->body = $body;
+        $this->headers = $headers;
+        $this->properties = $properties;
+
         $this->scope = static::SCOPE_MESSAGE_BUS;
     }
 

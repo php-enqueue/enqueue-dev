@@ -5,8 +5,9 @@ namespace Enqueue\Psr\Tests;
 use Enqueue\Psr\Exception;
 use Enqueue\Psr\ExceptionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class ExceptionTest extends \PHPUnit\Framework\TestCase
+class ExceptionTest extends TestCase
 {
     use ClassExtensionTrait;
 

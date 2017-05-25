@@ -7,9 +7,22 @@ use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase
 {
-    public function testCouldBeConstructedWithoutAnyArguments()
+    public function testCouldBeConstructedWithoutArguments()
     {
-        new Message();
+        $message = new Message();
+
+        $this->assertSame('', $message->getBody());
+        $this->assertSame([], $message->getProperties());
+        $this->assertSame([], $message->getHeaders());
+    }
+
+    public function testCouldBeConstructedWithOptionalArguments()
+    {
+        $message = new Message('theBody', ['barProp' => 'barPropVal'], ['fooHeader' => 'fooHeaderVal']);
+
+        $this->assertSame('theBody', $message->getBody());
+        $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());
+        $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
     }
 
     public function testShouldAllowGetPreviouslySetBody()

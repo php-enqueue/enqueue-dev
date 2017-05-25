@@ -46,7 +46,7 @@ class AmqpMessage implements PsrMessage
      * @param array  $properties
      * @param array  $headers
      */
-    public function __construct($body = null, array $properties = [], array $headers = [])
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -189,7 +189,9 @@ class AmqpMessage implements PsrMessage
      */
     public function getTimestamp()
     {
-        return $this->getHeader('timestamp');
+        $value = $this->getHeader('timestamp');
+
+        return $value === null ? null : (int) $value;
     }
 
     /**
