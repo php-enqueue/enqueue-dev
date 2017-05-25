@@ -41,7 +41,7 @@ class DbalMessage implements PsrMessage
      * @param array  $properties
      * @param array  $headers
      */
-    public function __construct($body = null, array $properties = [], array $headers = [])
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -210,7 +210,7 @@ class DbalMessage implements PsrMessage
      */
     public function getCorrelationId()
     {
-        return $this->getHeader('correlation_id', '');
+        return $this->getHeader('correlation_id', null);
     }
 
     /**
@@ -226,7 +226,7 @@ class DbalMessage implements PsrMessage
      */
     public function getMessageId()
     {
-        return $this->getHeader('message_id', '');
+        return $this->getHeader('message_id', null);
     }
 
     /**
@@ -234,7 +234,9 @@ class DbalMessage implements PsrMessage
      */
     public function getTimestamp()
     {
-        return $this->getHeader('timestamp');
+        $value = $this->getHeader('timestamp');
+
+        return $value === null ? null : (int) $value;
     }
 
     /**
@@ -242,6 +244,6 @@ class DbalMessage implements PsrMessage
      */
     public function setTimestamp($timestamp)
     {
-        $this->setHeader('timestamp', (int) $timestamp);
+        $this->setHeader('timestamp', $timestamp);
     }
 }

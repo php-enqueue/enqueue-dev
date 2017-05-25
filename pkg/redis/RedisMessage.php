@@ -31,7 +31,7 @@ class RedisMessage implements PsrMessage, \JsonSerializable
      * @param array  $properties
      * @param array  $headers
      */
-    public function __construct($body = null, array $properties = [], array $headers = [])
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -173,7 +173,9 @@ class RedisMessage implements PsrMessage, \JsonSerializable
      */
     public function getTimestamp()
     {
-        return $this->getHeader('timestamp');
+        $value = $this->getHeader('timestamp');
+
+        return $value === null ? null : (int) $value;
     }
 
     /**

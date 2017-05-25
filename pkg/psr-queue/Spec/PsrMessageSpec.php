@@ -1,13 +1,17 @@
 <?php
 
-namespace Enqueue\Psr\Tests;
+namespace Enqueue\Psr\Spec;
 
-use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\PsrMessage;
 use PHPUnit\Framework\TestCase;
 
-abstract class BasePsrMessageTest extends TestCase
+abstract class PsrMessageSpec extends TestCase
 {
+    public function testShouldImplementMessageInterface()
+    {
+        $this->assertInstanceOf(PsrMessage::class, $this->createMessage());
+    }
+
     public function testShouldSetRedeliveredToFalseInConstructor()
     {
         $message = $this->createMessage();
@@ -121,38 +125,64 @@ abstract class BasePsrMessageTest extends TestCase
         $this->assertSame(false, $message->isRedelivered());
     }
 
-    public function testShouldReturnNullIfNotPreviouslySetOnGetDestination()
+    public function testShouldReturnNullIfNotPreviouslySetCorrelationId()
     {
         $message = $this->createMessage();
 
-        $this->assertNull($message->getDestination());
+        $this->assertNull($message->getCorrelationId());
     }
 
-    public function testShouldReturnPreviouslySetDestination()
+    public function testShouldReturnPreviouslySetCorrelationId()
     {
-        $destinationMock = $this->createMock(PsrDestination::class);
-
         $message = $this->createMessage();
+        $message->setCorrelationId('theCorrelationId');
 
-        $message->setDestination($destinationMock);
-
-        $this->assertSame($destinationMock, $message->getDestination());
+        $this->assertSame('theCorrelationId', $message->getCorrelationId());
     }
 
-    public function testShouldAllowUnsetPreviouslySetDestination()
+    public function testShouldReturnNullIfNotPreviouslySetMessageId()
     {
-        $destinationMock = $this->createMock(PsrDestination::class);
-
         $message = $this->createMessage();
 
-        $message->setDestination($destinationMock);
+        $this->assertNull($message->getMessageId());
+    }
 
-        // guard
-        $this->assertSame($destinationMock, $message->getDestination());
+    public function testShouldReturnPreviouslySetMessageId()
+    {
+        $message = $this->createMessage();
+        $message->setMessageId('theMessageId');
 
-        $message->setDestination(null);
+        $this->assertSame('theMessageId', $message->getMessageId());
+    }
 
-        $this->assertNull($message->getDestination());
+    public function testShouldReturnNullIfNotPreviouslySetTimestamp()
+    {
+        $message = $this->createMessage();
+
+        $this->assertNull($message->getTimestamp());
+    }
+
+    public function testShouldReturnPreviouslySetTimestampAsInt()
+    {
+        $message = $this->createMessage();
+        $message->setTimestamp('123');
+
+        $this->assertSame(123, $message->getTimestamp());
+    }
+
+    public function testShouldReturnNullIfNotPreviouslySetReplyTo()
+    {
+        $message = $this->createMessage();
+
+        $this->assertNull($message->getReplyTo());
+    }
+
+    public function testShouldReturnPreviouslySetReplyTo()
+    {
+        $message = $this->createMessage();
+        $message->setReplyTo('theReply');
+
+        $this->assertSame('theReply', $message->getReplyTo());
     }
 
     /**

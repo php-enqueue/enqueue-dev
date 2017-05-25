@@ -26,10 +26,11 @@ class NullMessage implements PsrMessage
      */
     private $redelivered;
 
-    public function __construct()
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
-        $this->properties = [];
-        $this->headers = [];
+        $this->body = $body;
+        $this->properties = $properties;
+        $this->headers = $headers;
 
         $this->redelivered = false;
     }
@@ -146,7 +147,7 @@ class NullMessage implements PsrMessage
      */
     public function getCorrelationId()
     {
-        return $this->getHeader('correlation_id', '');
+        return $this->getHeader('correlation_id');
     }
 
     /**
@@ -165,7 +166,7 @@ class NullMessage implements PsrMessage
      */
     public function getMessageId()
     {
-        return $this->getHeader('message_id', '');
+        return $this->getHeader('message_id');
     }
 
     /**
@@ -173,7 +174,9 @@ class NullMessage implements PsrMessage
      */
     public function getTimestamp()
     {
-        return $this->getHeader('timestamp');
+        $value = $this->getHeader('timestamp');
+
+        return $value === null ? null : (int) $value;
     }
 
     /**

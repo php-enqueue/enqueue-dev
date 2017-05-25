@@ -148,7 +148,7 @@ class FsMessage implements PsrMessage, \JsonSerializable
      */
     public function getCorrelationId()
     {
-        return $this->getHeader('correlation_id', '');
+        return $this->getHeader('correlation_id');
     }
 
     /**
@@ -164,7 +164,7 @@ class FsMessage implements PsrMessage, \JsonSerializable
      */
     public function getMessageId()
     {
-        return $this->getHeader('message_id', '');
+        return $this->getHeader('message_id');
     }
 
     /**

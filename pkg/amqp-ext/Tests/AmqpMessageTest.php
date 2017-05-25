@@ -4,10 +4,10 @@ namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\Tests\BasePsrMessageTest;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class AmqpMessageTest extends BasePsrMessageTest
+class AmqpMessageTest extends TestCase
 {
     use ClassExtensionTrait;
 
@@ -41,39 +41,35 @@ class AmqpMessageTest extends BasePsrMessageTest
         $this->assertSame(\AMQP_NOPARAM, $message->getFlags());
     }
 
-    public function testShouldReturnPreviouslySetCorrelationId()
+    public function testShouldSetCorrelationIdAsHeader()
     {
         $message = new AmqpMessage();
         $message->setCorrelationId('theCorrelationId');
 
-        $this->assertSame('theCorrelationId', $message->getCorrelationId());
         $this->assertSame(['correlation_id' => 'theCorrelationId'], $message->getHeaders());
     }
 
-    public function testShouldReturnPreviouslySetMessageId()
+    public function testShouldSetSetMessageIdAsHeader()
     {
         $message = new AmqpMessage();
         $message->setMessageId('theMessageId');
 
-        $this->assertSame('theMessageId', $message->getMessageId());
         $this->assertSame(['message_id' => 'theMessageId'], $message->getHeaders());
     }
 
-    public function testShouldReturnPreviouslySetTimestamp()
+    public function testShouldSetTimestampAsHeader()
     {
         $message = new AmqpMessage();
         $message->setTimestamp('theTimestamp');
 
-        $this->assertSame('theTimestamp', $message->getTimestamp());
         $this->assertSame(['timestamp' => 'theTimestamp'], $message->getHeaders());
     }
 
-    public function testShouldReturnPreviouslySetReplyTo()
+    public function testShouldSetReplyToAsHeader()
     {
         $message = new AmqpMessage();
         $message->setReplyTo('theReply');
 
-        $this->assertSame('theReply', $message->getReplyTo());
         $this->assertSame(['reply_to' => 'theReply'], $message->getHeaders());
     }
 
