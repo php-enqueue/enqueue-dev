@@ -4,6 +4,7 @@ namespace Enqueue\Symfony;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
+use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Null\NullConnectionFactory;
@@ -140,6 +141,10 @@ class DefaultTransportFactory implements TransportFactoryInterface
 
         if ($connectionFactory instanceof FsConnectionFactory) {
             return new FsTransportFactory('default_fs');
+        }
+
+        if ($connectionFactory instanceof DbalConnectionFactory) {
+            return new FsTransportFactory('default_dbal');
         }
 
         if ($connectionFactory instanceof NullConnectionFactory) {

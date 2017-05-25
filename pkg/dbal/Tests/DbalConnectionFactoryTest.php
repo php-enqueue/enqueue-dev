@@ -23,7 +23,7 @@ class DbalConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertAttributeEquals([
             'lazy' => true,
-            'connection' => [],
+            'connection' => ['url' => 'mysql://root@localhost'],
         ], 'config', $factory);
     }
 

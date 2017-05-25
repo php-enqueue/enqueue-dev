@@ -49,6 +49,12 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
+        yield 'default_dbal_as_dsn' => [[
+            'transport' => [
+                'default' => getenv('DOCTRINE_DSN'),
+            ],
+        ]];
+
         yield 'stomp' => [[
             'transport' => [
                 'default' => 'stomp',
@@ -120,6 +126,13 @@ class UseCasesTest extends WebTestCase
                     'port' => getenv('SYMFONY__DB__PORT'),
                     'driver' => getenv('SYMFONY__DB__DRIVER'),
                 ],
+            ],
+        ]];
+
+        yield 'dbal_dsn' => [[
+            'transport' => [
+                'default' => 'dbal',
+                'dbal' => getenv('DOCTRINE_DSN'),
             ],
         ]];
 

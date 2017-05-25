@@ -115,20 +115,6 @@ class DbalConnectionFactory implements PsrConnectionFactory
             'sqlite' => true,
             'sqlite3' => true,
             'pdo_sqlite' => true,
-            'db2+doctrine' => true,
-            'ibm_db2+doctrine' => true,
-            'mssql+doctrine' => true,
-            'pdo_sqlsrv+doctrine' => true,
-            'mysql+doctrine' => true,
-            'mysql2+doctrine' => true,
-            'pdo_mysql+doctrine' => true,
-            'pgsql+doctrine' => true,
-            'postgres+doctrine' => true,
-            'postgresql+doctrine' => true,
-            'pdo_pgsql+doctrine' => true,
-            'sqlite+doctrine' => true,
-            'sqlite3+doctrine' => true,
-            'pdo_sqlite+doctrine' => true,
         ];
 
         if (false == isset($supported[$schema])) {
@@ -139,14 +125,11 @@ class DbalConnectionFactory implements PsrConnectionFactory
             ));
         }
 
-        $doctrineSchema = str_replace('+doctrine', '', $schema);
-        $doctrineUrl = empty($rest) ?
-            $doctrineSchema.'://root@localhost' :
-            str_replace($schema, $doctrineSchema, $dsn)
-        ;
-
-        return ['connection' => [
-            'url' => $doctrineUrl,
-        ]];
+        return [
+            'lazy' => true,
+            'connection' => [
+                'url' => empty($rest) ? $schema.'://root@localhost' : $dsn,
+            ],
+        ];
     }
 }

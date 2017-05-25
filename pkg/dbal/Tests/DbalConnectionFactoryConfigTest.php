@@ -55,6 +55,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             null,
             [
+                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
@@ -64,15 +65,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             'mysql://',
             [
-                'connection' => [
-                    'url' => 'mysql://root@localhost',
-                ],
-            ],
-        ];
-
-        yield [
-            'mysql+doctrine://',
-            [
+                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
@@ -82,6 +75,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             'pgsql://',
             [
+                'lazy' => true,
                 'connection' => [
                     'url' => 'pgsql://root@localhost',
                 ],
@@ -91,6 +85,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             'mysql://user:pass@host:10000/db',
             [
+                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://user:pass@host:10000/db',
                 ],
@@ -100,6 +95,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             [],
             [
+                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],

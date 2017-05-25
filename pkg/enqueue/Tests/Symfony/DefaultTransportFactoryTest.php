@@ -255,5 +255,9 @@ class DefaultTransportFactoryTest extends TestCase
         yield ['null://', 'default_null'];
 
         yield ['file://', 'default_fs'];
+
+        yield ['mysql://', 'default_dbal'];
+
+        yield ['pgsql://', 'default_dbal'];
     }
 }
