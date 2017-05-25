@@ -54,7 +54,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
 
         yield ['file://', FsConnectionFactory::class];
 
-        yield ['file://foo/bar/baz', FsConnectionFactory::class];
+        yield ['file:///foo/bar/baz', FsConnectionFactory::class];
 
         yield ['null://', NullConnectionFactory::class];
     }

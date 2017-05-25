@@ -62,16 +62,17 @@ class FsConnectionFactory implements PsrConnectionFactory
             return ['path' => $dsn];
         }
 
-        $scheme = parse_url($dsn, PHP_URL_SCHEME);
-        $path = parse_url($dsn, PHP_URL_PATH);
-        $host = parse_url($dsn, PHP_URL_HOST);
-        $query = parse_url($dsn, PHP_URL_QUERY);
-        if (false === $scheme) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        if (false === strpos($dsn, 'file://')) {
+            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "file://".', $dsn));
         }
 
-        if ('file' !== $scheme) {
-            throw new \LogicException('The given DSN scheme "%s" is not supported. Could be "file" only.');
+        $dsn = substr($dsn, 7);
+
+        $path = parse_url($dsn, PHP_URL_PATH);
+        $query = parse_url($dsn, PHP_URL_QUERY);
+
+        if ('/' != $path[0]) {
+            throw new \LogicException(sprintf('Failed to parse DSN path "%s". The path must start with "/"', $path));
         }
 
         if ($query) {
@@ -87,7 +88,7 @@ class FsConnectionFactory implements PsrConnectionFactory
             $config['chmod'] = intval($config['chmod'], 8);
         }
 
-        $config['path'] = sprintf('/%s%s', $host, $path);
+        $config['path'] = $path;
 
         return $config;
     }

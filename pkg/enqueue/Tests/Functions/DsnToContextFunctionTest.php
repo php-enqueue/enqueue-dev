@@ -54,7 +54,7 @@ class DsnToContextFunctionTest extends TestCase
 
         yield ['file://', FsContext::class];
 
-        yield ['file:/'.sys_get_temp_dir(), FsContext::class];
+        yield ['file://'.sys_get_temp_dir(), FsContext::class];
 
         yield ['null://', NullContext::class];
     }
