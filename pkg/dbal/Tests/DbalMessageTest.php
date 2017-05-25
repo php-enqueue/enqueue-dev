@@ -3,7 +3,6 @@
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalMessage;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
 
 class DbalMessageTest extends \PHPUnit_Framework_TestCase

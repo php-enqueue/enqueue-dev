@@ -54,7 +54,7 @@ class RedisProducerTest extends TestCase
         $redisMock
             ->expects($this->once())
             ->method('lpush')
-            ->with('aDestination', '{"body":null,"properties":[],"headers":[]}')
+            ->with('aDestination', '{"body":"","properties":[],"headers":[]}')
         ;
 
         $producer = new RedisProducer($redisMock);

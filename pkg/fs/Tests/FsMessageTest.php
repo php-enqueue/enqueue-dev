@@ -3,7 +3,6 @@
 namespace Enqueue\Fs\Tests;
 
 use Enqueue\Fs\FsMessage;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
 
 class FsMessageTest extends \PHPUnit\Framework\TestCase

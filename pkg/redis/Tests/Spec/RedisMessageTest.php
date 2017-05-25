@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Redis\Tests\Spec;
 
 use Enqueue\Psr\Spec\PsrMessageSpec;

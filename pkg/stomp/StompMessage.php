@@ -174,7 +174,7 @@ class StompMessage implements PsrMessage
      */
     public function getCorrelationId()
     {
-        return $this->getHeader('correlation_id', '');
+        return $this->getHeader('correlation_id');
     }
 
     /**
@@ -190,7 +190,7 @@ class StompMessage implements PsrMessage
      */
     public function getMessageId()
     {
-        return $this->getHeader('message_id', '');
+        return $this->getHeader('message_id');
     }
 
     /**

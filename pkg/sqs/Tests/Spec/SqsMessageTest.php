@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Sqs\Tests\Spec;
 
 use Enqueue\Psr\Spec\PsrMessageSpec;

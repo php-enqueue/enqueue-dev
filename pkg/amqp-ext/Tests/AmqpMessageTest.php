@@ -115,12 +115,4 @@ class AmqpMessageTest extends TestCase
 
         $this->assertSame(AMQP_NOPARAM, $message->getFlags());
     }
-
-    /**
-     * @return PsrMessage
-     */
-    protected function createMessage()
-    {
-        return new AmqpMessage();
-    }
 }

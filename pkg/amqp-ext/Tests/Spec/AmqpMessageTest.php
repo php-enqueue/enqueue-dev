@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpMessage;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Fs\Tests\Spec;
 
 use Enqueue\Fs\FsMessage;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Null\Tests\Spec;
 
 use Enqueue\Null\NullMessage;
