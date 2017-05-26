@@ -24,6 +24,7 @@
         "symfony/event-dispatcher": "^2.8|^3",
         "symfony/http-kernel": "^2.8|^3",
         "enqueue/amqp-ext": "^0.4",
+        "enqueue/dbal": "^0.4",
         "enqueue/fs": "^0.4",
         "enqueue/test": "^0.4",
         "enqueue/simple-client": "^0.4",
