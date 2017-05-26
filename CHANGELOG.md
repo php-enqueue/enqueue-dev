@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.4.10](https://github.com/php-enqueue/enqueue-dev/tree/0.4.10) (2017-05-26)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.9...0.4.10)
+
+- Calling AmqpContext::declareQueue\(\) now returns an integer holding the queue message count [\#66](https://github.com/php-enqueue/enqueue-dev/pull/66) ([J7mbo](https://github.com/J7mbo))
+
+- \[RabbitMQ\] support for wildcard topics \("topic exchange"\) [\#65](https://github.com/php-enqueue/enqueue-dev/issues/65)
+
+- \[dbal\] Add DSN support. [\#104](https://github.com/php-enqueue/enqueue-dev/pull/104) ([makasim](https://github.com/makasim))
+
 ## [0.4.9](https://github.com/php-enqueue/enqueue-dev/tree/0.4.9) (2017-05-25)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.8...0.4.9)
 
