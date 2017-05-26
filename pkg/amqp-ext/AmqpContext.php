@@ -114,6 +114,8 @@ class AmqpContext implements PsrContext
 
     /**
      * @param AmqpQueue|PsrDestination $destination
+     *
+     * @return int
      */
     public function declareQueue(PsrDestination $destination)
     {
@@ -127,11 +129,13 @@ class AmqpContext implements PsrContext
             $extQueue->setName($destination->getQueueName());
         }
 
-        $extQueue->declareQueue();
+        $count = $extQueue->declareQueue();
 
         if (false == $destination->getQueueName()) {
             $destination->setQueueName($extQueue->getName());
         }
+
+        return $count;
     }
 
     /**
