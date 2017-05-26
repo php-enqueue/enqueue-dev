@@ -33,7 +33,16 @@ class DbalTransportFactory implements TransportFactoryInterface
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
         $builder
+            ->beforeNormalization()
+                ->ifString()
+                ->then(function ($v) {
+                    return ['dsn' => $v];
+                })
+            ->end()
             ->children()
+                ->scalarNode('dsn')
+                    ->info('The Doctrine DBAL DSN. Other parameters are ignored if set')
+                ->end()
                 ->variableNode('connection')
                     ->treatNullLike([])
                     ->info('Doctrine DBAL connection options. See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html')
@@ -66,6 +75,9 @@ class DbalTransportFactory implements TransportFactoryInterface
         if (false == empty($config['dbal_connection_name'])) {
             $factory = new Definition(ManagerRegistryConnectionFactory::class);
             $factory->setArguments([new Reference('doctrine'), $config]);
+        } elseif (false == empty($config['dsn'])) {
+            $factory = new Definition(DbalConnectionFactory::class);
+            $factory->setArguments([$config['dsn']]);
         } elseif (false == empty($config['connection'])) {
             $factory = new Definition(DbalConnectionFactory::class);
             $factory->setArguments([$config]);

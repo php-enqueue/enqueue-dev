@@ -43,7 +43,11 @@ class DbalContext implements PsrContext
         } elseif (is_callable($connection)) {
             $this->connectionFactory = $connection;
         } else {
-            throw new \InvalidArgumentException('The connection argument must be either Doctrine\DBAL\Connection or callable that returns Doctrine\DBAL\Connection.');
+            throw new \InvalidArgumentException(sprintf(
+                'The connection argument must be either %s or callable that returns %s.',
+                Connection::class,
+                Connection::class
+            ));
         }
     }
 

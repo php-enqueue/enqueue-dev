@@ -19,21 +19,33 @@ class DbalConnectionFactory implements PsrConnectionFactory
     private $connection;
 
     /**
+     * The config could be an array, string DSN or null. In case of null it will attempt to connect to mysql localhost with default credentials.
+     *
      * $config = [
      *   'connection' => []             - dbal connection options. see http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
      *   'table_name' => 'enqueue',     - database table name.
      *   'polling_interval' => '1000',  - How often query for new messages (milliseconds)
      *   'lazy' => true,                - Use lazy database connection (boolean)
-     * ].
+     * ]
      *
-     * @param $config
+     * or
+     *
+     * mysql://user:pass@localhost:3606/db?charset=UTF-8
+     *
+     * @param array|string|null $config
      */
-    public function __construct(array $config = [])
+    public function __construct($config = 'mysql://')
     {
-        $this->config = array_replace([
-            'connection' => [],
-            'lazy' => true,
-        ], $config);
+        if (empty($config)) {
+            $config = $this->parseDsn('mysql://');
+        } elseif (is_string($config)) {
+            $config = $this->parseDsn($config);
+        } elseif (is_array($config)) {
+        } else {
+            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+        }
+
+        $this->config = $config;
     }
 
     /**
@@ -73,5 +85,51 @@ class DbalConnectionFactory implements PsrConnectionFactory
         }
 
         return $this->connection;
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return array
+     */
+    private function parseDsn($dsn)
+    {
+        if (false === strpos($dsn, '://')) {
+            throw new \LogicException(sprintf('The given DSN "%s" is not valid. Must contain "://".', $dsn));
+        }
+
+        list($schema, $rest) = explode('://', $dsn, 2);
+
+        $supported = [
+            'db2' => true,
+            'ibm_db2' => true,
+            'mssql' => true,
+            'pdo_sqlsrv' => true,
+            'mysql' => true,
+            'mysql2' => true,
+            'pdo_mysql' => true,
+            'pgsql' => true,
+            'postgres' => true,
+            'postgresql' => true,
+            'pdo_pgsql' => true,
+            'sqlite' => true,
+            'sqlite3' => true,
+            'pdo_sqlite' => true,
+        ];
+
+        if (false == isset($supported[$schema])) {
+            throw new \LogicException(sprintf(
+                'The given DSN schema "%s" is not supported. There are supported schemes: "%s".',
+                $schema,
+                implode('", "', array_keys($supported))
+            ));
+        }
+
+        return [
+            'lazy' => true,
+            'connection' => [
+                'url' => empty($rest) ? $schema.'://root@localhost' : $dsn,
+            ],
+        ];
     }
 }

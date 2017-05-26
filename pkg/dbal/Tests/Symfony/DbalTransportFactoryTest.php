@@ -61,6 +61,25 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
         ], $config);
     }
 
+    public function testShouldAllowAddConfigurationAsString()
+    {
+        $transport = new DbalTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), ['mysqlDSN']);
+
+        $this->assertEquals([
+            'dsn' => 'mysqlDSN',
+            'dbal_connection_name' => null,
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
+            'lazy' => true,
+        ], $config);
+    }
+
     public function testShouldCreateDbalConnectionFactory()
     {
         $container = new ContainerBuilder();
@@ -87,6 +106,26 @@ class DbalTransportFactoryTest extends \PHPUnit_Framework_TestCase
             'table_name' => 'enqueue',
             'polling_interval' => 1000,
         ], $factory->getArgument(0));
+    }
+
+    public function testShouldCreateConnectionFactoryFromDsnString()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new DbalTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'dsn' => 'theDSN',
+            'connection' => [],
+            'lazy' => true,
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(DbalConnectionFactory::class, $factory->getClass());
+        $this->assertSame('theDSN', $factory->getArgument(0));
     }
 
     public function testShouldCreateManagerRegistryConnectionFactory()

@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Functions;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use PHPUnit\Framework\TestCase;
@@ -57,5 +58,9 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
         yield ['file:///foo/bar/baz', FsConnectionFactory::class];
 
         yield ['null://', NullConnectionFactory::class];
+
+        yield ['mysql://', DbalConnectionFactory::class];
+
+        yield ['pgsql://', DbalConnectionFactory::class];
     }
 }

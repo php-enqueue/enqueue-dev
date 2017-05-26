@@ -4,6 +4,7 @@ namespace Enqueue;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Psr\PsrConnectionFactory;
@@ -28,6 +29,23 @@ function dsn_to_connection_factory($dsn)
 
     if (class_exists(NullConnectionFactory::class)) {
         $map['null'] = NullConnectionFactory::class;
+    }
+
+    if (class_exists(DbalConnectionFactory::class)) {
+        $map['db2'] = DbalConnectionFactory::class;
+        $map['ibm_db2'] = DbalConnectionFactory::class;
+        $map['mssql'] = DbalConnectionFactory::class;
+        $map['pdo_sqlsrv'] = DbalConnectionFactory::class;
+        $map['mysql'] = DbalConnectionFactory::class;
+        $map['mysql2'] = DbalConnectionFactory::class;
+        $map['pdo_mysql'] = DbalConnectionFactory::class;
+        $map['pgsql'] = DbalConnectionFactory::class;
+        $map['postgres'] = DbalConnectionFactory::class;
+        $map['postgresql'] = DbalConnectionFactory::class;
+        $map['pdo_pgsql'] = DbalConnectionFactory::class;
+        $map['sqlite'] = DbalConnectionFactory::class;
+        $map['sqlite3'] = DbalConnectionFactory::class;
+        $map['pdo_sqlite'] = DbalConnectionFactory::class;
     }
 
     list($scheme) = explode('://', $dsn);
