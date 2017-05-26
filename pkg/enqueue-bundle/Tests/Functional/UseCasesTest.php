@@ -51,7 +51,7 @@ class UseCasesTest extends WebTestCase
 
         yield 'default_dbal_as_dsn' => [[
             'transport' => [
-                'default' => getenv('DOCTRINE_DSN'),
+                'default' => getenv('DOCTINE_DSN'),
             ],
         ]];
 
@@ -105,13 +105,13 @@ class UseCasesTest extends WebTestCase
         yield 'fs_dsn' => [[
             'transport' => [
                 'default' => 'fs',
-                'fs' => 'file:/'.sys_get_temp_dir(),
+                'fs' => 'file://'.sys_get_temp_dir(),
             ],
         ]];
 
         yield 'default_fs_as_dsn' => [[
             'transport' => [
-                'default' => 'file:/'.sys_get_temp_dir(),
+                'default' => 'file://'.sys_get_temp_dir(),
             ],
         ]];
 
@@ -119,12 +119,14 @@ class UseCasesTest extends WebTestCase
             'transport' => [
                 'default' => 'dbal',
                 'dbal' => [
-                    'dbname' => getenv('SYMFONY__DB__NAME'),
-                    'user' => getenv('SYMFONY__DB__USER'),
-                    'password' => getenv('SYMFONY__DB__PASSWORD'),
-                    'host' => getenv('SYMFONY__DB__HOST'),
-                    'port' => getenv('SYMFONY__DB__PORT'),
-                    'driver' => getenv('SYMFONY__DB__DRIVER'),
+                    'connection' => [
+                        'dbname' => getenv('SYMFONY__DB__NAME'),
+                        'user' => getenv('SYMFONY__DB__USER'),
+                        'password' => getenv('SYMFONY__DB__PASSWORD'),
+                        'host' => getenv('SYMFONY__DB__HOST'),
+                        'port' => getenv('SYMFONY__DB__PORT'),
+                        'driver' => getenv('SYMFONY__DB__DRIVER'),
+                    ],
                 ],
             ],
         ]];
@@ -132,7 +134,7 @@ class UseCasesTest extends WebTestCase
         yield 'dbal_dsn' => [[
             'transport' => [
                 'default' => 'dbal',
-                'dbal' => getenv('DOCTRINE_DSN'),
+                'dbal' => getenv('DOCTINE_DSN'),
             ],
         ]];
 
@@ -231,6 +233,7 @@ class UseCasesTest extends WebTestCase
 
         $this->client = static::createClient(['enqueue_config' => $enqueueConfig]);
         $this->client->getKernel()->boot();
+        static::$kernel = $this->client->getKernel();
         $this->container = static::$kernel->getContainer();
 
         /** @var DriverInterface $driver */

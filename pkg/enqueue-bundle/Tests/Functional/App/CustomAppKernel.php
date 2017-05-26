@@ -5,6 +5,7 @@ namespace Enqueue\Bundle\Tests\Functional\App;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
@@ -24,6 +25,10 @@ class CustomAppKernel extends Kernel
 
     public function setEnqueueConfig(array $config)
     {
+        $fs = new Filesystem();
+        $fs->remove(sys_get_temp_dir().'/EnqueueBundleCustom/cache');
+        $fs->mkdir(sys_get_temp_dir().'/EnqueueBundleCustom/cache');
+
         $this->enqueueConfig = array_replace_recursive($this->enqueueConfig, $config);
     }
 

@@ -34,7 +34,7 @@ class StompTransportFactory implements TransportFactoryInterface
         $builder
             ->children()
                 ->scalarNode('host')->defaultValue('localhost')->cannotBeEmpty()->end()
-                ->integerNode('port')->min(1)->defaultValue(61613)->end()
+                ->scalarNode('port')->defaultValue(61613)->end()
                 ->scalarNode('login')->defaultValue('guest')->cannotBeEmpty()->end()
                 ->scalarNode('password')->defaultValue('guest')->cannotBeEmpty()->end()
                 ->scalarNode('vhost')->defaultValue('/')->cannotBeEmpty()->end()

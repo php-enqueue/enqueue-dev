@@ -70,7 +70,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
                 $this->factories[$name]->createDriver($container, $transportConfig);
             }
 
-            if (false == isset($config['transport'][$config['transport']['default']['alias']])) {
+            if (isset($config['transport']['default']['alias']) && false == isset($config['transport'][$config['transport']['default']['alias']])) {
                 throw new \LogicException(sprintf('Transport is not enabled: %s', $config['transport']['default']['alias']));
             }
 
@@ -82,7 +82,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
                 $config['client']['router_queue'],
                 $config['client']['default_processor_queue'],
                 $config['client']['router_processor'],
-                $config['transport'][$config['transport']['default']['alias']],
+                isset($config['transport']['default']['alias']) ? $config['transport'][$config['transport']['default']['alias']] : [],
             ]);
 
             $container->setParameter('enqueue.client.router_queue_name', $config['client']['router_queue']);
