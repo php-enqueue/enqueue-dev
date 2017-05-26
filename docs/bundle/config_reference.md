@@ -130,6 +130,9 @@ enqueue:
             lazy:                 true
         dbal:
 
+            # The Doctrine DBAL DSN. Other parameters are ignored if set
+            dsn:                  ~
+
             # Doctrine DBAL connection options. See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
             connection:           ~
 

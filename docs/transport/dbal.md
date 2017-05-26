@@ -26,17 +26,7 @@ $ composer require enqueue/dbal
 <?php
 use Enqueue\Dbal\DbalConnectionFactory;
 
-$factory = new DbalConnectionFactory([
-    'connection' => [
-        'dbname' => 'mqdev',
-        'user' => 'user',
-        'password' => 'pass',
-        'host' => 'localhost',
-        'port' => 3306,
-        'driver' => 'pdo_mysql',
-    ],
-    'table_name' => 'enqueue',
-]);
+$factory = new DbalConnectionFactory('mysql://user:pass@localhost:3306/mqdev');
 
 $psrContext = $factory->createContext();
 ```
