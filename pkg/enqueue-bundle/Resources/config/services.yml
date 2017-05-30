@@ -1,4 +1,10 @@
 services:
+    enqueue.connection_factory_factory:
+        class: 'Enqueue\ConnectionFactoryFactory'
+        public: false
+        arguments:
+            - []
+
     enqueue.consumption.extensions:
         class: 'Enqueue\Consumption\ChainExtension'
         public: false

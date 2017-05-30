@@ -30,7 +30,7 @@ services:
         class: 'Enqueue\Client\RpcClient'
         arguments:
             - '@enqueue.client.producer'
-            - '@enqueue.transport.context'
+            - '@enqueue.client.transport.context'
 
     enqueue.client.router_processor:
         class: 'Enqueue\Client\RouterProcessor'
@@ -78,7 +78,7 @@ services:
         class: 'Enqueue\Consumption\QueueConsumer'
         public: false
         arguments:
-            - '@enqueue.transport.context'
+            - '@enqueue.client.transport.context'
             - '@enqueue.consumption.extensions'
 
     enqueue.client.consume_messages_command:

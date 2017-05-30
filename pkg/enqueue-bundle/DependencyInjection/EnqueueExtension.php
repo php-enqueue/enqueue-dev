@@ -5,6 +5,8 @@ namespace Enqueue\Bundle\DependencyInjection;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\JobQueue\Job;
 use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\Psr\PsrConnectionFactory;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\FileLocator;
@@ -44,7 +46,20 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             throw new \LogicException(sprintf('Transport factory with such name already added. Name %s', $name));
         }
 
-        $this->factories[$name] = $transportFactory;
+//        $this->factories[$name] = $transportFactory;
+    }
+
+    /**
+     * @param string $name
+     * @param string $factoryClass
+     */
+    public function addFactoryClass($name, $factoryClass)
+    {
+        if (array_key_exists($name, $this->factories)) {
+            throw new \LogicException(sprintf('The factory with such name has already been added. Name "%s"', $name));
+        }
+
+        $this->factories[$name] = $factoryClass;
     }
 
     /**
@@ -52,17 +67,42 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $config = $this->processConfiguration(new Configuration($this->factories), $configs);
+        $config = $this->processConfiguration(new Configuration(array_keys($this->factories)), $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
+        $container->getDefinition('enqueue.connection_factory_factory')
+            ->replaceArgument(0, $this->factories);
+
         foreach ($config['transport'] as $name => $transportConfig) {
-            $this->factories[$name]->createConnectionFactory($container, $transportConfig);
-            $this->factories[$name]->createContext($container, $transportConfig);
+            $factoryId = sprintf('enqueue.transport.%s.connection_factory', $name);
+            $contextId = sprintf('enqueue.transport.%s.context', $name);
+
+            if (isset($transportConfig['dsn'])) {
+                $transportConfig = $transportConfig['dsn'];
+            }
+
+            $container->register($factoryId, PsrConnectionFactory::class)
+                ->addArgument($transportConfig)
+                ->setFactory([new Reference('enqueue.connection_factory_factory'), 'createFactory'])
+            ;
+
+            $container->register($contextId, PsrContext::class)
+                ->setFactory([new Reference($factoryId), 'createContext'])
+            ;
         }
 
         if (isset($config['client'])) {
+            $container->setAlias(
+                'enqueue.client.transport.connection_factory',
+                sprintf('enqueue.transport.%s.connection_factory', $config['client']['transport'])
+            );
+            $container->setAlias(
+                'enqueue.client.transport.context',
+                sprintf('enqueue.transport.%s.context', $config['client']['transport'])
+            );
+
             $loader->load('client.yml');
             $loader->load('extensions/flush_spool_producer_extension.yml');
 
