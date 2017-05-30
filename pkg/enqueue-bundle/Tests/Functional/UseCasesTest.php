@@ -8,6 +8,7 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @group functional
@@ -48,6 +49,15 @@ class UseCasesTest extends WebTestCase
                 'default' => getenv('AMQP_DSN'),
             ],
         ]];
+
+        // Symfony 2.x does not such env syntax
+        if (version_compare(Kernel::VERSION, '3.2', '>=')) {
+            yield 'default_dsn_as_env' => [[
+                'transport' => [
+                    'default' => '%env(AMQP_DSN)%',
+                ],
+            ]];
+        }
 
         yield 'default_dbal_as_dsn' => [[
             'transport' => [
