@@ -23,14 +23,22 @@ matrix:
     - php: 7.0
       sudo: false
       env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true SYMFONY_DEPRECATIONS_HELPER=weak
-    - php: 7.0
+    - php: 7.1
       sudo: required
       services: docker
       env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true
-    - php: 7.0
+    - php: 7.1
       sudo: required
       services: docker
       env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true
+    - php: 7.1
+      sudo: required
+      services: docker
+      env: SYMFONY_VERSION=3.2.* FUNCTIONAL_TESTS=true
+    - php: 7.1
+      sudo: required
+      services: docker
+      env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true
 
 cache:
     directories:

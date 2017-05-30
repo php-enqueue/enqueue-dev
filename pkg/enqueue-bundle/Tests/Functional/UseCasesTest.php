@@ -51,7 +51,7 @@ class UseCasesTest extends WebTestCase
         ]];
 
         // Symfony 2.x does not such env syntax
-        if (version_compare(Kernel::VERSION, '3.0', '>=')) {
+        if (version_compare(Kernel::VERSION, '3.2', '>=')) {
             yield 'default_dsn_as_env' => [[
                 'transport' => [
                     'default' => '%env(AMQP_DSN)%',
