@@ -10,12 +10,7 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Psr\PsrContext;
 
-/**
- * @param string $dsn
- *
- * @return PsrConnectionFactory
- */
-function dsn_to_connection_factory($dsn)
+function dsn_connection_factory_map()
 {
     $map = [];
 
@@ -46,6 +41,24 @@ function dsn_to_connection_factory($dsn)
         $map['sqlite'] = DbalConnectionFactory::class;
         $map['sqlite3'] = DbalConnectionFactory::class;
         $map['pdo_sqlite'] = DbalConnectionFactory::class;
+    }
+
+    return $map;
+}
+
+/**
+ * @param string                $dsn
+ * @param array|callable|string $map
+ *
+ * @return PsrConnectionFactory
+ */
+function dsn_to_connection_factory($dsn, $map = 'dsn_connection_factory_map')
+{
+    if (is_callable($map)) {
+        $map = call_user_func($map);
+    }
+    if (false == is_array($map)) {
+        throw new \LogicException(sprintf('The map must be array. Got %s', is_object($map) ? get_class($map) : gettype($map)));
     }
 
     list($scheme) = explode('://', $dsn);

@@ -3,23 +3,22 @@
 namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\Client\Config;
-use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
     /**
-     * @var TransportFactoryInterface[]
+     * @var string[]
      */
-    private $factories;
+    private $factoriesNames;
 
     /**
-     * @param TransportFactoryInterface[] $factories
+     * @param string[] $factoriesNames
      */
-    public function __construct(array $factories)
+    public function __construct(array $factoriesNames)
     {
-        $this->factories = $factories;
+        $this->factoriesNames = $factoriesNames;
     }
 
     /**
@@ -30,17 +29,69 @@ class Configuration implements ConfigurationInterface
         $tb = new TreeBuilder();
         $rootNode = $tb->root('enqueue');
 
-        $transportChildren = $rootNode->children()
-            ->arrayNode('transport')->isRequired()->children();
+        $rootNode
+            ->beforeNormalization()
+            ->always(function ($v) {
+                if (empty($v['transport'])) {
+                    $v['transport'] = [
+                        'default' => ['dsn' => 'null://'],
+                    ];
+                }
 
-        foreach ($this->factories as $factory) {
-            $factory->addConfiguration(
-                $transportChildren->arrayNode($factory->getName())
-            );
-        }
+                if (is_string($v['transport'])) {
+                    $v['transport'] = [
+                        'default' => ['dsn' => $v['transport']],
+                    ];
+                }
+
+                if (is_array($v['transport'])) {
+                    foreach ($v['transport'] as $name => $config) {
+                        if (empty($config)) {
+                            $config = ['dsn' => 'null://'];
+                        }
+
+                        if (is_string($config)) {
+                            $config = ['dsn' => $config];
+                        }
+
+                        if (empty($config['dsn']) && empty($config['config'])) {
+                            throw new \LogicException(sprintf('The transport "%s" is incorrectly configured. Either "dsn" or "config" must be set.', $name));
+                        }
+
+                        $v['transport'][$name] = $config;
+                    }
+                }
+
+                return $v;
+            })
+            ->end()
+            ->children()
+                ->arrayNode('transport')
+                    ->prototype('array')
+                        ->beforeNormalization()
+                            ->ifString()->then(function ($v) {
+                                return ['dsn' => $v];
+                            })
+                            ->ifEmpty()->then(function ($v) {
+                                return ['dsn' => 'null://'];
+                            })
+                        ->end()
+                        ->children()
+                            ->scalarNode('dsn')->end()
+                            ->enumNode('factory')->values($this->factoriesNames)->end()
+                            ->variableNode('config')
+                                ->treatNullLike([])
+                                ->info('The place for factory specific options')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
 
         $rootNode->children()
             ->arrayNode('client')->children()
+                ->scalarNode('transport')->defaultValue('default')->end()
                 ->booleanNode('traceable_producer')->defaultFalse()->end()
                 ->scalarNode('prefix')->defaultValue('enqueue')->end()
                 ->scalarNode('app_name')->defaultValue('app')->end()

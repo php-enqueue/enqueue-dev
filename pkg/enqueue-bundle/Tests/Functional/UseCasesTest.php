@@ -49,6 +49,12 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
+        yield 'default_dsn_as_env' => [[
+            'transport' => [
+                'default' => '%env(AMQP_DSN)%',
+            ],
+        ]];
+
         yield 'default_dbal_as_dsn' => [[
             'transport' => [
                 'default' => getenv('DOCTINE_DSN'),
