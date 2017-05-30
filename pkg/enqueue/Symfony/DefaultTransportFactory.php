@@ -12,7 +12,6 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Kernel;
 use function Enqueue\dsn_to_connection_factory;
 
 class DefaultTransportFactory implements TransportFactoryInterface
@@ -144,20 +143,17 @@ class DefaultTransportFactory implements TransportFactoryInterface
      */
     private function resolveDSN(ContainerBuilder $container, $dsn)
     {
-        // Symfony 2.x does not such env syntax
-        if (version_compare(Kernel::VERSION, '3.0', '<')) {
-            return $dsn;
-        }
+        if (method_exists($container, 'resolveEnvPlaceholders')) {
+            $dsn = $container->resolveEnvPlaceholders($dsn);
 
-        $dsn = $container->resolveEnvPlaceholders($dsn);
+            $matches = [];
+            if (preg_match('/%env\((.*?)\)/', $dsn, $matches)) {
+                if (false === $realDsn = getenv($matches[1])) {
+                    throw new \LogicException(sprintf('The env "%s" var is not defined', $matches[1]));
+                }
 
-        $matches = [];
-        if (preg_match('/%env\((.*?)\)/', $dsn, $matches)) {
-            if (false === $realDsn = getenv($matches[1])) {
-                throw new \LogicException(sprintf('The env "%s" var is not defined', $matches[1]));
+                return $realDsn;
             }
-
-            return $realDsn;
         }
 
         return $dsn;
