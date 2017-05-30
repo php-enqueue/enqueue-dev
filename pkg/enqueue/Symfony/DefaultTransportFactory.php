@@ -12,6 +12,7 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel;
 use function Enqueue\dsn_to_connection_factory;
 
 class DefaultTransportFactory implements TransportFactoryInterface
@@ -143,6 +144,11 @@ class DefaultTransportFactory implements TransportFactoryInterface
      */
     private function resolveDSN(ContainerBuilder $container, $dsn)
     {
+        // Symfony 2.x does not such env syntax
+        if (version_compare(Kernel::VERSION, '3.0', '<')) {
+            return $dsn;
+        }
+
         $dsn = $container->resolveEnvPlaceholders($dsn);
 
         $matches = [];
