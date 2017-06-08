@@ -65,6 +65,8 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
             ],
         ];
 
@@ -83,6 +85,8 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
             ],
         ];
 
@@ -99,6 +103,8 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
             ],
         ];
 
@@ -115,6 +121,8 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
             ],
         ];
 
@@ -131,6 +139,8 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => '2',
                 'persisted' => false,
                 'lazy' => '',
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
             ],
         ];
 
@@ -147,6 +157,8 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => true,
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
             ],
         ];
 
@@ -163,6 +175,44 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'connect_timeout' => null,
                 'persisted' => false,
                 'lazy' => false,
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
+            ],
+        ];
+
+        yield [
+            ['pre_fetch_count' => 123, 'pre_fetch_size' => 321],
+            [
+                'host' => 'localhost',
+                'port' => 5672,
+                'vhost' => '/',
+                'user' => 'guest',
+                'pass' => 'guest',
+                'read_timeout' => null,
+                'write_timeout' => null,
+                'connect_timeout' => null,
+                'persisted' => false,
+                'lazy' => true,
+                'pre_fetch_count' => 123,
+                'pre_fetch_size' => 321,
+            ],
+        ];
+
+        yield [
+            'amqp://user:pass@host:10000/vhost?pre_fetch_count=123&pre_fetch_size=321',
+            [
+                'host' => 'host',
+                'port' => '10000',
+                'vhost' => 'vhost',
+                'user' => 'user',
+                'pass' => 'pass',
+                'read_timeout' => null,
+                'write_timeout' => null,
+                'connect_timeout' => null,
+                'persisted' => false,
+                'lazy' => true,
+                'pre_fetch_count' => 123,
+                'pre_fetch_size' => 321,
             ],
         ];
     }
