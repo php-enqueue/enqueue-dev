@@ -61,11 +61,30 @@ class AmqpConnectionFactory implements PsrConnectionFactory
     {
         if ($this->config['lazy']) {
             return new AmqpContext(function () {
-                return new \AMQPChannel($this->establishConnection());
+                return $this->createExtContext($this->establishConnection());
             });
         }
 
-        return new AmqpContext(new \AMQPChannel($this->establishConnection()));
+        return new AmqpContext($this->createExtContext($this->establishConnection()));
+    }
+
+    /**
+     * @param \AMQPConnection $extConnection
+     *
+     * @return \AMQPChannel
+     */
+    private function createExtContext(\AMQPConnection $extConnection)
+    {
+        $channel = new \AMQPChannel($extConnection);
+        if (false == empty($this->config['pre_fetch_count'])) {
+            $channel->setPrefetchCount((int) $this->config['pre_fetch_count']);
+        }
+
+        if (false == empty($this->config['pre_fetch_size'])) {
+            $channel->setPrefetchSize((int) $this->config['pre_fetch_size']);
+        }
+
+        return $channel;
     }
 
     /**
@@ -118,6 +137,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         if ($dsnConfig['query']) {
             $query = [];
             parse_str($dsnConfig['query'], $query);
+
             $dsnConfig = array_replace($query, $dsnConfig);
         }
 
@@ -149,6 +169,8 @@ class AmqpConnectionFactory implements PsrConnectionFactory
             'connect_timeout' => null,
             'persisted' => false,
             'lazy' => true,
+            'pre_fetch_count' => null,
+            'pre_fetch_size' => null,
         ];
     }
 }
