@@ -7,6 +7,7 @@ use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Psr\PsrDestination;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProducer;
+use Enqueue\Util\JSON;
 use Makasim\File\TempFile;
 
 class FsProducer implements PsrProducer
@@ -41,16 +42,7 @@ class FsProducer implements PsrProducer
                 return;
             }
 
-            $rawMessage = '|'.json_encode($message);
-
-            if (JSON_ERROR_NONE !== json_last_error()) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Could not encode value into json. Error %s and message %s',
-                    json_last_error(),
-                    json_last_error_msg()
-                ));
-            }
-
+            $rawMessage = '|'.JSON::encode($message);
             $rawMessage = str_repeat(' ', 64 - (strlen($rawMessage) % 64)).$rawMessage;
 
             fwrite($file, $rawMessage);
