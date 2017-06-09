@@ -3,8 +3,12 @@
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\EmptyCommandSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyCommandNameSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -152,7 +156,8 @@ class BuildProcessorRegistryPassTest extends TestCase
 
     public function testShouldThrowExceptionWhenTopicSubscriberConfigurationIsInvalid()
     {
-        $this->setExpectedException(\LogicException::class, 'Topic subscriber configuration is invalid. "[12345]"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Topic subscriber configuration is invalid. "[12345]"');
 
         $container = $this->createContainerBuilder();
 
@@ -165,6 +170,90 @@ class BuildProcessorRegistryPassTest extends TestCase
         $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
 
         $pass = new BuildProcessorRegistryPass();
+        $pass->process($container);
+    }
+
+    public function testShouldBuildRouteFromOnlyNameCommandSubscriber()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(OnlyCommandNameSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-id', $processor);
+
+        $processorRegistry = new Definition();
+        $processorRegistry->setArguments([]);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
+
+        $pass = new BuildProcessorRegistryPass();
+        $pass->process($container);
+
+        $expectedValue = [
+            'the-command-name' => 'processor-id',
+        ];
+
+        $this->assertEquals($expectedValue, $processorRegistry->getArgument(0));
+    }
+
+    public function testShouldBuildRouteFromProcessorNameCommandSubscriber()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(ProcessorNameCommandSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-id', $processor);
+
+        $processorRegistry = new Definition();
+        $processorRegistry->setArguments([]);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
+
+        $pass = new BuildProcessorRegistryPass();
+        $pass->process($container);
+
+        $expectedValue = [
+            'the-command-name' => 'processor-id',
+        ];
+
+        $this->assertEquals($expectedValue, $processorRegistry->getArgument(0));
+    }
+
+    public function testShouldThrowExceptionWhenProcessorNameEmpty()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(EmptyCommandSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-id', $processor);
+
+        $processorRegistry = new Definition();
+        $processorRegistry->setArguments([]);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
+
+        $pass = new BuildProcessorRegistryPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The processor name (it is also the command name) must not be empty.');
+
+        $pass->process($container);
+    }
+
+    public function testShouldThrowExceptionWhenCommandSubscriberConfigurationIsInvalid()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(InvalidCommandSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-id', $processor);
+
+        $processorRegistry = new Definition();
+        $processorRegistry->setArguments([]);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
+
+        $pass = new BuildProcessorRegistryPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Command subscriber configuration is invalid. "12345"');
+
         $pass->process($container);
     }
 

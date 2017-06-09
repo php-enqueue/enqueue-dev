@@ -4,9 +4,12 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyCommandNameSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
+use Enqueue\Client\Config;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -213,8 +216,6 @@ class BuildClientRoutingPassTest extends TestCase
 
     public function testShouldThrowExceptionWhenTopicSubscriberConfigurationIsInvalid()
     {
-        $this->setExpectedException(\LogicException::class, 'Topic subscriber configuration is invalid. "[12345]"');
-
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(InvalidTopicSubscriber::class);
@@ -226,7 +227,59 @@ class BuildClientRoutingPassTest extends TestCase
         $container->setDefinition('enqueue.client.router_processor', $router);
 
         $pass = new BuildClientRoutingPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Topic subscriber configuration is invalid. "[12345]"');
+
         $pass->process($container);
+    }
+
+    public function testShouldBuildRouteFromCommandSubscriberIfOnlyCommandNameSpecified()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(OnlyCommandNameSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-service-id', $processor);
+
+        $router = new Definition();
+        $router->setArguments([null, null, null]);
+        $container->setDefinition('enqueue.client.router_processor', $router);
+
+        $pass = new BuildClientRoutingPass();
+        $pass->process($container);
+
+        $expectedRoutes = [
+            Config::COMMAND_TOPIC => [
+                ['the-command-name', 'aDefaultQueueName'],
+            ],
+        ];
+
+        $this->assertEquals($expectedRoutes, $router->getArgument(1));
+    }
+
+    public function testShouldBuildRouteFromCommandSubscriberIfProcessorNameSpecified()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(ProcessorNameCommandSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-service-id', $processor);
+
+        $router = new Definition();
+        $router->setArguments([null, null, null]);
+        $container->setDefinition('enqueue.client.router_processor', $router);
+
+        $pass = new BuildClientRoutingPass();
+        $pass->process($container);
+
+        $expectedRoutes = [
+            Config::COMMAND_TOPIC => [
+                ['the-command-name', 'the-command-queue-name'],
+            ],
+        ];
+
+        $this->assertEquals($expectedRoutes, $router->getArgument(1));
     }
 
     /**

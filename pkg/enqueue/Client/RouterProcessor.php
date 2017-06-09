@@ -17,21 +17,24 @@ class RouterProcessor implements PsrProcessor
     /**
      * @var array
      */
-    private $routes;
+    private $eventRoutes;
 
     /**
      * @var array
      */
-    private $commands;
+    private $commandRoutes;
 
     /**
      * @param DriverInterface $driver
-     * @param array           $routes
+     * @param array           $eventRoutes
+     * @param array           $commandRoutes
      */
-    public function __construct(DriverInterface $driver, array $routes = [])
+    public function __construct(DriverInterface $driver, array $eventRoutes = [], array $commandRoutes = [])
     {
         $this->driver = $driver;
-        $this->routes = $routes;
+
+        $this->eventRoutes = $eventRoutes;
+        $this->commandRoutes = $commandRoutes;
     }
 
     /**
@@ -42,9 +45,9 @@ class RouterProcessor implements PsrProcessor
     public function add($topicName, $queueName, $processorName)
     {
         if (Config::COMMAND_TOPIC === $topicName) {
-            $this->commands[$processorName] = $queueName;
+            $this->commandRoutes[$processorName] = $queueName;
         } else {
-            $this->routes[$topicName][] = [$processorName, $queueName];
+            $this->eventRoutes[$topicName][] = [$processorName, $queueName];
         }
     }
 
@@ -77,8 +80,8 @@ class RouterProcessor implements PsrProcessor
     {
         $topicName = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
 
-        if (array_key_exists($topicName, $this->routes)) {
-            foreach ($this->routes[$topicName] as $route) {
+        if (array_key_exists($topicName, $this->eventRoutes)) {
+            foreach ($this->eventRoutes[$topicName] as $route) {
                 $processorMessage = clone $message;
                 $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route[0]);
                 $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $route[1]);
@@ -105,9 +108,9 @@ class RouterProcessor implements PsrProcessor
             ));
         }
 
-        if (isset($this->commands[$processorName])) {
+        if (isset($this->commandRoutes[$processorName])) {
             $processorMessage = clone $message;
-            $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->commands[$processorName]);
+            $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->commandRoutes[$processorName]);
 
             $this->driver->sendToProcessor($this->driver->createClientMessage($processorMessage));
         }

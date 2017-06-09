@@ -50,7 +50,7 @@ trait ExtractProcessorTagSubscriptionsTrait
             $params = $processorClass::getSubscribedCommand();
             if (is_string($params)) {
                 if (empty($params)) {
-                    throw new \LogicException('The command name must not be empty');
+                    throw new \LogicException('The processor name (it is also the command name) must not be empty.');
                 }
 
                 $data[] = [
@@ -61,8 +61,7 @@ trait ExtractProcessorTagSubscriptionsTrait
                 ];
             } elseif (is_array($params)) {
                 $params = array_replace($subscriptionPrototype, $params);
-
-                if ($processorName = $resolve($params['processorName'])) {
+                if (false == $processorName = $resolve($params['processorName'])) {
                     throw new \LogicException('The processor name (it is also the command name) must not be empty.');
                 }
 

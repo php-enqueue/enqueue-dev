@@ -3,7 +3,9 @@
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyCommandNameSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -187,6 +189,50 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $expectedQueues = [
             'subscriber-queue-name' => ['processors' => ['processor-service-id']],
+        ];
+
+        $this->assertEquals($expectedQueues, $registry->getArgument(1));
+    }
+
+    public function testShouldBuildQueueFromCommandSubscriber()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(ProcessorNameCommandSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-service-id', $processor);
+
+        $registry = new Definition();
+        $registry->setArguments([null, []]);
+        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+
+        $pass = new BuildQueueMetaRegistryPass();
+        $pass->process($container);
+
+        $expectedQueues = [
+            'the-command-queue-name' => ['processors' => ['the-command-name']],
+        ];
+
+        $this->assertEquals($expectedQueues, $registry->getArgument(1));
+    }
+
+    public function testShouldBuildQueueFromOnlyCommandNameSubscriber()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(OnlyCommandNameSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-service-id', $processor);
+
+        $registry = new Definition();
+        $registry->setArguments([null, []]);
+        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+
+        $pass = new BuildQueueMetaRegistryPass();
+        $pass->process($container);
+
+        $expectedQueues = [
+            'aDefaultQueueName' => ['processors' => ['the-command-name']],
         ];
 
         $this->assertEquals($expectedQueues, $registry->getArgument(1));
