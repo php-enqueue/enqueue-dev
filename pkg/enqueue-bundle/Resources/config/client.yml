@@ -23,6 +23,12 @@ services:
     enqueue.producer:
         alias: 'enqueue.client.producer'
 
+    enqueue.client.producer_v2:
+        class: 'Enqueue\Client\ProducerV2'
+        arguments:
+            - '@enqueue.client.producer'
+            - '@enqueue.client.rpc_client'
+
     enqueue.spool_producer:
         alias: 'enqueue.client.spool_producer'
 
