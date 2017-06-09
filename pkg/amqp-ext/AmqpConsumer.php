@@ -34,15 +34,22 @@ class AmqpConsumer implements PsrConsumer
     private $isInit;
 
     /**
+     * @var string
+     */
+    private $receiveMethod;
+
+    /**
      * @param AmqpContext $context
      * @param AmqpQueue   $queue
      * @param Buffer      $buffer
+     * @param string      $receiveMethod
      */
-    public function __construct(AmqpContext $context, AmqpQueue $queue, Buffer $buffer)
+    public function __construct(AmqpContext $context, AmqpQueue $queue, Buffer $buffer, $receiveMethod)
     {
         $this->queue = $queue;
         $this->context = $context;
         $this->buffer = $buffer;
+        $this->receiveMethod = $receiveMethod;
 
         $this->isInit = false;
     }
@@ -64,61 +71,15 @@ class AmqpConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
-        $end = microtime(true) + ($timeout / 1000);
-
-        while (0 === $timeout || microtime(true) < $end) {
-            if ($message = $this->receiveNoWait()) {
-                return $message;
-            }
+        if ('basic_get' == $this->receiveMethod) {
+            return $this->receiveBasicGet($timeout);
         }
 
-//        if ($this->isInit && $message = $this->buffer->pop($this->getExtQueue()->getConsumerTag())) {
-//            return $message;
-//        }
-//
-//        /** @var \AMQPQueue $extQueue */
-//        $extConnection = $this->getExtQueue()->getChannel()->getConnection();
-//
-//        $originalTimeout = $extConnection->getReadTimeout();
-//        try {
-//            $extConnection->setReadTimeout($timeout / 1000);
-//
-//            if (false == $this->isInit) {
-//                $this->getExtQueue()->consume(null, AMQP_NOPARAM);
-//
-//                $this->isInit = true;
-//            }
-//
-//            /** @var AmqpMessage|null $message */
-//            $message = null;
-//
-//            $this->getExtQueue()->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) use (&$message) {
-//                $message = $this->convertMessage($extEnvelope);
-//                $message->setConsumerTag($q->getConsumerTag());
-//
-//                if ($this->getExtQueue()->getConsumerTag() == $q->getConsumerTag()) {
-//                    return false;
-//                }
-//
-//                // not our message, put it to buffer and continue.
-//                $this->buffer->push($q->getConsumerTag(), $message);
-//
-//                $message = null;
-//
-//                return true;
-//            }, AMQP_JUST_CONSUME);
-//
-//            return $message;
-//        } catch (\AMQPQueueException $e) {
-//            if ('Consumer timeout exceed' == $e->getMessage()) {
-//                return null;
-//            }
-//
-//            throw $e;
-//        } finally {
-//            $extConnection->setReadTimeout($originalTimeout);
-//        }
+        if ('basic_consume' == $this->receiveMethod) {
+            return $this->receiveBasicConsume($timeout);
+        }
+
+        throw new \LogicException('The "receiveMethod" is not supported');
     }
 
     /**
@@ -158,6 +119,77 @@ class AmqpConsumer implements PsrConsumer
             $message->getDeliveryTag(),
             $requeue ? AMQP_REQUEUE : AMQP_NOPARAM
         );
+    }
+
+    /**
+     * @param int $timeout
+     *
+     * @return AmqpMessage|null
+     */
+    private function receiveBasicGet($timeout)
+    {
+        $end = microtime(true) + ($timeout / 1000);
+
+        while (0 === $timeout || microtime(true) < $end) {
+            if ($message = $this->receiveNoWait()) {
+                return $message;
+            }
+        }
+    }
+
+    /**
+     * @param int $timeout
+     *
+     * @return AmqpMessage|null
+     */
+    private function receiveBasicConsume($timeout)
+    {
+        if ($this->isInit && $message = $this->buffer->pop($this->getExtQueue()->getConsumerTag())) {
+            return $message;
+        }
+
+        /** @var \AMQPQueue $extQueue */
+        $extConnection = $this->getExtQueue()->getChannel()->getConnection();
+
+        $originalTimeout = $extConnection->getReadTimeout();
+        try {
+            $extConnection->setReadTimeout($timeout / 1000);
+
+            if (false == $this->isInit) {
+                $this->getExtQueue()->consume(null, AMQP_NOPARAM);
+
+                $this->isInit = true;
+            }
+
+            /** @var AmqpMessage|null $message */
+            $message = null;
+
+            $this->getExtQueue()->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) use (&$message) {
+                $message = $this->convertMessage($extEnvelope);
+                $message->setConsumerTag($q->getConsumerTag());
+
+                if ($this->getExtQueue()->getConsumerTag() == $q->getConsumerTag()) {
+                    return false;
+                }
+
+                // not our message, put it to buffer and continue.
+                $this->buffer->push($q->getConsumerTag(), $message);
+
+                $message = null;
+
+                return true;
+            }, AMQP_JUST_CONSUME);
+
+            return $message;
+        } catch (\AMQPQueueException $e) {
+            if ('Consumer timeout exceed' == $e->getMessage()) {
+                return null;
+            }
+
+            throw $e;
+        } finally {
+            $extConnection->setReadTimeout($originalTimeout);
+        }
     }
 
     /**

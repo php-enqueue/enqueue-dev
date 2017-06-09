@@ -24,7 +24,8 @@ class AmqpConsumerTest extends TestCase
         new AmqpConsumer(
             $this->createContext(),
             new AmqpQueue('aName'),
-            new Buffer()
+            new Buffer(),
+            'basic_get'
         );
     }
 

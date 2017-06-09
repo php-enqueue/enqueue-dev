@@ -37,6 +37,14 @@ class AmqpConnectionFactoryConfigTest extends TestCase
         new AmqpConnectionFactory('amqp://:@/');
     }
 
+    public function testThrowIfReceiveMenthodIsInvalid()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Invalid "receive_method" option value "invalidMethod". It could be only "basic_get", "basic_consume"');
+
+        new AmqpConnectionFactory(['receive_method' => 'invalidMethod']);
+    }
+
     /**
      * @dataProvider provideConfigs
      *
@@ -67,6 +75,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'pre_fetch_count' => null,
                 'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -87,6 +96,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'pre_fetch_count' => null,
                 'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -105,6 +115,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'pre_fetch_count' => null,
                 'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -123,6 +134,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'pre_fetch_count' => null,
                 'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -141,6 +153,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => '',
                 'pre_fetch_count' => null,
                 'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -159,6 +172,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'pre_fetch_count' => null,
                 'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -177,6 +191,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'pre_fetch_count' => null,
                 'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -195,6 +210,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'pre_fetch_count' => 123,
                 'pre_fetch_size' => 321,
+                'receive_method' => 'basic_get',
             ],
         ];
 
@@ -213,6 +229,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'pre_fetch_count' => 123,
                 'pre_fetch_size' => 321,
+                'receive_method' => 'basic_get',
             ],
         ];
     }
