@@ -5,7 +5,7 @@ namespace Enqueue\Client;
 use Enqueue\Util\JSON;
 use Enqueue\Util\UUID;
 
-class Producer implements ProducerInterface
+class Producer implements ProducerInterface, ProducerV2Interface
 {
     /**
      * @var DriverInterface
@@ -18,7 +18,8 @@ class Producer implements ProducerInterface
     private $extension;
 
     /**
-     * @param DriverInterface $driver
+     * @param DriverInterface         $driver
+     * @param ExtensionInterface|null $extension
      */
     public function __construct(DriverInterface $driver, ExtensionInterface $extension = null)
     {
@@ -78,6 +79,32 @@ class Producer implements ProducerInterface
         } else {
             throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendEvent($topic, $message)
+    {
+        $this->send($topic, $message);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendCommand($command, $message)
+    {
+        if (false == $message instanceof Message) {
+            $message = new Message($message);
+        }
+
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $command);
+        $message->setScope(Message::SCOPE_APP);
+
+        $this->send('__command__', $message);
+
+        // TODO add support of replies
     }
 
     /**
