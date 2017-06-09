@@ -1,11 +1,17 @@
 # Change Log
 
+## [0.4.13](https://github.com/php-enqueue/enqueue-dev/tree/0.4.13) (2017-06-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.12...0.4.13)
+
+- \[amqp\] Consumer always gets the queue the consume callback was called on. [\#110](https://github.com/php-enqueue/enqueue-dev/issues/110)
+- \[amqp\] Add ability to choose what receive method to use: basic\_get or basic\_consume. [\#112](https://github.com/php-enqueue/enqueue-dev/pull/112) ([makasim](https://github.com/makasim))
+
 ## [0.4.12](https://github.com/php-enqueue/enqueue-dev/tree/0.4.12) (2017-06-08)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.11...0.4.12)
 
 - \[amqp\] Add pre\_fetch\_count, pre\_fetch\_size options. [\#108](https://github.com/php-enqueue/enqueue-dev/pull/108) ([makasim](https://github.com/makasim))
 
-- \[amqp\] Switch to AMQP' basic.get till the issue with basic.consume is solved. [\#111](https://github.com/php-enqueue/enqueue-dev/pull/111) ([makasim](https://github.com/makasim))
+- \[amqp\]\[hotfix\] Switch to AMQP' basic.get till the issue with basic.consume is solved. [\#111](https://github.com/php-enqueue/enqueue-dev/pull/111) ([makasim](https://github.com/makasim))
 
 ## [0.4.11](https://github.com/php-enqueue/enqueue-dev/tree/0.4.11) (2017-05-30)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.10...0.4.11)
