@@ -2,6 +2,8 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Rpc\Promise;
+
 interface ProducerV2Interface
 {
     /**
@@ -17,6 +19,8 @@ interface ProducerV2Interface
      *
      * @param string               $command
      * @param string|array|Message $message
+     *
+     * @return Promise|null the promise is returned if message has reply to set
      */
     public function sendCommand($command, $message);
 }
