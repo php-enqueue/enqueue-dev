@@ -27,21 +27,21 @@ class AmqpContextTest extends TestCase
 
     public function testCouldBeConstructedWithExtChannelAsFirstArgument()
     {
-        new AmqpContext($this->createExtChannelMock());
+        new AmqpContext($this->createExtChannelMock(), 'basic_get');
     }
 
     public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
     {
         new AmqpContext(function () {
             return $this->createExtChannelMock();
-        });
+        }, 'basic_get');
     }
 
     public function testShouldCreateNewBufferOnConstruct()
     {
         $context = new AmqpContext(function () {
             return $this->createExtChannelMock();
-        });
+        }, 'basic_get');
 
         $this->assertAttributeInstanceOf(Buffer::class, 'buffer', $context);
     }
@@ -51,12 +51,12 @@ class AmqpContextTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The extChannel argument must be either AMQPChannel or callable that return AMQPChannel.');
 
-        new AmqpContext(new \stdClass());
+        new AmqpContext(new \stdClass(), 'basic_get');
     }
 
     public function testShouldReturnAmqpMessageOnCreateMessageCallWithoutArguments()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $message = $context->createMessage();
 
@@ -68,7 +68,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldReturnAmqpMessageOnCreateMessageCal()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $message = $context->createMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
 
@@ -80,7 +80,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldCreateTopicWithGivenName()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $topic = $context->createTopic('theName');
 
@@ -93,7 +93,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfNotAmqpTopicGivenOnDeleteTopicCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
@@ -102,7 +102,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfNotAmqpTopicGivenOnDeclareTopicCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
@@ -111,7 +111,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldCreateQueueWithGivenName()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $queue = $context->createQueue('theName');
 
@@ -125,7 +125,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfNotAmqpQueueGivenOnDeleteQueueCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
@@ -134,7 +134,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfNotAmqpQueueGivenOnDeclareQueueCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
@@ -143,7 +143,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldReturnAmqpProducer()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $producer = $context->createProducer();
 
@@ -152,7 +152,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldReturnAmqpConsumerForGivenQueue()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $buffer = $this->readAttribute($context, 'buffer');
 
@@ -169,7 +169,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfNotAmqpQueueGivenOnCreateConsumerCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
@@ -178,7 +178,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfNotAmqpTopicGivenOnCreateConsumerCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
@@ -213,7 +213,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($extConnectionMock)
         ;
 
-        $context = new AmqpContext($extChannelMock);
+        $context = new AmqpContext($extChannelMock, 'basic_get');
 
         $context->close();
     }
@@ -247,7 +247,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($extConnectionMock)
         ;
 
-        $context = new AmqpContext($extChannelMock);
+        $context = new AmqpContext($extChannelMock, 'basic_get');
 
         $context->close();
     }
@@ -281,14 +281,14 @@ class AmqpContextTest extends TestCase
             ->willReturn($extConnectionMock)
         ;
 
-        $context = new AmqpContext($extChannelMock);
+        $context = new AmqpContext($extChannelMock, 'basic_get');
 
         $context->close();
     }
 
     public function testShouldThrowIfSourceNotAmqpTopicOnBindCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
@@ -297,7 +297,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfTargetNotAmqpQueueOnBindCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
@@ -306,7 +306,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfGivenQueueNotAmqpQueueOnPurge()
     {
-        $context = new AmqpContext($this->createExtChannelMock());
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');

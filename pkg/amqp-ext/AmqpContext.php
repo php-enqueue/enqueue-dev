@@ -26,12 +26,20 @@ class AmqpContext implements PsrContext
     private $buffer;
 
     /**
+     * @var string
+     */
+    private $receiveMethod;
+
+    /**
      * Callable must return instance of \AMQPChannel once called.
      *
      * @param \AMQPChannel|callable $extChannel
+     * @param string                $receiveMethod
      */
-    public function __construct($extChannel)
+    public function __construct($extChannel, $receiveMethod)
     {
+        $this->receiveMethod = $receiveMethod;
+
         if ($extChannel instanceof \AMQPChannel) {
             $this->extChannel = $extChannel;
         } elseif (is_callable($extChannel)) {
@@ -181,10 +189,10 @@ class AmqpContext implements PsrContext
             $queue = $this->createTemporaryQueue();
             $this->bind($destination, $queue);
 
-            return new AmqpConsumer($this, $queue, $this->buffer);
+            return new AmqpConsumer($this, $queue, $this->buffer, $this->receiveMethod);
         }
 
-        return new AmqpConsumer($this, $destination, $this->buffer);
+        return new AmqpConsumer($this, $destination, $this->buffer, $this->receiveMethod);
     }
 
     public function close()

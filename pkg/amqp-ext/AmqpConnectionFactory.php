@@ -30,6 +30,8 @@ class AmqpConnectionFactory implements PsrConnectionFactory
      *     'connect_timeout' => 'Connection timeout. Note: 0 or greater seconds. May be fractional.',
      *     'persisted' => 'bool, Whether it use single persisted connection or open a new one for every context',
      *     'lazy' => 'the connection will be performed as later as possible, if the option set to true',
+     *     'pre_fetch_count' => 'Controls how many messages could be prefetched',
+     *     'pre_fetch_size' => 'Controls how many messages could be prefetched',
      * ]
      *
      * or
@@ -50,6 +52,15 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
+
+        $supportedMethods = ['basic_get', 'basic_consume'];
+        if (false == in_array($this->config['receive_method'], $supportedMethods, true)) {
+            throw new \LogicException(sprintf(
+                'Invalid "receive_method" option value "%s". It could be only "%s"',
+                $this->config['receive_method'],
+                implode('", "', $supportedMethods)
+            ));
+        }
     }
 
     /**
@@ -62,10 +73,10 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         if ($this->config['lazy']) {
             return new AmqpContext(function () {
                 return $this->createExtContext($this->establishConnection());
-            });
+            }, $this->config['receive_method']);
         }
 
-        return new AmqpContext($this->createExtContext($this->establishConnection()));
+        return new AmqpContext($this->createExtContext($this->establishConnection()), $this->config['receive_method']);
     }
 
     /**
@@ -171,6 +182,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
             'lazy' => true,
             'pre_fetch_count' => null,
             'pre_fetch_size' => null,
+            'receive_method' => 'basic_get',
         ];
     }
 }
