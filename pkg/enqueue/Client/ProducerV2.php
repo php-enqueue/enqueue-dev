@@ -2,6 +2,9 @@
 
 namespace Enqueue\Client;
 
+/**
+ * @experimental
+ */
 class ProducerV2 implements ProducerV2Interface
 {
     /**
