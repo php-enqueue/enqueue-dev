@@ -19,7 +19,7 @@ interface ProducerV2Interface
      * @param string               $command
      * @param string|array|Message $message
      *
-     * @return Promise|null the promise is returned if message has reply to set
+     * @return Promise|null the promise is returned if needReply argument is true
      */
     public function sendCommand($command, $message);
 }

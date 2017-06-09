@@ -38,7 +38,7 @@ class ProducerV2 implements ProducerV2Interface
     /**
      * {@inheritdoc}
      */
-    public function sendCommand($command, $message)
+    public function sendCommand($command, $message, $needReply = false)
     {
         if (false == $message instanceof Message) {
             $message = new Message($message);
@@ -48,9 +48,10 @@ class ProducerV2 implements ProducerV2Interface
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $command);
         $message->setScope(Message::SCOPE_APP);
 
-        if ($message->getReplyTo()) {
+        if ($needReply) {
             return $this->rpcClient->callAsync(Config::COMMAND_TOPIC, $message, 60);
         }
+
         $this->realProducer->send(Config::COMMAND_TOPIC, $message);
     }
 }
