@@ -32,6 +32,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
      *     'lazy' => 'the connection will be performed as later as possible, if the option set to true',
      *     'pre_fetch_count' => 'Controls how many messages could be prefetched',
      *     'pre_fetch_size' => 'Controls how many messages could be prefetched',
+     *     'receive_method' => 'Could be either basic_get or basic_consume',
      * ]
      *
      * or
