@@ -62,6 +62,13 @@ class AmqpConnectionFactory implements PsrConnectionFactory
                 implode('", "', $supportedMethods)
             ));
         }
+
+        if ('basic_consume' == $this->config['receive_method']) {
+            if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || phpversion('amqp') == '1.9.1-dev')) {
+                // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
+                throw new \LogicException('The "basic_consume" method does not work on amqp extension prior 1.9.1 version.');
+            }
+        }
     }
 
     /**

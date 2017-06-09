@@ -72,22 +72,78 @@ class AmqpConsumer implements PsrConsumer
     public function receive($timeout = 0)
     {
         if ('basic_get' == $this->receiveMethod) {
-            $end = microtime(true) + ($timeout / 1000);
+            return $this->receiveBasicGet($timeout);
+        }
 
-            while (0 === $timeout || microtime(true) < $end) {
-                if ($message = $this->receiveNoWait()) {
-                    return $message;
-                }
+        if ('basic_consume' == $this->receiveMethod) {
+            return $this->receiveBasicConsume($timeout);
+        }
+
+        throw new \LogicException('The "receiveMethod" is not supported');
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return AmqpMessage|null
+     */
+    public function receiveNoWait()
+    {
+        if ($extMessage = $this->getExtQueue()->get()) {
+            return $this->convertMessage($extMessage);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param AmqpMessage $message
+     */
+    public function acknowledge(PsrMessage $message)
+    {
+        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
+
+        $this->getExtQueue()->ack($message->getDeliveryTag());
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param AmqpMessage $message
+     */
+    public function reject(PsrMessage $message, $requeue = false)
+    {
+        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
+
+        $this->getExtQueue()->reject(
+            $message->getDeliveryTag(),
+            $requeue ? AMQP_REQUEUE : AMQP_NOPARAM
+        );
+    }
+
+    /**
+     * @param int $timeout
+     *
+     * @return AmqpMessage|null
+     */
+    private function receiveBasicGet($timeout)
+    {
+        $end = microtime(true) + ($timeout / 1000);
+
+        while (0 === $timeout || microtime(true) < $end) {
+            if ($message = $this->receiveNoWait()) {
+                return $message;
             }
-
-            return;
         }
+    }
 
-        if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || phpversion('amqp') == '1.9.1-dev')) {
-            // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
-            throw new \LogicException('The "basic_consume" method does not work on amqp extension prior 1.9.1 version.');
-        }
-
+    /**
+     * @param int $timeout
+     *
+     * @return AmqpMessage|null
+     */
+    private function receiveBasicConsume($timeout)
+    {
         if ($this->isInit && $message = $this->buffer->pop($this->getExtQueue()->getConsumerTag())) {
             return $message;
         }
@@ -134,45 +190,6 @@ class AmqpConsumer implements PsrConsumer
         } finally {
             $extConnection->setReadTimeout($originalTimeout);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return AmqpMessage|null
-     */
-    public function receiveNoWait()
-    {
-        if ($extMessage = $this->getExtQueue()->get()) {
-            return $this->convertMessage($extMessage);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param AmqpMessage $message
-     */
-    public function acknowledge(PsrMessage $message)
-    {
-        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
-
-        $this->getExtQueue()->ack($message->getDeliveryTag());
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param AmqpMessage $message
-     */
-    public function reject(PsrMessage $message, $requeue = false)
-    {
-        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
-
-        $this->getExtQueue()->reject(
-            $message->getDeliveryTag(),
-            $requeue ? AMQP_REQUEUE : AMQP_NOPARAM
-        );
     }
 
     /**
