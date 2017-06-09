@@ -8,6 +8,7 @@ class Config
     const PARAMETER_PROCESSOR_NAME = 'enqueue.processor_name';
     const PARAMETER_PROCESSOR_QUEUE_NAME = 'enqueue.processor_queue_name';
     const DEFAULT_PROCESSOR_QUEUE_NAME = 'default';
+    const COMMAND_TOPIC = '__command__';
 
     /**
      * @var string

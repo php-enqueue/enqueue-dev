@@ -47,6 +47,11 @@ services:
         tags:
             - { name: 'kernel.event_listener', async: true, event: 'test_async', method: 'onEvent' }
 
+    test_command_subscriber_processor:
+        class: 'Enqueue\Bundle\Tests\Functional\App\TestCommandSubscriberProcessor'
+        tags:
+            - { name: 'enqueue.client.processor' }
+
     test_async_subscriber:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber'
         tags:

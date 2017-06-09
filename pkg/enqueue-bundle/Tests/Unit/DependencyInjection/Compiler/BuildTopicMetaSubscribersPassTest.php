@@ -4,8 +4,11 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\InvalidTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyCommandNameSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
+use Enqueue\Client\Config;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -285,8 +288,6 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
     public function testShouldThrowExceptionWhenTopicSubscriberConfigurationIsInvalid()
     {
-        $this->setExpectedException(\LogicException::class, 'Topic subscriber configuration is invalid. "[12345]"');
-
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(InvalidTopicSubscriber::class);
@@ -298,7 +299,55 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
         $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Topic subscriber configuration is invalid. "[12345]"');
+
         $pass->process($container);
+    }
+
+    public function testShouldBuildMetaFromCommandSubscriberIfOnlyCommandNameSpecified()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(OnlyCommandNameSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-id', $processor);
+
+        $topicMetaRegistry = new Definition();
+        $topicMetaRegistry->setArguments([[]]);
+        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+
+        $pass = new BuildTopicMetaSubscribersPass();
+        $pass->process($container);
+
+        $expectedValue = [
+            Config::COMMAND_TOPIC => ['processors' => ['the-command-name']],
+        ];
+
+        $this->assertEquals($expectedValue, $topicMetaRegistry->getArgument(0));
+    }
+
+    public function testShouldBuildMetaFromCommandSubscriberIfProcessorNameSpecified()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(ProcessorNameCommandSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-id', $processor);
+
+        $topicMetaRegistry = new Definition();
+        $topicMetaRegistry->setArguments([[]]);
+        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+
+        $pass = new BuildTopicMetaSubscribersPass();
+        $pass->process($container);
+
+        $expectedValue = [
+            Config::COMMAND_TOPIC => ['processors' => ['the-command-name']],
+        ];
+
+        $this->assertEquals($expectedValue, $topicMetaRegistry->getArgument(0));
     }
 
     /**

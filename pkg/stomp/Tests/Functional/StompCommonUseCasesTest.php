@@ -48,7 +48,7 @@ class StompCommonUseCasesTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($message);
 
         $this->assertGreaterThan(1.5, $endAt - $startAt);
-        $this->assertLessThan(2.5, $endAt - $startAt);
+        $this->assertLessThan(3, $endAt - $startAt);
     }
 
     public function testReturnNullImmediatelyOnReceiveNoWait()

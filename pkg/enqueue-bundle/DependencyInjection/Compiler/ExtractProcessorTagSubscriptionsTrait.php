@@ -2,6 +2,8 @@
 
 namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
+use Enqueue\Client\CommandSubscriberInterface;
+use Enqueue\Client\Config;
 use Enqueue\Client\TopicSubscriberInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
@@ -43,7 +45,42 @@ trait ExtractProcessorTagSubscriptionsTrait
         ];
 
         $data = [];
+        if (is_subclass_of($processorClass, CommandSubscriberInterface::class)) {
+            /** @var CommandSubscriberInterface $processorClass */
+            $params = $processorClass::getSubscribedCommand();
+            if (is_string($params)) {
+                if (empty($params)) {
+                    throw new \LogicException('The processor name (it is also the command name) must not be empty.');
+                }
+
+                $data[] = [
+                    'topicName' => Config::COMMAND_TOPIC,
+                    'queueName' => $defaultQueueName,
+                    'queueNameHardcoded' => false,
+                    'processorName' => $params,
+                ];
+            } elseif (is_array($params)) {
+                $params = array_replace($subscriptionPrototype, $params);
+                if (false == $processorName = $resolve($params['processorName'])) {
+                    throw new \LogicException('The processor name (it is also the command name) must not be empty.');
+                }
+
+                $data[] = [
+                    'topicName' => Config::COMMAND_TOPIC,
+                    'queueName' => $resolve($params['queueName']) ?: $defaultQueueName,
+                    'queueNameHardcoded' => $resolve($params['queueNameHardcoded']),
+                    'processorName' => $processorName,
+                ];
+            } else {
+                throw new \LogicException(sprintf(
+                    'Command subscriber configuration is invalid. "%s"',
+                    json_encode($processorClass::getSubscribedCommand())
+                ));
+            }
+        }
+
         if (is_subclass_of($processorClass, TopicSubscriberInterface::class)) {
+            /** @var TopicSubscriberInterface $processorClass */
             foreach ($processorClass::getSubscribedTopics() as $topicName => $params) {
                 if (is_string($params)) {
                     $data[] = [
@@ -68,7 +105,12 @@ trait ExtractProcessorTagSubscriptionsTrait
                     ));
                 }
             }
-        } else {
+        }
+
+        if (false == (
+            is_subclass_of($processorClass, CommandSubscriberInterface::class) ||
+            is_subclass_of($processorClass, TopicSubscriberInterface::class)
+        )) {
             foreach ($tagAttributes as $tagAttribute) {
                 $tagAttribute = array_replace($subscriptionPrototype, $tagAttribute);
 

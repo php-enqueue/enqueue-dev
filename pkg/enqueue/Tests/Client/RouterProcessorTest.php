@@ -27,7 +27,7 @@ class RouterProcessorTest extends TestCase
 
         $router = new RouterProcessor($this->createDriverMock(), $routes);
 
-        $this->assertAttributeEquals($routes, 'routes', $router);
+        $this->assertAttributeEquals($routes, 'eventRoutes', $router);
     }
 
     public function testShouldRejectIfTopicNameParameterIsNotSet()
@@ -41,7 +41,7 @@ class RouterProcessorTest extends TestCase
         $this->assertEquals('Got message without required parameter: "enqueue.topic_name"', $result->getReason());
     }
 
-    public function testShouldRouteOriginalMessageToRecipient()
+    public function testShouldRouteOriginalMessageToEventRecipient()
     {
         $message = new NullMessage();
         $message->setBody('theBody');
@@ -85,11 +85,92 @@ class RouterProcessorTest extends TestCase
         ], $routedMessage->getProperties());
     }
 
-    public function testShouldAddRoute()
+    public function testShouldRouteOriginalMessageToCommandRecipient()
+    {
+        $message = new NullMessage();
+        $message->setBody('theBody');
+        $message->setHeaders(['aHeader' => 'aHeaderVal']);
+        $message->setProperties([
+            'aProp' => 'aPropVal',
+            Config::PARAMETER_TOPIC_NAME => Config::COMMAND_TOPIC,
+            Config::PARAMETER_PROCESSOR_NAME => 'theCommandName',
+        ]);
+
+        $clientMessage = new Message();
+
+        $routedMessage = null;
+
+        $driver = $this->createDriverMock();
+        $driver
+            ->expects($this->once())
+            ->method('sendToProcessor')
+            ->with($this->identicalTo($clientMessage))
+        ;
+        $driver
+            ->expects($this->once())
+            ->method('createClientMessage')
+            ->willReturnCallback(function (NullMessage $message) use (&$routedMessage, $clientMessage) {
+                $routedMessage = $message;
+
+                return $clientMessage;
+            })
+        ;
+
+        $routes = [
+            'theCommandName' => 'aQueueName',
+        ];
+
+        $router = new RouterProcessor($driver, [], $routes);
+
+        $result = $router->process($message, new NullContext());
+
+        $this->assertEquals(Result::ACK, $result);
+        $this->assertEquals([
+            'aProp' => 'aPropVal',
+            'enqueue.topic_name' => Config::COMMAND_TOPIC,
+            'enqueue.processor_name' => 'theCommandName',
+            'enqueue.processor_queue_name' => 'aQueueName',
+        ], $routedMessage->getProperties());
+    }
+
+    public function testShouldRejectCommandMessageIfProcessorNamePropertyMissing()
+    {
+        $message = new NullMessage();
+        $message->setBody('theBody');
+        $message->setHeaders(['aHeader' => 'aHeaderVal']);
+        $message->setProperties([
+            'aProp' => 'aPropVal',
+            Config::PARAMETER_TOPIC_NAME => Config::COMMAND_TOPIC,
+        ]);
+
+        $driver = $this->createDriverMock();
+        $driver
+            ->expects($this->never())
+            ->method('sendToProcessor')
+        ;
+        $driver
+            ->expects($this->never())
+            ->method('createClientMessage')
+        ;
+
+        $routes = [
+            'theCommandName' => 'aQueueName',
+        ];
+
+        $router = new RouterProcessor($driver, [], $routes);
+
+        $result = $router->process($message, new NullContext());
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(Result::REJECT, $result->getStatus());
+        $this->assertEquals('Got message without required parameter: "enqueue.processor_name"', $result->getReason());
+    }
+
+    public function testShouldAddEventRoute()
     {
         $router = new RouterProcessor($this->createDriverMock(), []);
 
-        $this->assertAttributeSame([], 'routes', $router);
+        $this->assertAttributeSame([], 'eventRoutes', $router);
 
         $router->add('theTopicName', 'theQueueName', 'aProcessorName');
 
@@ -97,7 +178,21 @@ class RouterProcessorTest extends TestCase
             'theTopicName' => [
                 ['aProcessorName', 'theQueueName'],
             ],
-        ], 'routes', $router);
+        ], 'eventRoutes', $router);
+
+        $this->assertAttributeSame([], 'commandRoutes', $router);
+    }
+
+    public function testShouldAddCommandRoute()
+    {
+        $router = new RouterProcessor($this->createDriverMock(), []);
+
+        $this->assertAttributeSame([], 'eventRoutes', $router);
+
+        $router->add(Config::COMMAND_TOPIC, 'theQueueName', 'aProcessorName');
+
+        $this->assertAttributeSame(['aProcessorName' => 'theQueueName'], 'commandRoutes', $router);
+        $this->assertAttributeSame([], 'eventRoutes', $router);
     }
 
     /**

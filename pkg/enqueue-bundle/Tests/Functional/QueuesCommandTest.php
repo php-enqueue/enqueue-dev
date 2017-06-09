@@ -30,4 +30,16 @@ class QueuesCommandTest extends WebTestCase
         $this->assertContains('enqueue.app.default', $display);
         $this->assertContains('enqueue.client.router_processor', $display);
     }
+
+    public function testShouldDisplayRegisteredCommand()
+    {
+        $command = $this->container->get('enqueue.client.meta.queues_command');
+
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+
+        $display = $tester->getDisplay();
+
+        $this->assertContains('test_command_subscriber', $display);
+    }
 }
