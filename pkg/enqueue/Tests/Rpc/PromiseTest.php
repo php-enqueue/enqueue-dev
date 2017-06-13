@@ -3,140 +3,207 @@
 namespace Enqueue\Tests\Rpc;
 
 use Enqueue\Null\NullMessage;
-use Enqueue\Psr\PsrConsumer;
 use Enqueue\Rpc\Promise;
-use Enqueue\Rpc\TimeoutException;
 use PHPUnit\Framework\TestCase;
 
 class PromiseTest extends TestCase
 {
-    public function testCouldBeConstructedWithExpectedSetOfArguments()
+    public function testIsDeleteReplyQueueShouldReturnTrueByDefault()
     {
-        new Promise($this->createPsrConsumerMock(), 'aCorrelationId', 2);
+        $promise = new Promise(function(){}, function(){}, function(){});
+
+        $this->assertTrue($promise->isDeleteReplyQueue());
     }
 
-    public function testShouldTimeoutIfNoResponseMessage()
+    public function testCouldSetGetDeleteReplyQueue()
     {
-        $psrConsumerMock = $this->createPsrConsumerMock();
-        $psrConsumerMock
-            ->expects($this->atLeastOnce())
-            ->method('receive')
-            ->willReturn(null)
-        ;
+        $promise = new Promise(function(){}, function(){}, function(){});
 
-        $promise = new Promise($psrConsumerMock, 'aCorrelationId', 2);
+        $promise->setDeleteReplyQueue(false);
+        $this->assertFalse($promise->isDeleteReplyQueue());
 
-        $this->expectException(TimeoutException::class);
-        $this->expectExceptionMessage('Rpc call timeout is reached without receiving a reply message. Timeout: 2, CorrelationId: aCorrelationId');
-        $promise->getMessage();
+        $promise->setDeleteReplyQueue(true);
+        $this->assertTrue($promise->isDeleteReplyQueue());
     }
 
-    public function testShouldReturnReplyMessageIfCorrelationIdSame()
+    public function testOnReceiveShouldCallReceiveCallBack()
     {
-        $correlationId = 'theCorrelationId';
+        $receiveInvoked = false;
+        $receivecb = function() use (&$receiveInvoked) {
+            $receiveInvoked = true;
+        };
 
-        $replyMessage = new NullMessage();
-        $replyMessage->setCorrelationId($correlationId);
+        $promise = new Promise($receivecb, function(){}, function(){});
+        $promise->receive();
 
-        $psrConsumerMock = $this->createPsrConsumerMock();
-        $psrConsumerMock
-            ->expects($this->once())
-            ->method('receive')
-            ->willReturn($replyMessage)
-        ;
-        $psrConsumerMock
-            ->expects($this->once())
-            ->method('acknowledge')
-            ->with($this->identicalTo($replyMessage))
-        ;
-
-        $promise = new Promise($psrConsumerMock, $correlationId, 2);
-
-        $actualReplyMessage = $promise->getMessage();
-        $this->assertSame($replyMessage, $actualReplyMessage);
+        $this->assertTrue($receiveInvoked);
     }
 
-    public function testShouldReQueueIfCorrelationIdNotSame()
+    public function testOnReceiveNoWaitShouldCallReceiveNoWaitCallBack()
     {
-        $correlationId = 'theCorrelationId';
+        $receiveInvoked = false;
+        $receivecb = function() use (&$receiveInvoked) {
+            $receiveInvoked = true;
+        };
 
-        $anotherReplyMessage = new NullMessage();
-        $anotherReplyMessage->setCorrelationId('theOtherCorrelationId');
+        $promise = new Promise(function(){}, $receivecb, function(){});
+        $promise->receiveNoWait();
 
-        $replyMessage = new NullMessage();
-        $replyMessage->setCorrelationId($correlationId);
-
-        $psrConsumerMock = $this->createPsrConsumerMock();
-        $psrConsumerMock
-            ->expects($this->at(0))
-            ->method('receive')
-            ->willReturn($anotherReplyMessage)
-        ;
-        $psrConsumerMock
-            ->expects($this->at(1))
-            ->method('reject')
-            ->with($this->identicalTo($anotherReplyMessage), true)
-        ;
-        $psrConsumerMock
-            ->expects($this->at(2))
-            ->method('receive')
-            ->willReturn($replyMessage)
-        ;
-        $psrConsumerMock
-            ->expects($this->at(3))
-            ->method('acknowledge')
-            ->with($this->identicalTo($replyMessage))
-        ;
-
-        $promise = new Promise($psrConsumerMock, $correlationId, 2);
-
-        $actualReplyMessage = $promise->getMessage();
-        $this->assertSame($replyMessage, $actualReplyMessage);
+        $this->assertTrue($receiveInvoked);
     }
 
-    public function testShouldTrySeveralTimesToReceiveReplyMessage()
+    public function testOnReceiveShouldCallFinallyCallback()
     {
-        $correlationId = 'theCorrelationId';
+        $invoked = false;
+        $cb = function() use (&$invoked) {
+            $invoked = true;
+        };
 
-        $anotherReplyMessage = new NullMessage();
-        $anotherReplyMessage->setCorrelationId('theOtherCorrelationId');
+        $promise = new Promise(function(){}, function(){}, $cb);
+        $promise->receive();
 
-        $replyMessage = new NullMessage();
-        $replyMessage->setCorrelationId($correlationId);
-
-        $psrConsumerMock = $this->createPsrConsumerMock();
-        $psrConsumerMock
-            ->expects($this->at(0))
-            ->method('receive')
-            ->willReturn(null)
-        ;
-        $psrConsumerMock
-            ->expects($this->at(1))
-            ->method('receive')
-            ->willReturn(null)
-        ;
-        $psrConsumerMock
-            ->expects($this->at(2))
-            ->method('receive')
-            ->willReturn($replyMessage)
-        ;
-        $psrConsumerMock
-            ->expects($this->at(3))
-            ->method('acknowledge')
-            ->with($this->identicalTo($replyMessage))
-        ;
-
-        $promise = new Promise($psrConsumerMock, $correlationId, 2);
-
-        $actualReplyMessage = $promise->getMessage();
-        $this->assertSame($replyMessage, $actualReplyMessage);
+        $this->assertTrue($invoked);
     }
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
-     */
-    private function createPsrConsumerMock()
+    public function testOnReceiveShouldCallFinallyCallbackEvenIfExceptionThrown()
     {
-        return $this->createMock(PsrConsumer::class);
+        $invokedFinally = false;
+        $finallycb = function() use (&$invokedFinally) {
+            $invokedFinally = true;
+        };
+
+        $invokedReceive = false;
+        $receivecb = function() use (&$invokedReceive) {
+            $invokedReceive = true;
+            throw new \Exception();
+        };
+
+        try {
+            $promise = new Promise($receivecb, function(){}, $finallycb);
+            $promise->receive();
+        } catch (\Exception $e) {}
+
+        $this->assertTrue($invokedReceive);
+        $this->assertTrue($invokedFinally);
+    }
+
+    public function testOnReceiveShouldThrowExceptionIfCallbackReturnNotMessageInstance()
+    {
+        $receivecb = function() use (&$invokedReceive) {
+            return new \stdClass();
+        };
+
+        $promise = new Promise($receivecb, function(){}, function(){});
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Expected "Enqueue\Psr\PsrMessage" but got: "stdClass"');
+
+        $promise->receive();
+    }
+
+    public function testOnReceiveNoWaitShouldThrowExceptionIfCallbackReturnNotMessageInstance()
+    {
+        $receivecb = function() {
+            return new \stdClass();
+        };
+
+        $promise = new Promise(function(){}, $receivecb, function(){});
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Expected "Enqueue\Psr\PsrMessage" but got: "stdClass"');
+
+        $promise->receiveNoWait();
+    }
+
+    public function testOnReceiveNoWaitShouldCallFinallyCallbackOnlyIfMessageReceived()
+    {
+        $invokedReceive = false;
+        $receivecb = function() use (&$invokedReceive) {
+            $invokedReceive = true;
+        };
+
+        $invokedFinally = false;
+        $finallycb = function() use (&$invokedFinally) {
+            $invokedFinally = true;
+        };
+
+        $promise = new Promise(function(){}, $receivecb, $finallycb);
+        $promise->receiveNoWait();
+
+        $this->assertTrue($invokedReceive);
+        $this->assertFalse($invokedFinally);
+
+        // now should call finally too
+
+        $invokedReceive = false;
+        $receivecb = function() use (&$invokedReceive) {
+            $invokedReceive = true;
+            return new NullMessage();
+        };
+
+        $promise = new Promise(function(){}, $receivecb, $finallycb);
+        $promise->receiveNoWait();
+
+        $this->assertTrue($invokedReceive);
+        $this->assertTrue($invokedFinally);
+    }
+
+    public function testOnReceiveShouldNotCallCallbackIfMessageReceivedByReceiveNoWaitBefore()
+    {
+        $message = new NullMessage();
+
+        $invokedReceive = false;
+        $receivecb = function() use (&$invokedReceive) {
+            $invokedReceive = true;
+        };
+
+        $invokedReceiveNoWait = false;
+        $receiveNoWaitCb = function() use (&$invokedReceiveNoWait, $message) {
+            $invokedReceiveNoWait = true;
+
+            return $message;
+        };
+
+        $promise = new Promise($receivecb, $receiveNoWaitCb, function(){});
+
+        $this->assertSame($message, $promise->receiveNoWait());
+        $this->assertTrue($invokedReceiveNoWait);
+        $this->assertFalse($invokedReceive);
+
+        // receive should return message but not call callback
+        $invokedReceiveNoWait = false;
+
+        $this->assertSame($message, $promise->receive());
+        $this->assertFalse($invokedReceiveNoWait);
+        $this->assertFalse($invokedReceive);
+    }
+
+    public function testOnReceiveNoWaitShouldNotCallCallbackIfMessageReceivedByReceiveBefore()
+    {
+        $message = new NullMessage();
+
+        $invokedReceive = false;
+        $receivecb = function() use (&$invokedReceive, $message) {
+            $invokedReceive = true;
+            return $message;
+        };
+
+        $invokedReceiveNoWait = false;
+        $receiveNoWaitCb = function() use (&$invokedReceiveNoWait) {
+            $invokedReceiveNoWait = true;
+        };
+
+        $promise = new Promise($receivecb, $receiveNoWaitCb, function(){});
+
+        $this->assertSame($message, $promise->receive());
+        $this->assertTrue($invokedReceive);
+        $this->assertFalse($invokedReceiveNoWait);
+
+        // receiveNoWait should return message but not call callback
+        $invokedReceive = false;
+
+        $this->assertSame($message, $promise->receiveNoWait());
+        $this->assertFalse($invokedReceiveNoWait);
+        $this->assertFalse($invokedReceive);
     }
 }

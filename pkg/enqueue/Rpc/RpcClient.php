@@ -33,7 +33,7 @@ class RpcClient
      */
     public function call(PsrDestination $destination, PsrMessage $message, $timeout)
     {
-        return $this->callAsync($destination, $message, $timeout)->getMessage();
+        return $this->callAsync($destination, $message, $timeout)->receive();
     }
 
     /**
@@ -86,17 +86,36 @@ class RpcClient
             throw TimeoutException::create($timeout, $correlationId);
         };
 
+        $receiveNoWait = function() use ($replyQueue, $correlationId) {
+
+            static $consumer;
+
+            if (null === $consumer) {
+                $consumer = $this->context->createConsumer($replyQueue);
+            }
+
+            if ($message = $consumer->receiveNoWait()) {
+                if ($message->getCorrelationId() === $correlationId) {
+                    $consumer->acknowledge($message);
+
+                    return $message;
+                }
+
+                $consumer->reject($message, true);
+            }
+        };
+
         $finally = function(Promise $promise) use ($replyQueue) {
             if ($promise->isDeleteReplyQueue()) {
                 if (false == method_exists($this->context, 'deleteQueue')) {
-                    throw new \RuntimeException(sprintf('Context does not support delete queues: "%s"', get_class($this->context)));
+                    throw new \RuntimeException(sprintf('Context does not support delete queue: "%s"', get_class($this->context)));
                 }
 
                 $this->context->deleteQueue($replyQueue);
             }
         };
 
-        $promise = new Promise($receive, $finally);
+        $promise = new Promise($receive, $receiveNoWait, $finally);
         $promise->setDeleteReplyQueue($deleteReplyQueue);
 
         return $promise;

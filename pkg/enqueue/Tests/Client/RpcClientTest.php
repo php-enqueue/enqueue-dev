@@ -7,6 +7,7 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\RpcClient;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Rpc\Promise;
@@ -133,27 +134,6 @@ class RpcClientTest extends TestCase
         $rpc->callAsync('aTopic', $message, 2);
     }
 
-    public function testShouldPopulatePromiseWithExpectedArguments()
-    {
-        $context = new NullContext();
-
-        $message = new Message();
-        $message->setCorrelationId('theCorrelationId');
-
-        $timeout = 123;
-
-        $rpc = new RpcClient(
-            $this->createProducerMock(),
-            $context
-        );
-
-        $promise = $rpc->callAsync('aTopic', $message, $timeout);
-
-        $this->assertInstanceOf(Promise::class, $promise);
-        $this->assertAttributeEquals('theCorrelationId', 'correlationId', $promise);
-        $this->assertAttributeEquals(123, 'timeout', $promise);
-        $this->assertAttributeInstanceOf(PsrConsumer::class, 'consumer', $promise);
-    }
 
     public function testShouldDoSyncCall()
     {
@@ -163,7 +143,7 @@ class RpcClientTest extends TestCase
         $promiseMock = $this->createMock(Promise::class);
         $promiseMock
             ->expects($this->once())
-            ->method('getMessage')
+            ->method('receive')
             ->willReturn($replyMessage)
         ;
 
@@ -181,6 +161,185 @@ class RpcClientTest extends TestCase
         $this->assertSame($replyMessage, $actualReplyMessage);
     }
 
+    public function testShouldReceiveMessageAndAckMessageIfCorrelationEquals()
+    {
+        $replyQueue = new NullQueue('theReplyTo');
+        $message = new Message();
+        $message->setCorrelationId('theCorrelationId');
+        $message->setReplyTo('theReplyTo');
+
+        $receivedMessage = new NullMessage();
+        $receivedMessage->setCorrelationId('theCorrelationId');
+
+        $consumer = $this->createPsrConsumerMock();
+        $consumer
+            ->expects($this->once())
+            ->method('receive')
+            ->willReturn($receivedMessage)
+        ;
+        $consumer
+            ->expects($this->once())
+            ->method('acknowledge')
+            ->with($this->identicalTo($receivedMessage))
+        ;
+        $consumer
+            ->expects($this->never())
+            ->method('reject')
+        ;
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('theReplyTo')
+            ->willReturn($replyQueue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->with($this->identicalTo($replyQueue))
+            ->willReturn($consumer)
+        ;
+
+        $rpc = new RpcClient($this->createProducerMock(), $context);
+
+        $rpc->callAsync('topic', $message, 2)->receive();
+    }
+
+    public function testShouldReceiveNoWaitMessageAndAckMessageIfCorrelationEquals()
+    {
+        $replyQueue = new NullQueue('theReplyTo');
+        $message = new Message();
+        $message->setCorrelationId('theCorrelationId');
+        $message->setReplyTo('theReplyTo');
+
+        $receivedMessage = new NullMessage();
+        $receivedMessage->setCorrelationId('theCorrelationId');
+
+        $consumer = $this->createPsrConsumerMock();
+        $consumer
+            ->expects($this->once())
+            ->method('receiveNoWait')
+            ->willReturn($receivedMessage)
+        ;
+        $consumer
+            ->expects($this->once())
+            ->method('acknowledge')
+            ->with($this->identicalTo($receivedMessage))
+        ;
+        $consumer
+            ->expects($this->never())
+            ->method('reject')
+        ;
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('theReplyTo')
+            ->willReturn($replyQueue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->with($this->identicalTo($replyQueue))
+            ->willReturn($consumer)
+        ;
+
+        $rpc = new RpcClient($this->createProducerMock(), $context);
+
+        $rpc->callAsync('topic', $message, 2)->receiveNoWait();
+    }
+
+    public function testShouldDeleteQueueAfterReceiveIfDeleteReplyQueueIsTrue()
+    {
+        $replyQueue = new NullQueue('theReplyTo');
+        $message = new Message();
+        $message->setCorrelationId('theCorrelationId');
+        $message->setReplyTo('theReplyTo');
+
+        $receivedMessage = new NullMessage();
+        $receivedMessage->setCorrelationId('theCorrelationId');
+
+        $consumer = $this->createPsrConsumerMock();
+        $consumer
+            ->expects($this->once())
+            ->method('receive')
+            ->willReturn($receivedMessage)
+        ;
+
+        $context = $this->getMockBuilder(PsrContext::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['deleteQueue'])
+            ->getMockForAbstractClass()
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('theReplyTo')
+            ->willReturn($replyQueue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->with($this->identicalTo($replyQueue))
+            ->willReturn($consumer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('deleteQueue')
+            ->with($this->identicalTo($replyQueue))
+        ;
+
+        $rpc = new RpcClient($this->createProducerMock(), $context);
+
+        $promise = $rpc->callAsync('topic', $message, 2);
+        $promise->setDeleteReplyQueue(true);
+        $promise->receive();
+    }
+
+    public function testShouldThrowExceptionIfDeleteReplyQueueIsTrueButContextHasNoDeleteQueueMethod()
+    {
+        $replyQueue = new NullQueue('theReplyTo');
+        $message = new Message();
+        $message->setCorrelationId('theCorrelationId');
+        $message->setReplyTo('theReplyTo');
+
+        $receivedMessage = new NullMessage();
+        $receivedMessage->setCorrelationId('theCorrelationId');
+
+        $consumer = $this->createPsrConsumerMock();
+        $consumer
+            ->expects($this->once())
+            ->method('receive')
+            ->willReturn($receivedMessage)
+        ;
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('theReplyTo')
+            ->willReturn($replyQueue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->with($this->identicalTo($replyQueue))
+            ->willReturn($consumer)
+        ;
+
+        $rpc = new RpcClient($this->createProducerMock(), $context);
+
+        $promise = $rpc->callAsync('topic', $message, 2);
+        $promise->setDeleteReplyQueue(true);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Context does not support delete queue');
+
+        $promise->receive();
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */
@@ -195,5 +354,13 @@ class RpcClientTest extends TestCase
     private function createProducerMock()
     {
         return $this->createMock(ProducerInterface::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
+     */
+    private function createPsrConsumerMock()
+    {
+        return $this->createMock(PsrConsumer::class);
     }
 }
