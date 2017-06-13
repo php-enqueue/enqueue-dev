@@ -2,36 +2,35 @@
 
 namespace Enqueue\Rpc;
 
-use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrMessage;
 
 class Promise
 {
     /**
-     * @var PsrConsumer
+     * @var \Closure
      */
-    private $consumer;
+    private $receiveCallback;
 
     /**
-     * @var int
+     * @var \Closure
      */
-    private $timeout;
+    private $finallyCallback;
 
     /**
-     * @var string
+     * @var bool
      */
-    private $correlationId;
+    private $deleteReplyQueue;
 
     /**
-     * @param PsrConsumer $consumer
-     * @param string      $correlationId
-     * @param int         $timeout
+     * @param \Closure $receiveCallback
+     * @param \Closure $finallyCallback
      */
-    public function __construct(PsrConsumer $consumer, $correlationId, $timeout)
+    public function __construct(\Closure $receiveCallback, \Closure $finallyCallback)
     {
-        $this->consumer = $consumer;
-        $this->timeout = $timeout;
-        $this->correlationId = $correlationId;
+        $this->receiveCallback = $receiveCallback;
+        $this->finallyCallback = $finallyCallback;
+
+        $this->deleteReplyQueue = true;
     }
 
     /**
@@ -41,36 +40,35 @@ class Promise
      */
     public function getMessage()
     {
-        $endTime = time() + $this->timeout;
+        try {
+            $result = call_user_func($this->receiveCallback, $this);
 
-        while (time() < $endTime) {
-            if ($message = $this->consumer->receive($this->timeout)) {
-                if ($message->getCorrelationId() === $this->correlationId) {
-                    $this->consumer->acknowledge($message);
-
-                    return $message;
-                }
-
-                $this->consumer->reject($message, true);
+            if (false == $result instanceof PsrMessage) {
+                throw new \LogicException(sprintf(
+                    'Expected "%s" but got: "%s"', PsrMessage::class, is_object($result) ? get_class($result) : gettype($result)));
             }
+
+            return $result;
+        } finally {
+            call_user_func($this->finallyCallback, $this);
         }
-
-        throw TimeoutException::create($this->timeout, $this->correlationId);
     }
 
     /**
-     * @param int $timeout
+     * On TRUE deletes reply queue after getMessage call
+     *
+     * @param bool $delete
      */
-    public function setTimeout($timeout)
+    public function setDeleteReplyQueue($delete)
     {
-        $this->timeout = $timeout;
+        $this->deleteReplyQueue = (bool) $delete;
     }
 
     /**
-     * @return int
+     * @return bool
      */
-    public function getTimeout()
+    public function isDeleteReplyQueue()
     {
-        return $this->timeout;
+        return $this->deleteReplyQueue;
     }
 }
