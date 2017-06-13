@@ -89,7 +89,7 @@ class PromiseTest extends TestCase
 
     public function testOnReceiveShouldThrowExceptionIfCallbackReturnNotMessageInstance()
     {
-        $receivecb = function() use (&$invokedReceive) {
+        $receivecb = function() {
             return new \stdClass();
         };
 

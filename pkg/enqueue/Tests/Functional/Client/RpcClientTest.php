@@ -79,7 +79,7 @@ class RpcClientTest extends TestCase
         $this->assertInstanceOf(PsrMessage::class, $requestMessage);
         $this->assertEquals('Hi Thomas!', $requestMessage->getBody());
 
-        $replyMessage = $promise->getMessage();
+        $replyMessage = $promise->receive();
         $this->assertEquals('Hi John!', $replyMessage->getBody());
     }
 }
