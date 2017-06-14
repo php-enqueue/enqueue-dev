@@ -124,7 +124,7 @@ $message = $psrContext->createMessage('Hi there!');
 $rpcClient = new RpcClient($psrContext);
 
 $promise = $rpcClient->callAsync($queue, $message, 1);
-$replyMessage = $promise->getMessage();
+$replyMessage = $promise->receive();
 ```
 
 There is also extensions for the consumption component. 

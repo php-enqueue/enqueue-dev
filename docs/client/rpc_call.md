@@ -43,7 +43,7 @@ $promises[] = $rpcClient->callAsync('greeting_topic', 'Hi Thomas!', 5);
 
 $replyMessages = [];
 foreach ($promises as $promise) {
-    $replyMessages[] = $promise->getMessage();
+    $replyMessages[] = $promise->receive();
 }
 ```
 

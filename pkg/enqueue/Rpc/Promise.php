@@ -2,75 +2,135 @@
 
 namespace Enqueue\Rpc;
 
-use Enqueue\Psr\PsrConsumer;
 use Enqueue\Psr\PsrMessage;
 
 class Promise
 {
     /**
-     * @var PsrConsumer
+     * @var \Closure
      */
-    private $consumer;
+    private $receiveCallback;
 
     /**
-     * @var int
+     * @var \Closure
      */
-    private $timeout;
+    private $receiveNoWaitCallback;
 
     /**
-     * @var string
+     * @var \Closure
      */
-    private $correlationId;
+    private $finallyCallback;
 
     /**
-     * @param PsrConsumer $consumer
-     * @param string      $correlationId
-     * @param int         $timeout
+     * @var bool
      */
-    public function __construct(PsrConsumer $consumer, $correlationId, $timeout)
+    private $deleteReplyQueue;
+
+    /**
+     * @var PsrMessage
+     */
+    private $message;
+
+    /**
+     * @param \Closure $receiveCallback
+     * @param \Closure $receiveNoWaitCallback
+     * @param \Closure $finallyCallback
+     */
+    public function __construct(\Closure $receiveCallback, \Closure $receiveNoWaitCallback, \Closure $finallyCallback)
     {
-        $this->consumer = $consumer;
-        $this->timeout = $timeout;
-        $this->correlationId = $correlationId;
+        $this->receiveCallback = $receiveCallback;
+        $this->receiveNoWaitCallback = $receiveNoWaitCallback;
+        $this->finallyCallback = $finallyCallback;
+
+        $this->deleteReplyQueue = true;
     }
 
     /**
+     * Blocks until message received or timeout expired.
+     *
+     * @deprecated use "receive" instead
+     *
      * @throws TimeoutException if the wait timeout is reached
      *
      * @return PsrMessage
      */
     public function getMessage()
     {
-        $endTime = time() + $this->timeout;
+        return $this->receive();
+    }
 
-        while (time() < $endTime) {
-            if ($message = $this->consumer->receive($this->timeout)) {
-                if ($message->getCorrelationId() === $this->correlationId) {
-                    $this->consumer->acknowledge($message);
-
-                    return $message;
+    /**
+     * Blocks until message received or timeout expired.
+     *
+     * @throws TimeoutException if the wait timeout is reached
+     *
+     * @return PsrMessage
+     */
+    public function receive()
+    {
+        if (null == $this->message) {
+            try {
+                if ($message = $this->doReceive($this->receiveCallback)) {
+                    $this->message = $message;
                 }
-
-                $this->consumer->reject($message, true);
+            } finally {
+                call_user_func($this->finallyCallback, $this);
             }
         }
 
-        throw TimeoutException::create($this->timeout, $this->correlationId);
+        return $this->message;
     }
 
     /**
-     * @param int $timeout
+     * Non blocking function. Returns message or null.
+     *
+     * @return PsrMessage|null
      */
-    public function setTimeout($timeout)
+    public function receiveNoWait()
     {
-        $this->timeout = $timeout;
+        if (null == $this->message) {
+            if ($message = $this->doReceive($this->receiveNoWaitCallback)) {
+                $this->message = $message;
+
+                call_user_func($this->finallyCallback, $this);
+            }
+        }
+
+        return $this->message;
     }
 
     /**
-     * @return int
+     * On TRUE deletes reply queue after getMessage call.
+     *
+     * @param bool $delete
      */
-    public function getTimeout()
+    public function setDeleteReplyQueue($delete)
     {
-        return $this->timeout;
+        $this->deleteReplyQueue = (bool) $delete;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleteReplyQueue()
+    {
+        return $this->deleteReplyQueue;
+    }
+
+    /**
+     * @param \Closure $cb
+     *
+     * @return PsrMessage
+     */
+    private function doReceive(\Closure $cb)
+    {
+        $message = call_user_func($cb, $this);
+
+        if (null !== $message && false == $message instanceof PsrMessage) {
+            throw new \RuntimeException(sprintf(
+                'Expected "%s" but got: "%s"', PsrMessage::class, is_object($message) ? get_class($message) : gettype($message)));
+        }
+
+        return $message;
     }
 }

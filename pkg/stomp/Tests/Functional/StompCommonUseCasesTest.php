@@ -66,7 +66,7 @@ class StompCommonUseCasesTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNull($message);
 
-        $this->assertLessThan(0.5, $endAt - $startAt);
+        $this->assertLessThan(1, $endAt - $startAt);
     }
 
     public function testProduceAndReceiveOneMessage()
