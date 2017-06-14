@@ -48,6 +48,20 @@ class Promise
     /**
      * Blocks until message received or timeout expired.
      *
+     * @deprecated use "receive" instead
+     *
+     * @throws TimeoutException if the wait timeout is reached
+     *
+     * @return PsrMessage
+     */
+    public function getMessage()
+    {
+        return $this->receive();
+    }
+
+    /**
+     * Blocks until message received or timeout expired.
+     *
      * @throws TimeoutException if the wait timeout is reached
      *
      * @return PsrMessage
@@ -86,24 +100,7 @@ class Promise
     }
 
     /**
-     * @param \Closure $cb
-     *
-     * @return PsrMessage
-     */
-    private function doReceive(\Closure $cb)
-    {
-        $message = call_user_func($cb, $this);
-
-        if (null !== $message && false == $message instanceof PsrMessage) {
-            throw new \RuntimeException(sprintf(
-                'Expected "%s" but got: "%s"', PsrMessage::class, is_object($message) ? get_class($message) : gettype($message)));
-        }
-
-        return $message;
-    }
-
-    /**
-     * On TRUE deletes reply queue after getMessage call
+     * On TRUE deletes reply queue after getMessage call.
      *
      * @param bool $delete
      */
@@ -118,5 +115,22 @@ class Promise
     public function isDeleteReplyQueue()
     {
         return $this->deleteReplyQueue;
+    }
+
+    /**
+     * @param \Closure $cb
+     *
+     * @return PsrMessage
+     */
+    private function doReceive(\Closure $cb)
+    {
+        $message = call_user_func($cb, $this);
+
+        if (null !== $message && false == $message instanceof PsrMessage) {
+            throw new \RuntimeException(sprintf(
+                'Expected "%s" but got: "%s"', PsrMessage::class, is_object($message) ? get_class($message) : gettype($message)));
+        }
+
+        return $message;
     }
 }

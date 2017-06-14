@@ -78,8 +78,7 @@ class RpcClient
 
         $correlationId = $message->getCorrelationId();
 
-        $receive = function() use ($replyQueue, $timeout, $correlationId) {
-
+        $receive = function () use ($replyQueue, $timeout, $correlationId) {
             $endTime = time() + ((int) ($timeout / 1000));
             $consumer = $this->context->createConsumer($replyQueue);
 
@@ -98,8 +97,7 @@ class RpcClient
             throw TimeoutException::create($timeout, $correlationId);
         };
 
-        $receiveNoWait = function() use ($replyQueue, $correlationId) {
-
+        $receiveNoWait = function () use ($replyQueue, $correlationId) {
             static $consumer;
 
             if (null === $consumer) {
@@ -117,7 +115,7 @@ class RpcClient
             }
         };
 
-        $finally = function(Promise $promise) use ($replyQueue) {
+        $finally = function (Promise $promise) use ($replyQueue) {
             if ($promise->isDeleteReplyQueue()) {
                 if (false == method_exists($this->context, 'deleteQueue')) {
                     throw new \RuntimeException(sprintf('Context does not support delete queues: "%s"', get_class($this->context)));

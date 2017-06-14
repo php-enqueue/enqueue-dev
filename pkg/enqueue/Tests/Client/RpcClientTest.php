@@ -134,7 +134,6 @@ class RpcClientTest extends TestCase
         $rpc->callAsync('aTopic', $message, 2);
     }
 
-
     public function testShouldDoSyncCall()
     {
         $timeout = 123;

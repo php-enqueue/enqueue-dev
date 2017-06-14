@@ -10,14 +10,14 @@ class PromiseTest extends TestCase
 {
     public function testIsDeleteReplyQueueShouldReturnTrueByDefault()
     {
-        $promise = new Promise(function(){}, function(){}, function(){});
+        $promise = new Promise(function () {}, function () {}, function () {});
 
         $this->assertTrue($promise->isDeleteReplyQueue());
     }
 
     public function testCouldSetGetDeleteReplyQueue()
     {
-        $promise = new Promise(function(){}, function(){}, function(){});
+        $promise = new Promise(function () {}, function () {}, function () {});
 
         $promise->setDeleteReplyQueue(false);
         $this->assertFalse($promise->isDeleteReplyQueue());
@@ -29,11 +29,11 @@ class PromiseTest extends TestCase
     public function testOnReceiveShouldCallReceiveCallBack()
     {
         $receiveInvoked = false;
-        $receivecb = function() use (&$receiveInvoked) {
+        $receivecb = function () use (&$receiveInvoked) {
             $receiveInvoked = true;
         };
 
-        $promise = new Promise($receivecb, function(){}, function(){});
+        $promise = new Promise($receivecb, function () {}, function () {});
         $promise->receive();
 
         $this->assertTrue($receiveInvoked);
@@ -42,11 +42,11 @@ class PromiseTest extends TestCase
     public function testOnReceiveNoWaitShouldCallReceiveNoWaitCallBack()
     {
         $receiveInvoked = false;
-        $receivecb = function() use (&$receiveInvoked) {
+        $receivecb = function () use (&$receiveInvoked) {
             $receiveInvoked = true;
         };
 
-        $promise = new Promise(function(){}, $receivecb, function(){});
+        $promise = new Promise(function () {}, $receivecb, function () {});
         $promise->receiveNoWait();
 
         $this->assertTrue($receiveInvoked);
@@ -55,11 +55,11 @@ class PromiseTest extends TestCase
     public function testOnReceiveShouldCallFinallyCallback()
     {
         $invoked = false;
-        $cb = function() use (&$invoked) {
+        $cb = function () use (&$invoked) {
             $invoked = true;
         };
 
-        $promise = new Promise(function(){}, function(){}, $cb);
+        $promise = new Promise(function () {}, function () {}, $cb);
         $promise->receive();
 
         $this->assertTrue($invoked);
@@ -68,20 +68,21 @@ class PromiseTest extends TestCase
     public function testOnReceiveShouldCallFinallyCallbackEvenIfExceptionThrown()
     {
         $invokedFinally = false;
-        $finallycb = function() use (&$invokedFinally) {
+        $finallycb = function () use (&$invokedFinally) {
             $invokedFinally = true;
         };
 
         $invokedReceive = false;
-        $receivecb = function() use (&$invokedReceive) {
+        $receivecb = function () use (&$invokedReceive) {
             $invokedReceive = true;
             throw new \Exception();
         };
 
         try {
-            $promise = new Promise($receivecb, function(){}, $finallycb);
+            $promise = new Promise($receivecb, function () {}, $finallycb);
             $promise->receive();
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $this->assertTrue($invokedReceive);
         $this->assertTrue($invokedFinally);
@@ -89,11 +90,11 @@ class PromiseTest extends TestCase
 
     public function testOnReceiveShouldThrowExceptionIfCallbackReturnNotMessageInstance()
     {
-        $receivecb = function() {
+        $receivecb = function () {
             return new \stdClass();
         };
 
-        $promise = new Promise($receivecb, function(){}, function(){});
+        $promise = new Promise($receivecb, function () {}, function () {});
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Expected "Enqueue\Psr\PsrMessage" but got: "stdClass"');
@@ -103,11 +104,11 @@ class PromiseTest extends TestCase
 
     public function testOnReceiveNoWaitShouldThrowExceptionIfCallbackReturnNotMessageInstance()
     {
-        $receivecb = function() {
+        $receivecb = function () {
             return new \stdClass();
         };
 
-        $promise = new Promise(function(){}, $receivecb, function(){});
+        $promise = new Promise(function () {}, $receivecb, function () {});
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Expected "Enqueue\Psr\PsrMessage" but got: "stdClass"');
@@ -118,16 +119,16 @@ class PromiseTest extends TestCase
     public function testOnReceiveNoWaitShouldCallFinallyCallbackOnlyIfMessageReceived()
     {
         $invokedReceive = false;
-        $receivecb = function() use (&$invokedReceive) {
+        $receivecb = function () use (&$invokedReceive) {
             $invokedReceive = true;
         };
 
         $invokedFinally = false;
-        $finallycb = function() use (&$invokedFinally) {
+        $finallycb = function () use (&$invokedFinally) {
             $invokedFinally = true;
         };
 
-        $promise = new Promise(function(){}, $receivecb, $finallycb);
+        $promise = new Promise(function () {}, $receivecb, $finallycb);
         $promise->receiveNoWait();
 
         $this->assertTrue($invokedReceive);
@@ -136,12 +137,13 @@ class PromiseTest extends TestCase
         // now should call finally too
 
         $invokedReceive = false;
-        $receivecb = function() use (&$invokedReceive) {
+        $receivecb = function () use (&$invokedReceive) {
             $invokedReceive = true;
+
             return new NullMessage();
         };
 
-        $promise = new Promise(function(){}, $receivecb, $finallycb);
+        $promise = new Promise(function () {}, $receivecb, $finallycb);
         $promise->receiveNoWait();
 
         $this->assertTrue($invokedReceive);
@@ -153,18 +155,18 @@ class PromiseTest extends TestCase
         $message = new NullMessage();
 
         $invokedReceive = false;
-        $receivecb = function() use (&$invokedReceive) {
+        $receivecb = function () use (&$invokedReceive) {
             $invokedReceive = true;
         };
 
         $invokedReceiveNoWait = false;
-        $receiveNoWaitCb = function() use (&$invokedReceiveNoWait, $message) {
+        $receiveNoWaitCb = function () use (&$invokedReceiveNoWait, $message) {
             $invokedReceiveNoWait = true;
 
             return $message;
         };
 
-        $promise = new Promise($receivecb, $receiveNoWaitCb, function(){});
+        $promise = new Promise($receivecb, $receiveNoWaitCb, function () {});
 
         $this->assertSame($message, $promise->receiveNoWait());
         $this->assertTrue($invokedReceiveNoWait);
@@ -183,17 +185,18 @@ class PromiseTest extends TestCase
         $message = new NullMessage();
 
         $invokedReceive = false;
-        $receivecb = function() use (&$invokedReceive, $message) {
+        $receivecb = function () use (&$invokedReceive, $message) {
             $invokedReceive = true;
+
             return $message;
         };
 
         $invokedReceiveNoWait = false;
-        $receiveNoWaitCb = function() use (&$invokedReceiveNoWait) {
+        $receiveNoWaitCb = function () use (&$invokedReceiveNoWait) {
             $invokedReceiveNoWait = true;
         };
 
-        $promise = new Promise($receivecb, $receiveNoWaitCb, function(){});
+        $promise = new Promise($receivecb, $receiveNoWaitCb, function () {});
 
         $this->assertSame($message, $promise->receive());
         $this->assertTrue($invokedReceive);
@@ -205,5 +208,21 @@ class PromiseTest extends TestCase
         $this->assertSame($message, $promise->receiveNoWait());
         $this->assertFalse($invokedReceiveNoWait);
         $this->assertFalse($invokedReceive);
+    }
+
+    public function testDeprecatedGetMessageShouldCallReceiveMethod()
+    {
+        $promise = $this->getMockBuilder(Promise::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['receive'])
+            ->getMock()
+        ;
+
+        $promise
+            ->expects($this->once())
+            ->method('receive')
+        ;
+
+        $promise->getMessage();
     }
 }
