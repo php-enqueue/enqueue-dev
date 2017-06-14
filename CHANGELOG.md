@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.4.15](https://github.com/php-enqueue/enqueue-dev/tree/0.4.15) (2017-06-14)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.14...0.4.15)
+
+- Symfony async events. Support event subscribers. [\#94](https://github.com/php-enqueue/enqueue-dev/issues/94)
+
+- RPC Deletes Reply Queue After Receive Message [\#114](https://github.com/php-enqueue/enqueue-dev/pull/114) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.4.14](https://github.com/php-enqueue/enqueue-dev/tree/0.4.14) (2017-06-09)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.13...0.4.14)
 
@@ -59,8 +66,6 @@
 
 ## [0.4.5](https://github.com/php-enqueue/enqueue-dev/tree/0.4.5) (2017-05-22)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.4...0.4.5)
-
-- Symfony async events. Support event subscribers. [\#94](https://github.com/php-enqueue/enqueue-dev/issues/94)
 
 - Symfony. Async event subscriber. [\#95](https://github.com/php-enqueue/enqueue-dev/pull/95) ([makasim](https://github.com/makasim))
 
