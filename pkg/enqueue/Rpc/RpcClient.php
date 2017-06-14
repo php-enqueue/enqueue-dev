@@ -104,11 +104,7 @@ class RpcClient
         };
 
         $finally = function (Promise $promise) use ($replyQueue) {
-            if ($promise->isDeleteReplyQueue()) {
-                if (false == method_exists($this->context, 'deleteQueue')) {
-                    throw new \RuntimeException(sprintf('Context does not support delete queue: "%s"', get_class($this->context)));
-                }
-
+            if ($promise->isDeleteReplyQueue() && method_exists($this->context, 'deleteQueue')) {
                 $this->context->deleteQueue($replyQueue);
             }
         };

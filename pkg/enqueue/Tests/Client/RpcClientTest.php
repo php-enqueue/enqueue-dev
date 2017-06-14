@@ -297,7 +297,7 @@ class RpcClientTest extends TestCase
         $promise->receive();
     }
 
-    public function testShouldThrowExceptionIfDeleteReplyQueueIsTrueButContextHasNoDeleteQueueMethod()
+    public function testShouldNotCallDeleteQueueIfDeleteReplyQueueIsTrueButContextHasNoDeleteQueueMethod()
     {
         $replyQueue = new NullQueue('theReplyTo');
         $message = new Message();
@@ -332,9 +332,6 @@ class RpcClientTest extends TestCase
 
         $promise = $rpc->callAsync('topic', $message, 2);
         $promise->setDeleteReplyQueue(true);
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Context does not support delete queue');
 
         $promise->receive();
     }
