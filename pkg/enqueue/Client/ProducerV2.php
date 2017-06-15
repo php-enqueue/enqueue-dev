@@ -49,7 +49,7 @@ class ProducerV2 implements ProducerV2Interface
         $message->setScope(Message::SCOPE_APP);
 
         if ($needReply) {
-            return $this->rpcClient->callAsync(Config::COMMAND_TOPIC, $message, 60);
+            return $this->rpcClient->callAsync(Config::COMMAND_TOPIC, $message, 60000);
         }
 
         $this->realProducer->send(Config::COMMAND_TOPIC, $message);

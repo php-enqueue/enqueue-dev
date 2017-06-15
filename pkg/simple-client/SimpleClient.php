@@ -11,6 +11,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\ProducerInterface;
+use Enqueue\Client\ProducerV2Interface;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
@@ -183,6 +184,18 @@ final class SimpleClient
         $setupBroker && $this->setupBroker();
 
         return $this->container->get('enqueue.client.producer');
+    }
+
+    /**
+     * @param bool $setupBroker
+     *
+     * @return ProducerV2Interface
+     */
+    public function getProducerV2($setupBroker = false)
+    {
+        $setupBroker && $this->setupBroker();
+
+        return $this->container->get('enqueue.client.producer.v2');
     }
 
     public function setupBroker()
