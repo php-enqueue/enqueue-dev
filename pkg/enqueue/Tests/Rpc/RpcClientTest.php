@@ -114,6 +114,7 @@ class RpcClientTest extends TestCase
         $consumer
             ->expects($this->once())
             ->method('receive')
+            ->with(12345)
             ->willReturn($receivedMessage)
         ;
         $consumer
@@ -147,7 +148,7 @@ class RpcClientTest extends TestCase
 
         $rpc = new RpcClient($context);
 
-        $rpc->callAsync($queue, $message, 2)->receive();
+        $rpc->callAsync($queue, $message, 2)->receive(12345);
     }
 
     public function testShouldReceiveNoWaitMessageAndAckMessageIfCorrelationEquals()

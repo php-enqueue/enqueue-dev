@@ -96,13 +96,13 @@ class SimpleClientContainerExtension extends Extension
         $container->register('enqueue.client.rpc', RpcClient::class)
             ->setArguments([
                 new Reference('enqueue.client.producer'),
-                new Reference('enqueue.transport.context')
+                new Reference('enqueue.transport.context'),
         ]);
 
         $container->register('enqueue.client.producer.v2', ProducerV2::class)
             ->setArguments([
                 new Reference('enqueue.client.producer'),
-                new Reference('enqueue.client.rpc')
+                new Reference('enqueue.client.rpc'),
         ]);
 
         $container->register('enqueue.client.meta.topic_meta_registry', TopicMetaRegistry::class)

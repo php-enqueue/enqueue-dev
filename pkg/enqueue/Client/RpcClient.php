@@ -78,12 +78,13 @@ class RpcClient
 
         $correlationId = $message->getCorrelationId();
 
-        $receive = function () use ($replyQueue, $timeout, $correlationId) {
-            $endTime = time() + ((int) ($timeout / 1000));
+        $receive = function (Promise $promise, $promiseTimeout) use ($replyQueue, $timeout, $correlationId) {
+            $runTimeout = $promiseTimeout ?: $timeout;
+            $endTime = time() + ((int) ($runTimeout / 1000));
             $consumer = $this->context->createConsumer($replyQueue);
 
             do {
-                if ($message = $consumer->receive($timeout)) {
+                if ($message = $consumer->receive($runTimeout)) {
                     if ($message->getCorrelationId() === $correlationId) {
                         $consumer->acknowledge($message);
 
@@ -94,7 +95,7 @@ class RpcClient
                 }
             } while (time() < $endTime);
 
-            throw TimeoutException::create($timeout, $correlationId);
+            throw TimeoutException::create($runTimeout, $correlationId);
         };
 
         $receiveNoWait = function () use ($replyQueue, $correlationId) {
