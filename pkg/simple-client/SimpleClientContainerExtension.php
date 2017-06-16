@@ -10,7 +10,9 @@ use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\Producer;
+use Enqueue\Client\ProducerV2;
 use Enqueue\Client\RouterProcessor;
+use Enqueue\Client\RpcClient;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Symfony\TransportFactoryInterface;
@@ -91,6 +93,18 @@ class SimpleClientContainerExtension extends Extension
         $container->register('enqueue.client.producer', Producer::class)
             ->setArguments([
                 new Reference('enqueue.client.driver'),
+        ]);
+
+        $container->register('enqueue.client.rpc', RpcClient::class)
+            ->setArguments([
+                new Reference('enqueue.client.producer'),
+                new Reference('enqueue.transport.context'),
+        ]);
+
+        $container->register('enqueue.client.producer.v2', ProducerV2::class)
+            ->setArguments([
+                new Reference('enqueue.client.producer'),
+                new Reference('enqueue.client.rpc'),
         ]);
 
         $container->register('enqueue.client.meta.topic_meta_registry', TopicMetaRegistry::class)

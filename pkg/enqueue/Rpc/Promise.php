@@ -62,15 +62,17 @@ class Promise
     /**
      * Blocks until message received or timeout expired.
      *
+     * @param int $timeout
+     *
      * @throws TimeoutException if the wait timeout is reached
      *
      * @return PsrMessage
      */
-    public function receive()
+    public function receive($timeout = null)
     {
         if (null == $this->message) {
             try {
-                if ($message = $this->doReceive($this->receiveCallback)) {
+                if ($message = $this->doReceive($this->receiveCallback, $this, $timeout)) {
                     $this->message = $message;
                 }
             } finally {
@@ -89,7 +91,7 @@ class Promise
     public function receiveNoWait()
     {
         if (null == $this->message) {
-            if ($message = $this->doReceive($this->receiveNoWaitCallback)) {
+            if ($message = $this->doReceive($this->receiveNoWaitCallback, $this)) {
                 $this->message = $message;
 
                 call_user_func($this->finallyCallback, $this);
@@ -119,12 +121,13 @@ class Promise
 
     /**
      * @param \Closure $cb
+     * @param array    $args
      *
      * @return PsrMessage
      */
-    private function doReceive(\Closure $cb)
+    private function doReceive(\Closure $cb, ...$args)
     {
-        $message = call_user_func($cb, $this);
+        $message = call_user_func_array($cb, $args);
 
         if (null !== $message && false == $message instanceof PsrMessage) {
             throw new \RuntimeException(sprintf(

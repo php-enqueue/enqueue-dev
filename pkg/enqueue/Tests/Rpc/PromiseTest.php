@@ -29,14 +29,39 @@ class PromiseTest extends TestCase
     public function testOnReceiveShouldCallReceiveCallBack()
     {
         $receiveInvoked = false;
-        $receivecb = function () use (&$receiveInvoked) {
+        $receivePromise = null;
+        $receiveTimeout = null;
+        $receivecb = function ($promise, $timout) use (&$receiveInvoked, &$receivePromise, &$receiveTimeout) {
             $receiveInvoked = true;
+            $receivePromise = $promise;
+            $receiveTimeout = $timout;
         };
 
         $promise = new Promise($receivecb, function () {}, function () {});
         $promise->receive();
 
         $this->assertTrue($receiveInvoked);
+        $this->assertInstanceOf(Promise::class, $receivePromise);
+        $this->assertNull($receiveTimeout);
+    }
+
+    public function testOnReceiveShouldCallReceiveCallBackWithTimeout()
+    {
+        $receiveInvoked = false;
+        $receivePromise = null;
+        $receiveTimeout = null;
+        $receivecb = function ($promise, $timout) use (&$receiveInvoked, &$receivePromise, &$receiveTimeout) {
+            $receiveInvoked = true;
+            $receivePromise = $promise;
+            $receiveTimeout = $timout;
+        };
+
+        $promise = new Promise($receivecb, function () {}, function () {});
+        $promise->receive(12345);
+
+        $this->assertTrue($receiveInvoked);
+        $this->assertInstanceOf(Promise::class, $receivePromise);
+        $this->assertSame(12345, $receiveTimeout);
     }
 
     public function testOnReceiveNoWaitShouldCallReceiveNoWaitCallBack()
