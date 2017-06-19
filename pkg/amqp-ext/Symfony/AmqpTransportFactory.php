@@ -85,6 +85,11 @@ class AmqpTransportFactory implements TransportFactoryInterface
                 ->booleanNode('lazy')
                     ->defaultTrue()
                 ->end()
+                ->enumNode('receive_method')
+                    ->values(['basic_get', 'basic_consume'])
+                    ->defaultValue('basic_get')
+                    ->info('The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher')
+                ->end()
         ;
     }
 
