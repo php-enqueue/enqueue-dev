@@ -9,6 +9,7 @@ use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -54,6 +55,7 @@ class AmqpTransportFactoryTest extends TestCase
             'vhost' => '/',
             'persisted' => false,
             'lazy' => true,
+            'receive_method' => 'basic_get',
         ], $config);
     }
 
@@ -76,6 +78,47 @@ class AmqpTransportFactoryTest extends TestCase
             'vhost' => '/',
             'persisted' => false,
             'lazy' => true,
+            'receive_method' => 'basic_get',
+        ], $config);
+    }
+
+    public function testThrowIfInvalidReceiveMethodIsSet()
+    {
+        $transport = new AmqpTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The value "anInvalidMethod" is not allowed for path "foo.receive_method". Permissible values: "basic_get", "basic_consume"');
+        $processor->process($tb->buildTree(), [[
+            'receive_method' => 'anInvalidMethod',
+        ]]);
+    }
+
+    public function testShouldAllowChangeReceiveMethod()
+    {
+        $transport = new AmqpTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [[
+            'receive_method' => 'basic_consume',
+        ]]);
+
+        $this->assertEquals([
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+            'persisted' => false,
+            'lazy' => true,
+            'receive_method' => 'basic_consume',
         ], $config);
     }
 

@@ -61,6 +61,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
             'persisted' => false,
             'delay_plugin_installed' => false,
             'lazy' => true,
+            'receive_method' => 'basic_get',
         ], $config);
     }
 
