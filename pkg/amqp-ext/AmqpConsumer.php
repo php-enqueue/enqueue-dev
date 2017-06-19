@@ -134,6 +134,8 @@ class AmqpConsumer implements PsrConsumer
             if ($message = $this->receiveNoWait()) {
                 return $message;
             }
+
+            usleep(100000); //100ms
         }
     }
 
