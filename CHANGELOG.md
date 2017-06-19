@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.4.17](https://github.com/php-enqueue/enqueue-dev/tree/0.4.17) (2017-06-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.16...0.4.17)
+
+- \[amqp\] Fixes high CPU consumption when basic get is used [\#117](https://github.com/php-enqueue/enqueue-dev/pull/117) ([makasim](https://github.com/makasim))
+
+- \[RabbitMQ\] High resource usage in AmqpConsumer::receiveBasicGet\(\) [\#116](https://github.com/php-enqueue/enqueue-dev/issues/116)
+
+- \[simple-client\] Allow processor instance bind. [\#119](https://github.com/php-enqueue/enqueue-dev/pull/119) ([makasim](https://github.com/makasim))
+- \[amqp\] Add 'receive\_method' to amqp transport factory. [\#118](https://github.com/php-enqueue/enqueue-dev/pull/118) ([makasim](https://github.com/makasim))
+
+## [0.4.16](https://github.com/php-enqueue/enqueue-dev/tree/0.4.16) (2017-06-16)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.15...0.4.16)
+
+- ProducerV2 For SimpleClient [\#115](https://github.com/php-enqueue/enqueue-dev/pull/115) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.4.15](https://github.com/php-enqueue/enqueue-dev/tree/0.4.15) (2017-06-14)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.14...0.4.15)
 
