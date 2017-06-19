@@ -19,6 +19,7 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProcessor;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
@@ -80,17 +81,25 @@ final class SimpleClient
     }
 
     /**
-     * @param string   $topic
-     * @param string   $processorName
-     * @param callback $processor
+     * @param string                $topic
+     * @param string                $processorName
+     * @param callable|PsrProcessor $processor
      */
-    public function bind($topic, $processorName, callable $processor)
+    public function bind($topic, $processorName, $processor)
     {
+        if (is_callable($processor)) {
+            $processor = new CallbackProcessor($processor);
+        }
+
+        if (false == $processor instanceof PsrProcessor) {
+            throw new \LogicException('The processor must be either callable or instance of PsrProcessor');
+        }
+
         $queueName = $this->getConfig()->getDefaultProcessorQueueName();
 
         $this->getTopicMetaRegistry()->addProcessor($topic, $processorName);
         $this->getQueueMetaRegistry()->addProcessor($queueName, $processorName);
-        $this->getProcessorRegistry()->add($processorName, new CallbackProcessor($processor));
+        $this->getProcessorRegistry()->add($processorName, $processor);
         $this->getRouterProcessor()->add($topic, $queueName, $processorName);
     }
 
