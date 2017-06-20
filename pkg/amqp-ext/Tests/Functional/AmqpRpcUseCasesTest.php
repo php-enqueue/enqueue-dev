@@ -65,7 +65,7 @@ class AmqpRpcUseCasesTest extends TestCase
 
         $this->amqpContext->createProducer()->send($replyQueue, $replyMessage);
 
-        $actualReplyMessage = $promise->getMessage();
+        $actualReplyMessage = $promise->receive();
         $this->assertInstanceOf(AmqpMessage::class, $actualReplyMessage);
     }
 
@@ -95,7 +95,7 @@ class AmqpRpcUseCasesTest extends TestCase
 
         $this->amqpContext->createProducer()->send($replyQueue, $replyMessage);
 
-        $actualReplyMessage = $promise->getMessage();
+        $actualReplyMessage = $promise->receive();
         $this->assertInstanceOf(AmqpMessage::class, $actualReplyMessage);
     }
 }

@@ -63,7 +63,7 @@ class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
 
         $this->stompContext->createProducer()->send($replyQueue, $replyMessage);
 
-        $actualReplyMessage = $promise->getMessage();
+        $actualReplyMessage = $promise->receive();
         $this->assertInstanceOf(StompMessage::class, $actualReplyMessage);
     }
 
@@ -94,7 +94,7 @@ class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
 
         $this->stompContext->createProducer()->send($replyQueue, $replyMessage);
 
-        $actualReplyMessage = $promise->getMessage();
+        $actualReplyMessage = $promise->receive();
         $this->assertInstanceOf(StompMessage::class, $actualReplyMessage);
     }
 }

@@ -48,20 +48,6 @@ class Promise
     /**
      * Blocks until message received or timeout expired.
      *
-     * @deprecated use "receive" instead
-     *
-     * @throws TimeoutException if the wait timeout is reached
-     *
-     * @return PsrMessage
-     */
-    public function getMessage()
-    {
-        return $this->receive();
-    }
-
-    /**
-     * Blocks until message received or timeout expired.
-     *
      * @param int $timeout
      *
      * @throws TimeoutException if the wait timeout is reached

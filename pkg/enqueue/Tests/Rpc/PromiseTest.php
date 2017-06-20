@@ -234,20 +234,4 @@ class PromiseTest extends TestCase
         $this->assertFalse($invokedReceiveNoWait);
         $this->assertFalse($invokedReceive);
     }
-
-    public function testDeprecatedGetMessageShouldCallReceiveMethod()
-    {
-        $promise = $this->getMockBuilder(Promise::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['receive'])
-            ->getMock()
-        ;
-
-        $promise
-            ->expects($this->once())
-            ->method('receive')
-        ;
-
-        $promise->getMessage();
-    }
 }

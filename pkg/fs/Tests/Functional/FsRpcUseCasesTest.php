@@ -60,7 +60,7 @@ class FsRpcUseCasesTest extends TestCase
 
         $this->fsContext->createProducer()->send($replyQueue, $replyMessage);
 
-        $actualReplyMessage = $promise->getMessage();
+        $actualReplyMessage = $promise->receive();
         $this->assertInstanceOf(FsMessage::class, $actualReplyMessage);
     }
 
@@ -89,7 +89,7 @@ class FsRpcUseCasesTest extends TestCase
 
         $this->fsContext->createProducer()->send($replyQueue, $replyMessage);
 
-        $actualReplyMessage = $promise->getMessage();
+        $actualReplyMessage = $promise->receive();
         $this->assertInstanceOf(FsMessage::class, $actualReplyMessage);
     }
 }
