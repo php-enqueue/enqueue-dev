@@ -119,13 +119,16 @@ class Result
 
     /**
      * @param PsrMessage  $replyMessage
+     * @param string      $status
      * @param string|null $reason
      *
      * @return Result
      */
-    public static function reply(PsrMessage $replyMessage, $reason = '')
+    public static function reply(PsrMessage $replyMessage, $status = self::ACK, $reason = null)
     {
-        $result = static::ack($reason);
+        $status = null === $status ? self::ACK : $status;
+
+        $result = new static($status, $reason);
         $result->setReply($replyMessage);
 
         return $result;

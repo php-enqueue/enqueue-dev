@@ -53,11 +53,35 @@ class ResultTest extends TestCase
         $this->assertSame(null, $result->getReply());
     }
 
-    public function testCouldConstructedWithReplyFactoryMethod()
+    public function testCouldConstructedWithReplyFactoryMethodAndAckStatusByDefault()
     {
         $reply = new NullMessage();
 
-        $result = Result::reply($reply, 'theReason');
+        $result = Result::reply($reply);
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertSame(Result::ACK, $result->getStatus());
+        $this->assertSame('', $result->getReason());
+        $this->assertSame($reply, $result->getReply());
+    }
+
+    public function testCouldConstructedWithReplyFactoryMethodAndRejectStatusExplicitly()
+    {
+        $reply = new NullMessage();
+
+        $result = Result::reply($reply, Result::REJECT);
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertSame(Result::REJECT, $result->getStatus());
+        $this->assertSame('', $result->getReason());
+        $this->assertSame($reply, $result->getReply());
+    }
+
+    public function testCouldConstructedWithReplyFactoryMethodAndReasonSet()
+    {
+        $reply = new NullMessage();
+
+        $result = Result::reply($reply, null, 'theReason');
 
         $this->assertInstanceOf(Result::class, $result);
         $this->assertSame(Result::ACK, $result->getStatus());
