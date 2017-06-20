@@ -121,17 +121,10 @@ class QueueConsumer
         $logger = $context->getLogger() ?: new NullLogger();
         $logger->info('Start consuming');
 
-        /** @var PsrQueue|null $previousQueue */
-        $previousQueue = null;
-
         while (true) {
             try {
                 /** @var PsrQueue $queue */
                 foreach ($this->boundProcessors as list($queue, $processor)) {
-                    if (false == $previousQueue || $previousQueue->getQueueName() != $queue->getQueueName()) {
-                        $logger->debug(sprintf('Switch to a queue %s', $queue->getQueueName()));
-                    }
-
                     $consumer = $consumers[$queue->getQueueName()];
 
                     $context = new Context($this->psrContext);
@@ -141,8 +134,6 @@ class QueueConsumer
                     $context->setPsrProcessor($processor);
 
                     $this->doConsume($extension, $context);
-
-                    $previousQueue = $queue;
                 }
             } catch (ConsumptionInterruptedException $e) {
                 $logger->info(sprintf('Consuming interrupted'));
@@ -191,7 +182,7 @@ class QueueConsumer
         }
 
         if ($message = $consumer->receive($timeout = 5000)) {
-            $logger->info('Message received');
+            $logger->info('Message received from the queue: '.$context->getPsrQueue()->getQueueName());
             $logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
             $logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
             $logger->debug('Payload: {payload}', ['payload' => new VarExport($message->getBody())]);
