@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.4.18](https://github.com/php-enqueue/enqueue-dev/tree/0.4.18) (2017-06-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.17...0.4.18)
+
+- \[client\] Add ability to define a command as exclusive [\#120](https://github.com/php-enqueue/enqueue-dev/pull/120) ([makasim](https://github.com/makasim))
+
 ## [0.4.17](https://github.com/php-enqueue/enqueue-dev/tree/0.4.17) (2017-06-19)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.16...0.4.17)
 
