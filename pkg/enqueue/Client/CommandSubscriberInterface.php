@@ -15,9 +15,10 @@ interface CommandSubscriberInterface
      *   'processorName' => 'aCommandName',
      *   'queueName' => 'a_client_queue_name',
      *   'queueNameHardcoded' => true,
+     *   'exclusive' => true,
      * ]
      *
-     * queueName and queueNameHardcoded are optional.
+     * queueName, exclusive and queueNameHardcoded are optional.
      *
      * Note: If you set queueNameHardcoded to true then the queueName is used as is and therefor the driver is not used to create a transport queue name.
      *

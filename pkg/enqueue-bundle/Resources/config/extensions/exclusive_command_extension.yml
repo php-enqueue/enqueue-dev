@@ -1,0 +1,8 @@
+services:
+    enqueue.client.exclusive_command_extension:
+        class: 'Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension'
+        public: false
+        arguments:
+            - []
+        tags:
+            - { name: 'enqueue.consumption.extension', priority: 100 }
