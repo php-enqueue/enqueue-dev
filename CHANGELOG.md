@@ -1,5 +1,8 @@
 # Change Log
 
+## [0.4.19](https://github.com/php-enqueue/enqueue-dev/tree/0.4.19) (2017-06-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.18...0.4.19)
+
 ## [0.4.18](https://github.com/php-enqueue/enqueue-dev/tree/0.4.18) (2017-06-20)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.17...0.4.18)
 
