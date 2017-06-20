@@ -52,11 +52,14 @@ $client->send('a_bar_topic', new class() implements \JsonSerializable {
 <?php
 
 use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrProcessor;
 
 /** @var \Enqueue\SimpleClient\SimpleClient $client */
 
 $client->bind('a_bar_topic', 'a_processor_name', function(PsrMessage $psrMessage) {
     // processing logic here
+    
+    return PsrProcessor::ACK;
 });
 
 $client->consume();
