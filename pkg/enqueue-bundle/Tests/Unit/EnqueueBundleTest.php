@@ -7,6 +7,7 @@ use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildExclusiveCommandsExtensionPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
@@ -74,6 +75,11 @@ class EnqueueBundleTest extends TestCase
         ;
         $container
             ->expects($this->at(6))
+            ->method('addCompilerPass')
+            ->with($this->isInstanceOf(BuildExclusiveCommandsExtensionPass::class))
+        ;
+        $container
+            ->expects($this->at(7))
             ->method('getExtension')
             ->willReturn($extensionMock)
         ;

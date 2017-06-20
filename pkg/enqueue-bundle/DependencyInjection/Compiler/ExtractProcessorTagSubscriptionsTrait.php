@@ -42,6 +42,7 @@ trait ExtractProcessorTagSubscriptionsTrait
             'queueName' => null,
             'queueNameHardcoded' => false,
             'processorName' => null,
+            'exclusive' => false,
         ];
 
         $data = [];
@@ -70,6 +71,7 @@ trait ExtractProcessorTagSubscriptionsTrait
                     'queueName' => $resolve($params['queueName']) ?: $defaultQueueName,
                     'queueNameHardcoded' => $resolve($params['queueNameHardcoded']),
                     'processorName' => $processorName,
+                    'exclusive' => array_key_exists('exclusive', $params) ? $params['exclusive'] : false,
                 ];
             } else {
                 throw new \LogicException(sprintf(
@@ -123,6 +125,8 @@ trait ExtractProcessorTagSubscriptionsTrait
                     'queueName' => $resolve($tagAttribute['queueName']) ?: $defaultQueueName,
                     'queueNameHardcoded' => $resolve($tagAttribute['queueNameHardcoded']),
                     'processorName' => $resolve($tagAttribute['processorName']) ?: $processorServiceId,
+                    'exclusive' => Config::COMMAND_TOPIC == $resolve($tagAttribute['topicName']) &&
+                        array_key_exists('exclusive', $tagAttribute) ? $tagAttribute['exclusive'] : false,
                 ];
             }
         }

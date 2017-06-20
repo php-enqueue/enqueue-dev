@@ -65,6 +65,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         if (isset($config['client'])) {
             $loader->load('client.yml');
             $loader->load('extensions/flush_spool_producer_extension.yml');
+            $loader->load('extensions/exclusive_command_extension.yml');
 
             foreach ($config['transport'] as $name => $transportConfig) {
                 $this->factories[$name]->createDriver($container, $transportConfig);
