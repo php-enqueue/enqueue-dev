@@ -115,8 +115,8 @@ class DbalContext implements PsrContext
 
         $consumer = new DbalConsumer($this, $destination);
 
-        if (isset($this->config['pollingInterval'])) {
-            $consumer->setPollingInterval($this->config['pollingInterval']);
+        if (isset($this->config['polling_interval'])) {
+            $consumer->setPollingInterval($this->config['polling_interval']);
         }
 
         return $consumer;
