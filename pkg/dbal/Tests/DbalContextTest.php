@@ -98,7 +98,7 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
     public function testShouldCreateMessageConsumerAndSetPollingInterval()
     {
         $context = new DbalContext($this->createConnectionMock(), [
-            'pollingInterval' => 123456,
+            'polling_interval' => 123456,
         ]);
 
         $consumer = $context->createConsumer(new DbalDestination(''));
