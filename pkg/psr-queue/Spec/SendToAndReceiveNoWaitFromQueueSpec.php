@@ -17,13 +17,14 @@ abstract class SendToAndReceiveNoWaitFromQueueSpec extends TestCase
         $context = $this->createContext();
         $queue = $this->createQueue($context, 'send_to_and_receive_no_wait_from_queue_spec');
 
+        $consumer = $context->createConsumer($queue);
+
+        // guard
+        $this->assertNull($consumer->receiveNoWait());
+
         $expectedBody = __CLASS__.time();
 
         $context->createProducer()->send($queue, $context->createMessage($expectedBody));
-//        $context->close();
-//
-//        $context = $this->createContext();
-        $consumer = $context->createConsumer($queue);
 
         $startTime = microtime(true);
         $message = $consumer->receiveNoWait();

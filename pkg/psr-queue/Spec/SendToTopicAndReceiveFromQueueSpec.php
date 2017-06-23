@@ -19,13 +19,14 @@ abstract class SendToTopicAndReceiveFromQueueSpec extends TestCase
         $topic = $this->createTopic($context, 'send_to_topic_and_receive_from_queue_spec');
         $queue = $this->createQueue($context, 'send_to_topic_and_receive_from_queue_spec');
 
+        $consumer = $context->createConsumer($queue);
+
+        // guard
+        $this->assertNull($consumer->receiveNoWait());
+
         $expectedBody = __CLASS__.time();
 
         $context->createProducer()->send($topic, $context->createMessage($expectedBody));
-//        $context->close();
-//
-//        $context = $this->createContext();
-        $consumer = $context->createConsumer($queue);
 
         $message = $consumer->receive(2000); // 2 sec
 
