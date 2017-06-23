@@ -1,4 +1,5 @@
 version: '2'
+
 services:
   dev:
     image: enqueue/dev:latest
@@ -7,6 +8,7 @@ services:
       - rabbitmq
       - mysql
       - redis
+      - beanstalkd
     volumes:
       - './:/mqdev'
     environment:
@@ -29,6 +31,9 @@ services:
       - AWS__SQS__KEY=$ENQUEUE_AWS__SQS__KEY
       - AWS__SQS__SECRET=$ENQUEUE_AWS__SQS__SECRET
       - AWS__SQS__REGION=$ENQUEUE_AWS__SQS__REGION
+      - BEANSTALKD_HOST=beanstalkd
+      - BEANSTALKD_PORT=11300
+      - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
 
   rabbitmq:
     image: enqueue/rabbitmq:latest
@@ -37,6 +42,12 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
       - RABBITMQ_DEFAULT_VHOST=mqdev
+    ports:
+      - "15677:15672"
+
+  beanstalkd:
+      image: 'schickling/beanstalkd'
+
   redis:
     image: 'redis:3'
     ports:

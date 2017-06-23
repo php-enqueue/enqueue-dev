@@ -13,6 +13,7 @@
     "enqueue/null": "*@dev",
     "enqueue/dbal": "*@dev",
     "enqueue/sqs": "*@dev",
+    "enqueue/pheanstalk": "*@dev",
     "enqueue/enqueue-bundle": "*@dev",
     "enqueue/job-queue": "*@dev",
     "enqueue/simple-client": "*@dev",
@@ -84,6 +85,10 @@
     {
       "type": "path",
       "url": "pkg/sqs"
+    },
+    {
+      "type": "path",
+      "url": "pkg/pheanstalk"
     },
     {
       "type": "path",
