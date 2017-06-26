@@ -25,7 +25,7 @@ class AsyncListenerTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $registry = $this->createRegistryMock();
@@ -74,7 +74,7 @@ class AsyncListenerTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with('event.fooEvent', $this->identicalTo($message))
         ;
 

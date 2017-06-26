@@ -15,7 +15,7 @@ $message = new Message();
 $message->setDelay(60); // seconds
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 ## Expiration (TTL)
@@ -33,7 +33,7 @@ $message = new Message();
 $message->setExpire(60); // seconds
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 ## Priority 
@@ -52,7 +52,7 @@ $message = new Message();
 $message->setPriority(MessagePriority::HIGH);
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 ## Timestamp, Content type, Message id
@@ -72,7 +72,7 @@ $message->setTimestamp(time());
 $message->setContentType('text/plain');
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 [back to index](../index.md)

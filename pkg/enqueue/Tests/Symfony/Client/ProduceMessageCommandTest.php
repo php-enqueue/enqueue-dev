@@ -52,7 +52,7 @@ class ProduceMessageCommandTest extends TestCase
         $producerMock = $this->createProducerMock();
         $producerMock
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with('theTopic', 'theMessage')
         ;
 

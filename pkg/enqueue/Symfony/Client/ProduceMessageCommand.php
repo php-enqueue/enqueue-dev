@@ -44,7 +44,7 @@ class ProduceMessageCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->producer->send(
+        $this->producer->sendEvent(
             $input->getArgument('topic'),
             $input->getArgument('message')
         );

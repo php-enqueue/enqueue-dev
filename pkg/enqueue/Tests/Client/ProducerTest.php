@@ -10,6 +10,7 @@ use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Null\NullQueue;
+use Enqueue\Rpc\RpcFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +25,7 @@ class ProducerTest extends TestCase
 
     public function testCouldBeConstructedWithDriverAsFirstArgument()
     {
-        new Producer($this->createDriverStub());
+        new Producer($this->createDriverStub(), $this->createRpcFactory());
     }
 
     public function testShouldSendMessageToRouter()
@@ -38,8 +39,8 @@ class ProducerTest extends TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
 
         $expectedProperties = [
             'enqueue.topic_name' => 'topic',
@@ -59,8 +60,8 @@ class ProducerTest extends TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
 
         self::assertSame(MessagePriority::NORMAL, $message->getPriority());
     }
@@ -77,8 +78,8 @@ class ProducerTest extends TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
 
         self::assertSame(MessagePriority::HIGH, $message->getPriority());
     }
@@ -94,8 +95,8 @@ class ProducerTest extends TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
 
         self::assertNotEmpty($message->getMessageId());
     }
@@ -112,8 +113,8 @@ class ProducerTest extends TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
 
         self::assertSame('theCustomMessageId', $message->getMessageId());
     }
@@ -129,8 +130,8 @@ class ProducerTest extends TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
 
         self::assertNotEmpty($message->getTimestamp());
     }
@@ -147,8 +148,8 @@ class ProducerTest extends TestCase
             ->with(self::identicalTo($message))
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
 
         self::assertSame('theCustomTimestamp', $message->getTimestamp());
     }
@@ -165,8 +166,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', 'theStringMessage');
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', 'theStringMessage');
     }
 
     public function testShouldSendArrayAsJsonString()
@@ -181,8 +182,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', ['foo' => 'fooVal']);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', ['foo' => 'fooVal']);
     }
 
     public function testShouldConvertMessageArrayBodyJsonString()
@@ -200,8 +201,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
     }
 
     public function testSendShouldForceScalarsToStringAndSetTextContentType()
@@ -220,8 +221,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send($queue, 12345);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent($queue, 12345);
     }
 
     public function testSendShouldForceMessageScalarsBodyToStringAndSetTextContentType()
@@ -243,8 +244,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send($queue, $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent($queue, $message);
     }
 
     public function testSendShouldForceNullToEmptyStringAndSetTextContentType()
@@ -263,8 +264,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send($queue, null);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent($queue, null);
     }
 
     public function testSendShouldForceNullBodyToEmptyStringAndSetTextContentType()
@@ -286,8 +287,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send($queue, $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent($queue, $message);
     }
 
     public function testShouldThrowExceptionIfBodyIsObjectOnSend()
@@ -302,12 +303,12 @@ class ProducerTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new Producer($driver);
+        $producer = new Producer($driver, $this->createRpcFactory());
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: stdClass');
 
-        $producer->send('topic', new \stdClass());
+        $producer->sendEvent('topic', new \stdClass());
     }
 
     public function testShouldThrowExceptionIfBodyIsArrayWithObjectsInsideOnSend()
@@ -324,12 +325,12 @@ class ProducerTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new Producer($driver);
+        $producer = new Producer($driver, $this->createRpcFactory());
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The message\'s body must be an array of scalars. Found not scalar in the array: stdClass');
 
-        $producer->send($queue, ['foo' => new \stdClass()]);
+        $producer->sendEvent($queue, ['foo' => new \stdClass()]);
     }
 
     public function testShouldThrowExceptionIfBodyIsArrayWithObjectsInSubArraysInsideOnSend()
@@ -346,12 +347,12 @@ class ProducerTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new Producer($driver);
+        $producer = new Producer($driver, $this->createRpcFactory());
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The message\'s body must be an array of scalars. Found not scalar in the array: stdClass');
 
-        $producer->send($queue, ['foo' => ['bar' => new \stdClass()]]);
+        $producer->sendEvent($queue, ['foo' => ['bar' => new \stdClass()]]);
     }
 
     public function testShouldSendJsonSerializableObjectAsJsonStringToMessageBus()
@@ -368,8 +369,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $object);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $object);
     }
 
     public function testShouldSendMessageJsonSerializableBodyAsJsonStringToMessageBus()
@@ -389,8 +390,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
     }
 
     public function testThrowIfTryToSendMessageToMessageBusWithProcessorNamePropertySet()
@@ -411,11 +412,11 @@ class ProducerTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new Producer($driver);
+        $producer = new Producer($driver, $this->createRpcFactory());
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The enqueue.processor_name property must not be set for messages that are sent to message bus.');
-        $producer->send('topic', $message);
+        $producer->sendEvent('topic', $message);
     }
 
     public function testThrowIfTryToSendMessageToMessageBusWithProcessorQueueNamePropertySet()
@@ -436,11 +437,11 @@ class ProducerTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new Producer($driver);
+        $producer = new Producer($driver, $this->createRpcFactory());
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The enqueue.processor_queue_name property must not be set for messages that are sent to message bus.');
-        $producer->send('topic', $message);
+        $producer->sendEvent('topic', $message);
     }
 
     public function testThrowIfNotApplicationJsonContentTypeSetWithJsonSerializableBody()
@@ -464,8 +465,8 @@ class ProducerTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Content type "application/json" only allowed when body is array');
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
     }
 
     public function testShouldSendMessageToApplicationRouter()
@@ -489,8 +490,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
     }
 
     public function testShouldSendToCustomMessageToApplicationRouter()
@@ -516,8 +517,8 @@ class ProducerTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory());
+        $producer->sendEvent('topic', $message);
     }
 
     public function testThrowIfUnSupportedScopeGivenOnSend()
@@ -535,11 +536,11 @@ class ProducerTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new Producer($driver);
+        $producer = new Producer($driver, $this->createRpcFactory());
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The message scope "iDontKnowScope" is not supported.');
-        $producer->send('topic', $message);
+        $producer->sendEvent('topic', $message);
     }
 
     public function testShouldCallPreSendPostSendExtensionMethodsWhenSendToRouter()
@@ -566,8 +567,8 @@ class ProducerTest extends TestCase
             ->method('sendToRouter')
         ;
 
-        $producer = new Producer($driver, $extension);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory(), $extension);
+        $producer->sendEvent('topic', $message);
     }
 
     public function testShouldCallPreSendPostSendExtensionMethodsWhenSendToProcessor()
@@ -594,14 +595,22 @@ class ProducerTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $producer = new Producer($driver, $extension);
-        $producer->send('topic', $message);
+        $producer = new Producer($driver, $this->createRpcFactory(), $extension);
+        $producer->sendEvent('topic', $message);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|RpcFactory
+     */
+    private function createRpcFactory()
+    {
+        return $this->createMock(RpcFactory::class);
     }
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
      */
-    protected function createDriverStub()
+    private function createDriverStub()
     {
         $config = new Config(
             'a_prefix',

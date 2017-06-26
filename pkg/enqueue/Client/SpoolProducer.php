@@ -12,7 +12,12 @@ class SpoolProducer implements ProducerInterface
     /**
      * @var array
      */
-    private $queue;
+    private $events;
+
+    /**
+     * @var array
+     */
+    private $commands;
 
     /**
      * @param ProducerInterface $realProducer
@@ -21,7 +26,28 @@ class SpoolProducer implements ProducerInterface
     {
         $this->realProducer = $realProducer;
 
-        $this->queue = new \SplQueue();
+        $this->events = new \SplQueue();
+        $this->commands = new \SplQueue();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendCommand($command, $message, $needReply = false)
+    {
+        if ($needReply) {
+            return $this->realProducer->sendCommand($command, $message, $needReply);
+        }
+
+        $this->commands->enqueue([$command, $message]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendEvent($topic, $message)
+    {
+        $this->events->enqueue([$topic, $message]);
     }
 
     /**
@@ -29,7 +55,7 @@ class SpoolProducer implements ProducerInterface
      */
     public function send($topic, $message)
     {
-        $this->queue->enqueue([$topic, $message]);
+        $this->sendEvent($topic, $message);
     }
 
     /**
@@ -37,10 +63,16 @@ class SpoolProducer implements ProducerInterface
      */
     public function flush()
     {
-        while (false == $this->queue->isEmpty()) {
-            list($topic, $message) = $this->queue->dequeue();
+        while (false == $this->events->isEmpty()) {
+            list($topic, $message) = $this->events->dequeue();
 
-            $this->realProducer->send($topic, $message);
+            $this->realProducer->sendEvent($topic, $message);
+        }
+
+        while (false == $this->commands->isEmpty()) {
+            list($command, $message) = $this->commands->dequeue();
+
+            $this->realProducer->sendCommand($command, $message);
         }
     }
 }

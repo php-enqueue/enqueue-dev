@@ -10,11 +10,10 @@ use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\Producer;
-use Enqueue\Client\ProducerV2;
 use Enqueue\Client\RouterProcessor;
-use Enqueue\Client\RpcClient;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\NodeInterface;
@@ -90,22 +89,18 @@ class SimpleClientContainerExtension extends Extension
                 $transportConfig,
         ]);
 
+        $container->register('enqueue.client.rpc_factory', RpcFactory::class)
+            ->setArguments([
+                new Reference('enqueue.transport.context'),
+            ]);
+
         $container->register('enqueue.client.producer', Producer::class)
             ->setArguments([
                 new Reference('enqueue.client.driver'),
+                new Reference('enqueue.client.rpc_factory'),
         ]);
 
-        $container->register('enqueue.client.rpc', RpcClient::class)
-            ->setArguments([
-                new Reference('enqueue.client.producer'),
-                new Reference('enqueue.transport.context'),
-        ]);
-
-        $container->register('enqueue.client.producer.v2', ProducerV2::class)
-            ->setArguments([
-                new Reference('enqueue.client.producer'),
-                new Reference('enqueue.client.rpc'),
-        ]);
+        $container->setAlias('enqueue.client.producer_v2', 'enqueue.client.producer');
 
         $container->register('enqueue.client.meta.topic_meta_registry', TopicMetaRegistry::class)
             ->setArguments([[]]);

@@ -30,24 +30,25 @@ class TraceableProducerTest extends TestCase
         $internalMessageProducer = $this->createProducerMock();
         $internalMessageProducer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with($topic, $body)
         ;
 
         $messageProducer = new TraceableProducer($internalMessageProducer);
 
-        $messageProducer->send($topic, $body);
+        $messageProducer->sendEvent($topic, $body);
     }
 
     public function testShouldCollectInfoIfStringGivenAsMessage()
     {
         $messageProducer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', 'aFooBody');
+        $messageProducer->sendEvent('aFooTopic', 'aFooBody');
 
         $this->assertSame([
             [
                 'topic' => 'aFooTopic',
+                'command' => null,
                 'body' => 'aFooBody',
                 'headers' => [],
                 'properties' => [],
@@ -65,11 +66,12 @@ class TraceableProducerTest extends TestCase
     {
         $messageProducer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', ['foo' => 'fooVal', 'bar' => 'barVal']);
+        $messageProducer->sendEvent('aFooTopic', ['foo' => 'fooVal', 'bar' => 'barVal']);
 
         $this->assertSame([
             [
                 'topic' => 'aFooTopic',
+                'command' => null,
                 'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
                 'headers' => [],
                 'properties' => [],
@@ -98,11 +100,12 @@ class TraceableProducerTest extends TestCase
         $message->setPriority('theMessagePriority');
         $message->setTimestamp('theTimestamp');
 
-        $messageProducer->send('aFooTopic', $message);
+        $messageProducer->sendEvent('aFooTopic', $message);
 
         $this->assertSame([
             [
                 'topic' => 'aFooTopic',
+                'command' => null,
                 'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
                 'headers' => ['fooHeader' => 'fooVal'],
                 'properties' => ['fooProp' => 'fooVal'],
@@ -120,8 +123,8 @@ class TraceableProducerTest extends TestCase
     {
         $messageProducer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', 'aFooBody');
-        $messageProducer->send('aFooTopic', 'aFooBody');
+        $messageProducer->sendEvent('aFooTopic', 'aFooBody');
+        $messageProducer->sendEvent('aFooTopic', 'aFooBody');
 
         $this->assertArraySubset([
                 ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
@@ -133,8 +136,8 @@ class TraceableProducerTest extends TestCase
     {
         $messageProducer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', 'aFooBody');
-        $messageProducer->send('aBarTopic', 'aBarBody');
+        $messageProducer->sendEvent('aFooTopic', 'aFooBody');
+        $messageProducer->sendEvent('aBarTopic', 'aBarBody');
 
         $this->assertArraySubset([
             ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
@@ -146,8 +149,8 @@ class TraceableProducerTest extends TestCase
     {
         $messageProducer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', 'aFooBody');
-        $messageProducer->send('aBarTopic', 'aBarBody');
+        $messageProducer->sendEvent('aFooTopic', 'aFooBody');
+        $messageProducer->sendEvent('aBarTopic', 'aBarBody');
 
         $this->assertArraySubset([
             ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
@@ -163,7 +166,7 @@ class TraceableProducerTest extends TestCase
         $internalMessageProducer = $this->createProducerMock();
         $internalMessageProducer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->willThrowException(new \Exception())
         ;
 
@@ -172,7 +175,7 @@ class TraceableProducerTest extends TestCase
         $this->expectException(\Exception::class);
 
         try {
-            $messageProducer->send('aFooTopic', 'aFooBody');
+            $messageProducer->sendEvent('aFooTopic', 'aFooBody');
         } finally {
             $this->assertEmpty($messageProducer->getTraces());
         }
@@ -182,7 +185,7 @@ class TraceableProducerTest extends TestCase
     {
         $messageProducer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', 'aFooBody');
+        $messageProducer->sendEvent('aFooTopic', 'aFooBody');
 
         //guard
         $this->assertNotEmpty($messageProducer->getTraces());

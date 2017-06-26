@@ -60,7 +60,7 @@ class AsyncListener
             $message->setProperty('event_name', $eventName);
             $message->setProperty('transformer_name', $transformerName);
 
-            $this->producer->send('event.'.$eventName, $message);
+            $this->producer->sendEvent('event.'.$eventName, $message);
         }
     }
 }

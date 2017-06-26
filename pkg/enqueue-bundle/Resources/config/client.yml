@@ -7,6 +7,7 @@ services:
         class: 'Enqueue\Client\Producer'
         arguments:
             - '@enqueue.client.driver'
+            - '@enqueue.client.rpc_factory'
             - '@enqueue.client.extensions'
 
     enqueue.client.spool_producer:
@@ -24,18 +25,15 @@ services:
         alias: 'enqueue.client.producer'
 
     enqueue.client.producer_v2:
-        class: 'Enqueue\Client\ProducerV2'
-        arguments:
-            - '@enqueue.client.producer'
-            - '@enqueue.client.rpc_client'
+        alias: 'enqueue.client.producer'
 
     enqueue.spool_producer:
         alias: 'enqueue.client.spool_producer'
 
-    enqueue.client.rpc_client:
-        class: 'Enqueue\Client\RpcClient'
+    enqueue.client.rpc_factory:
+        class: 'Enqueue\Rpc\RpcFactory'
+        public: false
         arguments:
-            - '@enqueue.client.producer'
             - '@enqueue.transport.context'
 
     enqueue.client.router_processor:

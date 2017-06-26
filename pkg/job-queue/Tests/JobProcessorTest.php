@@ -8,8 +8,9 @@ use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobProcessor;
 use Enqueue\JobQueue\Topics;
+use PHPUnit\Framework\TestCase;
 
-class JobProcessorTest extends \PHPUnit\Framework\TestCase
+class JobProcessorTest extends TestCase
 {
     public function testCouldBeCreatedWithRequiredArguments()
     {
@@ -168,7 +169,7 @@ class JobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with(Topics::CALCULATE_ROOT_JOB_STATUS, ['jobId' => 12345])
         ;
 
@@ -245,7 +246,7 @@ class JobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $processor = new JobProcessor($storage, $producer);
@@ -315,7 +316,7 @@ class JobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $processor = new JobProcessor($storage, $producer);
@@ -385,7 +386,7 @@ class JobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $processor = new JobProcessor($storage, $producer);
@@ -455,7 +456,7 @@ class JobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $processor = new JobProcessor($storage, $producer);

@@ -81,7 +81,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $message = new NullMessage();
@@ -121,7 +121,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $message = new NullMessage();
@@ -161,7 +161,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with(Topics::ROOT_JOB_STOPPED, ['jobId' => 12345])
         ;
 

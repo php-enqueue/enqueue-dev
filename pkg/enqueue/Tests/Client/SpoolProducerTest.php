@@ -29,12 +29,12 @@ class SpoolProducerTest extends TestCase
         $realProducer = $this->createProducerMock();
         $realProducer
             ->expects($this->never())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $producer = new SpoolProducer($realProducer);
-        $producer->send('foo_topic', $message);
-        $producer->send('bar_topic', $message);
+        $producer->sendEvent('foo_topic', $message);
+        $producer->sendEvent('bar_topic', $message);
     }
 
     public function testShouldSendQueuedMessagesOnFlush()
@@ -45,25 +45,25 @@ class SpoolProducerTest extends TestCase
         $realProducer = $this->createProducerMock();
         $realProducer
             ->expects($this->at(0))
-            ->method('send')
+            ->method('sendEVent')
             ->with('foo_topic', 'first')
         ;
         $realProducer
             ->expects($this->at(1))
-            ->method('send')
+            ->method('sendEvent')
             ->with('bar_topic', ['second'])
         ;
         $realProducer
             ->expects($this->at(2))
-            ->method('send')
+            ->method('sendEvent')
             ->with('baz_topic', $this->identicalTo($message))
         ;
 
         $producer = new SpoolProducer($realProducer);
 
-        $producer->send('foo_topic', 'first');
-        $producer->send('bar_topic', ['second']);
-        $producer->send('baz_topic', $message);
+        $producer->sendEvent('foo_topic', 'first');
+        $producer->sendEvent('bar_topic', ['second']);
+        $producer->sendEvent('baz_topic', $message);
 
         $producer->flush();
     }

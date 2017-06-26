@@ -105,7 +105,7 @@ class DependentJobProcessor implements PsrProcessor, TopicSubscriberInterface
                 $message->setPriority($dependentJob['priority']);
             }
 
-            $this->producer->send($dependentJob['topic'], $message);
+            $this->producer->sendEvent($dependentJob['topic'], $message);
         }
 
         return Result::ACK;

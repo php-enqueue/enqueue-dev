@@ -89,7 +89,7 @@ class Step1Processor implements PsrProcessor
                     $runner->createDelayed(
                         $jobName,
                         function (JobRunner $runner, Job $childJob) use ($entity) {
-                            $this->producer->send('search:index:index-single-entity', [
+                            $this->producer->sendCommand('search:index:index-single-entity', [
                                 'entityId' => $entity->getId(),
                                 'jobId' => $childJob->getId(),
                             ]);

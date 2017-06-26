@@ -18,7 +18,14 @@ services:
         tags:
             - { name: 'console.command' }
 
+    enqueue.transport.rpc_factory:
+        class: 'Enqueue\Rpc\RpcFactory'
+        public: false
+        arguments:
+            - '@enqueue.transport.context'
+
     enqueue.transport.rpc_client:
         class: 'Enqueue\Rpc\RpcClient'
         arguments:
             - '@enqueue.transport.context'
+            - '@enqueue.transport.rpc_factory'

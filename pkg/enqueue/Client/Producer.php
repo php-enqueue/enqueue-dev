@@ -2,10 +2,11 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Rpc\RpcFactory;
 use Enqueue\Util\JSON;
 use Enqueue\Util\UUID;
 
-class Producer implements ProducerInterface
+class Producer implements ProducerInterface, ProducerV2Interface
 {
     /**
      * @var DriverInterface
@@ -18,18 +19,31 @@ class Producer implements ProducerInterface
     private $extension;
 
     /**
-     * @param DriverInterface $driver
+     * @var RpcFactory
      */
-    public function __construct(DriverInterface $driver, ExtensionInterface $extension = null)
-    {
+    private $rpcFactory;
+
+    /**
+     * @param DriverInterface         $driver
+     * @param ExtensionInterface|null $extension
+     * @param RpcFactory              $rpcFactory
+     *
+     * @internal param RpcClient $rpcClient
+     */
+    public function __construct(
+        DriverInterface $driver,
+        RpcFactory $rpcFactory,
+        ExtensionInterface $extension = null
+    ) {
         $this->driver = $driver;
+        $this->rpcFactory = $rpcFactory;
         $this->extension = $extension ?: new ChainExtension([]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function send($topic, $message)
+    public function sendEvent($topic, $message)
     {
         if (false == $message instanceof Message) {
             $body = $message;
@@ -78,6 +92,51 @@ class Producer implements ProducerInterface
         } else {
             throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendCommand($command, $message, $needReply = false)
+    {
+        if (false == $message instanceof Message) {
+            $message = new Message($message);
+        }
+
+        if ($needReply) {
+            $deleteReplyQueue = false;
+            $replyTo = $message->getReplyTo();
+
+            if (false == $replyTo) {
+                $message->setReplyTo($replyTo = $this->rpcFactory->createReplyTo());
+                $deleteReplyQueue = true;
+            }
+
+            if (false == $message->getCorrelationId()) {
+                $message->setCorrelationId(UUID::generate());
+            }
+        }
+
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $command);
+        $message->setScope(Message::SCOPE_APP);
+
+        $this->sendEvent(Config::COMMAND_TOPIC, $message);
+
+        if ($needReply) {
+            $promise = $this->rpcFactory->createPromise($replyTo, $message->getCorrelationId(), 60000);
+            $promise->setDeleteReplyQueue($deleteReplyQueue);
+
+            return $promise;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function send($topic, $message)
+    {
+        $this->sendEvent($topic, $message);
     }
 
     /**

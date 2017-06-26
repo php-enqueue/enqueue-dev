@@ -60,7 +60,12 @@ use Enqueue\Client\Producer;
 /** @var Producer $producer **/
 $producer = $container->get('enqueue.producer');
 
-$producer->send('aFooTopic', 'Something has happened');
+
+// send event to many consumers
+$producer->sendEvent('aFooTopic', 'Something has happened');
+
+// send command to ONE consumer
+$producer->sendCommand('aProcessorName', 'Something has happened');
 ```
 
 To consume messages you have to first create a message processor:
