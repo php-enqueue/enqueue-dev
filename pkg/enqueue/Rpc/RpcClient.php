@@ -15,11 +15,18 @@ class RpcClient
     private $context;
 
     /**
-     * @param PsrContext $context
+     * @var RpcFactory
      */
-    public function __construct(PsrContext $context)
+    private $rpcFactory;
+
+    /**
+     * @param PsrContext $context
+     * @param RpcFactory $promiseFactory
+     */
+    public function __construct(PsrContext $context, RpcFactory $promiseFactory = null)
     {
         $this->context = $context;
+        $this->rpcFactory = $promiseFactory ?: new RpcFactory($context);
     }
 
     /**
@@ -49,12 +56,11 @@ class RpcClient
             throw new \InvalidArgumentException(sprintf('Timeout must be positive not zero integer. Got %s', $timeout));
         }
 
-        if ($message->getReplyTo()) {
-            $replyQueue = $this->context->createQueue($message->getReplyTo());
-            $deleteReplyQueue = false;
-        } else {
-            $replyQueue = $this->context->createTemporaryQueue();
-            $message->setReplyTo($replyQueue->getQueueName());
+        $deleteReplyQueue = false;
+        $replyTo = $message->getReplyTo();
+
+        if (false == $replyTo) {
+            $message->setReplyTo($replyTo = $this->rpcFactory->createReplyTo());
             $deleteReplyQueue = true;
         }
 
@@ -64,53 +70,7 @@ class RpcClient
 
         $this->context->createProducer()->send($destination, $message);
 
-        $correlationId = $message->getCorrelationId();
-
-        $receive = function (Promise $promise, $promiseTimeout) use ($replyQueue, $timeout, $correlationId) {
-            $runTimeout = $promiseTimeout ?: $timeout;
-            $endTime = time() + ((int) ($runTimeout / 1000));
-            $consumer = $this->context->createConsumer($replyQueue);
-
-            do {
-                if ($message = $consumer->receive($runTimeout)) {
-                    if ($message->getCorrelationId() === $correlationId) {
-                        $consumer->acknowledge($message);
-
-                        return $message;
-                    }
-
-                    $consumer->reject($message, true);
-                }
-            } while (time() < $endTime);
-
-            throw TimeoutException::create($runTimeout, $correlationId);
-        };
-
-        $receiveNoWait = function () use ($replyQueue, $correlationId) {
-            static $consumer;
-
-            if (null === $consumer) {
-                $consumer = $this->context->createConsumer($replyQueue);
-            }
-
-            if ($message = $consumer->receiveNoWait()) {
-                if ($message->getCorrelationId() === $correlationId) {
-                    $consumer->acknowledge($message);
-
-                    return $message;
-                }
-
-                $consumer->reject($message, true);
-            }
-        };
-
-        $finally = function (Promise $promise) use ($replyQueue) {
-            if ($promise->isDeleteReplyQueue() && method_exists($this->context, 'deleteQueue')) {
-                $this->context->deleteQueue($replyQueue);
-            }
-        };
-
-        $promise = new Promise($receive, $receiveNoWait, $finally);
+        $promise = $this->rpcFactory->createPromise($replyTo, $message->getCorrelationId(), $timeout);
         $promise->setDeleteReplyQueue($deleteReplyQueue);
 
         return $promise;

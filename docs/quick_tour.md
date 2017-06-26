@@ -163,7 +163,7 @@ It provides easy to use services for producing and processing messages.
 It supports unified format for setting message expiration, delay, timestamp, correlation id.
 It supports message bus so different applications can talk to each other.
  
-Here's an example of how you can send and consume messages.
+Here's an example of how you can send and consume event messages.
  
 ```php
 <?php
@@ -179,13 +179,55 @@ $client = new SimpleClient('file://foo/bar');
 $client->setupBroker();
 
 $client->bind('a_foo_topic', 'fooProcessor', function(PsrMessage $message) {
-    // your processing logic here
+    // your event processor logic here
 });
 
-$client->send('a_bar_topic', 'aMessageData');
-
-// in another process you can consume messages. 
+// this is a blocking call, it'll consume message until it is interrupted 
 $client->consume();
+```
+
+and command messages: 
+
+```php
+<?php
+use Enqueue\SimpleClient\SimpleClient;
+use Enqueue\Psr\PsrMessage;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Client\Config;
+use Enqueue\Consumption\Extension\ReplyExtension;
+use Enqueue\Consumption\Result;
+
+// composer require enqueue/amqp-ext
+$client = new SimpleClient('amqp://');
+
+// composer require enqueue/fs
+$client = new SimpleClient('file://foo/bar');
+$client->
+
+$client->setupBroker();
+
+$client->bind(Config::COMMAND_TOPIC, 'bar_command', function(PsrMessage $message) {
+    // your bar command processor logic here
+});
+
+$client->bind(Config::COMMAND_TOPIC, 'baz_reply_command', function(PsrMessage $message, PsrContext $context) {
+    // your baz reply command processor logic here
+    
+    return Result::reply($context->createMessage('theReplyBody'));
+});
+
+// It is sent to one consumer.  
+$client->sendCommand('bar_command', 'aMessageData');
+
+// It is possible to get reply
+$promise = $client->sendCommand('bar_command', 'aMessageData', true);
+
+// you can send several commands and only after start getting replies.
+
+$replyMessage = $promise->receive(2000); // 2 sec
+
+// this is a blocking call, it'll consume message until it is interrupted 
+$client->consume([new ReplyExtension()]);
 ```
 
 ## Cli commands

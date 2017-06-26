@@ -121,7 +121,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $logger = $this->createLoggerMock();
@@ -157,7 +157,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $logger = $this->createLoggerMock();
@@ -200,7 +200,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->never())
-            ->method('send')
+            ->method('sendEvent')
         ;
 
         $logger = $this->createLoggerMock();
@@ -246,7 +246,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with('topic-name', $this->isInstanceOf(Message::class))
             ->will($this->returnCallback(function ($topic, Message $message) use (&$expectedMessage) {
                 $expectedMessage = $message;
@@ -294,7 +294,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with('topic-name', $this->isInstanceOf(Message::class))
             ->will($this->returnCallback(function ($topic, Message $message) use (&$expectedMessage) {
                 $expectedMessage = $message;

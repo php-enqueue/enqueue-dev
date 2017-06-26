@@ -11,7 +11,6 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\ProducerInterface;
-use Enqueue\Client\ProducerV2Interface;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
@@ -21,6 +20,7 @@ use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
+use Enqueue\Rpc\Promise;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
@@ -104,13 +104,38 @@ final class SimpleClient
     }
 
     /**
+     * @param string $command
+     * @param mixed  $message
+     * @param bool   $needReply
+     *
+     * @return Promise|null
+     */
+    public function sendCommand($command, $message, $needReply = false)
+    {
+        return $this->getProducer()->sendCommand($command, $message, $needReply);
+    }
+
+    /**
+     * @param string       $topic
+     * @param string|array $message
+     */
+    public function sendEvent($topic, $message)
+    {
+        $this->getProducer()->sendEvent($topic, $message);
+    }
+
+    /**
      * @param string       $topic
      * @param string|array $message
      * @param bool         $setupBroker
      */
     public function send($topic, $message, $setupBroker = false)
     {
-        $this->getProducer($setupBroker)->send($topic, $message);
+        if ($setupBroker) {
+            $this->setupBroker();
+        }
+
+        $this->sendEvent($topic, $message);
     }
 
     /**
@@ -193,18 +218,6 @@ final class SimpleClient
         $setupBroker && $this->setupBroker();
 
         return $this->container->get('enqueue.client.producer');
-    }
-
-    /**
-     * @param bool $setupBroker
-     *
-     * @return ProducerV2Interface
-     */
-    public function getProducerV2($setupBroker = false)
-    {
-        $setupBroker && $this->setupBroker();
-
-        return $this->container->get('enqueue.client.producer.v2');
     }
 
     public function setupBroker()

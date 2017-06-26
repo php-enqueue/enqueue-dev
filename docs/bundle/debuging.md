@@ -35,13 +35,13 @@ class DefaultController extends Controller
         /** @var ProducerInterface $producer */
         $producer = $this->get('enqueue.producer'); 
         
-        $producer->send('foo_topic', 'Hello world');
+        $producer->sendEvent('foo_topic', 'Hello world');
         
-        $producer->send('bar_topic', ['bar' => 'val']);
+        $producer->sendEvent('bar_topic', ['bar' => 'val']);
 
         $message = new Message();
         $message->setBody('baz');
-        $producer->send('baz_topic', $message);
+        $producer->sendEvent('baz_topic', $message);
 
         // ...
     }

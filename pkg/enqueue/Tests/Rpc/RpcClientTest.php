@@ -134,7 +134,7 @@ class RpcClientTest extends TestCase
             ->willReturn($this->createPsrProducerMock())
         ;
         $context
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('createQueue')
             ->with('theReplyTo')
             ->willReturn($replyQueue)
@@ -185,7 +185,7 @@ class RpcClientTest extends TestCase
             ->willReturn($this->createPsrProducerMock())
         ;
         $context
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('createQueue')
             ->with('theReplyTo')
             ->willReturn($replyQueue)
@@ -232,7 +232,7 @@ class RpcClientTest extends TestCase
             ->willReturn($this->createPsrProducerMock())
         ;
         $context
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('createQueue')
             ->with('theReplyTo')
             ->willReturn($replyQueue)

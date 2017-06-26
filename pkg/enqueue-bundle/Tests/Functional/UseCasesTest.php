@@ -167,7 +167,7 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
-        $this->getMessageProducer()->send(TestProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, 'test message body');
 
         $queue = $this->getPsrContext()->createQueue('enqueue.test');
 
@@ -189,7 +189,7 @@ class UseCasesTest extends WebTestCase
         $command = $this->container->get('enqueue.client.consume_messages_command');
         $processor = $this->container->get('test.message.processor');
 
-        $this->getMessageProducer()->send(TestProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, 'test message body');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -213,7 +213,7 @@ class UseCasesTest extends WebTestCase
         $command->setContainer($this->container);
         $processor = $this->container->get('test.message.processor');
 
-        $this->getMessageProducer()->send(TestProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, 'test message body');
 
         $tester = new CommandTester($command);
         $tester->execute([

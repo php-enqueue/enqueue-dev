@@ -26,7 +26,7 @@ class RootJobProcessor implements PsrProcessor
     {
         $result = $this->jobRunner->runUnique($message->getMessageId(), 'aJobName', function (JobRunner $runner) {
             $runner->createDelayed('aSubJobName1', function (JobRunner $runner, Job $childJob) {
-                $this->producer->send('aJobTopic', [
+                $this->producer->sendEvent('aJobTopic', [
                     'jobId' => $childJob->getId(),
                     // other data required by sub job
                 ]);

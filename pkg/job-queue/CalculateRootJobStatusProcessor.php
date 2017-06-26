@@ -75,7 +75,7 @@ class CalculateRootJobStatusProcessor implements PsrProcessor, TopicSubscriberIn
         $isRootJobStopped = $this->calculateRootJobStatusService->calculate($job);
 
         if ($isRootJobStopped) {
-            $this->producer->send(Topics::ROOT_JOB_STOPPED, [
+            $this->producer->sendEvent(Topics::ROOT_JOB_STOPPED, [
                 'jobId' => $job->getRootJob()->getId(),
             ]);
         }

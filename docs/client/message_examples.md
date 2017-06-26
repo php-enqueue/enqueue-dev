@@ -1,4 +1,28 @@
 # Client. Message examples
+
+* [Scope](#scope)
+* [Delay](#delay)
+* [Expiration (TTL)](#expiration-ttl)
+* [Priority](#priority)
+* [Timestamp, Content type, Message id](#timestamp-content-type-message-id)
+
+## Scope 
+
+There are two two types possible scopes: `Message:SCOPE_MESSAGE_BUS` and `Message::SCOPE_APP`. 
+The first one instructs the client send messages (if driver supports) to the message bus so other apps can consume those messages.
+The second in turns limits the message to the application that sent it. No other apps could receive it. 
+
+```php
+<?php
+
+use Enqueue\Client\Message;
+
+$message = new Message();
+$message->setScope(Message::SCOPE_MESSAGE_BUS);
+
+/** @var \Enqueue\Client\ProducerInterface $producer */
+$producer->sendEvent('aTopic', $message);
+```
  
 ## Delay 
 
@@ -15,7 +39,7 @@ $message = new Message();
 $message->setDelay(60); // seconds
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 ## Expiration (TTL)
@@ -33,7 +57,7 @@ $message = new Message();
 $message->setExpire(60); // seconds
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 ## Priority 
@@ -52,7 +76,7 @@ $message = new Message();
 $message->setPriority(MessagePriority::HIGH);
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 ## Timestamp, Content type, Message id
@@ -72,7 +96,7 @@ $message->setTimestamp(time());
 $message->setContentType('text/plain');
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer->send('aTopic', $message);
+$producer->sendEvent('aTopic', $message);
 ```
 
 [back to index](../index.md)

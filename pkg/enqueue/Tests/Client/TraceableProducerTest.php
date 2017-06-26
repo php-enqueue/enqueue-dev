@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client;
 
+use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
@@ -22,7 +23,7 @@ class TraceableProducerTest extends TestCase
         new TraceableProducer($this->createProducerMock());
     }
 
-    public function testShouldPassAllArgumentsToInternalMessageProducerSendMethod()
+    public function testShouldPassAllArgumentsToInternalEventMessageProducerSendMethod()
     {
         $topic = 'theTopic';
         $body = 'theBody';
@@ -30,24 +31,25 @@ class TraceableProducerTest extends TestCase
         $internalMessageProducer = $this->createProducerMock();
         $internalMessageProducer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->with($topic, $body)
         ;
 
-        $messageProducer = new TraceableProducer($internalMessageProducer);
+        $producer = new TraceableProducer($internalMessageProducer);
 
-        $messageProducer->send($topic, $body);
+        $producer->sendEvent($topic, $body);
     }
 
-    public function testShouldCollectInfoIfStringGivenAsMessage()
+    public function testShouldCollectInfoIfStringGivenAsEventMessage()
     {
-        $messageProducer = new TraceableProducer($this->createProducerMock());
+        $producer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', 'aFooBody');
+        $producer->sendEvent('aFooTopic', 'aFooBody');
 
         $this->assertSame([
             [
                 'topic' => 'aFooTopic',
+                'command' => null,
                 'body' => 'aFooBody',
                 'headers' => [],
                 'properties' => [],
@@ -58,18 +60,19 @@ class TraceableProducerTest extends TestCase
                 'contentType' => null,
                 'messageId' => null,
             ],
-        ], $messageProducer->getTraces());
+        ], $producer->getTraces());
     }
 
-    public function testShouldCollectInfoIfArrayGivenAsMessage()
+    public function testShouldCollectInfoIfArrayGivenAsEventMessage()
     {
-        $messageProducer = new TraceableProducer($this->createProducerMock());
+        $producer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', ['foo' => 'fooVal', 'bar' => 'barVal']);
+        $producer->sendEvent('aFooTopic', ['foo' => 'fooVal', 'bar' => 'barVal']);
 
         $this->assertSame([
             [
                 'topic' => 'aFooTopic',
+                'command' => null,
                 'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
                 'headers' => [],
                 'properties' => [],
@@ -80,12 +83,12 @@ class TraceableProducerTest extends TestCase
                 'contentType' => null,
                 'messageId' => null,
             ],
-        ], $messageProducer->getTraces());
+        ], $producer->getTraces());
     }
 
-    public function testShouldCollectInfoIfMessageObjectGivenAsMessage()
+    public function testShouldCollectInfoIfEventMessageObjectGivenAsMessage()
     {
-        $messageProducer = new TraceableProducer($this->createProducerMock());
+        $producer = new TraceableProducer($this->createProducerMock());
 
         $message = new Message();
         $message->setBody(['foo' => 'fooVal', 'bar' => 'barVal']);
@@ -98,11 +101,12 @@ class TraceableProducerTest extends TestCase
         $message->setPriority('theMessagePriority');
         $message->setTimestamp('theTimestamp');
 
-        $messageProducer->send('aFooTopic', $message);
+        $producer->sendEvent('aFooTopic', $message);
 
         $this->assertSame([
             [
                 'topic' => 'aFooTopic',
+                'command' => null,
                 'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
                 'headers' => ['fooHeader' => 'fooVal'],
                 'properties' => ['fooProp' => 'fooVal'],
@@ -113,82 +117,241 @@ class TraceableProducerTest extends TestCase
                 'contentType' => 'theContentType',
                 'messageId' => 'theMessageId',
             ],
-        ], $messageProducer->getTraces());
+        ], $producer->getTraces());
     }
 
-    public function testShouldAllowGetInfoSentToSameTopic()
-    {
-        $messageProducer = new TraceableProducer($this->createProducerMock());
-
-        $messageProducer->send('aFooTopic', 'aFooBody');
-        $messageProducer->send('aFooTopic', 'aFooBody');
-
-        $this->assertArraySubset([
-                ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
-                ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
-        ], $messageProducer->getTraces());
-    }
-
-    public function testShouldAllowGetInfoSentToDifferentTopics()
-    {
-        $messageProducer = new TraceableProducer($this->createProducerMock());
-
-        $messageProducer->send('aFooTopic', 'aFooBody');
-        $messageProducer->send('aBarTopic', 'aBarBody');
-
-        $this->assertArraySubset([
-            ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
-            ['topic' => 'aBarTopic', 'body' => 'aBarBody'],
-        ], $messageProducer->getTraces());
-    }
-
-    public function testShouldAllowGetInfoSentToSpecialTopicTopics()
-    {
-        $messageProducer = new TraceableProducer($this->createProducerMock());
-
-        $messageProducer->send('aFooTopic', 'aFooBody');
-        $messageProducer->send('aBarTopic', 'aBarBody');
-
-        $this->assertArraySubset([
-            ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
-        ], $messageProducer->getTopicTraces('aFooTopic'));
-
-        $this->assertArraySubset([
-            ['topic' => 'aBarTopic', 'body' => 'aBarBody'],
-        ], $messageProducer->getTopicTraces('aBarTopic'));
-    }
-
-    public function testShouldNotStoreAnythingIfInternalMessageProducerThrowsException()
+    public function testShouldNotStoreAnythingIfInternalEventMessageProducerThrowsException()
     {
         $internalMessageProducer = $this->createProducerMock();
         $internalMessageProducer
             ->expects($this->once())
-            ->method('send')
+            ->method('sendEvent')
             ->willThrowException(new \Exception())
         ;
 
-        $messageProducer = new TraceableProducer($internalMessageProducer);
+        $producer = new TraceableProducer($internalMessageProducer);
 
         $this->expectException(\Exception::class);
 
         try {
-            $messageProducer->send('aFooTopic', 'aFooBody');
+            $producer->sendEvent('aFooTopic', 'aFooBody');
         } finally {
-            $this->assertEmpty($messageProducer->getTraces());
+            $this->assertEmpty($producer->getTraces());
         }
+    }
+
+    public function testShouldPassAllArgumentsToInternalCommandMessageProducerSendMethod()
+    {
+        $command = 'theCommand';
+        $body = 'theBody';
+
+        $internalMessageProducer = $this->createProducerMock();
+        $internalMessageProducer
+            ->expects($this->once())
+            ->method('sendCommand')
+            ->with($command, $body)
+        ;
+
+        $producer = new TraceableProducer($internalMessageProducer);
+
+        $producer->sendCommand($command, $body);
+    }
+
+    public function testShouldCollectInfoIfStringGivenAsCommandMessage()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendCommand('aFooCommand', 'aFooBody');
+
+        $this->assertSame([
+            [
+                'topic' => Config::COMMAND_TOPIC,
+                'command' => 'aFooCommand',
+                'body' => 'aFooBody',
+                'headers' => [],
+                'properties' => [],
+                'priority' => null,
+                'expire' => null,
+                'delay' => null,
+                'timestamp' => null,
+                'contentType' => null,
+                'messageId' => null,
+            ],
+        ], $producer->getTraces());
+    }
+
+    public function testShouldCollectInfoIfArrayGivenAsCommandMessage()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendCommand('aFooCommand', ['foo' => 'fooVal', 'bar' => 'barVal']);
+
+        $this->assertSame([
+            [
+                'topic' => Config::COMMAND_TOPIC,
+                'command' => 'aFooCommand',
+                'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
+                'headers' => [],
+                'properties' => [],
+                'priority' => null,
+                'expire' => null,
+                'delay' => null,
+                'timestamp' => null,
+                'contentType' => null,
+                'messageId' => null,
+            ],
+        ], $producer->getTraces());
+    }
+
+    public function testShouldCollectInfoIfCommandMessageObjectGivenAsMessage()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $message = new Message();
+        $message->setBody(['foo' => 'fooVal', 'bar' => 'barVal']);
+        $message->setProperty('fooProp', 'fooVal');
+        $message->setHeader('fooHeader', 'fooVal');
+        $message->setContentType('theContentType');
+        $message->setDelay('theDelay');
+        $message->setExpire('theExpire');
+        $message->setMessageId('theMessageId');
+        $message->setPriority('theMessagePriority');
+        $message->setTimestamp('theTimestamp');
+
+        $producer->sendCommand('aFooCommand', $message);
+
+        $this->assertSame([
+            [
+                'topic' => Config::COMMAND_TOPIC,
+                'command' => 'aFooCommand',
+                'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
+                'headers' => ['fooHeader' => 'fooVal'],
+                'properties' => ['fooProp' => 'fooVal'],
+                'priority' => 'theMessagePriority',
+                'expire' => 'theExpire',
+                'delay' => 'theDelay',
+                'timestamp' => 'theTimestamp',
+                'contentType' => 'theContentType',
+                'messageId' => 'theMessageId',
+            ],
+        ], $producer->getTraces());
+    }
+
+    public function testShouldNotStoreAnythingIfInternalCommandMessageProducerThrowsException()
+    {
+        $internalMessageProducer = $this->createProducerMock();
+        $internalMessageProducer
+            ->expects($this->once())
+            ->method('sendCommand')
+            ->willThrowException(new \Exception())
+        ;
+
+        $producer = new TraceableProducer($internalMessageProducer);
+
+        $this->expectException(\Exception::class);
+
+        try {
+            $producer->sendCommand('aFooCommand', 'aFooBody');
+        } finally {
+            $this->assertEmpty($producer->getTraces());
+        }
+    }
+
+    public function testShouldAllowGetInfoSentToSameTopic()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendEvent('aFooTopic', 'aFooBody');
+        $producer->sendEvent('aFooTopic', 'aFooBody');
+
+        $this->assertArraySubset([
+                ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
+                ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
+        ], $producer->getTraces());
+    }
+
+    public function testShouldAllowGetInfoSentToDifferentTopics()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendEvent('aFooTopic', 'aFooBody');
+        $producer->sendEvent('aBarTopic', 'aBarBody');
+
+        $this->assertArraySubset([
+            ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
+            ['topic' => 'aBarTopic', 'body' => 'aBarBody'],
+        ], $producer->getTraces());
+    }
+
+    public function testShouldAllowGetInfoSentToSpecialTopic()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendEvent('aFooTopic', 'aFooBody');
+        $producer->sendEvent('aBarTopic', 'aBarBody');
+
+        $this->assertArraySubset([
+            ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
+        ], $producer->getTopicTraces('aFooTopic'));
+
+        $this->assertArraySubset([
+            ['topic' => 'aBarTopic', 'body' => 'aBarBody'],
+        ], $producer->getTopicTraces('aBarTopic'));
+    }
+
+    public function testShouldAllowGetInfoSentToSameCommand()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendCommand('aFooCommand', 'aFooBody');
+        $producer->sendCommand('aFooCommand', 'aFooBody');
+
+        $this->assertArraySubset([
+            ['command' => 'aFooCommand', 'body' => 'aFooBody'],
+            ['command' => 'aFooCommand', 'body' => 'aFooBody'],
+        ], $producer->getTraces());
+    }
+
+    public function testShouldAllowGetInfoSentToDifferentCommands()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendCommand('aFooCommand', 'aFooBody');
+        $producer->sendCommand('aBarCommand', 'aBarBody');
+
+        $this->assertArraySubset([
+            ['command' => 'aFooCommand', 'body' => 'aFooBody'],
+            ['command' => 'aBarCommand', 'body' => 'aBarBody'],
+        ], $producer->getTraces());
+    }
+
+    public function testShouldAllowGetInfoSentToSpecialCommand()
+    {
+        $producer = new TraceableProducer($this->createProducerMock());
+
+        $producer->sendCommand('aFooCommand', 'aFooBody');
+        $producer->sendCommand('aBarCommand', 'aBarBody');
+
+        $this->assertArraySubset([
+            ['command' => 'aFooCommand', 'body' => 'aFooBody'],
+        ], $producer->getCommandTraces('aFooCommand'));
+
+        $this->assertArraySubset([
+            ['command' => 'aBarCommand', 'body' => 'aBarBody'],
+        ], $producer->getCommandTraces('aBarCommand'));
     }
 
     public function testShouldAllowClearStoredTraces()
     {
-        $messageProducer = new TraceableProducer($this->createProducerMock());
+        $producer = new TraceableProducer($this->createProducerMock());
 
-        $messageProducer->send('aFooTopic', 'aFooBody');
+        $producer->sendEvent('aFooTopic', 'aFooBody');
 
         //guard
-        $this->assertNotEmpty($messageProducer->getTraces());
+        $this->assertNotEmpty($producer->getTraces());
 
-        $messageProducer->clearTraces();
-        $this->assertSame([], $messageProducer->getTraces());
+        $producer->clearTraces();
+        $this->assertSame([], $producer->getTraces());
     }
 
     /**
