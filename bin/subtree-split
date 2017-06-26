@@ -48,6 +48,7 @@ remote enqueue git@github.com:php-enqueue/enqueue.git
 remote simple-client git@github.com:php-enqueue/simple-client.git
 remote stomp git@github.com:php-enqueue/stomp.git
 remote amqp-ext git@github.com:php-enqueue/amqp-ext.git
+remote pheanstalk git@github.com:php-enqueue/pheanstalk.git
 remote fs git@github.com:php-enqueue/fs.git
 remote redis git@github.com:php-enqueue/redis.git
 remote dbal git@github.com:php-enqueue/dbal.git
@@ -62,6 +63,7 @@ split 'pkg/enqueue' enqueue
 split 'pkg/simple-client' simple-client
 split 'pkg/stomp' stomp
 split 'pkg/amqp-ext' amqp-ext
+split 'pkg/pheanstalk' pheanstalk
 split 'pkg/fs' fs
 split 'pkg/redis' redis
 split 'pkg/dbal' dbal
