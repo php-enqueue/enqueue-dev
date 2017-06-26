@@ -26,8 +26,8 @@ where another one (it is called spool producer) collects them in memory and send
 
 The producer has two types on send methods: 
 
-* `sendEvent` - Message is sent to topic and many consumers can subscriber to it. It is "fire and forget" strategy.
-* `sendCommand` - Message is to ONE exact consumer. It could be used as "fire and forget" or as RPC.
+* `sendEvent` - Message is sent to topic and many consumers can subscriber to it. It is "fire and forget" strategy. The even could be sent to "message bus" to other applications.
+* `sendCommand` - Message is to ONE exact consumer. It could be used as "fire and forget" or as RPC. The command message is always sent in scope of current application.
   
 ### Send event  
 

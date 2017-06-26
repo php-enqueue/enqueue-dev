@@ -20,6 +20,7 @@ use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProcessor;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
+use Enqueue\Rpc\Promise;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
@@ -105,10 +106,13 @@ final class SimpleClient
     /**
      * @param string $command
      * @param mixed  $message
+     * @param bool   $needReply
+     *
+     * @return Promise|null
      */
-    public function sendCommand($command, $message)
+    public function sendCommand($command, $message, $needReply = false)
     {
-        $this->getProducer()->sendCommand($command, $message);
+        return $this->getProducer()->sendCommand($command, $message, $needReply);
     }
 
     /**
