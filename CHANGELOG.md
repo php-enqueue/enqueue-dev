@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.5.0](https://github.com/php-enqueue/enqueue-dev/tree/0.5.0) (2017-06-26)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.20...0.5.0)
+
+- \[WIP\]\[beanstalk\] Add transport for beanstalkd [\#123](https://github.com/php-enqueue/enqueue-dev/pull/123) ([makasim](https://github.com/makasim))
+
+- DBAL Transport: polling\_interval not taken into account [\#121](https://github.com/php-enqueue/enqueue-dev/issues/121)
+
+- \[client\] Merge experimental ProducerV2 methods to Producer interface.  [\#124](https://github.com/php-enqueue/enqueue-dev/pull/124) ([makasim](https://github.com/makasim))
+- fix dbal polling interval configuration option [\#122](https://github.com/php-enqueue/enqueue-dev/pull/122) ([ASKozienko](https://github.com/ASKozienko))
+
+## [0.4.20](https://github.com/php-enqueue/enqueue-dev/tree/0.4.20) (2017-06-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.19...0.4.20)
+
 ## [0.4.19](https://github.com/php-enqueue/enqueue-dev/tree/0.4.19) (2017-06-20)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.18...0.4.19)
 
