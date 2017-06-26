@@ -103,10 +103,10 @@ class Producer implements ProducerInterface, ProducerV2Interface
             $message = new Message($message);
         }
 
-        if ($needReply) {
-            $deleteReplyQueue = false;
-            $replyTo = $message->getReplyTo();
+        $deleteReplyQueue = false;
+        $replyTo = $message->getReplyTo();
 
+        if ($needReply) {
             if (false == $replyTo) {
                 $message->setReplyTo($replyTo = $this->rpcFactory->createReplyTo());
                 $deleteReplyQueue = true;
