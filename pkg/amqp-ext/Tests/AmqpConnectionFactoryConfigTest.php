@@ -24,7 +24,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotAmqp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN scheme "%s" is not supported. Could be "amqp" only.');
+        $this->expectExceptionMessage('The given DSN scheme "http" is not supported. Could be "amqp" only.');
 
         new AmqpConnectionFactory('http://example.com');
     }

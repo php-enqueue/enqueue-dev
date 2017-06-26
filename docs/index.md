@@ -4,6 +4,7 @@
 * Transports
     - [Amqp (RabbitMQ, ActiveMQ)](transport/amqp.md)
     - [Amazon SQS](transport/sqs.md)
+    - [Beanstalk (Pheanstalk)](transport/pheanstalk.md)
     - [Stomp](transport/stomp.md)
     - [Redis](transport/redis.md)
     - [Doctrine DBAL](transport/dbal.md)

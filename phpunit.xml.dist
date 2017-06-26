@@ -49,6 +49,10 @@
             <directory>pkg/sqs/Tests</directory>
         </testsuite>
 
+        <testsuite name="pheanstalk transport">
+            <directory>pkg/pheanstalk/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>

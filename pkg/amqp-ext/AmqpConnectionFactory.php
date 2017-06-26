@@ -150,7 +150,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         ], $dsnConfig);
 
         if ('amqp' !== $dsnConfig['scheme']) {
-            throw new \LogicException('The given DSN scheme "%s" is not supported. Could be "amqp" only.');
+            throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be "amqp" only.', $dsnConfig['scheme']));
         }
 
         if ($dsnConfig['query']) {
