@@ -1,7 +1,7 @@
 # Change Log
 
-## [5.0.1](https://github.com/php-enqueue/enqueue-dev/tree/5.0.1) (2017-06-27)
-[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.0...5.0.1)
+## [0.5.1](https://github.com/php-enqueue/enqueue-dev/tree/0.5.1) (2017-06-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.0...0.5.1)
 
 - \[doc\] add a doc for client message scopes  [\#56](https://github.com/php-enqueue/enqueue-dev/issues/56)
 
