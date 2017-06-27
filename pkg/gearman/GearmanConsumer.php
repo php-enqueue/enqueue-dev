@@ -18,13 +18,22 @@ class GearmanConsumer implements PsrConsumer
     private $destination;
 
     /**
-     * @param \GearmanWorker     $worker
-     * @param GearmanDestination $destination
+     * @var GearmanContext
      */
-    public function __construct(\GearmanWorker $worker, GearmanDestination $destination)
+    private $context;
+
+    /**
+     * @param GearmanContext     $context
+     * @param GearmanDestination $destination
+     *
+     * @internal param \GearmanWorker $worker
+     */
+    public function __construct(GearmanContext $context, GearmanDestination $destination)
     {
-        $this->worker = $worker;
+        $this->context = $context;
         $this->destination = $destination;
+
+        $this->worker = $context->createWorker();
     }
 
     /**
@@ -85,6 +94,9 @@ class GearmanConsumer implements PsrConsumer
      */
     public function reject(PsrMessage $message, $requeue = false)
     {
+        if ($requeue) {
+            $this->context->createProducer()->send($this->destination, $message);
+        }
     }
 
     /**

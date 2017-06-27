@@ -88,7 +88,7 @@ class GearmanContext implements PsrContext
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GearmanDestination::class);
 
-        $this->consumers[] = $consumer = new GearmanConsumer($this->createWorker(), $destination);
+        $this->consumers[] = $consumer = new GearmanConsumer($this, $destination);
 
         return $consumer;
     }
