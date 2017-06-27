@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * The class contains the factory tests dedicated to configuration.
+ *
+ * @group functional
  */
 class GearmanConnectionFactoryConfigTest extends TestCase
 {

@@ -8,6 +8,9 @@ use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group functional
+ */
 class GearmanDestinationTest extends TestCase
 {
     use ClassExtensionTrait;

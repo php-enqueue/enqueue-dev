@@ -9,6 +9,9 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group functional
+ */
 class GearmanContextTest extends TestCase
 {
     use ClassExtensionTrait;
