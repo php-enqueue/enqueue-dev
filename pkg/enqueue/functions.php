@@ -6,7 +6,9 @@ use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
+use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
+use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Psr\PsrContext;
 
@@ -46,6 +48,14 @@ function dsn_to_connection_factory($dsn)
         $map['sqlite'] = DbalConnectionFactory::class;
         $map['sqlite3'] = DbalConnectionFactory::class;
         $map['pdo_sqlite'] = DbalConnectionFactory::class;
+    }
+
+    if (class_exists(GearmanConnectionFactory::class)) {
+        $map['gearman'] = GearmanConnectionFactory::class;
+    }
+
+    if (class_exists(PheanstalkConnectionFactory::class)) {
+        $map['beanstalk'] = PheanstalkConnectionFactory::class;
     }
 
     list($scheme) = explode('://', $dsn);

@@ -1,12 +1,11 @@
 <?php
 
-namespace Enqueue\Pheanstalk;
+namespace Enqueue\Gearman;
 
 use Enqueue\Psr\PsrMessage;
-use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkMessage implements PsrMessage, \JsonSerializable
+class GearmanMessage implements PsrMessage, \JsonSerializable
 {
     /**
      * @var string
@@ -29,7 +28,7 @@ class PheanstalkMessage implements PsrMessage, \JsonSerializable
     private $redelivered;
 
     /**
-     * @var Job
+     * @var \GearmanJob
      */
     private $job;
 
@@ -288,7 +287,7 @@ class PheanstalkMessage implements PsrMessage, \JsonSerializable
     }
 
     /**
-     * @return Job
+     * @return \GearmanJob
      */
     public function getJob()
     {
@@ -296,9 +295,9 @@ class PheanstalkMessage implements PsrMessage, \JsonSerializable
     }
 
     /**
-     * @param Job $job
+     * @param \GearmanJob $job
      */
-    public function setJob(Job $job)
+    public function setJob(\GearmanJob $job)
     {
         $this->job = $job;
     }

@@ -9,6 +9,7 @@ services:
       - mysql
       - redis
       - beanstalkd
+      - gearmand
     volumes:
       - './:/mqdev'
     environment:
@@ -34,6 +35,7 @@ services:
       - BEANSTALKD_HOST=beanstalkd
       - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
+      - GEARMAN_DSN=gearman://gearmand:4730
 
   rabbitmq:
     image: enqueue/rabbitmq:latest
@@ -47,6 +49,9 @@ services:
 
   beanstalkd:
       image: 'schickling/beanstalkd'
+
+  gearmand:
+      image: 'artefactual/gearmand'
 
   redis:
     image: 'redis:3'
