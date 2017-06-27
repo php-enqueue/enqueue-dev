@@ -1,5 +1,14 @@
 # Change Log
 
+## [5.0.1](https://github.com/php-enqueue/enqueue-dev/tree/5.0.1) (2017-06-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.0...5.0.1)
+
+- \[doc\] add a doc for client message scopes  [\#56](https://github.com/php-enqueue/enqueue-dev/issues/56)
+
+- \[client\] Command, Event segregation. [\#105](https://github.com/php-enqueue/enqueue-dev/issues/105)
+
+- Add Gearman transport. [\#125](https://github.com/php-enqueue/enqueue-dev/pull/125) ([makasim](https://github.com/makasim))
+
 ## [0.5.0](https://github.com/php-enqueue/enqueue-dev/tree/0.5.0) (2017-06-26)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.4.20...0.5.0)
 
