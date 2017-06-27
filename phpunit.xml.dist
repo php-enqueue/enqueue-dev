@@ -53,6 +53,10 @@
             <directory>pkg/pheanstalk/Tests</directory>
         </testsuite>
 
+        <testsuite name="gearman transport">
+            <directory>pkg/gearman/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>
