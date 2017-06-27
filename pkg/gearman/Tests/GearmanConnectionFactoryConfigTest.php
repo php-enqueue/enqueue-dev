@@ -8,12 +8,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * The class contains the factory tests dedicated to configuration.
- *
- * @group functional
  */
 class GearmanConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use SkipIfGearmanExtensionIsNotInstalledTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
@@ -57,24 +56,24 @@ class GearmanConnectionFactoryConfigTest extends TestCase
         yield [
             null,
             [
-                'host' => \GEARMAN_DEFAULT_TCP_HOST,
-                'port' => \GEARMAN_DEFAULT_TCP_PORT,
+                'host' => 'localhost',
+                'port' => 4730,
             ],
         ];
 
         yield [
             'gearman://',
             [
-                'host' => \GEARMAN_DEFAULT_TCP_HOST,
-                'port' => \GEARMAN_DEFAULT_TCP_PORT,
+                'host' => 'localhost',
+                'port' => 4730,
             ],
         ];
 
         yield [
             [],
             [
-                'host' => \GEARMAN_DEFAULT_TCP_HOST,
-                'port' => \GEARMAN_DEFAULT_TCP_PORT,
+                'host' => 'localhost',
+                'port' => 4730,
             ],
         ];
 
@@ -98,7 +97,7 @@ class GearmanConnectionFactoryConfigTest extends TestCase
             ['host' => 'theHost'],
             [
                 'host' => 'theHost',
-                'port' => \GEARMAN_DEFAULT_TCP_PORT,
+                'port' => 4730,
             ],
         ];
     }

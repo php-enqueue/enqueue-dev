@@ -6,12 +6,10 @@ use Enqueue\Gearman\GearmanMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group functional
- */
 class GearmanMessageTest extends TestCase
 {
     use ClassExtensionTrait;
+    use SkipIfGearmanExtensionIsNotInstalledTrait;
 
     public function testShouldAllowGetJobPreviouslySet()
     {

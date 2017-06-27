@@ -3,13 +3,13 @@
 namespace Enqueue\Gearman\Tests\Spec;
 
 use Enqueue\Gearman\GearmanConnectionFactory;
+use Enqueue\Gearman\Tests\SkipIfGearmanExtensionIsNotInstalledTrait;
 use Enqueue\Psr\Spec\PsrConnectionFactorySpec;
 
-/**
- * @group functional
- */
 class GearmanConnectionFactoryTest extends PsrConnectionFactorySpec
 {
+    use SkipIfGearmanExtensionIsNotInstalledTrait;
+
     /**
      * {@inheritdoc}
      */

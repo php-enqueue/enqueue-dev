@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 class GearmanContextTest extends TestCase
 {
     use ClassExtensionTrait;
+    use SkipIfGearmanExtensionIsNotInstalledTrait;
 
     public function testShouldImplementPsrContextInterface()
     {

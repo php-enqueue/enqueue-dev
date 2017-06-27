@@ -3,13 +3,13 @@
 namespace Enqueue\Gearman\Tests\Spec;
 
 use Enqueue\Gearman\GearmanDestination;
+use Enqueue\Gearman\Tests\SkipIfGearmanExtensionIsNotInstalledTrait;
 use Enqueue\Psr\Spec\PsrQueueSpec;
 
-/**
- * @group functional
- */
 class GearmanQueueTest extends PsrQueueSpec
 {
+    use SkipIfGearmanExtensionIsNotInstalledTrait;
+
     /**
      * {@inheritdoc}
      */

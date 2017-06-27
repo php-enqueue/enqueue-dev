@@ -12,12 +12,10 @@ use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group functional
- */
 class GearmanProducerTest extends TestCase
 {
     use ClassExtensionTrait;
+    use SkipIfGearmanExtensionIsNotInstalledTrait;
 
     public function testCouldBeConstructedWithGearmanClientAsFirstArgument()
     {
