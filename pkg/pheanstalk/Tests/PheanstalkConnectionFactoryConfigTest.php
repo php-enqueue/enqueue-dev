@@ -62,8 +62,6 @@ class PheanstalkConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        // some examples from Appendix A: Examples (https://www.rabbitmq.com/uri-spec.html)
-
         yield [
             'beanstalk://',
             [

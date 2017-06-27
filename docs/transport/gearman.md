@@ -1,4 +1,4 @@
-# Gearman (Gearman) transport
+# Gearman transport
 
 The transport uses [Gearman](http://gearman.org/) job manager. 
 The transport uses [Gearman PHP extension](http://php.net/manual/en/book.gearman.php) internally.      

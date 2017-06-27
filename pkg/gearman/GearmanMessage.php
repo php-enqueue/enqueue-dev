@@ -27,10 +27,10 @@ class GearmanMessage implements PsrMessage, \JsonSerializable
      */
     private $redelivered;
 
-//    /**
-//     * @var \GearmanJob
-//     */
-//    private $job;
+    /**
+     * @var \GearmanJob
+     */
+    private $job;
 
     /**
      * @param string $body
@@ -286,19 +286,19 @@ class GearmanMessage implements PsrMessage, \JsonSerializable
         return new self($data['body'], $data['properties'], $data['headers']);
     }
 
-//    /**
-//     * @return \GearmanJob
-//     */
-//    public function getJob()
-//    {
-//        return $this->job;
-//    }
-//
-//    /**
-//     * @param \GearmanJob $job
-//     */
-//    public function setJob(\GearmanJob $job)
-//    {
-//        $this->job = $job;
-//    }
+    /**
+     * @return \GearmanJob
+     */
+    public function getJob()
+    {
+        return $this->job;
+    }
+
+    /**
+     * @param \GearmanJob $job
+     */
+    public function setJob(\GearmanJob $job)
+    {
+        $this->job = $job;
+    }
 }
