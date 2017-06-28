@@ -6,6 +6,7 @@ use Enqueue\Client\TraceableProducer;
 use Enqueue\JobQueue\Job;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -68,7 +69,9 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             $loader->load('extensions/exclusive_command_extension.yml');
 
             foreach ($config['transport'] as $name => $transportConfig) {
-                $this->factories[$name]->createDriver($container, $transportConfig);
+                if ($this->factories[$name] instanceof DriverFactoryInterface) {
+                    $this->factories[$name]->createDriver($container, $transportConfig);
+                }
             }
 
             if (isset($config['transport']['default']['alias']) && false == isset($config['transport'][$config['transport']['default']['alias']])) {

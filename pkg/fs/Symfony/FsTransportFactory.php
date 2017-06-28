@@ -5,13 +5,14 @@ namespace Enqueue\Fs\Symfony;
 use Enqueue\Fs\Client\FsDriver;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
+use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class FsTransportFactory implements TransportFactoryInterface
+class FsTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
     /**
      * @var string

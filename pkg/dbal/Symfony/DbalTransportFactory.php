@@ -6,13 +6,14 @@ use Enqueue\Dbal\Client\DbalDriver;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
+use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class DbalTransportFactory implements TransportFactoryInterface
+class DbalTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
     /**
      * @var string

@@ -5,13 +5,14 @@ namespace Enqueue\AmqpExt\Symfony;
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\Client\AmqpDriver;
+use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class AmqpTransportFactory implements TransportFactoryInterface
+class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
     /**
      * @var string

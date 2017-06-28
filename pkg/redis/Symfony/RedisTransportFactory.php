@@ -5,13 +5,14 @@ namespace Enqueue\Redis\Symfony;
 use Enqueue\Redis\Client\RedisDriver;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
+use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RedisTransportFactory implements TransportFactoryInterface
+class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
     /**
      * @var string
