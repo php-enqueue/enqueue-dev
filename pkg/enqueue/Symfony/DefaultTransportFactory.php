@@ -14,7 +14,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use function Enqueue\dsn_to_connection_factory;
 
-class DefaultTransportFactory implements TransportFactoryInterface
+class DefaultTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
     /**
      * @var string

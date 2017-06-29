@@ -2,13 +2,12 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Mocks;
 
-use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
-class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
+class TransportFactoryWithoutDriverFactory implements TransportFactoryInterface
 {
     /**
      * @var string
@@ -18,7 +17,7 @@ class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInt
     /**
      * @param string $name
      */
-    public function __construct($name = 'foo')
+    public function __construct($name = 'without_driver')
     {
         $this->name = $name;
     }
@@ -28,10 +27,6 @@ class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInt
      */
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
-        $builder
-            ->children()
-                ->scalarNode('foo_param')->isRequired()->cannotBeEmpty()->end()
-        ;
     }
 
     /**
@@ -39,7 +34,7 @@ class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInt
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
-        $factoryId = 'foo.connection_factory';
+        $factoryId = 'without_driver.connection_factory';
 
         $container->setDefinition($factoryId, new Definition(\stdClass::class, [$config]));
 
@@ -51,7 +46,7 @@ class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInt
      */
     public function createContext(ContainerBuilder $container, array $config)
     {
-        $contextId = 'foo.context';
+        $contextId = 'without_driver.context';
 
         $container->setDefinition($contextId, new Definition(\stdClass::class, [$config]));
 
@@ -60,11 +55,7 @@ class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInt
 
     public function createDriver(ContainerBuilder $container, array $config)
     {
-        $driverId = 'foo.driver';
-
-        $container->setDefinition($driverId, new Definition(\stdClass::class, [$config]));
-
-        return $driverId;
+        throw new \LogicException('It should not be called. The method will be removed');
     }
 
     /**

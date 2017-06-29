@@ -5,6 +5,7 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
+use Enqueue\Bundle\Tests\Unit\Mocks\TransportFactoryWithoutDriverFactory;
 use Enqueue\Client\Producer;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Null\NullContext;
@@ -129,7 +130,10 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
+        self::assertTrue($container->hasDefinition('foo.connection_factory'));
         self::assertTrue($container->hasDefinition('foo.context'));
+        self::assertFalse($container->hasDefinition('foo.driver'));
+
         $context = $container->getDefinition('foo.context');
         self::assertEquals(\stdClass::class, $context->getClass());
         self::assertEquals([['foo_param' => 'aParam']], $context->getArguments());
@@ -176,8 +180,29 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
+        self::assertTrue($container->hasDefinition('foo.driver'));
         self::assertTrue($container->hasDefinition('enqueue.client.config'));
         self::assertTrue($container->hasDefinition('enqueue.client.producer'));
+    }
+
+    public function testShouldNotCreateDriverIfFactoryDoesNotImplementDriverFactoryInterface()
+    {
+        $container = new ContainerBuilder();
+
+        $extension = new EnqueueExtension();
+        $extension->addTransportFactory(new TransportFactoryWithoutDriverFactory());
+
+        $extension->load([[
+            'client' => null,
+            'transport' => [
+                'default' => 'without_driver',
+                'without_driver' => [],
+            ],
+        ]], $container);
+
+        self::assertTrue($container->hasDefinition('without_driver.context'));
+        self::assertTrue($container->hasDefinition('without_driver.connection_factory'));
+        self::assertFalse($container->hasDefinition('without_driver.driver'));
     }
 
     public function testShouldUseProducerByDefault()
