@@ -104,7 +104,7 @@ class RouterProcessor implements PsrProcessor
         if (false == $commandName) {
             return Result::reject(sprintf(
                 'Got message without required parameter: "%s"',
-                Config::PARAMETER_PROCESSOR_NAME
+                Config::PARAMETER_COMMAND_NAME
             ));
         }
 

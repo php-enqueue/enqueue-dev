@@ -88,7 +88,8 @@ class ProducerTest extends WebTestCase
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
             'enqueue.topic_name' => Config::COMMAND_TOPIC,
-            'enqueue.processor_name' => 'theCommand',
+            'enqueue.processor_name' => 'enqueue.client.router_processor',
+            'enqueue.command_name' => 'theCommand',
             'enqueue.processor_queue_name' => 'default',
         ], $traces[0]['properties']);
     }
@@ -125,7 +126,8 @@ class ProducerTest extends WebTestCase
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
             'enqueue.topic_name' => Config::COMMAND_TOPIC,
-            'enqueue.processor_name' => 'theCommand',
+            'enqueue.processor_name' => 'enqueue.client.router_processor',
+            'enqueue.command_name' => 'theCommand',
             'enqueue.processor_queue_name' => 'default',
         ], $traces[0]['properties']);
     }
