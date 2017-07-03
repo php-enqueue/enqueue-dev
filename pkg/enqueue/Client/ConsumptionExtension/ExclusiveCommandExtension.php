@@ -3,25 +3,33 @@
 namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;
+use Enqueue\Client\ExtensionInterface as ClientExtensionInterface;
+use Enqueue\Client\Message;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
 
-class ExclusiveCommandExtension implements ExtensionInterface
+class ExclusiveCommandExtension implements ConsumptionExtensionInterface, ClientExtensionInterface
 {
     use EmptyExtensionTrait;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $queueNameToProcessorNameMap;
 
     /**
-     * @param array $queueNameToProcessorNameMap
+     * @var string[]
+     */
+    private $processorNameToQueueNameMap;
+
+    /**
+     * @param string[] $queueNameToProcessorNameMap
      */
     public function __construct(array $queueNameToProcessorNameMap)
     {
         $this->queueNameToProcessorNameMap = $queueNameToProcessorNameMap;
+        $this->processorNameToQueueNameMap = array_flip($queueNameToProcessorNameMap);
     }
 
     public function onPreReceived(Context $context)
@@ -46,5 +54,31 @@ class ExclusiveCommandExtension implements ExtensionInterface
             $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $queue->getQueueName());
             $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->queueNameToProcessorNameMap[$queue->getQueueName()]);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onPreSend($topic, Message $message)
+    {
+        if (Config::COMMAND_TOPIC != $topic) {
+            return;
+        }
+
+//        if ($message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
+//            return;
+//        }
+
+        $processorName = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME);
+        if (array_key_exists($processorName, $this->processorNameToQueueNameMap)) {
+            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->processorNameToQueueNameMap[$processorName]);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onPostSend($topic, Message $message)
+    {
     }
 }

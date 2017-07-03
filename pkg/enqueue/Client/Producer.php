@@ -118,7 +118,7 @@ class Producer implements ProducerInterface, ProducerV2Interface
         }
 
         $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $command);
+        $message->setProperty(Config::PARAMETER_COMMAND_NAME, $command);
         $message->setScope(Message::SCOPE_APP);
 
         $this->sendEvent(Config::COMMAND_TOPIC, $message);

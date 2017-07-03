@@ -100,17 +100,18 @@ class RouterProcessor implements PsrProcessor
      */
     private function routeCommand(PsrMessage $message)
     {
-        $processorName = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME);
-        if (false == $processorName) {
+        $commandName = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
+        if (false == $commandName) {
             return Result::reject(sprintf(
                 'Got message without required parameter: "%s"',
                 Config::PARAMETER_PROCESSOR_NAME
             ));
         }
 
-        if (isset($this->commandRoutes[$processorName])) {
+        if (isset($this->commandRoutes[$commandName])) {
             $processorMessage = clone $message;
-            $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->commandRoutes[$processorName]);
+            $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->commandRoutes[$commandName]);
+            $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_NAME, $commandName);
 
             $this->driver->sendToProcessor($this->driver->createClientMessage($processorMessage));
         }
