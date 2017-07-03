@@ -46,6 +46,9 @@ class ExclusiveCommandExtension implements ConsumptionExtensionInterface, Client
         if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             return;
         }
+        if ($message->getProperty(Config::PARAMETER_COMMAND_NAME)) {
+            return;
+        }
 
         if (array_key_exists($queue->getQueueName(), $this->queueNameToProcessorNameMap)) {
             $context->getLogger()->debug('[ExclusiveCommandExtension] This is a exclusive command queue and client\'s properties are not set. Setting them');
@@ -53,6 +56,7 @@ class ExclusiveCommandExtension implements ConsumptionExtensionInterface, Client
             $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
             $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $queue->getQueueName());
             $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->queueNameToProcessorNameMap[$queue->getQueueName()]);
+            $message->setProperty(Config::PARAMETER_COMMAND_NAME, $this->queueNameToProcessorNameMap[$queue->getQueueName()]);
         }
     }
 
@@ -65,13 +69,10 @@ class ExclusiveCommandExtension implements ConsumptionExtensionInterface, Client
             return;
         }
 
-//        if ($message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-//            return;
-//        }
-
-        $processorName = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME);
-        if (array_key_exists($processorName, $this->processorNameToQueueNameMap)) {
-            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->processorNameToQueueNameMap[$processorName]);
+        $commandName = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
+        if (array_key_exists($commandName, $this->processorNameToQueueNameMap)) {
+            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $commandName);
+            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->processorNameToQueueNameMap[$commandName]);
         }
     }
 

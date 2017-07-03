@@ -52,6 +52,11 @@ services:
         tags:
             - { name: 'enqueue.client.processor' }
 
+    test_exclusive_command_subscriber_processor:
+        class: 'Enqueue\Bundle\Tests\Functional\App\TestExclusiveCommandSubscriberProcessor'
+        tags:
+            - { name: 'enqueue.client.processor' }
+
     test_async_subscriber:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber'
         tags:
