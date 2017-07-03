@@ -5,6 +5,7 @@ namespace Enqueue\Client;
 class Config
 {
     const PARAMETER_TOPIC_NAME = 'enqueue.topic_name';
+    const PARAMETER_COMMAND_NAME = 'enqueue.command_name';
     const PARAMETER_PROCESSOR_NAME = 'enqueue.processor_name';
     const PARAMETER_PROCESSOR_QUEUE_NAME = 'enqueue.processor_queue_name';
     const DEFAULT_PROCESSOR_QUEUE_NAME = 'default';

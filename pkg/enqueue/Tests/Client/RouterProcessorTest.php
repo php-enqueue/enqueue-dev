@@ -93,7 +93,7 @@ class RouterProcessorTest extends TestCase
         $message->setProperties([
             'aProp' => 'aPropVal',
             Config::PARAMETER_TOPIC_NAME => Config::COMMAND_TOPIC,
-            Config::PARAMETER_PROCESSOR_NAME => 'theCommandName',
+            Config::PARAMETER_COMMAND_NAME => 'theCommandName',
         ]);
 
         $clientMessage = new Message();
@@ -129,11 +129,12 @@ class RouterProcessorTest extends TestCase
             'aProp' => 'aPropVal',
             'enqueue.topic_name' => Config::COMMAND_TOPIC,
             'enqueue.processor_name' => 'theCommandName',
+            'enqueue.command_name' => 'theCommandName',
             'enqueue.processor_queue_name' => 'aQueueName',
         ], $routedMessage->getProperties());
     }
 
-    public function testShouldRejectCommandMessageIfProcessorNamePropertyMissing()
+    public function testShouldRejectCommandMessageIfCommandNamePropertyMissing()
     {
         $message = new NullMessage();
         $message->setBody('theBody');
@@ -163,7 +164,7 @@ class RouterProcessorTest extends TestCase
 
         $this->assertInstanceOf(Result::class, $result);
         $this->assertEquals(Result::REJECT, $result->getStatus());
-        $this->assertEquals('Got message without required parameter: "enqueue.processor_name"', $result->getReason());
+        $this->assertEquals('Got message without required parameter: "enqueue.command_name"', $result->getReason());
     }
 
     public function testShouldAddEventRoute()

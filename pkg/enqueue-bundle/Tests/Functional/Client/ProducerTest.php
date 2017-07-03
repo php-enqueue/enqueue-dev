@@ -88,24 +88,33 @@ class ProducerTest extends WebTestCase
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
             'enqueue.topic_name' => Config::COMMAND_TOPIC,
-            'enqueue.processor_name' => 'theCommand',
+            'enqueue.processor_name' => 'enqueue.client.router_processor',
+            'enqueue.command_name' => 'theCommand',
             'enqueue.processor_queue_name' => 'default',
         ], $traces[0]['properties']);
     }
 
-    public function testShouldSendCommandWithNeedForReply()
+    public function testShouldSendExclusiveCommandWithNeedForReply()
     {
         /** @var ProducerInterface $producer */
         $producer = $this->container->get('enqueue.client.producer');
 
-        $result = $producer->sendCommand('theCommand', 'theMessage', true);
+        $message = new Message('theMessage');
 
-        $this->assertInstanceOf(Promise::class, $result);
+        $result = $producer->sendCommand('theExclusiveCommandName', $message, false);
 
-        $traces = $this->getTraceableProducer()->getCommandTraces('theCommand');
+        $this->assertNull($result);
+
+        $traces = $this->getTraceableProducer()->getCommandTraces('theExclusiveCommandName');
 
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
+        $this->assertEquals([
+            'enqueue.topic_name' => Config::COMMAND_TOPIC,
+            'enqueue.processor_name' => 'theExclusiveCommandName',
+            'enqueue.command_name' => 'theExclusiveCommandName',
+            'enqueue.processor_queue_name' => 'the_exclusive_command_queue',
+        ], $traces[0]['properties']);
     }
 
     public function testShouldSendMessageInstanceCommandWithNeedForReply()
@@ -125,7 +134,8 @@ class ProducerTest extends WebTestCase
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
             'enqueue.topic_name' => Config::COMMAND_TOPIC,
-            'enqueue.processor_name' => 'theCommand',
+            'enqueue.processor_name' => 'enqueue.client.router_processor',
+            'enqueue.command_name' => 'theCommand',
             'enqueue.processor_queue_name' => 'default',
         ], $traces[0]['properties']);
     }

@@ -4,8 +4,10 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension;
+use Enqueue\Client\ExtensionInterface as ClientExtensionInterface;
+use Enqueue\Client\Message;
 use Enqueue\Consumption\Context;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
@@ -17,9 +19,14 @@ class ExclusiveCommandExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementConsumptionExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, ExclusiveCommandExtension::class);
+        $this->assertClassImplements(ConsumptionExtensionInterface::class, ExclusiveCommandExtension::class);
+    }
+
+    public function testShouldImplementClientExtensionInterface()
+    {
+        $this->assertClassImplements(ClientExtensionInterface::class, ExclusiveCommandExtension::class);
     }
 
     public function testCouldBeConstructedWithQueueNameToProcessorNameMap()
@@ -134,6 +141,54 @@ class ExclusiveCommandExtensionTest extends TestCase
             'enqueue.topic_name' => '__command__',
             'enqueue.processor_queue_name' => 'aFooQueueName',
             'enqueue.processor_name' => 'aFooProcessorName',
+            'enqueue.command_name' => 'aFooProcessorName',
+        ], $message->getProperties());
+    }
+
+    public function testShouldDoNothingOnPreSendIfTopicNotCommandOne()
+    {
+        $message = new Message();
+
+        $extension = new ExclusiveCommandExtension([
+            'aFooQueueName' => 'aFooProcessorName',
+        ]);
+
+        $extension->onPreSend('aTopic', $message);
+
+        $this->assertEquals([], $message->getProperties());
+    }
+
+    public function testShouldDoNothingIfCommandNotExclusive()
+    {
+        $message = new Message();
+        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'theBarProcessorName');
+
+        $extension = new ExclusiveCommandExtension([
+            'aFooQueueName' => 'aFooProcessorName',
+        ]);
+
+        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
+
+        $this->assertEquals([
+            'enqueue.command_name' => 'theBarProcessorName',
+        ], $message->getProperties());
+    }
+
+    public function testShouldForceExclusiveCommandQueue()
+    {
+        $message = new Message();
+        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'aFooProcessorName');
+
+        $extension = new ExclusiveCommandExtension([
+            'aFooQueueName' => 'aFooProcessorName',
+        ]);
+
+        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
+
+        $this->assertEquals([
+            'enqueue.command_name' => 'aFooProcessorName',
+            'enqueue.processor_name' => 'aFooProcessorName',
+            'enqueue.processor_queue_name' => 'aFooQueueName',
         ], $message->getProperties());
     }
 }

@@ -6,3 +6,4 @@ services:
             - []
         tags:
             - { name: 'enqueue.consumption.extension', priority: 100 }
+            - { name: 'enqueue.client.extension', priority: 100 }
