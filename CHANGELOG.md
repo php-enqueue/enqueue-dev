@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.5.2](https://github.com/php-enqueue/enqueue-dev/tree/0.5.2) (2017-07-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.1...0.5.2)
+
+- \[symfony\] Extract DriverFactoryInterface from TransportFactoryInterface. [\#126](https://github.com/php-enqueue/enqueue-dev/pull/126) ([makasim](https://github.com/makasim))
+
+- \[client\] Send exclusive commands to their queues directly, by passing… [\#127](https://github.com/php-enqueue/enqueue-dev/pull/127) ([makasim](https://github.com/makasim))
+
 ## [0.5.1](https://github.com/php-enqueue/enqueue-dev/tree/0.5.1) (2017-06-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.0...0.5.1)
 
