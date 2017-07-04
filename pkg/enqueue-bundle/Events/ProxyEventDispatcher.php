@@ -2,12 +2,11 @@
 
 namespace Enqueue\Bundle\Events;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProxyEventDispatcher extends ContainerAwareEventDispatcher
+class ProxyEventDispatcher extends EventDispatcher
 {
     /**
      * @var EventDispatcherInterface
@@ -20,14 +19,11 @@ class ProxyEventDispatcher extends ContainerAwareEventDispatcher
     private $asyncListener;
 
     /**
-     * @param ContainerInterface       $container
      * @param EventDispatcherInterface $trueEventDispatcher
      * @param AsyncListener            $asyncListener
      */
-    public function __construct(ContainerInterface $container, EventDispatcherInterface $trueEventDispatcher, AsyncListener $asyncListener)
+    public function __construct(EventDispatcherInterface $trueEventDispatcher, AsyncListener $asyncListener)
     {
-        parent::__construct($container);
-
         $this->trueEventDispatcher = $trueEventDispatcher;
         $this->asyncListener = $asyncListener;
     }
