@@ -19,6 +19,8 @@ class AsyncListener
      */
     private $registry;
 
+    private $syncMode = [];
+
     /**
      * @param ProducerInterface $producer
      * @param Registry          $registry
@@ -27,6 +29,34 @@ class AsyncListener
     {
         $this->producer = $producer;
         $this->registry = $registry;
+    }
+
+    public function __invoke(Event $event, $eventName)
+    {
+        $this->onEvent($event, $eventName);
+    }
+
+    public function resetSyncMode()
+    {
+        $this->syncMode = [];
+    }
+
+    /**
+     * @param string $eventName
+     */
+    public function syncMode($eventName)
+    {
+        $this->syncMode[$eventName] = true;
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return bool
+     */
+    public function isSyncMode($eventName)
+    {
+        return isset($this->syncMode[$eventName]);
     }
 
     /**
