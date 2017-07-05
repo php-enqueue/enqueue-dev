@@ -7,7 +7,7 @@ use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class AsyncListener extends \Enqueue\AsyncEventDispatcher\AsyncListener
+class AsyncListener
 {
     /**
      * @var ProducerInterface
