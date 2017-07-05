@@ -11,6 +11,7 @@ use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class AsyncListenerTest extends TestCase
@@ -67,7 +68,7 @@ class AsyncListenerTest extends TestCase
 
         $listener->syncMode('fooEvent');
 
-        $listener->onEvent(null, 'fooEvent');
+        $listener->onEvent(new Event(), 'fooEvent');
         $listener->onEvent(new GenericEvent(), 'fooEvent');
     }
 
