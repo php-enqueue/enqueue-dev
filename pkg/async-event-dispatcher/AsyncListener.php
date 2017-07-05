@@ -40,6 +40,11 @@ class AsyncListener
         $this->eventQueue = $eventQueue instanceof PsrQueue ? $eventQueue : $context->createQueue($eventQueue);
     }
 
+    public function __invoke(Event $event, $eventName)
+    {
+        $this->onEvent($event, $eventName);
+    }
+
     public function resetSyncMode()
     {
         $this->syncMode = [];
@@ -67,7 +72,7 @@ class AsyncListener
      * @param Event  $event
      * @param string $eventName
      */
-    public function onEvent(Event $event = null, $eventName)
+    public function onEvent(Event $event, $eventName)
     {
         if (false == isset($this->syncMode[$eventName])) {
             $transformerName = $this->registry->getTransformerNameForEvent($eventName);
