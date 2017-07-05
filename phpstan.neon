@@ -5,4 +5,5 @@ parameters:
 		- pkg/job-queue/Test/JobRunner.php
 		- pkg/job-queue/Tests/Functional/app/AppKernel.php
 		- pkg/redis/PhpRedis.php
-		- pkg/redis/RedisConnectionFactory.php 
+		- pkg/redis/RedisConnectionFactory.php
+		- pkg/gearman
