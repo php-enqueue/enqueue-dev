@@ -24,8 +24,8 @@ class AsyncEventDispatcherExtension extends Extension
         if (version_compare(Kernel::VERSION, '3.3', '<')) {
             $container->setDefinition('enqueue.events.event_dispatcher', new Definition(OldProxyEventDispatcher::class, [
                 new Reference('service_container'),
-                new Reference('enqueue.events.registry'),
-                new Reference('enqueue.events.event_dispatcher'),
+                new Reference('event_dispatcher'),
+                new Reference('enqueue.events.async_listener'),
             ]));
         }
     }
