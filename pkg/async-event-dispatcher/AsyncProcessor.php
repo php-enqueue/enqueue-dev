@@ -6,6 +6,7 @@ use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Psr\PsrProcessor;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AsyncProcessor implements PsrProcessor
 {
@@ -15,18 +16,28 @@ class AsyncProcessor implements PsrProcessor
     private $registry;
 
     /**
-     * @var ProxyEventDispatcher
+     * @var AsyncEventDispatcher|OldAsyncEventDispatcher
      */
-    private $eventDispatcher;
+    private $dispatcher;
 
     /**
-     * @param Registry             $registry
-     * @param ProxyEventDispatcher $eventDispatcher
+     * @param Registry                 $registry
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(Registry $registry, ProxyEventDispatcher $eventDispatcher)
+    public function __construct(Registry $registry, EventDispatcherInterface $dispatcher)
     {
         $this->registry = $registry;
-        $this->eventDispatcher = $eventDispatcher;
+
+        if (false == ($dispatcher instanceof AsyncEventDispatcher || $dispatcher instanceof OldAsyncEventDispatcher)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The dispatcher argument must be either instance of "%s" or "%s" but got "%s"',
+                AsyncEventDispatcher::class,
+                OldAsyncEventDispatcher::class,
+                get_class($dispatcher)
+            ));
+        }
+
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -43,7 +54,7 @@ class AsyncProcessor implements PsrProcessor
 
         $event = $this->registry->getTransformer($transformerName)->toEvent($eventName, $message);
 
-        $this->eventDispatcher->dispatchAsyncListenersOnly($eventName, $event);
+        $this->dispatcher->dispatchAsyncListenersOnly($eventName, $event);
 
         return self::ACK;
     }

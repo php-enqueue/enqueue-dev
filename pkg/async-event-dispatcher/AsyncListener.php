@@ -2,16 +2,16 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Enqueue\Client\Message;
-use Enqueue\Client\ProducerInterface;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrQueue;
 use Symfony\Component\EventDispatcher\Event;
 
 class AsyncListener
 {
     /**
-     * @var ProducerInterface
+     * @var PsrContext
      */
-    private $producer;
+    private $context;
 
     /**
      * @var Registry
@@ -19,18 +19,25 @@ class AsyncListener
     private $registry;
 
     /**
+     * @var PsrQueue
+     */
+    private $eventQueue;
+
+    /**
      * @var bool
      */
     private $syncMode;
 
     /**
-     * @param ProducerInterface $producer
-     * @param Registry          $registry
+     * @param PsrContext      $context
+     * @param Registry        $registry
+     * @param PsrQueue|string $eventQueue
      */
-    public function __construct(ProducerInterface $producer, Registry $registry)
+    public function __construct(PsrContext $context, Registry $registry, $eventQueue)
     {
-        $this->producer = $producer;
+        $this->context = $context;
         $this->registry = $registry;
+        $this->eventQueue = $eventQueue instanceof PsrQueue ? $eventQueue : $context->createQueue($eventQueue);
     }
 
     public function resetSyncMode()
@@ -47,6 +54,16 @@ class AsyncListener
     }
 
     /**
+     * @param string $eventName
+     *
+     * @return bool
+     */
+    public function isSyncMode($eventName)
+    {
+        return isset($this->syncMode[$eventName]);
+    }
+
+    /**
      * @param Event  $event
      * @param string $eventName
      */
@@ -56,11 +73,10 @@ class AsyncListener
             $transformerName = $this->registry->getTransformerNameForEvent($eventName);
 
             $message = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
-            $message->setScope(Message::SCOPE_APP);
             $message->setProperty('event_name', $eventName);
             $message->setProperty('transformer_name', $transformerName);
 
-            $this->producer->sendEvent('event.'.$eventName, $message);
+            $this->context->createProducer()->send($this->eventQueue, $message);
         }
     }
 }

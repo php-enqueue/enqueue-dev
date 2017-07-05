@@ -2,7 +2,7 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Enqueue\Client\Message;
+use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\Kernel;
@@ -10,16 +10,33 @@ use Symfony\Component\HttpKernel\Kernel;
 class PhpSerializerEventTransformer implements EventTransformer
 {
     /**
+     * @var PsrContext
+     */
+    private $context;
+
+    /**
+     * @var bool
+     */
+    private $skipSymfonyVersionCheck;
+
+    /**
+     * @param PsrContext $context
+     * @param bool       $skipSymfonyVersionCheck It is useful when async dispatcher is used without Kernel. So there is no way to check the version.
+     */
+    public function __construct(PsrContext $context, $skipSymfonyVersionCheck = false)
+    {
+        $this->context = $context;
+        $this->skipSymfonyVersionCheck = $skipSymfonyVersionCheck;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toMessage($eventName, Event $event = null)
     {
         $this->assertSymfony30OrHigher();
 
-        $message = new Message();
-        $message->setBody(serialize($event));
-
-        return $message;
+        return $this->context->createMessage(serialize($event));
     }
 
     /**
@@ -34,6 +51,10 @@ class PhpSerializerEventTransformer implements EventTransformer
 
     private function assertSymfony30OrHigher()
     {
+        if ($this->skipSymfonyVersionCheck) {
+            return;
+        }
+
         if (version_compare(Kernel::VERSION, '3.0', '<')) {
             throw new \LogicException(
                 'This transformer does not work on Symfony prior 3.0. '.

@@ -4,3 +4,4 @@
 /phpunit.xml
 /vendor/
 /.idea/
+Tests/Functional/queues

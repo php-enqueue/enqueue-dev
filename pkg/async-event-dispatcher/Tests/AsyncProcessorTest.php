@@ -2,9 +2,9 @@
 
 namespace Enqueue\AsyncEventDispatcher\Tests;
 
+use Enqueue\AsyncEventDispatcher\AsyncEventDispatcher;
 use Enqueue\AsyncEventDispatcher\AsyncProcessor;
 use Enqueue\AsyncEventDispatcher\EventTransformer;
-use Enqueue\AsyncEventDispatcher\ProxyEventDispatcher;
 use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullContext;
@@ -105,11 +105,11 @@ class AsyncProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProxyEventDispatcher
+     * @return \PHPUnit_Framework_MockObject_MockObject|AsyncEventDispatcher
      */
     private function createProxyEventDispatcherMock()
     {
-        return $this->createMock(ProxyEventDispatcher::class);
+        return $this->createMock(AsyncEventDispatcher::class);
     }
 
     /**

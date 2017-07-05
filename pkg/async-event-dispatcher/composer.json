@@ -20,6 +20,7 @@
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3",
         "symfony/http-kernel": "^2.8|^3",
+        "symfony/filesystem": "^2.8|^3",
         "enqueue/null": "^0.5@dev"
     },
     "suggest": {

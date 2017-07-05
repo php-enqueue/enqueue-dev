@@ -5,8 +5,10 @@ namespace Enqueue\AsyncEventDispatcher\Tests;
 use Enqueue\AsyncEventDispatcher\AsyncListener;
 use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\AsyncEventDispatcher\Registry;
-use Enqueue\Client\Message;
-use Enqueue\Client\ProducerInterface;
+use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -15,17 +17,44 @@ class AsyncListenerTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testCouldBeConstructedWithRegistryAndProxyEventDispatcher()
+    public function testCouldBeConstructedWithContextAndRegistryAndEventQueueAsString()
     {
-        new AsyncListener($this->createProducerMock(), $this->createRegistryMock());
+        $eventQueue = new NullQueue('symfony_events');
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('symfony_events')
+            ->willReturn($eventQueue)
+        ;
+
+        $listener = new AsyncListener($context, $this->createRegistryMock(), 'symfony_events');
+
+        $this->assertAttributeSame($eventQueue, 'eventQueue', $listener);
+    }
+
+    public function testCouldBeConstructedWithContextAndRegistryAndPsrQueue()
+    {
+        $eventQueue = new NullQueue('symfony_events');
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->never())
+            ->method('createQueue')
+        ;
+
+        $listener = new AsyncListener($context, $this->createRegistryMock(), $eventQueue);
+
+        $this->assertAttributeSame($eventQueue, 'eventQueue', $listener);
     }
 
     public function testShouldDoNothingIfSyncModeOn()
     {
-        $producer = $this->createProducerMock();
+        $producer = $this->createContextMock();
         $producer
             ->expects($this->never())
-            ->method('sendEvent')
+            ->method('createProducer')
         ;
 
         $registry = $this->createRegistryMock();
@@ -34,7 +63,7 @@ class AsyncListenerTest extends TestCase
             ->method('getTransformerNameForEvent')
         ;
 
-        $listener = new AsyncListener($producer, $registry);
+        $listener = new AsyncListener($producer, $registry, new NullQueue('symfony_events'));
 
         $listener->syncMode('fooEvent');
 
@@ -46,8 +75,8 @@ class AsyncListenerTest extends TestCase
     {
         $event = new GenericEvent();
 
-        $message = new Message();
-        $message->setBody('serializedEvent');
+        $message = new NullMessage('serializedEvent');
+        $eventQueue = new NullQueue('symfony_events');
 
         $transformerMock = $this->createEventTransformerMock();
         $transformerMock
@@ -74,11 +103,19 @@ class AsyncListenerTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('sendEvent')
-            ->with('event.fooEvent', $this->identicalTo($message))
+            ->method('send')
+            ->with($this->identicalTo($eventQueue), $this->identicalTo($message))
         ;
 
-        $listener = new AsyncListener($producer, $registry);
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->with()
+            ->willReturn($producer)
+        ;
+
+        $listener = new AsyncListener($context, $registry, $eventQueue);
 
         $listener->onEvent($event, 'fooEvent');
 
@@ -99,11 +136,19 @@ class AsyncListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProducer
      */
     private function createProducerMock()
     {
-        return $this->createMock(ProducerInterface::class);
+        return $this->createMock(PsrProducer::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     */
+    private function createContextMock()
+    {
+        return $this->createMock(PsrContext::class);
     }
 
     /**
