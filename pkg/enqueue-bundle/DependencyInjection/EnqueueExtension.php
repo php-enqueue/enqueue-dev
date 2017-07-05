@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
+use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\JobQueue\Job;
 use Enqueue\Null\Symfony\NullTransportFactory;
@@ -118,7 +119,8 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         }
 
         if (isset($config['async_events']['enabled'])) {
-            $loader->load('events.yml');
+            $extension = new AsyncEventDispatcherExtension();
+            $extension->load([], $container);
 
             if (false == empty($config['async_events']['spool_producer'])) {
                 $container->getDefinition('enqueue.events.async_listener')

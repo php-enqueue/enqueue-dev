@@ -66,7 +66,7 @@ You can also add an async listener directly and register a custom message proces
 
 services:
     acme.async_foo_listener:
-        class: 'Enqueue\Bundle\Events\AsyncListener'
+        class: 'Enqueue\AsyncEventDispatcher\AsyncListener'
         public: false
         arguments: ['@enqueue.client.producer', '@enqueue.events.registry']
         tags:
@@ -78,7 +78,7 @@ The message processor must subscribe to `event.foo` topic. The message queue top
 ```php
 <?php
 
-use Enqueue\Bundle\Events\Registry;
+use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\PsrMessage;
@@ -126,7 +126,7 @@ class FooEventProcessor implements PsrProcessor, TopicSubscriberInterface
 ## Event transformer
 
 The bundle uses [php serializer](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue-bundle/Events/PhpSerializerEventTransformer.php) transformer by default to pass events through MQ.
-You could create a transformer for the given event type. The transformer must implement `Enqueue\Bundle\Events\EventTransformer` interface.
+You could create a transformer for the given event type. The transformer must implement `Enqueue\AsyncEventDispatcher\EventTransformer` interface.
 Consider the next example. It shows how to send an event that contains Doctrine entity as a subject  
  
 ```php
@@ -140,7 +140,7 @@ use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Util\JSON;
 use Symfony\Component\EventDispatcher\Event;
-use Enqueue\Bundle\Events\EventTransformer;
+use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

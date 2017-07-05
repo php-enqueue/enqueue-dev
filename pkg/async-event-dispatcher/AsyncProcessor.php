@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\Events;
+namespace Enqueue\AsyncEventDispatcher;
 
 use Enqueue\Consumption\Result;
 use Enqueue\Psr\PsrContext;

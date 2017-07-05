@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\Events;
+namespace Enqueue\AsyncEventDispatcher;
 
 use Enqueue\Client\Message;
 use Enqueue\Psr\PsrMessage;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Enqueue\Bundle\Tests\Unit\Events;
+namespace Enqueue\AsyncEventDispatcher\Tests;
 
-use Enqueue\Bundle\Events\EventTransformer;
-use Enqueue\Bundle\Events\PhpSerializerEventTransformer;
+use Enqueue\AsyncEventDispatcher\EventTransformer;
+use Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer;
 use Enqueue\Client\Message;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;

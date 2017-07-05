@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\Events;
+namespace Enqueue\AsyncEventDispatcher;
 
 interface Registry
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\Events\DependencyInjection;
+namespace Enqueue\AsyncEventDispatcher\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

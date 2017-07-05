@@ -1,9 +1,9 @@
 <?php
 
-namespace Enqueue\Bundle\Tests\Unit\Events;
+namespace Enqueue\AsyncEventDispatcher\Tests;
 
-use Enqueue\Bundle\Events\AsyncListener;
-use Enqueue\Bundle\Events\ProxyEventDispatcher;
+use Enqueue\AsyncEventDispatcher\AsyncListener;
+use Enqueue\AsyncEventDispatcher\ProxyEventDispatcher;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;

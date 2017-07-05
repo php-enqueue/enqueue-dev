@@ -1,11 +1,11 @@
 <?php
 
-namespace Enqueue\Bundle\Tests\Unit\Events;
+namespace Enqueue\AsyncEventDispatcher\Tests;
 
-use Enqueue\Bundle\Events\AsyncProcessor;
-use Enqueue\Bundle\Events\EventTransformer;
-use Enqueue\Bundle\Events\ProxyEventDispatcher;
-use Enqueue\Bundle\Events\Registry;
+use Enqueue\AsyncEventDispatcher\AsyncProcessor;
+use Enqueue\AsyncEventDispatcher\EventTransformer;
+use Enqueue\AsyncEventDispatcher\ProxyEventDispatcher;
+use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;

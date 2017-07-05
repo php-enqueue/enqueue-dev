@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\Events;
+namespace Enqueue\AsyncEventDispatcher;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;

@@ -1,29 +1,29 @@
 services:
     enqueue.events.registry:
-        class: 'Enqueue\Bundle\Events\ContainerAwareRegistry'
+        class: 'Enqueue\AsyncEventDispatcher\ContainerAwareRegistry'
         public: false
         arguments: [[], []]
         calls:
             -  ['setContainer', ['@service_container']]
 
     enqueue.events.async_listener:
-        class: 'Enqueue\Bundle\Events\AsyncListener'
+        class: 'Enqueue\AsyncEventDispatcher\AsyncListener'
         arguments: ['@enqueue.client.producer', '@enqueue.events.registry']
 
 
     enqueue.events.event_dispatcher:
-        class: 'Enqueue\Bundle\Events\ProxyEventDispatcher'
+        class: 'Enqueue\AsyncEventDispatcher\ProxyEventDispatcher'
         arguments:
             - '@event_dispatcher'
             - '@enqueue.events.async_listener'
 
     enqueue.events.async_processor:
-        class: 'Enqueue\Bundle\Events\AsyncProcessor'
+        class: 'Enqueue\AsyncEventDispatcher\AsyncProcessor'
         arguments:
             - '@enqueue.events.registry'
             - '@enqueue.events.event_dispatcher'
 
     enqueue.events.php_serializer_event_transofrmer:
-        class: 'Enqueue\Bundle\Events\PhpSerializerEventTransformer'
+        class: 'Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer'
         tags:
             - {name: 'enqueue.event_transformer', eventName: '/.*/', transformerName: 'php_serializer' }

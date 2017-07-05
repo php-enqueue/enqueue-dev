@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional\App;
 
-use Enqueue\Bundle\Events\EventTransformer;
+use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\Client\Message;
 use Enqueue\Psr\PsrMessage;
 use Enqueue\Util\JSON;

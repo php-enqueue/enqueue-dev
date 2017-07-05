@@ -1,10 +1,10 @@
 <?php
 
-namespace Enqueue\Bundle\Tests\Unit\Events;
+namespace Enqueue\AsyncEventDispatcher\Tests;
 
-use Enqueue\Bundle\Events\ContainerAwareRegistry;
-use Enqueue\Bundle\Events\EventTransformer;
-use Enqueue\Bundle\Events\Registry;
+use Enqueue\AsyncEventDispatcher\ContainerAwareRegistry;
+use Enqueue\AsyncEventDispatcher\EventTransformer;
+use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -89,7 +89,7 @@ class ContainerAwareRegistryTest extends TestCase
         $registry->setContainer($container);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The container must return instance of Enqueue\Bundle\Events\EventTransformer but got stdClass');
+        $this->expectExceptionMessage('The container must return instance of Enqueue\AsyncEventDispatcher\EventTransformer but got stdClass');
         $registry->getTransformer('fooTrans');
     }
 
