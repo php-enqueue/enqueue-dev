@@ -68,58 +68,9 @@ services:
     acme.async_foo_listener:
         class: 'Enqueue\AsyncEventDispatcher\AsyncListener'
         public: false
-        arguments: ['@enqueue.client.producer', '@enqueue.events.registry']
+        arguments: ['@enqueue.transport.default.context', '@enqueue.events.registry', 'a_queue_name']
         tags:
           - { name: 'kernel.event_listener', event: 'foo', method: 'onEvent' }
-```
-
-The message processor must subscribe to `event.foo` topic. The message queue topics names for event follow this patter `event.{eventName}`.
-
-```php
-<?php
-
-use Enqueue\AsyncEventDispatcher\Registry;
-use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
-
-class FooEventProcessor implements PsrProcessor, TopicSubscriberInterface
-{
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * @param Registry $registry
-     */
-    public function __construct(Registry $registry)
-    {
-        $this->registry = $registry;
-    }
-
-    public function process(PsrMessage $message, PsrContext $context)
-    {
-        if (false == $eventName = $message->getProperty('event_name')) {
-            return self::REJECT;
-        }
-        if (false == $transformerName = $message->getProperty('transformer_name')) {
-            return self::REJECT;
-        }
-
-        // do what you want with the event.
-        $event = $this->registry->getTransformer($transformerName)->toEvent($eventName, $message);
-        
-        
-        return self::ACK;
-    }
-
-    public static function getSubscribedTopics()
-    {
-        return ['event.foo'];
-    }
-}
 ```
 
 
