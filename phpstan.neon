@@ -1,3 +1,4 @@
 parameters:
 	excludes_analyse:
 		- pkg/enqueue/Util/UUID.php
+		- pkg/enqueue-bundle/Tests/Functional/App
