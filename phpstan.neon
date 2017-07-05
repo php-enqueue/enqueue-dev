@@ -7,3 +7,4 @@ parameters:
 		- pkg/redis/PhpRedis.php
 		- pkg/redis/RedisConnectionFactory.php
 		- pkg/gearman
+		- pkg/amqp-ext/AmqpConsumer.php
