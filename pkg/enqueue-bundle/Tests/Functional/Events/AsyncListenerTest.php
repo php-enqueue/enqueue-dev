@@ -38,7 +38,7 @@ class AsyncListenerTest extends WebTestCase
         $this->assertEmpty($listener->calls);
     }
 
-    public function testShouldSendMessageToExpectedTopicInsteadOfCallingRealListener()
+    public function testShouldSendMessageToExpectedCommandInsteadOfCallingRealListener()
     {
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = $this->container->get('event_dispatcher');
@@ -50,11 +50,11 @@ class AsyncListenerTest extends WebTestCase
         /** @var TraceableProducer $producer */
         $producer = $this->container->get('enqueue.producer');
 
-        $traces = $producer->getTopicTraces('event.test_async');
+        $traces = $producer->getCommandTraces('symfony_events');
 
         $this->assertCount(1, $traces);
 
-        $this->assertEquals('event.test_async', $traces[0]['topic']);
+        $this->assertEquals('symfony_events', $traces[0]['command']);
         $this->assertEquals('{"subject":"theSubject","arguments":{"fooArg":"fooVal"}}', $traces[0]['body']);
     }
 
@@ -70,7 +70,7 @@ class AsyncListenerTest extends WebTestCase
         /** @var TraceableProducer $producer */
         $producer = $this->container->get('enqueue.producer');
 
-        $traces = $producer->getTopicTraces('event.test_async');
+        $traces = $producer->getCommandTraces('symfony_events');
 
         $this->assertCount(3, $traces);
     }
@@ -89,7 +89,7 @@ class AsyncListenerTest extends WebTestCase
         /** @var TraceableProducer $producer */
         $producer = $this->container->get('enqueue.producer');
 
-        $traces = $producer->getTopicTraces('event.test_async');
+        $traces = $producer->getCommandTraces('symfony_events');
 
         $this->assertCount(1, $traces);
     }

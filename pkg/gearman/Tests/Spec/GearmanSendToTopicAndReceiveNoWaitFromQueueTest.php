@@ -1,7 +1,8 @@
 <?php
 
-namespace Enqueue\Gearman;
+namespace Enqueue\Gearman\Tests\Spec;
 
+use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 

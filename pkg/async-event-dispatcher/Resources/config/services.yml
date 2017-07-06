@@ -1,0 +1,45 @@
+parameters:
+    enqueue_events_queue: 'symfony_events'
+
+services:
+    # should be defined by the extension
+    # enqueue.events.context:
+
+    enqueue.events.registry:
+        class: 'Enqueue\AsyncEventDispatcher\ContainerAwareRegistry'
+        public: false
+        arguments: [[], []]
+        calls:
+            -  ['setContainer', ['@service_container']]
+
+    enqueue.events.async_listener:
+        class: 'Enqueue\AsyncEventDispatcher\AsyncListener'
+        arguments: ['@enqueue.events.context', '@enqueue.events.registry', '%enqueue_events_queue%']
+
+
+    enqueue.events.event_dispatcher:
+        class: 'Enqueue\AsyncEventDispatcher\AsyncEventDispatcher'
+        arguments:
+            - '@event_dispatcher'
+            - '@enqueue.events.async_listener'
+
+    enqueue.events.async_processor:
+        class: 'Enqueue\AsyncEventDispatcher\AsyncProcessor'
+        arguments:
+            - '@enqueue.events.registry'
+            - '@enqueue.events.event_dispatcher'
+        tags:
+            -
+                name: 'enqueue.client.processor'
+                topicName: '__command__'
+                processorName: '%enqueue_events_queue%'
+                queueName: '%enqueue_events_queue%'
+                queueNameHardcoded: true
+                exclusive: true
+
+    enqueue.events.php_serializer_event_transofrmer:
+        class: 'Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer'
+        arguments:
+            - '@enqueue.events.context'
+        tags:
+            - {name: 'enqueue.event_transformer', eventName: '/.*/', transformerName: 'php_serializer' }

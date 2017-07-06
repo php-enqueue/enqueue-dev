@@ -1,11 +1,12 @@
 <?php
 
-namespace Enqueue\Bundle\Tests\Unit\Events;
+namespace Enqueue\AsyncEventDispatcher\Tests;
 
-use Enqueue\Bundle\Events\EventTransformer;
-use Enqueue\Bundle\Events\PhpSerializerEventTransformer;
-use Enqueue\Client\Message;
+use Enqueue\AsyncEventDispatcher\EventTransformer;
+use Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer;
 use Enqueue\Null\NullMessage;
+use Enqueue\Psr\PsrContext;
+use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -22,7 +23,7 @@ class PhpSerializerEventTransformerTest extends TestCase
 
     public function testCouldBeConstructedWithoutAnyArguments()
     {
-        new PhpSerializerEventTransformer();
+        new PhpSerializerEventTransformer($this->createContextStub());
     }
 
     public function testShouldReturnMessageWithPhpSerializedEventAsBodyOnToMessage()
@@ -31,14 +32,14 @@ class PhpSerializerEventTransformerTest extends TestCase
             $this->markTestSkipped('This functionality only works on Symfony 3.0 or higher');
         }
 
-        $transformer = new PhpSerializerEventTransformer();
+        $transformer = new PhpSerializerEventTransformer($this->createContextStub());
 
         $event = new GenericEvent('theSubject');
         $expectedBody = serialize($event);
 
         $message = $transformer->toMessage('fooEvent', $event);
 
-        $this->assertInstanceOf(Message::class, $message);
+        $this->assertInstanceOf(PsrMessage::class, $message);
         $this->assertEquals($expectedBody, $message->getBody());
     }
 
@@ -51,7 +52,7 @@ class PhpSerializerEventTransformerTest extends TestCase
         $message = new NullMessage();
         $message->setBody(serialize(new GenericEvent('theSubject')));
 
-        $transformer = new PhpSerializerEventTransformer();
+        $transformer = new PhpSerializerEventTransformer($this->createContextStub());
 
         $event = $transformer->toEvent('anEventName', $message);
 
@@ -68,7 +69,7 @@ class PhpSerializerEventTransformerTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('This transformer does not work on Symfony prior 3.0.');
 
-        $transformer = new PhpSerializerEventTransformer();
+        $transformer = new PhpSerializerEventTransformer($this->createContextStub());
 
         $transformer->toMessage(new GenericEvent());
     }
@@ -82,8 +83,25 @@ class PhpSerializerEventTransformerTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('This transformer does not work on Symfony prior 3.0.');
 
-        $transformer = new PhpSerializerEventTransformer();
+        $transformer = new PhpSerializerEventTransformer($this->createContextStub());
 
         $transformer->toEvent('anEvent', new NullMessage());
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     */
+    private function createContextStub()
+    {
+        $context = $this->createMock(PsrContext::class);
+        $context
+            ->expects($this->any())
+            ->method('createMessage')
+            ->willReturnCallback(function ($body) {
+                return new NullMessage($body);
+            })
+        ;
+
+        return $context;
     }
 }

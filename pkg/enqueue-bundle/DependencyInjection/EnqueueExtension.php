@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
+use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\JobQueue\Job;
 use Enqueue\Null\Symfony\NullTransportFactory;
@@ -118,13 +119,10 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         }
 
         if (isset($config['async_events']['enabled'])) {
-            $loader->load('events.yml');
-
-            if (false == empty($config['async_events']['spool_producer'])) {
-                $container->getDefinition('enqueue.events.async_listener')
-                    ->replaceArgument(0, new Reference('enqueue.client.spool_producer'))
-                ;
-            }
+            $extension = new AsyncEventDispatcherExtension();
+            $extension->load([[
+                'context_service' => 'enqueue.transport.default.context',
+            ]], $container);
         }
 
         if ($config['extensions']['doctrine_ping_connection_extension']) {

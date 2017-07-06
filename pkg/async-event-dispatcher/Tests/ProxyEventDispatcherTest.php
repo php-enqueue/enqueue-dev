@@ -1,13 +1,11 @@
 <?php
 
-namespace Enqueue\Bundle\Tests\Unit\Events;
+namespace Enqueue\AsyncEventDispatcher\Tests;
 
-use Enqueue\Bundle\Events\AsyncListener;
-use Enqueue\Bundle\Events\ProxyEventDispatcher;
+use Enqueue\AsyncEventDispatcher\AsyncEventDispatcher;
+use Enqueue\AsyncEventDispatcher\AsyncListener;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -15,9 +13,9 @@ class ProxyEventDispatcherTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldBeSubClassOfContainerAwareEventDispatcher()
+    public function testShouldBeSubClassOfEventDispatcher()
     {
-        $this->assertClassExtends(ContainerAwareEventDispatcher::class, ProxyEventDispatcher::class);
+        $this->assertClassExtends(EventDispatcher::class, AsyncEventDispatcher::class);
     }
 
     public function testShouldSetSyncModeForGivenEventNameOnDispatchAsyncListenersOnly()
@@ -34,7 +32,7 @@ class ProxyEventDispatcherTest extends TestCase
         ;
 
         $trueEventDispatcher = new EventDispatcher();
-        $dispatcher = new ProxyEventDispatcher(new Container(), $trueEventDispatcher, $asyncListenerMock);
+        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $asyncListenerMock);
 
         $event = new GenericEvent();
         $dispatcher->dispatchAsyncListenersOnly('theEvent', $event);
@@ -45,15 +43,15 @@ class ProxyEventDispatcherTest extends TestCase
         $otherEventWasCalled = false;
         $trueEventDispatcher = new EventDispatcher();
         $trueEventDispatcher->addListener('theEvent', function () use (&$otherEventWasCalled) {
-            $this->assertInstanceOf(ProxyEventDispatcher::class, func_get_arg(2));
+            $this->assertInstanceOf(AsyncEventDispatcher::class, func_get_arg(2));
 
             $otherEventWasCalled = true;
         });
 
         $asyncEventWasCalled = false;
-        $dispatcher = new ProxyEventDispatcher(new Container(), $trueEventDispatcher, $this->createAsyncLisenerMock());
+        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncLisenerMock());
         $dispatcher->addListener('theEvent', function () use (&$asyncEventWasCalled) {
-            $this->assertInstanceOf(ProxyEventDispatcher::class, func_get_arg(2));
+            $this->assertInstanceOf(AsyncEventDispatcher::class, func_get_arg(2));
 
             $asyncEventWasCalled = true;
         });
@@ -70,15 +68,15 @@ class ProxyEventDispatcherTest extends TestCase
         $otherEventWasCalled = false;
         $trueEventDispatcher = new EventDispatcher();
         $trueEventDispatcher->addListener('theOtherEvent', function () use (&$otherEventWasCalled) {
-            $this->assertNotInstanceOf(ProxyEventDispatcher::class, func_get_arg(2));
+            $this->assertNotInstanceOf(AsyncEventDispatcher::class, func_get_arg(2));
 
             $otherEventWasCalled = true;
         });
 
         $asyncEventWasCalled = false;
-        $dispatcher = new ProxyEventDispatcher(new Container(), $trueEventDispatcher, $this->createAsyncLisenerMock());
+        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncLisenerMock());
         $dispatcher->addListener('theEvent', function () use (&$asyncEventWasCalled) {
-            $this->assertInstanceOf(ProxyEventDispatcher::class, func_get_arg(2));
+            $this->assertInstanceOf(AsyncEventDispatcher::class, func_get_arg(2));
 
             $asyncEventWasCalled = true;
 
@@ -99,7 +97,7 @@ class ProxyEventDispatcherTest extends TestCase
             func_get_arg(2)->dispatch('theOtherAsyncEvent');
         });
 
-        $dispatcher = new ProxyEventDispatcher(new Container(), $trueEventDispatcher, $this->createAsyncLisenerMock());
+        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncLisenerMock());
         $dispatcher->addListener('theAsyncEvent', function () {
             func_get_arg(2)->dispatch('theOtherEvent');
         });

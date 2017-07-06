@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\Events;
+namespace Enqueue\AsyncEventDispatcher;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;

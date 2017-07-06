@@ -1,7 +1,8 @@
 <?php
 
-namespace Enqueue\Pheanstalk;
+namespace Enqueue\Pheanstalk\Tests\Spec;
 
+use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\Psr\PsrContext;
 use Enqueue\Psr\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 

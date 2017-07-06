@@ -19,6 +19,7 @@
     "enqueue/job-queue": "*@dev",
     "enqueue/simple-client": "*@dev",
     "enqueue/test": "*@dev",
+    "enqueue/async-event-dispatcher": "*@dev",
 
     "phpunit/phpunit": "^5",
     "doctrine/doctrine-bundle": "~1.2",
@@ -98,6 +99,10 @@
     {
       "type": "path",
       "url": "pkg/simple-client"
+    },
+    {
+      "type": "path",
+      "url": "pkg/async-event-dispatcher"
     }
   ]
 }

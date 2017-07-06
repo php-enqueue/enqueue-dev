@@ -1,12 +1,13 @@
 <?php
 
-namespace Enqueue\Bundle\Events;
+namespace Enqueue\Bundle\Tests\Functional\App;
 
+use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class AsyncListener
+class AsyncListener extends \Enqueue\AsyncEventDispatcher\AsyncListener
 {
     /**
      * @var ProducerInterface
@@ -19,11 +20,6 @@ class AsyncListener
     private $registry;
 
     /**
-     * @var bool
-     */
-    private $syncMode;
-
-    /**
      * @param ProducerInterface $producer
      * @param Registry          $registry
      */
@@ -33,34 +29,22 @@ class AsyncListener
         $this->registry = $registry;
     }
 
-    public function resetSyncMode()
-    {
-        $this->syncMode = [];
-    }
-
-    /**
-     * @param string $eventName
-     */
-    public function syncMode($eventName)
-    {
-        $this->syncMode[$eventName] = true;
-    }
-
     /**
      * @param Event  $event
      * @param string $eventName
      */
     public function onEvent(Event $event = null, $eventName)
     {
-        if (false == isset($this->syncMode[$eventName])) {
+        if (false == $this->isSyncMode($eventName)) {
             $transformerName = $this->registry->getTransformerNameForEvent($eventName);
 
-            $message = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
+            $psrMessage = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
+            $message = new Message($psrMessage->getBody());
             $message->setScope(Message::SCOPE_APP);
             $message->setProperty('event_name', $eventName);
             $message->setProperty('transformer_name', $transformerName);
 
-            $this->producer->sendEvent('event.'.$eventName, $message);
+            $this->producer->sendCommand('symfony_events', $message);
         }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
-use Enqueue\Bundle\Events\AsyncListener;
-use Enqueue\Bundle\Events\AsyncProcessor;
+use Enqueue\AsyncEventDispatcher\AsyncListener;
+use Enqueue\AsyncEventDispatcher\AsyncProcessor;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;

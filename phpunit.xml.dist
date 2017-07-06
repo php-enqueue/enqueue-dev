@@ -68,6 +68,10 @@
         <testsuite name="simple-client">
             <directory>pkg/simple-client/Tests</directory>
         </testsuite>
+
+        <testsuite name="async-event-dispatcher">
+            <directory>pkg/async-event-dispatcher/Tests</directory>
+        </testsuite>
     </testsuites>
 
     <filter>

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
-use Enqueue\Bundle\Events\AsyncListener;
+use Enqueue\AsyncEventDispatcher\AsyncListener;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\TraceableProducer;
@@ -50,11 +50,11 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var TraceableProducer $producer */
         $producer = $this->container->get('enqueue.producer');
 
-        $traces = $producer->getTopicTraces('event.test_async_subscriber');
+        $traces = $producer->getCommandTraces('symfony_events');
 
         $this->assertCount(1, $traces);
 
-        $this->assertEquals('event.test_async_subscriber', $traces[0]['topic']);
+        $this->assertEquals('symfony_events', $traces[0]['command']);
         $this->assertEquals('{"subject":"theSubject","arguments":{"fooArg":"fooVal"}}', $traces[0]['body']);
     }
 
@@ -70,7 +70,7 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var TraceableProducer $producer */
         $producer = $this->container->get('enqueue.producer');
 
-        $traces = $producer->getTopicTraces('event.test_async_subscriber');
+        $traces = $producer->getCommandTraces('symfony_events');
 
         $this->assertCount(3, $traces);
     }
@@ -89,7 +89,7 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var TraceableProducer $producer */
         $producer = $this->container->get('enqueue.producer');
 
-        $traces = $producer->getTopicTraces('event.test_async_subscriber');
+        $traces = $producer->getCommandTraces('symfony_events');
 
         $this->assertCount(1, $traces);
     }

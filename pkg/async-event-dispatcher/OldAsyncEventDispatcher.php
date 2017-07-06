@@ -1,13 +1,13 @@
 <?php
 
-namespace Enqueue\Bundle\Events;
+namespace Enqueue\AsyncEventDispatcher;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProxyEventDispatcher extends ContainerAwareEventDispatcher
+class OldAsyncEventDispatcher extends ContainerAwareEventDispatcher
 {
     /**
      * @var EventDispatcherInterface
