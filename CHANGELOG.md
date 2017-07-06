@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.5.3](https://github.com/php-enqueue/enqueue-dev/tree/0.5.3) (2017-07-06)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.2...0.5.3)
+
+- \[bundle\] Extend EventDispatcher instead of container aware one. [\#129](https://github.com/php-enqueue/enqueue-dev/pull/129) ([makasim](https://github.com/makasim))
+
+- \[Symfony\] Symfony 3.3 / 4.x compatibility for ProxyEventDispatcher [\#109](https://github.com/php-enqueue/enqueue-dev/issues/109)
+
 ## [0.5.2](https://github.com/php-enqueue/enqueue-dev/tree/0.5.2) (2017-07-03)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.1...0.5.2)
 
