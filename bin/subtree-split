@@ -58,6 +58,7 @@ remote sqs git@github.com:php-enqueue/sqs.git
 remote enqueue-bundle git@github.com:php-enqueue/enqueue-bundle.git
 remote job-queue git@github.com:php-enqueue/job-queue.git
 remote test git@github.com:php-enqueue/test.git
+remote async-event-dispatcher git@github.com:php-enqueue/async-event-dispatcher.git
 
 split 'pkg/psr-queue' psr-queue
 split 'pkg/enqueue' enqueue
@@ -74,3 +75,4 @@ split 'pkg/sqs' sqs
 split 'pkg/enqueue-bundle' enqueue-bundle
 split 'pkg/job-queue' job-queue
 split 'pkg/test' test
+split 'pkg/async-event-dispatcher' async-event-dispatcher
