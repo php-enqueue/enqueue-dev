@@ -29,16 +29,6 @@ interface TransportFactoryInterface
     public function createContext(ContainerBuilder $container, array $config);
 
     /**
-     * @deprecated since 0.5 will be removed in 0.6. The method will be moved to DriverFactoryInterface
-     *
-     * @param ContainerBuilder $container
-     * @param array            $config
-     *
-     * @return string The method must return a driver service id
-     */
-    public function createDriver(ContainerBuilder $container, array $config);
-
-    /**
      * @return string
      */
     public function getName();
