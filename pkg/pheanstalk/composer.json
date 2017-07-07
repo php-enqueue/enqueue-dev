@@ -20,6 +20,7 @@
         "enqueue/test": "^0.6@dev",
         "enqueue/enqueue": "^0.6@dev",
         "enqueue/null": "^0.6@dev",
+        "queue-interop/queue-spec": "^0.5@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
     },
