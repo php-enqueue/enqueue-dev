@@ -12,8 +12,8 @@
     ],
     "require": {
         "php": ">=5.6",
-        "enqueue/psr-queue": "^0.5@dev",
-        "enqueue/null": "^0.5@dev",
+        "enqueue/psr-queue": "^0.6@dev",
+        "enqueue/null": "^0.6@dev",
         "ramsey/uuid": "^2|^3.5"
     },
     "require-dev": {
@@ -23,11 +23,11 @@
         "symfony/config": "^2.8|^3",
         "symfony/event-dispatcher": "^2.8|^3",
         "symfony/http-kernel": "^2.8|^3",
-        "enqueue/amqp-ext": "^0.5@dev",
-        "enqueue/dbal": "^0.5@dev",
-        "enqueue/fs": "^0.5@dev",
-        "enqueue/test": "^0.5@dev",
-        "enqueue/simple-client": "^0.5@dev",
+        "enqueue/amqp-ext": "^0.6@dev",
+        "enqueue/dbal": "^0.6@dev",
+        "enqueue/fs": "^0.6@dev",
+        "enqueue/test": "^0.6@dev",
+        "enqueue/simple-client": "^0.6@dev",
         "empi89/php-amqp-stubs": "*@dev"
     },
     "suggest": {
@@ -51,7 +51,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.5.x-dev"
+            "dev-master": "0.6.x-dev"
         }
     }
 }

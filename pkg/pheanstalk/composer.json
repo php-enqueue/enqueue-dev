@@ -13,13 +13,13 @@
     "require": {
         "php": ">=5.6",
         "pda/pheanstalk": "^3",
-        "enqueue/psr-queue": "^0.5@dev"
+        "enqueue/psr-queue": "^0.6@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
-        "enqueue/test": "^0.5@dev",
-        "enqueue/enqueue": "^0.5@dev",
-        "enqueue/null": "^0.5@dev",
+        "enqueue/test": "^0.6@dev",
+        "enqueue/enqueue": "^0.6@dev",
+        "enqueue/null": "^0.6@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
     },
@@ -35,7 +35,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.5.x-dev"
+            "dev-master": "0.6.x-dev"
         }
     }
 }
