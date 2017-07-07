@@ -64,6 +64,7 @@ class SqsProducer implements PsrProducer
             ],
             'MessageBody' => $body,
             'QueueUrl' => $this->context->getQueueUrl($destination),
+            'DelaySeconds' => (int) $this->deliveryDelay / 1000,
         ];
 
         if ($message->getDelaySeconds()) {
