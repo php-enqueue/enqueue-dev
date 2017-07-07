@@ -2,6 +2,7 @@
 
 namespace Enqueue\Pheanstalk;
 
+use Interop\Queue\CompletionListener;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -11,6 +12,16 @@ use Pheanstalk\Pheanstalk;
 
 class PheanstalkProducer implements PsrProducer
 {
+    /**
+     * @var CompletionListener
+     */
+    private $completionListener;
+
+    /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
     /**
      * @var Pheanstalk
      */
@@ -50,5 +61,37 @@ class PheanstalkProducer implements PsrProducer
             $message->getDelay(),
             $message->getTimeToRun()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCompletionListener(CompletionListener $listener = null)
+    {
+        $this->completionListener = $listener;
+    }
+
+    /**
+     * @return CompletionListener|null
+     */
+    public function getCompletionListener()
+    {
+        return $this->completionListener;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

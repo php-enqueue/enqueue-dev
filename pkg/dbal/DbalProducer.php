@@ -4,6 +4,7 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
 use Enqueue\Util\JSON;
+use Interop\Queue\CompletionListener;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
@@ -13,6 +14,16 @@ use Interop\Queue\PsrProducer;
 
 class DbalProducer implements PsrProducer
 {
+    /**
+     * @var CompletionListener
+     */
+    private $completionListener;
+
+    /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
     /**
      * @var DbalContext
      */
@@ -84,5 +95,37 @@ class DbalProducer implements PsrProducer
         } catch (\Exception $e) {
             throw new Exception('The transport fails to send the message due to some internal error.', null, $e);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCompletionListener(CompletionListener $listener = null)
+    {
+        $this->completionListener = $listener;
+    }
+
+    /**
+     * @return CompletionListener|null
+     */
+    public function getCompletionListener()
+    {
+        return $this->completionListener;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

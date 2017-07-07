@@ -2,6 +2,7 @@
 
 namespace Enqueue\Fs;
 
+use Interop\Queue\CompletionListener;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -11,6 +12,16 @@ use Makasim\File\TempFile;
 
 class FsProducer implements PsrProducer
 {
+    /**
+     * @var CompletionListener
+     */
+    private $completionListener;
+
+    /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
     /**
      * @var FsContext
      */
@@ -55,5 +66,37 @@ class FsProducer implements PsrProducer
 
             fwrite($file, $rawMessage);
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCompletionListener(CompletionListener $listener = null)
+    {
+        $this->completionListener = $listener;
+    }
+
+    /**
+     * @return CompletionListener|null
+     */
+    public function getCompletionListener()
+    {
+        return $this->completionListener;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }
