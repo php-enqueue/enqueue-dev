@@ -29,22 +29,6 @@ class NullProducer implements PsrProducer
     /**
      * {@inheritdoc}
      */
-    public function setCompletionListener(CompletionListener $listener = null)
-    {
-        $this->completionListener = $listener;
-    }
-
-    /**
-     * @return CompletionListener|null
-     */
-    public function getCompletionListener()
-    {
-        return $this->completionListener;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getDeliveryDelay()
     {
         return $this->deliveryDelay;
