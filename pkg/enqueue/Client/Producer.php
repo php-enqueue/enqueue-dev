@@ -6,7 +6,7 @@ use Enqueue\Rpc\RpcFactory;
 use Enqueue\Util\JSON;
 use Enqueue\Util\UUID;
 
-class Producer implements ProducerInterface, ProducerV2Interface
+class Producer implements ProducerInterface
 {
     /**
      * @var DriverInterface
