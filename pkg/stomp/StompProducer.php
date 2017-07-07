@@ -2,7 +2,6 @@
 
 namespace Enqueue\Stomp;
 
-use Interop\Queue\CompletionListener;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -13,11 +12,6 @@ use Stomp\Transport\Message as StompLibMessage;
 
 class StompProducer implements PsrProducer
 {
-    /**
-     * @var CompletionListener
-     */
-    private $completionListener;
-
     /**
      * @var float
      */

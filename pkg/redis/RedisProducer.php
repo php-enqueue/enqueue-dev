@@ -2,7 +2,6 @@
 
 namespace Enqueue\Redis;
 
-use Interop\Queue\CompletionListener;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -11,11 +10,6 @@ use Interop\Queue\PsrProducer;
 
 class RedisProducer implements PsrProducer
 {
-    /**
-     * @var CompletionListener
-     */
-    private $completionListener;
-
     /**
      * @var float
      */

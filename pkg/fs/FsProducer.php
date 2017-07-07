@@ -2,7 +2,6 @@
 
 namespace Enqueue\Fs;
 
-use Interop\Queue\CompletionListener;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -12,11 +11,6 @@ use Makasim\File\TempFile;
 
 class FsProducer implements PsrProducer
 {
-    /**
-     * @var CompletionListener
-     */
-    private $completionListener;
-
     /**
      * @var float
      */

@@ -2,18 +2,12 @@
 
 namespace Enqueue\Null;
 
-use Interop\Queue\CompletionListener;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
 
 class NullProducer implements PsrProducer
 {
-    /**
-     * @var CompletionListener
-     */
-    private $completionListener;
-
     /**
      * @var float
      */

@@ -4,7 +4,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
 use Enqueue\Util\JSON;
-use Interop\Queue\CompletionListener;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
@@ -14,11 +13,6 @@ use Interop\Queue\PsrProducer;
 
 class DbalProducer implements PsrProducer
 {
-    /**
-     * @var CompletionListener
-     */
-    private $completionListener;
-
     /**
      * @var float
      */
