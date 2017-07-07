@@ -2,7 +2,7 @@
 
 namespace Enqueue\Pheanstalk;
 
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 use Pheanstalk\Pheanstalk;
 
 class PheanstalkConnectionFactory implements PsrConnectionFactory

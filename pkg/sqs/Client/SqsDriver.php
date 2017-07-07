@@ -7,10 +7,10 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
+use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

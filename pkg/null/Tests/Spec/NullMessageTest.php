@@ -3,7 +3,7 @@
 namespace Enqueue\Null\Tests\Spec;
 
 use Enqueue\Null\NullMessage;
-use Enqueue\Psr\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\PsrMessageSpec;
 
 class NullMessageTest extends PsrMessageSpec
 {

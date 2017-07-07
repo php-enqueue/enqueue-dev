@@ -10,7 +10,7 @@ use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

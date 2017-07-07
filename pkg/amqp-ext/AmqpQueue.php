@@ -2,7 +2,7 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\PsrQueue;
+use Interop\Queue\PsrQueue;
 
 class AmqpQueue implements PsrQueue
 {

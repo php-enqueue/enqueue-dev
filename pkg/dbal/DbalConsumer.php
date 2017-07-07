@@ -4,10 +4,10 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Util\JSON;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrMessage;
 
 class DbalConsumer implements PsrConsumer
 {

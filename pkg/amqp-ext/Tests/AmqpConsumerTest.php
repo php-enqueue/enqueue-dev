@@ -6,8 +6,8 @@ use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\Buffer;
-use Enqueue\Psr\PsrConsumer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConsumer;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConsumerTest extends TestCase

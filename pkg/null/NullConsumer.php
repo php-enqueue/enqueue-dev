@@ -2,9 +2,9 @@
 
 namespace Enqueue\Null;
 
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
 
 class NullConsumer implements PsrConsumer
 {

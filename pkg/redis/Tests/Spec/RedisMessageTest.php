@@ -2,8 +2,8 @@
 
 namespace Enqueue\Redis\Tests\Spec;
 
-use Enqueue\Psr\Spec\PsrMessageSpec;
 use Enqueue\Redis\RedisMessage;
+use Interop\Queue\Spec\PsrMessageSpec;
 
 class RedisMessageTest extends PsrMessageSpec
 {

@@ -3,8 +3,8 @@
 namespace Enqueue\Gearman\Tests\Spec;
 
 use Enqueue\Gearman\GearmanConnectionFactory;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\Spec\SendToTopicAndReceiveFromQueueSpec;
+use Interop\Queue\PsrContext;
+use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
 /**
  * @group functional

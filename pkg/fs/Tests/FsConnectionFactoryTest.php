@@ -4,8 +4,8 @@ namespace Enqueue\Fs\Tests;
 
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
-use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConnectionFactory;
 
 class FsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {

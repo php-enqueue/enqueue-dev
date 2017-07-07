@@ -2,7 +2,7 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 class FsConnectionFactory implements PsrConnectionFactory
 {

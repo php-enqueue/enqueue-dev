@@ -2,7 +2,7 @@
 
 namespace Enqueue\Sqs;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 class SqsMessage implements PsrMessage
 {

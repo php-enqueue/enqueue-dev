@@ -39,9 +39,9 @@ To consume messages you have to define a processor class first:
 <?php
 // app/code/local/Acme/Module/Helper/Async/Foo.php
 
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 class Acme_Module_Helper_Async_Foo implements PsrProcessor
 {

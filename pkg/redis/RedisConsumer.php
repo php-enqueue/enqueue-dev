@@ -2,9 +2,9 @@
 
 namespace Enqueue\Redis;
 
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrMessage;
 
 class RedisConsumer implements PsrConsumer
 {

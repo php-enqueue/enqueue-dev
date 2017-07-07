@@ -2,8 +2,8 @@
 
 namespace Enqueue\Sqs;
 
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 
 class SqsDestination implements PsrTopic, PsrQueue
 {

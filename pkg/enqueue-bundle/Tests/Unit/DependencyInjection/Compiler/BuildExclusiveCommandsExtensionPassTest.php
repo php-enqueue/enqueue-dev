@@ -7,8 +7,8 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ExclusiveButQueu
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ExclusiveCommandSubscriber;
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProcessor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

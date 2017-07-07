@@ -2,7 +2,7 @@
 
 namespace Enqueue\Redis;
 
-use Enqueue\Psr\Exception;
+use Interop\Queue\Exception;
 
 class ServerException extends Exception
 {

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Null;
 
-use Enqueue\Psr\PsrQueue;
+use Interop\Queue\PsrQueue;
 
 class NullQueue implements PsrQueue
 {

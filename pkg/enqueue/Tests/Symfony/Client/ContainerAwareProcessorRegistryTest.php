@@ -3,9 +3,9 @@
 namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\ProcessorRegistryInterface;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Symfony\Client\ContainerAwareProcessorRegistry;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProcessor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 

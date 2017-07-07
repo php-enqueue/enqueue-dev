@@ -4,8 +4,8 @@ namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\Spec\SendToAndReceiveFromQueueSpec;
+use Interop\Queue\PsrContext;
+use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
 /**
  * @group functional

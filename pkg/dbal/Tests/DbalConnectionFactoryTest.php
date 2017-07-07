@@ -5,8 +5,8 @@ namespace Enqueue\Dbal\Tests;
 use Doctrine\DBAL\Connection;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
-use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConnectionFactory;
 
 class DbalConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,9 +2,9 @@
 
 namespace Enqueue\Null;
 
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProducer;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 
 class NullProducer implements PsrProducer
 {

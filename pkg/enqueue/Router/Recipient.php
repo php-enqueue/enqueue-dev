@@ -2,8 +2,8 @@
 
 namespace Enqueue\Router;
 
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
 
 class Recipient
 {

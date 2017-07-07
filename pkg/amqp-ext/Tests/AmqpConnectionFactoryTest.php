@@ -4,8 +4,8 @@ namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConnectionFactoryTest extends TestCase

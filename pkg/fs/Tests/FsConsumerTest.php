@@ -7,8 +7,8 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
-use Enqueue\Psr\PsrConsumer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConsumer;
 use Makasim\File\TempFile;
 
 class FsConsumerTest extends \PHPUnit\Framework\TestCase

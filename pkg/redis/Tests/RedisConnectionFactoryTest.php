@@ -2,10 +2,10 @@
 
 namespace Enqueue\Redis\Tests;
 
-use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConnectionFactory;
 
 class RedisConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {

@@ -2,10 +2,10 @@
 
 namespace Enqueue\Sqs\Tests;
 
-use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConnectionFactory;
 
 class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Stomp\Transport\Frame;
 
 class StompMessage implements PsrMessage

@@ -6,7 +6,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\QueueSubscriberInterface;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

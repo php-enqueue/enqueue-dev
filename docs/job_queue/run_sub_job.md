@@ -7,9 +7,9 @@ They will be executed in parallel.
 ```php
 <?php
 use Enqueue\Client\ProducerInterface;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Util\JSON;

@@ -3,7 +3,7 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
-use Enqueue\Psr\Spec\PsrConnectionFactorySpec;
+use Interop\Queue\Spec\PsrConnectionFactorySpec;
 
 class PheanstalkConnectionFactoryTest extends PsrConnectionFactorySpec
 {

@@ -2,8 +2,8 @@
 
 namespace Enqueue\Sqs\Tests\Spec;
 
-use Enqueue\Psr\Spec\PsrMessageSpec;
 use Enqueue\Sqs\SqsMessage;
+use Interop\Queue\Spec\PsrMessageSpec;
 
 class SqsMessageTest extends PsrMessageSpec
 {

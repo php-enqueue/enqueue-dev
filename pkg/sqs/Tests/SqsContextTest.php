@@ -4,15 +4,15 @@ namespace Enqueue\Sqs\Tests;
 
 use Aws\Result;
 use Aws\Sqs\SqsClient;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrQueue;
 use Enqueue\Sqs\SqsConsumer;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Enqueue\Sqs\SqsProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrQueue;
 
 class SqsContextTest extends \PHPUnit\Framework\TestCase
 {

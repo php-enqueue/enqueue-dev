@@ -5,11 +5,11 @@ namespace Enqueue\Tests\Rpc;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
 class RpcClientTest extends TestCase

@@ -17,14 +17,14 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Rpc\Promise;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SimpleClient

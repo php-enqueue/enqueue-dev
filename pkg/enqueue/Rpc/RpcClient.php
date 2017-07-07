@@ -2,10 +2,10 @@
 
 namespace Enqueue\Rpc;
 
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Util\UUID;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
 
 class RpcClient
 {

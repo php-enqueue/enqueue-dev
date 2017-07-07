@@ -3,7 +3,7 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkMessage;
-use Enqueue\Psr\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\PsrMessageSpec;
 
 class PheanstalkMessageTest extends PsrMessageSpec
 {

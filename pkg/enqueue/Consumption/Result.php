@@ -2,8 +2,8 @@
 
 namespace Enqueue\Consumption;
 
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 class Result
 {

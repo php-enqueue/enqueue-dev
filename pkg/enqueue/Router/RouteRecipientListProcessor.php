@@ -2,9 +2,9 @@
 
 namespace Enqueue\Router;
 
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 class RouteRecipientListProcessor implements PsrProcessor
 {

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 class FsMessage implements PsrMessage, \JsonSerializable
 {

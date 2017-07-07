@@ -8,9 +8,9 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 

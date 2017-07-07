@@ -4,8 +4,8 @@ namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\ProcessorRegistryInterface;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProcessor;
 use PHPUnit\Framework\TestCase;
 
 class ArrayProcessorRegistryTest extends TestCase

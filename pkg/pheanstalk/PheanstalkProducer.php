@@ -2,11 +2,11 @@
 
 namespace Enqueue\Pheanstalk;
 
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProducer;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 use Pheanstalk\Pheanstalk;
 
 class PheanstalkProducer implements PsrProducer

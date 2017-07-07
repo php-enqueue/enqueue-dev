@@ -10,7 +10,7 @@ use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
 use Enqueue\Null\NullMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrContext;
 use Psr\Log\LoggerInterface;
 
 class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase

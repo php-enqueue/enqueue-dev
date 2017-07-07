@@ -2,8 +2,8 @@
 
 namespace Enqueue\Null;
 
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrDestination;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrDestination;
 
 class NullContext implements PsrContext
 {

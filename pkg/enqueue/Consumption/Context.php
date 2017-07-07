@@ -3,11 +3,11 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrQueue;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 
 class Context

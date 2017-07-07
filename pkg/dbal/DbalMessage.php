@@ -2,7 +2,7 @@
 
 namespace Enqueue\Dbal;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 class DbalMessage implements PsrMessage
 {

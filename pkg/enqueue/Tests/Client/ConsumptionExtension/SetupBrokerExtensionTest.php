@@ -6,8 +6,8 @@ use Enqueue\Client\ConsumptionExtension\SetupBrokerExtension;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 

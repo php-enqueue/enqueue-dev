@@ -3,7 +3,7 @@
 namespace Enqueue\Fs\Tests\Spec;
 
 use Enqueue\Fs\FsMessage;
-use Enqueue\Psr\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\PsrMessageSpec;
 
 class FsMessageTest extends PsrMessageSpec
 {

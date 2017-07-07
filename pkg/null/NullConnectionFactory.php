@@ -2,7 +2,7 @@
 
 namespace Enqueue\Null;
 
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 class NullConnectionFactory implements PsrConnectionFactory
 {

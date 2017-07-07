@@ -8,9 +8,9 @@ use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
 use Makasim\File\TempFile;
 
 class FsContextTest extends \PHPUnit\Framework\TestCase

@@ -9,7 +9,7 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

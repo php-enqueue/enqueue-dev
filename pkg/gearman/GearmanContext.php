@@ -2,9 +2,9 @@
 
 namespace Enqueue\Gearman;
 
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrDestination;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrDestination;
 
 class GearmanContext implements PsrContext
 {

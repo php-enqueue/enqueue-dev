@@ -33,7 +33,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 require_once __DIR__.'/vendor/autoload.php';
 
-// it could be any other enqueue/psr-queue compatible context.
+// it could be any other queue-interop/queue-interop compatible context.
 $context = (new FsConnectionFactory('file://'.__DIR__.'/queues'))->createContext();
 $eventQueue = $context->createQueue('symfony_events');
 
@@ -81,7 +81,7 @@ $dispatcher->dispatch('the_event', new GenericEvent('theSubject'));
 
 // consume.php
 
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 
 require_once __DIR__.'/vendor/autoload.php';
 include __DIR__.'/config.php';

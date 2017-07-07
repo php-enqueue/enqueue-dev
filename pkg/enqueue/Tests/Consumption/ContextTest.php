@@ -5,11 +5,11 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 

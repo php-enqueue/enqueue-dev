@@ -3,8 +3,8 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\Spec\SendToTopicAndReceiveFromQueueSpec;
+use Interop\Queue\PsrContext;
+use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
 /**
  * @group functional

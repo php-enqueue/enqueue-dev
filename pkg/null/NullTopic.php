@@ -2,7 +2,7 @@
 
 namespace Enqueue\Null;
 
-use Enqueue\Psr\PsrTopic;
+use Interop\Queue\PsrTopic;
 
 class NullTopic implements PsrTopic
 {

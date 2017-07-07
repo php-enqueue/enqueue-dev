@@ -7,12 +7,12 @@ use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
-use Enqueue\Psr\Exception;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Exception;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrProducer;
 
 class DbalProducerTest extends \PHPUnit_Framework_TestCase
 {

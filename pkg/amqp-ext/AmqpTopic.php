@@ -2,7 +2,7 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\PsrTopic;
+use Interop\Queue\PsrTopic;
 
 class AmqpTopic implements PsrTopic
 {

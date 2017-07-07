@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional;
 
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrContext;
 
 /**
  * @group functional

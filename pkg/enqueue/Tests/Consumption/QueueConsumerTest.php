@@ -10,12 +10,12 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrQueue;
 use Enqueue\Tests\Consumption\Mock\BreakCycleExtension;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrQueue;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -95,7 +95,7 @@ class QueueConsumerTest extends TestCase
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The argument must be an instance of Enqueue\Psr\PsrQueue but got stdClass.');
+        $this->expectExceptionMessage('The argument must be an instance of Interop\Queue\PsrQueue but got stdClass.');
         $consumer->bind(new \stdClass(), $processorMock);
     }
 
@@ -104,7 +104,7 @@ class QueueConsumerTest extends TestCase
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The argument must be an instance of Enqueue\Psr\PsrProcessor but got stdClass.');
+        $this->expectExceptionMessage('The argument must be an instance of Interop\Queue\PsrProcessor but got stdClass.');
         $consumer->bind(new NullQueue(''), new \stdClass());
     }
 

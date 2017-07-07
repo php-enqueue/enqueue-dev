@@ -36,7 +36,7 @@ It is handy to subscribe on event messages. It allows to keep subscription login
 namespace AppBundle\Async;
 
 use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 
 class SayHelloProcessor implements PsrProcessor, TopicSubscriberInterface
 {
@@ -52,7 +52,7 @@ On the topic subscriber you can also define queue and processor name:
 ```php
 <?php
 use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 
 class SayHelloProcessor implements PsrProcessor, TopicSubscriberInterface
 {
@@ -89,7 +89,7 @@ If you send a message using ProducerV2::sendCommand('aCommandName') method it wi
 namespace AppBundle\Async;
 
 use Enqueue\Client\CommandSubscriberInterface;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 
 class SayHelloProcessor implements PsrProcessor, CommandSubscriberInterface
 {
@@ -105,7 +105,7 @@ On the command subscriber you can also define additional settings such as queue 
 ```php
 <?php
 use Enqueue\Client\CommandSubscriberInterface;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 
 class SayHelloProcessor implements PsrProcessor, CommandSubscriberInterface
 {
@@ -124,7 +124,7 @@ In the container you can just add the tag `enqueue.client.message_processor` and
 ```php
 <?php
 use Enqueue\Client\CommandSubscriberInterface;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 
 class SayHelloProcessor implements PsrProcessor, CommandSubscriberInterface
 {

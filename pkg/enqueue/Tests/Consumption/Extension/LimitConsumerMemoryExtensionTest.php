@@ -4,9 +4,9 @@ namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\LimitConsumerMemoryExtension;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

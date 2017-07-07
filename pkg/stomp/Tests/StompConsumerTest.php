@@ -2,14 +2,14 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrMessage;
 use Stomp\Protocol\Protocol;
 use Stomp\Transport\Frame;
 

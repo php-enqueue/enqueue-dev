@@ -2,7 +2,7 @@
 
 namespace Enqueue\Pheanstalk;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
 

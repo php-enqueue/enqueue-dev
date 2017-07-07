@@ -3,9 +3,9 @@
 namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Client\TopicSubscriberInterface;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 class TestProcessor implements PsrProcessor, TopicSubscriberInterface
 {

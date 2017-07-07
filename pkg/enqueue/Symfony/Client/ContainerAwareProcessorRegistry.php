@@ -3,7 +3,7 @@
 namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\ProcessorRegistryInterface;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 

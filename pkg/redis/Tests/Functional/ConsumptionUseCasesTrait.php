@@ -8,8 +8,8 @@ use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Redis\RedisContext;
+use Interop\Queue\PsrMessage;
 
 trait ConsumptionUseCasesTrait
 {

@@ -9,8 +9,8 @@ use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProcessor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

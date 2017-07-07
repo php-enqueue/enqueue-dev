@@ -3,7 +3,7 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkContext;
-use Enqueue\Psr\Spec\PsrContextSpec;
+use Interop\Queue\Spec\PsrContextSpec;
 use Pheanstalk\Pheanstalk;
 
 class PheanstalkContextTest extends PsrContextSpec

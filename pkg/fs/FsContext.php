@@ -2,10 +2,10 @@
 
 namespace Enqueue\Fs;
 
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrQueue;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrQueue;
 use Makasim\File\TempFile;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\LockHandler;

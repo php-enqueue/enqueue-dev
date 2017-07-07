@@ -8,12 +8,12 @@ use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use Enqueue\Test\RabbitmqStompExtension;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 /**
  * @group functional

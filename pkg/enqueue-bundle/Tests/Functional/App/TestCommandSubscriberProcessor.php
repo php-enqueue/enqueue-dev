@@ -4,9 +4,9 @@ namespace Enqueue\Bundle\Tests\Functional\App;
 
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 class TestCommandSubscriberProcessor implements PsrProcessor, CommandSubscriberInterface
 {

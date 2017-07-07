@@ -5,9 +5,9 @@ Here's example:
 
 ```php
 <?php
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 
 class SendMailProcessor implements PsrProcessor
 {
@@ -26,9 +26,9 @@ Sometimes you have to reject messages explicitly.
 
 ```php
 <?php
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 use Enqueue\Util\JSON;
 
 class SendMailProcessor implements PsrProcessor
@@ -53,9 +53,9 @@ If it returns true than there was attempt to process message.
    
 ```php
 <?php
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 
 class SendMailProcessor implements PsrProcessor
 {
@@ -76,9 +76,9 @@ The second argument is your context. You can use it to send messages to other qu
  
 ```php
 <?php
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 
 class SendMailProcessor implements PsrProcessor
 {
@@ -99,9 +99,9 @@ The consumption component provide some useful extensions, for example there is a
  
 ```php
 <?php
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\ReplyExtension;

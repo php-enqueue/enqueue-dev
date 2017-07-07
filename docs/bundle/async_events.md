@@ -88,7 +88,7 @@ namespace AcmeBundle\Listener;
 
 use Enqueue\Client\Message;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Enqueue\Util\JSON;
 use Symfony\Component\EventDispatcher\Event;
 use Enqueue\AsyncEventDispatcher\EventTransformer;

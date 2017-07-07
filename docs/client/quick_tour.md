@@ -51,8 +51,8 @@ $client->send('a_bar_topic', new class() implements \JsonSerializable {
 ```php
 <?php
 
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 /** @var \Enqueue\SimpleClient\SimpleClient $client */
 

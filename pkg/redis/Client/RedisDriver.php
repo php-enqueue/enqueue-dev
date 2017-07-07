@@ -7,10 +7,10 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
+use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
 
 class RedisDriver implements DriverInterface

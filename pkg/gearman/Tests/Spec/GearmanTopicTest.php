@@ -4,7 +4,7 @@ namespace Enqueue\Gearman\Tests\Spec;
 
 use Enqueue\Gearman\GearmanDestination;
 use Enqueue\Gearman\Tests\SkipIfGearmanExtensionIsNotInstalledTrait;
-use Enqueue\Psr\Spec\PsrTopicSpec;
+use Interop\Queue\Spec\PsrTopicSpec;
 
 class GearmanTopicTest extends PsrTopicSpec
 {

@@ -8,9 +8,9 @@ use Enqueue\AsyncEventDispatcher\AsyncProcessor;
 use Enqueue\AsyncEventDispatcher\SimpleRegistry;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncEventTransformer;
 use Enqueue\Fs\FsConnectionFactory;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrQueue;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrQueue;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -54,7 +54,7 @@ class UseCasesTest extends TestCase
     {
         (new Filesystem())->remove(__DIR__.'/queues/');
 
-        // it could be any other enqueue/psr-queue compatible context.
+        // it could be any other queue-interop/queue-interop compatible context.
         $this->context = $context = (new FsConnectionFactory('file://'.__DIR__.'/queues'))->createContext();
         $this->queue = $queue = $context->createQueue('symfony_events');
 

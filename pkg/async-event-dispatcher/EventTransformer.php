@@ -2,7 +2,7 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Symfony\Component\EventDispatcher\Event;
 
 interface EventTransformer

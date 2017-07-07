@@ -3,10 +3,10 @@
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalDestination;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 
 class DbalDestinationTest extends \PHPUnit_Framework_TestCase
 {

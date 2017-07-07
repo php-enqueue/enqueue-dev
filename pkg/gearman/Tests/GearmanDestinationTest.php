@@ -3,9 +3,9 @@
 namespace Enqueue\Gearman\Tests;
 
 use Enqueue\Gearman\GearmanDestination;
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 use PHPUnit\Framework\TestCase;
 
 class GearmanDestinationTest extends TestCase

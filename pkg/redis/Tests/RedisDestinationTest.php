@@ -2,10 +2,10 @@
 
 namespace Enqueue\Redis\Tests;
 
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 
 class RedisDestinationTest extends \PHPUnit\Framework\TestCase
 {

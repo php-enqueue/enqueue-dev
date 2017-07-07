@@ -4,7 +4,7 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 class DbalConnectionFactory implements PsrConnectionFactory
 {

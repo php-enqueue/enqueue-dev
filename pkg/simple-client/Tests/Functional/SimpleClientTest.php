@@ -6,10 +6,10 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Interop\Queue\PsrMessage;
 use PHPUnit\Framework\TestCase;
 
 /**

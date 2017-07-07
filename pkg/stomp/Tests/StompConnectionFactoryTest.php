@@ -2,10 +2,10 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConnectionFactory;
 
 class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {

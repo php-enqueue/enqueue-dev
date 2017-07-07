@@ -2,11 +2,11 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 
 class AmqpContext implements PsrContext
 {
