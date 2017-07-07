@@ -3,7 +3,7 @@
 namespace Enqueue\Dbal\Tests\Spec;
 
 use Enqueue\Dbal\DbalMessage;
-use Enqueue\Psr\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\PsrMessageSpec;
 
 class DbalMessageTest extends PsrMessageSpec
 {

@@ -14,9 +14,9 @@ Guaranty that there is only single job running with such name.
 
 ```php
 <?php 
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrContext;
 use Enqueue\Util\JSON;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
@@ -57,9 +57,9 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Util\JSON;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
 
 class Step1Processor implements PsrProcessor 
 {
@@ -140,9 +140,9 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\DependentJobService;
 use Enqueue\Util\JSON;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
 
 class ReindexProcessor implements PsrProcessor 
 {

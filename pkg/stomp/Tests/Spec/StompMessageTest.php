@@ -2,8 +2,8 @@
 
 namespace Enqueue\Stomp\Tests\Spec;
 
-use Enqueue\Psr\Spec\PsrMessageSpec;
 use Enqueue\Stomp\StompMessage;
+use Interop\Queue\Spec\PsrMessageSpec;
 
 class StompMessageTest extends PsrMessageSpec
 {

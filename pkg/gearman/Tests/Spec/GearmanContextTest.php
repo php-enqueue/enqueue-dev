@@ -3,7 +3,7 @@
 namespace Enqueue\Gearman\Tests\Spec;
 
 use Enqueue\Gearman\GearmanConnectionFactory;
-use Enqueue\Psr\Spec\PsrContextSpec;
+use Interop\Queue\Spec\PsrContextSpec;
 
 /**
  * @group functional

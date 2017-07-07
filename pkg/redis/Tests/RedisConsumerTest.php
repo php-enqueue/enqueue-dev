@@ -2,7 +2,6 @@
 
 namespace Enqueue\Redis\Tests;
 
-use Enqueue\Psr\PsrConsumer;
 use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisConsumer;
 use Enqueue\Redis\RedisContext;
@@ -10,6 +9,7 @@ use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Redis\RedisProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConsumer;
 
 class RedisConsumerTest extends \PHPUnit\Framework\TestCase
 {

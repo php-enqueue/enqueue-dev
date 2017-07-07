@@ -43,7 +43,6 @@ function remote()
     git remote add $1 $2 || true
 }
 
-remote psr-queue git@github.com:php-enqueue/psr-queue.git
 remote enqueue git@github.com:php-enqueue/enqueue.git
 remote simple-client git@github.com:php-enqueue/simple-client.git
 remote stomp git@github.com:php-enqueue/stomp.git
@@ -60,7 +59,6 @@ remote job-queue git@github.com:php-enqueue/job-queue.git
 remote test git@github.com:php-enqueue/test.git
 remote async-event-dispatcher git@github.com:php-enqueue/async-event-dispatcher.git
 
-split 'pkg/psr-queue' psr-queue
 split 'pkg/enqueue' enqueue
 split 'pkg/simple-client' simple-client
 split 'pkg/stomp' stomp

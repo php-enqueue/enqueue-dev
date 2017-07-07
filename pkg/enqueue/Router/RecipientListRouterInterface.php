@@ -2,7 +2,7 @@
 
 namespace Enqueue\Router;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 interface RecipientListRouterInterface
 {

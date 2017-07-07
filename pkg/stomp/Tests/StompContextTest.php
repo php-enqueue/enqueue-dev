@@ -2,9 +2,6 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrQueue;
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompContext;
@@ -12,6 +9,9 @@ use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrQueue;
 
 class StompContextTest extends \PHPUnit\Framework\TestCase
 {

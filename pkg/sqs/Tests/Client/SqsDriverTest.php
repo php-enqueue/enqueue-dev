@@ -8,12 +8,12 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMeta;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Sqs\Client\SqsDriver;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
 class SqsDriverTest extends TestCase

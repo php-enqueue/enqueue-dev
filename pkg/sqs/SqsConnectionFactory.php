@@ -3,7 +3,7 @@
 namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 class SqsConnectionFactory implements PsrConnectionFactory
 {

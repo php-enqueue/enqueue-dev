@@ -9,8 +9,8 @@ use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
+use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 

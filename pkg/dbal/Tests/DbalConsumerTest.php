@@ -8,10 +8,10 @@ use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrMessage;
 
 class DbalConsumerTest extends \PHPUnit_Framework_TestCase
 {

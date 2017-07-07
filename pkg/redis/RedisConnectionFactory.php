@@ -2,7 +2,7 @@
 
 namespace Enqueue\Redis;
 
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 use Predis\Client;
 
 class RedisConnectionFactory implements PsrConnectionFactory

@@ -2,10 +2,10 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 
 class StompDestinationTest extends \PHPUnit\Framework\TestCase
 {

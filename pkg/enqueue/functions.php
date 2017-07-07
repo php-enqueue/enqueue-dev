@@ -9,8 +9,8 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
-use Enqueue\Psr\PsrConnectionFactory;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 /**
  * @param string $dsn

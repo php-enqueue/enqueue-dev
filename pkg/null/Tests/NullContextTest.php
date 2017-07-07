@@ -8,8 +8,8 @@ use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullProducer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 
 class NullContextTest extends TestCase

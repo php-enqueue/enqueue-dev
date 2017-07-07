@@ -2,7 +2,7 @@
 
 namespace Enqueue\Rpc;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 class Promise
 {

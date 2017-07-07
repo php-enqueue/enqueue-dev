@@ -7,9 +7,9 @@ use Enqueue\Null\NullQueue;
 use Enqueue\Pheanstalk\PheanstalkDestination;
 use Enqueue\Pheanstalk\PheanstalkMessage;
 use Enqueue\Pheanstalk\PheanstalkProducer;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\InvalidMessageException;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
 use Pheanstalk\Pheanstalk;
 use PHPUnit\Framework\TestCase;
 

@@ -2,7 +2,7 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 class AmqpMessage implements PsrMessage
 {

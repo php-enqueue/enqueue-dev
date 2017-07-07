@@ -20,7 +20,7 @@ Produce a message:
 
 ```php
 <?php
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 /** @var PsrConnectionFactory $connectionFactory **/
 $psrContext = $connectionFactory->createContext();
@@ -37,7 +37,7 @@ Consume a message:
 
 ```php
 <?php
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 /** @var PsrConnectionFactory $connectionFactory **/
 $psrContext = $connectionFactory->createContext();
@@ -64,9 +64,9 @@ The `consume` method starts the consumption process which last as long as it is 
 
 ```php
 <?php
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrContext;
 use Enqueue\Consumption\QueueConsumer;
 
 /** @var PsrContext $psrContext */
@@ -132,8 +132,8 @@ It simplifies a server side of RPC.
 
 ```php
 <?php
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\ReplyExtension;
@@ -168,7 +168,7 @@ Here's an example of how you can send and consume event messages.
 ```php
 <?php
 use Enqueue\SimpleClient\SimpleClient;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 // composer require enqueue/amqp-ext
 $client = new SimpleClient('amqp://');
@@ -191,8 +191,8 @@ and command messages:
 ```php
 <?php
 use Enqueue\SimpleClient\SimpleClient;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 use Enqueue\Client\Config;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
@@ -244,7 +244,7 @@ Let's see how you can use consumption one:
 // app.php
 
 use Symfony\Component\Console\Application;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 

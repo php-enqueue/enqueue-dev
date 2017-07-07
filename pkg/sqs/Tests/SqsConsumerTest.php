@@ -4,15 +4,15 @@ namespace Enqueue\Sqs\Tests;
 
 use Aws\Result;
 use Aws\Sqs\SqsClient;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Sqs\SqsConsumer;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Enqueue\Sqs\SqsProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrMessage;
 
 class SqsConsumerTest extends \PHPUnit_Framework_TestCase
 {

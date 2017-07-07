@@ -3,8 +3,8 @@
 namespace Enqueue\Null\Tests;
 
 use Enqueue\Null\NullMessage;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrMessage;
 use PHPUnit\Framework\TestCase;
 
 class NullMessageTest extends TestCase

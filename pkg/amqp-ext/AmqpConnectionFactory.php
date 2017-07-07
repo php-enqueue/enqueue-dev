@@ -2,7 +2,7 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 class AmqpConnectionFactory implements PsrConnectionFactory
 {

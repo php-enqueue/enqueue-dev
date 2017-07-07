@@ -2,7 +2,7 @@
 
 namespace Enqueue\Gearman;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Pheanstalk\Pheanstalk;
 
 class GearmanMessage implements PsrMessage, \JsonSerializable

@@ -9,8 +9,8 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 
 class SetRouterPropertiesExtensionTest extends TestCase

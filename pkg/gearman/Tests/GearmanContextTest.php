@@ -4,9 +4,9 @@ namespace Enqueue\Gearman\Tests;
 
 use Enqueue\Gearman\GearmanContext;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 
 /**

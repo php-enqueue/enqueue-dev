@@ -7,12 +7,12 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Redis\Client\RedisDriver;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
 class RedisDriverTest extends TestCase

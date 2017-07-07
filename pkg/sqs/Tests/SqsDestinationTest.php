@@ -2,10 +2,10 @@
 
 namespace Enqueue\Sqs\Tests;
 
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 
 class SqsDestinationTest extends \PHPUnit_Framework_TestCase
 {

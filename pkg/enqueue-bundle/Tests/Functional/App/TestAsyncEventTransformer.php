@@ -3,9 +3,9 @@
 namespace Enqueue\Bundle\Tests\Functional\App;
 
 use Enqueue\AsyncEventDispatcher\EventTransformer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Util\JSON;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

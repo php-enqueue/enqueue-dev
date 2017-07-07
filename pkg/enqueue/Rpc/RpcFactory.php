@@ -2,7 +2,7 @@
 
 namespace Enqueue\Rpc;
 
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrContext;
 
 class RpcFactory
 {

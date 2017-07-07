@@ -4,8 +4,8 @@ namespace Enqueue\Null\Tests;
 
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\NullContext;
-use Enqueue\Psr\PsrConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class NullConnectionFactoryTest extends TestCase

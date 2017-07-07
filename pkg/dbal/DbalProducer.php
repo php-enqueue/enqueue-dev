@@ -3,13 +3,13 @@
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
-use Enqueue\Psr\Exception;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Util\JSON;
+use Interop\Queue\Exception;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 
 class DbalProducer implements PsrProducer
 {

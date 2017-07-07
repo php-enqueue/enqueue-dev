@@ -7,9 +7,9 @@ use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

@@ -2,8 +2,8 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\PsrQueue;
-use Enqueue\Psr\PsrTopic;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 
 class StompDestination implements PsrTopic, PsrQueue
 {

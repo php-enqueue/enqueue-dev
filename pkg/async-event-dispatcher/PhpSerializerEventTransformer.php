@@ -2,8 +2,8 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\Kernel;
 

@@ -8,10 +8,10 @@ use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrProducer;
 use Makasim\File\TempFile;
 
 class FsProducerTest extends \PHPUnit\Framework\TestCase

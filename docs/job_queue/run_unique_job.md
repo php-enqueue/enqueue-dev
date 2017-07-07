@@ -12,9 +12,9 @@ It shows how you can run unique job using job queue (The configuration is descri
 
 ```php
 <?php 
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
 use Enqueue\JobQueue\JobRunner;
 
 class UniqueJobProcessor implements PsrProcessor 

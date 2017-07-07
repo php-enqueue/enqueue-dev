@@ -4,11 +4,11 @@ namespace Enqueue\Tests\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrQueue;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Enqueue\Tests\Symfony\Consumption\Mock\QueueSubscriberProcessor;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrQueue;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
@@ -61,7 +61,7 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
         $tester = new CommandTester($command);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Invalid message processor service given. It must be an instance of Enqueue\Psr\PsrProcessor but stdClass');
+        $this->expectExceptionMessage('Invalid message processor service given. It must be an instance of Interop\Queue\PsrProcessor but stdClass');
         $tester->execute([
             'processor-service' => 'processor-service',
             '--queue' => ['queue-name'],

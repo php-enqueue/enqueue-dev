@@ -2,8 +2,8 @@
 
 namespace Enqueue\Gearman;
 
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrMessage;
 
 class GearmanConsumer implements PsrConsumer
 {

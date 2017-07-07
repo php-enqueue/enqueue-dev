@@ -72,9 +72,9 @@ To consume messages you have to first create a message processor:
 
 ```php
 <?php
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
 use Enqueue\Client\TopicSubscriberInterface;
 
 class FooProcessor implements PsrProcessor, TopicSubscriberInterface

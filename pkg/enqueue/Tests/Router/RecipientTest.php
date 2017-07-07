@@ -2,9 +2,9 @@
 
 namespace Enqueue\Tests\Router;
 
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
 use Enqueue\Router\Recipient;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
 use PHPUnit\Framework\TestCase;
 
 class RecipientTest extends TestCase

@@ -9,7 +9,7 @@ use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalMessage;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

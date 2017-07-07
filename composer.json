@@ -4,7 +4,6 @@
   "minimum-stability": "stable",
   "require": {
     "php": ">=5.6",
-    "enqueue/psr-queue": "*@dev",
     "enqueue/enqueue": "*@dev",
     "enqueue/stomp": "*@dev",
     "enqueue/amqp-ext": "*@dev",
@@ -20,6 +19,8 @@
     "enqueue/simple-client": "*@dev",
     "enqueue/test": "*@dev",
     "enqueue/async-event-dispatcher": "*@dev",
+    "queue-interop/queue-interop": "^0.5@dev",
+    "queue-interop/queue-spec": "^0.5@dev",
 
     "phpunit/phpunit": "^5",
     "doctrine/doctrine-bundle": "~1.2",
@@ -40,10 +41,6 @@
     "bin-dir": "bin"
   },
   "repositories": [
-    {
-      "type": "path",
-      "url": "pkg/psr-queue"
-    },
     {
       "type": "path",
       "url": "pkg/test"

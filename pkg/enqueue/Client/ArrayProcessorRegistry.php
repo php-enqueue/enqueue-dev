@@ -2,7 +2,7 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrProcessor;
 
 class ArrayProcessorRegistry implements ProcessorRegistryInterface
 {

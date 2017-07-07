@@ -5,11 +5,11 @@ namespace Enqueue\Consumption;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
-use Enqueue\Psr\PsrConsumer;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrProcessor;
-use Enqueue\Psr\PsrQueue;
 use Enqueue\Util\VarExport;
+use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrProcessor;
+use Interop\Queue\PsrQueue;
 use Psr\Log\NullLogger;
 
 class QueueConsumer

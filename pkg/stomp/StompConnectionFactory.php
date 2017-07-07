@@ -2,7 +2,7 @@
 
 namespace Enqueue\Stomp;
 
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 use Stomp\Network\Connection;
 
 class StompConnectionFactory implements PsrConnectionFactory

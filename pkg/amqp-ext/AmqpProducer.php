@@ -2,12 +2,12 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrDestination;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProducer;
-use Enqueue\Psr\PsrTopic;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrTopic;
 
 class AmqpProducer implements PsrProducer
 {

@@ -11,8 +11,8 @@ use Enqueue\Fs\Client\FsDriver;
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProducer;
 use Makasim\File\TempFile;
 
 class FsDriverTest extends \PHPUnit\Framework\TestCase

@@ -2,8 +2,8 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrQueue;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrQueue;
 use Symfony\Component\EventDispatcher\Event;
 
 class AsyncListener

@@ -3,9 +3,9 @@
 namespace Enqueue\Tests\Symfony\Consumption\Mock;
 
 use Enqueue\Consumption\QueueSubscriberInterface;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProcessor;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 class QueueSubscriberProcessor implements PsrProcessor, QueueSubscriberInterface
 {

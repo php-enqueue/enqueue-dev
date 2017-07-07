@@ -13,8 +13,8 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
 class RabbitMqDriverTest extends TestCase

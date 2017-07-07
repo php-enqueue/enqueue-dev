@@ -5,8 +5,8 @@ namespace Enqueue\Null\Tests;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullProducer;
 use Enqueue\Null\NullTopic;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
 class NullProducerTest extends TestCase

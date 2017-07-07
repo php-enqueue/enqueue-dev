@@ -122,7 +122,7 @@ class PromiseTest extends TestCase
         $promise = new Promise($receivecb, function () {}, function () {});
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Expected "Enqueue\Psr\PsrMessage" but got: "stdClass"');
+        $this->expectExceptionMessage('Expected "Interop\Queue\PsrMessage" but got: "stdClass"');
 
         $promise->receive();
     }
@@ -136,7 +136,7 @@ class PromiseTest extends TestCase
         $promise = new Promise(function () {}, $receivecb, function () {});
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Expected "Enqueue\Psr\PsrMessage" but got: "stdClass"');
+        $this->expectExceptionMessage('Expected "Interop\Queue\PsrMessage" but got: "stdClass"');
 
         $promise->receiveNoWait();
     }

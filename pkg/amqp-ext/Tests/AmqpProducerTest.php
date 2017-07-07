@@ -3,8 +3,8 @@
 namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpProducer;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
 class AmqpProducerTest extends TestCase

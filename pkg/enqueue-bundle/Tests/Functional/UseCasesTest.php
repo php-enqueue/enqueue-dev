@@ -5,8 +5,8 @@ namespace Enqueue\Bundle\Tests\Functional;
 use Enqueue\Bundle\Tests\Functional\App\CustomAppKernel;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\ProducerInterface;
-use Enqueue\Psr\PsrContext;
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\Kernel;
 

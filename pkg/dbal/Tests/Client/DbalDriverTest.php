@@ -11,8 +11,8 @@ use Enqueue\Dbal\Client\DbalDriver;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
-use Enqueue\Psr\PsrProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrProducer;
 
 class DbalDriverTest extends \PHPUnit_Framework_TestCase
 {

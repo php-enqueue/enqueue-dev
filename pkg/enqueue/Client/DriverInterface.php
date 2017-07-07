@@ -2,8 +2,8 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrQueue;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 
 interface DriverInterface

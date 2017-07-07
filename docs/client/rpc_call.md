@@ -55,8 +55,8 @@ Of course it is possible to implement rpc server side based on transport classes
 ```php
 <?php
 
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrContext;
 use Enqueue\Consumption\Result;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;

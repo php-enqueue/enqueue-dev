@@ -9,8 +9,8 @@ use Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
-use Enqueue\Psr\PsrProcessor;
 use Enqueue\Util\JSON;
+use Interop\Queue\PsrProcessor;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**

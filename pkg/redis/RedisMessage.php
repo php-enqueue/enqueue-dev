@@ -2,7 +2,7 @@
 
 namespace Enqueue\Redis;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 class RedisMessage implements PsrMessage, \JsonSerializable
 {

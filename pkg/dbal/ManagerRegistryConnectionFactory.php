@@ -4,7 +4,7 @@ namespace Enqueue\Dbal;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Enqueue\Psr\PsrConnectionFactory;
+use Interop\Queue\PsrConnectionFactory;
 
 class ManagerRegistryConnectionFactory implements PsrConnectionFactory
 {

@@ -13,10 +13,6 @@
         >
 
     <testsuites>
-        <testsuite name="psr-queue">
-            <directory>pkg/psr-queue/Tests</directory>
-        </testsuite>
-
         <testsuite name="enqueue">
             <directory>pkg/enqueue/Tests</directory>
         </testsuite>

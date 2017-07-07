@@ -4,9 +4,9 @@ namespace Enqueue\Pheanstalk\Tests;
 
 use Enqueue\Null\NullQueue;
 use Enqueue\Pheanstalk\PheanstalkContext;
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\PsrContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrContext;
 use Pheanstalk\Connection;
 use Pheanstalk\Pheanstalk;
 use PHPUnit\Framework\TestCase;

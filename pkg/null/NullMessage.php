@@ -2,7 +2,7 @@
 
 namespace Enqueue\Null;
 
-use Enqueue\Psr\PsrMessage;
+use Interop\Queue\PsrMessage;
 
 class NullMessage implements PsrMessage
 {

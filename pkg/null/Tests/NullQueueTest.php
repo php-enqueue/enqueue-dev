@@ -3,8 +3,8 @@
 namespace Enqueue\Null\Tests;
 
 use Enqueue\Null\NullQueue;
-use Enqueue\Psr\PsrQueue;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrQueue;
 use PHPUnit\Framework\TestCase;
 
 class NullQueueTest extends TestCase

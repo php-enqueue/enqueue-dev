@@ -3,7 +3,7 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkDestination;
-use Enqueue\Psr\Spec\PsrTopicSpec;
+use Interop\Queue\Spec\PsrTopicSpec;
 
 class PheanstalkTopicTest extends PsrTopicSpec
 {

@@ -2,15 +2,15 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Psr\InvalidDestinationException;
-use Enqueue\Psr\InvalidMessageException;
-use Enqueue\Psr\PsrMessage;
-use Enqueue\Psr\PsrProducer;
-use Enqueue\Psr\PsrQueue;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
 use Stomp\Client;
 use Stomp\Transport\Message;
 
