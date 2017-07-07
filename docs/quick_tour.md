@@ -99,7 +99,7 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\SignalExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 
-/** @var \Enqueue\Psr\PsrContext $psrContext */
+/** @var \Interop\Queue\PsrContext $psrContext */
 
 $queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
     new SignalExtension(),
@@ -116,7 +116,7 @@ You can do several calls asynchronously. This is how you can send a RPC message 
 <?php
 use Enqueue\Rpc\RpcClient;
 
-/** @var \Enqueue\Psr\PsrContext $psrContext */
+/** @var \Interop\Queue\PsrContext $psrContext */
 
 $queue = $psrContext->createQueue('foo');
 $message = $psrContext->createMessage('Hi there!');
@@ -139,7 +139,7 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 
-/** @var \Enqueue\Psr\PsrContext $psrContext */
+/** @var \Interop\Queue\PsrContext $psrContext */
 
 $queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
     new ReplyExtension()

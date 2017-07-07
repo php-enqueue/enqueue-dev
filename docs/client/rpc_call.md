@@ -62,7 +62,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\SimpleClient\SimpleClient;
 
-/** @var \Enqueue\Psr\PsrContext $context */
+/** @var \Interop\Queue\PsrContext $context */
 
 $client = new SimpleClient('amqp://');
 

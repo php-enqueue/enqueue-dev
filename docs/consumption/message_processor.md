@@ -119,7 +119,7 @@ class SendMailProcessor implements PsrProcessor
     }
 }
 
-/** @var \Enqueue\Psr\PsrContext $psrContext */
+/** @var \Interop\Queue\PsrContext $psrContext */
 
 $queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
     new ReplyExtension()
