@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.6.0](https://github.com/php-enqueue/enqueue-dev/tree/0.6.0) (2017-07-07)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.3...0.6.0)
+
+- Migrate to queue interop [\#130](https://github.com/php-enqueue/enqueue-dev/pull/130) ([makasim](https://github.com/makasim))
+
+- Remove previously deprecated code. [\#131](https://github.com/php-enqueue/enqueue-dev/pull/131) ([makasim](https://github.com/makasim))
+
 ## [0.5.3](https://github.com/php-enqueue/enqueue-dev/tree/0.5.3) (2017-07-06)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.2...0.5.3)
 
