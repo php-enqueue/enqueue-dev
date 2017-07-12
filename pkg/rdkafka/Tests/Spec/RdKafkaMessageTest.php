@@ -11,6 +11,6 @@ class RdKafkaMessageTest extends PsrMessageSpec
      */
     protected function createMessage()
     {
-        return new RdKafkaMessage(self::EXPECTED_TOPIC_NAME);
+        return new RdKafkaMessage();
     }
 }

@@ -23,6 +23,7 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
      *     'rebalance_cb' => null,
      *     'partitioner' => null,                          // https://arnaud-lb.github.io/php-rdkafka/phpdoc/rdkafka-topicconf.setpartitioner.html
      *     'log_level' => null,
+     *     'commit_async' => false,
      * ]
      *
      * or
@@ -63,7 +64,43 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
      */
     private function parseDsn($dsn)
     {
+        $dsnConfig = parse_url($dsn);
+        if (false === $dsnConfig) {
+            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        }
 
+        $dsnConfig = array_replace([
+            'scheme' => null,
+            'host' => null,
+            'port' => null,
+            'user' => null,
+            'pass' => null,
+            'path' => null,
+            'query' => null,
+        ], $dsnConfig);
+
+        if ('rdkafka' !== $dsnConfig['scheme']) {
+            throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be "rdkafka" only.', $dsnConfig['scheme']));
+        }
+
+//        $query = [];
+//        if ($dsnConfig['query']) {
+//            parse_str($dsnConfig['query'], $query);
+//        }
+
+
+        $broker = $dsnConfig['host'];
+        if ($dsnConfig['port']) {
+            $broker .= ':'.$dsnConfig['port'];
+        }
+
+        return [
+            'global' => [
+                'group.id' => uniqid('', true),
+                'metadata.broker.list' => $broker,
+                'auto.offset.reset' => 'largest',
+            ],
+        ];
     }
 
     /**
@@ -74,6 +111,7 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
         return [
             'global' => [
                 'metadata.broker.list' => 'localhost:9092',
+                'group.id' => uniqid('', true),
             ],
         ];
     }

@@ -2,6 +2,7 @@
 namespace Enqueue\RdKafka;
 
 use Interop\Queue\PsrMessage;
+use RdKafka\Message;
 
 class RdKafkaMessage implements PsrMessage, \JsonSerializable
 {
@@ -34,6 +35,11 @@ class RdKafkaMessage implements PsrMessage, \JsonSerializable
      * @var string|null
      */
     private $key;
+
+    /**
+     * @var Message
+     */
+    private $kafkaMessage;
 
     /**
      * @param string $body
@@ -240,6 +246,22 @@ class RdKafkaMessage implements PsrMessage, \JsonSerializable
     public function setKey($key)
     {
         $this->key = $key;
+    }
+
+    /**
+     * @return Message
+     */
+    public function getKafkaMessage()
+    {
+        return $this->kafkaMessage;
+    }
+
+    /**
+     * @param Message $message
+     */
+    public function setKafkaMessage(Message $message)
+    {
+        $this->kafkaMessage = $message;
     }
 
     /**

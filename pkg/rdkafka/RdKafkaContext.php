@@ -1,14 +1,11 @@
 <?php
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
 use RdKafka\Conf;
+use RdKafka\KafkaConsumer;
 use RdKafka\Producer;
 use RdKafka\TopicConf;
 
@@ -55,9 +52,14 @@ class RdKafkaContext implements PsrContext
         return new RdKafkaTopic($topicName);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return RdKafkaTopic
+     */
     public function createQueue($queueName)
     {
-        // TODO: Implement createQueue() method.
+        return new RdKafkaTopic($queueName);
     }
 
     /**
@@ -78,14 +80,29 @@ class RdKafkaContext implements PsrContext
         return new RdKafkaProducer($this->getProducer());
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param RdKafkaTopic $destination
+     */
     public function createConsumer(PsrDestination $destination)
     {
-        // TODO: Implement createConsumer() method.
+        InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
+
+        $consumer = new RdKafkaConsumer(new KafkaConsumer($this->getConf()), $this, $destination);
+
+        if (isset($this->config['commit_async'])) {
+            $consumer->setCommitAsync($this->config['commit_async']);
+        }
+
+        return $consumer;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function close()
     {
-
     }
 
     /**
