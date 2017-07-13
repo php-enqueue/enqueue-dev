@@ -1,10 +1,11 @@
 <?php
 namespace Enqueue\RdKafka;
 
+use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use RdKafka\TopicConf;
 
-class RdKafkaTopic implements PsrTopic
+class RdKafkaTopic implements PsrTopic, PsrQueue
 {
     /**
      * @var string
@@ -39,6 +40,14 @@ class RdKafkaTopic implements PsrTopic
      * {@inheritdoc}
      */
     public function getTopicName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQueueName()
     {
         return $this->name;
     }

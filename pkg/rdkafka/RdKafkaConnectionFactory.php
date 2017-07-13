@@ -46,7 +46,6 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
         $this->config = array_replace($this->defaultConfig(), $config);
     }
 
-
     /**
      * {@inheritdoc}
      *
@@ -83,24 +82,19 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
             throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be "rdkafka" only.', $dsnConfig['scheme']));
         }
 
-//        $query = [];
-//        if ($dsnConfig['query']) {
-//            parse_str($dsnConfig['query'], $query);
-//        }
-
+        $config = [];
+        if ($dsnConfig['query']) {
+            parse_str($dsnConfig['query'], $config);
+        }
 
         $broker = $dsnConfig['host'];
         if ($dsnConfig['port']) {
             $broker .= ':'.$dsnConfig['port'];
         }
 
-        return [
-            'global' => [
-                'group.id' => uniqid('', true),
-                'metadata.broker.list' => $broker,
-                'auto.offset.reset' => 'largest',
-            ],
-        ];
+        $config['global']['metadata.broker.list'] = $broker;
+
+        return array_replace_recursive($this->defaultConfig(), $config);
     }
 
     /**
@@ -110,8 +104,8 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
     {
         return [
             'global' => [
-                'metadata.broker.list' => 'localhost:9092',
                 'group.id' => uniqid('', true),
+                'metadata.broker.list' => 'localhost:9092',
             ],
         ];
     }

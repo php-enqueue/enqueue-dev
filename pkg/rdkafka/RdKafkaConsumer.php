@@ -98,7 +98,7 @@ class RdKafkaConsumer implements PsrConsumer
      */
     public function receiveNoWait()
     {
-        return $this->receive(1000);
+        return $this->receive(10);
     }
 
     /**
