@@ -319,7 +319,7 @@ final class SimpleClient
                 ],
             ];
         } elseif (is_array($config)) {
-            $extConfig = array_merge_recursive([
+            $extConfig = array_replace_recursive([
                 'client' => [],
                 'transport' => [],
             ], $config);
