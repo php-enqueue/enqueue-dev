@@ -79,6 +79,7 @@ class RdKafkaConsumer implements PsrConsumer
     {
         $this->consumer->subscribe([$this->topic->getTopicName()]);
 
+        $message = null;
         if ($timeout > 0) {
             $message = $this->doReceive($timeout);
         } else {
