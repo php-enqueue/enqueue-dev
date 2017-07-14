@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\RdKafka\Tests;
 
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
@@ -43,7 +44,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
             'global' => [
                 'group.id' => 'group-id',
                 'metadata.broker.list' => 'localhost:9092',
-            ]
+            ],
         ], $config);
     }
 
@@ -60,7 +61,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
             'global' => [
                 'group.id' => 'group-id',
                 'metadata.broker.list' => 'localhost:9092',
-            ]
+            ],
         ], $config);
     }
 
@@ -85,7 +86,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
                 'global' => [
                     'metadata.broker.list' => 'theHost:1234',
                     'group.id' => 'group-id',
-                ]
+                ],
             ],
         ];
 
@@ -94,13 +95,13 @@ class RdKafkaConnectionFactoryTest extends TestCase
                 'global' => [
                     'metadata.broker.list' => 'theHost:1234',
                     'group.id' => 'group-id',
-                ]
+                ],
             ],
             [
                 'global' => [
                     'metadata.broker.list' => 'theHost:1234',
                     'group.id' => 'group-id',
-                ]
+                ],
             ],
         ];
     }

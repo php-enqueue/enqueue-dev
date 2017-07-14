@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\RdKafka\Tests\Spec;
 
 use Enqueue\RdKafka\RdKafkaConnectionFactory;

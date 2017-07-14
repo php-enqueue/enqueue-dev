@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\RdKafka;
 
 use Interop\Queue\InvalidDestinationException;
