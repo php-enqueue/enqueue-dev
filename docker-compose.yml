@@ -36,6 +36,8 @@ services:
       - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
       - GEARMAN_DSN=gearman://gearmand:4730
+      - RDKAFKA_HOST=kafka
+      - RDKAFKA_PORT=9092
 
   rabbitmq:
     image: enqueue/rabbitmq:latest

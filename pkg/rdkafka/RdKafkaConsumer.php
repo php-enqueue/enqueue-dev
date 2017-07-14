@@ -98,7 +98,7 @@ class RdKafkaConsumer implements PsrConsumer
      */
     public function receiveNoWait()
     {
-        return $this->receive(10);
+        throw new \LogicException('Not implemented');
     }
 
     /**

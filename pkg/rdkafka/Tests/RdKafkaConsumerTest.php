@@ -91,70 +91,14 @@ class RdKafkaConsumerTest extends TestCase
         $this->assertSame($kafkaMessage, $actualMessage->getKafkaMessage());
     }
 
-    public function testShouldReceiveNoWaitFromQueueAndReturnNullIfNoMessageInQueue()
+    public function testShouldThrowExceptionNotImplementedOnReceiveNoWait()
     {
-        $destination = new RdKafkaTopic('dest');
+        $consumer = new RdKafkaConsumer($this->createKafkaConsumerMock(), $this->createContextMock(), new RdKafkaTopic(''));
 
-        $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Not implemented');
 
-        $kafkaConsumer = $this->createKafkaConsumerMock();
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('subscribe')
-            ->with(['dest'])
-        ;
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('consume')
-            ->with(10)
-            ->willReturn($kafkaMessage)
-        ;
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('unsubscribe')
-        ;
-
-        $consumer = new RdKafkaConsumer($kafkaConsumer, $this->createContextMock(), $destination);
-
-        $this->assertNull($consumer->receiveNoWait());
-    }
-
-    public function testShouldReceiveNoWaitFromQueueAndReturnMessageIfMessageInQueue()
-    {
-        $destination = new RdKafkaTopic('dest');
-
-        $message = new  RdKafkaMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
-
-        $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR_NO_ERROR;
-        $kafkaMessage->payload = json_encode($message);
-
-        $kafkaConsumer = $this->createKafkaConsumerMock();
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('subscribe')
-            ->with(['dest'])
-        ;
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('consume')
-            ->with(10)
-            ->willReturn($kafkaMessage)
-        ;
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('unsubscribe')
-        ;
-
-        $consumer = new RdKafkaConsumer($kafkaConsumer, $this->createContextMock(), $destination);
-
-        $actualMessage = $consumer->receiveNoWait();
-
-        $this->assertSame('theBody', $actualMessage->getBody());
-        $this->assertSame(['foo' => 'fooVal'], $actualMessage->getProperties());
-        $this->assertSame(['bar' => 'barVal'], $actualMessage->getHeaders());
-        $this->assertSame($kafkaMessage, $actualMessage->getKafkaMessage());
+        $consumer->receiveNoWait();
     }
 
     /**
