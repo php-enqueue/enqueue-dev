@@ -1,3 +1,5 @@
+sudo: required
+
 git:
     depth: 10
 
@@ -6,37 +8,27 @@ language: php
 matrix:
   include:
     - php: 5.6
-      sudo: false
       env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
     - php: 7.1
-      sudo: false
       env: SYMFONY_VERSION=3.0.* PHPSTAN=true
     - php: 7.1
-      sudo: false
       env: SYMFONY_VERSION=3.0.* PHP_CS_FIXER=true
     - php: 7.0
-      sudo: false
       env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
     - php: 5.6
-      sudo: false
       env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true SYMFONY_DEPRECATIONS_HELPER=weak
     - php: 7.0
-      sudo: false
       env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true SYMFONY_DEPRECATIONS_HELPER=weak
     - php: 7.1
-      sudo: required
       services: docker
       env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true
     - php: 7.1
-      sudo: required
       services: docker
       env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true
     - php: 7.1
-      sudo: required
       services: docker
       env: SYMFONY_VERSION=3.2.* FUNCTIONAL_TESTS=true
     - php: 7.1
-      sudo: required
       services: docker
       env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true
 
@@ -44,11 +36,12 @@ cache:
     directories:
         - $HOME/.composer/cache
 
-before_install:
-    - git clone https://github.com/edenhill/librdkafka.git $HOME/librdkafka
-    - cd $HOME/librdkafka && git checkout v0.11.0-RC2 && ./configure && make && make install
-
 install:
+    - git clone https://github.com/edenhill/librdkafka.git $HOME/librdkafka
+    - cd $HOME/librdkafka && git checkout v0.11.0-RC2 && ./configure && make && sudo make install
+    - pecl install rdkafka
+    - cd $TRAVIS_BUILD_DIR
+
     - rm $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini;
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
