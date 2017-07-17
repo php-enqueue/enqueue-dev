@@ -9,7 +9,17 @@ Features:
 
 * [Feature rich](docs/quick_tour.md).
 * Implements [JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) like transports based on a[queue-interop](https://github.com/queue-interop/queue-interop) interfaces.
-* Supported  transports [AMQP](docs/transport/amqp.md) (RabbitMQ, ActiveMQ), [Beanstalk](docs/transport/pheanstalk.md),  [STOMP](docs/transport/stomp.md), [Amazon SQS](docs/transport/sqs.md), [Redis](docs/transport/redis.md), [Gearman](docs/transport/gearman.md), [Doctrine DBAL](docs/transport/dbal.md), [Filesystem](docs/transport/filesystem.md), [Null](docs/transport/null.md).
+* Supported  transports 
+    * [AMQP](docs/transport/amqp.md) (RabbitMQ, ActiveMQ) 
+    * [Beanstalk](docs/transport/pheanstalk.md)
+    * [STOMP](docs/transport/stomp.md)
+    * [Amazon SQS](docs/transport/sqs.md)
+    * [Kafka](docs/transport/kafka.md)
+    * [Redis](docs/transport/redis.md)
+    * [Gearman](docs/transport/gearman.md)
+    * [Doctrine DBAL](docs/transport/dbal.md)
+    * [Filesystem](docs/transport/filesystem.md)
+    * [Null](docs/transport/null.md).
 * [Symfony bundle](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
 * [Magento1 extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/magento/quick_tour.md)
 * [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
