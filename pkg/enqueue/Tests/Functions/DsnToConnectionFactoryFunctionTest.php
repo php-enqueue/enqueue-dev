@@ -5,7 +5,10 @@ namespace Enqueue\Tests\Functions;
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
+use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
+use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
+use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class DsnToConnectionFactoryFunctionTest extends TestCase
@@ -62,5 +65,11 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
         yield ['mysql://', DbalConnectionFactory::class];
 
         yield ['pgsql://', DbalConnectionFactory::class];
+
+        yield ['beanstalk://', PheanstalkConnectionFactory::class];
+
+        yield ['gearman://', GearmanConnectionFactory::class];
+
+        yield ['rdkafka://', RdKafkaConnectionFactory::class];
     }
 }

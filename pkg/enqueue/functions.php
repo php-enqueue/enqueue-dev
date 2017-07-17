@@ -9,6 +9,7 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
+use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
 
@@ -56,6 +57,11 @@ function dsn_to_connection_factory($dsn)
 
     if (class_exists(PheanstalkConnectionFactory::class)) {
         $map['beanstalk'] = PheanstalkConnectionFactory::class;
+    }
+
+    if (class_exists(RdKafkaConnectionFactory::class)) {
+        $map['kafka'] = RdKafkaConnectionFactory::class;
+        $map['rdkafka'] = RdKafkaConnectionFactory::class;
     }
 
     list($scheme) = explode('://', $dsn);
