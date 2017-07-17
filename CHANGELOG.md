@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.6.1](https://github.com/php-enqueue/enqueue-dev/tree/0.6.1) (2017-07-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.6.0...0.6.1)
+
+- RdKafka Transport [\#134](https://github.com/php-enqueue/enqueue-dev/pull/134) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.6.0](https://github.com/php-enqueue/enqueue-dev/tree/0.6.0) (2017-07-07)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.5.3...0.6.0)
 
