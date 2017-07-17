@@ -24,6 +24,7 @@
         "symfony/event-dispatcher": "^2.8|^3",
         "symfony/http-kernel": "^2.8|^3",
         "enqueue/amqp-ext": "^0.6@dev",
+        "enqueue/rdkafka": "^0.6@dev",
         "enqueue/dbal": "^0.6@dev",
         "enqueue/fs": "^0.6@dev",
         "enqueue/test": "^0.6@dev",
