@@ -68,7 +68,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
 
         yield ['beanstalk://', PheanstalkConnectionFactory::class];
 
-        yield ['gearman://', GearmanConnectionFactory::class];
+//        yield ['gearman://', GearmanConnectionFactory::class];
 
         yield ['rdkafka://', RdKafkaConnectionFactory::class];
     }
