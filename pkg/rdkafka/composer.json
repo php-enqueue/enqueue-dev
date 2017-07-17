@@ -30,6 +30,17 @@
             "/Tests/"
         ]
     },
+    "autoload-dev": {
+        "files": [
+            "Tests/bootstrap.php"
+        ],
+        "psr-0": {
+            "RdKafka": "vendor/kwn/php-rdkafka-stubs/stubs"
+        },
+        "psr-4": {
+            "RdKafka\\": "vendor/kwn/php-rdkafka-stubs/stubs/RdKafka"
+        }
+    },
     "suggest": {
         "enqueue/enqueue": "If you'd like to use advanced features like Client abstract layer or Symfony integration features"
     },

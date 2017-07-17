@@ -37,7 +37,16 @@
     "phpstan/phpstan": "^0.7.0"
   },
   "autoload": {
-    "files": ["pkg/enqueue/functions_include.php"]
+    "files": [
+      "pkg/enqueue/functions_include.php",
+      "pkg/rdkafka/Tests/bootstrap.php"
+    ],
+    "psr-0": {
+      "RdKafka": "vendor/kwn/php-rdkafka-stubs/stubs"
+    },
+    "psr-4": {
+      "RdKafka\\": "vendor/kwn/php-rdkafka-stubs/stubs/RdKafka"
+    }
   },
   "config": {
     "bin-dir": "bin"
