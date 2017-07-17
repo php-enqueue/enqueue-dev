@@ -25,6 +25,7 @@
         "symfony/http-kernel": "^2.8|^3",
         "enqueue/amqp-ext": "^0.6@dev",
         "enqueue/pheanstalk": "^0.6@dev",
+        "enqueue/gearman": "^0.6@dev",
         "enqueue/rdkafka": "^0.6@dev",
         "enqueue/dbal": "^0.6@dev",
         "enqueue/fs": "^0.6@dev",
