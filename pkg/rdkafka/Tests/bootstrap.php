@@ -4,7 +4,7 @@ if (extension_loaded('rdkafka')) {
     return;
 }
 
-$kafkaStubsDir = __DIR__.'/../vendor/kwh/php-rdkafka-stubs';
+$kafkaStubsDir = __DIR__.'/../vendor/kwn/php-rdkafka-stubs';
 if (false == file_exists($kafkaStubsDir)) {
     $kafkaStubsDir = __DIR__.'/../../../vendor/kwn/php-rdkafka-stubs';
     if (false == file_exists($kafkaStubsDir)) {
