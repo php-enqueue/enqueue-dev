@@ -51,6 +51,7 @@ remote pheanstalk git@github.com:php-enqueue/pheanstalk.git
 remote gearman git@github.com:php-enqueue/gearman.git
 remote fs git@github.com:php-enqueue/fs.git
 remote redis git@github.com:php-enqueue/redis.git
+remote rdkafka git@github.com:php-enqueue/rdkafka.git
 remote dbal git@github.com:php-enqueue/dbal.git
 remote null git@github.com:php-enqueue/null.git
 remote sqs git@github.com:php-enqueue/sqs.git
@@ -65,6 +66,7 @@ split 'pkg/stomp' stomp
 split 'pkg/amqp-ext' amqp-ext
 split 'pkg/pheanstalk' pheanstalk
 split 'pkg/gearman' gearman
+split 'pkg/rdkafka' rdkafka
 split 'pkg/fs' fs
 split 'pkg/redis' redis
 split 'pkg/dbal' dbal
