@@ -10,6 +10,8 @@ services:
       - redis
       - beanstalkd
       - gearmand
+      - kafka
+      - zookeeper
     volumes:
       - './:/mqdev'
     environment:
