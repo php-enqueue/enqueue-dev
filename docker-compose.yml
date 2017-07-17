@@ -10,6 +10,8 @@ services:
       - redis
       - beanstalkd
       - gearmand
+      - kafka
+      - zookeeper
     volumes:
       - './:/mqdev'
     environment:
@@ -36,6 +38,8 @@ services:
       - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
       - GEARMAN_DSN=gearman://gearmand:4730
+      - RDKAFKA_HOST=kafka
+      - RDKAFKA_PORT=9092
 
   rabbitmq:
     image: enqueue/rabbitmq:latest
@@ -70,6 +74,20 @@ services:
     # build: { context: docker, dockerfile: Dockerfile.generate-changelog }
     volumes:
       - ./:/mqdev
+
+  zookeeper:
+    image: 'wurstmeister/zookeeper'
+    ports:
+      - '2181:2181'
+
+  kafka:
+    image: 'wurstmeister/kafka:0.10.2.1'
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
 
 volumes:
   mysql-data:
