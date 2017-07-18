@@ -1,39 +1,72 @@
 <?php
 
-namespace Enqueue\Amqplib;
+namespace Enqueue\AmqpLib;
 
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 
 class AmqpContext implements PsrContext
 {
+    /**
+     * @var AbstractConnection
+     */
     private $connection;
+
+    /**
+     * @var AMQPChannel
+     */
     private $channel;
 
+    /**
+     * @param AbstractConnection $connection
+     */
     public function __construct(AbstractConnection $connection)
     {
         $this->connection = $connection;
     }
 
+    /**
+     * @param string|null $body
+     * @param array       $properties
+     * @param array       $headers
+     *
+     * @return AmqpMessage
+     */
     public function createMessage($body = null, array $properties = [], array $headers = [])
     {
         return new AmqpMessage($body, $properties, $headers);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return AmqpQueue
+     */
     public function createQueue($name)
     {
         return new AmqpQueue($name);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return AmqpTopic
+     */
     public function createTopic($name)
     {
         return new AmqpTopic($name);
     }
 
+    /**
+     * @param PsrDestination $destination
+     *
+     * @return AmqpConsumer
+     */
     public function createConsumer(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
@@ -41,11 +74,17 @@ class AmqpContext implements PsrContext
         return new AmqpConsumer($this->getChannel(), $destination);
     }
 
+    /**
+     * @return AmqpProducer
+     */
     public function createProducer()
     {
         return new AmqpProducer($this->getChannel());
     }
 
+    /**
+     * @return AmqpQueue
+     */
     public function createTemporaryQueue()
     {
         $queue = $this->createQueue(null);
@@ -56,6 +95,9 @@ class AmqpContext implements PsrContext
         return $queue;
     }
 
+    /**
+     * @param AmqpTopic $destination
+     */
     public function declareTopic(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
@@ -73,6 +115,9 @@ class AmqpContext implements PsrContext
         );
     }
 
+    /**
+     * @param AmqpQueue $destination
+     */
     public function declareQueue(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
@@ -89,6 +134,12 @@ class AmqpContext implements PsrContext
         );
     }
 
+    /**
+     * @param AmqpTopic|AmqpQueue $source
+     * @param AmqpTopic|AmqpQueue $target
+     *
+     * @throws Exception
+     */
     public function bind(PsrDestination $source, PsrDestination $target)
     {
         $source instanceof PsrTopic
@@ -138,9 +189,6 @@ class AmqpContext implements PsrContext
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function close()
     {
         if ($this->channel) {
@@ -148,6 +196,9 @@ class AmqpContext implements PsrContext
         }
     }
 
+    /**
+     * @return AMQPChannel
+     */
     private function getChannel()
     {
         if (null === $this->channel) {

@@ -7,7 +7,7 @@
     "enqueue/enqueue": "*@dev",
     "enqueue/stomp": "*@dev",
     "enqueue/amqp-ext": "*@dev",
-    "enqueue/amqplib": "*@dev",
+    "enqueue/amqp-lib": "*@dev",
     "enqueue/redis": "*@dev",
     "enqueue/fs": "*@dev",
     "enqueue/null": "*@dev",
@@ -71,7 +71,7 @@
     },
     {
       "type": "path",
-      "url": "pkg/amqplib"
+      "url": "pkg/amqp-lib"
     },
     {
       "type": "path",

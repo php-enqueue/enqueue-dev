@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Amqplib;
+namespace Enqueue\AmqpLib;
 
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
@@ -11,20 +11,39 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpConsumer implements PsrConsumer
 {
+    /**
+     * @var AMQPChannel
+     */
     private $channel;
+
+    /**
+     * @var AmqpQueue
+     */
     private $queue;
 
+    /**
+     * @param AMQPChannel $channel
+     * @param AmqpQueue   $queue
+     */
     public function __construct(AMQPChannel $channel, AmqpQueue $queue)
     {
         $this->channel = $channel;
         $this->queue = $queue;
     }
 
+    /**
+     * @return AmqpQueue
+     */
     public function getQueue()
     {
         return $this->queue;
     }
 
+    /**
+     * @param int $timeout
+     *
+     * @return AmqpMessage|null
+     */
     public function receive($timeout = 0)
     {
         $end = microtime(true) + ($timeout / 1000);
@@ -38,6 +57,9 @@ class AmqpConsumer implements PsrConsumer
         }
     }
 
+    /**
+     * @return AmqpMessage|null
+     */
     public function receiveNoWait()
     {
         if ($message = $this->channel->basic_get($this->queue->getQueueName())) {
@@ -45,6 +67,9 @@ class AmqpConsumer implements PsrConsumer
         }
     }
 
+    /**
+     * @param AmqpMessage $message
+     */
     public function acknowledge(PsrMessage $message)
     {
         InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
@@ -52,6 +77,10 @@ class AmqpConsumer implements PsrConsumer
         $this->channel->basic_ack($message->getDeliveryTag());
     }
 
+    /**
+     * @param AmqpMessage $message
+     * @param bool        $requeue
+     */
     public function reject(PsrMessage $message, $requeue = false)
     {
         InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
@@ -59,6 +88,11 @@ class AmqpConsumer implements PsrConsumer
         $this->channel->basic_reject($message->getDeliveryTag(), $requeue);
     }
 
+    /**
+     * @param LibAMQPMessage $amqpMessage
+     *
+     * @return AmqpMessage
+     */
     private function convertMessage(LibAMQPMessage $amqpMessage)
     {
         $headers = new AMQPTable($amqpMessage->get_properties());

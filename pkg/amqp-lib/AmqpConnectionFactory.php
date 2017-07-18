@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Amqplib;
+namespace Enqueue\AmqpLib;
 
 use Interop\Queue\PsrConnectionFactory;
 use PhpAmqpLib\Connection\AbstractConnection;
@@ -8,19 +8,35 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class AmqpConnectionFactory implements PsrConnectionFactory
 {
+    /**
+     * @var array
+     */
     private $config;
+
+    /**
+     * @var AbstractConnection
+     */
     private $connection;
 
+    /**
+     * @param array $config
+     */
     public function __construct(array $config = [])
     {
         $this->config = array_replace($this->defaultConfig(), $config);
     }
 
+    /**
+     * @return AmqpContext
+     */
     public function createContext()
     {
         return new AmqpContext($this->establishConnection());
     }
 
+    /**
+     * @return AbstractConnection
+     */
     private function establishConnection()
     {
         if (false == $this->connection) {
@@ -36,6 +52,9 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         return $this->connection;
     }
 
+    /**
+     * @return array
+     */
     private function defaultConfig()
     {
         return [

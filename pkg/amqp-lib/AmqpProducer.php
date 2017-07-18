@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Amqplib;
+namespace Enqueue\AmqpLib;
 
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
@@ -14,13 +14,23 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpProducer implements PsrProducer
 {
+    /**
+     * @var AMQPChannel
+     */
     private $channel;
 
+    /**
+     * @param AMQPChannel $channel
+     */
     public function __construct(AMQPChannel $channel)
     {
         $this->channel = $channel;
     }
 
+    /**
+     * @param AmqpTopic|AmqpQueue $destination
+     * @param AmqpMessage         $message
+     */
     public function send(PsrDestination $destination, PsrMessage $message)
     {
         $destination instanceof PsrTopic
