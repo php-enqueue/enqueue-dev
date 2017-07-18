@@ -3,21 +3,17 @@
 namespace Enqueue\LaravelQueue;
 
 use Illuminate\Contracts\Queue\Queue as QueueContract;
-use Illuminate\Queue\Queue;
+use Illuminate\Queue\Queue as BaseQueue;
 use Interop\Queue\PsrContext;
 
-class PsrQueue extends Queue implements QueueContract
+class Queue extends BaseQueue implements QueueContract
 {
     /**
-     * The name of the default queue.
-     *
      * @var string
      */
-    protected $default;
+    protected $queueName;
 
     /**
-     * The "time to run" for all pushed jobs.
-     *
      * @var int
      */
     protected $timeToRun;
@@ -28,13 +24,13 @@ class PsrQueue extends Queue implements QueueContract
 
     /**
      * @param PsrContext $psrContext
-     * @param string     $default
+     * @param string     $queueName
      * @param int        $timeToRun
      */
-    public function __construct(PsrContext $psrContext, $default, $timeToRun)
+    public function __construct(PsrContext $psrContext, $queueName, $timeToRun)
     {
         $this->psrContext = $psrContext;
-        $this->default = $default;
+        $this->queueName = $queueName;
         $this->timeToRun = $timeToRun;
     }
 
@@ -65,6 +61,7 @@ class PsrQueue extends Queue implements QueueContract
      */
     public function pushOn($queue, $job, $data = '')
     {
+        new \LogicException('to be implemented');
     }
 
     /**
@@ -97,6 +94,7 @@ class PsrQueue extends Queue implements QueueContract
         if ($psrMessage = $psrConsumer->receive(1000)) { // 1 sec
             return new Job(
                 $this->container,
+                $this->psrContext,
                 $psrConsumer,
                 $psrMessage,
                 $this->connectionName
@@ -111,8 +109,24 @@ class PsrQueue extends Queue implements QueueContract
      *
      * @return \Interop\Queue\PsrQueue
      */
-    public function getQueue($queue)
+    public function getQueue($queue = null)
     {
-        return $this->psrContext->createQueue($queue ?: $this->default);
+        return $this->psrContext->createQueue($queue ?: $this->queueName);
+    }
+
+    /**
+     * @return PsrContext
+     */
+    public function getPsrContext()
+    {
+        return $this->psrContext;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimeToRun()
+    {
+        return $this->timeToRun;
     }
 }

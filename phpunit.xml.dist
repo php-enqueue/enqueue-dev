@@ -61,6 +61,10 @@
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>
 
+        <testsuite name="laravel-queue">
+            <directory>pkg/laravel-queue/Tests</directory>
+        </testsuite>
+
         <testsuite name="job-queue">
             <directory>pkg/job-queue/Tests</directory>
         </testsuite>

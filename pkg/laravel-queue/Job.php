@@ -6,10 +6,16 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job as BaseJob;
 use Interop\Queue\PsrConsumer;
+use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 
 class Job extends BaseJob implements JobContract
 {
+    /**
+     * @var PsrContext
+     */
+    private $psrContext;
+
     /**
      * @var PsrConsumer
      */
@@ -22,26 +28,18 @@ class Job extends BaseJob implements JobContract
 
     /**
      * @param Container   $container
+     * @param PsrContext  $psrContext
      * @param PsrConsumer $psrConsumer
      * @param PsrMessage  $psrMessage
      * @param string      $connectionName
      */
-    public function __construct(Container $container, PsrConsumer $psrConsumer, PsrMessage $psrMessage, $connectionName)
+    public function __construct(Container $container, PsrContext $psrContext, PsrConsumer $psrConsumer, PsrMessage $psrMessage, $connectionName)
     {
         $this->container = $container;
+        $this->psrContext = $psrContext;
         $this->psrConsumer = $psrConsumer;
         $this->psrMessage = $psrMessage;
         $this->connectionName = $connectionName;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fire()
-    {
-        $this->psrMessage->setProperty('x-attempts', $this->attempts() + 1);
-
-        parent::fire();
     }
 
     /**
@@ -59,7 +57,16 @@ class Job extends BaseJob implements JobContract
      */
     public function release($delay = 0)
     {
-        $this->psrConsumer->reject($this->psrMessage, true);
+        if ($delay) {
+            throw new \LogicException('To be implemented');
+        }
+
+        $requeueMessage = clone $this->psrMessage;
+        $requeueMessage->setProperty('x-attempts', $this->attempts() + 1);
+
+        $this->psrContext->createProducer()->send($this->psrConsumer->getQueue(), $requeueMessage);
+
+        $this->psrConsumer->acknowledge($this->psrMessage);
     }
 
     /**

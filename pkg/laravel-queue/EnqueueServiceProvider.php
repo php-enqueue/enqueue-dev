@@ -2,19 +2,21 @@
 
 namespace Enqueue\LaravelQueue;
 
+use Illuminate\Queue\QueueManager;
 use Illuminate\Support\ServiceProvider;
 
-class QueueServiceProvider extends ServiceProvider
+class EnqueueServiceProvider extends ServiceProvider
 {
     /**
      * {@inheritdoc}
      */
     public function boot()
     {
+        /** @var QueueManager $manager */
         $manager = $this->app['queue'];
 
         $manager->addConnector('enqueue', function () {
-            return new DsnToPsrQueueConnector();
+            return new Connector();
         });
     }
 
