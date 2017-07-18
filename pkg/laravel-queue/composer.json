@@ -1,0 +1,20 @@
+{
+    "name": "enqueue/laravel-queue",
+    "type": "library",
+    "description": "Laravel Queue Extension. It uses Enqueue transports",
+    "keywords": ["messaging", "queue", "laravel"],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.6",
+        "illuminate/queue": "^5.4",
+        "queue-interop/queue-interop": "^0.5"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\LaravelQueue\\": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.6.x-dev"
+        }
+    }
+}
