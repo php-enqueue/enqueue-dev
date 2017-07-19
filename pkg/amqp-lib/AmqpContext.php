@@ -177,7 +177,7 @@ class AmqpContext implements PsrContext
                 $source->getArguments(),
                 $source->getTicket()
             );
-        // bind queue to exchange
+            // bind queue to exchange
         } elseif ($source instanceof AmqpQueue) {
             $this->getChannel()->queue_bind(
                 $source->getQueueName(),
@@ -187,7 +187,7 @@ class AmqpContext implements PsrContext
                 $target->getArguments(),
                 $target->getTicket()
             );
-        // bind exchange to queue
+            // bind exchange to queue
         } else {
             $this->getChannel()->queue_bind(
                 $target->getQueueName(),

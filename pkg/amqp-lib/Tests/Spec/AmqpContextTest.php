@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\AmqpLib\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpContext;
