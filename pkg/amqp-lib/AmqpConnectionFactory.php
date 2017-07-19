@@ -32,6 +32,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
      *     'pass' => 'amqp.password Password. Note: Max 128 characters.',
      *     'lazy' => 'the connection will be performed as later as possible, if the option set to true',
      *     'stream' => 'stream or socket connection',
+     *     'receive_method' => 'Could be either basic_get or basic_consume',
      * ]
      *
      * or
@@ -52,6 +53,15 @@ class AmqpConnectionFactory implements PsrConnectionFactory
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
+
+        $supportedMethods = ['basic_get', 'basic_consume'];
+        if (false == in_array($this->config['receive_method'], $supportedMethods, true)) {
+            throw new \LogicException(sprintf(
+                'Invalid "receive_method" option value "%s". It could be only "%s"',
+                $this->config['receive_method'],
+                implode('", "', $supportedMethods)
+            ));
+        }
     }
 
     /**
@@ -59,7 +69,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
      */
     public function createContext()
     {
-        return new AmqpContext($this->establishConnection());
+        return new AmqpContext($this->establishConnection(), $this->config['receive_method']);
     }
 
     /**
@@ -214,6 +224,7 @@ class AmqpConnectionFactory implements PsrConnectionFactory
             'heartbeat' => 0,
             'connection_timeout' => 3.0,
             'read_write_timeout' => 3.0,
+            'receive_method' => 'basic_get',
         ];
     }
 }

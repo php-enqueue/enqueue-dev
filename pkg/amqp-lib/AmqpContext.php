@@ -24,11 +24,24 @@ class AmqpContext implements PsrContext
     private $channel;
 
     /**
-     * @param AbstractConnection $connection
+     * @var string
      */
-    public function __construct(AbstractConnection $connection)
+    private $receiveMethod;
+
+    /**
+     * @var Buffer
+     */
+    private $buffer;
+
+    /**
+     * @param AbstractConnection $connection
+     * @param string             $receiveMethod
+     */
+    public function __construct(AbstractConnection $connection, $receiveMethod)
     {
         $this->connection = $connection;
+        $this->receiveMethod = $receiveMethod;
+        $this->buffer = new Buffer();
     }
 
     /**
@@ -79,10 +92,10 @@ class AmqpContext implements PsrContext
             $queue = $this->createTemporaryQueue();
             $this->bind($destination, $queue);
 
-            return new AmqpConsumer($this->getChannel(), $queue);
+            return new AmqpConsumer($this->getChannel(), $queue, $this->buffer, $this->receiveMethod);
         }
 
-        return new AmqpConsumer($this->getChannel(), $destination);
+        return new AmqpConsumer($this->getChannel(), $destination, $this->buffer, $this->receiveMethod);
     }
 
     /**
