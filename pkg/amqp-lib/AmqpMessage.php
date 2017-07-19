@@ -7,7 +7,7 @@ use Interop\Queue\PsrMessage;
 class AmqpMessage implements PsrMessage
 {
     /**
-     * @var string|null
+     * @var string
      */
     private $body;
 
@@ -51,7 +51,7 @@ class AmqpMessage implements PsrMessage
      * @param array  $properties
      * @param array  $headers
      */
-    public function __construct($body = null, array $properties = [], array $headers = [])
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -60,7 +60,7 @@ class AmqpMessage implements PsrMessage
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getBody()
     {
@@ -68,7 +68,7 @@ class AmqpMessage implements PsrMessage
     }
 
     /**
-     * @param string|null $body
+     * @param string $body
      */
     public function setBody($body)
     {

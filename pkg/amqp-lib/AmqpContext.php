@@ -6,6 +6,7 @@ use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
@@ -37,7 +38,7 @@ class AmqpContext implements PsrContext
      *
      * @return AmqpMessage
      */
-    public function createMessage($body = null, array $properties = [], array $headers = [])
+    public function createMessage($body = '', array $properties = [], array $headers = [])
     {
         return new AmqpMessage($body, $properties, $headers);
     }
@@ -69,7 +70,17 @@ class AmqpContext implements PsrContext
      */
     public function createConsumer(PsrDestination $destination)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
+        $destination instanceof PsrTopic
+            ? InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class)
+            : InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class)
+        ;
+
+        if ($destination instanceof AmqpTopic) {
+            $queue = $this->createTemporaryQueue();
+            $this->bind($destination, $queue);
+
+            return new AmqpConsumer($this->getChannel(), $queue);
+        }
 
         return new AmqpConsumer($this->getChannel(), $destination);
     }
@@ -187,6 +198,18 @@ class AmqpContext implements PsrContext
                 $source->getTicket()
             );
         }
+    }
+
+    /**
+     * Purge all messages from the given queue.
+     *
+     * @param PsrQueue $queue
+     */
+    public function purge(PsrQueue $queue)
+    {
+        InvalidDestinationException::assertDestinationInstanceOf($queue, AmqpQueue::class);
+
+        $this->getChannel()->queue_purge($queue->getQueueName());
     }
 
     public function close()

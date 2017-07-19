@@ -8,6 +8,7 @@
     "enqueue/stomp": "*@dev",
     "enqueue/amqp-ext": "*@dev",
     "enqueue/amqp-lib": "*@dev",
+    "php-amqplib/php-amqplib": "^2.7@dev",
     "enqueue/redis": "*@dev",
     "enqueue/fs": "*@dev",
     "enqueue/null": "*@dev",
