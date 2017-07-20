@@ -22,6 +22,7 @@ Features:
     * [Null](docs/transport/null.md).
 * [Symfony bundle](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
 * [Magento1 extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/magento/quick_tour.md)
+* [Laravel extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/quick_tour.md)
 * [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
 * [RPC over MQ](https://www.rabbitmq.com/tutorials/tutorial-one-php.html) support.
 * Temporary queues support.
