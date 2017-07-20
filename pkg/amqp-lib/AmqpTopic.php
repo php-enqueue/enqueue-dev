@@ -62,6 +62,7 @@ class AmqpTopic implements PsrTopic
     public function __construct($name)
     {
         $this->name = $name;
+        $this->type = 'direct';
         $this->passive = false;
         $this->durable = false;
         $this->autoDelete = true;

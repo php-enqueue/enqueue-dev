@@ -193,12 +193,11 @@ class AmqpConnectionFactory implements PsrConnectionFactory
 
         unset($dsnConfig['scheme'], $dsnConfig['query'], $dsnConfig['fragment'], $dsnConfig['path']);
 
-        $config = array_replace($this->defaultConfig(), $dsnConfig);
-        $config = array_map(function ($value) {
+        $dsnConfig = array_map(function ($value) {
             return urldecode($value);
-        }, $config);
+        }, $dsnConfig);
 
-        return $config;
+        return $dsnConfig;
     }
 
     /**
