@@ -17,7 +17,6 @@
     "enqueue/rdkafka": "*@dev",
     "kwn/php-rdkafka-stubs": "^1.0.2",
     "enqueue/enqueue-bundle": "*@dev",
-    "enqueue/laravel-queue": "*@dev",
     "enqueue/job-queue": "*@dev",
     "enqueue/simple-client": "*@dev",
     "enqueue/test": "*@dev",
@@ -76,10 +75,6 @@
     {
       "type": "path",
       "url": "pkg/enqueue-bundle"
-    },
-    {
-      "type": "path",
-      "url": "pkg/laravel-queue"
     },
     {
       "type": "path",
