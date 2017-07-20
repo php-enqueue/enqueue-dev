@@ -15,7 +15,7 @@ class EnqueueServiceProvider extends ServiceProvider
         /** @var QueueManager $manager */
         $manager = $this->app['queue'];
 
-        $manager->addConnector('enqueue', function () {
+        $manager->addConnector('interop', function () {
             return new Connector();
         });
     }
