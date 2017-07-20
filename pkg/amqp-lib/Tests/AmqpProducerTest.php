@@ -12,8 +12,8 @@ use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
-use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 use PHPUnit\Framework\TestCase;
 
