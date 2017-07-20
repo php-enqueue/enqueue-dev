@@ -10,7 +10,7 @@ use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 /**
  * @group functional
  */
-class AmqpSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFromQueueSpec
+class AmqpSendToTopicAndReceiveFromQueueWithBasicGetMethodTest extends SendToTopicAndReceiveFromQueueSpec
 {
     /**
      * {@inheritdoc}
