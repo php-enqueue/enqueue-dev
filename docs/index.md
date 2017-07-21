@@ -40,6 +40,7 @@
     - [Quick tour](async_event_dispatcher/quick_tour.md)
 * Laravel
     - [Quick tour](laravel/quick_tour.md)
+    - [Queues](laravel/queues.md)
 * Magento
     - [Quick tour](magento/quick_tour.md)
     - [Cli commands](magento/cli_commands.md) 
