@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.6.2](https://github.com/php-enqueue/enqueue-dev/tree/0.6.2) (2017-07-21)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.6.1...0.6.2)
+
+- Laravel queue package [\#137](https://github.com/php-enqueue/enqueue-dev/pull/137) ([makasim](https://github.com/makasim))
+- Add AmqpLib support [\#136](https://github.com/php-enqueue/enqueue-dev/pull/136) ([fibula](https://github.com/fibula))
+
 ## [0.6.1](https://github.com/php-enqueue/enqueue-dev/tree/0.6.1) (2017-07-17)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.6.0...0.6.1)
 
