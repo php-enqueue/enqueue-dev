@@ -7,6 +7,8 @@
     "enqueue/enqueue": "*@dev",
     "enqueue/stomp": "*@dev",
     "enqueue/amqp-ext": "*@dev",
+    "queue-interop/amqp-interop": "^0.5@dev",
+    "enqueue/amqp-ext-interop": "*@dev",
     "enqueue/amqp-lib": "*@dev",
     "php-amqplib/php-amqplib": "^2.7@dev",
     "enqueue/redis": "*@dev",
@@ -121,6 +123,14 @@
     {
       "type": "path",
       "url": "pkg/async-event-dispatcher"
+    },
+    {
+      "type": "vcs",
+      "url": "git@github.com:queue-interop/amqp-interop.git"
+    },
+    {
+      "type": "path",
+      "url": "pkg/amqp-ext-interop"
     }
   ]
 }
