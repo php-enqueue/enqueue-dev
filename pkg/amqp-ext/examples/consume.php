@@ -34,17 +34,17 @@ $fooConsumer = $context->createConsumer($queue);
 $queue = $context->createQueue('bar');
 $barConsumer = $context->createConsumer($queue);
 
-$consumer = $context->createConsumer($queue);
-
 $consumers = [$fooConsumer, $barConsumer];
 
 $consumer = $consumers[rand(0, 1)];
 
 while (true) {
     if ($m = $consumer->receive(1)) {
-        $consumer = $consumers[rand(0, 1)];
+        echo $m->getBody(), PHP_EOL;
         $consumer->acknowledge($m);
     }
+
+    $consumer = $consumers[rand(0, 1)];
 }
 
 echo 'Done'."\n";

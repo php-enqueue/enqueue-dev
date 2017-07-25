@@ -3,14 +3,15 @@
 namespace  Enqueue\AmqpExt\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\AmqpMessage;
-use Enqueue\AmqpExt\AmqpQueue;
-use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\Exception\LogicException;
+use Interop\Amqp\AmqpMessage;
+use Interop\Amqp\AmqpQueue;
+use Interop\Amqp\AmqpTopic;
+use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -112,7 +113,7 @@ class RabbitMqDriver extends AmqpDriver
                 ));
             }
 
-            $transportMessage->setHeader('priority', $this->priorityMap[$priority]);
+            $transportMessage->setPriority($this->priorityMap[$priority]);
         }
 
         if ($message->getDelay()) {
@@ -135,7 +136,7 @@ class RabbitMqDriver extends AmqpDriver
     {
         $clientMessage = parent::createClientMessage($message);
 
-        if ($priority = $message->getHeader('priority')) {
+        if ($priority = $message->getPriority()) {
             if (false === $clientPriority = array_search($priority, $this->priorityMap, true)) {
                 throw new \LogicException(sprintf('Cant convert transport priority to client: "%s"', $priority));
             }
@@ -178,7 +179,7 @@ class RabbitMqDriver extends AmqpDriver
                 $this->context->declareTopic($delayTopic);
 
                 $log('Bind processor queue to delay exchange: %s -> %s', $queue->getQueueName(), $delayTopic->getTopicName());
-                $this->context->bind($delayTopic, $queue);
+                $this->context->bind(new AmqpBind($delayTopic, $queue , $queue->getQueueName()));
             }
         }
     }
@@ -194,9 +195,8 @@ class RabbitMqDriver extends AmqpDriver
 
         // in order to use delay feature make sure the rabbitmq_delayed_message_exchange plugin is installed.
         $delayTopic = $this->context->createTopic($queueName.'.delayed');
-        $delayTopic->setRoutingKey($queueName);
         $delayTopic->setType('x-delayed-message');
-        $delayTopic->addFlag(AMQP_DURABLE);
+        $delayTopic->addFlag(AmqpTopic::FLAG_DURABLE);
         $delayTopic->setArguments([
             'x-delayed-type' => 'direct',
         ]);
