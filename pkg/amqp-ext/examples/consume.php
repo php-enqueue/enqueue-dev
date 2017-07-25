@@ -36,9 +36,6 @@ $barConsumer = $context->createConsumer($queue);
 
 $consumer = $context->createConsumer($queue);
 
-$fooConsumer->receive(1);
-$barConsumer->receive(1);
-
 $consumers = [$fooConsumer, $barConsumer];
 
 $consumer = $consumers[rand(0, 1)];

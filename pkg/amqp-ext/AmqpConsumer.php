@@ -2,11 +2,14 @@
 
 namespace Enqueue\AmqpExt;
 
+use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
+use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
+use Interop\Amqp\AmqpQueue;
+use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
 
-class AmqpConsumer implements PsrConsumer
+class AmqpConsumer implements InteropAmqpConsumer
 {
     /**
      * @var AmqpContext
@@ -39,6 +42,16 @@ class AmqpConsumer implements PsrConsumer
     private $receiveMethod;
 
     /**
+     * @var int
+     */
+    private $flags;
+
+    /**
+     * @var string
+     */
+    private $consumerTag;
+
+    /**
      * @param AmqpContext $context
      * @param AmqpQueue   $queue
      * @param Buffer      $buffer
@@ -50,8 +63,57 @@ class AmqpConsumer implements PsrConsumer
         $this->context = $context;
         $this->buffer = $buffer;
         $this->receiveMethod = $receiveMethod;
+        $this->flags = self::FLAG_NOPARAM;
 
         $this->isInit = false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConsumerTag($consumerTag)
+    {
+        $this->consumerTag = $consumerTag;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConsumerTag()
+    {
+        return $this->consumerTag;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearFlags()
+    {
+        $this->flags = self::FLAG_NOPARAM;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFlag($flag)
+    {
+        $this->flags |= $flag;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFlags()
+    {
+        return $this->flags;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFlags($flags)
+    {
+        $this->flags = $flags;
     }
 
     /**
@@ -67,7 +129,7 @@ class AmqpConsumer implements PsrConsumer
     /**
      * {@inheritdoc}
      *
-     * @return AmqpMessage|null
+     * @return InteropAmqpMessage|null
      */
     public function receive($timeout = 0)
     {
@@ -89,7 +151,7 @@ class AmqpConsumer implements PsrConsumer
      */
     public function receiveNoWait()
     {
-        if ($extMessage = $this->getExtQueue()->get()) {
+        if ($extMessage = $this->getExtQueue()->get(Flags::convertConsumerFlags($this->flags))) {
             return $this->convertMessage($extMessage);
         }
     }
@@ -101,7 +163,7 @@ class AmqpConsumer implements PsrConsumer
      */
     public function acknowledge(PsrMessage $message)
     {
-        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
         $this->getExtQueue()->ack($message->getDeliveryTag());
     }
@@ -113,7 +175,7 @@ class AmqpConsumer implements PsrConsumer
      */
     public function reject(PsrMessage $message, $requeue = false)
     {
-        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
         $this->getExtQueue()->reject(
             $message->getDeliveryTag(),
@@ -124,7 +186,7 @@ class AmqpConsumer implements PsrConsumer
     /**
      * @param int $timeout
      *
-     * @return AmqpMessage|null
+     * @return InteropAmqpMessage|null
      */
     private function receiveBasicGet($timeout)
     {
@@ -142,7 +204,7 @@ class AmqpConsumer implements PsrConsumer
     /**
      * @param int $timeout
      *
-     * @return AmqpMessage|null
+     * @return InteropAmqpMessage|null
      */
     private function receiveBasicConsume($timeout)
     {
@@ -158,7 +220,7 @@ class AmqpConsumer implements PsrConsumer
             $extConnection->setReadTimeout($timeout / 1000);
 
             if (false == $this->isInit) {
-                $this->getExtQueue()->consume(null, AMQP_NOPARAM);
+                $this->getExtQueue()->consume(null, Flags::convertConsumerFlags($this->flags), $this->consumerTag);
 
                 $this->isInit = true;
             }
@@ -232,7 +294,7 @@ class AmqpConsumer implements PsrConsumer
         if (false == $this->extQueue) {
             $extQueue = new \AMQPQueue($this->context->getExtChannel());
             $extQueue->setName($this->queue->getQueueName());
-            $extQueue->setFlags($this->queue->getFlags());
+            $extQueue->setFlags(Flags::convertQueueFlags($this->queue->getFlags()));
             $extQueue->setArguments($this->queue->getArguments());
 
             $this->extQueue = $extQueue;

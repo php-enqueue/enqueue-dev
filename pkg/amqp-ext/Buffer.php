@@ -2,6 +2,8 @@
 
 namespace Enqueue\AmqpExt;
 
+use Interop\Amqp\AmqpMessage;
+
 class Buffer
 {
     /**

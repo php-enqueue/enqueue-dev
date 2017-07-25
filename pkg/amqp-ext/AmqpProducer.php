@@ -2,14 +2,17 @@
 
 namespace Enqueue\AmqpExt;
 
+use Interop\Amqp\AmqpMessage;
+use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
+use Interop\Amqp\AmqpQueue;
+use Interop\Amqp\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrTopic;
 
-class AmqpProducer implements PsrProducer
+class AmqpProducer implements InteropAmqpProducer
 {
     /**
      * @var \AMQPChannel
@@ -49,13 +52,13 @@ class AmqpProducer implements PsrProducer
             $amqpExchange = new \AMQPExchange($this->amqpChannel);
             $amqpExchange->setType($destination->getType());
             $amqpExchange->setName($destination->getTopicName());
-            $amqpExchange->setFlags($destination->getFlags());
+            $amqpExchange->setFlags(Flags::convertTopicFlags($destination->getFlags()));
             $amqpExchange->setArguments($destination->getArguments());
 
             $amqpExchange->publish(
                 $message->getBody(),
-                $destination->getRoutingKey(),
-                $message->getFlags(),
+                $message->getRoutingKey(),
+                Flags::convertMessageFlags($message->getFlags()),
                 $amqpAttributes
             );
         } else {
@@ -66,7 +69,7 @@ class AmqpProducer implements PsrProducer
             $amqpExchange->publish(
                 $message->getBody(),
                 $destination->getQueueName(),
-                $message->getFlags(),
+                Flags::convertMessageFlags($message->getFlags()),
                 $amqpAttributes
             );
         }

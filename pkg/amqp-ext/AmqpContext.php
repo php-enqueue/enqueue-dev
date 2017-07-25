@@ -2,13 +2,20 @@
 
 namespace Enqueue\AmqpExt;
 
+use Enqueue\Psr\Exception;
+use Interop\Amqp\AmqpContext as InteropAmqpContext;
+use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
+use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
+use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\Impl\AmqpBind;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpQueue;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 
-class AmqpContext implements PsrContext
+class AmqpContext implements InteropAmqpContext
 {
     /**
      * @var \AMQPChannel
@@ -53,8 +60,6 @@ class AmqpContext implements PsrContext
 
     /**
      * {@inheritdoc}
-     *
-     * @return AmqpMessage
      */
     public function createMessage($body = '', array $properties = [], array $headers = [])
     {
@@ -63,8 +68,6 @@ class AmqpContext implements PsrContext
 
     /**
      * {@inheritdoc}
-     *
-     * @return AmqpTopic
      */
     public function createTopic($topicName)
     {
@@ -72,36 +75,30 @@ class AmqpContext implements PsrContext
     }
 
     /**
-     * @param AmqpTopic|PsrDestination $destination
+     * {@inheritdoc}
      */
-    public function deleteTopic(PsrDestination $destination)
+    public function deleteTopic(InteropAmqpTopic $topic)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
-
         $extExchange = new \AMQPExchange($this->getExtChannel());
-        $extExchange->delete($destination->getTopicName(), $destination->getFlags());
+        $extExchange->delete($topic->getTopicName(), Flags::convertTopicFlags($topic->getFlags()));
     }
 
     /**
-     * @param AmqpTopic|PsrDestination $destination
+     * {@inheritdoc}
      */
-    public function declareTopic(PsrDestination $destination)
+    public function declareTopic(InteropAmqpTopic $topic)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
-
         $extExchange = new \AMQPExchange($this->getExtChannel());
-        $extExchange->setName($destination->getTopicName());
-        $extExchange->setType($destination->getType());
-        $extExchange->setArguments($destination->getArguments());
-        $extExchange->setFlags($destination->getFlags());
+        $extExchange->setName($topic->getTopicName());
+        $extExchange->setType($topic->getType());
+        $extExchange->setArguments($topic->getArguments());
+        $extExchange->setFlags(Flags::convertTopicFlags($topic->getFlags()));
 
         $extExchange->declareExchange();
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return AmqpQueue
      */
     public function createQueue($queueName)
     {
@@ -109,54 +106,106 @@ class AmqpContext implements PsrContext
     }
 
     /**
-     * @param AmqpQueue|PsrDestination $destination
+     * {@inheritdoc}
      */
-    public function deleteQueue(PsrDestination $destination)
+    public function deleteQueue(InteropAmqpQueue $queue)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
-
         $extQueue = new \AMQPQueue($this->getExtChannel());
-        $extQueue->setName($destination->getQueueName());
-        $extQueue->delete($destination->getFlags());
+        $extQueue->setName($queue->getQueueName());
+        $extQueue->delete(Flags::convertQueueFlags($queue->getFlags()));
     }
 
     /**
-     * @param AmqpQueue|PsrDestination $destination
-     *
-     * @return int
+     * {@inheritdoc}
      */
-    public function declareQueue(PsrDestination $destination)
+    public function declareQueue(InteropAmqpQueue $queue)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
-
         $extQueue = new \AMQPQueue($this->getExtChannel());
-        $extQueue->setFlags($destination->getFlags());
-        $extQueue->setArguments($destination->getArguments());
+        $extQueue->setName($queue->getQueueName());
+        $extQueue->setArguments($queue->getArguments());
+        $extQueue->setFlags(Flags::convertQueueFlags($queue->getFlags()));
 
-        if ($destination->getQueueName()) {
-            $extQueue->setName($destination->getQueueName());
+        return $extQueue->declareQueue();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purgeQueue(InteropAmqpQueue $queue)
+    {
+        $amqpQueue = new \AMQPQueue($this->getExtChannel());
+        $amqpQueue->setName($queue->getQueueName());
+        $amqpQueue->purge();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function bind(InteropAmqpBind $bind)
+    {
+        if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
+            throw new Exception('Is not possible to bind queue to queue. It is possible to bind topic to queue or topic to topic');
         }
 
-        $count = $extQueue->declareQueue();
+        // bind exchange to exchange
+        if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
+            $exchange = new \AMQPExchange($this->getExtChannel());
+            $exchange->setName($bind->getSource()->getTopicName());
+            $exchange->bind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
+            // bind queue to exchange
+        } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
+            $queue = new \AMQPQueue($this->getExtChannel());
+            $queue->setName($bind->getSource()->getQueueName());
+            $queue->bind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
+            // bind exchange to queue
+        } else {
+            $queue = new \AMQPQueue($this->getExtChannel());
+            $queue->setName($bind->getTarget()->getQueueName());
+            $queue->bind($bind->getSource()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
+        }
+    }
 
-        if (false == $destination->getQueueName()) {
-            $destination->setQueueName($extQueue->getName());
+    /**
+     * {@inheritdoc}
+     */
+    public function unbind(InteropAmqpBind $bind)
+    {
+        if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
+            throw new Exception('Is not possible to unbind queue to queue. It is possible to unbind topic from queue or topic from topic');
         }
 
-        return $count;
+        // unbind exchange from exchange
+        if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
+            $exchange = new \AMQPExchange($this->getExtChannel());
+            $exchange->setName($bind->getSource()->getTopicName());
+            $exchange->unbind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
+            // unbind queue from exchange
+        } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
+            $queue = new \AMQPQueue($this->getExtChannel());
+            $queue->setName($bind->getSource()->getQueueName());
+            $queue->unbind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
+            // unbind exchange from queue
+        } else {
+            $queue = new \AMQPQueue($this->getExtChannel());
+            $queue->setName($bind->getTarget()->getQueueName());
+            $queue->unbind($bind->getSource()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
+        }
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return AmqpQueue
+     * @return InteropAmqpQueue
      */
     public function createTemporaryQueue()
     {
-        $queue = $this->createQueue(null);
-        $queue->addFlag(AMQP_EXCLUSIVE);
+        $extQueue = new \AMQPQueue($this->getExtChannel());
+        $extQueue->setFlags(AMQP_EXCLUSIVE);
 
-        $this->declareQueue($queue);
+        $extQueue->declareQueue();
+
+        $queue = $this->createQueue($extQueue->getName());
+        $queue->addFlag(InteropAmqpQueue::FLAG_EXCLUSIVE);
 
         return $queue;
     }
@@ -181,13 +230,13 @@ class AmqpContext implements PsrContext
     public function createConsumer(PsrDestination $destination)
     {
         $destination instanceof PsrTopic
-            ? InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class)
-            : InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class)
+            ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
+            : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class)
         ;
 
         if ($destination instanceof AmqpTopic) {
             $queue = $this->createTemporaryQueue();
-            $this->bind($destination, $queue);
+            $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
             return new AmqpConsumer($this, $queue, $this->buffer, $this->receiveMethod);
         }
@@ -195,34 +244,15 @@ class AmqpContext implements PsrContext
         return new AmqpConsumer($this, $destination, $this->buffer, $this->receiveMethod);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function close()
     {
         $extConnection = $this->getExtChannel()->getConnection();
         if ($extConnection->isConnected()) {
             $extConnection->isPersistent() ? $extConnection->pdisconnect() : $extConnection->disconnect();
         }
-    }
-
-    /**
-     * @param AmqpTopic|PsrDestination $source
-     * @param AmqpQueue|PsrDestination $target
-     */
-    public function bind(PsrDestination $source, PsrDestination $target)
-    {
-        InvalidDestinationException::assertDestinationInstanceOf($source, AmqpTopic::class);
-        InvalidDestinationException::assertDestinationInstanceOf($target, AmqpQueue::class);
-
-        $amqpQueue = new \AMQPQueue($this->getExtChannel());
-        $amqpQueue->setName($target->getQueueName());
-        $amqpQueue->bind($source->getTopicName(), $amqpQueue->getName(), $target->getBindArguments());
-    }
-
-    /**
-     * @return \AMQPConnection
-     */
-    public function getExtConnection()
-    {
-        return $this->getExtChannel()->getConnection();
     }
 
     /**
@@ -243,19 +273,5 @@ class AmqpContext implements PsrContext
         }
 
         return $this->extChannel;
-    }
-
-    /**
-     * Purge all messages from the given queue.
-     *
-     * @param PsrQueue $queue
-     */
-    public function purge(PsrQueue $queue)
-    {
-        InvalidDestinationException::assertDestinationInstanceOf($queue, AmqpQueue::class);
-
-        $amqpQueue = new \AMQPQueue($this->getExtChannel());
-        $amqpQueue->setName($queue->getQueueName());
-        $amqpQueue->purge();
     }
 }

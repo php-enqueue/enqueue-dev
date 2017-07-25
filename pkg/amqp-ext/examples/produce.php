@@ -16,6 +16,9 @@ if ($autoload) {
 }
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Interop\Amqp\AmqpTopic;
+use Interop\Amqp\AmqpQueue;
+use Interop\Amqp\Impl\AmqpBind;
 
 $config = [
     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
@@ -29,28 +32,28 @@ $factory = new AmqpConnectionFactory($config);
 $context = $factory->createContext();
 
 $topic = $context->createTopic('test.amqp.ext');
-$topic->addFlag(AMQP_DURABLE);
-$topic->setType(AMQP_EX_TYPE_FANOUT);
+$topic->addFlag(AmqpTopic::FLAG_DURABLE);
+$topic->setType(AmqpTopic::TYPE_FANOUT);
 $topic->setArguments(['alternate-exchange' => 'foo']);
 
 $context->deleteTopic($topic);
 $context->declareTopic($topic);
 
 $fooQueue = $context->createQueue('foo');
-$fooQueue->addFlag(AMQP_DURABLE);
+$fooQueue->addFlag(AmqpQueue::FLAG_DURABLE);
 
 $context->deleteQueue($fooQueue);
 $context->declareQueue($fooQueue);
 
-$context->bind($topic, $fooQueue);
+$context->bind(new AmqpBind($topic, $fooQueue));
 
 $barQueue = $context->createQueue('bar');
-$barQueue->addFlag(AMQP_DURABLE);
+$barQueue->addFlag(AmqpQueue::FLAG_DURABLE);
 
 $context->deleteQueue($barQueue);
 $context->declareQueue($barQueue);
 
-$context->bind($topic, $barQueue);
+$context->bind(new AmqpBind($topic, $barQueue));
 
 $message = $context->createMessage('Hello Bar!');
 
