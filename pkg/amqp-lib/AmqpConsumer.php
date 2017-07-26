@@ -2,16 +2,19 @@
 
 namespace Enqueue\AmqpLib;
 
+use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
+use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
+use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
+use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
-class AmqpConsumer implements PsrConsumer
+class AmqpConsumer implements InteropAmqpConsumer
 {
     /**
      * @var AMQPChannel
@@ -19,7 +22,7 @@ class AmqpConsumer implements PsrConsumer
     private $channel;
 
     /**
-     * @var AmqpQueue
+     * @var InteropAmqpQueue
      */
     private $queue;
 
@@ -39,9 +42,14 @@ class AmqpConsumer implements PsrConsumer
     private $receiveMethod;
 
     /**
-     * @var AmqpMessage
+     * @var InteropAmqpMessage
      */
     private $receivedMessage;
+
+    /**
+     * @var int
+     */
+    private $flags;
 
     /**
      * @var string
@@ -49,23 +57,72 @@ class AmqpConsumer implements PsrConsumer
     private $consumerTag;
 
     /**
-     * @param AMQPChannel $channel
-     * @param AmqpQueue   $queue
-     * @param Buffer      $buffer
-     * @param string      $receiveMethod
+     * @param AMQPChannel      $channel
+     * @param InteropAmqpQueue $queue
+     * @param Buffer           $buffer
+     * @param string           $receiveMethod
      */
-    public function __construct(AMQPChannel $channel, AmqpQueue $queue, Buffer $buffer, $receiveMethod)
+    public function __construct(AMQPChannel $channel, InteropAmqpQueue $queue, Buffer $buffer, $receiveMethod)
     {
         $this->channel = $channel;
         $this->queue = $queue;
         $this->buffer = $buffer;
         $this->receiveMethod = $receiveMethod;
+        $this->flags = self::FLAG_NOPARAM;
 
         $this->isInit = false;
     }
 
     /**
-     * @return AmqpQueue
+     * {@inheritdoc}
+     */
+    public function setConsumerTag($consumerTag)
+    {
+        $this->consumerTag = $consumerTag;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConsumerTag()
+    {
+        return $this->consumerTag;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearFlags()
+    {
+        $this->flags = self::FLAG_NOPARAM;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFlag($flag)
+    {
+        $this->flags |= $flag;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFlags()
+    {
+        return $this->flags;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFlags($flags)
+    {
+        $this->flags = $flags;
+    }
+
+    /**
+     * @return InteropAmqpQueue
      */
     public function getQueue()
     {
@@ -75,7 +132,7 @@ class AmqpConsumer implements PsrConsumer
     /**
      * {@inheritdoc}
      *
-     * @return AmqpMessage|null
+     * @return InteropAmqpMessage|null
      */
     public function receive($timeout = 0)
     {
@@ -91,32 +148,34 @@ class AmqpConsumer implements PsrConsumer
     }
 
     /**
-     * @return AmqpMessage|null
+     * @return InteropAmqpMessage|null
      */
     public function receiveNoWait()
     {
-        if ($message = $this->channel->basic_get($this->queue->getQueueName())) {
+        if ($message = $this->channel->basic_get($this->queue->getQueueName(), !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK))) {
             return $this->convertMessage($message);
         }
     }
 
     /**
-     * @param AmqpMessage $message
+     * @param InteropAmqpMessage $message
      */
     public function acknowledge(PsrMessage $message)
     {
-        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
+
+        var_dump($message->getDeliveryTag());
 
         $this->channel->basic_ack($message->getDeliveryTag());
     }
 
     /**
-     * @param AmqpMessage $message
-     * @param bool        $requeue
+     * @param InteropAmqpMessage $message
+     * @param bool               $requeue
      */
     public function reject(PsrMessage $message, $requeue = false)
     {
-        InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
         $this->channel->basic_reject($message->getDeliveryTag(), $requeue);
     }
@@ -124,7 +183,7 @@ class AmqpConsumer implements PsrConsumer
     /**
      * @param LibAMQPMessage $amqpMessage
      *
-     * @return AmqpMessage
+     * @return InteropAmqpMessage
      */
     private function convertMessage(LibAMQPMessage $amqpMessage)
     {
@@ -147,7 +206,7 @@ class AmqpConsumer implements PsrConsumer
     /**
      * @param int $timeout
      *
-     * @return AmqpMessage|null
+     * @return InteropAmqpMessage|null
      */
     private function receiveBasicGet($timeout)
     {
@@ -165,20 +224,20 @@ class AmqpConsumer implements PsrConsumer
     /**
      * @param int $timeout
      *
-     * @return AmqpMessage|null
+     * @return InteropAmqpMessage|null
      */
     private function receiveBasicConsume($timeout)
     {
         if (false === $this->isInit) {
             $callback = function (LibAMQPMessage $message) {
                 $receivedMessage = $this->convertMessage($message);
-                $consumerTag = $message->delivery_info['consumer_tag'];
+                $receivedMessage->setConsumerTag($message->delivery_info['consumer_tag']);
 
-                if ($this->consumerTag === $consumerTag) {
+                if ($this->consumerTag === $receivedMessage->getConsumerTag()) {
                     $this->receivedMessage = $receivedMessage;
                 } else {
                     // not our message, put it to buffer and continue.
-                    $this->buffer->push($consumerTag, $receivedMessage);
+                    $this->buffer->push($receivedMessage->getConsumerTag(), $receivedMessage);
                 }
             };
 
@@ -186,11 +245,11 @@ class AmqpConsumer implements PsrConsumer
 
             $consumerTag = $this->channel->basic_consume(
                 $this->queue->getQueueName(),
-                $this->queue->getConsumerTag(),
-                $this->queue->isNoLocal(),
-                $this->queue->isNoAck(),
-                $this->queue->isExclusive(),
-                $this->queue->isNoWait(),
+                $this->getConsumerTag() ?: $this->getQueue()->getConsumerTag(),
+                !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
+                !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
+                !!($this->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
+                !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT),
                 $callback
             );
 
@@ -210,8 +269,11 @@ class AmqpConsumer implements PsrConsumer
         $this->receivedMessage = null;
 
         try {
+            echo 'here', PHP_EOL;
             $this->channel->wait(null, false, $timeout);
+            echo 'here1', PHP_EOL;
         } catch (AMQPTimeoutException $e) {
+            echo 'here2', PHP_EOL;
         }
 
         return $this->receivedMessage;
