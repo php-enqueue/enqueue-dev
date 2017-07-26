@@ -3,15 +3,16 @@
 namespace Enqueue\AmqpExt\Tests\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\AmqpMessage;
-use Enqueue\AmqpExt\AmqpQueue;
-use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\AmqpExt\Client\AmqpDriver;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Amqp\Impl\AmqpBind;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpQueue;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
@@ -62,7 +63,6 @@ class AmqpDriverTest extends TestCase
         $this->assertSame([], $queue->getArguments());
         $this->assertSame(2, $queue->getFlags());
         $this->assertNull($queue->getConsumerTag());
-        $this->assertSame([], $queue->getBindArguments());
     }
 
     public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
@@ -176,13 +176,13 @@ class AmqpDriverTest extends TestCase
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertSame([
             'hkey' => 'hval',
-            'content_type' => 'ContentType',
-            'expiration' => '123000',
-            'delivery_mode' => 2,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
             'reply_to' => 'theReplyTo',
             'correlation_id' => 'theCorrelationId',
+            'content_type' => 'ContentType',
+            'delivery_mode' => 2,
+            'expiration' => '123000',
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
@@ -351,7 +351,7 @@ class AmqpDriverTest extends TestCase
         $context
             ->expects($this->at(4))
             ->method('bind')
-            ->with($this->identicalTo($routerTopic), $this->identicalTo($routerQueue))
+            ->with($this->isInstanceOf(AmqpBind::class))
         ;
         // setup processor queue
         $context

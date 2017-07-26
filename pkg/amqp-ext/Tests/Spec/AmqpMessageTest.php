@@ -2,7 +2,7 @@
 
 namespace Enqueue\AmqpExt\Tests\Spec;
 
-use Enqueue\AmqpExt\AmqpMessage;
+use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Queue\Spec\PsrMessageSpec;
 
 class AmqpMessageTest extends PsrMessageSpec

@@ -4,9 +4,9 @@ namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\AmqpQueue;
 use Enqueue\AmqpExt\Buffer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Queue\PsrConsumer;
 use PHPUnit\Framework\TestCase;
 

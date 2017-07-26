@@ -4,6 +4,7 @@ namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
+use Interop\Amqp\AmqpTopic;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
@@ -31,7 +32,7 @@ class AmqpSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFromQu
     {
         $queue = $context->createQueue($queueName);
         $context->declareQueue($queue);
-        $context->purge($queue);
+        $context->purgeQueue($queue);
 
         $context->bind($context->createTopic($queueName), $queue);
 
@@ -46,8 +47,8 @@ class AmqpSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFromQu
     protected function createTopic(PsrContext $context, $topicName)
     {
         $topic = $context->createTopic($topicName);
-        $topic->setType(\AMQP_EX_TYPE_FANOUT);
-        $topic->addFlag(\AMQP_DURABLE);
+        $topic->setType(AmqpTopic::TYPE_FANOUT);
+        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
         $context->declareTopic($topic);
 
         return $topic;
