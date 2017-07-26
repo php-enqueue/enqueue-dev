@@ -179,7 +179,7 @@ class RabbitMqDriver extends AmqpDriver
                 $this->context->declareTopic($delayTopic);
 
                 $log('Bind processor queue to delay exchange: %s -> %s', $queue->getQueueName(), $delayTopic->getTopicName());
-                $this->context->bind(new AmqpBind($delayTopic, $queue , $queue->getQueueName()));
+                $this->context->bind(new AmqpBind($delayTopic, $queue, $queue->getQueueName()));
             }
         }
     }

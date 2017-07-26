@@ -16,8 +16,8 @@ if ($autoload) {
 }
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\AmqpQueue;
+use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 
 $config = [

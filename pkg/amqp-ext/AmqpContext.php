@@ -2,15 +2,15 @@
 
 namespace Enqueue\AmqpExt;
 
-use Enqueue\Psr\Exception;
-use Interop\Amqp\AmqpContext as InteropAmqpContext;
-use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
-use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\AmqpContext as InteropAmqpContext;
+use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
+use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
+use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
