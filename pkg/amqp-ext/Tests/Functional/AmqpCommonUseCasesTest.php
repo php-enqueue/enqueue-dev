@@ -5,6 +5,7 @@ namespace Enqueue\AmqpExt\Tests\Functional;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -133,7 +134,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $queue = $this->amqpContext->createQueue('amqp_ext.test');
         $this->amqpContext->declareQueue($queue);
 
-        $this->amqpContext->bind($topic, $queue);
+        $this->amqpContext->bind(new AmqpBind($topic, $queue));
 
         $message = $this->amqpContext->createMessage(__METHOD__);
 
@@ -209,7 +210,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $producer->send($queue, $message);
         $producer->send($queue, $message);
 
-        $this->amqpContext->purge($queue);
+        $this->amqpContext->purgeQueue($queue);
 
         $this->assertNull($consumer->receive(1));
     }

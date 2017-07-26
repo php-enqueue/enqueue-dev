@@ -5,6 +5,7 @@ namespace Enqueue\AmqpExt\Tests\Spec;
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
 use Interop\Amqp\AmqpTopic;
+use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
@@ -34,7 +35,7 @@ class AmqpSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFromQu
         $context->declareQueue($queue);
         $context->purgeQueue($queue);
 
-        $context->bind($context->createTopic($queueName), $queue);
+        $context->bind(new AmqpBind($context->createTopic($queueName), $queue));
 
         return $queue;
     }
