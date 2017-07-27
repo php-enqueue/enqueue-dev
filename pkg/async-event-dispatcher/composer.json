@@ -21,7 +21,7 @@
         "symfony/config": "^2.8|^3",
         "symfony/http-kernel": "^2.8|^3",
         "symfony/filesystem": "^2.8|^3",
-        "enqueue/null": "^0.6@dev"
+        "enqueue/null": "^0.7@dev"
     },
     "suggest": {
         "symfony/dependency-injection": "^2.8|^3 If you'd like to use async event dispatcher container extension."
@@ -35,7 +35,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.6.x-dev"
+            "dev-master": "0.7.x-dev"
         }
     }
 }
