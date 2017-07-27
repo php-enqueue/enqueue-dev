@@ -40,7 +40,7 @@ install:
     - rm $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini;
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
-    - composer install --ignore-platform-reqs # ext-amqp is not installed
+    - composer install
     - if [ "$FUNCTIONAL_TESTS" = true ]; then docker --version; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then docker-compose --version; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/dev -b; fi
