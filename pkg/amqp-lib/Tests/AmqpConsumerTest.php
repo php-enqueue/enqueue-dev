@@ -160,10 +160,9 @@ class AmqpConsumerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('wait')
-            ->willReturnCallback(function() {
+            ->willReturnCallback(function () {
                 usleep(2000);
             });
-        ;
 
         $consumer = new AmqpConsumer($channel, new AmqpQueue('aName'), new Buffer(), 'basic_consume');
 

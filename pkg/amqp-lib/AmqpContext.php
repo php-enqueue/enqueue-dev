@@ -3,10 +3,10 @@
 namespace Enqueue\AmqpLib;
 
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
-use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
@@ -134,11 +134,11 @@ class AmqpContext implements InteropAmqpContext
         $this->getChannel()->exchange_declare(
             $topic->getTopicName(),
             $topic->getType(),
-            !!($topic->getFlags() & InteropAmqpTopic::FLAG_PASSIVE),
-            !!($topic->getFlags() & InteropAmqpTopic::FLAG_DURABLE),
-            !!($topic->getFlags() & InteropAmqpTopic::FLAG_AUTODELETE),
-            !!($topic->getFlags() & InteropAmqpTopic::FLAG_INTERNAL),
-            !!($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_PASSIVE),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_DURABLE),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_AUTODELETE),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_INTERNAL),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT),
             $topic->getArguments()
         );
     }
@@ -150,8 +150,8 @@ class AmqpContext implements InteropAmqpContext
     {
         $this->getChannel()->exchange_delete(
             $topic->getTopicName(),
-            !!($topic->getFlags() & InteropAmqpTopic::FLAG_IFUNUSED),
-            !!($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT)
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_IFUNUSED),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT)
         );
     }
 
@@ -162,11 +162,11 @@ class AmqpContext implements InteropAmqpContext
     {
         return $this->getChannel()->queue_declare(
             $queue->getQueueName(),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_PASSIVE),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_DURABLE),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_EXCLUSIVE),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_AUTODELETE),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_PASSIVE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_DURABLE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_EXCLUSIVE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_AUTODELETE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT),
             $queue->getArguments()
         );
     }
@@ -178,9 +178,9 @@ class AmqpContext implements InteropAmqpContext
     {
         $this->getChannel()->queue_delete(
             $queue->getQueueName(),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_IFUNUSED),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_IFEMPTY),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFUNUSED),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFEMPTY),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
         );
     }
 
@@ -191,7 +191,7 @@ class AmqpContext implements InteropAmqpContext
     {
         $this->getChannel()->queue_purge(
             $queue->getQueueName(),
-            !!($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
         );
     }
 
@@ -210,7 +210,7 @@ class AmqpContext implements InteropAmqpContext
                 $bind->getTarget()->getTopicName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
-                !!($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
             // bind queue to exchange
@@ -219,7 +219,7 @@ class AmqpContext implements InteropAmqpContext
                 $bind->getSource()->getQueueName(),
                 $bind->getTarget()->getTopicName(),
                 $bind->getRoutingKey(),
-                !!($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
             // bind exchange to queue
@@ -228,7 +228,7 @@ class AmqpContext implements InteropAmqpContext
                 $bind->getTarget()->getQueueName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
-                !!($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
         }
@@ -249,7 +249,7 @@ class AmqpContext implements InteropAmqpContext
                 $bind->getTarget()->getTopicName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
-                !!($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
             // bind queue to exchange

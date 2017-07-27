@@ -3,11 +3,9 @@
 namespace Enqueue\AmqpLib\Tests;
 
 use Enqueue\AmqpLib\AmqpContext;
-use Enqueue\Null\NullQueue;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\InvalidDestinationException;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PHPUnit\Framework\TestCase;

@@ -147,7 +147,7 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     public function receiveNoWait()
     {
-        if ($message = $this->channel->basic_get($this->queue->getQueueName(), !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK))) {
+        if ($message = $this->channel->basic_get($this->queue->getQueueName(), (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK))) {
             return $this->convertMessage($message);
         }
     }
@@ -232,10 +232,10 @@ class AmqpConsumer implements InteropAmqpConsumer
             $consumerTag = $this->channel->basic_consume(
                 $this->queue->getQueueName(),
                 $this->getConsumerTag() ?: $this->getQueue()->getConsumerTag(),
-                !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
-                !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
-                !!($this->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
-                !!($this->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT),
+                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
+                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
+                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
+                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT),
                 $callback
             );
 
@@ -277,6 +277,7 @@ class AmqpConsumer implements InteropAmqpConsumer
                     break;
                 }
             }
-        } catch (AMQPTimeoutException $e) {}
+        } catch (AMQPTimeoutException $e) {
+        }
     }
 }

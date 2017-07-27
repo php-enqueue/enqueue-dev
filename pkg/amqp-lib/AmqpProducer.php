@@ -56,16 +56,16 @@ class AmqpProducer implements InteropAmqpProducer
                 $amqpMessage,
                 $destination->getTopicName(),
                 $message->getRoutingKey(),
-                !!($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
-                !!($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
             );
         } else {
             $this->channel->basic_publish(
                 $amqpMessage,
                 '',
                 $destination->getQueueName(),
-                !!($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
-                !!($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
             );
         }
     }
