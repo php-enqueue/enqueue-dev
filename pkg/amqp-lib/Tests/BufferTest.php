@@ -2,8 +2,8 @@
 
 namespace Enqueue\AmqpLib\Tests;
 
-use Enqueue\AmqpLib\AmqpMessage;
 use Enqueue\AmqpLib\Buffer;
+use Interop\Amqp\Impl\AmqpMessage;
 use PHPUnit\Framework\TestCase;
 
 class BufferTest extends TestCase

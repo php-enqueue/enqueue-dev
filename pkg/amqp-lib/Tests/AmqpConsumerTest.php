@@ -3,12 +3,12 @@
 namespace Enqueue\AmqpLib\Tests;
 
 use Enqueue\AmqpLib\AmqpConsumer;
-use Enqueue\AmqpLib\AmqpMessage;
-use Enqueue\AmqpLib\AmqpQueue;
 use Enqueue\AmqpLib\Buffer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\WriteAttributeTrait;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use PhpAmqpLib\Channel\AMQPChannel;
@@ -48,7 +48,7 @@ class AmqpConsumerTest extends TestCase
         $consumer = new AmqpConsumer($this->createChannelMock(), new AmqpQueue('aName'), new Buffer(), 'basic_get');
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\AmqpLib\AmqpMessage but');
+        $this->expectExceptionMessage('The message must be an instance of Interop\Amqp\AmqpMessage but');
 
         $consumer->acknowledge(new NullMessage());
     }
@@ -58,7 +58,7 @@ class AmqpConsumerTest extends TestCase
         $consumer = new AmqpConsumer($this->createChannelMock(), new AmqpQueue('aName'), new Buffer(), 'basic_get');
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\AmqpLib\AmqpMessage but');
+        $this->expectExceptionMessage('The message must be an instance of Interop\Amqp\AmqpMessage but');
 
         $consumer->reject(new NullMessage());
     }
@@ -159,19 +159,17 @@ class AmqpConsumerTest extends TestCase
         ;
         $channel
             ->expects($this->once())
-            ->method('basic_qos')
-            ->with($this->identicalTo(0), $this->identicalTo(1), $this->isFalse())
-        ;
-        $channel
-            ->expects($this->once())
             ->method('wait')
+            ->willReturnCallback(function() {
+                usleep(2000);
+            });
         ;
 
         $consumer = new AmqpConsumer($channel, new AmqpQueue('aName'), new Buffer(), 'basic_consume');
 
         $message = new AmqpMessage();
         $message->setDeliveryTag('delivery-tag');
-        $consumer->receive();
+        $consumer->receive(1);
     }
 
     /**

@@ -3,11 +3,10 @@
 namespace Enqueue\AmqpLib\Tests;
 
 use Enqueue\AmqpLib\AmqpContext;
-use Enqueue\AmqpLib\AmqpQueue;
-use Enqueue\AmqpLib\AmqpTopic;
 use Enqueue\Null\NullQueue;
-use Enqueue\Null\NullTopic;
-use Interop\Queue\Exception;
+use Interop\Amqp\Impl\AmqpBind;
+use Interop\Amqp\Impl\AmqpQueue;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
@@ -30,7 +29,7 @@ class AmqpContextTest extends TestCase
                 $this->isTrue(),
                 $this->isTrue(),
                 $this->identicalTo(['key' => 'value']),
-                $this->identicalTo(12345)
+                $this->isNull()
             )
         ;
 
@@ -44,13 +43,11 @@ class AmqpContextTest extends TestCase
         $topic = new AmqpTopic('name');
         $topic->setType('type');
         $topic->setArguments(['key' => 'value']);
-        $topic->setAutoDelete(true);
-        $topic->setDurable(true);
-        $topic->setInternal(true);
-        $topic->setNoWait(true);
-        $topic->setPassive(true);
-        $topic->setRoutingKey('routing-key');
-        $topic->setTicket(12345);
+        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
+        $topic->addFlag(AmqpTopic::FLAG_NOWAIT);
+        $topic->addFlag(AmqpTopic::FLAG_PASSIVE);
+        $topic->addFlag(AmqpTopic::FLAG_INTERNAL);
+        $topic->addFlag(AmqpTopic::FLAG_AUTODELETE);
 
         $session = new AmqpContext($connection, '');
         $session->declareTopic($topic);
@@ -70,7 +67,7 @@ class AmqpContextTest extends TestCase
                 $this->isTrue(),
                 $this->isTrue(),
                 $this->identicalTo(['key' => 'value']),
-                $this->identicalTo(12345)
+                $this->isNull()
             )
         ;
 
@@ -83,47 +80,15 @@ class AmqpContextTest extends TestCase
 
         $queue = new AmqpQueue('name');
         $queue->setArguments(['key' => 'value']);
-        $queue->setAutoDelete(true);
-        $queue->setDurable(true);
-        $queue->setNoWait(true);
-        $queue->setPassive(true);
-        $queue->setTicket(12345);
-        $queue->setConsumerTag('consumer-tag');
-        $queue->setExclusive(true);
-        $queue->setNoLocal(true);
+        $queue->addFlag(AmqpQueue::FLAG_AUTODELETE);
+        $queue->addFlag(AmqpQueue::FLAG_DURABLE);
+        $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
+        $queue->addFlag(AmqpQueue::FLAG_PASSIVE);
+        $queue->addFlag(AmqpQueue::FLAG_EXCLUSIVE);
+        $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
 
         $session = new AmqpContext($connection, '');
         $session->declareQueue($queue);
-    }
-
-    public function testDeclareBindShouldThrowExceptionIfSourceDestinationIsInvalid()
-    {
-        $context = new AmqpContext($this->createConnectionMock(), '');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpLib\AmqpTopic but got');
-
-        $context->bind(new NullTopic(''), new AmqpTopic('name'));
-    }
-
-    public function testDeclareBindShouldThrowExceptionIfTargetDestinationIsInvalid()
-    {
-        $context = new AmqpContext($this->createConnectionMock(), '');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpLib\AmqpTopic but got');
-
-        $context->bind(new AmqpQueue('name'), new NullTopic(''));
-    }
-
-    public function testDeclareBindShouldThrowExceptionWhenSourceAndTargetAreQueues()
-    {
-        $context = new AmqpContext($this->createConnectionMock(), '');
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Is not possible to bind queue to queue. It is possible to bind topic to queue or topic to topic');
-
-        $context->bind(new AmqpQueue('name'), new AmqpQueue('name'));
     }
 
     public function testDeclareBindShouldBindTopicToTopic()
@@ -135,7 +100,7 @@ class AmqpContextTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('exchange_bind')
-            ->with('target', 'source')
+            ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), $this->isTrue())
         ;
 
         $connection = $this->createConnectionMock();
@@ -146,7 +111,7 @@ class AmqpContextTest extends TestCase
         ;
 
         $context = new AmqpContext($connection, '');
-        $context->bind($source, $target);
+        $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
     }
 
     public function testDeclareBindShouldBindTopicToQueue()
@@ -158,7 +123,7 @@ class AmqpContextTest extends TestCase
         $channel
             ->expects($this->exactly(2))
             ->method('queue_bind')
-            ->with('target', 'source')
+            ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), $this->isTrue())
         ;
 
         $connection = $this->createConnectionMock();
@@ -169,8 +134,8 @@ class AmqpContextTest extends TestCase
         ;
 
         $context = new AmqpContext($connection, '');
-        $context->bind($source, $target);
-        $context->bind($target, $source);
+        $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
+        $context->bind(new AmqpBind($source, $target, 'routing-key', 12345));
     }
 
     public function testShouldCloseChannelConnection()
@@ -194,16 +159,6 @@ class AmqpContextTest extends TestCase
         $context->close();
     }
 
-    public function testPurgeShouldThrowExceptionIfDestinationIsNotAmqpQueue()
-    {
-        $context = new AmqpContext($this->createConnectionMock(), '');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpLib\AmqpQueue but got');
-
-        $context->purge(new NullQueue(''));
-    }
-
     public function testShouldPurgeQueue()
     {
         $queue = new AmqpQueue('queue');
@@ -223,7 +178,7 @@ class AmqpContextTest extends TestCase
         ;
 
         $context = new AmqpContext($connection, '');
-        $context->purge($queue);
+        $context->purgeQueue($queue);
     }
 
     /**
