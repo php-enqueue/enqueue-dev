@@ -36,8 +36,7 @@
     "symfony/event-dispatcher": "^2.8|^3",
     "symfony/console": "^2.8|^3",
     "friendsofphp/php-cs-fixer": "^2",
-    "empi89/php-amqp-stubs": "*@dev",
-    "phpstan/phpstan": "^0.7.0"
+    "empi89/php-amqp-stubs": "*@dev"
   },
   "autoload": {
     "files": [
@@ -52,7 +51,12 @@
     }
   },
   "config": {
-    "bin-dir": "bin"
+    "bin-dir": "bin",
+    "platform": {
+      "ext-amqp": "1.7",
+      "ext-gearman": "1.1",
+      "ext-rdkafka": "3.3"
+    }
   },
   "repositories": [
     {
