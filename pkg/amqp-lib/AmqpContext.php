@@ -285,6 +285,7 @@ class AmqpContext implements InteropAmqpContext
     {
         if (null === $this->channel) {
             $this->channel = $this->connection->channel();
+            $this->channel->basic_qos(0, 1, false);
         }
 
         return $this->channel;

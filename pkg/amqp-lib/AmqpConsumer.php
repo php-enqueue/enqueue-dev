@@ -42,11 +42,6 @@ class AmqpConsumer implements InteropAmqpConsumer
     private $receiveMethod;
 
     /**
-     * @var InteropAmqpMessage
-     */
-    private $receivedMessage;
-
-    /**
      * @var int
      */
     private $flags;
@@ -164,8 +159,6 @@ class AmqpConsumer implements InteropAmqpConsumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-        var_dump($message->getDeliveryTag());
-
         $this->channel->basic_ack($message->getDeliveryTag());
     }
 
@@ -233,15 +226,8 @@ class AmqpConsumer implements InteropAmqpConsumer
                 $receivedMessage = $this->convertMessage($message);
                 $receivedMessage->setConsumerTag($message->delivery_info['consumer_tag']);
 
-                if ($this->consumerTag === $receivedMessage->getConsumerTag()) {
-                    $this->receivedMessage = $receivedMessage;
-                } else {
-                    // not our message, put it to buffer and continue.
-                    $this->buffer->push($receivedMessage->getConsumerTag(), $receivedMessage);
-                }
+                $this->buffer->push($receivedMessage->getConsumerTag(), $receivedMessage);
             };
-
-            $this->channel->basic_qos(0, 1, false);
 
             $consumerTag = $this->channel->basic_consume(
                 $this->queue->getQueueName(),
@@ -253,7 +239,7 @@ class AmqpConsumer implements InteropAmqpConsumer
                 $callback
             );
 
-            $this->consumerTag = $consumerTag ?: $this->queue->getConsumerTag();
+            $this->consumerTag = $consumerTag ?: $this->getQueue()->getConsumerTag();
 
             if (empty($this->consumerTag)) {
                 throw new Exception('Got empty consumer tag');
@@ -266,16 +252,31 @@ class AmqpConsumer implements InteropAmqpConsumer
             return $message;
         }
 
-        $this->receivedMessage = null;
-
         try {
-            echo 'here', PHP_EOL;
-            $this->channel->wait(null, false, $timeout);
-            echo 'here1', PHP_EOL;
-        } catch (AMQPTimeoutException $e) {
-            echo 'here2', PHP_EOL;
-        }
+            while (true) {
+                $start = microtime(true);
 
-        return $this->receivedMessage;
+                $this->channel->wait(null, false, $timeout / 1000);
+
+                if ($message = $this->buffer->pop($this->consumerTag)) {
+                    return $message;
+                }
+
+                // is here when consumed message is not for this consumer
+
+                // as timeout is infinite have to continue consumption, but it can overflow message buffer
+                if ($timeout <= 0) {
+                    continue;
+                }
+
+                // compute remaining timeout and continue until time is up
+                $stop = microtime(true);
+                $timeout -= ($stop - $start) * 1000;
+
+                if ($timeout <= 0) {
+                    break;
+                }
+            }
+        } catch (AMQPTimeoutException $e) {}
     }
 }

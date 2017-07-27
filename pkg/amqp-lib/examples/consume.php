@@ -34,14 +34,13 @@ $fooConsumer = $context->createConsumer($queue);
 
 $queue = $context->createQueue('bar');
 $barConsumer = $context->createConsumer($queue);
-//$barConsumer->addFlag(\Interop\Amqp\AmqpConsumer::FLAG_NOACK);
 
 $consumers = [$fooConsumer, $barConsumer];
 
 $consumer = $consumers[rand(0, 1)];
 
 while (true) {
-    if ($m = $consumer->receive(0.100)) {
+    if ($m = $consumer->receive(100)) {
         echo $m->getBody(), PHP_EOL;
         $consumer->acknowledge($m);
     }
