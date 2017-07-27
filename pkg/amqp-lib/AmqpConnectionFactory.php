@@ -2,14 +2,14 @@
 
 namespace Enqueue\AmqpLib;
 
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
 use PhpAmqpLib\Connection\AMQPLazySocketConnection;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-class AmqpConnectionFactory implements PsrConnectionFactory
+class AmqpConnectionFactory implements InteropAmqpConnectionFactory
 {
     /**
      * @var array

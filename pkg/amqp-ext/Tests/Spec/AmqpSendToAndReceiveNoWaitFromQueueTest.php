@@ -31,7 +31,7 @@ class AmqpSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFrom
     {
         $queue = $context->createQueue($queueName);
         $context->declareQueue($queue);
-        $context->purge($queue);
+        $context->purgeQueue($queue);
 
         return $queue;
     }

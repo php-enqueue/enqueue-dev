@@ -4,14 +4,14 @@ namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\AmqpExt\AmqpProducer;
-use Enqueue\AmqpExt\AmqpQueue;
-use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\AmqpExt\Buffer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpQueue;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
@@ -86,27 +86,8 @@ class AmqpContextTest extends TestCase
 
         $this->assertInstanceOf(AmqpTopic::class, $topic);
         $this->assertSame('theName', $topic->getTopicName());
-        $this->assertSame(\AMQP_NOPARAM, $topic->getFlags());
+        $this->assertSame(AmqpTopic::FLAG_NOPARAM, $topic->getFlags());
         $this->assertSame([], $topic->getArguments());
-        $this->assertSame(null, $topic->getRoutingKey());
-    }
-
-    public function testShouldThrowIfNotAmqpTopicGivenOnDeleteTopicCall()
-    {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
-        $context->deleteTopic(new NullTopic('aName'));
-    }
-
-    public function testShouldThrowIfNotAmqpTopicGivenOnDeclareTopicCall()
-    {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
-        $context->declareTopic(new NullTopic('aName'));
     }
 
     public function testShouldCreateQueueWithGivenName()
@@ -117,28 +98,9 @@ class AmqpContextTest extends TestCase
 
         $this->assertInstanceOf(AmqpQueue::class, $queue);
         $this->assertSame('theName', $queue->getQueueName());
-        $this->assertSame(\AMQP_NOPARAM, $queue->getFlags());
+        $this->assertSame(AmqpQueue::FLAG_NOPARAM, $queue->getFlags());
         $this->assertSame([], $queue->getArguments());
-        $this->assertSame([], $queue->getBindArguments());
         $this->assertSame(null, $queue->getConsumerTag());
-    }
-
-    public function testShouldThrowIfNotAmqpQueueGivenOnDeleteQueueCall()
-    {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
-        $context->deleteQueue(new NullQueue('aName'));
-    }
-
-    public function testShouldThrowIfNotAmqpQueueGivenOnDeclareQueueCall()
-    {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
-        $context->declareQueue(new NullQueue('aName'));
     }
 
     public function testShouldReturnAmqpProducer()
@@ -172,7 +134,7 @@ class AmqpContextTest extends TestCase
         $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpQueue but got Enqueue\Null\NullQueue.');
         $context->createConsumer(new NullQueue('aName'));
     }
 
@@ -181,11 +143,11 @@ class AmqpContextTest extends TestCase
         $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
+        $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpTopic but got Enqueue\Null\NullTopic.');
         $context->createConsumer(new NullTopic('aName'));
     }
 
-    public function shouldDoNothingIfConnectionAlreadyClosed()
+    public function testShouldDoNothingIfConnectionAlreadyClosed()
     {
         $extConnectionMock = $this->createExtConnectionMock();
         $extConnectionMock
@@ -284,33 +246,6 @@ class AmqpContextTest extends TestCase
         $context = new AmqpContext($extChannelMock, 'basic_get');
 
         $context->close();
-    }
-
-    public function testShouldThrowIfSourceNotAmqpTopicOnBindCall()
-    {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpTopic but got Enqueue\Null\NullTopic.');
-        $context->bind(new NullTopic('aName'), new AmqpQueue('aName'));
-    }
-
-    public function testShouldThrowIfTargetNotAmqpQueueOnBindCall()
-    {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
-        $context->bind(new AmqpTopic('aName'), new NullQueue('aName'));
-    }
-
-    public function testShouldThrowIfGivenQueueNotAmqpQueueOnPurge()
-    {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpExt\AmqpQueue but got Enqueue\Null\NullQueue.');
-        $context->purge(new NullQueue('aName'));
     }
 
     /**

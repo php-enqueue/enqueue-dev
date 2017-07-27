@@ -15,7 +15,7 @@ if ($autoload) {
     throw new \LogicException('Composer autoload was not found');
 }
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory;
 
 $config = [
     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
@@ -23,6 +23,7 @@ $config = [
     'user' => getenv('SYMFONY__RABBITMQ__USER'),
     'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
     'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+    'receive_method' => 'basic_consume',
 ];
 
 $factory = new AmqpConnectionFactory($config);
@@ -39,7 +40,7 @@ $consumers = [$fooConsumer, $barConsumer];
 $consumer = $consumers[rand(0, 1)];
 
 while (true) {
-    if ($m = $consumer->receive(1)) {
+    if ($m = $consumer->receive(100)) {
         echo $m->getBody(), PHP_EOL;
         $consumer->acknowledge($m);
     }

@@ -15,7 +15,7 @@ if ($autoload) {
     throw new \LogicException('Composer autoload was not found');
 }
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
@@ -34,7 +34,7 @@ $context = $factory->createContext();
 $topic = $context->createTopic('test.amqp.ext');
 $topic->addFlag(AmqpTopic::FLAG_DURABLE);
 $topic->setType(AmqpTopic::TYPE_FANOUT);
-$topic->setArguments(['alternate-exchange' => 'foo']);
+//$topic->setArguments(['alternate-exchange' => 'foo']);
 
 $context->deleteTopic($topic);
 $context->declareTopic($topic);

@@ -3,9 +3,6 @@
 namespace Enqueue\AmqpExt\Tests\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\AmqpMessage;
-use Enqueue\AmqpExt\AmqpQueue;
-use Enqueue\AmqpExt\AmqpTopic;
 use Enqueue\AmqpExt\Client\AmqpDriver;
 use Enqueue\AmqpExt\Client\RabbitMqDriver;
 use Enqueue\Client\Config;
@@ -14,6 +11,10 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Amqp\AmqpBind;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpQueue;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\PsrProducer;
 use PHPUnit\Framework\TestCase;
 
@@ -69,7 +70,6 @@ class RabbitMqDriverTest extends TestCase
         $this->assertSame([], $queue->getArguments());
         $this->assertSame(2, $queue->getFlags());
         $this->assertNull($queue->getConsumerTag());
-        $this->assertSame([], $queue->getBindArguments());
     }
 
     public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
@@ -249,13 +249,13 @@ class RabbitMqDriverTest extends TestCase
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertSame([
             'hkey' => 'hval',
-            'content_type' => 'ContentType',
-            'expiration' => '123000',
-            'delivery_mode' => 2,
             'message_id' => 'MessageId',
             'timestamp' => 1000,
             'reply_to' => 'theReplyTo',
             'correlation_id' => 'theCorrelationId',
+            'content_type' => 'ContentType',
+            'delivery_mode' => 2,
+            'expiration' => '123000',
             'priority' => 4,
         ], $transportMessage->getHeaders());
         $this->assertSame([
@@ -498,7 +498,7 @@ class RabbitMqDriverTest extends TestCase
         $context
             ->expects($this->at(4))
             ->method('bind')
-            ->with($this->identicalTo($routerTopic), $this->identicalTo($routerQueue))
+            ->with($this->isInstanceOf(AmqpBind::class))
         ;
         // setup processor queue
         $context
@@ -549,7 +549,7 @@ class RabbitMqDriverTest extends TestCase
         $context
             ->expects($this->at(4))
             ->method('bind')
-            ->with($this->identicalTo($routerTopic), $this->identicalTo($routerQueue))
+            ->with($this->isInstanceOf(AmqpBind::class))
         ;
         // setup processor queue
         $context
@@ -581,7 +581,7 @@ class RabbitMqDriverTest extends TestCase
         $context
             ->expects($this->at(10))
             ->method('bind')
-            ->with($this->identicalTo($delayTopic), $this->identicalTo($processorQueue))
+            ->with($this->isInstanceOf(AmqpBind::class))
         ;
 
         $config = Config::create('', '', '', '', '', '', ['delay_plugin_installed' => true]);

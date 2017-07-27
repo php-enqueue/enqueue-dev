@@ -3,14 +3,14 @@
 namespace  Enqueue\AmqpExt\Client;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\AmqpMessage;
-use Enqueue\AmqpExt\AmqpQueue;
-use Enqueue\AmqpExt\AmqpTopic;
-use Enqueue\AmqpExt\DeliveryMode;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
+use Interop\Amqp\AmqpMessage;
+use Interop\Amqp\AmqpQueue;
+use Interop\Amqp\AmqpTopic;
+use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -97,7 +97,7 @@ class AmqpDriver implements DriverInterface
         $log('Declare router queue: %s', $routerQueue->getQueueName());
         $this->context->declareQueue($routerQueue);
         $log('Bind router queue to exchange: %s -> %s', $routerQueue->getQueueName(), $routerTopic->getTopicName());
-        $this->context->bind($routerTopic, $routerQueue);
+        $this->context->bind(new AmqpBind($routerTopic, $routerQueue, $routerQueue->getQueueName()));
 
         // setup queues
         foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
@@ -118,7 +118,7 @@ class AmqpDriver implements DriverInterface
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
         $queue = $this->context->createQueue($transportName);
-        $queue->addFlag(AMQP_DURABLE);
+        $queue->addFlag(AmqpQueue::FLAG_DURABLE);
 
         return $queue;
     }
@@ -133,14 +133,6 @@ class AmqpDriver implements DriverInterface
         $headers = $message->getHeaders();
         $properties = $message->getProperties();
 
-        $headers['content_type'] = $message->getContentType();
-
-        if ($message->getExpire()) {
-            $headers['expiration'] = (string) ($message->getExpire() * 1000);
-        }
-
-        $headers['delivery_mode'] = DeliveryMode::PERSISTENT;
-
         $transportMessage = $this->context->createMessage();
         $transportMessage->setBody($message->getBody());
         $transportMessage->setHeaders($headers);
@@ -149,6 +141,12 @@ class AmqpDriver implements DriverInterface
         $transportMessage->setTimestamp($message->getTimestamp());
         $transportMessage->setReplyTo($message->getReplyTo());
         $transportMessage->setCorrelationId($message->getCorrelationId());
+        $transportMessage->setContentType($message->getContentType());
+        $transportMessage->setDeliveryMode(AmqpMessage::DELIVERY_MODE_PERSISTENT);
+
+        if ($message->getExpire()) {
+            $transportMessage->setExpiration((string) ($message->getExpire() * 1000));
+        }
 
         return $transportMessage;
     }
@@ -165,10 +163,9 @@ class AmqpDriver implements DriverInterface
         $clientMessage->setBody($message->getBody());
         $clientMessage->setHeaders($message->getHeaders());
         $clientMessage->setProperties($message->getProperties());
+        $clientMessage->setContentType($message->getContentType());
 
-        $clientMessage->setContentType($message->getHeader('content_type'));
-
-        if ($expiration = $message->getHeader('expiration')) {
+        if ($expiration = $message->getExpiration()) {
             if (false == is_numeric($expiration)) {
                 throw new \LogicException(sprintf('expiration header is not numeric. "%s"', $expiration));
             }
@@ -200,8 +197,8 @@ class AmqpDriver implements DriverInterface
         $topic = $this->context->createTopic(
             $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())
         );
-        $topic->setType(AMQP_EX_TYPE_FANOUT);
-        $topic->addFlag(AMQP_DURABLE);
+        $topic->setType(AmqpTopic::TYPE_FANOUT);
+        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
 
         return $topic;
     }

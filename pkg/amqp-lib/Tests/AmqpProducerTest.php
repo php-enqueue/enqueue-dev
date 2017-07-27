@@ -2,11 +2,11 @@
 
 namespace Enqueue\AmqpLib\Tests;
 
-use Enqueue\AmqpLib\AmqpMessage;
 use Enqueue\AmqpLib\AmqpProducer;
-use Enqueue\AmqpLib\AmqpQueue;
-use Enqueue\AmqpLib\AmqpTopic;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpQueue;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -36,7 +36,7 @@ class AmqpProducerTest extends TestCase
         $producer = new AmqpProducer($this->createAmqpChannelMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\AmqpLib\AmqpQueue but got');
+        $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpQueue but got');
 
         $producer->send($this->createDestinationMock(), new AmqpMessage());
     }
@@ -46,7 +46,7 @@ class AmqpProducerTest extends TestCase
         $producer = new AmqpProducer($this->createAmqpChannelMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\AmqpLib\AmqpMessage but it is');
+        $this->expectExceptionMessage('The message must be an instance of Interop\Amqp\AmqpMessage but it is');
 
         $producer->send(new AmqpTopic('name'), $this->createMessageMock());
     }
@@ -66,10 +66,12 @@ class AmqpProducerTest extends TestCase
         ;
 
         $topic = new AmqpTopic('topic');
-        $topic->setRoutingKey('routing-key');
+
+        $message = new AmqpMessage('body');
+        $message->setRoutingKey('routing-key');
 
         $producer = new AmqpProducer($channel);
-        $producer->send($topic, new AmqpMessage('body'));
+        $producer->send($topic, $message);
 
         $this->assertEquals('body', $amqpMessage->getBody());
     }

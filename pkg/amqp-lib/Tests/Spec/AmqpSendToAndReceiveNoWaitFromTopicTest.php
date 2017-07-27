@@ -4,6 +4,7 @@ namespace Enqueue\AmqpLib\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Enqueue\AmqpLib\AmqpContext;
+use Interop\Amqp\AmqpTopic;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendToAndReceiveNoWaitFromTopicSpec;
 
@@ -30,8 +31,8 @@ class AmqpSendToAndReceiveNoWaitFromTopicTest extends SendToAndReceiveNoWaitFrom
     protected function createTopic(PsrContext $context, $topicName)
     {
         $topic = $context->createTopic($topicName);
-        $topic->setType('fanout');
-        $topic->setDurable(true);
+        $topic->setType(AmqpTopic::TYPE_FANOUT);
+        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
         $context->declareTopic($topic);
 
         return $topic;

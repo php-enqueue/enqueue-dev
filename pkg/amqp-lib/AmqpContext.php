@@ -2,16 +2,23 @@
 
 namespace Enqueue\AmqpLib;
 
+use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\AmqpContext as InteropAmqpContext;
+use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
+use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
+use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
+use Interop\Amqp\Impl\AmqpBind;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpQueue;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 
-class AmqpContext implements PsrContext
+class AmqpContext implements InteropAmqpContext
 {
     /**
      * @var AbstractConnection
@@ -49,7 +56,7 @@ class AmqpContext implements PsrContext
      * @param array       $properties
      * @param array       $headers
      *
-     * @return AmqpMessage
+     * @return InteropAmqpMessage
      */
     public function createMessage($body = '', array $properties = [], array $headers = [])
     {
@@ -59,7 +66,7 @@ class AmqpContext implements PsrContext
     /**
      * @param string $name
      *
-     * @return AmqpQueue
+     * @return InteropAmqpQueue
      */
     public function createQueue($name)
     {
@@ -69,7 +76,7 @@ class AmqpContext implements PsrContext
     /**
      * @param string $name
      *
-     * @return AmqpTopic
+     * @return InteropAmqpTopic
      */
     public function createTopic($name)
     {
@@ -84,13 +91,13 @@ class AmqpContext implements PsrContext
     public function createConsumer(PsrDestination $destination)
     {
         $destination instanceof PsrTopic
-            ? InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class)
-            : InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class)
+            ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
+            : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class)
         ;
 
         if ($destination instanceof AmqpTopic) {
             $queue = $this->createTemporaryQueue();
-            $this->bind($destination, $queue);
+            $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
             return new AmqpConsumer($this->getChannel(), $queue, $this->buffer, $this->receiveMethod);
         }
@@ -107,12 +114,12 @@ class AmqpContext implements PsrContext
     }
 
     /**
-     * @return AmqpQueue
+     * @return InteropAmqpQueue
      */
     public function createTemporaryQueue()
     {
         $queue = $this->createQueue(null);
-        $queue->setExclusive(true);
+        $queue->addFlag(InteropAmqpQueue::FLAG_EXCLUSIVE);
 
         $this->declareQueue($queue);
 
@@ -120,109 +127,148 @@ class AmqpContext implements PsrContext
     }
 
     /**
-     * @param AmqpTopic $destination
+     * {@inheritdoc}
      */
-    public function declareTopic(PsrDestination $destination)
+    public function declareTopic(InteropAmqpTopic $topic)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpTopic::class);
-
         $this->getChannel()->exchange_declare(
-            $destination->getTopicName(),
-            $destination->getType(),
-            $destination->isPassive(),
-            $destination->isDurable(),
-            $destination->isAutoDelete(),
-            $destination->isInternal(),
-            $destination->isNoWait(),
-            $destination->getArguments(),
-            $destination->getTicket()
+            $topic->getTopicName(),
+            $topic->getType(),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_PASSIVE),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_DURABLE),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_AUTODELETE),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_INTERNAL),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT),
+            $topic->getArguments()
         );
     }
 
     /**
-     * @param AmqpQueue $destination
+     * {@inheritdoc}
      */
-    public function declareQueue(PsrDestination $destination)
+    public function deleteTopic(InteropAmqpTopic $topic)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, AmqpQueue::class);
-
-        $this->getChannel()->queue_declare(
-            $destination->getQueueName(),
-            $destination->isPassive(),
-            $destination->isDurable(),
-            $destination->isExclusive(),
-            $destination->isAutoDelete(),
-            $destination->isNoWait(),
-            $destination->getArguments(),
-            $destination->getTicket()
+        $this->getChannel()->exchange_delete(
+            $topic->getTopicName(),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_IFUNUSED),
+            (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT)
         );
     }
 
     /**
-     * @param AmqpTopic|AmqpQueue $source
-     * @param AmqpTopic|AmqpQueue $target
-     *
-     * @throws Exception
+     * {@inheritdoc}
      */
-    public function bind(PsrDestination $source, PsrDestination $target)
+    public function declareQueue(InteropAmqpQueue $queue)
     {
-        $source instanceof PsrTopic
-            ? InvalidDestinationException::assertDestinationInstanceOf($source, AmqpTopic::class)
-            : InvalidDestinationException::assertDestinationInstanceOf($source, AmqpQueue::class)
-        ;
+        return $this->getChannel()->queue_declare(
+            $queue->getQueueName(),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_PASSIVE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_DURABLE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_EXCLUSIVE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_AUTODELETE),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT),
+            $queue->getArguments()
+        );
+    }
 
-        $target instanceof PsrTopic
-            ? InvalidDestinationException::assertDestinationInstanceOf($target, AmqpTopic::class)
-            : InvalidDestinationException::assertDestinationInstanceOf($target, AmqpQueue::class)
-        ;
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteQueue(InteropAmqpQueue $queue)
+    {
+        $this->getChannel()->queue_delete(
+            $queue->getQueueName(),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFUNUSED),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFEMPTY),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
+        );
+    }
 
-        if ($source instanceof AmqpQueue && $target instanceof AmqpQueue) {
+    /**
+     * {@inheritdoc}
+     */
+    public function purgeQueue(InteropAmqpQueue $queue)
+    {
+        $this->getChannel()->queue_purge(
+            $queue->getQueueName(),
+            (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function bind(InteropAmqpBind $bind)
+    {
+        if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
             throw new Exception('Is not possible to bind queue to queue. It is possible to bind topic to queue or topic to topic');
         }
 
         // bind exchange to exchange
-        if ($source instanceof AmqpTopic && $target instanceof AmqpTopic) {
+        if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
             $this->getChannel()->exchange_bind(
-                $target->getTopicName(),
-                $source->getTopicName(),
-                $source->getRoutingKey(),
-                $source->isNowait(),
-                $source->getArguments(),
-                $source->getTicket()
+                $bind->getTarget()->getTopicName(),
+                $bind->getSource()->getTopicName(),
+                $bind->getRoutingKey(),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                $bind->getArguments()
             );
             // bind queue to exchange
-        } elseif ($source instanceof AmqpQueue) {
+        } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getChannel()->queue_bind(
-                $source->getQueueName(),
-                $target->getTopicName(),
-                $target->getRoutingKey(),
-                $target->isNowait(),
-                $target->getArguments(),
-                $target->getTicket()
+                $bind->getSource()->getQueueName(),
+                $bind->getTarget()->getTopicName(),
+                $bind->getRoutingKey(),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                $bind->getArguments()
             );
             // bind exchange to queue
         } else {
             $this->getChannel()->queue_bind(
-                $target->getQueueName(),
-                $source->getTopicName(),
-                $source->getRoutingKey(),
-                $source->isNowait(),
-                $source->getArguments(),
-                $source->getTicket()
+                $bind->getTarget()->getQueueName(),
+                $bind->getSource()->getTopicName(),
+                $bind->getRoutingKey(),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                $bind->getArguments()
             );
         }
     }
 
     /**
-     * Purge all messages from the given queue.
-     *
-     * @param PsrQueue $queue
+     * {@inheritdoc}
      */
-    public function purge(PsrQueue $queue)
+    public function unbind(InteropAmqpBind $bind)
     {
-        InvalidDestinationException::assertDestinationInstanceOf($queue, AmqpQueue::class);
+        if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
+            throw new Exception('Is not possible to bind queue to queue. It is possible to bind topic to queue or topic to topic');
+        }
 
-        $this->getChannel()->queue_purge($queue->getQueueName());
+        // bind exchange to exchange
+        if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
+            $this->getChannel()->exchange_unbind(
+                $bind->getTarget()->getTopicName(),
+                $bind->getSource()->getTopicName(),
+                $bind->getRoutingKey(),
+                (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
+                $bind->getArguments()
+            );
+            // bind queue to exchange
+        } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
+            $this->getChannel()->queue_unbind(
+                $bind->getSource()->getQueueName(),
+                $bind->getTarget()->getTopicName(),
+                $bind->getRoutingKey(),
+                $bind->getArguments()
+            );
+            // bind exchange to queue
+        } else {
+            $this->getChannel()->queue_unbind(
+                $bind->getTarget()->getQueueName(),
+                $bind->getSource()->getTopicName(),
+                $bind->getRoutingKey(),
+                $bind->getArguments()
+            );
+        }
     }
 
     public function close()
@@ -239,6 +285,7 @@ class AmqpContext implements PsrContext
     {
         if (null === $this->channel) {
             $this->channel = $this->connection->channel();
+            $this->channel->basic_qos(0, 1, false);
         }
 
         return $this->channel;

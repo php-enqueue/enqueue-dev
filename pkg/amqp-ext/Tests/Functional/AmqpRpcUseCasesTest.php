@@ -3,11 +3,11 @@
 namespace Enqueue\AmqpExt\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\AmqpMessage;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
 use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Interop\Amqp\Impl\AmqpMessage;
 use PHPUnit\Framework\TestCase;
 
 /**
