@@ -51,6 +51,36 @@ class AmqpContextTest extends TestCase
         $session->declareTopic($topic);
     }
 
+    public function testShouldDeleteTopic()
+    {
+        $channel = $this->createChannelMock();
+        $channel
+            ->expects($this->once())
+            ->method('exchange_delete')
+            ->with(
+                $this->identicalTo('name'),
+                $this->isTrue(),
+                $this->isTrue()
+            )
+        ;
+
+        $connection = $this->createConnectionMock();
+        $connection
+            ->expects($this->once())
+            ->method('channel')
+            ->willReturn($channel)
+        ;
+
+        $topic = new AmqpTopic('name');
+        $topic->setType('type');
+        $topic->setArguments(['key' => 'value']);
+        $topic->addFlag(AmqpTopic::FLAG_IFUNUSED);
+        $topic->addFlag(AmqpTopic::FLAG_NOWAIT);
+
+        $session = new AmqpContext($connection, '');
+        $session->deleteTopic($topic);
+    }
+
     public function testShouldDeclareQueue()
     {
         $channel = $this->createChannelMock();
@@ -89,7 +119,38 @@ class AmqpContextTest extends TestCase
         $session->declareQueue($queue);
     }
 
-    public function testDeclareBindShouldBindTopicToTopic()
+    public function testShouldDeleteQueue()
+    {
+        $channel = $this->createChannelMock();
+        $channel
+            ->expects($this->once())
+            ->method('queue_delete')
+            ->with(
+                $this->identicalTo('name'),
+                $this->isTrue(),
+                $this->isTrue(),
+                $this->isTrue()
+            )
+        ;
+
+        $connection = $this->createConnectionMock();
+        $connection
+            ->expects($this->once())
+            ->method('channel')
+            ->willReturn($channel)
+        ;
+
+        $queue = new AmqpQueue('name');
+        $queue->setArguments(['key' => 'value']);
+        $queue->addFlag(AmqpQueue::FLAG_IFUNUSED);
+        $queue->addFlag(AmqpQueue::FLAG_IFEMPTY);
+        $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
+
+        $session = new AmqpContext($connection, '');
+        $session->deleteQueue($queue);
+    }
+
+    public function testBindShouldBindTopicToTopic()
     {
         $source = new AmqpTopic('source');
         $target = new AmqpTopic('target');
@@ -112,7 +173,7 @@ class AmqpContextTest extends TestCase
         $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
     }
 
-    public function testDeclareBindShouldBindTopicToQueue()
+    public function testBindShouldBindTopicToQueue()
     {
         $source = new AmqpTopic('source');
         $target = new AmqpQueue('target');
@@ -134,6 +195,53 @@ class AmqpContextTest extends TestCase
         $context = new AmqpContext($connection, '');
         $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
         $context->bind(new AmqpBind($source, $target, 'routing-key', 12345));
+    }
+
+    public function testShouldUnBindTopicFromTopic()
+    {
+        $source = new AmqpTopic('source');
+        $target = new AmqpTopic('target');
+
+        $channel = $this->createChannelMock();
+        $channel
+            ->expects($this->once())
+            ->method('exchange_unbind')
+            ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), $this->isTrue())
+        ;
+
+        $connection = $this->createConnectionMock();
+        $connection
+            ->expects($this->once())
+            ->method('channel')
+            ->willReturn($channel)
+        ;
+
+        $context = new AmqpContext($connection, '');
+        $context->unbind(new AmqpBind($target, $source, 'routing-key', 12345));
+    }
+
+    public function testShouldUnBindTopicFromQueue()
+    {
+        $source = new AmqpTopic('source');
+        $target = new AmqpQueue('target');
+
+        $channel = $this->createChannelMock();
+        $channel
+            ->expects($this->exactly(2))
+            ->method('queue_unbind')
+            ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), ['key' => 'value'])
+        ;
+
+        $connection = $this->createConnectionMock();
+        $connection
+            ->expects($this->once())
+            ->method('channel')
+            ->willReturn($channel)
+        ;
+
+        $context = new AmqpContext($connection, '');
+        $context->unbind(new AmqpBind($target, $source, 'routing-key', 12345, ['key' => 'value']));
+        $context->unbind(new AmqpBind($source, $target, 'routing-key', 12345, ['key' => 'value']));
     }
 
     public function testShouldCloseChannelConnection()
@@ -160,12 +268,13 @@ class AmqpContextTest extends TestCase
     public function testShouldPurgeQueue()
     {
         $queue = new AmqpQueue('queue');
+        $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
 
         $channel = $this->createChannelMock();
         $channel
             ->expects($this->once())
             ->method('queue_purge')
-            ->with('queue')
+            ->with($this->identicalTo('queue'), $this->isTrue())
         ;
 
         $connection = $this->createConnectionMock();
