@@ -12,6 +12,11 @@ use Makasim\File\TempFile;
 class FsProducer implements PsrProducer
 {
     /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
+    /**
      * @var FsContext
      */
     private $context;
@@ -55,5 +60,21 @@ class FsProducer implements PsrProducer
 
             fwrite($file, $rawMessage);
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

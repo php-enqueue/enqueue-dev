@@ -12,6 +12,11 @@ use Pheanstalk\Pheanstalk;
 class PheanstalkProducer implements PsrProducer
 {
     /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
+    /**
      * @var Pheanstalk
      */
     private $pheanstalk;
@@ -50,5 +55,21 @@ class PheanstalkProducer implements PsrProducer
             $message->getDelay(),
             $message->getTimeToRun()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

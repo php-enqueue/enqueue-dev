@@ -11,6 +11,11 @@ use Interop\Queue\PsrProducer;
 class SqsProducer implements PsrProducer
 {
     /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
+    /**
      * @var SqsContext
      */
     private $context;
@@ -53,6 +58,7 @@ class SqsProducer implements PsrProducer
             ],
             'MessageBody' => $body,
             'QueueUrl' => $this->context->getQueueUrl($destination),
+            'DelaySeconds' => (int) $this->deliveryDelay / 1000,
         ];
 
         if ($message->getDelaySeconds()) {
@@ -72,5 +78,21 @@ class SqsProducer implements PsrProducer
         if (false == $result->hasKey('MessageId')) {
             throw new \RuntimeException('Message was not sent');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

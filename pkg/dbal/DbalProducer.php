@@ -14,6 +14,11 @@ use Interop\Queue\PsrProducer;
 class DbalProducer implements PsrProducer
 {
     /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
+    /**
      * @var DbalContext
      */
     private $context;
@@ -84,5 +89,21 @@ class DbalProducer implements PsrProducer
         } catch (\Exception $e) {
             throw new Exception('The transport fails to send the message due to some internal error.', null, $e);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

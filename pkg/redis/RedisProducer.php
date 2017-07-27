@@ -11,6 +11,11 @@ use Interop\Queue\PsrProducer;
 class RedisProducer implements PsrProducer
 {
     /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
+    /**
      * @var Redis
      */
     private $redis;
@@ -35,5 +40,21 @@ class RedisProducer implements PsrProducer
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
         $this->redis->lpush($destination->getName(), json_encode($message));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

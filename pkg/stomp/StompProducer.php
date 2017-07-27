@@ -13,6 +13,11 @@ use Stomp\Transport\Message as StompLibMessage;
 class StompProducer implements PsrProducer
 {
     /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
+    /**
      * @var Client
      */
     private $stomp;
@@ -43,5 +48,21 @@ class StompProducer implements PsrProducer
         $stompMessage = new StompLibMessage($message->getBody(), $headers);
 
         $this->stomp->send($destination->getQueueName(), $stompMessage);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }

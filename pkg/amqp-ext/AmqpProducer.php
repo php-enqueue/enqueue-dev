@@ -12,6 +12,11 @@ use Interop\Queue\PsrTopic;
 class AmqpProducer implements PsrProducer
 {
     /**
+     * @var float
+     */
+    private $deliveryDelay = PsrMessage::DEFAULT_DELIVERY_DELAY;
+
+    /**
      * @var \AMQPChannel
      */
     private $amqpChannel;
@@ -70,5 +75,21 @@ class AmqpProducer implements PsrProducer
                 $amqpAttributes
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 }
