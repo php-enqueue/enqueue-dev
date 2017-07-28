@@ -73,6 +73,10 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     public function setConsumerTag($consumerTag)
     {
+        if ($this->isInit) {
+            throw new Exception('Consumer tag is not mutable after it has been subscribed to broker');
+        }
+
         $this->consumerTag = $consumerTag;
     }
 
