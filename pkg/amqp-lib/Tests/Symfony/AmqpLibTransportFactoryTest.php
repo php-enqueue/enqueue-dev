@@ -1,0 +1,239 @@
+<?php
+
+namespace Enqueue\AmqpLib\Tests\Symfony;
+
+use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
+use Enqueue\Client\Amqp\AmqpDriver;
+use Enqueue\Symfony\TransportFactoryInterface;
+use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+
+class AmqpLibTransportFactoryTest extends TestCase
+{
+    use ClassExtensionTrait;
+
+    public function testShouldImplementTransportFactoryInterface()
+    {
+        $this->assertClassImplements(TransportFactoryInterface::class, AmqpLibTransportFactory::class);
+    }
+
+    public function testCouldBeConstructedWithDefaultName()
+    {
+        $transport = new AmqpLibTransportFactory();
+
+        $this->assertEquals('amqp_lib', $transport->getName());
+    }
+
+    public function testCouldBeConstructedWithCustomName()
+    {
+        $transport = new AmqpLibTransportFactory('theCustomName');
+
+        $this->assertEquals('theCustomName', $transport->getName());
+    }
+
+    public function testShouldAllowAddConfiguration()
+    {
+        $transport = new AmqpLibTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), []);
+
+        $this->assertEquals([
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+            'lazy' => true,
+            'receive_method' => 'basic_get',
+            'connection_timeout' => 3.0,
+            'read_write_timeout' => 3.0,
+            'read_timeout' => 3,
+            'write_timeout' => 3,
+            'stream' => true,
+            'insist' => false,
+            'keepalive' => false,
+            'heartbeat' => 0,
+        ], $config);
+    }
+
+    public function testShouldAllowAddConfigurationAsString()
+    {
+        $transport = new AmqpLibTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), ['amqpDSN']);
+
+        $this->assertEquals([
+            'dsn' => 'amqpDSN',
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+            'lazy' => true,
+            'receive_method' => 'basic_get',
+            'connection_timeout' => 3.0,
+            'read_write_timeout' => 3.0,
+            'read_timeout' => 3,
+            'write_timeout' => 3,
+            'stream' => true,
+            'insist' => false,
+            'keepalive' => false,
+            'heartbeat' => 0,
+        ], $config);
+    }
+
+    public function testThrowIfInvalidReceiveMethodIsSet()
+    {
+        $transport = new AmqpLibTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The value "anInvalidMethod" is not allowed for path "foo.receive_method". Permissible values: "basic_get", "basic_consume"');
+        $processor->process($tb->buildTree(), [[
+            'receive_method' => 'anInvalidMethod',
+        ]]);
+    }
+
+    public function testShouldAllowChangeReceiveMethod()
+    {
+        $transport = new AmqpLibTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [[
+            'receive_method' => 'basic_consume',
+        ]]);
+
+        $this->assertEquals([
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+            'lazy' => true,
+            'receive_method' => 'basic_consume',
+            'connection_timeout' => 3.0,
+            'read_write_timeout' => 3.0,
+            'read_timeout' => 3,
+            'write_timeout' => 3,
+            'stream' => true,
+            'insist' => false,
+            'keepalive' => false,
+            'heartbeat' => 0,
+        ], $config);
+    }
+
+    public function testShouldCreateConnectionFactory()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new AmqpLibTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+        $this->assertSame([[
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+        ]], $factory->getArguments());
+    }
+
+    public function testShouldCreateConnectionFactoryFromDsnString()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new AmqpLibTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'dsn' => 'theConnectionDSN',
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+        $this->assertSame(['theConnectionDSN'], $factory->getArguments());
+    }
+
+    public function testShouldCreateContext()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new AmqpLibTransportFactory();
+
+        $serviceId = $transport->createContext($container, [
+            'host' => 'localhost',
+            'port' => 5672,
+            'user' => 'guest',
+            'pass' => 'guest',
+            'vhost' => '/',
+        ]);
+
+        $this->assertEquals('enqueue.transport.amqp_lib.context', $serviceId);
+        $this->assertTrue($container->hasDefinition($serviceId));
+
+        $context = $container->getDefinition('enqueue.transport.amqp_lib.context');
+        $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
+        $this->assertEquals('enqueue.transport.amqp_lib.connection_factory', (string) $context->getFactory()[0]);
+        $this->assertEquals('createContext', $context->getFactory()[1]);
+    }
+
+    public function testShouldCreateDriver()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new AmqpLibTransportFactory();
+
+        $serviceId = $transport->createDriver($container, []);
+
+        $this->assertEquals('enqueue.client.amqp_lib.driver', $serviceId);
+        $this->assertTrue($container->hasDefinition($serviceId));
+
+        $driver = $container->getDefinition($serviceId);
+        $this->assertSame(AmqpDriver::class, $driver->getClass());
+
+        $this->assertInstanceOf(Reference::class, $driver->getArgument(0));
+        $this->assertEquals('enqueue.transport.amqp_lib.context', (string) $driver->getArgument(0));
+
+        $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
+        $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
+
+        $this->assertInstanceOf(Reference::class, $driver->getArgument(2));
+        $this->assertEquals('enqueue.client.meta.queue_meta_registry', (string) $driver->getArgument(2));
+    }
+}

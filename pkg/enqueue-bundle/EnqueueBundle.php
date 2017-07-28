@@ -5,6 +5,9 @@ namespace Enqueue\Bundle;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
+use Enqueue\AmqpLib\AmqpContext as AmqpLibContext;
+use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
+use Enqueue\AmqpLib\Symfony\RabbitMqAmqpLibTransportFactory;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventsPass;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncTransformersPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
@@ -56,6 +59,11 @@ class EnqueueBundle extends Bundle
         if (class_exists(AmqpContext::class)) {
             $extension->addTransportFactory(new AmqpTransportFactory());
             $extension->addTransportFactory(new RabbitMqAmqpTransportFactory());
+        }
+
+        if (class_exists(AmqpLibContext::class)) {
+            $extension->addTransportFactory(new AmqpLibTransportFactory());
+            $extension->addTransportFactory(new RabbitMqAmqpLibTransportFactory());
         }
 
         if (class_exists(FsContext::class)) {
