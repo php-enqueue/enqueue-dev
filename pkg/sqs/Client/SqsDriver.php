@@ -97,7 +97,7 @@ class SqsDriver implements DriverInterface
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
-            $logger->debug(sprintf('[AmqpDriver] '.$text, ...$args));
+            $logger->debug(sprintf('[SqsDriver] '.$text, ...$args));
         };
 
         // setup router
