@@ -4,7 +4,7 @@ namespace Enqueue\AmqpExt\Symfony;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\Client\AmqpDriver;
+use Enqueue\Client\Amqp\AmqpDriver;
 use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;

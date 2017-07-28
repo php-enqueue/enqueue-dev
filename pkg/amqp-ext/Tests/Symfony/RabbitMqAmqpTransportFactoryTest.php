@@ -3,9 +3,9 @@
 namespace Enqueue\AmqpExt\Tests\Symfony;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Client\RabbitMqDriver;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
+use Enqueue\Client\Amqp\RabbitMqDriver;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;

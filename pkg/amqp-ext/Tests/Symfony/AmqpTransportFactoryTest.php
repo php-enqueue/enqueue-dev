@@ -3,8 +3,8 @@
 namespace Enqueue\AmqpExt\Tests\Symfony;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Client\AmqpDriver;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
+use Enqueue\Client\Amqp\AmqpDriver;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;

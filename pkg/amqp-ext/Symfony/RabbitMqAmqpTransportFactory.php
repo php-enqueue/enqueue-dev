@@ -2,7 +2,7 @@
 
 namespace Enqueue\AmqpExt\Symfony;
 
-use Enqueue\AmqpExt\Client\RabbitMqDriver;
+use Enqueue\Client\Amqp\RabbitMqDriver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;

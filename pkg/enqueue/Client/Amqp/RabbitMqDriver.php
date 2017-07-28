@@ -1,13 +1,13 @@
 <?php
 
-namespace  Enqueue\AmqpExt\Client;
+namespace  Enqueue\Client\Amqp;
 
-use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\Exception\LogicException;
+use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
