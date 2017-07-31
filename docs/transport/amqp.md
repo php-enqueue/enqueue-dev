@@ -1,6 +1,6 @@
 # AMQP transport
 
-Implements [AMQP specifications](https://www.rabbitmq.com/specification.html).
+Implements [AMQP specifications](https://www.rabbitmq.com/specification.html) and implements [amqp interop](https://github.com/queue-interop/amqp-interop) interfaces.
 Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 
 * [Installation](#installation)
@@ -56,10 +56,12 @@ Declare topic operation creates a topic on a broker side.
  
 ```php
 <?php
+use Interop\Amqp\AmqpTopic;
+
 /** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
 
 $fooTopic = $psrContext->createTopic('foo');
-$fooTopic->addFlag(AMQP_EX_TYPE_FANOUT);
+$fooTopic->addFlag(AmqpTopic::TYPE_FANOUT);
 $psrContext->declareTopic($fooTopic);
 
 // to remove topic use delete topic method
@@ -72,10 +74,12 @@ Declare queue operation creates a queue on a broker side.
  
 ```php
 <?php
+use Interop\Amqp\AmqpQueue;
+
 /** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
 
 $fooQueue = $psrContext->createQueue('foo');
-$fooQueue->addFlag(AMQP_DURABLE);
+$fooQueue->addFlag(AmqpQueue::FLAG_DURABLE);
 $psrContext->declareQueue($fooQueue);
 
 // to remove topic use delete queue method
@@ -88,11 +92,13 @@ Connects a queue to the topic. So messages from that topic comes to the queue an
 
 ```php
 <?php
-/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
-/** @var \Enqueue\AmqpExt\AmqpQueue $fooQueue */
-/** @var \Enqueue\AmqpExt\AmqpTopic $fooTopic */
+use Interop\Amqp\Impl\AmqpBind;
 
-$psrContext->bind($fooTopic, $fooQueue);
+/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+/** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
+/** @var \Interop\Amqp\Impl\AmqpTopic $fooTopic */
+
+$psrContext->bind(new AmqpBind($fooTopic, $fooQueue));
 ```
 
 ## Send message to topic 
@@ -100,7 +106,7 @@ $psrContext->bind($fooTopic, $fooQueue);
 ```php
 <?php
 /** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
-/** @var \Enqueue\AmqpExt\AmqpTopic $fooTopic */
+/** @var \Interop\Amqp\Impl\AmqpTopic $fooTopic */
 
 $message = $psrContext->createMessage('Hello world!');
 
@@ -112,7 +118,7 @@ $psrContext->createProducer()->send($fooTopic, $message);
 ```php
 <?php
 /** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
-/** @var \Enqueue\AmqpExt\AmqpQueue $fooQueue */
+/** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
 
 $message = $psrContext->createMessage('Hello world!');
 
@@ -124,7 +130,7 @@ $psrContext->createProducer()->send($fooQueue, $message);
 ```php
 <?php
 /** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
-/** @var \Enqueue\AmqpExt\AmqpQueue $fooQueue */
+/** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
 
 $consumer = $psrContext->createConsumer($fooQueue);
 
@@ -141,11 +147,11 @@ $consumer->acknowledge($message);
 ```php
 <?php
 /** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
-/** @var \Enqueue\AmqpExt\AmqpQueue $fooQueue */
+/** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
 
 $queue = $psrContext->createQueue('aQueue');
 
-$psrContext->purge($queue);
+$psrContext->purgeQueue($queue);
 ```
 
 [back to index](../index.md)
