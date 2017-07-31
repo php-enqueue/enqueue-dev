@@ -21,6 +21,7 @@
         "phpunit/phpunit": "~5.5",
         "enqueue/stomp": "^0.7@dev",
         "enqueue/amqp-ext": "^0.7@dev",
+        "php-amqplib/php-amqplib": "^2.7@dev",
         "enqueue/amqp-lib": "^0.7@dev",
         "enqueue/job-queue": "^0.7@dev",
         "enqueue/fs": "^0.7@dev",
