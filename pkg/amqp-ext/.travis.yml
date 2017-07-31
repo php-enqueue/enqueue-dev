@@ -14,8 +14,9 @@ cache:
         - $HOME/.composer/cache
 
 install:
+    - php Tests/fix_composer_json.php
     - composer self-update
-    - composer install --prefer-source --ignore-platform-reqs # ext-amqp is not installed
+    - composer install
 
 script:
     - vendor/bin/phpunit --exclude-group=functional
