@@ -126,10 +126,6 @@
     {
       "type": "path",
       "url": "pkg/async-event-dispatcher"
-    },
-    {
-      "type": "vcs",
-      "url": "git@github.com:queue-interop/amqp-interop.git"
     }
   ]
 }
