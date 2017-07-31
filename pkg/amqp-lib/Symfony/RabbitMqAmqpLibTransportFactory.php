@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\AmqpExt\Symfony;
+namespace Enqueue\AmqpLib\Symfony;
 
 use Enqueue\Client\Amqp\RabbitMqDriver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -8,12 +8,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RabbitMqAmqpTransportFactory extends AmqpTransportFactory
+class RabbitMqAmqpLibTransportFactory extends AmqpLibTransportFactory
 {
     /**
      * @param string $name
      */
-    public function __construct($name = 'rabbitmq_amqp')
+    public function __construct($name = 'rabbitmq_amqp_lib')
     {
         parent::__construct($name);
     }

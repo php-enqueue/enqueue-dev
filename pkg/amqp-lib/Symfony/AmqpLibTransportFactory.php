@@ -1,9 +1,9 @@
 <?php
 
-namespace Enqueue\AmqpExt\Symfony;
+namespace Enqueue\AmqpLib\Symfony;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\AmqpContext;
+use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Enqueue\AmqpLib\AmqpContext;
 use Enqueue\Client\Amqp\AmqpDriver;
 use Enqueue\Symfony\DriverFactoryInterface;
 use Enqueue\Symfony\TransportFactoryInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
+class AmqpLibTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
     /**
      * @var string
@@ -22,7 +22,7 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
     /**
      * @param string $name
      */
-    public function __construct($name = 'amqp')
+    public function __construct($name = 'amqp_lib')
     {
         $this->name = $name;
     }
@@ -68,28 +68,44 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
                     ->cannotBeEmpty()
                     ->info('The virtual host on the host. Note: Max 128 characters.')
                 ->end()
-                ->integerNode('connect_timeout')
+                ->integerNode('connection_timeout')
+                    ->defaultValue(3.0)
                     ->min(0)
                     ->info('Connection timeout. Note: 0 or greater seconds. May be fractional.')
                 ->end()
+                ->integerNode('read_write_timeout')
+                    ->defaultValue(3.0)
+                    ->min(0)
+                ->end()
                 ->integerNode('read_timeout')
+                    ->defaultValue(3)
                     ->min(0)
                     ->info('Timeout in for income activity. Note: 0 or greater seconds. May be fractional.')
                 ->end()
                 ->integerNode('write_timeout')
+                    ->defaultValue(3)
                     ->min(0)
                     ->info('Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.')
                 ->end()
-                ->booleanNode('persisted')
-                    ->defaultFalse()
-                ->end()
                 ->booleanNode('lazy')
                     ->defaultTrue()
+                ->end()
+                ->booleanNode('stream')
+                    ->defaultTrue()
+                ->end()
+                ->booleanNode('insist')
+                    ->defaultFalse()
+                ->end()
+                ->booleanNode('keepalive')
+                    ->defaultFalse()
                 ->end()
                 ->enumNode('receive_method')
                     ->values(['basic_get', 'basic_consume'])
                     ->defaultValue('basic_get')
                     ->info('The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher')
+                ->end()
+                ->integerNode('heartbeat')
+                    ->defaultValue(0)
                 ->end()
         ;
     }

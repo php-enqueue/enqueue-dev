@@ -6,6 +6,7 @@ use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Queue\Exception;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrMessage;
 
@@ -73,6 +74,10 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     public function setConsumerTag($consumerTag)
     {
+        if ($this->isInit) {
+            throw new Exception('Consumer tag is not mutable after it has been subscribed to broker');
+        }
+
         $this->consumerTag = $consumerTag;
     }
 

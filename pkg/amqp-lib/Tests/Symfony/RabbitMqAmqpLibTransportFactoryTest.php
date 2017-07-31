@@ -1,10 +1,10 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests\Symfony;
+namespace Enqueue\AmqpLib\Tests\Symfony;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
+use Enqueue\AmqpLib\Symfony\RabbitMqAmqpLibTransportFactory;
 use Enqueue\Client\Amqp\RabbitMqDriver;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
@@ -14,37 +14,37 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RabbitMqAmqpTransportFactoryTest extends TestCase
+class RabbitMqAmqpLibTransportFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementTransportFactoryInterface()
     {
-        $this->assertClassImplements(TransportFactoryInterface::class, RabbitMqAmqpTransportFactory::class);
+        $this->assertClassImplements(TransportFactoryInterface::class, RabbitMqAmqpLibTransportFactory::class);
     }
 
     public function testShouldExtendAmqpTransportFactoryClass()
     {
-        $this->assertClassExtends(AmqpTransportFactory::class, RabbitMqAmqpTransportFactory::class);
+        $this->assertClassExtends(AmqpLibTransportFactory::class, RabbitMqAmqpLibTransportFactory::class);
     }
 
     public function testCouldBeConstructedWithDefaultName()
     {
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpLibTransportFactory();
 
-        $this->assertEquals('rabbitmq_amqp', $transport->getName());
+        $this->assertEquals('rabbitmq_amqp_lib', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
     {
-        $transport = new RabbitMqAmqpTransportFactory('theCustomName');
+        $transport = new RabbitMqAmqpLibTransportFactory('theCustomName');
 
         $this->assertEquals('theCustomName', $transport->getName());
     }
 
     public function testShouldAllowAddConfiguration()
     {
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpLibTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -58,10 +58,17 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
             'delay_plugin_installed' => false,
             'lazy' => true,
             'receive_method' => 'basic_get',
+            'connection_timeout' => 3.0,
+            'read_write_timeout' => 3.0,
+            'read_timeout' => 3,
+            'write_timeout' => 3,
+            'stream' => true,
+            'insist' => false,
+            'keepalive' => false,
+            'heartbeat' => 0,
         ], $config);
     }
 
@@ -69,7 +76,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpLibTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
             'host' => 'localhost',
@@ -99,7 +106,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpLibTransportFactory();
 
         $serviceId = $transport->createContext($container, [
             'host' => 'localhost',
@@ -111,12 +118,12 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
             'delay_plugin_installed' => false,
         ]);
 
-        $this->assertEquals('enqueue.transport.rabbitmq_amqp.context', $serviceId);
+        $this->assertEquals('enqueue.transport.rabbitmq_amqp_lib.context', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
-        $context = $container->getDefinition('enqueue.transport.rabbitmq_amqp.context');
+        $context = $container->getDefinition('enqueue.transport.rabbitmq_amqp_lib.context');
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
-        $this->assertEquals('enqueue.transport.rabbitmq_amqp.connection_factory', (string) $context->getFactory()[0]);
+        $this->assertEquals('enqueue.transport.rabbitmq_amqp_lib.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
     }
 
@@ -124,11 +131,11 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpLibTransportFactory();
 
         $serviceId = $transport->createDriver($container, []);
 
-        $this->assertEquals('enqueue.client.rabbitmq_amqp.driver', $serviceId);
+        $this->assertEquals('enqueue.client.rabbitmq_amqp_lib.driver', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
         $driver = $container->getDefinition($serviceId);

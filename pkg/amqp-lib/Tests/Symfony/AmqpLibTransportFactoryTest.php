@@ -1,9 +1,9 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests\Symfony;
+namespace Enqueue\AmqpLib\Tests\Symfony;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
 use Enqueue\Client\Amqp\AmqpDriver;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
@@ -14,32 +14,32 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class AmqpTransportFactoryTest extends TestCase
+class AmqpLibTransportFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementTransportFactoryInterface()
     {
-        $this->assertClassImplements(TransportFactoryInterface::class, AmqpTransportFactory::class);
+        $this->assertClassImplements(TransportFactoryInterface::class, AmqpLibTransportFactory::class);
     }
 
     public function testCouldBeConstructedWithDefaultName()
     {
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
 
-        $this->assertEquals('amqp', $transport->getName());
+        $this->assertEquals('amqp_lib', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
     {
-        $transport = new AmqpTransportFactory('theCustomName');
+        $transport = new AmqpLibTransportFactory('theCustomName');
 
         $this->assertEquals('theCustomName', $transport->getName());
     }
 
     public function testShouldAllowAddConfiguration()
     {
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -53,15 +53,22 @@ class AmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
             'lazy' => true,
             'receive_method' => 'basic_get',
+            'connection_timeout' => 3.0,
+            'read_write_timeout' => 3.0,
+            'read_timeout' => 3,
+            'write_timeout' => 3,
+            'stream' => true,
+            'insist' => false,
+            'keepalive' => false,
+            'heartbeat' => 0,
         ], $config);
     }
 
     public function testShouldAllowAddConfigurationAsString()
     {
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -76,15 +83,22 @@ class AmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
             'lazy' => true,
             'receive_method' => 'basic_get',
+            'connection_timeout' => 3.0,
+            'read_write_timeout' => 3.0,
+            'read_timeout' => 3,
+            'write_timeout' => 3,
+            'stream' => true,
+            'insist' => false,
+            'keepalive' => false,
+            'heartbeat' => 0,
         ], $config);
     }
 
     public function testThrowIfInvalidReceiveMethodIsSet()
     {
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -100,7 +114,7 @@ class AmqpTransportFactoryTest extends TestCase
 
     public function testShouldAllowChangeReceiveMethod()
     {
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -116,9 +130,16 @@ class AmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
             'lazy' => true,
             'receive_method' => 'basic_consume',
+            'connection_timeout' => 3.0,
+            'read_write_timeout' => 3.0,
+            'read_timeout' => 3,
+            'write_timeout' => 3,
+            'stream' => true,
+            'insist' => false,
+            'keepalive' => false,
+            'heartbeat' => 0,
         ], $config);
     }
 
@@ -126,7 +147,7 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
             'host' => 'localhost',
@@ -134,7 +155,6 @@ class AmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
@@ -146,7 +166,6 @@ class AmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
         ]], $factory->getArguments());
     }
 
@@ -154,7 +173,7 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
             'dsn' => 'theConnectionDSN',
@@ -163,7 +182,6 @@ class AmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
@@ -176,7 +194,7 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
 
         $serviceId = $transport->createContext($container, [
             'host' => 'localhost',
@@ -184,15 +202,14 @@ class AmqpTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'persisted' => false,
         ]);
 
-        $this->assertEquals('enqueue.transport.amqp.context', $serviceId);
+        $this->assertEquals('enqueue.transport.amqp_lib.context', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
-        $context = $container->getDefinition('enqueue.transport.amqp.context');
+        $context = $container->getDefinition('enqueue.transport.amqp_lib.context');
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
-        $this->assertEquals('enqueue.transport.amqp.connection_factory', (string) $context->getFactory()[0]);
+        $this->assertEquals('enqueue.transport.amqp_lib.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
     }
 
@@ -200,18 +217,18 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory();
+        $transport = new AmqpLibTransportFactory();
 
         $serviceId = $transport->createDriver($container, []);
 
-        $this->assertEquals('enqueue.client.amqp.driver', $serviceId);
+        $this->assertEquals('enqueue.client.amqp_lib.driver', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
         $driver = $container->getDefinition($serviceId);
         $this->assertSame(AmqpDriver::class, $driver->getClass());
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(0));
-        $this->assertEquals('enqueue.transport.amqp.context', (string) $driver->getArgument(0));
+        $this->assertEquals('enqueue.transport.amqp_lib.context', (string) $driver->getArgument(0));
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
         $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
