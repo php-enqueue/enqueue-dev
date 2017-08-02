@@ -8,6 +8,7 @@ use Interop\Queue\PriorityNotSupportedException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
+use Interop\Queue\TimeToLiveNotSupportedException;
 
 class SqsProducer implements PsrProducer
 {
@@ -105,7 +106,7 @@ class SqsProducer implements PsrProducer
      */
     public function setPriority($priority)
     {
-        throw new PriorityNotSupportedException('Provider does not support priority feature');
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
@@ -121,7 +122,7 @@ class SqsProducer implements PsrProducer
      */
     public function setTimeToLive($timeToLive)
     {
-        throw new PriorityNotSupportedException('Provider does not support time to live feature');
+        throw TimeToLiveNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**

@@ -99,7 +99,7 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
-        throw new DeliveryDelayNotSupportedException('The provider does not support delivery delay feature');
+        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**

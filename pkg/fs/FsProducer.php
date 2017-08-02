@@ -2,8 +2,10 @@
 
 namespace Enqueue\Fs;
 
+use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PriorityNotSupportedException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
@@ -11,6 +13,11 @@ use Makasim\File\TempFile;
 
 class FsProducer implements PsrProducer
 {
+    /**
+     * @var float|int|null
+     */
+    private $timeToLive;
+
     /**
      * @var FsContext
      */
@@ -41,6 +48,10 @@ class FsProducer implements PsrProducer
                 return;
             }
 
+            if (null !== $this->timeToLive) {
+                $message->setHeader('x-expire-at', microtime(true) + ($this->timeToLive / 1000));
+            }
+
             $rawMessage = '|'.json_encode($message);
 
             if (JSON_ERROR_NONE !== json_last_error()) {
@@ -62,7 +73,7 @@ class FsProducer implements PsrProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
-        throw new \LogicException('Not implemented');
+        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
@@ -78,7 +89,7 @@ class FsProducer implements PsrProducer
      */
     public function setPriority($priority)
     {
-        throw new \LogicException('Not implemented');
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
@@ -94,7 +105,7 @@ class FsProducer implements PsrProducer
      */
     public function setTimeToLive($timeToLive)
     {
-        throw new \LogicException('Not implemented');
+        $this->timeToLive = $timeToLive;
     }
 
     /**
