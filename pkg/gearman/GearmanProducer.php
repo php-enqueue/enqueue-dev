@@ -41,4 +41,52 @@ class GearmanProducer implements PsrProducer
             throw new \GearmanException(sprintf('The return code is not %s (GEARMAN_SUCCESS) but %s', \GEARMAN_SUCCESS, $code));
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimeToLive()
+    {
+        return null;
+    }
 }
