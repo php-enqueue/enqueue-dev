@@ -47,7 +47,7 @@ class AmqpContextTest extends TestCase
         $topic->addFlag(AmqpTopic::FLAG_INTERNAL);
         $topic->addFlag(AmqpTopic::FLAG_AUTODELETE);
 
-        $session = new AmqpContext($connection, '');
+        $session = new AmqpContext($connection);
         $session->declareTopic($topic);
     }
 
@@ -77,7 +77,7 @@ class AmqpContextTest extends TestCase
         $topic->addFlag(AmqpTopic::FLAG_IFUNUSED);
         $topic->addFlag(AmqpTopic::FLAG_NOWAIT);
 
-        $session = new AmqpContext($connection, '');
+        $session = new AmqpContext($connection);
         $session->deleteTopic($topic);
     }
 
@@ -115,7 +115,7 @@ class AmqpContextTest extends TestCase
         $queue->addFlag(AmqpQueue::FLAG_EXCLUSIVE);
         $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
 
-        $session = new AmqpContext($connection, '');
+        $session = new AmqpContext($connection);
         $session->declareQueue($queue);
     }
 
@@ -146,7 +146,7 @@ class AmqpContextTest extends TestCase
         $queue->addFlag(AmqpQueue::FLAG_IFEMPTY);
         $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
 
-        $session = new AmqpContext($connection, '');
+        $session = new AmqpContext($connection);
         $session->deleteQueue($queue);
     }
 
@@ -169,7 +169,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $context = new AmqpContext($connection, '');
+        $context = new AmqpContext($connection);
         $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
     }
 
@@ -192,7 +192,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $context = new AmqpContext($connection, '');
+        $context = new AmqpContext($connection);
         $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
         $context->bind(new AmqpBind($source, $target, 'routing-key', 12345));
     }
@@ -216,7 +216,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $context = new AmqpContext($connection, '');
+        $context = new AmqpContext($connection);
         $context->unbind(new AmqpBind($target, $source, 'routing-key', 12345));
     }
 
@@ -239,7 +239,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $context = new AmqpContext($connection, '');
+        $context = new AmqpContext($connection);
         $context->unbind(new AmqpBind($target, $source, 'routing-key', 12345, ['key' => 'value']));
         $context->unbind(new AmqpBind($source, $target, 'routing-key', 12345, ['key' => 'value']));
     }
@@ -259,7 +259,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $context = new AmqpContext($connection, '');
+        $context = new AmqpContext($connection);
         $context->createProducer();
 
         $context->close();
@@ -284,8 +284,33 @@ class AmqpContextTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $context = new AmqpContext($connection, '');
+        $context = new AmqpContext($connection);
         $context->purgeQueue($queue);
+    }
+
+    public function testShouldSetQos()
+    {
+        $channel = $this->createChannelMock();
+        $channel
+            ->expects($this->at(0))
+            ->method('basic_qos')
+            ->with($this->identicalTo(0), $this->identicalTo(1), $this->isFalse())
+        ;
+        $channel
+            ->expects($this->at(1))
+            ->method('basic_qos')
+            ->with($this->identicalTo(123), $this->identicalTo(456), $this->isTrue())
+        ;
+
+        $connection = $this->createConnectionMock();
+        $connection
+            ->expects($this->once())
+            ->method('channel')
+            ->willReturn($channel)
+        ;
+
+        $context = new AmqpContext($connection);
+        $context->setQos(123, 456, true);
     }
 
     /**

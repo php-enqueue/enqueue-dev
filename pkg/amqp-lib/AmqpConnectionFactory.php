@@ -33,6 +33,9 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
      *     'lazy' => 'the connection will be performed as later as possible, if the option set to true',
      *     'stream' => 'stream or socket connection',
      *     'receive_method' => 'Could be either basic_get or basic_consume',
+     *     'qos_prefetch_size' => 'The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"',
+     *     'qos_prefetch_count' => 'Specifies a prefetch window in terms of whole messages.',
+     *     'qos_global' => 'If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.',
      * ]
      *
      * or
@@ -69,7 +72,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
      */
     public function createContext()
     {
-        return new AmqpContext($this->establishConnection(), $this->config['receive_method']);
+        return new AmqpContext($this->establishConnection(), $this->config);
     }
 
     /**
@@ -224,6 +227,9 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
             'connection_timeout' => 3.0,
             'read_write_timeout' => 3.0,
             'receive_method' => 'basic_get',
+            'qos_prefetch_size' => 0,
+            'qos_prefetch_count' => 1,
+            'qos_global' => false,
         ];
     }
 }
