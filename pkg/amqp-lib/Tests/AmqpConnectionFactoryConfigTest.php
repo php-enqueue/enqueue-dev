@@ -81,6 +81,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => 3.0,
                 'read_write_timeout' => 3.0,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -107,6 +110,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => 3.0,
                 'read_write_timeout' => 3.0,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -131,6 +137,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => 3.0,
                 'read_write_timeout' => 3.0,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -155,6 +164,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => 3.0,
                 'read_write_timeout' => 3.0,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -179,6 +191,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => '2',
                 'read_write_timeout' => 3.0,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -203,6 +218,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => 3.0,
                 'read_write_timeout' => 3.0,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -227,6 +245,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => 3.0,
                 'read_write_timeout' => 3.0,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -251,6 +272,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => 123,
                 'read_write_timeout' => 321,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
 
@@ -275,6 +299,9 @@ class AmqpConnectionFactoryConfigTest extends TestCase
                 'heartbeat' => 0,
                 'connection_timeout' => '123',
                 'read_write_timeout' => '321',
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
             ],
         ];
     }
