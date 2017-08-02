@@ -33,7 +33,7 @@ class AmqpContext implements InteropAmqpContext
     /**
      * @var string
      */
-    private $receiveMethod;
+    private $config;
 
     /**
      * @var Buffer
@@ -42,12 +42,18 @@ class AmqpContext implements InteropAmqpContext
 
     /**
      * @param AbstractConnection $connection
-     * @param string             $receiveMethod
+     * @param array              $config
      */
-    public function __construct(AbstractConnection $connection, $receiveMethod)
+    public function __construct(AbstractConnection $connection, $config = [])
     {
+        $this->config = array_replace([
+            'receive_method' => 'basic_get',
+            'qos_prefetch_size' => 0,
+            'qos_prefetch_count' => 1,
+            'qos_global' => false,
+        ], $config);
+
         $this->connection = $connection;
-        $this->receiveMethod = $receiveMethod;
         $this->buffer = new Buffer();
     }
 
@@ -99,10 +105,10 @@ class AmqpContext implements InteropAmqpContext
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this->getChannel(), $queue, $this->buffer, $this->receiveMethod);
+            return new AmqpConsumer($this->getChannel(), $queue, $this->buffer, $this->config['receive_method']);
         }
 
-        return new AmqpConsumer($this->getChannel(), $destination, $this->buffer, $this->receiveMethod);
+        return new AmqpConsumer($this->getChannel(), $destination, $this->buffer, $this->config['receive_method']);
     }
 
     /**
@@ -279,13 +285,25 @@ class AmqpContext implements InteropAmqpContext
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setQos($prefetchSize, $prefetchCount, $global)
+    {
+        $this->getChannel()->basic_qos($prefetchSize, $prefetchCount, $global);
+    }
+
+    /**
      * @return AMQPChannel
      */
     private function getChannel()
     {
         if (null === $this->channel) {
             $this->channel = $this->connection->channel();
-            $this->channel->basic_qos(0, 1, false);
+            $this->channel->basic_qos(
+                $this->config['qos_prefetch_size'],
+                $this->config['qos_prefetch_count'],
+                $this->config['qos_global']
+            );
         }
 
         return $this->channel;

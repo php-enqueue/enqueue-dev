@@ -256,6 +256,14 @@ class AmqpContext implements InteropAmqpContext
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setQos($prefetchSize, $prefetchCount, $global)
+    {
+        $this->getExtChannel()->qos($prefetchSize, $prefetchCount);
+    }
+
+    /**
      * @return \AMQPChannel
      */
     public function getExtChannel()
