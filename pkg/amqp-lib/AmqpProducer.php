@@ -6,6 +6,7 @@ use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
+use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -17,6 +18,16 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpProducer implements InteropAmqpProducer
 {
+    /**
+     * @var int|null
+     */
+    private $priority;
+
+    /**
+     * @var int|float|null
+     */
+    private $timeToLive;
+
     /**
      * @var AMQPChannel
      */
@@ -42,6 +53,14 @@ class AmqpProducer implements InteropAmqpProducer
         ;
 
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
+
+        if (null !== $this->priority && null === $message->getPriority()) {
+            $message->setPriority($this->priority);
+        }
+
+        if (null !== $this->timeToLive && null === $message->getExpiration()) {
+            $message->setExpiration($this->timeToLive);
+        }
 
         $amqpProperties = $message->getHeaders();
 
@@ -75,7 +94,7 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
-        throw new \LogicException('Not implemented');
+        throw new DeliveryDelayNotSupportedException('The provider does not support delivery delay feature');
     }
 
     /**
@@ -91,7 +110,7 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function setPriority($priority)
     {
-        throw new \LogicException('Not implemented');
+        $this->priority = $priority;
     }
 
     /**
@@ -99,7 +118,7 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function getPriority()
     {
-        return null;
+        return $this->priority;
     }
 
     /**
@@ -107,7 +126,7 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function setTimeToLive($timeToLive)
     {
-        throw new \LogicException('Not implemented');
+        $this->timeToLive = $timeToLive;
     }
 
     /**
@@ -115,6 +134,6 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function getTimeToLive()
     {
-        return null;
+        return $this->timeToLive;
     }
 }

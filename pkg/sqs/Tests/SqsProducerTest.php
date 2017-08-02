@@ -130,6 +130,56 @@ class SqsProducerTest extends \PHPUnit_Framework_TestCase
         $producer->send($destination, $message);
     }
 
+    public function testShouldSendDelayedMessage()
+    {
+        $expectedArguments = [
+            'MessageAttributes' => [
+                'Headers' => [
+                    'DataType' => 'String',
+                    'StringValue' => '[{"hkey":"hvaleu"},{"key":"value"}]',
+                ],
+            ],
+            'MessageBody' => 'theBody',
+            'QueueUrl' => 'theQueueUrl',
+            'DelaySeconds' => 12345,
+            'MessageDeduplicationId' => 'theDeduplicationId',
+            'MessageGroupId' => 'groupId',
+        ];
+
+        $client = $this->createSqsClientMock();
+        $client
+            ->expects($this->once())
+            ->method('sendMessage')
+            ->with($this->identicalTo($expectedArguments))
+            ->willReturn(new Result())
+        ;
+
+        $context = $this->createSqsContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->willReturn('theQueueUrl')
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getClient')
+            ->will($this->returnValue($client))
+        ;
+
+        $destination = new SqsDestination('queue-name');
+        $message = new SqsMessage('theBody', ['key' => 'value'], ['hkey' => 'hvaleu']);
+        $message->setDelaySeconds(12345);
+        $message->setMessageDeduplicationId('theDeduplicationId');
+        $message->setMessageGroupId('groupId');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Message was not sent');
+
+        $producer = new SqsProducer($context);
+        $producer->setDeliveryDelay(5000);
+        $producer->send($destination, $message);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|SqsContext
      */

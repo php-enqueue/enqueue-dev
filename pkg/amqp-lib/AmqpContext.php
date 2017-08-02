@@ -17,6 +17,7 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpContext implements InteropAmqpContext
 {
@@ -173,7 +174,7 @@ class AmqpContext implements InteropAmqpContext
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_EXCLUSIVE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_AUTODELETE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT),
-            $queue->getArguments()
+            $queue->getArguments() ? new AMQPTable($queue->getArguments()) : null
         );
     }
 
