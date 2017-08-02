@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.6",
         "ext-amqp": "^1.6",
-        "queue-interop/queue-interop": "^0.5@dev",
+        "queue-interop/queue-interop": "^0.6@dev",
         "queue-interop/amqp-interop": "^0.5@dev",
         "psr/log": "^1"
     },
@@ -22,7 +22,7 @@
         "enqueue/test": "^0.7@dev",
         "enqueue/enqueue": "^0.7@dev",
         "enqueue/null": "^0.7@dev",
-        "queue-interop/queue-spec": "^0.5@dev",
+        "queue-interop/queue-spec": "^0.6@dev",
         "empi89/php-amqp-stubs": "*@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"

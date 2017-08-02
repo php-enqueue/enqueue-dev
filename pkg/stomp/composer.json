@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.6",
         "stomp-php/stomp-php": "^4",
-        "queue-interop/queue-interop": "^0.5@dev",
+        "queue-interop/queue-interop": "^0.6@dev",
         "php-http/guzzle6-adapter": "^1.1",
         "richardfullmer/rabbitmq-management-api": "^2.0",
         "psr/log": "^1"
@@ -23,7 +23,7 @@
         "enqueue/test": "^0.7@dev",
         "enqueue/enqueue": "^0.7@dev",
         "enqueue/null": "^0.7@dev",
-        "queue-interop/queue-spec": "^0.5@dev",
+        "queue-interop/queue-spec": "^0.6@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
     },
