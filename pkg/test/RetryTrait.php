@@ -14,6 +14,12 @@ trait RetryTrait
                 parent::runBare();
 
                 return;
+            } catch (\PHPUnit_Framework_IncompleteTestError $e) {
+                throw $e;
+            } catch (\PHPUnit_Framework_SkippedTestError $e) {
+                throw $e;
+            } catch (\Throwable $e) {
+                // last one thrown below
             } catch (\Exception $e) {
                 // last one thrown below
             }

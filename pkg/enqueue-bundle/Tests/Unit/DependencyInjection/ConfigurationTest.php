@@ -145,7 +145,7 @@ class ConfigurationTest extends TestCase
                 'prefix' => 'enqueue',
                 'app_name' => 'app',
                 'router_processor' => 'enqueue.client.router_processor',
-                'router_topic' => 'router',
+                'router_topic' => 'default',
                 'router_queue' => 'default',
                 'default_processor_queue' => 'default',
                 'traceable_producer' => false,
