@@ -44,7 +44,7 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('traceable_producer')->defaultFalse()->end()
                 ->scalarNode('prefix')->defaultValue('enqueue')->end()
                 ->scalarNode('app_name')->defaultValue('app')->end()
-                ->scalarNode('router_topic')->defaultValue('router')->cannotBeEmpty()->end()
+                ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
                 ->scalarNode('router_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
                 ->scalarNode('router_processor')->defaultValue('enqueue.client.router_processor')->end()
                 ->scalarNode('default_processor_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()

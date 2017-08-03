@@ -172,7 +172,7 @@ class SimpleClientContainerExtension extends Extension
             ->arrayNode('client')->children()
                 ->scalarNode('prefix')->defaultValue('enqueue')->end()
                 ->scalarNode('app_name')->defaultValue('app')->end()
-                ->scalarNode('router_topic')->defaultValue('router')->cannotBeEmpty()->end()
+                ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
                 ->scalarNode('router_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
                 ->scalarNode('default_processor_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
                 ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
