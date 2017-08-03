@@ -116,6 +116,8 @@ class AmqpProducer implements InteropAmqpProducer
     public function setPriority($priority)
     {
         $this->priority = $priority;
+
+        return $this;
     }
 
     /**
@@ -132,6 +134,8 @@ class AmqpProducer implements InteropAmqpProducer
     public function setTimeToLive($timeToLive)
     {
         $this->timeToLive = $timeToLive;
+
+        return $this;
     }
 
     /**
