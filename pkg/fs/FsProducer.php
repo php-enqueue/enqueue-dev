@@ -2,8 +2,10 @@
 
 namespace Enqueue\Fs;
 
+use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PriorityNotSupportedException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
@@ -11,6 +13,11 @@ use Makasim\File\TempFile;
 
 class FsProducer implements PsrProducer
 {
+    /**
+     * @var float|int|null
+     */
+    private $timeToLive;
+
     /**
      * @var FsContext
      */
@@ -41,6 +48,10 @@ class FsProducer implements PsrProducer
                 return;
             }
 
+            if (null !== $this->timeToLive) {
+                $message->setHeader('x-expire-at', microtime(true) + ($this->timeToLive / 1000));
+            }
+
             $rawMessage = '|'.json_encode($message);
 
             if (JSON_ERROR_NONE !== json_last_error()) {
@@ -55,5 +66,53 @@ class FsProducer implements PsrProducer
 
             fwrite($file, $rawMessage);
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        $this->timeToLive = $timeToLive;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimeToLive()
+    {
+        return null;
     }
 }

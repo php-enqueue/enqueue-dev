@@ -51,4 +51,52 @@ class PheanstalkProducer implements PsrProducer
             $message->getTimeToRun()
         );
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimeToLive()
+    {
+        return null;
+    }
 }

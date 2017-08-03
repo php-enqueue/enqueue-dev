@@ -89,7 +89,14 @@ class FsConsumer implements PsrConsumer
 
                 if ($rawMessage) {
                     try {
-                        $this->preFetchedMessages[] = FsMessage::jsonUnserialize($rawMessage);
+                        $fetchedMessage = FsMessage::jsonUnserialize($rawMessage);
+                        $expireAt = $fetchedMessage->getHeader('x-expire-at');
+                        if ($expireAt && $expireAt - microtime(true) < 0) {
+                            // message has expired, just drop it.
+                            return;
+                        }
+
+                        $this->preFetchedMessages[] = $fetchedMessage;
                     } catch (\Exception $e) {
                         throw new \LogicException(sprintf("Cannot decode json message '%s'", $rawMessage), null, $e);
                     }

@@ -13,8 +13,8 @@
     "require": {
         "php": ">=5.6",
         "ext-amqp": "^1.6",
-        "queue-interop/queue-interop": "^0.5@dev",
-        "queue-interop/amqp-interop": "^0.5@dev",
+        
+        "queue-interop/amqp-interop": "^0.6@dev",
         "psr/log": "^1"
     },
     "require-dev": {

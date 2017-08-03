@@ -6,6 +6,7 @@ use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
+use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -14,6 +15,16 @@ use Interop\Queue\PsrTopic;
 
 class AmqpProducer implements InteropAmqpProducer
 {
+    /**
+     * @var int|null
+     */
+    private $priority;
+
+    /**
+     * @var int|float|null
+     */
+    private $timeToLive;
+
     /**
      * @var \AMQPChannel
      */
@@ -41,6 +52,14 @@ class AmqpProducer implements InteropAmqpProducer
         ;
 
         InvalidMessageException::assertMessageInstanceOf($message, AmqpMessage::class);
+
+        if (null !== $this->priority && null === $message->getPriority()) {
+            $message->setPriority($this->priority);
+        }
+
+        if (null !== $this->timeToLive && null === $message->getExpiration()) {
+            $message->setExpiration($this->timeToLive);
+        }
 
         $amqpAttributes = $message->getHeaders();
 
@@ -73,5 +92,53 @@ class AmqpProducer implements InteropAmqpProducer
                 $amqpAttributes
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        $this->timeToLive = $timeToLive;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimeToLive()
+    {
+        return $this->timeToLive;
     }
 }

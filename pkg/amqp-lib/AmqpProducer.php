@@ -6,6 +6,7 @@ use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
+use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -17,6 +18,16 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpProducer implements InteropAmqpProducer
 {
+    /**
+     * @var int|null
+     */
+    private $priority;
+
+    /**
+     * @var int|float|null
+     */
+    private $timeToLive;
+
     /**
      * @var AMQPChannel
      */
@@ -43,6 +54,14 @@ class AmqpProducer implements InteropAmqpProducer
 
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
+        if (null !== $this->priority && null === $message->getPriority()) {
+            $message->setPriority($this->priority);
+        }
+
+        if (null !== $this->timeToLive && null === $message->getExpiration()) {
+            $message->setExpiration($this->timeToLive);
+        }
+
         $amqpProperties = $message->getHeaders();
 
         if ($appProperties = $message->getProperties()) {
@@ -68,5 +87,53 @@ class AmqpProducer implements InteropAmqpProducer
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        $this->timeToLive = $timeToLive;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimeToLive()
+    {
+        return $this->timeToLive;
     }
 }

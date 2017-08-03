@@ -4,12 +4,19 @@ namespace Enqueue\Sqs;
 
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
+use Interop\Queue\PriorityNotSupportedException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
+use Interop\Queue\TimeToLiveNotSupportedException;
 
 class SqsProducer implements PsrProducer
 {
+    /**
+     * @var int|float|null
+     */
+    private $deliveryDelay;
+
     /**
      * @var SqsContext
      */
@@ -55,6 +62,10 @@ class SqsProducer implements PsrProducer
             'QueueUrl' => $this->context->getQueueUrl($destination),
         ];
 
+        if (null !== $this->deliveryDelay) {
+            $arguments['DelaySeconds'] = (int) $this->deliveryDelay / 1000;
+        }
+
         if ($message->getDelaySeconds()) {
             $arguments['DelaySeconds'] = $message->getDelaySeconds();
         }
@@ -72,5 +83,53 @@ class SqsProducer implements PsrProducer
         if (false == $result->hasKey('MessageId')) {
             throw new \RuntimeException('Message was not sent');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeliveryDelay($deliveryDelay)
+    {
+        $this->deliveryDelay = $deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeliveryDelay()
+    {
+        return $this->deliveryDelay;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPriority($priority)
+    {
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        throw TimeToLiveNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimeToLive()
+    {
+        return null;
     }
 }
