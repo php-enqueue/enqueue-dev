@@ -91,6 +91,8 @@ class SqsProducer implements PsrProducer
     public function setDeliveryDelay($deliveryDelay)
     {
         $this->deliveryDelay = $deliveryDelay;
+
+        return $this;
     }
 
     /**

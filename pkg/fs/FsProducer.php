@@ -106,6 +106,8 @@ class FsProducer implements PsrProducer
     public function setTimeToLive($timeToLive)
     {
         $this->timeToLive = $timeToLive;
+
+        return $this;
     }
 
     /**

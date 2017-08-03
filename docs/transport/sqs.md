@@ -7,6 +7,7 @@ It uses internally official [aws sdk library](https://packagist.org/packages/aws
 * [Create context](#create-context)
 * [Declare queue](#decalre-queue)
 * [Send message to queue](#send-message-to-queue)
+* [Send delay message](#send-delay-message)
 * [Consume message](#consume-message)
 * [Purge queue messages](#purge-queue-messages)
 
@@ -56,6 +57,22 @@ $fooQueue = $psrContext->createQueue('foo');
 $message = $psrContext->createMessage('Hello world!');
 
 $psrContext->createProducer()->send($fooQueue, $message);
+```
+
+## Send delay message
+
+```php
+<?php
+/** @var \Enqueue\Sqs\SqsContext $psrContext */
+
+$fooQueue = $psrContext->createQueue('foo');
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setDeliveryDelay(60000) // 60 sec
+    
+    ->send($fooQueue, $message)
+;
 ```
 
 ## Consume message:

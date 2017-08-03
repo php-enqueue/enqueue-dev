@@ -10,6 +10,8 @@ Build on top of [php amqp lib](https://github.com/php-amqplib/php-amqplib).
 * [Bind queue to topic](#bind-queue-to-topic)
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
+* [Send priority message](#send-priority-message)
+* [Send expiration message](#send-expiration-message)
 * [Consume message](#consume-message)
 * [Purge queue messages](#purge-queue-messages)
 
@@ -123,6 +125,42 @@ $psrContext->createProducer()->send($fooTopic, $message);
 $message = $psrContext->createMessage('Hello world!');
 
 $psrContext->createProducer()->send($fooQueue, $message);
+```
+
+## Send priority message
+
+```php
+<?php
+/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+
+$fooQueue = $psrContext->createQueue('foo');
+$fooQueue->addFlag(AmqpQueue::FLAG_DURABLE);
+$fooQueue->setArguments(['x-max-priority' => 10]);
+$psrContext->declareQueue($fooQueue);
+
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setPriority(5) // the higher priority the sooner a message gets to a consumer
+    //    
+    ->send($fooQueue, $message)
+;
+```
+
+## Send expiration message
+
+```php
+<?php
+/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+/** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
+
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setTimeToLive(60000) // 60 sec
+    //    
+    ->send($fooQueue, $message)
+;
 ```
 
 ## Consume message:
