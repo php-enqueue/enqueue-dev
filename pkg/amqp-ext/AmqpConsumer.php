@@ -287,6 +287,7 @@ class AmqpConsumer implements InteropAmqpConsumer
         );
         $message->setRedelivered($extEnvelope->isRedelivery());
         $message->setDeliveryTag($extEnvelope->getDeliveryTag());
+        $message->setRoutingKey($extEnvelope->getRoutingKey());
 
         return $message;
     }

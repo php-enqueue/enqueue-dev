@@ -124,10 +124,10 @@ class AmqpContext implements InteropAmqpContext
      */
     public function createTemporaryQueue()
     {
-        $queue = $this->createQueue(null);
-        $queue->addFlag(InteropAmqpQueue::FLAG_EXCLUSIVE);
+        list($name) = $this->getChannel()->queue_declare('', false, false, true, false);
 
-        $this->declareQueue($queue);
+        $queue = $this->createQueue($name);
+        $queue->addFlag(InteropAmqpQueue::FLAG_EXCLUSIVE);
 
         return $queue;
     }
@@ -166,7 +166,7 @@ class AmqpContext implements InteropAmqpContext
      */
     public function declareQueue(InteropAmqpQueue $queue)
     {
-        return $this->getChannel()->queue_declare(
+        list(, $messageCount) = $this->getChannel()->queue_declare(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_PASSIVE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_DURABLE),
@@ -175,6 +175,8 @@ class AmqpContext implements InteropAmqpContext
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT),
             $queue->getArguments()
         );
+
+        return $messageCount;
     }
 
     /**
