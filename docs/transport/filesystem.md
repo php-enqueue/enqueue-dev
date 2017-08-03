@@ -9,6 +9,7 @@ A message is a line inside the file.
 * [Create context](#create-context)
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
+* [Send expiration message](#send-expiration-message)
 * [Consume message](#consume-message)
 * [Purge queue messages](#purge-queue-messages)
 
@@ -70,6 +71,22 @@ $fooQueue = $psrContext->createQueue('aQueue');
 $message = $psrContext->createMessage('Hello world!');
 
 $psrContext->createProducer()->send($fooQueue, $message);
+```
+
+## Send expiration message
+
+```php
+<?php
+/** @var \Enqueue\Fs\FsContext $psrContext */
+
+$fooQueue = $psrContext->createQueue('aQueue');
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setTimeToLive(60000) // 60 sec
+    //    
+    ->send($fooQueue, $message)
+;
 ```
 
 ## Consume message:
