@@ -4,14 +4,18 @@ namespace Enqueue\Sqs\Tests\Spec;
 
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
+use Enqueue\Test\RetryTrait;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
 /**
  * @group functional
+ * @retry 5
  */
 class SqsSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {
+    use RetryTrait;
+
     /**
      * {@inheritdoc}
      */

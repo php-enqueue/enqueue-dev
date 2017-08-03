@@ -9,6 +9,7 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Sqs\SqsContext;
+use Enqueue\Test\RetryTrait;
 use Enqueue\Test\SqsExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
@@ -18,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 class SqsConsumptionUseCasesTest extends TestCase
 {
     use SqsExtension;
+    use RetryTrait;
 
     /**
      * @var SqsContext
@@ -43,6 +45,9 @@ class SqsConsumptionUseCasesTest extends TestCase
         }
     }
 
+    /**
+     * @retry 5
+     */
     public function testConsumeOneMessageAndExit()
     {
         $queue = $this->context->createQueue('enqueue_test_queue');
@@ -64,6 +69,9 @@ class SqsConsumptionUseCasesTest extends TestCase
         $this->assertEquals(__METHOD__, $processor->lastProcessedMessage->getBody());
     }
 
+    /**
+     * @retry 5
+     */
     public function testConsumeOneMessageAndSendReplyExit()
     {
         $queue = $this->context->createQueue('enqueue_test_queue');
