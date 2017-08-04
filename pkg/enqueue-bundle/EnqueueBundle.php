@@ -2,6 +2,9 @@
 
 namespace Enqueue\Bundle;
 
+use Enqueue\AmqpBunny\AmqpContext as AmqpBunnyContext;
+use Enqueue\AmqpBunny\Symfony\AmqpBunnyTransportFactory;
+use Enqueue\AmqpBunny\Symfony\RabbitMqAmqpBunnyTransportFactory;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
@@ -80,6 +83,11 @@ class EnqueueBundle extends Bundle
 
         if (class_exists(SqsContext::class)) {
             $extension->addTransportFactory(new SqsTransportFactory());
+        }
+
+        if (class_exists(AmqpBunnyContext::class)) {
+            $extension->addTransportFactory(new AmqpBunnyTransportFactory());
+            $extension->addTransportFactory(new RabbitMqAmqpBunnyTransportFactory());
         }
 
         $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
