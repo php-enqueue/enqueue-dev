@@ -14,7 +14,7 @@ fi
 
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
-for REMOTE in origin stomp amqp-ext amqp-lib pheanstalk gearman sqs fs redis dbal null rdkafka enqueue simple-client enqueue-bundle job-queue test async-event-dispatcher
+for REMOTE in origin stomp amqp-ext amqp-lib amqp-bunny pheanstalk gearman sqs fs redis dbal null rdkafka enqueue simple-client enqueue-bundle job-queue test async-event-dispatcher
 do
     echo ""
     echo ""
