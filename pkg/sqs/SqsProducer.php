@@ -108,6 +108,10 @@ class SqsProducer implements PsrProducer
      */
     public function setPriority($priority)
     {
+        if (null === $priority) {
+            return;
+        }
+
         throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
@@ -124,6 +128,10 @@ class SqsProducer implements PsrProducer
      */
     public function setTimeToLive($timeToLive)
     {
+        if (null === $timeToLive) {
+            return;
+        }
+
         throw TimeToLiveNotSupportedException::providerDoestNotSupportIt();
     }
 

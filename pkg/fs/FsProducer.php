@@ -73,6 +73,10 @@ class FsProducer implements PsrProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
+        if (null === $deliveryDelay) {
+            return;
+        }
+
         throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
     }
 
@@ -89,6 +93,10 @@ class FsProducer implements PsrProducer
      */
     public function setPriority($priority)
     {
+        if (null === $priority) {
+            return;
+        }
+
         throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 

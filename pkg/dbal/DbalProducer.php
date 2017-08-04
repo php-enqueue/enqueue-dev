@@ -91,6 +91,10 @@ class DbalProducer implements PsrProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
+        if (null === $deliveryDelay) {
+            return;
+        }
+
         throw new \LogicException('Not implemented');
     }
 
@@ -107,6 +111,10 @@ class DbalProducer implements PsrProducer
      */
     public function setPriority($priority)
     {
+        if (null === $priority) {
+            return;
+        }
+
         throw new \LogicException('Not implemented');
     }
 
@@ -123,6 +131,10 @@ class DbalProducer implements PsrProducer
      */
     public function setTimeToLive($timeToLive)
     {
+        if (null === $timeToLive) {
+            return;
+        }
+
         throw new \LogicException('Not implemented');
     }
 

@@ -92,6 +92,10 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
+        if (null === $deliveryDelay) {
+            return;
+        }
+
         throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
     }
 
