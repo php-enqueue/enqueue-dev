@@ -16,12 +16,27 @@ class RabbitMQDlxDelayStrategy implements DelayStrategy
      */
     public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, $delayMsec)
     {
+        $properties = $message->getProperties();
+
+        // The x-death header must be removed because of the bug in RabbitMQ.
+        // It was reported that the bug is fixed since 3.5.4 but I tried with 3.6.1 and the bug still there.
+        // https://github.com/rabbitmq/rabbitmq-server/issues/216
+        unset($properties['x-death']);
+
+        $delayMessage = $context->createMessage($message->getBody(), $properties, $message->getHeaders());
+        $delayMessage->setExpiration((int) $delayMsec);
+        $delayMessage->setRoutingKey($message->getRoutingKey());
+
         if ($dest instanceof AmqpTopic) {
-            $delayQueue = $context->createQueue($dest->getTopicName().'.'.$delayMsec.'.x.delayed');
+            $routingKey = $message->getRoutingKey() ? '.'.$message->getRoutingKey() : '';
+            $name = sprintf('enqueue.%s%s.%s.x.delay', $dest->getTopicName(), $routingKey, $delayMsec);
+
+            $delayQueue = $context->createQueue($name);
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
             $delayQueue->setArgument('x-dead-letter-exchange', $dest->getTopicName());
+            $delayQueue->setArgument('x-dead-letter-routing-key', (string) $delayMessage->getRoutingKey());
         } elseif ($dest instanceof AmqpQueue) {
-            $delayQueue = $context->createQueue($dest->getQueueName().'.'.$delayMsec.'.delayed');
+            $delayQueue = $context->createQueue('enqueue.'.$dest->getQueueName().'.'.$delayMsec.'.delayed');
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
             $delayQueue->setArgument('x-dead-letter-exchange', '');
             $delayQueue->setArgument('x-dead-letter-routing-key', $dest->getQueueName());
@@ -33,16 +48,6 @@ class RabbitMQDlxDelayStrategy implements DelayStrategy
         }
 
         $context->declareQueue($delayQueue);
-
-        $properties = $message->getProperties();
-
-        // The x-death header must be removed because of the bug in RabbitMQ.
-        // It was reported that the bug is fixed since 3.5.4 but I tried with 3.6.1 and the bug still there.
-        // https://github.com/rabbitmq/rabbitmq-server/issues/216
-        unset($properties['x-death']);
-
-        $delayMessage = $context->createMessage($message->getBody(), $properties, $message->getHeaders());
-        $delayMessage->setExpiration((string) $delayMsec);
 
         $context->createProducer()->send($delayQueue, $delayMessage);
     }
