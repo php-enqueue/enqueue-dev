@@ -2,6 +2,8 @@
 
 namespace Enqueue\Bundle\Tests\Unit;
 
+use Enqueue\AmqpBunny\Symfony\AmqpBunnyTransportFactory;
+use Enqueue\AmqpBunny\Symfony\RabbitMqAmqpBunnyTransportFactory;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
 use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
@@ -218,6 +220,28 @@ class EnqueueBundleTest extends TestCase
             ->expects($this->at(9))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(SqsTransportFactory::class))
+        ;
+
+        $bundle = new EnqueueBundle();
+        $bundle->build($container);
+    }
+
+    public function testShouldRegisterAmqpBunnyTransportFactory()
+    {
+        $extensionMock = $this->createEnqueueExtensionMock();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extensionMock);
+
+        $extensionMock
+            ->expects($this->at(10))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(AmqpBunnyTransportFactory::class))
+        ;
+        $extensionMock
+            ->expects($this->at(11))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(RabbitMqAmqpBunnyTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();

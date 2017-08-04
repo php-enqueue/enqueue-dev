@@ -2,7 +2,9 @@
 
 namespace Enqueue;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
@@ -26,8 +28,22 @@ function dsn_to_connection_factory($dsn)
         $map['file'] = FsConnectionFactory::class;
     }
 
-    if (class_exists(AmqpConnectionFactory::class)) {
-        $map['amqp'] = AmqpConnectionFactory::class;
+    if (class_exists(AmqpExtConnectionFactory::class)) {
+        $map['amqp+ext'] = AmqpExtConnectionFactory::class;
+    }
+    if (class_exists(AmqpBunnyConnectionFactory::class)) {
+        $map['amqp+lib'] = AmqpBunnyConnectionFactory::class;
+    }
+    if (class_exists(AmqpLibConnectionFactory::class)) {
+        $map['amqp+bunny'] = AmqpBunnyConnectionFactory::class;
+    }
+
+    if (class_exists(AmqpExtConnectionFactory::class)) {
+        $map['amqp'] = AmqpExtConnectionFactory::class;
+    } elseif (class_exists(AmqpBunnyConnectionFactory::class)) {
+        $map['amqp'] = AmqpBunnyConnectionFactory::class;
+    } elseif (class_exists(AmqpLibConnectionFactory::class)) {
+        $map['amqp'] = AmqpLibConnectionFactory::class;
     }
 
     if (class_exists(NullConnectionFactory::class)) {

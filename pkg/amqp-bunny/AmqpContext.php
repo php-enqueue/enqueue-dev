@@ -1,7 +1,8 @@
 <?php
 
-namespace Enqueue\AmqpLib;
+namespace Enqueue\AmqpBunny;
 
+use Bunny\Channel;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
@@ -15,21 +16,18 @@ use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AbstractConnection;
-use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpContext implements InteropAmqpContext
 {
     /**
-     * @var AbstractConnection
+     * @var Channel
      */
-    private $connection;
+    private $bunnyChannel;
 
     /**
-     * @var AMQPChannel
+     * @var callable
      */
-    private $channel;
+    private $bunnyChannelFactory;
 
     /**
      * @var string
@@ -42,10 +40,12 @@ class AmqpContext implements InteropAmqpContext
     private $buffer;
 
     /**
-     * @param AbstractConnection $connection
-     * @param array              $config
+     * Callable must return instance of \Bunny\Channel once called.
+     *
+     * @param Channel|callable $bunnyChannel
+     * @param array            $config
      */
-    public function __construct(AbstractConnection $connection, $config = [])
+    public function __construct($bunnyChannel, $config = [])
     {
         $this->config = array_replace([
             'receive_method' => 'basic_get',
@@ -54,7 +54,14 @@ class AmqpContext implements InteropAmqpContext
             'qos_global' => false,
         ], $config);
 
-        $this->connection = $connection;
+        if ($bunnyChannel instanceof Channel) {
+            $this->bunnyChannel = $bunnyChannel;
+        } elseif (is_callable($bunnyChannel)) {
+            $this->bunnyChannelFactory = $bunnyChannel;
+        } else {
+            throw new \InvalidArgumentException('The bunnyChannel argument must be either \Bunny\Channel or callable that return it.');
+        }
+
         $this->buffer = new Buffer();
     }
 
@@ -106,10 +113,10 @@ class AmqpContext implements InteropAmqpContext
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this->getChannel(), $queue, $this->buffer, $this->config['receive_method']);
+            return new AmqpConsumer($this->getBunnyChannel(), $queue, $this->buffer, $this->config['receive_method']);
         }
 
-        return new AmqpConsumer($this->getChannel(), $destination, $this->buffer, $this->config['receive_method']);
+        return new AmqpConsumer($this->getBunnyChannel(), $destination, $this->buffer, $this->config['receive_method']);
     }
 
     /**
@@ -117,7 +124,7 @@ class AmqpContext implements InteropAmqpContext
      */
     public function createProducer()
     {
-        return new AmqpProducer($this->getChannel());
+        return new AmqpProducer($this->getBunnyChannel());
     }
 
     /**
@@ -125,9 +132,9 @@ class AmqpContext implements InteropAmqpContext
      */
     public function createTemporaryQueue()
     {
-        list($name) = $this->getChannel()->queue_declare('', false, false, true, false);
+        $frame = $this->getBunnyChannel()->queueDeclare('', false, false, true, false);
 
-        $queue = $this->createQueue($name);
+        $queue = $this->createQueue($frame->queue);
         $queue->addFlag(InteropAmqpQueue::FLAG_EXCLUSIVE);
 
         return $queue;
@@ -138,7 +145,7 @@ class AmqpContext implements InteropAmqpContext
      */
     public function declareTopic(InteropAmqpTopic $topic)
     {
-        $this->getChannel()->exchange_declare(
+        $this->getBunnyChannel()->exchangeDeclare(
             $topic->getTopicName(),
             $topic->getType(),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_PASSIVE),
@@ -146,7 +153,7 @@ class AmqpContext implements InteropAmqpContext
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_AUTODELETE),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_INTERNAL),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT),
-            $topic->getArguments() ? new AMQPTable($topic->getArguments()) : null
+            $topic->getArguments()
         );
     }
 
@@ -155,7 +162,7 @@ class AmqpContext implements InteropAmqpContext
      */
     public function deleteTopic(InteropAmqpTopic $topic)
     {
-        $this->getChannel()->exchange_delete(
+        $this->getBunnyChannel()->exchangeDelete(
             $topic->getTopicName(),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_IFUNUSED),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT)
@@ -167,17 +174,17 @@ class AmqpContext implements InteropAmqpContext
      */
     public function declareQueue(InteropAmqpQueue $queue)
     {
-        list(, $messageCount) = $this->getChannel()->queue_declare(
+        $frame = $this->getBunnyChannel()->queueDeclare(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_PASSIVE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_DURABLE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_EXCLUSIVE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_AUTODELETE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT),
-            $queue->getArguments() ? new AMQPTable($queue->getArguments()) : null
+            $queue->getArguments()
         );
 
-        return $messageCount;
+        return $frame->messageCount;
     }
 
     /**
@@ -185,7 +192,7 @@ class AmqpContext implements InteropAmqpContext
      */
     public function deleteQueue(InteropAmqpQueue $queue)
     {
-        $this->getChannel()->queue_delete(
+        $this->getBunnyChannel()->queueDelete(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFUNUSED),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFEMPTY),
@@ -198,7 +205,7 @@ class AmqpContext implements InteropAmqpContext
      */
     public function purgeQueue(InteropAmqpQueue $queue)
     {
-        $this->getChannel()->queue_purge(
+        $this->getBunnyChannel()->queuePurge(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
         );
@@ -215,7 +222,7 @@ class AmqpContext implements InteropAmqpContext
 
         // bind exchange to exchange
         if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
-            $this->getChannel()->exchange_bind(
+            $this->getBunnyChannel()->exchangeBind(
                 $bind->getTarget()->getTopicName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -224,7 +231,7 @@ class AmqpContext implements InteropAmqpContext
             );
             // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
-            $this->getChannel()->queue_bind(
+            $this->getBunnyChannel()->queueBind(
                 $bind->getSource()->getQueueName(),
                 $bind->getTarget()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -233,7 +240,7 @@ class AmqpContext implements InteropAmqpContext
             );
             // bind exchange to queue
         } else {
-            $this->getChannel()->queue_bind(
+            $this->getBunnyChannel()->queueBind(
                 $bind->getTarget()->getQueueName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -254,7 +261,7 @@ class AmqpContext implements InteropAmqpContext
 
         // bind exchange to exchange
         if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
-            $this->getChannel()->exchange_unbind(
+            $this->getBunnyChannel()->exchangeUnbind(
                 $bind->getTarget()->getTopicName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -263,7 +270,7 @@ class AmqpContext implements InteropAmqpContext
             );
             // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
-            $this->getChannel()->queue_unbind(
+            $this->getBunnyChannel()->queueUnbind(
                 $bind->getSource()->getQueueName(),
                 $bind->getTarget()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -271,7 +278,7 @@ class AmqpContext implements InteropAmqpContext
             );
             // bind exchange to queue
         } else {
-            $this->getChannel()->queue_unbind(
+            $this->getBunnyChannel()->queueUnbind(
                 $bind->getTarget()->getQueueName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -282,8 +289,8 @@ class AmqpContext implements InteropAmqpContext
 
     public function close()
     {
-        if ($this->channel) {
-            $this->channel->close();
+        if ($this->bunnyChannel) {
+            $this->bunnyChannel->close();
         }
     }
 
@@ -292,23 +299,26 @@ class AmqpContext implements InteropAmqpContext
      */
     public function setQos($prefetchSize, $prefetchCount, $global)
     {
-        $this->getChannel()->basic_qos($prefetchSize, $prefetchCount, $global);
+        $this->getBunnyChannel()->qos($prefetchSize, $prefetchCount, $global);
     }
 
     /**
-     * @return AMQPChannel
+     * @return Channel
      */
-    private function getChannel()
+    public function getBunnyChannel()
     {
-        if (null === $this->channel) {
-            $this->channel = $this->connection->channel();
-            $this->channel->basic_qos(
-                $this->config['qos_prefetch_size'],
-                $this->config['qos_prefetch_count'],
-                $this->config['qos_global']
-            );
+        if (false == $this->bunnyChannel) {
+            $bunnyChannel = call_user_func($this->bunnyChannelFactory);
+            if (false == $bunnyChannel instanceof Channel) {
+                throw new \LogicException(sprintf(
+                    'The factory must return instance of \Bunny\Channel. It returned %s',
+                    is_object($bunnyChannel) ? get_class($bunnyChannel) : gettype($bunnyChannel)
+                ));
+            }
+
+            $this->bunnyChannel = $bunnyChannel;
         }
 
-        return $this->channel;
+        return $this->bunnyChannel;
     }
 }
