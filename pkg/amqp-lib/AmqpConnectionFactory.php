@@ -2,6 +2,8 @@
 
 namespace Enqueue\AmqpLib;
 
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
@@ -9,8 +11,10 @@ use PhpAmqpLib\Connection\AMQPLazySocketConnection;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-class AmqpConnectionFactory implements InteropAmqpConnectionFactory
+class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var array
      */
@@ -72,7 +76,10 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
      */
     public function createContext()
     {
-        return new AmqpContext($this->establishConnection(), $this->config);
+        $context = new AmqpContext($this->establishConnection(), $this->config);
+        $context->setDelayStrategy($this->delayStrategy);
+
+        return $context;
     }
 
     /**

@@ -1,33 +1,35 @@
 <?php
 
-namespace Enqueue\Client\Amqp;
+namespace Enqueue\AmqpTools;
 
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpDestination;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
+use Interop\Queue\InvalidDestinationException;
 
-class DlxDelayStrategy implements DelayStrategy
+class RabbitMQDlxDelayStrategy implements DelayStrategy
 {
     /**
      * {@inheritdoc}
      */
-    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message)
+    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, $delayMsec)
     {
-        $delaySec = 1235; // $message->getDelay();
-
         if ($dest instanceof AmqpTopic) {
-            $delayQueue = $context->createQueue($dest->getTopicName().'.'.$delaySec.'.x.delayed');
+            $delayQueue = $context->createQueue($dest->getTopicName().'.'.$delayMsec.'.x.delayed');
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
             $delayQueue->setArgument('x-dead-letter-exchange', $dest->getTopicName());
         } elseif ($dest instanceof AmqpQueue) {
-            $delayQueue = $context->createQueue($dest->getQueueName().'.'.$delaySec.'.delayed');
+            $delayQueue = $context->createQueue($dest->getQueueName().'.'.$delayMsec.'.delayed');
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
             $delayQueue->setArgument('x-dead-letter-exchange', '');
             $delayQueue->setArgument('x-dead-letter-routing-key', $dest->getQueueName());
         } else {
-            throw new \LogicException();
+            throw new InvalidDestinationException(sprintf('The destination must be an instance of %s but got %s.',
+                AmqpTopic::class.'|'.AmqpQueue::class,
+                get_class($dest)
+            ));
         }
 
         $context->declareQueue($delayQueue);
@@ -40,7 +42,7 @@ class DlxDelayStrategy implements DelayStrategy
         unset($properties['x-death']);
 
         $delayMessage = $context->createMessage($message->getBody(), $properties, $message->getHeaders());
-        $delayMessage->setExpiration((string) ($delaySec * 1000));
+        $delayMessage->setExpiration((string) $delayMsec);
 
         $context->createProducer()->send($delayQueue, $delayMessage);
     }

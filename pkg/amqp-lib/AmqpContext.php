@@ -2,6 +2,8 @@
 
 namespace Enqueue\AmqpLib;
 
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
@@ -19,8 +21,10 @@ use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Wire\AMQPTable;
 
-class AmqpContext implements InteropAmqpContext
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var AbstractConnection
      */
@@ -117,7 +121,10 @@ class AmqpContext implements InteropAmqpContext
      */
     public function createProducer()
     {
-        return new AmqpProducer($this->getChannel());
+        $producer = new AmqpProducer($this->getChannel(), $this);
+        $producer->setDelayStrategy($this->delayStrategy);
+
+        return $producer;
     }
 
     /**
@@ -146,7 +153,7 @@ class AmqpContext implements InteropAmqpContext
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_AUTODELETE),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_INTERNAL),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT),
-            $topic->getArguments()
+            $topic->getArguments() ? new AMQPTable($topic->getArguments()) : null
         );
     }
 
