@@ -8,6 +8,7 @@
     "enqueue/stomp": "*@dev",
     "enqueue/amqp-ext": "*@dev",
     "enqueue/amqp-lib": "*@dev",
+    "enqueue/amqp-bunny": "*@dev",
     "php-amqplib/php-amqplib": "^2.7@dev",
     "enqueue/redis": "*@dev",
     "enqueue/fs": "*@dev",
@@ -78,6 +79,10 @@
     {
       "type": "path",
       "url": "pkg/amqp-lib"
+    },
+    {
+      "type": "path",
+      "url": "pkg/amqp-bunny"
     },
     {
       "type": "path",

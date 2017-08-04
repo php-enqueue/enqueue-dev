@@ -28,7 +28,7 @@ class DsnToContextFunctionTest extends TestCase
     public function testThrowIfDsnNotSupported()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The scheme "http" is not supported. Supported "file", "amqp", "null"');
+        $this->expectExceptionMessage('The scheme "http" is not supported. Supported "file", "amqp+ext"');
 
         \Enqueue\dsn_to_context('http://schemeNotSupported');
     }

@@ -2,7 +2,7 @@
 
 * [Quick tour](quick_tour.md)
 * Transports
-    - Amqp based on [the ext](docs/transport/amqp.md), [the lib](docs/transport/amqp_lib.md)
+    - Amqp based on [the ext](docs/transport/amqp.md), [bunny](docs/transport/amqp_bunny.md), [the lib](docs/transport/amqp_lib.md)
     - [Amazon SQS](transport/sqs.md)
     - [Beanstalk (Pheanstalk)](transport/pheanstalk.md)
     - [Gearman](transport/gearman.md)

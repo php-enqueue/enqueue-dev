@@ -1,7 +1,8 @@
 <?php
 
-namespace Enqueue\AmqpExt;
+namespace Enqueue\AmqpBunny;
 
+use Bunny\Client;
 use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
 
 class AmqpConnectionFactory implements InteropAmqpConnectionFactory
@@ -12,9 +13,9 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
     private $config;
 
     /**
-     * @var \AMQPConnection
+     * @var Client
      */
-    private $connection;
+    private $client;
 
     /**
      * The config could be an array, string DSN or null. In case of null it will attempt to connect to localhost with default credentials.
@@ -25,26 +26,23 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
      *     'vhost' => 'amqp.vhost The virtual host on the host. Note: Max 128 characters.',
      *     'user' => 'amqp.user The user name to use. Note: Max 128 characters.',
      *     'pass' => 'amqp.password Password. Note: Max 128 characters.',
-     *     'read_timeout'  => 'Timeout in for income activity. Note: 0 or greater seconds. May be fractional.',
-     *     'write_timeout' => 'Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.',
-     *     'connect_timeout' => 'Connection timeout. Note: 0 or greater seconds. May be fractional.',
-     *     'persisted' => 'bool, Whether it use single persisted connection or open a new one for every context',
      *     'lazy' => 'the connection will be performed as later as possible, if the option set to true',
-     *     'pre_fetch_count' => 'Controls how many messages could be prefetched',
-     *     'pre_fetch_size' => 'Controls how many messages could be prefetched',
      *     'receive_method' => 'Could be either basic_get or basic_consume',
+     *     'qos_prefetch_size' => 'The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"',
+     *     'qos_prefetch_count' => 'Specifies a prefetch window in terms of whole messages.',
+     *     'qos_global' => 'If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.',
      * ]
      *
      * or
      *
-     * amqp://user:pass@host:10000/vhost?lazy=true&persisted=false&read_timeout=2
+     * amqp://user:pass@host:10000/vhost?lazy=true&socket=true
      *
      * @param array|string $config
      */
     public function __construct($config = 'amqp://')
     {
-        if (is_string($config) && 0 === strpos($config, 'amqp+ext://')) {
-            $config = str_replace('amqp+ext://', 'amqp://', $config);
+        if (is_string($config) && 0 === strpos($config, 'amqp+bunny://')) {
+            $config = str_replace('amqp+bunny://', 'amqp://', $config);
         }
 
         if (empty($config) || 'amqp://' === $config) {
@@ -66,69 +64,33 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
                 implode('", "', $supportedMethods)
             ));
         }
-
-        if ('basic_consume' == $this->config['receive_method']) {
-            if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || phpversion('amqp') == '1.9.1-dev')) {
-                // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
-                throw new \LogicException('The "basic_consume" method does not work on amqp extension prior 1.9.1 version.');
-            }
-        }
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AmqpContext
      */
     public function createContext()
     {
         if ($this->config['lazy']) {
             return new AmqpContext(function () {
-                return $this->createExtContext($this->establishConnection());
-            }, $this->config['receive_method']);
+                return $this->establishConnection()->channel();
+            }, $this->config);
         }
 
-        return new AmqpContext($this->createExtContext($this->establishConnection()), $this->config['receive_method']);
+        return new AmqpContext($this->establishConnection()->channel(), $this->config);
     }
 
     /**
-     * @param \AMQPConnection $extConnection
-     *
-     * @return \AMQPChannel
-     */
-    private function createExtContext(\AMQPConnection $extConnection)
-    {
-        $channel = new \AMQPChannel($extConnection);
-        if (false == empty($this->config['pre_fetch_count'])) {
-            $channel->setPrefetchCount((int) $this->config['pre_fetch_count']);
-        }
-
-        if (false == empty($this->config['pre_fetch_size'])) {
-            $channel->setPrefetchSize((int) $this->config['pre_fetch_size']);
-        }
-
-        return $channel;
-    }
-
-    /**
-     * @return \AMQPConnection
+     * @return Client
      */
     private function establishConnection()
     {
-        if (false == $this->connection) {
-            $config = $this->config;
-            $config['login'] = $this->config['user'];
-            $config['password'] = $this->config['pass'];
-
-            $this->connection = new \AMQPConnection($config);
-
-            $this->config['persisted'] ? $this->connection->pconnect() : $this->connection->connect();
-        }
-        if (false == $this->connection->isConnected()) {
-            $this->config['persisted'] ? $this->connection->preconnect() : $this->connection->reconnect();
+        if (false == $this->client) {
+            $this->client = new Client($this->config);
+            $this->client->connect();
         }
 
-        return $this->connection;
+        return $this->client;
     }
 
     /**
@@ -168,12 +130,11 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
 
         unset($dsnConfig['scheme'], $dsnConfig['query'], $dsnConfig['fragment'], $dsnConfig['path']);
 
-        $config = array_replace($this->defaultConfig(), $dsnConfig);
-        $config = array_map(function ($value) {
+        $dsnConfig = array_map(function ($value) {
             return urldecode($value);
-        }, $config);
+        }, $dsnConfig);
 
-        return $config;
+        return $dsnConfig;
     }
 
     /**
@@ -184,17 +145,15 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
         return [
             'host' => 'localhost',
             'port' => 5672,
-            'vhost' => '/',
             'user' => 'guest',
             'pass' => 'guest',
-            'read_timeout' => null,
-            'write_timeout' => null,
-            'connect_timeout' => null,
-            'persisted' => false,
             'lazy' => true,
-            'pre_fetch_count' => null,
-            'pre_fetch_size' => null,
+            'vhost' => '/',
+            'heartbeat' => 0,
             'receive_method' => 'basic_get',
+            'qos_prefetch_size' => 0,
+            'qos_prefetch_count' => 1,
+            'qos_global' => false,
         ];
     }
 }

@@ -32,7 +32,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
     public function testThrowIfDsnNotSupported()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The scheme "http" is not supported. Supported "file", "amqp", "null"');
+        $this->expectExceptionMessage('The scheme "http" is not supported. Supported "file", "amqp+ext"');
 
         \Enqueue\dsn_to_connection_factory('http://schemeNotSupported');
     }
@@ -68,7 +68,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
 
         yield ['beanstalk://', PheanstalkConnectionFactory::class];
 
-//        yield ['gearman://', GearmanConnectionFactory::class];
+        //        yield ['gearman://', GearmanConnectionFactory::class];
 
         yield ['rdkafka://', RdKafkaConnectionFactory::class];
     }
