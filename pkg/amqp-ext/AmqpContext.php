@@ -2,6 +2,8 @@
 
 namespace Enqueue\AmqpExt;
 
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
@@ -15,8 +17,10 @@ use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
 
-class AmqpContext implements InteropAmqpContext
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var \AMQPChannel
      */
@@ -217,7 +221,10 @@ class AmqpContext implements InteropAmqpContext
      */
     public function createProducer()
     {
-        return new AmqpProducer($this->getExtChannel());
+        $producer = new AmqpProducer($this->getExtChannel(), $this);
+        $producer->setDelayStrategy($this->delayStrategy);
+
+        return $producer;
     }
 
     /**

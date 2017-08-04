@@ -2,10 +2,14 @@
 
 namespace Enqueue\AmqpExt;
 
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
 
-class AmqpConnectionFactory implements InteropAmqpConnectionFactory
+class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var array
      */
@@ -79,12 +83,18 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
     public function createContext()
     {
         if ($this->config['lazy']) {
-            return new AmqpContext(function () {
+            $context =  new AmqpContext(function () {
                 return $this->createExtContext($this->establishConnection());
             }, $this->config['receive_method']);
+            $context->setDelayStrategy($this->delayStrategy);
+
+            return $context;
         }
 
-        return new AmqpContext($this->createExtContext($this->establishConnection()), $this->config['receive_method']);
+        $context = new AmqpContext($this->createExtContext($this->establishConnection()), $this->config['receive_method']);
+        $context->setDelayStrategy($this->delayStrategy);
+
+        return $context;
     }
 
     /**

@@ -10,7 +10,7 @@ trait DelayStrategyAwareTrait
     protected $delayStrategy;
 
     /**
-     * {@inheritdoc}
+     * @param DelayStrategy|null $delayStrategy
      */
     public function setDelayStrategy(DelayStrategy $delayStrategy = null)
     {
