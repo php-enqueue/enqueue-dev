@@ -59,3 +59,4 @@
 * [FOSElasticaBundle. Improve performance of fos:elastica:populate command](https://github.com/php-enqueue/enqueue-elastica-bundle)
 * [Message bus to every PHP application](https://blog.forma-pro.com/message-bus-to-every-php-application-42a7d3fbb30b)
 * [Symfony Async EventDispatcher](https://blog.forma-pro.com/symfony-async-eventdispatcher-d01055a255cf)
+* [Spool Swiftmailer emails to real message queue.](https://blog.forma-pro.com/spool-swiftmailer-emails-to-real-message-queue-9ecb8b53b5de)
