@@ -128,7 +128,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function createProducer()
     {
-        $producer =  new AmqpProducer($this->getBunnyChannel(), $this);
+        $producer = new AmqpProducer($this->getBunnyChannel(), $this);
         $producer->setDelayStrategy($this->delayStrategy);
 
         return $producer;

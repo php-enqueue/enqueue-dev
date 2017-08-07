@@ -87,7 +87,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     public function createContext()
     {
         if ($this->config['lazy']) {
-            $context =  new AmqpContext(function () {
+            $context = new AmqpContext(function () {
                 return $this->createExtContext($this->establishConnection());
             }, $this->config['receive_method']);
             $context->setDelayStrategy($this->delayStrategy);
