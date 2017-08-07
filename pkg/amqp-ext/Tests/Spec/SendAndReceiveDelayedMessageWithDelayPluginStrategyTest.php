@@ -3,7 +3,7 @@
 namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
-use Enqueue\AmqpTools\RabbitMQDelayPluginDelayStrategy;
+use Enqueue\AmqpTools\RabbitMqDelayPluginDelayStrategy;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
@@ -15,7 +15,7 @@ class SendAndReceiveDelayedMessageWithDelayPluginStrategyTest extends SendAndRec
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
-        $factory->setDelayStrategy(new RabbitMQDelayPluginDelayStrategy());
+        $factory->setDelayStrategy(new RabbitMqDelayPluginDelayStrategy());
 
         return $factory->createContext();
     }
