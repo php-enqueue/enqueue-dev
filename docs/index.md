@@ -45,6 +45,7 @@
 * [Use cases](#use-cases)
     - [FOSElasticaBundle. Populate command optimizations](elastica-bundle/populate-command-optimization.md)
     - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
+    - [Monolog. Send messages to message queue](monolog/send-messages-to-mq.md)
 * [Development](#development)
     - [Contribution](contribution.md)
 
