@@ -3,6 +3,8 @@
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
@@ -17,8 +19,10 @@ use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
 
-class AmqpContext implements InteropAmqpContext
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var Channel
      */
@@ -124,7 +128,10 @@ class AmqpContext implements InteropAmqpContext
      */
     public function createProducer()
     {
-        return new AmqpProducer($this->getBunnyChannel());
+        $producer =  new AmqpProducer($this->getBunnyChannel(), $this);
+        $producer->setDelayStrategy($this->delayStrategy);
+
+        return $producer;
     }
 
     /**

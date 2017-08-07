@@ -3,10 +3,14 @@
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Client;
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
 
-class AmqpConnectionFactory implements InteropAmqpConnectionFactory
+class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var array
      */
@@ -72,12 +76,18 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory
     public function createContext()
     {
         if ($this->config['lazy']) {
-            return new AmqpContext(function () {
+            $context = new AmqpContext(function () {
                 return $this->establishConnection()->channel();
             }, $this->config);
+            $context->setDelayStrategy($this->delayStrategy);
+
+            return $context;
         }
 
-        return new AmqpContext($this->establishConnection()->channel(), $this->config);
+        $context = new AmqpContext($this->establishConnection()->channel(), $this->config);
+        $context->setDelayStrategy($this->delayStrategy);
+
+        return $context;
     }
 
     /**
