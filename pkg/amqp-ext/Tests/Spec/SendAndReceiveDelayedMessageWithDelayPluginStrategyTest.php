@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\AmqpLib\Tests\Spec;
+namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Enqueue\AmqpTools\RabbitMQDelayPluginDelayStrategy;
