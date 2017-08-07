@@ -68,6 +68,9 @@ enqueue:
             write_timeout:        ~
             persisted:            false
             lazy:                 true
+
+            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
+            receive_method:       basic_get # One of "basic_get"; "basic_consume"
         rabbitmq_amqp:
 
             # The connection to AMQP broker set as a string. Other parameters are ignored if set
@@ -98,6 +101,86 @@ enqueue:
             write_timeout:        ~
             persisted:            false
             lazy:                 true
+
+            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
+            receive_method:       basic_get # One of "basic_get"; "basic_consume"
+
+            # The option tells whether RabbitMQ broker has delay plugin installed or not
+            delay_plugin_installed: false
+        amqp_lib:
+
+            # The connection to AMQP broker set as a string. Other parameters are ignored if set
+            dsn:                  ~
+
+            # The host to connect too. Note: Max 1024 characters
+            host:                 localhost
+
+            # Port on the host.
+            port:                 5672
+
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
+
+            # Password. Note: Max 128 characters.
+            pass:                 guest
+
+            # The virtual host on the host. Note: Max 128 characters.
+            vhost:                /
+
+            # Connection timeout. Note: 0 or greater seconds. May be fractional.
+            connection_timeout:   !!float 3
+            read_write_timeout:   !!float 3
+
+            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
+            read_timeout:         3
+
+            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
+            write_timeout:        3
+            lazy:                 true
+            stream:               true
+            insist:               false
+            keepalive:            false
+
+            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
+            receive_method:       basic_get # One of "basic_get"; "basic_consume"
+            heartbeat:            0
+        rabbitmq_amqp_lib:
+
+            # The connection to AMQP broker set as a string. Other parameters are ignored if set
+            dsn:                  ~
+
+            # The host to connect too. Note: Max 1024 characters
+            host:                 localhost
+
+            # Port on the host.
+            port:                 5672
+
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
+
+            # Password. Note: Max 128 characters.
+            pass:                 guest
+
+            # The virtual host on the host. Note: Max 128 characters.
+            vhost:                /
+
+            # Connection timeout. Note: 0 or greater seconds. May be fractional.
+            connection_timeout:   !!float 3
+            read_write_timeout:   !!float 3
+
+            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
+            read_timeout:         3
+
+            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
+            write_timeout:        3
+            lazy:                 true
+            stream:               true
+            insist:               false
+            keepalive:            false
+
+            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
+            receive_method:       basic_get # One of "basic_get"; "basic_consume"
+            heartbeat:            0
 
             # The option tells whether RabbitMQ broker has delay plugin installed or not
             delay_plugin_installed: false
@@ -155,11 +238,62 @@ enqueue:
 
             # the connection will be performed as later as possible, if the option set to true
             lazy:                 true
+        amqp_bunny:
+
+            # The connection to AMQP broker set as a string. Other parameters are ignored if set
+            dsn:                  ~
+
+            # The host to connect too. Note: Max 1024 characters
+            host:                 localhost
+
+            # Port on the host.
+            port:                 5672
+
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
+
+            # Password. Note: Max 128 characters.
+            pass:                 guest
+
+            # The virtual host on the host. Note: Max 128 characters.
+            vhost:                /
+            lazy:                 true
+
+            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
+            receive_method:       basic_get # One of "basic_get"; "basic_consume"
+            heartbeat:            0
+        rabbitmq_amqp_bunny:
+
+            # The connection to AMQP broker set as a string. Other parameters are ignored if set
+            dsn:                  ~
+
+            # The host to connect too. Note: Max 1024 characters
+            host:                 localhost
+
+            # Port on the host.
+            port:                 5672
+
+            # The user name to use. Note: Max 128 characters.
+            user:                 guest
+
+            # Password. Note: Max 128 characters.
+            pass:                 guest
+
+            # The virtual host on the host. Note: Max 128 characters.
+            vhost:                /
+            lazy:                 true
+
+            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
+            receive_method:       basic_get # One of "basic_get"; "basic_consume"
+            heartbeat:            0
+
+            # The option tells whether RabbitMQ broker has delay plugin installed or not
+            delay_plugin_installed: false
     client:
         traceable_producer:   false
         prefix:               enqueue
         app_name:             app
-        router_topic:         router
+        router_topic:         default
         router_queue:         default
         router_processor:     enqueue.client.router_processor
         default_processor_queue: default
@@ -167,7 +301,6 @@ enqueue:
     job:                  false
     async_events:
         enabled:              false
-        spool_producer:       false
     extensions:
         doctrine_ping_connection_extension: false
         doctrine_clear_identity_map_extension: false

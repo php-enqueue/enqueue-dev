@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/amqp-ext/d/total.png)](https://packagist.org/packages/enqueue/amqp-ext)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/amqp-ext/version.png)](https://packagist.org/packages/enqueue/amqp-ext)
  
-This is an implementation of PSR specification. It allows you to send and consume message via AMQP protocol.  
+This is an implementation of [amqp interop](https://github.com/queue-interop/amqp-interop). It uses PHP [amqp extension](https://github.com/pdezwart/php-amqp) internally.  
 
 ## Resources
 

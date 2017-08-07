@@ -82,6 +82,25 @@ class AmqpConnectionFactoryConfigTest extends TestCase
         // some examples from Appendix A: Examples (https://www.rabbitmq.com/uri-spec.html)
 
         yield [
+            'amqp+ext://user:pass@host:10000/vhost',
+            [
+                'host' => 'host',
+                'port' => 10000,
+                'vhost' => 'vhost',
+                'user' => 'user',
+                'pass' => 'pass',
+                'read_timeout' => null,
+                'write_timeout' => null,
+                'connect_timeout' => null,
+                'persisted' => false,
+                'lazy' => true,
+                'pre_fetch_count' => null,
+                'pre_fetch_size' => null,
+                'receive_method' => 'basic_get',
+            ],
+        ];
+
+        yield [
             'amqp://user:pass@host:10000/vhost',
             [
                 'host' => 'host',
