@@ -1,5 +1,29 @@
 # Change Log
 
+## [0.7.0](https://github.com/php-enqueue/enqueue-dev/tree/0.7.0) (2017-08-07)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.6.2...0.7.0)
+
+- \[producer\] do not throw exception if feature not implemented and null… [\#154](https://github.com/php-enqueue/enqueue-dev/pull/154) ([makasim](https://github.com/makasim))
+- Amqp bunny [\#153](https://github.com/php-enqueue/enqueue-dev/pull/153) ([makasim](https://github.com/makasim))
+
+- \\[producer\\] do not throw exception if feature not implemented and null… [\#154](https://github.com/php-enqueue/enqueue-dev/pull/154) ([makasim](https://github.com/makasim))
+
+- \[amqp\] Move client related code to Enqueue\Client\Amqp namespace. [\#143](https://github.com/php-enqueue/enqueue-dev/issues/143)
+- \[amqp\] What should we do if consumer has already subscribed but smn is trying to change consumer tag? [\#142](https://github.com/php-enqueue/enqueue-dev/issues/142)
+- Find a way to retry flaky tests  [\#140](https://github.com/php-enqueue/enqueue-dev/issues/140)
+- \[client\] use default topic as  router topic. [\#135](https://github.com/php-enqueue/enqueue-dev/issues/135)
+
+- continue if exclusive is set to false [\#156](https://github.com/php-enqueue/enqueue-dev/pull/156) ([toooni](https://github.com/toooni))
+- \[doc\] add elastica populate bundle [\#155](https://github.com/php-enqueue/enqueue-dev/pull/155) ([makasim](https://github.com/makasim))
+- \[amqp\] Delay Strategy [\#152](https://github.com/php-enqueue/enqueue-dev/pull/152) ([ASKozienko](https://github.com/ASKozienko))
+- \[client\] Use default as router topic. [\#151](https://github.com/php-enqueue/enqueue-dev/pull/151) ([makasim](https://github.com/makasim))
+- Amqp Tutorial [\#150](https://github.com/php-enqueue/enqueue-dev/pull/150) ([ASKozienko](https://github.com/ASKozienko))
+- Delay, ttl, priority, in producer [\#149](https://github.com/php-enqueue/enqueue-dev/pull/149) ([makasim](https://github.com/makasim))
+- \[Amqp\] Qos [\#148](https://github.com/php-enqueue/enqueue-dev/pull/148) ([ASKozienko](https://github.com/ASKozienko))
+- amqp interop client [\#144](https://github.com/php-enqueue/enqueue-dev/pull/144) ([ASKozienko](https://github.com/ASKozienko))
+- \[composer\] Add extensions to platform config. [\#139](https://github.com/php-enqueue/enqueue-dev/pull/139) ([makasim](https://github.com/makasim))
+- Amqp Interop [\#138](https://github.com/php-enqueue/enqueue-dev/pull/138) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.6.2](https://github.com/php-enqueue/enqueue-dev/tree/0.6.2) (2017-07-21)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.6.1...0.6.2)
 
