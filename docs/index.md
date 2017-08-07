@@ -1,7 +1,7 @@
 # Documentation.
 
 * [Quick tour](quick_tour.md)
-* Transports
+* [Transports](#transports)
     - Amqp based on [the ext](transport/amqp.md), [bunny](transport/amqp_bunny.md), [the lib](transport/amqp_lib.md)
     - [Amazon SQS](transport/sqs.md)
     - [Beanstalk (Pheanstalk)](transport/pheanstalk.md)
@@ -12,19 +12,19 @@
     - [Doctrine DBAL](transport/dbal.md)
     - [Filesystem](transport/filesystem.md)
     - [Null](transport/null.md)
-* Consumption
+* [Consumption](#consumption)
     - [Extensions](consumption/extensions.md)
     - [Message processor](consumption/message_processor.md)
-* Client
+* [Client](#client)
     - [Quick tour](client/quick_tour.md)
     - [Message examples](client/message_examples.md)
     - [Supported brokers](client/supported_brokers.md)
     - [Message bus](client/message_bus.md)
     - [RPC call](client/rpc_call.md)
-* Job queue
+* [Job queue](#job-queue)
     - [Run unique job](job_queue/run_unique_job.md)
     - [Run sub job(s)](job_queue/run_sub_job.md)
-* EnqueueBundle (Symfony).  
+* [EnqueueBundle (Symfony)](#enqueue-bundle-symfony).  
     - [Quick tour](bundle/quick_tour.md)
     - [Config reference](bundle/config_reference.md)
     - [Cli commands](bundle/cli_commands.md)
@@ -36,16 +36,16 @@
     - [Production settings](bundle/production_settings.md)
     - [Debuging](bundle/debuging.md)
     - [Functional testing](bundle/functional_testing.md) 
-* Laravel
+* [Laravel](#laravel)
     - [Quick tour](laravel/quick_tour.md)
     - [Queues](laravel/queues.md)
-* Magento
+* [Magento](#magento)
     - [Quick tour](magento/quick_tour.md)
     - [Cli commands](magento/cli_commands.md)
 * [Use cases](#use-cases)
     - [FOSElasticaBundle. Populate command optimizations](elastica-bundle/populate-command-optimization.md)
     - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
-* Development
+* [Development](#development)
     - [Contribution](contribution.md)
 
 # Blogs
