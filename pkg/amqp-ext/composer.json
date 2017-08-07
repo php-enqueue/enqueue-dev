@@ -15,6 +15,7 @@
         "ext-amqp": "^1.6",
         
         "queue-interop/amqp-interop": "^0.6@dev",
+        "enqueue/amqp-tools": "^0.7@dev",
         "psr/log": "^1"
     },
     "require-dev": {

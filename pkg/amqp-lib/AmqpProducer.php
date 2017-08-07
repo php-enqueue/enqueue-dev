@@ -2,6 +2,8 @@
 
 namespace Enqueue\AmqpLib;
 
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
@@ -16,8 +18,10 @@ use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
-class AmqpProducer implements InteropAmqpProducer
+class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var int|null
      */
@@ -29,16 +33,28 @@ class AmqpProducer implements InteropAmqpProducer
     private $timeToLive;
 
     /**
+     * @var int
+     */
+    private $deliveryDelay;
+
+    /**
      * @var AMQPChannel
      */
     private $channel;
 
     /**
-     * @param AMQPChannel $channel
+     * @var AmqpContext
      */
-    public function __construct(AMQPChannel $channel)
+    private $context;
+
+    /**
+     * @param AMQPChannel $channel
+     * @param AmqpContext $context
+     */
+    public function __construct(AMQPChannel $channel, AmqpContext $context)
     {
         $this->channel = $channel;
+        $this->context = $context;
     }
 
     /**
@@ -70,7 +86,9 @@ class AmqpProducer implements InteropAmqpProducer
 
         $amqpMessage = new LibAMQPMessage($message->getBody(), $amqpProperties);
 
-        if ($destination instanceof InteropAmqpTopic) {
+        if ($this->deliveryDelay) {
+            $this->delayStrategy->delayMessage($this->context, $destination, $message, $this->deliveryDelay);
+        } elseif ($destination instanceof InteropAmqpTopic) {
             $this->channel->basic_publish(
                 $amqpMessage,
                 $destination->getTopicName(),
@@ -94,11 +112,11 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
-        if (null === $deliveryDelay) {
-            return;
+        if (null === $this->delayStrategy) {
+            throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
         }
 
-        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
+        $this->deliveryDelay = $deliveryDelay;
     }
 
     /**
@@ -106,7 +124,7 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function getDeliveryDelay()
     {
-        return null;
+        return $this->deliveryDelay;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
+use Enqueue\AmqpTools\DelayStrategyAware;
+use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
@@ -14,8 +16,10 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrTopic;
 
-class AmqpProducer implements InteropAmqpProducer
+class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var int|null
      */
@@ -32,11 +36,23 @@ class AmqpProducer implements InteropAmqpProducer
     private $channel;
 
     /**
-     * @param Channel $channel
+     * @var int
      */
-    public function __construct(Channel $channel)
+    private $deliveryDelay;
+
+    /**
+     * @var AmqpContext
+     */
+    private $context;
+
+    /**
+     * @param Channel     $channel
+     * @param AmqpContext $context
+     */
+    public function __construct(Channel $channel, AmqpContext $context)
     {
         $this->channel = $channel;
+        $this->context = $context;
     }
 
     /**
@@ -47,8 +63,7 @@ class AmqpProducer implements InteropAmqpProducer
     {
         $destination instanceof PsrTopic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
-            : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class)
-        ;
+            : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class);
 
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
@@ -66,7 +81,9 @@ class AmqpProducer implements InteropAmqpProducer
             $amqpProperties['application_headers'] = $appProperties;
         }
 
-        if ($destination instanceof InteropAmqpTopic) {
+        if ($this->deliveryDelay) {
+            $this->delayStrategy->delayMessage($this->context, $destination, $message, $this->deliveryDelay);
+        } elseif ($destination instanceof InteropAmqpTopic) {
             $this->channel->publish(
                 $message->getBody(),
                 $amqpProperties,
@@ -92,11 +109,11 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
-        if (null === $deliveryDelay) {
-            return;
+        if (null === $this->delayStrategy) {
+            throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
         }
 
-        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
+        $this->deliveryDelay = $deliveryDelay;
     }
 
     /**
@@ -104,7 +121,7 @@ class AmqpProducer implements InteropAmqpProducer
      */
     public function getDeliveryDelay()
     {
-        return null;
+        return $this->deliveryDelay;
     }
 
     /**
