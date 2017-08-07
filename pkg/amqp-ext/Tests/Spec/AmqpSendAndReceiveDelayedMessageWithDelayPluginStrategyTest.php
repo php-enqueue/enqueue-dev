@@ -1,13 +1,16 @@
 <?php
 
-namespace Enqueue\AmqpLib\Tests\Spec;
+namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Enqueue\AmqpTools\RabbitMqDelayPluginDelayStrategy;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
-class SendAndReceiveDelayedMessageWithDelayPluginStrategyTest extends SendAndReceiveDelayedMessageFromQueueSpec
+/**
+ * @group functional
+ */
+class AmqpSendAndReceiveDelayedMessageWithDelayPluginStrategyTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {
     /**
      * {@inheritdoc}

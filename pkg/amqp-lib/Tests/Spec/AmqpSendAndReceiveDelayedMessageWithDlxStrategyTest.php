@@ -7,7 +7,10 @@ use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
-class SendAndReceiveDelayedMessageWithDlxStrategyTest extends SendAndReceiveDelayedMessageFromQueueSpec
+/**
+ * @group functional
+ */
+class AmqpSendAndReceiveDelayedMessageWithDlxStrategyTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {
     /**
      * {@inheritdoc}
