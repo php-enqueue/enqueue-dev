@@ -35,15 +35,16 @@
     - [Consumption extension](bundle/consumption_extension.md)
     - [Production settings](bundle/production_settings.md)
     - [Debuging](bundle/debuging.md)
-    - [Functional testing](bundle/functional_testing.md)
-* Async event dispatcher  (Symfony)
-    - [Quick tour](async_event_dispatcher/quick_tour.md)
+    - [Functional testing](bundle/functional_testing.md) 
 * Laravel
     - [Quick tour](laravel/quick_tour.md)
     - [Queues](laravel/queues.md)
 * Magento
     - [Quick tour](magento/quick_tour.md)
-    - [Cli commands](magento/cli_commands.md) 
+    - [Cli commands](magento/cli_commands.md)
+* [Use cases]
+    - [FOSElasticaBundle. Populate command optimizations](elastica-bundle/populate-command-optimization.md)
+    - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
 * Development
     - [Contribution](contribution.md)
 
