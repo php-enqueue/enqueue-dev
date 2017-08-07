@@ -49,6 +49,7 @@ remote stomp git@github.com:php-enqueue/stomp.git
 remote amqp-ext git@github.com:php-enqueue/amqp-ext.git
 remote amqp-lib git@github.com:php-enqueue/amqp-lib.git
 remote amqp-bunny git@github.com:php-enqueue/amqp-bunny.git
+remote amqp-tools git@github.com:php-enqueue/amqp-tools.git
 remote pheanstalk git@github.com:php-enqueue/pheanstalk.git
 remote gearman git@github.com:php-enqueue/gearman.git
 remote fs git@github.com:php-enqueue/fs.git
@@ -68,6 +69,7 @@ split 'pkg/stomp' stomp
 split 'pkg/amqp-ext' amqp-ext
 split 'pkg/amqp-lib' amqp-lib
 split 'pkg/amqp-bunny' amqp-bunny
+split 'pkg/amqp-tools' amqp-tools
 split 'pkg/pheanstalk' pheanstalk
 split 'pkg/gearman' gearman
 split 'pkg/rdkafka' rdkafka
