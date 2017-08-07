@@ -10,7 +10,7 @@ use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\InvalidDestinationException;
 
-class RabbitMQDelayPluginDelayStrategy implements DelayStrategy
+class RabbitMqDelayPluginDelayStrategy implements DelayStrategy
 {
     /**
      * {@inheritdoc}
@@ -47,7 +47,10 @@ class RabbitMQDelayPluginDelayStrategy implements DelayStrategy
         }
 
         $producer = $context->createProducer();
-        $producer->setDelayStrategy(null);
+
+        if ($producer instanceof DelayStrategyAware) {
+            $producer->setDelayStrategy(null);
+        }
 
         $producer->send($delayTopic, $delayMessage);
     }

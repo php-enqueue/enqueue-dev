@@ -9,7 +9,7 @@ use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
 
-class RabbitMQDlxDelayStrategy implements DelayStrategy
+class RabbitMqDlxDelayStrategy implements DelayStrategy
 {
     /**
      * {@inheritdoc}
@@ -24,7 +24,6 @@ class RabbitMQDlxDelayStrategy implements DelayStrategy
         unset($properties['x-death']);
 
         $delayMessage = $context->createMessage($message->getBody(), $properties, $message->getHeaders());
-        $delayMessage->setExpiration((int) $delayMsec);
         $delayMessage->setRoutingKey($message->getRoutingKey());
 
         if ($dest instanceof AmqpTopic) {
@@ -33,11 +32,13 @@ class RabbitMQDlxDelayStrategy implements DelayStrategy
 
             $delayQueue = $context->createQueue($name);
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
+            $delayQueue->setArgument('x-message-ttl', $delayMsec);
             $delayQueue->setArgument('x-dead-letter-exchange', $dest->getTopicName());
             $delayQueue->setArgument('x-dead-letter-routing-key', (string) $delayMessage->getRoutingKey());
         } elseif ($dest instanceof AmqpQueue) {
             $delayQueue = $context->createQueue('enqueue.'.$dest->getQueueName().'.'.$delayMsec.'.delayed');
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
+            $delayQueue->setArgument('x-message-ttl', $delayMsec);
             $delayQueue->setArgument('x-dead-letter-exchange', '');
             $delayQueue->setArgument('x-dead-letter-routing-key', $dest->getQueueName());
         } else {
