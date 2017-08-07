@@ -48,4 +48,32 @@ Consume messages:
 $ php artisan queue:work interop
 ```
 
+## Amqp interop
+
+While interop connector can send\consume messages from any queue interop compatible transports. 
+But it does not support some AMQP specific features, such as queue declaration and delays. 
+To cover those cases the package provides a AmqpQueue. It can work with any amqp interop [compatible trnasport](https://github.com/queue-interop/queue-interop#compatible-projects-1), for example `enqueue/amqp-bunny`. 
+Here's how it could be configured:
+
+```php
+<?php
+
+// config/queue.php
+
+return [
+    // uncomment to set it as default
+    // 'default' => env('QUEUE_DRIVER', 'interop'),
+    
+    'connections' => [
+        'interop' => [
+            'driver' => 'amqp_interop',
+            'connection_factory_class' => \Enqueue\AmqpBunny\AmqpConnectionFactory::class,
+            
+            // connects to localhost
+            'dsn' => 'amqp://',
+        ],
+    ],
+];
+```
+
 [back to index](../index.md)
