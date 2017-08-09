@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.7.1](https://github.com/php-enqueue/enqueue-dev/tree/0.7.1) (2017-08-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.0...0.7.1)
+
+- Symfony bundle doesn't work when sending commands [\#160](https://github.com/php-enqueue/enqueue-dev/issues/160)
+- \[amqp-ext\] Server connection error [\#157](https://github.com/php-enqueue/enqueue-dev/issues/157)
+
+- Client fix command routing [\#163](https://github.com/php-enqueue/enqueue-dev/pull/163) ([makasim](https://github.com/makasim))
+
 ## [0.7.0](https://github.com/php-enqueue/enqueue-dev/tree/0.7.0) (2017-08-07)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.6.2...0.7.0)
 
