@@ -58,7 +58,7 @@ class RabbitMqAmqpBunnyTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'delay_strategy' => null,
+            'delay_strategy' => 'dlx',
             'lazy' => true,
             'receive_method' => 'basic_get',
             'heartbeat' => 0,

@@ -59,7 +59,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
             'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
-            'delay_strategy' => null,
+            'delay_strategy' => 'dlx',
             'lazy' => true,
             'receive_method' => 'basic_get',
         ], $config);

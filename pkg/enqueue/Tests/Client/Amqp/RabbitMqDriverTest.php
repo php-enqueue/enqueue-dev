@@ -97,7 +97,7 @@ class RabbitMqDriverTest extends TestCase
         $transportMessage->setBody('body');
         $transportMessage->setHeaders(['hkey' => 'hval']);
         $transportMessage->setProperties(['key' => 'val']);
-        $transportMessage->setProperty('x-delay', '5678000');
+        $transportMessage->setProperty('enqueue-delay', '5678000');
         $transportMessage->setHeader('content_type', 'ContentType');
         $transportMessage->setHeader('expiration', '12345000');
         $transportMessage->setHeader('priority', 3);
@@ -108,7 +108,7 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $this->createAmqpContextMock(),
-            new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
+            new Config('', '', '', '', '', '', ['delay_strategy' => 'dlx']),
             $this->createDummyQueueMetaRegistry()
         );
 
@@ -128,7 +128,7 @@ class RabbitMqDriverTest extends TestCase
         ], $clientMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
-            'x-delay' => '5678000',
+            'enqueue-delay' => '5678000',
         ], $clientMessage->getProperties());
         $this->assertSame('MessageId', $clientMessage->getMessageId());
         $this->assertSame(12345, $clientMessage->getExpire());
@@ -143,7 +143,7 @@ class RabbitMqDriverTest extends TestCase
     public function testShouldThrowExceptionIfXDelayIsNotNumeric()
     {
         $transportMessage = new AmqpMessage();
-        $transportMessage->setProperty('x-delay', 'is-not-numeric');
+        $transportMessage->setProperty('enqueue-delay', 'is-not-numeric');
 
         $driver = new RabbitMqDriver(
             $this->createAmqpContextMock(),
@@ -152,7 +152,7 @@ class RabbitMqDriverTest extends TestCase
         );
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('x-delay header is not numeric. "is-not-numeric"');
+        $this->expectExceptionMessage('"enqueue-delay" header is not numeric. "is-not-numeric"');
 
         $driver->createClientMessage($transportMessage);
     }
@@ -239,7 +239,7 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $context,
-            new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
+            new Config('', '', '', '', '', '', ['delay_strategy' => 'dlx']),
             $this->createDummyQueueMetaRegistry()
         );
 
@@ -260,7 +260,7 @@ class RabbitMqDriverTest extends TestCase
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
-            'x-delay' => '432000',
+            'enqueue-delay' => 432000,
         ], $transportMessage->getProperties());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
@@ -282,12 +282,12 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $context,
-            new Config('', '', '', '', '', '', ['delay_plugin_installed' => false]),
+            new Config('', '', '', '', '', '', ['delay_strategy' => null]),
             $this->createDummyQueueMetaRegistry()
         );
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The message delaying is not supported. In order to use delay feature install RabbitMQ delay plugin.');
+        $this->expectExceptionMessage('The message delaying is not supported. In order to use delay feature install RabbitMQ delay strategy.');
         $driver->createTransportMessage($clientMessage);
     }
 
@@ -386,28 +386,27 @@ class RabbitMqDriverTest extends TestCase
         $driver->sendToProcessor($message);
     }
 
-    public function testShouldSendMessageToDelayExchangeIfDelaySet()
+    public function testShouldSendMessageToProcessorWithDeliveryDelay()
     {
         $queue = new AmqpQueue('');
-        $delayTopic = new AmqpTopic('');
         $transportMessage = new AmqpMessage();
 
         $producer = $this->createAmqpProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($delayTopic), $this->identicalTo($transportMessage))
+            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
+        ;
+        $producer
+            ->expects($this->once())
+            ->method('setDeliveryDelay')
+            ->with($this->identicalTo(10000))
         ;
         $context = $this->createAmqpContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
             ->willReturn($queue)
-        ;
-        $context
-            ->expects($this->once())
-            ->method('createTopic')
-            ->willReturn($delayTopic)
         ;
         $context
             ->expects($this->once())
@@ -422,7 +421,7 @@ class RabbitMqDriverTest extends TestCase
 
         $driver = new RabbitMqDriver(
             $context,
-            new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
+            new Config('', '', '', '', '', '', ['delay_strategy' => 'dlx']),
             $this->createDummyQueueMetaRegistry()
         );
 
@@ -521,7 +520,6 @@ class RabbitMqDriverTest extends TestCase
         $routerQueue = new AmqpQueue('');
 
         $processorQueue = new AmqpQueue('');
-        $delayTopic = new AmqpTopic('');
 
         $context = $this->createAmqpContextMock();
         // setup router
@@ -560,27 +558,6 @@ class RabbitMqDriverTest extends TestCase
             ->expects($this->at(6))
             ->method('declareQueue')
             ->with($this->identicalTo($processorQueue))
-        ;
-        $context
-            ->expects($this->at(7))
-            ->method('createQueue')
-            ->willReturn($processorQueue)
-        ;
-        $context
-            ->expects($this->at(8))
-            ->method('createTopic')
-            ->willReturn($delayTopic)
-        ;
-        $context
-            ->expects($this->at(9))
-            ->method('declareTopic')
-            ->with($this->identicalTo($delayTopic))
-        ;
-
-        $context
-            ->expects($this->at(10))
-            ->method('bind')
-            ->with($this->isInstanceOf(AmqpBind::class))
         ;
 
         $config = Config::create('', '', '', '', '', '', ['delay_plugin_installed' => true]);

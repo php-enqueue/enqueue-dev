@@ -58,7 +58,7 @@ class RabbitMqAmqpLibTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'delay_strategy' => null,
+            'delay_strategy' => 'dlx',
             'lazy' => true,
             'receive_method' => 'basic_get',
             'connection_timeout' => 3.0,

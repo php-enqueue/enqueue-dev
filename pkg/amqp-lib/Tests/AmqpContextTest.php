@@ -8,6 +8,7 @@ use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Wire\AMQPTable;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
@@ -26,7 +27,7 @@ class AmqpContextTest extends TestCase
                 $this->isTrue(),
                 $this->isTrue(),
                 $this->isTrue(),
-                $this->identicalTo(['key' => 'value']),
+                $this->isInstanceOf(AMQPTable::class),
                 $this->isNull()
             )
         ;
@@ -94,7 +95,7 @@ class AmqpContextTest extends TestCase
                 $this->isTrue(),
                 $this->isTrue(),
                 $this->isTrue(),
-                $this->identicalTo(['key' => 'value']),
+                $this->isInstanceOf(AMQPTable::class),
                 $this->isNull()
             )
         ;
