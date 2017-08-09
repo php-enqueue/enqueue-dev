@@ -10,11 +10,7 @@ use Enqueue\Consumption\Exception\LogicException;
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
-use Interop\Amqp\AmqpTopic;
-use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrMessage;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class RabbitMqDriver extends AmqpDriver
 {
