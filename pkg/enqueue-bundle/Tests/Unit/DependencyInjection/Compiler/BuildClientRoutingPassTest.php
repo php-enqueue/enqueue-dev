@@ -9,7 +9,6 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTop
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
-use Enqueue\Client\Config;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -250,12 +249,11 @@ class BuildClientRoutingPassTest extends TestCase
         $pass->process($container);
 
         $expectedRoutes = [
-            Config::COMMAND_TOPIC => [
-                ['the-command-name', 'aDefaultQueueName'],
-            ],
+            'the-command-name' => 'aDefaultQueueName',
         ];
 
-        $this->assertEquals($expectedRoutes, $router->getArgument(1));
+        $this->assertEquals([], $router->getArgument(1));
+        $this->assertEquals($expectedRoutes, $router->getArgument(2));
     }
 
     public function testShouldBuildRouteFromCommandSubscriberIfProcessorNameSpecified()
@@ -274,12 +272,11 @@ class BuildClientRoutingPassTest extends TestCase
         $pass->process($container);
 
         $expectedRoutes = [
-            Config::COMMAND_TOPIC => [
-                ['the-command-name', 'the-command-queue-name'],
-            ],
+            'the-command-name' => 'the-command-queue-name',
         ];
 
-        $this->assertEquals($expectedRoutes, $router->getArgument(1));
+        $this->assertEquals([], $router->getArgument(1));
+        $this->assertEquals($expectedRoutes, $router->getArgument(2));
     }
 
     /**
