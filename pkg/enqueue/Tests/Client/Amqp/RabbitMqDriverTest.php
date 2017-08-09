@@ -505,7 +505,7 @@ class RabbitMqDriverTest extends TestCase
             ->willReturn($processorQueue)
         ;
 
-        $config = Config::create('', '', '', '', '', '', ['delay_plugin_installed' => false]);
+        $config = Config::create('', '', '', '', '', '', ['delay_strategy' => null]);
 
         $meta = new QueueMetaRegistry($config, ['default' => []]);
 
@@ -560,7 +560,7 @@ class RabbitMqDriverTest extends TestCase
             ->with($this->identicalTo($processorQueue))
         ;
 
-        $config = Config::create('', '', '', '', '', '', ['delay_plugin_installed' => true]);
+        $config = Config::create('', '', '', '', '', '', ['delay_strategy' => 'dlx']);
 
         $meta = new QueueMetaRegistry($config, ['default' => []]);
 
