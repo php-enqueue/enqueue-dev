@@ -22,29 +22,25 @@ class BuildClientRoutingPass implements CompilerPassInterface
             return;
         }
 
-        $configs = [];
+        $events = [];
+        $commands = [];
         foreach ($container->findTaggedServiceIds($processorTagName) as $serviceId => $tagAttributes) {
             $subscriptions = $this->extractSubscriptions($container, $serviceId, $tagAttributes);
 
             foreach ($subscriptions as $subscription) {
-                $configs[$subscription['topicName']][] = [
-                    $subscription['processorName'],
-                    $subscription['queueName'],
-                ];
+                if (Config::COMMAND_TOPIC === $subscription['topicName']) {
+                    $commands[$subscription['processorName']] = $subscription['queueName'];
+                } else {
+                    $events[$subscription['topicName']][] = [
+                        $subscription['processorName'],
+                        $subscription['queueName'],
+                    ];
+                }
             }
         }
 
         $router = $container->getDefinition($routerId);
-        $router->replaceArgument(1, $configs);
-
-        if (isset($configs[Config::COMMAND_TOPIC])) {
-            $commandRoutes = [];
-
-            foreach ($configs[Config::COMMAND_TOPIC] as $command) {
-                $commandRoutes[$command[0]] = $command[1];
-            }
-
-            $router->replaceArgument(2, $commandRoutes);
-        }
+        $router->replaceArgument(1, $events);
+        $router->replaceArgument(2, $commands);
     }
 }
