@@ -30,8 +30,8 @@ class RabbitMqAmqpTransportFactory extends AmqpTransportFactory
 
         $builder
             ->children()
-                ->booleanNode('delay_strategy')
-                    ->defaultFalse()
+                ->scalarNode('delay_strategy')
+                    ->defaultNull()
                     ->info('The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id')
                 ->end()
         ;

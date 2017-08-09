@@ -58,7 +58,7 @@ class RabbitMqAmqpLibTransportFactoryTest extends TestCase
             'user' => 'guest',
             'pass' => 'guest',
             'vhost' => '/',
-            'delay_plugin_installed' => false,
+            'delay_strategy' => null,
             'lazy' => true,
             'receive_method' => 'basic_get',
             'connection_timeout' => 3.0,
@@ -85,7 +85,7 @@ class RabbitMqAmqpLibTransportFactoryTest extends TestCase
             'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
-            'delay_plugin_installed' => false,
+            'delay_strategy' => null,
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
@@ -98,7 +98,7 @@ class RabbitMqAmqpLibTransportFactoryTest extends TestCase
             'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
-            'delay_plugin_installed' => false,
+            'delay_strategy' => null,
         ]], $factory->getArguments());
     }
 
@@ -115,7 +115,7 @@ class RabbitMqAmqpLibTransportFactoryTest extends TestCase
             'pass' => 'guest',
             'vhost' => '/',
             'persisted' => false,
-            'delay_plugin_installed' => false,
+            'delay_strategy' => null,
         ]);
 
         $this->assertEquals('enqueue.transport.rabbitmq_amqp_lib.context', $serviceId);
