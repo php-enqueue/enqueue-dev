@@ -122,7 +122,7 @@ class RabbitMqDriver extends AmqpDriver
                 throw new LogicException('The message delaying is not supported. In order to use delay feature install RabbitMQ delay strategy.');
             }
 
-            $transportMessage->setProperty('enqueue.delay', $message->getDelay() * 1000);
+            $transportMessage->setProperty('enqueue-delay', $message->getDelay() * 1000);
         }
 
         return $transportMessage;
@@ -145,9 +145,9 @@ class RabbitMqDriver extends AmqpDriver
             $clientMessage->setPriority($clientPriority);
         }
 
-        if ($delay = $message->getProperty('enqueue.delay')) {
+        if ($delay = $message->getProperty('enqueue-delay')) {
             if (false == is_numeric($delay)) {
-                throw new \LogicException(sprintf('"enqueue.delay" header is not numeric. "%s"', $delay));
+                throw new \LogicException(sprintf('"enqueue-delay" header is not numeric. "%s"', $delay));
             }
 
             $clientMessage->setDelay((int) ((int) $delay) / 1000);
