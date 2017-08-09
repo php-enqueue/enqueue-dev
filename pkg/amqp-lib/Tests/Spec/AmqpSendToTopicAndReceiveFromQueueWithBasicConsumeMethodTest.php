@@ -35,7 +35,6 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
 
         $queue = $context->createQueue($queueName);
         $context->declareQueue($queue);
-        $context->purgeQueue($queue);
 
         $context->bind(new AmqpBind($context->createTopic($queueName), $queue));
 
