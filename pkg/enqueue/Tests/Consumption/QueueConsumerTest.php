@@ -149,6 +149,37 @@ class QueueConsumerTest extends TestCase
         $this->assertSame($consumer, $consumer->bind(new NullQueue('aQueueName'), $processorMock));
     }
 
+    public function testShouldSubscribeToGivenQueueWithExpectedTimeout()
+    {
+        $expectedQueue = new NullQueue('theQueueName');
+
+        $messageConsumerMock = $this->createMock(PsrConsumer::class);
+        $messageConsumerMock
+            ->expects($this->once())
+            ->method('receive')
+            ->with(12345)
+            ->willReturn(null)
+        ;
+
+        $contextMock = $this->createMock(PsrContext::class);
+        $contextMock
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->with($this->identicalTo($expectedQueue))
+            ->willReturn($messageConsumerMock)
+        ;
+
+        $processorMock = $this->createProcessorMock();
+        $processorMock
+            ->expects($this->never())
+            ->method('process')
+        ;
+
+        $queueConsumer = new QueueConsumer($contextMock, new BreakCycleExtension(1), 0, 12345);
+        $queueConsumer->bind($expectedQueue, $processorMock);
+        $queueConsumer->consume();
+    }
+
     public function testShouldSubscribeToGivenQueueAndQuitAfterFifthIdleCycle()
     {
         $expectedQueue = new NullQueue('theQueueName');

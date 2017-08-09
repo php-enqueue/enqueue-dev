@@ -34,23 +34,31 @@ class QueueConsumer
     private $boundProcessors;
 
     /**
-     * @var int
+     * @var int|float in milliseconds
      */
-    private $idleMicroseconds;
+    private $idleTimeout;
+
+    /**
+     * @var int|float in milliseconds
+     */
+    private $receiveTimeout;
 
     /**
      * @param PsrContext                             $psrContext
      * @param ExtensionInterface|ChainExtension|null $extension
-     * @param int                                    $idleMicroseconds 100ms by default
+     * @param int|float                              $idleTimeout    the time in milliseconds queue consumer waits if no message received
+     * @param int|float                              $receiveTimeout the time in milliseconds queue consumer waits for a message (10 ms by default)
      */
     public function __construct(
         PsrContext $psrContext,
         ExtensionInterface $extension = null,
-        $idleMicroseconds = 100000
+        $idleTimeout = 0,
+        $receiveTimeout = 10000
     ) {
         $this->psrContext = $psrContext;
         $this->extension = $extension;
-        $this->idleMicroseconds = $idleMicroseconds;
+        $this->idleTimeout = $idleTimeout;
+        $this->receiveTimeout = $receiveTimeout;
 
         $this->boundProcessors = [];
     }
@@ -181,7 +189,7 @@ class QueueConsumer
             throw new ConsumptionInterruptedException();
         }
 
-        if ($message = $consumer->receive($timeout = 5000)) {
+        if ($message = $consumer->receive($this->receiveTimeout)) {
             $logger->info('Message received from the queue: '.$context->getPsrQueue()->getQueueName());
             $logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
             $logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
@@ -215,7 +223,7 @@ class QueueConsumer
 
             $extension->onPostReceived($context);
         } else {
-            usleep($this->idleMicroseconds);
+            usleep($this->idleTimeout * 1000);
             $extension->onIdle($context);
         }
 
