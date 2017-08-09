@@ -23,6 +23,15 @@ class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
      */
     private $queue;
 
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        if ($this->context && $this->queue) {
+            $this->context->deleteQueue($this->queue);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -50,14 +59,5 @@ class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
         $context->declareQueue($this->queue);
 
         return $this->queue;
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        if ($this->context && $this->queue) {
-            $this->context->deleteQueue($this->queue);
-        }
     }
 }

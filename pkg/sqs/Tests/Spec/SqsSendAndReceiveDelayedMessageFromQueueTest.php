@@ -27,6 +27,15 @@ class SqsSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayed
      */
     private $queue;
 
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        if ($this->context && $this->queue) {
+            $this->context->deleteQueue($this->queue);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -54,14 +63,5 @@ class SqsSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayed
         $context->declareQueue($this->queue);
 
         return $this->queue;
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        if ($this->context && $this->queue) {
-            $this->context->deleteQueue($this->queue);
-        }
     }
 }
