@@ -53,7 +53,7 @@ class QueueConsumer
         PsrContext $psrContext,
         ExtensionInterface $extension = null,
         $idleTimeout = 0,
-        $receiveTimeout = 10000
+        $receiveTimeout = 10
     ) {
         $this->psrContext = $psrContext;
         $this->extension = $extension;
