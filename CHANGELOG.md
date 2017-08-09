@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.7.2](https://github.com/php-enqueue/enqueue-dev/tree/0.7.2) (2017-08-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.1...0.7.2)
+
+- AmqpConsumer::receiveBasicGet, only one message per timeout consumed [\#159](https://github.com/php-enqueue/enqueue-dev/issues/159)
+- Symfony 2.8 compatability issue [\#158](https://github.com/php-enqueue/enqueue-dev/issues/158)
+
+- \[consumption\] adjust receive and idle timeouts [\#165](https://github.com/php-enqueue/enqueue-dev/pull/165) ([makasim](https://github.com/makasim))
+- Remove maxDepth option on profiler dump. [\#164](https://github.com/php-enqueue/enqueue-dev/pull/164) ([jenkoian](https://github.com/jenkoian))
+
 ## [0.7.1](https://github.com/php-enqueue/enqueue-dev/tree/0.7.1) (2017-08-09)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.0...0.7.1)
 
