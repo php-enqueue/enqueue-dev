@@ -42,6 +42,7 @@ services:
         arguments:
             - '@enqueue.client.driver'
             - []
+            - []
         tags:
             -
                 name: 'enqueue.client.processor'
