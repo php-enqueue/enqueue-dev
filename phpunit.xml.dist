@@ -30,7 +30,7 @@
         </testsuite>
 
         <testsuite name="amqp-lib transport">
-            <directory>pkg/amqp-lib/Tests</directory >
+            <directory>pkg/amqp-lib/Tests</directory>
         </testsuite>
 
         <testsuite name="amqp-tools">
