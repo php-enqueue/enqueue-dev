@@ -8,7 +8,7 @@ use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
 
 /**
  * @group functional
- * @retry 5
+ * @retry 10
  */
 class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
