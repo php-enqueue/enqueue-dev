@@ -182,6 +182,53 @@ class UseCasesTest extends WebTestCase
     /**
      * @dataProvider provideEnqueueConfigs
      */
+    public function testProducerSendsCommandMessage(array $enqueueConfig)
+    {
+        $this->customSetUp($enqueueConfig);
+
+        $expectedBody = __METHOD__.time();
+
+        $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
+
+        $queue = $this->getPsrContext()->createQueue('enqueue.test');
+
+        $consumer = $this->getPsrContext()->createConsumer($queue);
+
+        $message = $consumer->receive(100);
+        $consumer->acknowledge($message);
+
+        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertSame($expectedBody, $message->getBody());
+    }
+
+    /**
+     * @dataProvider provideEnqueueConfigs
+     */
+    public function testClientConsumeCommandMessagesFromExplicitlySetQueue(array $enqueueConfig)
+    {
+        $this->customSetUp($enqueueConfig);
+
+        $command = $this->container->get('enqueue.client.consume_messages_command');
+        $processor = $this->container->get('test.message.command_processor');
+
+        $expectedBody = __METHOD__.time();
+
+        $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--message-limit' => 2,
+            '--time-limit' => 'now +10 seconds',
+            'client-queue-names' => ['test'],
+        ]);
+
+        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertEquals($expectedBody, $processor->message->getBody());
+    }
+
+    /**
+     * @dataProvider provideEnqueueConfigs
+     */
     public function testClientConsumeMessagesFromExplicitlySetQueue(array $enqueueConfig)
     {
         $this->customSetUp($enqueueConfig);

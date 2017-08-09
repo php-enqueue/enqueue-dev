@@ -26,3 +26,8 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'
         tags:
             - { name: 'enqueue.client.processor' }
+
+    test.message.command_processor:
+        class: 'Enqueue\Bundle\Tests\Functional\TestCommandProcessor'
+        tags:
+            - { name: 'enqueue.client.processor' }
