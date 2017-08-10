@@ -4,12 +4,6 @@
     "description": "Message Queue Stomp Transport",
     "keywords": ["messaging", "queue", "stomp"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:php-enqueue/test.git"
-        }
-    ],
     "require": {
         "php": ">=5.6",
         "stomp-php/stomp-php": "^4",

@@ -4,12 +4,6 @@
     "description": "Message Queue Kafka Transport",
     "keywords": ["messaging", "queue", "kafka"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:php-enqueue/test.git"
-        }
-    ],
     "require": {
         "php": ">=5.6",
         "ext-rdkafka": "^3.0.3",

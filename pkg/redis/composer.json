@@ -4,12 +4,6 @@
     "description": "Message Queue Redis Transport",
     "keywords": ["messaging", "queue", "redis"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:php-enqueue/test.git"
-        }
-    ],
     "require": {
         "php": ">=5.6",
         "queue-interop/queue-interop": "^0.6@dev",

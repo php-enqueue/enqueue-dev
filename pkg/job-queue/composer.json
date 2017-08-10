@@ -4,12 +4,6 @@
     "description": "Job Queue",
     "keywords": ["messaging", "queue", "jobs"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:php-enqueue/test.git"
-        }
-    ],
     "require": {
         "php": ">=5.6",
         "symfony/framework-bundle": "^2.8|^3",

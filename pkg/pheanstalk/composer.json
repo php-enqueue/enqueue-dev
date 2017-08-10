@@ -4,12 +4,6 @@
     "description": "Message Queue Beanstalk transport",
     "keywords": ["messaging", "queue", "Pheanstalk", "Beanstalk"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:php-enqueue/test.git"
-        }
-    ],
     "require": {
         "php": ">=5.6",
         "pda/pheanstalk": "^3",
