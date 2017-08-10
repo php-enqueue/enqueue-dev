@@ -16,6 +16,7 @@
         "symfony/http-kernel": "^2.8|^3",
         "symfony/filesystem": "^2.8|^3",
         "enqueue/null": "^0.7@dev",
+        "enqueue/fs": "^0.7@dev",
         "enqueue/test": "^0.7@dev"
     },
     "suggest": {
@@ -27,7 +28,6 @@
             "/Tests/"
         ]
     },
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "0.7.x-dev"
