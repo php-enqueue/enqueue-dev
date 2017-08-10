@@ -14,7 +14,9 @@ cache:
         - $HOME/.composer/cache
 
 install:
-    - sudo apt-get update && sudo apt-get install libgearman-dev -y --no-install-recommends --no-install-suggests && pecl install gearman
+    - sudo apt-get update
+    - sudo apt-get install libgearman-dev -y --no-install-recommends --no-install-suggests
+    - pecl install gearman
     - composer self-update
     - composer install --prefer-source
 
