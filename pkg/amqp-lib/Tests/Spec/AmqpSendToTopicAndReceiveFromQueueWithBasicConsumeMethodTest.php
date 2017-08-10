@@ -37,7 +37,8 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
 
         try {
             $context->deleteQueue($queue);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $context->declareQueue($queue);
         $context->purgeQueue($queue);
@@ -60,7 +61,8 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
 
         try {
             $context->deleteTopic($topic);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $context->declareTopic($topic);
 
