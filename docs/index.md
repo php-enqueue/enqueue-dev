@@ -56,6 +56,7 @@
 * [The how and why of the migration from RabbitMqBundle to EnqueueBundle](https://blog.forma-pro.com/the-how-and-why-of-the-migration-from-rabbitmqbundle-to-enqueuebundle-6c4054135e2b)
 * [RabbitMQ redelivery pitfalls](https://blog.forma-pro.com/rabbitmq-redelivery-pitfalls-440e0347f4e0)
 * [RabbitMQ delayed messaging](https://blog.forma-pro.com/rabbitmq-delayed-messaging-da802e3a0aa9)
+* [RabbitMQ tutorials based on AMQP interop](https://blog.forma-pro.com/rabbitmq-tutorials-based-on-amqp-interop-cf325d3b4912)
 * [LiipImagineBundle. Process images in background](https://blog.forma-pro.com/liipimaginebundle-process-images-in-background-3838c0ed5234)
 * [FOSElasticaBundle. Improve performance of fos:elastica:populate command](https://github.com/php-enqueue/enqueue-elastica-bundle)
 * [Message bus to every PHP application](https://blog.forma-pro.com/message-bus-to-every-php-application-42a7d3fbb30b)
