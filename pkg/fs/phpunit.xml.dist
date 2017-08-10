@@ -22,10 +22,6 @@
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners>
 
-    <php>
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
-    </php>
-
     <filter>
         <whitelist>
             <directory suffix=".php">.</directory>
