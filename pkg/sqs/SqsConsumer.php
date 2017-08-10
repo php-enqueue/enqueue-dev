@@ -98,7 +98,21 @@ class SqsConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        $timeout /= 1000;
+        $maxLongPollingTime = 20; // 20 is max allowed long polling value
+
+        if ($timeout === 0) {
+            while (true) {
+                if ($message = $this->receiveMessage($maxLongPollingTime)) {
+                    return $message;
+                }
+            }
+        }
+
+        $timeout = (int) ceil($timeout / 1000);
+
+        if ($timeout > $maxLongPollingTime) {
+            throw new \LogicException(sprintf('Max allowed SQS receive message timeout is: "%s"', $maxLongPollingTime));
+        }
 
         return $this->receiveMessage($timeout);
     }
