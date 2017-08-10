@@ -33,6 +33,14 @@
             <directory>pkg/amqp-bunny/Tests</directory>
         </testsuite>
 
+        <testsuite name="amqp-lib transport">
+            <directory>pkg/amqp-lib/Tests</directory>
+        </testsuite>
+
+        <testsuite name="amqp-tools">
+            <directory>pkg/amqp-tools/Tests</directory>
+        </testsuite>
+
         <testsuite name="fs transport">
             <directory>pkg/fs/Tests</directory>
         </testsuite>

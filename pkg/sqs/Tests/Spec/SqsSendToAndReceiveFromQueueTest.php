@@ -4,6 +4,7 @@ namespace Enqueue\Sqs\Tests\Spec;
 
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
+use Enqueue\Sqs\SqsDestination;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
@@ -12,6 +13,25 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
  */
 class SqsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
+    /**
+     * @var SqsContext
+     */
+    private $context;
+
+    /**
+     * @var SqsDestination
+     */
+    private $queue;
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        if ($this->context && $this->queue) {
+            $this->context->deleteQueue($this->queue);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -23,7 +43,7 @@ class SqsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
             'region' => getenv('AWS__SQS__REGION'),
         ]);
 
-        return $factory->createContext();
+        return $this->context = $factory->createContext();
     }
 
     /**
@@ -35,9 +55,9 @@ class SqsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
     {
         $queueName = $queueName.time();
 
-        $queue = $context->createQueue($queueName);
-        $context->declareQueue($queue);
+        $this->queue = $context->createQueue($queueName);
+        $context->declareQueue($this->queue);
 
-        return $queue;
+        return $this->queue;
     }
 }

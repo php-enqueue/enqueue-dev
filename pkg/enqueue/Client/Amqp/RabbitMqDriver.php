@@ -10,11 +10,7 @@ use Enqueue\Consumption\Exception\LogicException;
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
-use Interop\Amqp\AmqpTopic;
-use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrMessage;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class RabbitMqDriver extends AmqpDriver
 {
@@ -75,12 +71,13 @@ class RabbitMqDriver extends AmqpDriver
 
         $transportMessage = $this->createTransportMessage($message);
         $destination = $this->createQueue($queueName);
+        $producer = $this->context->createProducer();
 
         if ($message->getDelay()) {
-            $destination = $this->createDelayedTopic($destination);
+            $producer->setDeliveryDelay($message->getDelay() * 1000);
         }
 
-        $this->context->createProducer()->send($destination, $transportMessage);
+        $producer->send($destination, $transportMessage);
     }
 
     /**
@@ -117,11 +114,11 @@ class RabbitMqDriver extends AmqpDriver
         }
 
         if ($message->getDelay()) {
-            if (false == $this->config->getTransportOption('delay_plugin_installed', false)) {
-                throw new LogicException('The message delaying is not supported. In order to use delay feature install RabbitMQ delay plugin.');
+            if (false == $this->config->getTransportOption('delay_strategy', false)) {
+                throw new LogicException('The message delaying is not supported. In order to use delay feature install RabbitMQ delay strategy.');
             }
 
-            $transportMessage->setProperty('x-delay', (string) ($message->getDelay() * 1000));
+            $transportMessage->setProperty('enqueue-delay', $message->getDelay() * 1000);
         }
 
         return $transportMessage;
@@ -144,63 +141,14 @@ class RabbitMqDriver extends AmqpDriver
             $clientMessage->setPriority($clientPriority);
         }
 
-        if ($delay = $message->getProperty('x-delay')) {
+        if ($delay = $message->getProperty('enqueue-delay')) {
             if (false == is_numeric($delay)) {
-                throw new \LogicException(sprintf('x-delay header is not numeric. "%s"', $delay));
+                throw new \LogicException(sprintf('"enqueue-delay" header is not numeric. "%s"', $delay));
             }
 
             $clientMessage->setDelay((int) ((int) $delay) / 1000);
         }
 
         return $clientMessage;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
-    {
-        $logger = $logger ?: new NullLogger();
-
-        parent::setupBroker($logger);
-
-        $log = function ($text, ...$args) use ($logger) {
-            $logger->debug(sprintf('[RabbitMqDriver] '.$text, ...$args));
-        };
-
-        // setup delay exchanges
-        if ($this->config->getTransportOption('delay_plugin_installed', false)) {
-            foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
-                $queue = $this->createQueue($meta->getClientName());
-
-                $delayTopic = $this->createDelayedTopic($queue);
-
-                $log('Declare delay exchange: %s', $delayTopic->getTopicName());
-                $this->context->declareTopic($delayTopic);
-
-                $log('Bind processor queue to delay exchange: %s -> %s', $queue->getQueueName(), $delayTopic->getTopicName());
-                $this->context->bind(new AmqpBind($delayTopic, $queue, $queue->getQueueName()));
-            }
-        }
-    }
-
-    /**
-     * @param AmqpQueue $queue
-     *
-     * @return AmqpTopic
-     */
-    private function createDelayedTopic(AmqpQueue $queue)
-    {
-        $queueName = $queue->getQueueName();
-
-        // in order to use delay feature make sure the rabbitmq_delayed_message_exchange plugin is installed.
-        $delayTopic = $this->context->createTopic($queueName.'.delayed');
-        $delayTopic->setType('x-delayed-message');
-        $delayTopic->addFlag(AmqpTopic::FLAG_DURABLE);
-        $delayTopic->setArguments([
-            'x-delayed-type' => 'direct',
-        ]);
-
-        return $delayTopic;
     }
 }

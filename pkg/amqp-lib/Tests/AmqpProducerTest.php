@@ -2,6 +2,7 @@
 
 namespace Enqueue\AmqpLib\Tests;
 
+use Enqueue\AmqpLib\AmqpContext;
 use Enqueue\AmqpLib\AmqpProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Amqp\Impl\AmqpMessage;
@@ -23,7 +24,7 @@ class AmqpProducerTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new AmqpProducer($this->createAmqpChannelMock());
+        new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock());
     }
 
     public function testShouldImplementPsrProducerInterface()
@@ -33,7 +34,7 @@ class AmqpProducerTest extends TestCase
 
     public function testShouldThrowExceptionWhenDestinationTypeIsInvalid()
     {
-        $producer = new AmqpProducer($this->createAmqpChannelMock());
+        $producer = new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock());
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpQueue but got');
@@ -43,7 +44,7 @@ class AmqpProducerTest extends TestCase
 
     public function testShouldThrowExceptionWhenMessageTypeIsInvalid()
     {
-        $producer = new AmqpProducer($this->createAmqpChannelMock());
+        $producer = new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock());
 
         $this->expectException(InvalidMessageException::class);
         $this->expectExceptionMessage('The message must be an instance of Interop\Amqp\AmqpMessage but it is');
@@ -70,7 +71,7 @@ class AmqpProducerTest extends TestCase
         $message = new AmqpMessage('body');
         $message->setRoutingKey('routing-key');
 
-        $producer = new AmqpProducer($channel);
+        $producer = new AmqpProducer($channel, $this->createContextMock());
         $producer->send($topic, $message);
 
         $this->assertEquals('body', $amqpMessage->getBody());
@@ -92,7 +93,7 @@ class AmqpProducerTest extends TestCase
 
         $queue = new AmqpQueue('queue');
 
-        $producer = new AmqpProducer($channel);
+        $producer = new AmqpProducer($channel, $this->createContextMock());
         $producer->send($queue, new AmqpMessage('body'));
 
         $this->assertEquals('body', $amqpMessage->getBody());
@@ -111,7 +112,7 @@ class AmqpProducerTest extends TestCase
             }))
         ;
 
-        $producer = new AmqpProducer($channel);
+        $producer = new AmqpProducer($channel, $this->createContextMock());
         $producer->send(new AmqpTopic('name'), new AmqpMessage('body', [], ['content_type' => 'text/plain']));
 
         $this->assertEquals(['content_type' => 'text/plain'], $amqpMessage->get_properties());
@@ -130,7 +131,7 @@ class AmqpProducerTest extends TestCase
             }))
         ;
 
-        $producer = new AmqpProducer($channel);
+        $producer = new AmqpProducer($channel, $this->createContextMock());
         $producer->send(new AmqpTopic('name'), new AmqpMessage('body', ['key' => 'value']));
 
         $properties = $amqpMessage->get_properties();
@@ -162,5 +163,13 @@ class AmqpProducerTest extends TestCase
     private function createAmqpChannelMock()
     {
         return $this->createMock(AMQPChannel::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     */
+    private function createContextMock()
+    {
+        return $this->createMock(AmqpContext::class);
     }
 }

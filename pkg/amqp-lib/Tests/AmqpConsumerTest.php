@@ -103,6 +103,7 @@ class AmqpConsumerTest extends TestCase
         $amqpMessage->delivery_info['delivery_tag'] = 'delivery-tag';
         $amqpMessage->delivery_info['routing_key'] = 'routing-key';
         $amqpMessage->delivery_info['redelivered'] = true;
+        $amqpMessage->delivery_info['routing_key'] = 'routing-key';
 
         $channel = $this->createChannelMock();
         $channel
@@ -121,6 +122,7 @@ class AmqpConsumerTest extends TestCase
         $this->assertInstanceOf(AmqpMessage::class, $message);
         $this->assertSame('body', $message->getBody());
         $this->assertSame('delivery-tag', $message->getDeliveryTag());
+        $this->assertSame('routing-key', $message->getRoutingKey());
         $this->assertTrue($message->isRedelivered());
     }
 
@@ -148,6 +150,7 @@ class AmqpConsumerTest extends TestCase
         $this->assertInstanceOf(AmqpMessage::class, $message);
         $this->assertSame('body', $message->getBody());
         $this->assertSame('delivery-tag', $message->getDeliveryTag());
+        $this->assertSame('routing-key', $message->getRoutingKey());
         $this->assertTrue($message->isRedelivered());
     }
 

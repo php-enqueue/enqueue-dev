@@ -3,7 +3,7 @@
 namespace Enqueue\AmqpLib\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
-use Enqueue\AmqpLib\AmqpContext;
+use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrContext;
@@ -14,6 +14,8 @@ use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
  */
 class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendToTopicAndReceiveFromQueueSpec
 {
+    private $topic;
+
     /**
      * {@inheritdoc}
      */
@@ -31,13 +33,17 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
      */
     protected function createQueue(PsrContext $context, $queueName)
     {
-        $queueName .= '_basic_consume';
+        $queue = $context->createQueue('send_to_topic_and_receive_from_queue_spec_basic_consume');
 
-        $queue = $context->createQueue($queueName);
+        try {
+            $context->deleteQueue($queue);
+        } catch (\Exception $e) {
+        }
+
         $context->declareQueue($queue);
         $context->purgeQueue($queue);
 
-        $context->bind(new AmqpBind($context->createTopic($queueName), $queue));
+        $context->bind(new AmqpBind($this->topic, $queue));
 
         return $queue;
     }
@@ -49,13 +55,17 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
      */
     protected function createTopic(PsrContext $context, $topicName)
     {
-        $topicName .= '_basic_consume';
-
-        $topic = $context->createTopic($topicName);
+        $topic = $context->createTopic('send_to_topic_and_receive_from_queue_spec_basic_consume');
         $topic->setType(AmqpTopic::TYPE_FANOUT);
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);
+
+        try {
+            $context->deleteTopic($topic);
+        } catch (\Exception $e) {
+        }
+
         $context->declareTopic($topic);
 
-        return $topic;
+        return $this->topic = $topic;
     }
 }

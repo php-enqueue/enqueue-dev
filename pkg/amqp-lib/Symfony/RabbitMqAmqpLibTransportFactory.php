@@ -2,6 +2,7 @@
 
 namespace Enqueue\AmqpLib\Symfony;
 
+use Enqueue\AmqpTools\DelayStrategyTransportFactoryTrait;
 use Enqueue\Client\Amqp\RabbitMqDriver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -10,6 +11,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class RabbitMqAmqpLibTransportFactory extends AmqpLibTransportFactory
 {
+    use DelayStrategyTransportFactoryTrait;
+
     /**
      * @param string $name
      */
@@ -27,11 +30,23 @@ class RabbitMqAmqpLibTransportFactory extends AmqpLibTransportFactory
 
         $builder
             ->children()
-                ->booleanNode('delay_plugin_installed')
-                    ->defaultFalse()
-                    ->info('The option tells whether RabbitMQ broker has delay plugin installed or not')
+                ->scalarNode('delay_strategy')
+                    ->defaultValue('dlx')
+                    ->info('The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id')
                 ->end()
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createConnectionFactory(ContainerBuilder $container, array $config)
+    {
+        $factoryId = parent::createConnectionFactory($container, $config);
+
+        $this->registerDelayStrategy($container, $config, $factoryId, $this->getName());
+
+        return $factoryId;
     }
 
     /**
