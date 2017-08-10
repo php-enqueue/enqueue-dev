@@ -105,8 +105,8 @@ enqueue:
             # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
             receive_method:       basic_get # One of "basic_get"; "basic_consume"
 
-            # The option tells whether RabbitMQ broker has delay plugin installed or not
-            delay_plugin_installed: false
+            # The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id
+            delay_strategy:       dlx
         amqp_lib:
 
             # The connection to AMQP broker set as a string. Other parameters are ignored if set
@@ -182,8 +182,8 @@ enqueue:
             receive_method:       basic_get # One of "basic_get"; "basic_consume"
             heartbeat:            0
 
-            # The option tells whether RabbitMQ broker has delay plugin installed or not
-            delay_plugin_installed: false
+            # The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id
+            delay_strategy:       dlx
         fs:
 
             # The path to a directory where to store messages given as DSN. For example file://tmp/foo
@@ -287,8 +287,8 @@ enqueue:
             receive_method:       basic_get # One of "basic_get"; "basic_consume"
             heartbeat:            0
 
-            # The option tells whether RabbitMQ broker has delay plugin installed or not
-            delay_plugin_installed: false
+            # The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id
+            delay_strategy:       dlx
     client:
         traceable_producer:   false
         prefix:               enqueue
