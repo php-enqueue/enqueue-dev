@@ -7,6 +7,7 @@ use Enqueue\AmqpLib\AmqpContext;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
 use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
 /**
@@ -24,6 +25,31 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN').'?receive_method=basic_consume');
 
         return $factory->createContext();
+    }
+
+    public function test()
+    {
+        $context = $this->createContext();
+        $topic = $this->createTopic($context, 'send_to_topic_and_receive_from_queue_spec');
+        $queue = $this->createQueue($context, 'send_to_topic_and_receive_from_queue_spec');
+
+        $consumer = $context->createConsumer($queue);
+
+        // guard
+        $this->assertNull($consumer->receiveNoWait());
+
+        $expectedBody = __CLASS__.time();
+
+        $context->createProducer()->send($topic, $context->createMessage($expectedBody));
+
+        $message = $consumer->receive(10000); // 2 sec
+
+        var_dump($message);
+
+        $this->assertInstanceOf(PsrMessage::class, $message);
+        $consumer->acknowledge($message);
+
+        $this->assertSame($expectedBody, $message->getBody());
     }
 
     /**
