@@ -3,10 +3,6 @@ sudo: false
 git:
     depth: 10
 
-addons:
-  apt_packages:
-    - libgearman-dev
-
 language: php
 
 php:
@@ -18,7 +14,7 @@ cache:
         - $HOME/.composer/cache
 
 install:
-    - pecl install gearman
+    - sudo apt-get update && sudo apt-get install libgearman-dev -y --no-install-recommends --no-install-suggests && pecl install gearman
     - composer self-update
     - composer install --prefer-source
 
