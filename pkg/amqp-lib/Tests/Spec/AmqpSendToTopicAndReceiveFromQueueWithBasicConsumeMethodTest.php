@@ -42,8 +42,8 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
 
         $consumer = $context->createConsumer($queue);
 
-          // guard
-//        $this->assertNull($consumer->receiveNoWait());
+        // guard
+        $this->assertNull($consumer->receiveNoWait());
 
         $expectedBody = __CLASS__.time();
 
