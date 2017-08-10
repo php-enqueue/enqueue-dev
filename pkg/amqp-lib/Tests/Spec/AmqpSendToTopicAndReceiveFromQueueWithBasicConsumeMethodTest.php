@@ -48,7 +48,7 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
 
         $context->createProducer()->send($topic, $context->createMessage($expectedBody));
 
-        $message = $consumer->receive(10000); // 2 sec
+        $message = $consumer->receive(2000); // 2 sec
 
         var_dump($message);
 
