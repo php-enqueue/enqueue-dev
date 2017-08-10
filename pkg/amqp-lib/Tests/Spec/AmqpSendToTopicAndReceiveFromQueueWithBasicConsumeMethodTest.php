@@ -14,6 +14,8 @@ use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
  */
 class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendToTopicAndReceiveFromQueueSpec
 {
+    private $topic;
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +38,7 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
         $queue = $context->createQueue($queueName);
         $context->declareQueue($queue);
 
-        $context->bind(new AmqpBind($context->createTopic($queueName), $queue));
+        $context->bind(new AmqpBind($this->topic, $queue));
 
         return $queue;
     }
@@ -55,6 +57,6 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);
         $context->declareTopic($topic);
 
-        return $topic;
+        return $this->topic = $topic;
     }
 }
