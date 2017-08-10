@@ -7,7 +7,6 @@ use Enqueue\AmqpLib\AmqpContext;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
 use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
 /**
@@ -27,37 +26,6 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
         return $factory->createContext();
     }
 
-    public function test()
-    {
-        $context = $this->createContext();
-
-        $topic = $context->createTopic('send_to_topic_and_receive_from_queue_spec_basic_consume3');
-        $topic->setType(AmqpTopic::TYPE_FANOUT);
-        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
-        $context->declareTopic($topic);
-
-        $queue = $context->createQueue('send_to_topic_and_receive_from_queue_spec_basic_consume3');
-        $context->declareQueue($queue);
-        $context->purgeQueue($queue);
-
-        $context->bind(new AmqpBind($topic, $queue));
-
-        $consumer = $context->createConsumer($queue);
-
-        $expectedBody = __CLASS__.time();
-
-        $context->createProducer()->send($topic, $context->createMessage($expectedBody));
-
-        $message = $consumer->receive(2000); // 2 sec
-
-        var_dump($message);
-
-        $this->assertInstanceOf(PsrMessage::class, $message);
-        $consumer->acknowledge($message);
-
-        $this->assertSame($expectedBody, $message->getBody());
-    }
-
     /**
      * {@inheritdoc}
      *
@@ -68,7 +36,13 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
         $queueName .= '_basic_consume';
 
         $queue = $context->createQueue($queueName);
+
+        try {
+            $context->deleteQueue($queue);
+        } catch (\Exception $e) {}
+
         $context->declareQueue($queue);
+        $context->purgeQueue($queue);
 
         $context->bind(new AmqpBind($this->topic, $queue));
 
@@ -87,6 +61,11 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
         $topic = $context->createTopic($topicName);
         $topic->setType(AmqpTopic::TYPE_FANOUT);
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);
+
+        try {
+            $context->deleteQueue($topic);
+        } catch (\Exception $e) {}
+
         $context->declareTopic($topic);
 
         return $this->topic = $topic;
