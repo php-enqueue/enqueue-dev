@@ -30,13 +30,19 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
     public function test()
     {
         $context = $this->createContext();
-        $topic = $this->createTopic($context, 'send_to_topic_and_receive_from_queue_spec');
-        $queue = $this->createQueue($context, 'send_to_topic_and_receive_from_queue_spec');
+
+        $topic = $context->createTopic('send_to_topic_and_receive_from_queue_spec_basic_consume2');
+        $topic->setType(AmqpTopic::TYPE_DIRECT);
+        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
+        $context->declareTopic($topic);
+
+        $queue = $context->createQueue('send_to_topic_and_receive_from_queue_spec_basic_consume2');
+        $context->declareQueue($queue);
+        $context->purgeQueue($queue);
+
+        $context->bind(new AmqpBind($topic, $queue));
 
         $consumer = $context->createConsumer($queue);
-
-        // guard
-        $this->assertNull($consumer->receiveNoWait());
 
         $expectedBody = __CLASS__.time();
 
