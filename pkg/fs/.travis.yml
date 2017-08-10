@@ -18,4 +18,4 @@ install:
     - composer install --prefer-source
 
 script:
-    - vendor/bin/phpunit --exclude-group=functional
+    - SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/phpunit --exclude-group=functional
