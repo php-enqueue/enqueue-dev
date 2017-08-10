@@ -25,6 +25,10 @@
             <directory>pkg/amqp-ext/Tests</directory>
         </testsuite>
 
+        <testsuite name="amqp-lib transport">
+            <directory>pkg/amqp-lib/Tests</directory>
+        </testsuite>
+
         <testsuite name="amqp-bunny transport">
             <directory>pkg/amqp-bunny/Tests</directory>
         </testsuite>

@@ -101,6 +101,7 @@ class AmqpConsumerTest extends TestCase
     {
         $amqpMessage = new \PhpAmqpLib\Message\AMQPMessage('body');
         $amqpMessage->delivery_info['delivery_tag'] = 'delivery-tag';
+        $amqpMessage->delivery_info['routing_key'] = 'routing-key';
         $amqpMessage->delivery_info['redelivered'] = true;
 
         $channel = $this->createChannelMock();
@@ -127,6 +128,7 @@ class AmqpConsumerTest extends TestCase
     {
         $amqpMessage = new \PhpAmqpLib\Message\AMQPMessage('body');
         $amqpMessage->delivery_info['delivery_tag'] = 'delivery-tag';
+        $amqpMessage->delivery_info['routing_key'] = 'routing-key';
         $amqpMessage->delivery_info['redelivered'] = true;
 
         $channel = $this->createChannelMock();
