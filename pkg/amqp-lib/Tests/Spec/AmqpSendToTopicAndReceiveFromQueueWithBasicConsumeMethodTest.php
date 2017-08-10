@@ -32,9 +32,19 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
         $topic = $context->createTopic('send_to_topic_and_receive_from_queue_spec_basic_consume');
         $topic->setType(AmqpTopic::TYPE_FANOUT);
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);
+
+        try {
+            $context->deleteTopic($topic);
+        } catch (\Exception $e) {}
+
         $context->declareTopic($topic);
 
         $queue = $context->createQueue('send_to_topic_and_receive_from_queue_spec_basic_consume');
+
+        try {
+            $context->deleteQueue($queue);
+        } catch (\Exception $e) {}
+
         $context->declareQueue($queue);
         $context->purgeQueue($queue);
 
