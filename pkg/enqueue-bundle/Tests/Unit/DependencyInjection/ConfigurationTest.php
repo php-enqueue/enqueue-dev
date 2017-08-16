@@ -376,4 +376,51 @@ class ConfigurationTest extends TestCase
             ],
         ], $config);
     }
+
+    public function testShouldDisableAsyncEventsByDefault()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+        ]]);
+
+        $this->assertArraySubset([
+            'async_events' => [
+                'enabled' => false,
+            ],
+        ], $config);
+    }
+
+    public function testShouldAllowEnableAsyncEvents()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+            'async_events' => true,
+        ]]);
+
+        $this->assertArraySubset([
+            'async_events' => [
+                'enabled' => true,
+            ],
+        ], $config);
+
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+            'async_events' => [
+                'enabled' => true,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'async_events' => [
+                'enabled' => true,
+            ],
+        ], $config);
+    }
 }

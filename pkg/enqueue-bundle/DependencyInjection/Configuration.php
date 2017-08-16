@@ -52,6 +52,7 @@ class Configuration implements ConfigurationInterface
             ->end()->end()
             ->booleanNode('job')->defaultFalse()->end()
             ->arrayNode('async_events')
+                ->addDefaultsIfNotSet()
                 ->canBeEnabled()
             ->end()
             ->arrayNode('extensions')->addDefaultsIfNotSet()->children()

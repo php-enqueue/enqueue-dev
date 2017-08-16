@@ -8,7 +8,7 @@ use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
 
 /**
  * @group functional
- * @retry 10
+ * @retry 5
  */
 class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
@@ -45,6 +45,10 @@ class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
             ],
         ];
 
-        return (new RdKafkaConnectionFactory($config))->createContext();
+        $context = (new RdKafkaConnectionFactory($config))->createContext();
+
+        sleep(3);
+
+        return $context;
     }
 }
