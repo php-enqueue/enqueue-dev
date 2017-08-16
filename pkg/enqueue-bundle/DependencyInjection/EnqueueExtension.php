@@ -118,7 +118,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             $loader->load('job.yml');
         }
 
-        if (isset($config['async_events']['enabled']) && $config['async_events']['enabled']) {
+        if ($config['async_events']['enabled']) {
             $extension = new AsyncEventDispatcherExtension();
             $extension->load([[
                 'context_service' => 'enqueue.transport.default.context',
