@@ -51,4 +51,12 @@ script:
     - if [ "$PHP_CS_FIXER" = true ]; then ./bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no --path-mode=intersection -- "${COMMIT_SCA_FILES[@]}"; fi
     - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/dev -t; fi
+    
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/3f8b3668e7792de23a49
+    on_success: change  
+    on_failure: always  
+    on_start: never     
 
