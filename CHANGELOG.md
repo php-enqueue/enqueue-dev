@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.7.5](https://github.com/php-enqueue/enqueue-dev/tree/0.7.5) (2017-08-16)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.4...0.7.5)
+
+- Bundle disable async events by default [\#169](https://github.com/php-enqueue/enqueue-dev/pull/169) ([makasim](https://github.com/makasim))
+- Delay Strategy Configuration [\#162](https://github.com/php-enqueue/enqueue-dev/pull/162) ([ASKozienko](https://github.com/ASKozienko))
+
+## [0.7.4](https://github.com/php-enqueue/enqueue-dev/tree/0.7.4) (2017-08-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.3...0.7.4)
+
 ## [0.7.3](https://github.com/php-enqueue/enqueue-dev/tree/0.7.3) (2017-08-09)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.2...0.7.3)
 
