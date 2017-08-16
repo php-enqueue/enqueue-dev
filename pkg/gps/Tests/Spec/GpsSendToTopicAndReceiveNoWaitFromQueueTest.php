@@ -7,6 +7,9 @@ use Enqueue\Gps\GpsContext;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 
+/**
+ * @group functional
+ */
 class GpsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
 {
     private $topic;
