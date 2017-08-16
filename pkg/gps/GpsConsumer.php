@@ -141,6 +141,7 @@ class GpsConsumer implements PsrConsumer
             if ($messages) {
                 return $this->convertMessage(current($messages));
             }
-        } catch (ServiceException $e) {} // timeout
+        } catch (ServiceException $e) {
+        } // timeout
     }
 }

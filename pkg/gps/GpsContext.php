@@ -113,7 +113,8 @@ class GpsContext implements PsrContext
     {
         try {
             $this->getClient()->createTopic($topic->getTopicName());
-        } catch (ConflictException $e) {}
+        } catch (ConflictException $e) {
+        }
     }
 
     /**
@@ -126,9 +127,10 @@ class GpsContext implements PsrContext
 
         try {
             $this->getClient()->subscribe($queue->getQueueName(), $topic->getTopicName(), [
-                'ackDeadlineSeconds' => $this->options['ackDeadlineSeconds']
+                'ackDeadlineSeconds' => $this->options['ackDeadlineSeconds'],
             ]);
-        } catch (ConflictException $e) {}
+        } catch (ConflictException $e) {
+        }
     }
 
     /**
