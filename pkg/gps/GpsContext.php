@@ -89,6 +89,9 @@ class GpsContext implements PsrContext
         return new GpsProducer($this);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function createConsumer(PsrDestination $destination)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GpsQueue::class);

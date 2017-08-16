@@ -21,12 +21,27 @@ class GpsConnectionFactory implements PsrConnectionFactory
      *   'keyFilePath' => The full path to your service account credentials.json file retrieved from the Google Developers Console.
      *   'retries'     => Number of retries for a failed request. **Defaults to** `3`.
      *   'scopes'      => Scopes to be used for the request.
+     *   'lazy'        => 'the connection will be performed as later as possible, if the option set to true'
      * ]
      *
-     * @param array $config
+     * or
+     *
+     * gps:
+     * gps:?projectId=projectName
+     *
+     * @param array|string|null $config
      */
-    public function __construct(array $config = [])
+    public function __construct($config = 'gps:')
     {
+        if (empty($config) || 'gps:' === $config) {
+            $config = [];
+        } elseif (is_string($config)) {
+            $config = $this->parseDsn($config);
+        } elseif (is_array($config)) {
+        } else {
+            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+        }
+
         $this->config = array_replace($this->defaultConfig(), $config);
     }
 
@@ -44,6 +59,26 @@ class GpsConnectionFactory implements PsrConnectionFactory
         }
 
         return new GpsContext($this->establishConnection());
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return array
+     */
+    private function parseDsn($dsn)
+    {
+        if (false === strpos($dsn, 'gps:')) {
+            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "gps:".', $dsn));
+        }
+
+        $config = [];
+
+        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
+            parse_str($query, $config);
+        }
+
+        return $config;
     }
 
     /**
