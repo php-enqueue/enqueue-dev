@@ -21,6 +21,7 @@ class GpsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveN
 
     /**
      * @param GpsContext $context
+     * @param mixed      $queueName
      */
     protected function createQueue(PsrContext $context, $queueName)
     {
