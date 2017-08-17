@@ -5,6 +5,7 @@ namespace Enqueue\Gps;
 use Google\Cloud\PubSub\Topic;
 use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PriorityNotSupportedException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
@@ -32,6 +33,7 @@ class GpsProducer implements PsrProducer
     public function send(PsrDestination $destination, PsrMessage $message)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GpsTopic::class);
+        InvalidMessageException::assertMessageInstanceOf($message, GpsMessage::class);
 
         /** @var Topic $topic */
         $topic = $this->context->getClient()->topic($destination->getTopicName());
