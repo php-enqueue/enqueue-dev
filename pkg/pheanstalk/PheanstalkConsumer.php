@@ -49,7 +49,7 @@ class PheanstalkConsumer implements PsrConsumer
     {
         if ($timeout === 0) {
             while (true) {
-                if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), 1000)) {
+                if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), 5)) {
                     return $this->convertJobToMessage($job);
                 }
             }
