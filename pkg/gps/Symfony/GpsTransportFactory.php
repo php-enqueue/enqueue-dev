@@ -41,7 +41,7 @@ class GpsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
             ->end()
             ->children()
                 ->scalarNode('dsn')
-                    ->info('The connection to AMQP broker set as a string. Other parameters are ignored if set')
+                    ->info('The connection to Google Pub/Sub broker set as a string. Other parameters are ignored if set')
                 ->end()
                 ->scalarNode('projectId')
                     ->info('The project ID from the Google Developer\'s Console.')

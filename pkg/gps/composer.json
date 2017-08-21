@@ -4,12 +4,6 @@
     "description": "Message Google Cloud Pub/Sub Transport",
     "keywords": ["messaging", "queue", "google", "pubsub"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:php-enqueue/test.git"
-        }
-    ],
     "require": {
         "php": ">=5.6",
         "queue-interop/queue-interop": "^0.6@dev",
