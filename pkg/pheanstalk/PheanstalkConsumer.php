@@ -47,8 +47,16 @@ class PheanstalkConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), $timeout / 1000)) {
-            return $this->convertJobToMessage($job);
+        if ($timeout === 0) {
+            while (true) {
+                if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), 1000)) {
+                    return $this->convertJobToMessage($job);
+                }
+            }
+        } else {
+            if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), $timeout / 1000)) {
+                return $this->convertJobToMessage($job);
+            }
         }
     }
 
@@ -101,7 +109,10 @@ class PheanstalkConsumer implements PsrConsumer
      */
     private function convertJobToMessage(Job $job)
     {
+        $stats = $this->pheanstalk->statsJob($job);
+
         $message = PheanstalkMessage::jsonUnserialize($job->getData());
+        $message->setRedelivered($stats['reserves'] > 1);
         $message->setJob($job);
 
         return $message;
