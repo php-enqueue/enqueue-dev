@@ -85,7 +85,7 @@ class SqsDriver implements DriverInterface
     public function createQueue($queueName)
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
-        $transportName = str_replace('.', '_dot_', $transportName);
+        $transportName = preg_replace('/\.(?!fifo)/', '_dot_', $transportName);
 
         return $this->context->createQueue($transportName);
     }
@@ -134,6 +134,11 @@ class SqsDriver implements DriverInterface
         $transportMessage->setTimestamp($message->getTimestamp());
         $transportMessage->setReplyTo($message->getReplyTo());
         $transportMessage->setCorrelationId($message->getCorrelationId());
+
+        if (preg_match('/(\.fifo)$/', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME))) {
+            $transportMessage->setMessageGroupId(md5(__METHOD__));
+            $transportMessage->setMessageDeduplicationId(md5($message->getBody()));
+        }
 
         return $transportMessage;
     }

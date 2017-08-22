@@ -62,6 +62,28 @@ class SqsDriverTest extends TestCase
         $this->assertSame('aQueueName', $queue->getQueueName());
     }
 
+    /**
+     * @group fifo
+     */
+    public function testShouldCreateAndReturnAFIFOQueueInstance()
+    {
+        $expectedQueue = new SqsDestination('aQueueName.fifo');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aprefix_dot_afooqueue.fifo')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new SqsDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+        $queue = $driver->createQueue('aFooQueue.fifo');
+
+        $this->assertSame($expectedQueue, $queue);
+        $this->assertSame('aQueueName.fifo', $queue->getQueueName());
+    }
+
     public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
     {
         $expectedQueue = new SqsDestination('aQueueName');
@@ -171,6 +193,61 @@ class SqsDriverTest extends TestCase
         $this->assertSame(1000, $transportMessage->getTimestamp());
         $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
         $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
+    }
+
+    /**
+     * @group fifo
+     */
+    public function testShouldConvertClientMessageToTransportMessageForAFIFOQueue()
+    {
+        $clientMessage = new Message();
+        $clientMessage->setBody('body');
+        $clientMessage->setHeaders(['hkey' => 'hval']);
+        $clientMessage->setProperties([
+             Config::PARAMETER_PROCESSOR_QUEUE_NAME => 'aQueueName.fifo',
+         ]);
+        $clientMessage->setContentType('ContentType');
+        $clientMessage->setExpire(123);
+        $clientMessage->setPriority(MessagePriority::VERY_HIGH);
+        $clientMessage->setMessageId('MessageId');
+        $clientMessage->setTimestamp(1000);
+        $clientMessage->setReplyTo('theReplyTo');
+        $clientMessage->setCorrelationId('theCorrelationId');
+
+        $context = $this->createPsrContextMock();
+        $context
+             ->expects($this->once())
+             ->method('createMessage')
+             ->willReturn(new SqsMessage())
+         ;
+
+        $driver = new SqsDriver(
+             $context,
+             Config::create(),
+             $this->createQueueMetaRegistryMock()
+         );
+
+        $transportMessage = $driver->createTransportMessage($clientMessage);
+
+        $this->assertInstanceOf(SqsMessage::class, $transportMessage);
+        $this->assertSame('body', $transportMessage->getBody());
+        $this->assertSame([
+             'hkey' => 'hval',
+             'content_type' => 'ContentType',
+             'message_id' => 'MessageId',
+             'timestamp' => 1000,
+             'reply_to' => 'theReplyTo',
+             'correlation_id' => 'theCorrelationId',
+         ], $transportMessage->getHeaders());
+        $this->assertSame([
+             Config::PARAMETER_PROCESSOR_QUEUE_NAME => 'aQueueName.fifo',
+         ], $transportMessage->getProperties());
+        $this->assertSame('MessageId', $transportMessage->getMessageId());
+        $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
+        $this->assertSame(md5('Enqueue\Sqs\Client\SqsDriver::createTransportMessage'), $transportMessage->getMessageGroupId());
+        $this->assertSame(md5('body'), $transportMessage->getMessageDeduplicationId());
     }
 
     public function testShouldSendMessageToRouterQueue()
@@ -401,6 +478,7 @@ class SqsDriverTest extends TestCase
         $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
         $registry->add('default');
         $registry->add('aFooQueue');
+        $registry->add('aFooQueue.fifo');
         $registry->add('aBarQueue', 'aBarQueue');
 
         return $registry;
