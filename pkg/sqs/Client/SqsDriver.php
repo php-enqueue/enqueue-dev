@@ -85,7 +85,7 @@ class SqsDriver implements DriverInterface
     public function createQueue($queueName)
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
-        $transportName = str_replace('.', '_dot_', $transportName);
+        $transportName = preg_replace('/\.(?!fifo)/', '_dot_', $transportName);
 
         return $this->context->createQueue($transportName);
     }

@@ -62,6 +62,28 @@ class SqsDriverTest extends TestCase
         $this->assertSame('aQueueName', $queue->getQueueName());
     }
 
+    /**
+     * @group fifo
+     */
+    public function testShouldCreateAndReturnAFIFOQueueInstance()
+    {
+        $expectedQueue = new SqsDestination('aQueueName.fifo');
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('aprefix_dot_afooqueue.fifo')
+            ->willReturn($expectedQueue)
+        ;
+
+        $driver = new SqsDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+        $queue = $driver->createQueue('aFooQueue.fifo');
+
+        $this->assertSame($expectedQueue, $queue);
+        $this->assertSame('aQueueName.fifo', $queue->getQueueName());
+    }
+
     public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
     {
         $expectedQueue = new SqsDestination('aQueueName');
@@ -401,6 +423,7 @@ class SqsDriverTest extends TestCase
         $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
         $registry->add('default');
         $registry->add('aFooQueue');
+        $registry->add('aFooQueue.fifo');
         $registry->add('aBarQueue', 'aBarQueue');
 
         return $registry;
