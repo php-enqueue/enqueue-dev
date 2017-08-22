@@ -135,6 +135,11 @@ class SqsDriver implements DriverInterface
         $transportMessage->setReplyTo($message->getReplyTo());
         $transportMessage->setCorrelationId($message->getCorrelationId());
 
+        if (preg_match('/(\.fifo)$/', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME))) {
+            $transportMessage->setMessageGroupId(md5(__METHOD__));
+            $transportMessage->setMessageDeduplicationId(md5($message->getBody()));
+        }
+
         return $transportMessage;
     }
 
