@@ -48,8 +48,8 @@ class RedisConsumer implements PsrConsumer
         $timeout = (int) ($timeout / 1000);
         if (empty($timeout)) {
             //            Caused by
-//            Predis\Response\ServerException: ERR timeout is not an integer or out of range
-//            /mqdev/vendor/predis/predis/src/Client.php:370
+            //            Predis\Response\ServerException: ERR timeout is not an integer or out of range
+            //            /mqdev/vendor/predis/predis/src/Client.php:370
 
             return $this->receiveNoWait();
         }
