@@ -169,12 +169,18 @@ class DbalConsumer implements PsrConsumer
         try {
             $now = time();
 
-            $sql = sprintf(
-                'SELECT * FROM %s WHERE queue=:queue AND '.
-                '(delayed_until IS NULL OR delayed_until<=:delayedUntil) '.
-                'ORDER BY priority DESC, id ASC LIMIT 1 FOR UPDATE',
-                $this->context->getTableName()
-            );
+            $query = $this->dbal->createQueryBuilder();
+            $query
+                ->select('*')
+                ->from($this->context->getTableName())
+                ->where('queue = :queue')
+                ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
+                ->orderBy('priority', 'desc')
+                ->orderBy('id', 'asc')
+                ->setMaxResults(1)
+            ;
+
+            $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
 
             $dbalMessage = $this->dbal->executeQuery(
                 $sql,
