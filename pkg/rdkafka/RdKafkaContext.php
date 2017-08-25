@@ -157,7 +157,7 @@ class RdKafkaContext implements PsrContext
             }
 
             if (isset($this->config['rebalance_cb'])) {
-                $this->conf->setRebalanceCb($this->config['errorebalance_cbr_cb']);
+                $this->conf->setRebalanceCb($this->config['rebalance_cb']);
             }
 
             $this->conf->setDefaultTopicConf($topicConf);
