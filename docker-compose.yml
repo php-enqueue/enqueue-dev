@@ -12,6 +12,7 @@ services:
       - gearmand
       - kafka
       - zookeeper
+      - google-pubsub
     volumes:
       - './:/mqdev'
     environment:
@@ -40,6 +41,8 @@ services:
       - GEARMAN_DSN=gearman://gearmand:4730
       - RDKAFKA_HOST=kafka
       - RDKAFKA_PORT=9092
+      - PUBSUB_EMULATOR_HOST=http://google-pubsub:8085
+      - GCLOUD_PROJECT=mqdev
 
   rabbitmq:
     image: enqueue/rabbitmq:latest
@@ -88,6 +91,10 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
+
+  google-pubsub:
+      image: 'google/cloud-sdk:latest'
+      entrypoint: 'gcloud beta emulators pubsub start --host-port=0.0.0.0:8085'
 
 volumes:
   mysql-data:

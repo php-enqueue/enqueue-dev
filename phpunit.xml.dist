@@ -73,6 +73,10 @@
             <directory>pkg/rdkafka/Tests</directory>
         </testsuite>
 
+        <testsuite name="Google Pub/Sub transport">
+            <directory>pkg/gps/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>

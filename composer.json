@@ -20,6 +20,7 @@
     "enqueue/gearman": "*@dev",
     "enqueue/rdkafka": "*@dev",
     "kwn/php-rdkafka-stubs": "^1.0.2",
+    "enqueue/gps": "*@dev",
     "enqueue/enqueue-bundle": "*@dev",
     "enqueue/job-queue": "*@dev",
     "enqueue/simple-client": "*@dev",
@@ -128,6 +129,10 @@
     {
       "type": "path",
       "url": "pkg/rdkafka"
+    },
+    {
+      "type": "path",
+      "url": "pkg/gps"
     },
     {
       "type": "path",
