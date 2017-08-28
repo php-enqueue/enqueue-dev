@@ -5,7 +5,6 @@ namespace Enqueue\Fs\Tests\Functional;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsMessage;
-use Makasim\File\TempFile;
 use PHPUnit\Framework\TestCase;
 
 class FsConsumerTest extends TestCase
@@ -19,8 +18,7 @@ class FsConsumerTest extends TestCase
     {
         $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir()]))->createContext();
 
-        new TempFile(sys_get_temp_dir().'/fs_test_queue');
-        file_put_contents(sys_get_temp_dir().'/fs_test_queue', '');
+        $this->fsContext->purge($this->fsContext->createQueue('fs_test_queue'));
     }
 
     public function tearDown()
@@ -67,5 +65,30 @@ class FsConsumerTest extends TestCase
         $this->assertNull($message);
 
         $this->assertEmpty(file_get_contents(sys_get_temp_dir().'/fs_test_queue'));
+    }
+
+    /**
+     * @group bug
+     */
+    public function testShouldNotFailOnSpecificMessageSize()
+    {
+        $context = $this->fsContext;
+        $queue = $context->createQueue('fs_test_queue');
+        $context->purge($queue);
+
+        $consumer = $context->createConsumer($queue);
+        $producer = $context->createProducer();
+
+        $producer->send($queue, $context->createMessage(str_repeat('a', 23)));
+        $producer->send($queue, $context->createMessage(str_repeat('b', 24)));
+
+        $message = $consumer->receiveNoWait();
+        $this->assertSame(str_repeat('b', 24), $message->getBody());
+
+        $message = $consumer->receiveNoWait();
+        $this->assertSame(str_repeat('a', 23), $message->getBody());
+
+        $message = $consumer->receiveNoWait();
+        $this->assertNull($message);
     }
 }
