@@ -2,10 +2,10 @@
 
 namespace Enqueue\Sqs\Tests\Spec;
 
-use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Test\RetryTrait;
+use Enqueue\Test\SqsExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
@@ -16,6 +16,7 @@ use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 class SqsSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {
     use RetryTrait;
+    use SqsExtension;
 
     /**
      * @var SqsContext
@@ -41,13 +42,7 @@ class SqsSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayed
      */
     protected function createContext()
     {
-        $factory = new SqsConnectionFactory([
-            'key' => getenv('AWS__SQS__KEY'),
-            'secret' => getenv('AWS__SQS__SECRET'),
-            'region' => getenv('AWS__SQS__REGION'),
-        ]);
-
-        return $this->context = $factory->createContext();
+        return $this->context = $this->buildSqsContext();
     }
 
     /**
