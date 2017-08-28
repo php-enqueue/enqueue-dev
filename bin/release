@@ -14,7 +14,7 @@ fi
 
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
-for REMOTE in origin stomp amqp-ext amqp-lib amqp-bunny amqp-tools pheanstalk gearman sqs fs redis dbal null rdkafka enqueue simple-client enqueue-bundle job-queue test async-event-dispatcher
+for REMOTE in origin stomp amqp-ext amqp-lib amqp-bunny amqp-tools pheanstalk gearman sqs gps fs redis dbal null rdkafka enqueue simple-client enqueue-bundle job-queue test async-event-dispatcher
 do
     echo ""
     echo ""
@@ -37,7 +37,7 @@ do
 
         CHANGES_SINCE_LAST_RELEASE=$(git log "$LAST_RELEASE"...master)
         CHANGES_SINCE_LAST_RELEASE="$CHANGES_SINCE_LAST_RELEASE" | xargs echo -n
-        if [[ ! -z "$CHANGES_SINCE_LAST_RELEASE" ]]; then
+        if [[ ! -z "$CHANGES_SINCE_LAST_RELEASE" || -z $LAST_RELEASE]]; then
             echo "There are changes since last release. Releasing $1";
 
             git tag $1 -s -m "Release $1"

@@ -58,6 +58,7 @@ remote rdkafka git@github.com:php-enqueue/rdkafka.git
 remote dbal git@github.com:php-enqueue/dbal.git
 remote null git@github.com:php-enqueue/null.git
 remote sqs git@github.com:php-enqueue/sqs.git
+remote gps git@github.com:php-enqueue/gps.git
 remote enqueue-bundle git@github.com:php-enqueue/enqueue-bundle.git
 remote job-queue git@github.com:php-enqueue/job-queue.git
 remote test git@github.com:php-enqueue/test.git
@@ -78,6 +79,7 @@ split 'pkg/redis' redis
 split 'pkg/dbal' dbal
 split 'pkg/null' null
 split 'pkg/sqs' sqs
+split 'pkg/gps' gps
 split 'pkg/enqueue-bundle' enqueue-bundle
 split 'pkg/job-queue' job-queue
 split 'pkg/test' test

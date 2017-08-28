@@ -7,6 +7,7 @@ bin/sql-formatter
 bin/phpstan
 bin/jp.php
 bin/php-parse
+bin/google-cloud-batch
 vendor
 .php_cs
 .php_cs.cache
