@@ -3,6 +3,8 @@
 namespace Enqueue\Dbal\Tests;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Statement;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
@@ -148,7 +150,41 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($dbalMessage))
         ;
 
+        $queryBuilder = $this->createQueryBuilderMock();
+        $queryBuilder
+            ->expects($this->once())
+            ->method('select')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('from')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('where')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('andWhere')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->exactly(2))
+            ->method('orderBy')
+            ->will($this->returnSelf())
+        ;
+
+        $platform = $this->createPlatformMock();
+
         $dbal = $this->createConnectionMock();
+        $dbal
+            ->expects($this->once())
+            ->method('createQueryBuilder')
+            ->willReturn($queryBuilder)
+        ;
         $dbal
             ->expects($this->once())
             ->method('executeQuery')
@@ -162,6 +198,11 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $dbal
             ->expects($this->once())
             ->method('commit')
+        ;
+        $dbal
+            ->expects($this->once())
+            ->method('getDatabasePlatform')
+            ->willReturn($platform)
         ;
 
         $context = $this->createContextMock();
@@ -201,7 +242,41 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(null))
         ;
 
+        $queryBuilder = $this->createQueryBuilderMock();
+        $queryBuilder
+            ->expects($this->once())
+            ->method('select')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('from')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('where')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('andWhere')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->exactly(2))
+            ->method('orderBy')
+            ->will($this->returnSelf())
+        ;
+
+        $platform = $this->createPlatformMock();
+
         $dbal = $this->createConnectionMock();
+        $dbal
+            ->expects($this->once())
+            ->method('createQueryBuilder')
+            ->willReturn($queryBuilder)
+        ;
         $dbal
             ->expects($this->once())
             ->method('executeQuery')
@@ -215,6 +290,11 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $dbal
             ->expects($this->once())
             ->method('commit')
+        ;
+        $dbal
+            ->expects($this->once())
+            ->method('getDatabasePlatform')
+            ->willReturn($platform)
         ;
 
         $context = $this->createContextMock();
@@ -250,7 +330,41 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(['id' => '2134']))
         ;
 
+        $queryBuilder = $this->createQueryBuilderMock();
+        $queryBuilder
+            ->expects($this->once())
+            ->method('select')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('from')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('where')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->once())
+            ->method('andWhere')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->exactly(2))
+            ->method('orderBy')
+            ->will($this->returnSelf())
+        ;
+
+        $platform = $this->createPlatformMock();
+
         $dbal = $this->createConnectionMock();
+        $dbal
+            ->expects($this->once())
+            ->method('createQueryBuilder')
+            ->willReturn($queryBuilder)
+        ;
         $dbal
             ->expects($this->once())
             ->method('executeQuery')
@@ -268,6 +382,11 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $dbal
             ->expects($this->once())
             ->method('rollBack')
+        ;
+        $dbal
+            ->expects($this->once())
+            ->method('getDatabasePlatform')
+            ->willReturn($platform)
         ;
 
         $context = $this->createContextMock();
@@ -317,6 +436,22 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
     private function createContextMock()
     {
         return $this->createMock(DbalContext::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|QueryBuilder
+     */
+    private function createQueryBuilderMock()
+    {
+        return $this->createMock(QueryBuilder::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|AbstractPlatform
+     */
+    private function createPlatformMock()
+    {
+        return $this->createMock(AbstractPlatform::class);
     }
 }
 

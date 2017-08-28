@@ -2,9 +2,9 @@
 
 namespace Enqueue\Sqs\Tests\Spec;
 
-use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
+use Enqueue\Test\SqsExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
 
@@ -13,6 +13,8 @@ use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
  */
 class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
+    use SqsExtension;
+
     /**
      * @var SqsContext
      */
@@ -37,13 +39,7 @@ class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
      */
     protected function createContext()
     {
-        $factory = new SqsConnectionFactory([
-            'key' => getenv('AWS__SQS__KEY'),
-            'secret' => getenv('AWS__SQS__SECRET'),
-            'region' => getenv('AWS__SQS__REGION'),
-        ]);
-
-        return $this->context = $factory->createContext();
+        return $this->context = $this->buildSqsContext();
     }
 
     /**
