@@ -4,6 +4,7 @@
 * [Transports](#transports)
     - Amqp based on [the ext](transport/amqp.md), [bunny](transport/amqp_bunny.md), [the lib](transport/amqp_lib.md)
     - [Amazon SQS](transport/sqs.md)
+    - [Google PubSub](transport/gps.md)
     - [Beanstalk (Pheanstalk)](transport/pheanstalk.md)
     - [Gearman](transport/gearman.md)
     - [Kafka](transport/kafka.md)

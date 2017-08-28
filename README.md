@@ -14,6 +14,7 @@ Features:
     * [Beanstalk](docs/transport/pheanstalk.md)
     * [STOMP](docs/transport/stomp.md)
     * [Amazon SQS](docs/transport/sqs.md)
+    * [Google PubSub](docs/transport/gps.md)
     * [Kafka](docs/transport/kafka.md)
     * [Redis](docs/transport/redis.md)
     * [Gearman](docs/transport/gearman.md)
