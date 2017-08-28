@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.7.8](https://github.com/php-enqueue/enqueue-dev/tree/0.7.8) (2017-08-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.7...0.7.8)
+
+- fix sqs tests when run by not a member of the project. [\#179](https://github.com/php-enqueue/enqueue-dev/issues/179)
+- \[bundle\] It is not possible to use client's producer in a cli event, for example on exception [\#177](https://github.com/php-enqueue/enqueue-dev/issues/177)
+- Error on PurgeFosElasticPopulateQueueListener::\_\_construct\(\) [\#174](https://github.com/php-enqueue/enqueue-dev/issues/174)
+- \[bundle\] Possible issue when something configured wronly [\#172](https://github.com/php-enqueue/enqueue-dev/issues/172)
+- \[FS\] Frame not being read correctly [\#170](https://github.com/php-enqueue/enqueue-dev/issues/170)
+
+- \[consumption\] Do not close context. [\#183](https://github.com/php-enqueue/enqueue-dev/pull/183) ([makasim](https://github.com/makasim))
+- \[bundle\] do not use client's related stuff if it is disabled [\#182](https://github.com/php-enqueue/enqueue-dev/pull/182) ([makasim](https://github.com/makasim))
+- \[fs\] fix bug that happens with specific message length. [\#181](https://github.com/php-enqueue/enqueue-dev/pull/181) ([makasim](https://github.com/makasim))
+- \[sqs\] Skip tests if no amazon credentinals present. [\#180](https://github.com/php-enqueue/enqueue-dev/pull/180) ([makasim](https://github.com/makasim))
+- Fix typo in configuration parameter [\#178](https://github.com/php-enqueue/enqueue-dev/pull/178) ([akucherenko](https://github.com/akucherenko))
+- Google Pub/Sub [\#167](https://github.com/php-enqueue/enqueue-dev/pull/167) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.7.7](https://github.com/php-enqueue/enqueue-dev/tree/0.7.7) (2017-08-25)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.6...0.7.7)
 
