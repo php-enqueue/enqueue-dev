@@ -60,7 +60,7 @@ class DelayRedeliveredMessageExtension implements ExtensionInterface
         $this->driver->sendToProcessor($delayedMessage);
         $context->getLogger()->debug('[DelayRedeliveredMessageExtension] Send delayed message');
 
-        $context->setResult(Result::REJECT);
+        $context->setResult(Result::reject('A new copy of the message was sent with a delay. The original message is rejected'));
         $context->getLogger()->debug(
             '[DelayRedeliveredMessageExtension] '.
             'Reject redelivered original message by setting reject status to context.'
