@@ -16,6 +16,10 @@ class BuildTopicMetaSubscribersPass implements CompilerPassInterface
     {
         $processorTagName = 'enqueue.client.processor';
 
+        if (false == $container->hasDefinition('enqueue.client.meta.topic_meta_registry')) {
+            return;
+        }
+
         $topicsSubscribers = [];
         foreach ($container->findTaggedServiceIds($processorTagName) as $serviceId => $tagAttributes) {
             $subscriptions = $this->extractSubscriptions($container, $serviceId, $tagAttributes);
