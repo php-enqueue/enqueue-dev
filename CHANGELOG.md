@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.7.9](https://github.com/php-enqueue/enqueue-dev/tree/0.7.9) (2017-08-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.8...0.7.9)
+
+- Update to phpstan 0.8 [\#141](https://github.com/php-enqueue/enqueue-dev/issues/141)
+- \[client\] Add a reason while setting reject in DelayRedeliveredMessageExtension [\#41](https://github.com/php-enqueue/enqueue-dev/issues/41)
+
+- \[Doctrine\] add support to convert Doctrine events to Enqueue messages [\#68](https://github.com/php-enqueue/enqueue-dev/issues/68)
+
+- \[client\] DelayRedeliveredMessageExtension. Add reject reason. [\#185](https://github.com/php-enqueue/enqueue-dev/pull/185) ([makasim](https://github.com/makasim))
+- \[phpstan\] update to 0.8 version [\#184](https://github.com/php-enqueue/enqueue-dev/pull/184) ([makasim](https://github.com/makasim))
+
 ## [0.7.8](https://github.com/php-enqueue/enqueue-dev/tree/0.7.8) (2017-08-28)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.7...0.7.8)
 
