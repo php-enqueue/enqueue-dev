@@ -164,7 +164,6 @@ class FsConsumer implements PsrConsumer
 
         fseek($file, -$offset, SEEK_END);
         $frame = fread($file, $frameSize);
-
         if ('' == $frame) {
             return '';
         }
@@ -173,6 +172,12 @@ class FsConsumer implements PsrConsumer
             return $frame;
         }
 
-        return $this->readFrame($file, $frameNumber + 1).$frame;
+        $previousFrame = $this->readFrame($file, $frameNumber + 1);
+
+        if ('|' === substr($previousFrame, -1) && '{' === $frame[0]) {
+            return '|'.$frame;
+        }
+
+        return $previousFrame.$frame;
     }
 }
