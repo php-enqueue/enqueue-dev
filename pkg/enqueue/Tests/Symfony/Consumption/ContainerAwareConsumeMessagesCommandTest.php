@@ -97,13 +97,13 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
         ]);
     }
 
-    public function testShouldExecuteConsumptionWithExplisitlySetQueueViaQueueOption()
+    public function testShouldExecuteConsumptionWithExplicitlySetQueueViaQueueOption()
     {
         $processor = $this->createProcessor();
 
         $context = $this->createContextMock();
         $context
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('close')
         ;
 
@@ -117,11 +117,6 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
             ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
-        ;
-        $consumer
-            ->expects($this->exactly(1))
-            ->method('getPsrContext')
-            ->will($this->returnValue($context))
         ;
 
         $container = new Container();
@@ -143,7 +138,7 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
 
         $context = $this->createContextMock();
         $context
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('close')
         ;
 
@@ -162,11 +157,6 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
             ->expects($this->at(2))
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
-        ;
-        $consumer
-            ->expects($this->at(3))
-            ->method('getPsrContext')
-            ->will($this->returnValue($context))
         ;
 
         $container = new Container();

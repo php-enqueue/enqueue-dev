@@ -652,13 +652,13 @@ class QueueConsumerTest extends TestCase
         $queueConsumer->consume();
     }
 
-    public function testShouldCloseSessionWhenConsumptionInterrupted()
+    public function testShouldNotCloseContextWhenConsumptionInterrupted()
     {
         $messageConsumerStub = $this->createMessageConsumerStub($message = null);
 
         $contextStub = $this->createPsrContextStub($messageConsumerStub);
         $contextStub
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('close')
         ;
 
@@ -681,7 +681,7 @@ class QueueConsumerTest extends TestCase
         $queueConsumer->consume();
     }
 
-    public function testShouldCloseSessionWhenConsumptionInterruptedByException()
+    public function testShouldNotCloseContextWhenConsumptionInterruptedByException()
     {
         $expectedException = new \Exception();
 
@@ -689,7 +689,7 @@ class QueueConsumerTest extends TestCase
 
         $contextStub = $this->createPsrContextStub($messageConsumerStub);
         $contextStub
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('close')
         ;
 

@@ -91,7 +91,7 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $context = $this->createPsrContextMock();
         $context
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('close')
         ;
 
@@ -105,11 +105,6 @@ class ConsumeMessagesCommandTest extends TestCase
             ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
-        ;
-        $consumer
-            ->expects($this->once())
-            ->method('getPsrContext')
-            ->will($this->returnValue($context))
         ;
 
         $queueMetaRegistry = $this->createQueueMetaRegistry([
@@ -138,7 +133,7 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $context = $this->createPsrContextMock();
         $context
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('close')
         ;
 
@@ -152,11 +147,6 @@ class ConsumeMessagesCommandTest extends TestCase
             ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
-        ;
-        $consumer
-            ->expects($this->once())
-            ->method('getPsrContext')
-            ->will($this->returnValue($context))
         ;
 
         $queueMetaRegistry = $this->createQueueMetaRegistry([
