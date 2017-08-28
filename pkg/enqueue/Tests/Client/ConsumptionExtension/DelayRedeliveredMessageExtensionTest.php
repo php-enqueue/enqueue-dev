@@ -66,15 +66,18 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
         $context->setPsrMessage($originMessage);
         $context->setLogger($logger);
 
-        self::assertNull($context->getResult());
+        $this->assertNull($context->getResult());
 
         $extension = new DelayRedeliveredMessageExtension($driver, 12345);
         $extension->onPreReceived($context);
 
-        self::assertEquals(Result::REJECT, $context->getResult());
+        $result = $context->getResult();
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertSame(Result::REJECT, $result->getStatus());
+        $this->assertSame('A new copy of the message was sent with a delay. The original message is rejected', $result->getReason());
 
-        self::assertInstanceOf(Message::class, $delayedMessage);
-        self::assertEquals([
+        $this->assertInstanceOf(Message::class, $delayedMessage);
+        $this->assertEquals([
             'enqueue.redelivery_count' => 1,
         ], $delayedMessage->getProperties());
     }
@@ -95,7 +98,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
         $extension = new DelayRedeliveredMessageExtension($driver, 12345);
         $extension->onPreReceived($context);
 
-        self::assertNull($context->getResult());
+        $this->assertNull($context->getResult());
     }
 
     public function testShouldDoNothingIfMessageIsRedeliveredButResultWasAlreadySetOnContext()
