@@ -87,14 +87,10 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
 
         $runtimeExtensions = new ChainExtension($extensions);
 
-        try {
-            foreach ($queues as $queue) {
-                $this->consumer->bind($queue, $processor);
-            }
-
-            $this->consumer->consume($runtimeExtensions);
-        } finally {
-            $this->consumer->getPsrContext()->close();
+        foreach ($queues as $queue) {
+            $this->consumer->bind($queue, $processor);
         }
+
+        $this->consumer->consume($runtimeExtensions);
     }
 }

@@ -149,7 +149,6 @@ class QueueConsumer
                 $context->setExecutionInterrupted(true);
 
                 $extension->onInterrupted($context);
-                $this->psrContext->close();
 
                 return;
             } catch (\Exception $exception) {
@@ -158,10 +157,8 @@ class QueueConsumer
 
                 try {
                     $this->onInterruptionByException($extension, $context);
-                    $this->psrContext->close();
                 } catch (\Exception $e) {
                     // for some reason finally does not work here on php5.5
-                    $this->psrContext->close();
 
                     throw $e;
                 }

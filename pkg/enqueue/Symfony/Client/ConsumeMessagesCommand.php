@@ -97,11 +97,7 @@ class ConsumeMessagesCommand extends Command
             $this->consumer->bind($queue, $this->processor);
         }
 
-        try {
-            $this->consumer->consume($this->getRuntimeExtensions($input, $output));
-        } finally {
-            $this->consumer->getPsrContext()->close();
-        }
+        $this->consumer->consume($this->getRuntimeExtensions($input, $output));
     }
 
     /**
