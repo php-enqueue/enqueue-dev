@@ -1,11 +1,12 @@
 <?php
 
-namespace Enqueue\Gps\Client;
+namespace Enqueue\Gps\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Gps\Client\GpsDriver;
 use Enqueue\Gps\GpsContext;
 use Enqueue\Gps\GpsMessage;
 use Enqueue\Gps\GpsProducer;
