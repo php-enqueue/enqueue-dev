@@ -2,7 +2,7 @@
 
 namespace Enqueue\Sqs\Tests\Spec;
 
-use Enqueue\Sqs\SqsConnectionFactory;
+use Enqueue\Test\SqsExtension;
 use Interop\Queue\Spec\PsrProducerSpec;
 
 /**
@@ -10,17 +10,13 @@ use Interop\Queue\Spec\PsrProducerSpec;
  */
 class SqsProducerTest extends PsrProducerSpec
 {
+    use SqsExtension;
+
     /**
      * {@inheritdoc}
      */
     protected function createProducer()
     {
-        $factory = new SqsConnectionFactory([
-            'key' => getenv('AWS__SQS__KEY'),
-            'secret' => getenv('AWS__SQS__SECRET'),
-            'region' => getenv('AWS__SQS__REGION'),
-        ]);
-
-        return $factory->createContext()->createProducer();
+        return $this->buildSqsContext()->createProducer();
     }
 }
