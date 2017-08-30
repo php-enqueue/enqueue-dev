@@ -7,6 +7,7 @@ The transport uses [Kafka](https://kafka.apache.org/) streaming platform as a MQ
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)
+* [Serialize message](#serialize-message)
 
 ## Installation
 
@@ -86,6 +87,29 @@ $message = $consumer->receive();
 
 $consumer->acknowledge($message);
 // $consumer->reject($message);
+```
+
+## Serialize message
+
+By default the transport serializes messages to json format but you might want to use another format such as [Apache Avro](https://avro.apache.org/docs/1.2.0/).
+For that you have to implement Serializer interface and set it to the context, producer or consumer. 
+If a serializer set to context it will be injected to all consumers and producers created by the context.
+
+```php
+<?php
+use Enqueue\RdKafka\Serializer;
+use Enqueue\RdKafka\RdKafkaMessage;
+
+class FooSerializer implements Serializer
+{
+    public function toMessage($string) {}
+    
+    public function toString(RdKafkaMessage $message) {}
+}
+
+/** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
+
+$psrContext->setSerializer(new FooSerializer());
 ```
 
 [back to index](index.md)
