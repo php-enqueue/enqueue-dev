@@ -9,6 +9,8 @@ use RdKafka\KafkaConsumer;
 
 class RdKafkaConsumer implements PsrConsumer
 {
+    use SerializerAwareTrait;
+
     /**
      * @var KafkaConsumer
      */
@@ -38,14 +40,17 @@ class RdKafkaConsumer implements PsrConsumer
      * @param KafkaConsumer  $consumer
      * @param RdKafkaContext $context
      * @param RdKafkaTopic   $topic
+     * @param Serializer     $serializer
      */
-    public function __construct(KafkaConsumer $consumer, RdKafkaContext $context, RdKafkaTopic $topic)
+    public function __construct(KafkaConsumer $consumer, RdKafkaContext $context, RdKafkaTopic $topic, Serializer $serializer)
     {
         $this->consumer = $consumer;
         $this->context = $context;
         $this->topic = $topic;
         $this->subscribed = false;
         $this->commitAsync = false;
+
+        $this->setSerializer($serializer);
     }
 
     /**
@@ -151,7 +156,7 @@ class RdKafkaConsumer implements PsrConsumer
             case RD_KAFKA_RESP_ERR__TIMED_OUT:
                 break;
             case RD_KAFKA_RESP_ERR_NO_ERROR:
-                $message = RdKafkaMessage::jsonUnserialize($kafkaMessage->payload);
+                $message = $this->serializer->toMessage($kafkaMessage->payload);
                 $message->setKey($kafkaMessage->key);
                 $message->setPartition($kafkaMessage->partition);
                 $message->setKafkaMessage($kafkaMessage);
