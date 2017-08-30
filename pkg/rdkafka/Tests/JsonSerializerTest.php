@@ -40,7 +40,7 @@ class JsonSerializerTest extends TestCase
         $message = new RdKafkaMessage('theBody', ['aProp' => STDIN]);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The malformed json given. Error 8 and message Type is not supported');
+        $this->expectExceptionMessage('The malformed json given.');
         $serializer->toString($message);
     }
 
@@ -62,7 +62,7 @@ class JsonSerializerTest extends TestCase
         $serializer = new JsonSerializer();
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The malformed json given. Error 2 and message State mismatch (invalid or malformed JSON)');
+        $this->expectExceptionMessage('The malformed json given.');
         $serializer->toMessage('{]');
     }
 }
