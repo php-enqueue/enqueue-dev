@@ -11,17 +11,22 @@ use RdKafka\Producer;
 
 class RdKafkaProducer implements PsrProducer
 {
+    use SerializerAwareTrait;
+
     /**
      * @var Producer
      */
     private $producer;
 
     /**
-     * @param Producer $producer
+     * @param Producer   $producer
+     * @param Serializer $serializer
      */
-    public function __construct(Producer $producer)
+    public function __construct(Producer $producer, Serializer $serializer)
     {
         $this->producer = $producer;
+
+        $this->setSerializer($serializer);
     }
 
     /**
@@ -37,7 +42,7 @@ class RdKafkaProducer implements PsrProducer
 
         $partition = $message->getPartition() ?: $destination->getPartition() ?: RD_KAFKA_PARTITION_UA;
         $key = $message->getKey() ?: $destination->getKey() ?: null;
-        $payload = json_encode($message);
+        $payload = $this->serializer->toString($message);
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
         $topic->produce($partition, 0 /* must be 0 */, $payload, $key);

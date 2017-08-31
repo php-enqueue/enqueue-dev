@@ -5,6 +5,10 @@ namespace Enqueue\RdKafka;
 use Interop\Queue\PsrMessage;
 use RdKafka\Message;
 
+/**
+ * TODO: \JsonSerializable will be removed in next version (probably 0.8.x)
+ * The serialization logic was moved to JsonSerializer.
+ */
 class RdKafkaMessage implements PsrMessage, \JsonSerializable
 {
     /**
@@ -270,11 +274,7 @@ class RdKafkaMessage implements PsrMessage, \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return [
-            'body' => $this->getBody(),
-            'properties' => $this->getProperties(),
-            'headers' => $this->getHeaders(),
-        ];
+        return (new JsonSerializer())->toString($this);
     }
 
     /**
@@ -284,15 +284,6 @@ class RdKafkaMessage implements PsrMessage, \JsonSerializable
      */
     public static function jsonUnserialize($json)
     {
-        $data = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
-        }
-
-        return new self($data['body'], $data['properties'], $data['headers']);
+        return (new JsonSerializer())->toMessage($json);
     }
 }

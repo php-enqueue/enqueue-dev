@@ -12,6 +12,8 @@ use RdKafka\TopicConf;
 
 class RdKafkaContext implements PsrContext
 {
+    use SerializerAwareTrait;
+
     /**
      * @var array
      */
@@ -33,6 +35,8 @@ class RdKafkaContext implements PsrContext
     public function __construct(array $config)
     {
         $this->config = $config;
+
+        $this->setSerializer(new JsonSerializer());
     }
 
     /**
@@ -78,7 +82,7 @@ class RdKafkaContext implements PsrContext
      */
     public function createProducer()
     {
-        return new RdKafkaProducer($this->getProducer());
+        return new RdKafkaProducer($this->getProducer(), $this->getSerializer());
     }
 
     /**
@@ -90,7 +94,12 @@ class RdKafkaContext implements PsrContext
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
 
-        $consumer = new RdKafkaConsumer(new KafkaConsumer($this->getConf()), $this, $destination);
+        $consumer = new RdKafkaConsumer(
+            new KafkaConsumer($this->getConf()),
+            $this,
+            $destination,
+            $this->getSerializer()
+        );
 
         if (isset($this->config['commit_async'])) {
             $consumer->setCommitAsync($this->config['commit_async']);
