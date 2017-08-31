@@ -37,7 +37,12 @@ class JsonSerializerTest extends TestCase
     {
         $serializer = new JsonSerializer();
 
-        $message = new RdKafkaMessage('theBody', ['aProp' => STDIN]);
+        $resource = fopen(__FILE__, 'r');
+
+        //guard
+        $this->assertInternalType('resource', $resource);
+
+        $message = new RdKafkaMessage('theBody', ['aProp' => $resource]);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The malformed json given.');
