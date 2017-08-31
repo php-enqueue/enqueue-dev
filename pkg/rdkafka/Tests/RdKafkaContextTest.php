@@ -57,7 +57,9 @@ class RdKafkaContextTest extends TestCase
 
     public function testShouldInjectItsSerializerToConsumer()
     {
-        $context = new RdKafkaContext([]);
+        $context = new RdKafkaContext(['global' => [
+            'group.id' => uniqid('', true),
+        ]]);
 
         $producer = $context->createConsumer($context->createQueue('aQueue'));
 
