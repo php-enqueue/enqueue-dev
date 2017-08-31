@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.7.10](https://github.com/php-enqueue/enqueue-dev/tree/0.7.10) (2017-08-31)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.9...0.7.10)
+
+- Serialization beyond JSON [\#187](https://github.com/php-enqueue/enqueue-dev/issues/187)
+- \[rdkafka\] Add abilito change the way a message is serialized. [\#188](https://github.com/php-enqueue/enqueue-dev/pull/188) ([makasim](https://github.com/makasim))
+
+- Bug on AsyncDoctrineOrmProvider::setContext\(\) [\#186](https://github.com/php-enqueue/enqueue-dev/issues/186)
+
 ## [0.7.9](https://github.com/php-enqueue/enqueue-dev/tree/0.7.9) (2017-08-28)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.8...0.7.9)
 
