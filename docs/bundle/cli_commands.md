@@ -94,7 +94,7 @@ Help:
 ## enqueue:queues
 
 ```
-/bin/console enqueue:queues --help
+./bin/console enqueue:queues --help
 Usage:
   enqueue:queues
   enq:m:q
