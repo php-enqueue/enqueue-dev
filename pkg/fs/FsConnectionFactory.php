@@ -18,7 +18,7 @@ class FsConnectionFactory implements PsrConnectionFactory
      *   'path' => 'the directory where all queue\topic files remain. For example /home/foo/enqueue',
      *   'pre_fetch_count' => 'Integer. Defines how many messages to fetch from the file.',
      *   'chmod' => 'Defines a mode the files are created with',
-     *   'polling_interval' => 'How often query for new messages, default 1000 (milliseconds)',
+     *   'polling_interval' => 'How often query for new messages, default 100 (milliseconds)',
      * ]
      *
      * or
@@ -105,7 +105,7 @@ class FsConnectionFactory implements PsrConnectionFactory
             'path' => null,
             'pre_fetch_count' => 1,
             'chmod' => 0600,
-            'polling_interval' => 1000,
+            'polling_interval' => 100,
         ];
     }
 }

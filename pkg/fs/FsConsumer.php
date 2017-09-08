@@ -31,7 +31,7 @@ class FsConsumer implements PsrConsumer
     /**
      * @var int microseconds
      */
-    private $pollingInterval = 1000000;
+    private $pollingInterval = 100000;
 
     /**
      * @param FsContext     $context

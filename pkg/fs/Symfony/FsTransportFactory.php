@@ -57,8 +57,8 @@ class FsTransportFactory implements TransportFactoryInterface, DriverFactoryInte
                     ->info('The queue files are created with this given permissions if not exist.')
                 ->end()
                 ->integerNode('polling_interval')
-                    ->defaultValue(1000)
-                    ->min(100)
+                    ->defaultValue(100)
+                    ->min(50)
                     ->info('How often query for new messages.')
                 ->end()
         ;

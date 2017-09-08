@@ -58,7 +58,7 @@ class FsConnectionFactoryConfigTest extends TestCase
                 'path' => sys_get_temp_dir().'/enqueue',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
-                'polling_interval' => '1000',
+                'polling_interval' => 100,
             ],
         ];
 
@@ -68,7 +68,7 @@ class FsConnectionFactoryConfigTest extends TestCase
                 'path' => sys_get_temp_dir().'/enqueue',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
-                'polling_interval' => '1000',
+                'polling_interval' => 100,
             ],
         ];
 
@@ -78,7 +78,7 @@ class FsConnectionFactoryConfigTest extends TestCase
                 'path' => sys_get_temp_dir().'/enqueue',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
-                'polling_interval' => '1000',
+                'polling_interval' => 100,
             ],
         ];
 
@@ -88,7 +88,7 @@ class FsConnectionFactoryConfigTest extends TestCase
                 'path' => sys_get_temp_dir().'/enqueue',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
-                'polling_interval' => '1000',
+                'polling_interval' => 100,
             ],
         ];
 
@@ -98,7 +98,7 @@ class FsConnectionFactoryConfigTest extends TestCase
                 'path' => '/foo/bar/baz',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
-                'polling_interval' => '1000',
+                'polling_interval' => 100,
             ],
         ];
 
@@ -108,7 +108,7 @@ class FsConnectionFactoryConfigTest extends TestCase
                 'path' => '/foo/bar/baz',
                 'pre_fetch_count' => 1,
                 'chmod' => 0600,
-                'polling_interval' => '1000',
+                'polling_interval' => 100,
             ],
         ];
 
@@ -118,7 +118,7 @@ class FsConnectionFactoryConfigTest extends TestCase
                 'path' => '/foo/bar/baz',
                 'pre_fetch_count' => 100,
                 'chmod' => 0666,
-                'polling_interval' => '1000',
+                'polling_interval' => 100,
             ],
         ];
     }
