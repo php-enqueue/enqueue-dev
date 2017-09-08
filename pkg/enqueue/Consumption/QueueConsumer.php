@@ -64,6 +64,38 @@ class QueueConsumer
     }
 
     /**
+     * @param int $timeout
+     */
+    public function setIdleTimeout($timeout)
+    {
+        $this->idleTimeout = (int) $timeout;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIdleTimeout()
+    {
+        return $this->idleTimeout;
+    }
+
+    /**
+     * @param int $timeout
+     */
+    public function setReceiveTimeout($timeout)
+    {
+        $this->receiveTimeout = (int) $timeout;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReceiveTimeout()
+    {
+        return $this->receiveTimeout;
+    }
+
+    /**
      * @return PsrContext
      */
     public function getPsrContext()

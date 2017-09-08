@@ -423,4 +423,25 @@ class ConfigurationTest extends TestCase
             ],
         ], $config);
     }
+
+    public function testShouldAllowConfigureConsumption()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+            'consumption' => [
+                'idle_timeout' => 123,
+                'receive_timeout' => 456,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'consumption' => [
+                'idle_timeout' => 123,
+                'receive_timeout' => 456,
+            ],
+        ], $config);
+    }
 }

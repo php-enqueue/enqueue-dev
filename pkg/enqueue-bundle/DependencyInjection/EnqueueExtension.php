@@ -110,6 +110,19 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             }
         }
 
+        // configure queue consumer
+        $container->getDefinition('enqueue.consumption.queue_consumer')
+            ->setArgument(2, $config['consumption']['idle_timeout'])
+            ->setArgument(3, $config['consumption']['receive_timeout'])
+        ;
+
+        if ($container->hasDefinition('enqueue.client.queue_consumer')) {
+            $container->getDefinition('enqueue.client.queue_consumer')
+                ->setArgument(2, $config['consumption']['idle_timeout'])
+                ->setArgument(3, $config['consumption']['receive_timeout'])
+            ;
+        }
+
         if ($config['job']) {
             if (false == class_exists(Job::class)) {
                 throw new \LogicException('Seems "enqueue/job-queue" is not installed. Please fix this issue.');

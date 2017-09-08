@@ -20,6 +20,7 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
 {
     use ContainerAwareTrait;
     use LimitsExtensionsCommandTrait;
+    use QueueConsumerOptionsCommandTrait;
 
     /**
      * @var QueueConsumer
@@ -44,6 +45,7 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
     protected function configure()
     {
         $this->configureLimitsExtensions();
+        $this->configureQueueConsumerOptions();
 
         $this
             ->setName('enqueue:transport:consume')
@@ -60,6 +62,8 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->setQueueConsumerOptions($this->consumer, $input);
+
         /** @var PsrProcessor $processor */
         $processor = $this->container->get($input->getArgument('processor-service'));
         if (false == $processor instanceof  PsrProcessor) {

@@ -9,6 +9,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Symfony\Consumption\LimitsExtensionsCommandTrait;
+use Enqueue\Symfony\Consumption\QueueConsumerOptionsCommandTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +20,7 @@ class ConsumeMessagesCommand extends Command
 {
     use LimitsExtensionsCommandTrait;
     use SetupBrokerExtensionCommandTrait;
+    use QueueConsumerOptionsCommandTrait;
 
     /**
      * @var QueueConsumer
@@ -67,6 +69,7 @@ class ConsumeMessagesCommand extends Command
     {
         $this->configureLimitsExtensions();
         $this->configureSetupBrokerExtension();
+        $this->configureQueueConsumerOptions();
 
         $this
             ->setName('enqueue:consume')
@@ -83,6 +86,8 @@ class ConsumeMessagesCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->setQueueConsumerOptions($this->consumer, $input);
+
         $queueMetas = [];
         if ($clientQueueNames = $input->getArgument('client-queue-names')) {
             foreach ($clientQueueNames as $clientQueueName) {
