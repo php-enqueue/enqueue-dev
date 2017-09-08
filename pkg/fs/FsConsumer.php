@@ -29,6 +29,11 @@ class FsConsumer implements PsrConsumer
     private $preFetchedMessages;
 
     /**
+     * @var int microseconds
+     */
+    private $pollingInterval = 100000;
+
+    /**
      * @param FsContext     $context
      * @param FsDestination $destination
      * @param int           $preFetchCount
@@ -40,6 +45,26 @@ class FsConsumer implements PsrConsumer
         $this->preFetchCount = $preFetchCount;
 
         $this->preFetchedMessages = [];
+    }
+
+    /**
+     * Set polling interval in milliseconds.
+     *
+     * @param int $msec
+     */
+    public function setPollingInterval($msec)
+    {
+        $this->pollingInterval = $msec * 1000;
+    }
+
+    /**
+     * Get polling interval in milliseconds.
+     *
+     * @return int
+     */
+    public function getPollingInterval()
+    {
+        return (int) $this->pollingInterval / 1000;
     }
 
     /**
@@ -59,13 +84,25 @@ class FsConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        $end = microtime(true) + ($timeout / 1000);
-        while (0 === $timeout || microtime(true) < $end) {
-            if ($message = $this->receiveNoWait()) {
+        $timeout /= 1000;
+        $startAt = microtime(true);
+
+        while (true) {
+            $message = $this->receiveNoWait();
+
+            if ($message) {
                 return $message;
             }
 
-            usleep(100);
+            if ($timeout && (microtime(true) - $startAt) >= $timeout) {
+                return;
+            }
+
+            usleep($this->pollingInterval);
+
+            if ($timeout && (microtime(true) - $startAt) >= $timeout) {
+                return;
+            }
         }
     }
 

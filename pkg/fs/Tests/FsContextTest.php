@@ -233,4 +233,18 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
 
         unlink($tmpFile);
     }
+
+    public function testShouldCreateMessageConsumerAndSetPollingInterval()
+    {
+        $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
+
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 123456);
+
+        $queue = $context->createQueue($tmpFile->getFilename());
+
+        $consumer = $context->createConsumer($queue);
+
+        $this->assertInstanceOf(FsConsumer::class, $consumer);
+        $this->assertEquals(123456, $consumer->getPollingInterval());
+    }
 }
