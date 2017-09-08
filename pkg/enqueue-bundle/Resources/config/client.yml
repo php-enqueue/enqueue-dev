@@ -85,6 +85,8 @@ services:
         arguments:
             - '@enqueue.transport.context'
             - '@enqueue.consumption.extensions'
+            - ~
+            - ~
 
     enqueue.client.consume_messages_command:
         class: 'Enqueue\Symfony\Client\ConsumeMessagesCommand'
