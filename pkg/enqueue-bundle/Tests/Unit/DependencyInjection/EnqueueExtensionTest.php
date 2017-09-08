@@ -546,8 +546,8 @@ class EnqueueExtensionTest extends TestCase
             'transport' => [
             ],
             'consumption' => [
-                'idle-timeout' => 123,
-                'receive-timeout' => 456,
+                'idle_timeout' => 123,
+                'receive_timeout' => 456,
             ],
         ]], $container);
 
