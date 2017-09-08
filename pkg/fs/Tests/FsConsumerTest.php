@@ -64,6 +64,14 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
         $consumer->reject(new FsMessage());
     }
 
+    public function testCouldSetAndGetPollingInterval()
+    {
+        $consumer = new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 123);
+        $consumer->setPollingInterval(123456);
+
+        $this->assertEquals(123456, $consumer->getPollingInterval());
+    }
+
     public function testShouldSendSameMessageToDestinationOnReQueue()
     {
         $message = new FsMessage();

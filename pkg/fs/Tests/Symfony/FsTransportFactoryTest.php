@@ -52,6 +52,7 @@ class FsTransportFactoryTest extends TestCase
             'path' => sys_get_temp_dir(),
             'pre_fetch_count' => 1,
             'chmod' => 0600,
+            'polling_interval' => 1000,
         ], $config);
     }
 
@@ -69,6 +70,7 @@ class FsTransportFactoryTest extends TestCase
             'dsn' => 'fileDSN',
             'pre_fetch_count' => 1,
             'chmod' => 0600,
+            'polling_interval' => 1000,
         ], $config);
     }
 
@@ -82,6 +84,7 @@ class FsTransportFactoryTest extends TestCase
             'path' => sys_get_temp_dir(),
             'pre_fetch_count' => 1,
             'chmod' => 0600,
+            'polling_interval' => 1000,
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
@@ -91,6 +94,7 @@ class FsTransportFactoryTest extends TestCase
             'path' => sys_get_temp_dir(),
             'pre_fetch_count' => 1,
             'chmod' => 0600,
+            'polling_interval' => 1000,
         ]], $factory->getArguments());
     }
 
@@ -120,6 +124,7 @@ class FsTransportFactoryTest extends TestCase
             'path' => sys_get_temp_dir(),
             'pre_fetch_count' => 1,
             'chmod' => 0600,
+            'polling_interval' => 1000,
         ]);
 
         $this->assertEquals('enqueue.transport.fs.context', $serviceId);

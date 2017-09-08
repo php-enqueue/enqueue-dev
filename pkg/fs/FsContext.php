@@ -33,11 +33,17 @@ class FsContext implements PsrContext
     private $lockHandlers;
 
     /**
+     * @var null
+     */
+    private $pollingInterval;
+
+    /**
      * @param string $storeDir
      * @param int    $preFetchCount
      * @param int    $chmod
+     * @param null   $pollingInterval
      */
-    public function __construct($storeDir, $preFetchCount, $chmod)
+    public function __construct($storeDir, $preFetchCount, $chmod, $pollingInterval = null)
     {
         $fs = new Filesystem();
         $fs->mkdir($storeDir);
@@ -45,6 +51,7 @@ class FsContext implements PsrContext
         $this->storeDir = $storeDir;
         $this->preFetchCount = $preFetchCount;
         $this->chmod = $chmod;
+        $this->pollingInterval = $pollingInterval;
 
         $this->lockHandlers = [];
     }
@@ -160,7 +167,13 @@ class FsContext implements PsrContext
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
-        return new FsConsumer($this, $destination, $this->preFetchCount);
+        $consumer = new FsConsumer($this, $destination, $this->preFetchCount);
+
+        if ($this->pollingInterval) {
+            $consumer->setPollingInterval($this->pollingInterval);
+        }
+
+        return $consumer;
     }
 
     public function close()

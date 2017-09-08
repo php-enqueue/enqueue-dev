@@ -18,6 +18,7 @@ class FsConnectionFactory implements PsrConnectionFactory
      *   'path' => 'the directory where all queue\topic files remain. For example /home/foo/enqueue',
      *   'pre_fetch_count' => 'Integer. Defines how many messages to fetch from the file.',
      *   'chmod' => 'Defines a mode the files are created with',
+     *   'polling_interval' => 'How often query for new messages, default 1000 (milliseconds)',
      * ]
      *
      * or
@@ -48,7 +49,12 @@ class FsConnectionFactory implements PsrConnectionFactory
      */
     public function createContext()
     {
-        return new FsContext($this->config['path'], $this->config['pre_fetch_count'], $this->config['chmod']);
+        return new FsContext(
+            $this->config['path'],
+            $this->config['pre_fetch_count'],
+            $this->config['chmod'],
+            $this->config['polling_interval']
+        );
     }
 
     /**
@@ -99,6 +105,7 @@ class FsConnectionFactory implements PsrConnectionFactory
             'path' => null,
             'pre_fetch_count' => 1,
             'chmod' => 0600,
+            'polling_interval' => 1000,
         ];
     }
 }
