@@ -92,6 +92,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setHeader('content_type', 'ContentType');
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setPriority(2);
         $transportMessage->setDelay(12345);
 
         $driver = new DbalDriver(
