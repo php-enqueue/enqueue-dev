@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.7.11](https://github.com/php-enqueue/enqueue-dev/tree/0.7.11) (2017-09-11)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.10...0.7.11)
+
+- Redis consumer has very high resource usage [\#191](https://github.com/php-enqueue/enqueue-dev/issues/191)
+
+- Queue Consumer Options [\#193](https://github.com/php-enqueue/enqueue-dev/pull/193) ([ASKozienko](https://github.com/ASKozienko))
+- \[FS\] Polling Interval [\#192](https://github.com/php-enqueue/enqueue-dev/pull/192) ([ASKozienko](https://github.com/ASKozienko))
+- \[Symfony\] added toolbar info in profiler [\#190](https://github.com/php-enqueue/enqueue-dev/pull/190) ([Miliooo](https://github.com/Miliooo))
+- docs cli\_commands.md fix [\#189](https://github.com/php-enqueue/enqueue-dev/pull/189) ([Miliooo](https://github.com/Miliooo))
+
 ## [0.7.10](https://github.com/php-enqueue/enqueue-dev/tree/0.7.10) (2017-08-31)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.9...0.7.10)
 
