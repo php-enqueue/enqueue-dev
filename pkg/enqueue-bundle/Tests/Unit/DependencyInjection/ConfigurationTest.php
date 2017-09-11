@@ -423,4 +423,42 @@ class ConfigurationTest extends TestCase
             ],
         ], $config);
     }
+
+    public function testShouldSetDefaultConfigurationForConsumption()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+        ]]);
+
+        $this->assertArraySubset([
+            'consumption' => [
+                'idle_timeout' => 0,
+                'receive_timeout' => 100,
+            ],
+        ], $config);
+    }
+
+    public function testShouldAllowConfigureConsumption()
+    {
+        $configuration = new Configuration([]);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [],
+            'consumption' => [
+                'idle_timeout' => 123,
+                'receive_timeout' => 456,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'consumption' => [
+                'idle_timeout' => 123,
+                'receive_timeout' => 456,
+            ],
+        ], $config);
+    }
 }

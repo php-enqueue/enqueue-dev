@@ -16,6 +16,7 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
     use LimitsExtensionsCommandTrait;
+    use QueueConsumerOptionsCommandTrait;
 
     /**
      * @var QueueConsumer
@@ -38,6 +39,7 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
     protected function configure()
     {
         $this->configureLimitsExtensions();
+        $this->configureQueueConsumerOptions();
 
         $this
             ->setName('enqueue:transport:consume')
@@ -51,6 +53,8 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->setQueueConsumerOptions($this->consumer, $input);
+
         $extensions = $this->getLimitsExtensions($input, $output);
         array_unshift($extensions, new LoggerExtension(new ConsoleLogger($output)));
 

@@ -298,6 +298,13 @@ enqueue:
         router_processor:     enqueue.client.router_processor
         default_processor_queue: default
         redelivered_delay_time: 0
+    consumption:
+
+        # the time in milliseconds queue consumer waits if no message received
+        idle_timeout:         0
+
+        # the time in milliseconds queue consumer waits for a message (100 ms by default)
+        receive_timeout:      100
     job:                  false
     async_events:
         enabled:              false
@@ -306,6 +313,8 @@ enqueue:
         doctrine_clear_identity_map_extension: false
         signal_extension:     true
         reply_extension:      true
+
+
 ```
 
 [back to index](../index.md)

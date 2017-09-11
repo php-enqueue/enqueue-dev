@@ -535,4 +535,28 @@ class EnqueueExtensionTest extends TestCase
 
         $this->assertSame([], $container->getExtensionConfig('doctrine'));
     }
+
+    public function testShouldConfigureQueueConsumer()
+    {
+        $container = new ContainerBuilder();
+
+        $extension = new EnqueueExtension();
+        $extension->load([[
+            'client' => [],
+            'transport' => [
+            ],
+            'consumption' => [
+                'idle_timeout' => 123,
+                'receive_timeout' => 456,
+            ],
+        ]], $container);
+
+        $def = $container->getDefinition('enqueue.consumption.queue_consumer');
+        $this->assertSame(123, $def->getArgument(2));
+        $this->assertSame(456, $def->getArgument(3));
+
+        $def = $container->getDefinition('enqueue.client.queue_consumer');
+        $this->assertSame(123, $def->getArgument(2));
+        $this->assertSame(456, $def->getArgument(3));
+    }
 }
