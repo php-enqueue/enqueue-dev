@@ -172,8 +172,13 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnSelf())
         ;
         $queryBuilder
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('orderBy')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->exactly(1))
+            ->method('addOrderBy')
             ->will($this->returnSelf())
         ;
 
@@ -264,8 +269,13 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnSelf())
         ;
         $queryBuilder
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('orderBy')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->exactly(1))
+            ->method('addOrderBy')
             ->will($this->returnSelf())
         ;
 
@@ -352,8 +362,13 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnSelf())
         ;
         $queryBuilder
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('orderBy')
+            ->will($this->returnSelf())
+        ;
+        $queryBuilder
+            ->expects($this->exactly(1))
+            ->method('addOrderBy')
             ->will($this->returnSelf())
         ;
 

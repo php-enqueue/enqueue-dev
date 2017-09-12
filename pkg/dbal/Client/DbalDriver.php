@@ -31,6 +31,17 @@ class DbalDriver implements DriverInterface
     private $queueMetaRegistry;
 
     /**
+     * @var array
+     */
+    private static $priorityMap = [
+        MessagePriority::VERY_LOW => 0,
+        MessagePriority::LOW => 1,
+        MessagePriority::NORMAL => 2,
+        MessagePriority::HIGH => 3,
+        MessagePriority::VERY_HIGH => 4,
+    ];
+
+    /**
      * @param DbalContext       $context
      * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
@@ -63,6 +74,9 @@ class DbalDriver implements DriverInterface
         $transportMessage->setDelay($message->getDelay());
         $transportMessage->setReplyTo($message->getReplyTo());
         $transportMessage->setCorrelationId($message->getCorrelationId());
+        if (array_key_exists($message->getPriority(), self::$priorityMap)) {
+            $transportMessage->setPriority(self::$priorityMap[$message->getPriority()]);
+        }
 
         return $transportMessage;
     }
@@ -83,10 +97,15 @@ class DbalDriver implements DriverInterface
         $clientMessage->setContentType($message->getHeader('content_type'));
         $clientMessage->setMessageId($message->getMessageId());
         $clientMessage->setTimestamp($message->getTimestamp());
-        $clientMessage->setPriority(MessagePriority::NORMAL);
         $clientMessage->setDelay($message->getDelay());
         $clientMessage->setReplyTo($message->getReplyTo());
         $clientMessage->setCorrelationId($message->getCorrelationId());
+
+        $priorityMap = array_flip(self::$priorityMap);
+        $priority = array_key_exists($message->getPriority(), $priorityMap) ?
+            $priorityMap[$message->getPriority()] :
+            MessagePriority::NORMAL;
+        $clientMessage->setPriority($priority);
 
         return $clientMessage;
     }
@@ -155,5 +174,13 @@ class DbalDriver implements DriverInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPriorityMap()
+    {
+        return self::$priorityMap;
     }
 }
