@@ -2,11 +2,11 @@
 
 namespace Enqueue\AmqpExt;
 
-use Interop\Amqp\AmqpConsumer;
-use Interop\Amqp\AmqpDestination;
-use Interop\Amqp\AmqpMessage;
-use Interop\Amqp\AmqpQueue;
-use Interop\Amqp\AmqpTopic;
+use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
+use Interop\Amqp\AmqpDestination as InteropAmqpDestination;
+use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
+use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
+use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
 
 class Flags
 {
@@ -19,11 +19,11 @@ class Flags
     {
         $flags = AMQP_NOPARAM;
 
-        if ($interop & AmqpMessage::FLAG_MANDATORY) {
+        if ($interop & InteropAmqpMessage::FLAG_MANDATORY) {
             $flags |= AMQP_MANDATORY;
         }
 
-        if ($interop & AmqpMessage::FLAG_IMMEDIATE) {
+        if ($interop & InteropAmqpMessage::FLAG_IMMEDIATE) {
             $flags |= AMQP_IMMEDIATE;
         }
 
@@ -41,7 +41,7 @@ class Flags
 
         $flags |= static::convertDestinationFlags($interop);
 
-        if ($interop & AmqpTopic::FLAG_INTERNAL) {
+        if ($interop & InteropAmqpTopic::FLAG_INTERNAL) {
             $flags |= AMQP_INTERNAL;
         }
 
@@ -59,7 +59,7 @@ class Flags
 
         $flags |= static::convertDestinationFlags($interop);
 
-        if ($interop & AmqpQueue::FLAG_EXCLUSIVE) {
+        if ($interop & InteropAmqpQueue::FLAG_EXCLUSIVE) {
             $flags |= AMQP_EXCLUSIVE;
         }
 
@@ -75,19 +75,19 @@ class Flags
     {
         $flags = AMQP_NOPARAM;
 
-        if ($interop & AmqpDestination::FLAG_PASSIVE) {
+        if ($interop & InteropAmqpDestination::FLAG_PASSIVE) {
             $flags |= AMQP_PASSIVE;
         }
 
-        if ($interop & AmqpDestination::FLAG_DURABLE) {
+        if ($interop & InteropAmqpDestination::FLAG_DURABLE) {
             $flags |= AMQP_DURABLE;
         }
 
-        if ($interop & AmqpDestination::FLAG_AUTODELETE) {
+        if ($interop & InteropAmqpDestination::FLAG_AUTODELETE) {
             $flags |= AMQP_AUTODELETE;
         }
 
-        if ($interop & AmqpDestination::FLAG_NOWAIT) {
+        if ($interop & InteropAmqpDestination::FLAG_NOWAIT) {
             $flags |= AMQP_NOWAIT;
         }
 
@@ -103,19 +103,19 @@ class Flags
     {
         $flags = AMQP_NOPARAM;
 
-        if ($interop & AmqpConsumer::FLAG_NOLOCAL) {
+        if ($interop & InteropAmqpConsumer::FLAG_NOLOCAL) {
             $flags |= AMQP_NOLOCAL;
         }
 
-        if ($interop & AmqpConsumer::FLAG_NOACK) {
+        if ($interop & InteropAmqpConsumer::FLAG_NOACK) {
             $flags |= AMQP_AUTOACK;
         }
 
-        if ($interop & AmqpConsumer::FLAG_EXCLUSIVE) {
+        if ($interop & InteropAmqpConsumer::FLAG_EXCLUSIVE) {
             $flags |= AMQP_EXCLUSIVE;
         }
 
-        if ($interop & AmqpConsumer::FLAG_NOWAIT) {
+        if ($interop & InteropAmqpConsumer::FLAG_NOWAIT) {
             $flags |= AMQP_NOWAIT;
         }
 
