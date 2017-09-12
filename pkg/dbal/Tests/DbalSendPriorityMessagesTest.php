@@ -44,7 +44,7 @@ class DbalSendPriorityMessagesTest extends TestCase
      */
     protected function createContext()
     {
-        $factory =  new DbalConnectionFactory(
+        $factory = new DbalConnectionFactory(
             [
                 'lazy' => true,
                 'connection' => [
@@ -54,7 +54,7 @@ class DbalSendPriorityMessagesTest extends TestCase
                     'host' => getenv('SYMFONY__DB__HOST'),
                     'port' => getenv('SYMFONY__DB__PORT'),
                     'driver' => getenv('SYMFONY__DB__DRIVER'),
-                ]
+                ],
             ]
         );
 
@@ -76,7 +76,8 @@ class DbalSendPriorityMessagesTest extends TestCase
 
     /**
      * @param PsrContext $context
-     * @param int $priority
+     * @param int        $priority
+     *
      * @return DbalMessage
      */
     protected function createMessage(PsrContext $context, $priority)
