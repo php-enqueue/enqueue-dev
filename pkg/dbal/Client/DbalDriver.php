@@ -107,7 +107,6 @@ class DbalDriver implements DriverInterface
             MessagePriority::NORMAL;
         $clientMessage->setPriority($priority);
 
-
         return $clientMessage;
     }
 
