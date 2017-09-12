@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.7.12](https://github.com/php-enqueue/enqueue-dev/tree/0.7.12) (2017-09-12)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.11...0.7.12)
+
+- fixed NS [\#194](https://github.com/php-enqueue/enqueue-dev/pull/194) ([chdeliens](https://github.com/chdeliens))
+
 ## [0.7.11](https://github.com/php-enqueue/enqueue-dev/tree/0.7.11) (2017-09-11)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.10...0.7.11)
 
