@@ -32,9 +32,14 @@ class DbalMessage implements PsrMessage
     private $priority;
 
     /**
-     * @var int
+     * @var int milliseconds
      */
-    private $delay;
+    private $deliveryDelay;
+
+    /**
+     * @var int milliseconds
+     */
+    private $timeToLive;
 
     /**
      * @param string $body
@@ -48,7 +53,7 @@ class DbalMessage implements PsrMessage
         $this->headers = $headers;
         $this->redelivered = false;
         $this->priority = 0;
-        $this->delay = null;
+        $this->deliveryDelay = null;
     }
 
     /**
@@ -182,19 +187,37 @@ class DbalMessage implements PsrMessage
     /**
      * @return int
      */
-    public function getDelay()
+    public function getDeliveryDelay()
     {
-        return $this->delay;
+        return $this->deliveryDelay;
     }
 
     /**
-     * Set delay in seconds.
+     * Set delay in milliseconds.
      *
-     * @param int $delay
+     * @param int $deliveryDelay
      */
-    public function setDelay($delay)
+    public function setDeliveryDelay($deliveryDelay)
     {
-        $this->delay = $delay;
+        $this->deliveryDelay = $deliveryDelay;
+    }
+
+    /**
+     * @return int|float|null
+     */
+    public function getTimeToLive()
+    {
+        return $this->timeToLive;
+    }
+
+    /**
+     * Set time to live in milliseconds.
+     *
+     * @param int|float|null $timeToLive
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        $this->timeToLive = $timeToLive;
     }
 
     /**

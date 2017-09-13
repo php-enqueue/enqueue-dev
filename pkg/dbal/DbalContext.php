@@ -56,7 +56,7 @@ class DbalContext implements PsrContext
      *
      * @return DbalMessage
      */
-    public function createMessage($body = null, array $properties = [], array $headers = [])
+    public function createMessage($body = '', array $properties = [], array $headers = [])
     {
         $message = new DbalMessage();
         $message->setBody($body);
@@ -170,8 +170,13 @@ class DbalContext implements PsrContext
             return;
         }
 
+        if ($this->getDbalConnection()->getDatabasePlatform()->hasNativeGuidType()) {
+            throw new \LogicException('The platform does not support UUIDs natively');
+        }
+
         $table = new Table($this->getTableName());
-        $table->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
+        $table->addColumn('id', 'guid');
+        $table->addColumn('published_at', 'bigint');
         $table->addColumn('body', 'text', ['notnull' => false]);
         $table->addColumn('headers', 'text', ['notnull' => false]);
         $table->addColumn('properties', 'text', ['notnull' => false]);
@@ -179,8 +184,10 @@ class DbalContext implements PsrContext
         $table->addColumn('queue', 'string');
         $table->addColumn('priority', 'smallint');
         $table->addColumn('delayed_until', 'integer', ['notnull' => false]);
+        $table->addColumn('time_to_live', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['published_at']);
         $table->addIndex(['queue']);
         $table->addIndex(['priority']);
         $table->addIndex(['delayed_until']);
