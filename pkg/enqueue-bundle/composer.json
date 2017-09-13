@@ -7,23 +7,23 @@
     "require": {
         "php": ">=5.6",
         "symfony/framework-bundle": "^2.8|^3",
-        "enqueue/enqueue": "^0.7@dev",
-        "enqueue/null": "^0.7@dev",
-        "enqueue/async-event-dispatcher": "^0.7@dev"
+        "enqueue/enqueue": "^0.8@dev",
+        "enqueue/null": "^0.8@dev",
+        "enqueue/async-event-dispatcher": "^0.8@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",
-        "enqueue/stomp": "^0.7@dev",
-        "enqueue/amqp-ext": "^0.7@dev",
+        "enqueue/stomp": "^0.8@dev",
+        "enqueue/amqp-ext": "^0.8@dev",
         "php-amqplib/php-amqplib": "^2.7@dev",
-        "enqueue/amqp-lib": "^0.7@dev",
-        "enqueue/amqp-bunny": "^0.7@dev",
-        "enqueue/job-queue": "^0.7@dev",
-        "enqueue/fs": "^0.7@dev",
-        "enqueue/redis": "^0.7@dev",
-        "enqueue/dbal": "^0.7@dev",
-        "enqueue/sqs": "^0.7@dev",
-        "enqueue/test": "^0.7@dev",
+        "enqueue/amqp-lib": "^0.8@dev",
+        "enqueue/amqp-bunny": "^0.8@dev",
+        "enqueue/job-queue": "^0.8@dev",
+        "enqueue/fs": "^0.8@dev",
+        "enqueue/redis": "^0.8@dev",
+        "enqueue/dbal": "^0.8@dev",
+        "enqueue/sqs": "^0.8@dev",
+        "enqueue/test": "^0.8@dev",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/monolog-bundle": "^2.8|^3",
         "symfony/browser-kit": "^2.8|^3",
@@ -37,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.7.x-dev"
+            "dev-master": "0.8.x-dev"
         }
     }
 }

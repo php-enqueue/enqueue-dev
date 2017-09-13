@@ -11,9 +11,9 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
-        "enqueue/test": "^0.7@dev",
-        "enqueue/enqueue": "^0.7@dev",
-        "enqueue/null": "^0.7@dev",
+        "enqueue/test": "^0.8@dev",
+        "enqueue/enqueue": "^0.8@dev",
+        "enqueue/null": "^0.8@dev",
         "queue-interop/queue-spec": "^0.5@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
@@ -30,7 +30,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.7.x-dev"
+            "dev-master": "0.8.x-dev"
         }
     }
 }
