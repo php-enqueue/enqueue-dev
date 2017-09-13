@@ -1,8 +1,8 @@
 <?php
 
-namespace Interop\Queue\Spec;
+namespace Enqueue\Dbal\Tests\Spec;
 
-use Enqueue\Dbal\Tests\Spec\CreateDbalContextTrait;
+use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
 /**
  * @group functional
