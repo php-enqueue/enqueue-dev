@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.7.13](https://github.com/php-enqueue/enqueue-dev/tree/0.7.13) (2017-09-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.12...0.7.13)
+
+- \[dbal\] add priority support on transport level. [\#198](https://github.com/php-enqueue/enqueue-dev/pull/198) ([makasim](https://github.com/makasim))
+
+- Topic subscriber doesn't work with 2 separate apps [\#196](https://github.com/php-enqueue/enqueue-dev/issues/196)
+- \\[dbal\\] add priority support on transport level. [\#198](https://github.com/php-enqueue/enqueue-dev/pull/198) ([makasim](https://github.com/makasim))
+- Fixed losing message priority for dbal driver [\#195](https://github.com/php-enqueue/enqueue-dev/pull/195) ([vtsykun](https://github.com/vtsykun))
+
+- \[bundle\] add tests for the case where topic subscriber does not def p… [\#197](https://github.com/php-enqueue/enqueue-dev/pull/197) ([makasim](https://github.com/makasim))
+
 ## [0.7.12](https://github.com/php-enqueue/enqueue-dev/tree/0.7.12) (2017-09-12)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.11...0.7.12)
 
