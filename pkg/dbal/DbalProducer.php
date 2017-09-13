@@ -14,6 +14,11 @@ use Interop\Queue\PsrProducer;
 class DbalProducer implements PsrProducer
 {
     /**
+     * @var int|null
+     */
+    private $priority;
+
+    /**
      * @var DbalContext
      */
     private $context;
@@ -29,14 +34,19 @@ class DbalProducer implements PsrProducer
     /**
      * {@inheritdoc}
      *
-     * @param PsrDestination $destination
-     * @param PsrMessage     $message
+     * @param DbalDestination $destination
+     * @param DbalMessage     $message
      *
      * @throws Exception
      */
     public function send(PsrDestination $destination, PsrMessage $message)
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
+        InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
+
+        if (null !== $this->priority && null === $message->getPriority()) {
+            $message->setPriority($this->priority);
+        }
 
         $body = $message->getBody();
         if (is_scalar($body) || null === $body) {
@@ -111,11 +121,9 @@ class DbalProducer implements PsrProducer
      */
     public function setPriority($priority)
     {
-        if (null === $priority) {
-            return;
-        }
+        $this->priority = $priority;
 
-        throw new \LogicException('Not implemented');
+        return $this;
     }
 
     /**
@@ -123,7 +131,7 @@ class DbalProducer implements PsrProducer
      */
     public function getPriority()
     {
-        return null;
+        return $this->priority;
     }
 
     /**
