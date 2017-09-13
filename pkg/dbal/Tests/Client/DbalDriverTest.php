@@ -93,7 +93,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
         $transportMessage->setPriority(2);
-        $transportMessage->setDelay(12345);
+        $transportMessage->setDeliveryDelay(12345);
 
         $driver = new DbalDriver(
             $this->createPsrContextMock(),

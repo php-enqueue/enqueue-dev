@@ -8,7 +8,6 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -52,72 +51,6 @@ class DbalProducerTest extends \PHPUnit_Framework_TestCase
         $producer = new DbalProducer($this->createContextMock());
 
         $producer->send(new NotSupportedDestination1(), new DbalMessage());
-    }
-
-    public function testShouldThrowIfInsertMessageFailed()
-    {
-        $dbal = $this->createConnectionMock();
-        $dbal
-            ->expects($this->once())
-            ->method('insert')
-            ->will($this->throwException(new \Exception('error message')))
-        ;
-
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('getDbalConnection')
-            ->will($this->returnValue($dbal))
-        ;
-
-        $destination = new DbalDestination('queue-name');
-        $message = new DbalMessage();
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('The transport fails to send the message due to some internal error.');
-
-        $producer = new DbalProducer($context);
-        $producer->send($destination, $message);
-    }
-
-    public function testShouldSendMessage()
-    {
-        $expectedMessage = [
-            'body' => 'body',
-            'headers' => '{"hkey":"hvalue"}',
-            'properties' => '{"pkey":"pvalue"}',
-            'priority' => 123,
-            'queue' => 'queue-name',
-        ];
-
-        $dbal = $this->createConnectionMock();
-        $dbal
-            ->expects($this->once())
-            ->method('insert')
-            ->with('tableName', $expectedMessage)
-        ;
-
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('getDbalConnection')
-            ->will($this->returnValue($dbal))
-        ;
-        $context
-            ->expects($this->once())
-            ->method('getTableName')
-            ->will($this->returnValue('tableName'))
-        ;
-
-        $destination = new DbalDestination('queue-name');
-        $message = new DbalMessage();
-        $message->setBody('body');
-        $message->setHeaders(['hkey' => 'hvalue']);
-        $message->setProperties(['pkey' => 'pvalue']);
-        $message->setPriority(123);
-
-        $producer = new DbalProducer($context);
-        $producer->send($destination, $message);
     }
 
     /**
