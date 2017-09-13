@@ -10,6 +10,7 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyCommandNameS
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\WithoutProcessorNameTopicSubscriber;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -115,6 +116,28 @@ class BuildProcessorRegistryPassTest extends TestCase
         $container = $this->createContainerBuilder();
 
         $processor = new Definition(OnlyTopicNameTopicSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-id', $processor);
+
+        $processorRegistry = new Definition();
+        $processorRegistry->setArguments([]);
+        $container->setDefinition('enqueue.client.processor_registry', $processorRegistry);
+
+        $pass = new BuildProcessorRegistryPass();
+        $pass->process($container);
+
+        $expectedValue = [
+            'processor-id' => 'processor-id',
+        ];
+
+        $this->assertEquals($expectedValue, $processorRegistry->getArgument(0));
+    }
+
+    public function testShouldBuildRouteFromWithoutProcessorNameTopicSubscriber()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(WithoutProcessorNameTopicSubscriber::class);
         $processor->addTag('enqueue.client.processor');
         $container->setDefinition('processor-id', $processor);
 

@@ -9,6 +9,7 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTop
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
+use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\WithoutProcessorNameTopicSubscriber;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -207,6 +208,30 @@ class BuildClientRoutingPassTest extends TestCase
         $expectedRoutes = [
             'topic-subscriber-name' => [
                 ['processor-service-id', 'subscriber-queue-name'],
+            ],
+        ];
+
+        $this->assertEquals($expectedRoutes, $router->getArgument(1));
+    }
+
+    public function testShouldBuildRouteFromWithoutProcessorNameTopicSubscriber()
+    {
+        $container = $this->createContainerBuilder();
+
+        $processor = new Definition(WithoutProcessorNameTopicSubscriber::class);
+        $processor->addTag('enqueue.client.processor');
+        $container->setDefinition('processor-service-id', $processor);
+
+        $router = new Definition();
+        $router->setArguments([null, null, null]);
+        $container->setDefinition('enqueue.client.router_processor', $router);
+
+        $pass = new BuildClientRoutingPass();
+        $pass->process($container);
+
+        $expectedRoutes = [
+            'without-processor-name' => [
+                ['processor-service-id', 'a_queue_name'],
             ],
         ];
 
