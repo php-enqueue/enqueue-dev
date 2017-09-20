@@ -119,6 +119,15 @@ class FsConsumer implements PsrConsumer
             $count = $this->preFetchCount;
             while ($count) {
                 $frame = $this->readFrame($file, 1);
+
+                //guards
+                if ($frame && false == ('|' == $frame[0] || ' ' == $frame[0])) {
+                    throw new \LogicException(sprintf('The frame could start from either " " or "|". The malformed frame starts with "%s".', $frame[0]));
+                }
+                if (0 !== $reminder = strlen($frame) % 64) {
+                    throw new \LogicException(sprintf('The frame size is "%d" and it must divide exactly to 64 but it leaves a reminder "%d".', strlen($frame), $reminder));
+                }
+
                 ftruncate($file, fstat($file)['size'] - strlen($frame));
                 rewind($file);
 
@@ -212,7 +221,12 @@ class FsConsumer implements PsrConsumer
         $previousFrame = $this->readFrame($file, $frameNumber + 1);
 
         if ('|' === substr($previousFrame, -1) && '{' === $frame[0]) {
-            return '|'.$frame;
+            $matched = [];
+            if (false === preg_match('/\ *?\|$/', $previousFrame, $matched)) {
+                throw new \LogicException('Something went completely wrong.');
+            }
+
+            return $matched[0].$frame;
         }
 
         return $previousFrame.$frame;
