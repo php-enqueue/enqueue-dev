@@ -4,6 +4,7 @@ namespace Enqueue\Fs\Tests\Functional;
 
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
+use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -69,6 +70,7 @@ class FsConsumerTest extends TestCase
 
     /**
      * @group bug
+     * @group bug170
      */
     public function testShouldNotFailOnSpecificMessageSize()
     {
@@ -90,5 +92,83 @@ class FsConsumerTest extends TestCase
 
         $message = $consumer->receiveNoWait();
         $this->assertNull($message);
+    }
+
+    /**
+     * @group bug
+     * @group bug170
+     */
+    public function testShouldNotCorruptFrameSize()
+    {
+        $context = $this->fsContext;
+        $queue = $context->createQueue('fs_test_queue');
+        $context->purge($queue);
+
+        $consumer = $context->createConsumer($queue);
+        $producer = $context->createProducer();
+
+        $producer->send($queue, $context->createMessage(str_repeat('a', 23)));
+        $producer->send($queue, $context->createMessage(str_repeat('b', 24)));
+
+        $message = $consumer->receiveNoWait();
+        $this->assertNotNull($message);
+        $context->workWithFile($queue, 'a+', function (FsDestination $destination, $file) {
+            $this->assertSame(0, fstat($file)['size'] % 64);
+        });
+
+        $message = $consumer->receiveNoWait();
+        $this->assertNotNull($message);
+        $context->workWithFile($queue, 'a+', function (FsDestination $destination, $file) {
+            $this->assertSame(0, fstat($file)['size'] % 64);
+        });
+
+        $message = $consumer->receiveNoWait();
+        $this->assertNull($message);
+    }
+
+    /**
+     * @group bug
+     * @group bug202
+     */
+    public function testShouldThrowExceptionForTheCorruptedQueueFile()
+    {
+        $context = $this->fsContext;
+        $queue = $context->createQueue('fs_test_queue');
+        $context->purge($queue);
+
+        $context->workWithFile($queue, 'a+', function (FsDestination $destination, $file) {
+            fwrite($file, '|{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_red_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic_name":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"46fdc345-5d0c-426e-95ac-227c7e657839","timestamp":1505379216,"reply_to":null,"correlation_id":""}}                                                          |{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_black_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic_name":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"c4d60e39-3a8c-42df-b536-c8b7c13e006d","timestamp":1505379216,"reply_to":null,"correlation_id":""}}                                                          |{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_green_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic_name":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"3a6aa176-c879-4435-9626-c48e0643defa","timestamp":1505379216,"reply_to":null,"correlation_id":""}}');
+        });
+
+        $consumer = $context->createConsumer($queue);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The frame could start from either " " or "|". The malformed frame starts with """.');
+        $consumer->receiveNoWait();
+    }
+
+    /**
+     * @group bug
+     * @group bug202
+     */
+    public function testShouldThrowExceptionWhenFrameSizeNotDivideExactly()
+    {
+        $context = $this->fsContext;
+        $queue = $context->createQueue('fs_test_queue');
+        $context->purge($queue);
+
+        $context->workWithFile($queue, 'a+', function (FsDestination $destination, $file) {
+            $msg = '|{"body":""}';
+            //guard
+            $this->assertNotSame(0, strlen($msg) % 64);
+
+            fwrite($file, $msg);
+        });
+
+        $consumer = $context->createConsumer($queue);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The frame size is "12" and it must divide exactly to 64 but it leaves a reminder "12".');
+        $consumer->receiveNoWait();
     }
 }
