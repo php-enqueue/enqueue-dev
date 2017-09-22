@@ -12,6 +12,7 @@ use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\Redis\RedisConnectionFactory;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
 
@@ -80,8 +81,12 @@ function dsn_to_connection_factory($dsn)
         $map['rdkafka'] = RdKafkaConnectionFactory::class;
     }
 
-    list($scheme) = explode('://', $dsn);
-    if (false == $scheme || false === strpos($dsn, '://')) {
+    if (class_exists(RedisConnectionFactory::class)) {
+        $map['redis'] = RedisConnectionFactory::class;
+    }
+
+    list($scheme) = explode(':', $dsn, 2);
+    if (false == $scheme || false === strpos($dsn, ':')) {
         throw new \LogicException(sprintf('The scheme could not be parsed from DSN "%s"', $dsn));
     }
 

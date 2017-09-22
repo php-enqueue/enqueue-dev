@@ -38,13 +38,26 @@ $ composer require enqueue/redis predis/predis:^1
 <?php
 use Enqueue\Redis\RedisConnectionFactory;
 
-$connectionFactory = new RedisConnectionFactory([
-    'host' => 'localhost',
-    'port' => 6379,
+// connects to localhost
+$factory = new RedisConnectionFactory();
+
+// same as above
+$factory = new RedisConnectionFactory('redis:');
+
+// same as above
+$factory = new RedisConnectionFactory([]);
+
+// connect to Redis at example.com port 1000 using phpredis extension 
+$factory = new RedisConnectionFactory([
+    'host' => 'example.com',
+    'port' => 1000,
     'vendor' => 'phpredis',
 ]);
 
-$psrContext = $connectionFactory->createContext();
+// same as above but given as DSN string
+$factory = new RedisConnectionFactory('redis://example.com:1000?vendor=phpredis');
+
+$psrContext = $factory->createContext();
 ```
 
 * With predis library:

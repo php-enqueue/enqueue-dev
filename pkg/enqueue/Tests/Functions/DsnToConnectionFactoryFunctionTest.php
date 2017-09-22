@@ -9,6 +9,7 @@ use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\Redis\RedisConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class DsnToConnectionFactoryFunctionTest extends TestCase
@@ -71,5 +72,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
         //        yield ['gearman://', GearmanConnectionFactory::class];
 
         yield ['rdkafka://', RdKafkaConnectionFactory::class];
+
+        yield ['redis:', RedisConnectionFactory::class];
     }
 }
