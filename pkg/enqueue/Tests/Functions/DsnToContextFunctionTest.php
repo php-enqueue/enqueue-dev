@@ -5,6 +5,8 @@ namespace Enqueue\Tests\Functions;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Fs\FsContext;
 use Enqueue\Null\NullContext;
+use Enqueue\Redis\RedisContext;
+use Enqueue\Stomp\StompContext;
 use PHPUnit\Framework\TestCase;
 
 class DsnToContextFunctionTest extends TestCase
@@ -57,5 +59,9 @@ class DsnToContextFunctionTest extends TestCase
         yield ['file://'.sys_get_temp_dir(), FsContext::class];
 
         yield ['null://', NullContext::class];
+
+        yield ['redis:', RedisContext::class];
+
+        yield ['stomp:', StompContext::class];
     }
 }
