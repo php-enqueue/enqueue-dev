@@ -47,6 +47,9 @@ $connectionFactory = new FsConnectionFactory([
 ]);
 
 $psrContext = $connectionFactory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('file:');
 ```
 
 ## Send message to topic
