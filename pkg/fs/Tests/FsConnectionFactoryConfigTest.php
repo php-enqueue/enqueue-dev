@@ -24,7 +24,7 @@ class FsConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotAmqp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "file://');
+        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "file:');
 
         new FsConnectionFactory('http://example.com');
     }
@@ -83,7 +83,7 @@ class FsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'file://',
+            'file:',
             [
                 'path' => sys_get_temp_dir().'/enqueue',
                 'pre_fetch_count' => 1,

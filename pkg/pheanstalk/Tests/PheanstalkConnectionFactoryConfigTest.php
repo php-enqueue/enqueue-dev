@@ -63,7 +63,7 @@ class PheanstalkConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'beanstalk://',
+            'beanstalk:',
             [
                 'host' => 'localhost',
                 'port' => 11300,
