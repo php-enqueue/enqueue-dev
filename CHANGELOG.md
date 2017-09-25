@@ -1,5 +1,23 @@
 # Change Log
 
+## [0.7.15](https://github.com/php-enqueue/enqueue-dev/tree/0.7.15) (2017-09-25)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.14...0.7.15)
+
+- \[FS\]\[RFC\] Change to FIFO queue [\#171](https://github.com/php-enqueue/enqueue-dev/issues/171)
+- Transports must support configuration via DSN string [\#87](https://github.com/php-enqueue/enqueue-dev/issues/87)
+- Add support of async message processing to transport interfaces. Like Java JMS. [\#27](https://github.com/php-enqueue/enqueue-dev/issues/27)
+- \[redis\] add dsn support for redis transport. [\#204](https://github.com/php-enqueue/enqueue-dev/pull/204) ([makasim](https://github.com/makasim))
+- \[dbal\]\[bc break\] Performance improvements and new features. [\#199](https://github.com/php-enqueue/enqueue-dev/pull/199) ([makasim](https://github.com/makasim))
+
+- \[FS\] Cannot decode json message [\#202](https://github.com/php-enqueue/enqueue-dev/issues/202)
+- \[fs\] fix bugs introduced in \#181. [\#203](https://github.com/php-enqueue/enqueue-dev/pull/203) ([makasim](https://github.com/makasim))
+
+- \[FS\] Cannot decode json message [\#201](https://github.com/php-enqueue/enqueue-dev/issues/201)
+- \[FS\] Cannot decode json message [\#200](https://github.com/php-enqueue/enqueue-dev/issues/200)
+
+## [0.7.14](https://github.com/php-enqueue/enqueue-dev/tree/0.7.14) (2017-09-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.13...0.7.14)
+
 ## [0.7.13](https://github.com/php-enqueue/enqueue-dev/tree/0.7.13) (2017-09-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.12...0.7.13)
 
