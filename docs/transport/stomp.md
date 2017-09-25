@@ -18,15 +18,26 @@ $ composer require enqueue/stomp
 <?php
 use Enqueue\Stomp\StompConnectionFactory;
 
-$connectionFactory = new StompConnectionFactory([
-    'host' => '127.0.0.1',
-    'port' => 61613,
-    'login' => 'guest',
-    'password' => 'guest',
-    'vhost' => '/',
+// connects to localhost
+$factory = new StompConnectionFactory();
+
+// same as above
+$factory = new StompConnectionFactory('stomp:');
+
+// same as above
+$factory = new StompConnectionFactory([]);
+
+// connect to stomp broker at example.com port 1000 using 
+$factory = new StompConnectionFactory([
+    'host' => 'example.com',
+    'port' => 1000,
+    'login' => 'theLogin',
 ]);
 
-$psrContext = $connectionFactory->createContext();
+// same as above but given as DSN string
+$factory = new StompConnectionFactory('stomp://example.com:1000?login=theLogin');
+
+$psrContext = $factory->createContext();
 ```
 
 ## Send message to topic 
