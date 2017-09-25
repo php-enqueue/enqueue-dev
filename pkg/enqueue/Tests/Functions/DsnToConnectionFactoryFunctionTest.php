@@ -10,6 +10,7 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Stomp\StompConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -77,5 +78,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
         yield ['redis:', RedisConnectionFactory::class];
 
         yield ['stomp:', StompConnectionFactory::class];
+
+        yield ['sqs:', SqsConnectionFactory::class];
     }
 }

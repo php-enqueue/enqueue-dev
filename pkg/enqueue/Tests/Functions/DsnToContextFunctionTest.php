@@ -6,6 +6,7 @@ use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Fs\FsContext;
 use Enqueue\Null\NullContext;
 use Enqueue\Redis\RedisContext;
+use Enqueue\Sqs\SqsContext;
 use Enqueue\Stomp\StompContext;
 use PHPUnit\Framework\TestCase;
 
@@ -63,5 +64,7 @@ class DsnToContextFunctionTest extends TestCase
         yield ['redis:', RedisContext::class];
 
         yield ['stomp:', StompContext::class];
+
+        yield ['sqs:', SqsContext::class];
     }
 }

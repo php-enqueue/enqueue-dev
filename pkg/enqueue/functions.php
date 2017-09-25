@@ -13,6 +13,7 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Stomp\StompConnectionFactory;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
@@ -88,6 +89,10 @@ function dsn_to_connection_factory($dsn)
 
     if (class_exists(StompConnectionFactory::class)) {
         $map['stomp'] = StompConnectionFactory::class;
+    }
+
+    if (class_exists(SqsConnectionFactory::class)) {
+        $map['sqs'] = SqsConnectionFactory::class;
     }
 
     list($scheme) = explode(':', $dsn, 2);
