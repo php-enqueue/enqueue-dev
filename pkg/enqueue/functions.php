@@ -9,6 +9,7 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
+use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
@@ -35,7 +36,7 @@ function dsn_to_connection_factory($dsn)
         $map['amqp+ext'] = AmqpExtConnectionFactory::class;
     }
     if (class_exists(AmqpBunnyConnectionFactory::class)) {
-        $map['amqp+lib'] = AmqpBunnyConnectionFactory::class;
+        $map['amqp+lib'] = AmqpLibConnectionFactory::class;
     }
     if (class_exists(AmqpLibConnectionFactory::class)) {
         $map['amqp+bunny'] = AmqpBunnyConnectionFactory::class;
@@ -93,6 +94,10 @@ function dsn_to_connection_factory($dsn)
 
     if (class_exists(SqsConnectionFactory::class)) {
         $map['sqs'] = SqsConnectionFactory::class;
+    }
+
+    if (class_exists(GpsConnectionFactory::class)) {
+        $map['gps'] = GpsConnectionFactory::class;
     }
 
     list($scheme) = explode(':', $dsn, 2);

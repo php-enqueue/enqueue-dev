@@ -4,6 +4,7 @@ namespace Enqueue\Tests\Functions;
 
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Fs\FsContext;
+use Enqueue\Gps\GpsContext;
 use Enqueue\Null\NullContext;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Sqs\SqsContext;
@@ -66,5 +67,7 @@ class DsnToContextFunctionTest extends TestCase
         yield ['stomp:', StompContext::class];
 
         yield ['sqs:', SqsContext::class];
+
+        yield ['gps:', GpsContext::class];
     }
 }

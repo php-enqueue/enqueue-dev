@@ -6,6 +6,7 @@ use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
+use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
@@ -80,5 +81,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
         yield ['stomp:', StompConnectionFactory::class];
 
         yield ['sqs:', SqsConnectionFactory::class];
+
+        yield ['gps:', GpsConnectionFactory::class];
     }
 }

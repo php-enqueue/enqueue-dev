@@ -250,7 +250,11 @@ class DefaultTransportFactoryTest extends TestCase
 
     public static function provideDSNs()
     {
-        yield ['amqp://', 'default_amqp'];
+        yield ['amqp+ext://', 'default_amqp_ext'];
+
+        yield ['amqp+lib:', 'default_amqp_lib'];
+
+        yield ['amqp+bunny://', 'default_amqp_bunny'];
 
         yield ['null://', 'default_null'];
 
@@ -259,5 +263,13 @@ class DefaultTransportFactoryTest extends TestCase
         yield ['mysql://', 'default_dbal'];
 
         yield ['pgsql://', 'default_dbal'];
+
+        yield ['gps:', 'default_gps'];
+
+        yield ['sqs:', 'default_sqs'];
+
+        yield ['redis:', 'default_redis'];
+
+        yield ['stomp:', 'default_stomp'];
     }
 }
