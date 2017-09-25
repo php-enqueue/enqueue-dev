@@ -171,7 +171,7 @@ use Enqueue\SimpleClient\SimpleClient;
 use Interop\Queue\PsrMessage;
 
 // composer require enqueue/amqp-ext
-$client = new SimpleClient('amqp://');
+$client = new SimpleClient('amqp:');
 
 // composer require enqueue/fs
 $client = new SimpleClient('file://foo/bar');
@@ -197,8 +197,8 @@ use Enqueue\Client\Config;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 
-// composer require enqueue/amqp-ext
-$client = new SimpleClient('amqp://');
+// composer require enqueue/amqp-ext # or enqueue/amqp-bunny or enqueue/amqp-lib 
+$client = new SimpleClient('amqp:');
 
 // composer require enqueue/fs
 $client = new SimpleClient('file://foo/bar');

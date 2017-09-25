@@ -58,7 +58,7 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
                     }
 
                     if (empty($v)) {
-                        return ['dsn' => 'null://'];
+                        return ['dsn' => 'null:'];
                     }
 
                     if (is_string($v)) {

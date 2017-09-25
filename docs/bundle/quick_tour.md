@@ -6,7 +6,7 @@ It adds easy to use [configuration layer](config_reference.md), register service
 ## Install
 
 ```bash
-$ composer require enqueue/enqueue-bundle enqueue/amqp-ext
+$ composer require enqueue/enqueue-bundle enqueue/amqp-ext # or enqueue/amqp-bunny, enqueue/amqp-lib
 ```
 
 _**Note**: You could use not only AMQP transport but other available: STOMP, Amazon SQS, Redis, Filesystem, Doctrine DBAL and others._
@@ -47,7 +47,7 @@ First, you have to configure a transport layer and set one to be default.
 
 enqueue:
     transport:
-        default: "amqp://"
+        default: "amqp:"
     client: ~
 ```
 

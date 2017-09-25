@@ -52,15 +52,15 @@ class DsnToContextFunctionTest extends TestCase
 
     public static function provideDSNs()
     {
-        yield ['amqp://', AmqpContext::class];
+        yield ['amqp:', AmqpContext::class];
 
         yield ['amqp://user:pass@foo/vhost', AmqpContext::class];
 
-        yield ['file://', FsContext::class];
+        yield ['file:', FsContext::class];
 
         yield ['file://'.sys_get_temp_dir(), FsContext::class];
 
-        yield ['null://', NullContext::class];
+        yield ['null:', NullContext::class];
 
         yield ['redis:', RedisContext::class];
 
