@@ -25,7 +25,7 @@ use Enqueue\RdKafka\RdKafkaConnectionFactory;
 $connectionFactory = new RdKafkaConnectionFactory();
 
 // same as above
-$connectionFactory = new RdKafkaConnectionFactory('rdkafka://');
+$connectionFactory = new RdKafkaConnectionFactory('rdkafka:');
 
 // same as above
 $connectionFactory = new RdKafkaConnectionFactory([]);

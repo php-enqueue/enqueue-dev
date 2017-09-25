@@ -29,13 +29,14 @@ class PheanstalkConnectionFactory implements PsrConnectionFactory
      *
      * or
      *
+     * beanstalk: - connects to localhost:11300
      * beanstalk://host:port
      *
      * @param array|string $config
      */
-    public function __construct($config = 'beanstalk://')
+    public function __construct($config = 'beanstalk:')
     {
-        if (empty($config) || 'beanstalk://' === $config) {
+        if (empty($config) || 'beanstalk:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);

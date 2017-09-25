@@ -45,14 +45,13 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
      *
      * @param array|string $config
      */
-    public function __construct($config = 'amqp://')
+    public function __construct($config = 'amqp:')
     {
         if (is_string($config) && 0 === strpos($config, 'amqp+ext:')) {
             $config = str_replace('amqp+ext:', 'amqp:', $config);
         }
 
-        // third argument is deprecated will be removed in 0.8
-        if (empty($config) || 'amqp:' === $config || 'amqp://' === $config) {
+        if (empty($config) || 'amqp:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);

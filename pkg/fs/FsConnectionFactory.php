@@ -23,14 +23,15 @@ class FsConnectionFactory implements PsrConnectionFactory
      *
      * or
      *
+     * file: - create queue files in tmp dir.
      * file://home/foo/enqueue
      * file://home/foo/enqueue?pre_fetch_count=20&chmod=0777
      *
      * @param array|string|null $config
      */
-    public function __construct($config = 'file://')
+    public function __construct($config = 'file:')
     {
-        if (empty($config) || 'file://' === $config) {
+        if (empty($config) || 'file:' === $config) {
             $config = ['path' => sys_get_temp_dir().'/enqueue'];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
@@ -68,8 +69,8 @@ class FsConnectionFactory implements PsrConnectionFactory
             return ['path' => $dsn];
         }
 
-        if (false === strpos($dsn, 'file://')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "file://".', $dsn));
+        if (false === strpos($dsn, 'file:')) {
+            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "file:".', $dsn));
         }
 
         $dsn = substr($dsn, 7);

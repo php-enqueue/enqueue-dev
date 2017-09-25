@@ -29,13 +29,13 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
      *
      * or
      *
-     * rdkafka://host:port
+     * kafka://host:port
      *
      * @param array|string $config
      */
-    public function __construct($config = 'rdkafka://')
+    public function __construct($config = 'kafka:')
     {
-        if (empty($config) || 'rdkafka://' === $config) {
+        if (empty($config) || 'kafka:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
@@ -79,8 +79,8 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
             'query' => null,
         ], $dsnConfig);
 
-        if ('rdkafka' !== $dsnConfig['scheme']) {
-            throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be "rdkafka" only.', $dsnConfig['scheme']));
+        if ('kafka' !== $dsnConfig['scheme']) {
+            throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be "kafka" only.', $dsnConfig['scheme']));
         }
 
         $config = [];
