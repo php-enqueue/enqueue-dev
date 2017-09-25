@@ -28,6 +28,9 @@ use Enqueue\Dbal\DbalConnectionFactory;
 
 $factory = new DbalConnectionFactory('mysql://user:pass@localhost:3306/mqdev');
 
+// connects to localhost
+$factory = new DbalConnectionFactory('mysql:');
+
 $psrContext = $factory->createContext();
 ```
 

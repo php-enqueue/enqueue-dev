@@ -29,7 +29,7 @@ use Enqueue\Fs\FsConnectionFactory;
 $connectionFactory = new FsConnectionFactory();
 
 // same as above
-$connectionFactory = new FsConnectionFactory('file://');
+$connectionFactory = new FsConnectionFactory('file:');
 
 // stores in custom folder
 $connectionFactory = new FsConnectionFactory('/path/to/queue/dir');

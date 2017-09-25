@@ -27,6 +27,9 @@ putenv('PUBSUB_EMULATOR_HOST=http://localhost:8900');
 
 $connectionFactory = new GpsConnectionFactory();
 
+// save as above 
+$connectionFactory = new GpsConnectionFactory('gps:');
+
 $psrContext = $connectionFactory->createContext();
 ```
 

@@ -26,7 +26,7 @@ use Enqueue\Gearman\GearmanConnectionFactory;
 $factory = new GearmanConnectionFactory();
 
 // same as above
-$factory = new GearmanConnectionFactory('gearman://');
+$factory = new GearmanConnectionFactory('gearman:');
 
 // connects to example host and port 5555
 $factory = new GearmanConnectionFactory('gearman://example:5555');

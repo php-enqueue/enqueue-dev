@@ -26,7 +26,7 @@ use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 $factory = new PheanstalkConnectionFactory();
 
 // same as above
-$factory = new PheanstalkConnectionFactory('beanstalk://');
+$factory = new PheanstalkConnectionFactory('beanstalk:');
 
 // connects to example host and port 5555
 $factory = new PheanstalkConnectionFactory('beanstalk://example:5555');

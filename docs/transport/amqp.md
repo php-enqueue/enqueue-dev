@@ -32,13 +32,14 @@ use Enqueue\AmqpExt\AmqpConnectionFactory;
 $connectionFactory = new AmqpConnectionFactory();
 
 // same as above
-$connectionFactory = new AmqpConnectionFactory('amqp://');
+$factory = new AmqpConnectionFactory('amqp:');
+$factory = new AmqpConnectionFactory('amqp+ext:');
 
 // same as above
-$connectionFactory = new AmqpConnectionFactory([]);
+$factory = new AmqpConnectionFactory([]);
 
 // connect to AMQP broker at example.com
-$connectionFactory = new AmqpConnectionFactory([
+$factory = new AmqpConnectionFactory([
     'host' => 'example.com',
     'port' => 1000,
     'vhost' => '/',
@@ -48,9 +49,9 @@ $connectionFactory = new AmqpConnectionFactory([
 ]);
 
 // same as above but given as DSN string
-$connectionFactory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
+$factory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
-$psrContext = $connectionFactory->createContext();
+$psrContext = $factory->createContext();
 ```
 
 ## Declare topic.
