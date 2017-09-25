@@ -22,14 +22,17 @@ $ composer require enqueue/sqs
 ```php
 <?php
 use Enqueue\Sqs\SqsConnectionFactory;
-
-$connectionFactory = new SqsConnectionFactory([
+ 
+$factory = new SqsConnectionFactory([
     'key' => 'aKey',
     'secret' => 'aSecret',
     'region' => 'aRegion',
 ]);
 
-$psrContext = $connectionFactory->createContext();
+// same as above but given as DSN string
+$factory = new SqsConnectionFactory('sqs:?key=aKey&secret=aSecret&region=aRegion');
+
+$psrContext = $factory->createContext();
 ```
 
 ## Declare queue.

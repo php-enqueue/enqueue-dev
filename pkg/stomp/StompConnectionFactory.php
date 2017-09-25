@@ -18,21 +18,37 @@ class StompConnectionFactory implements PsrConnectionFactory
     private $stomp;
 
     /**
-     * @param array $config
+     * $config = [
+     * 'host' => null,
+     * 'port' => null,
+     * 'login' => null,
+     * 'password' => null,
+     * 'vhost' => null,
+     * 'buffer_size' => 1000,
+     * 'connection_timeout' => 1,
+     * 'sync' => false,
+     * 'lazy' => true,
+     * ].
+     *
+     * or
+     *
+     * stomp:
+     * stomp:?buffer_size=100
+     *
+     * @param array|string|null $config
      */
-    public function __construct(array $config)
+    public function __construct($config = 'stomp:')
     {
-        $this->config = array_replace([
-            'host' => null,
-            'port' => null,
-            'login' => null,
-            'password' => null,
-            'vhost' => null,
-            'buffer_size' => 1000,
-            'connection_timeout' => 1,
-            'sync' => false,
-            'lazy' => true,
-        ], $config);
+        if (empty($config) || 'stomp:' === $config) {
+            $config = [];
+        } elseif (is_string($config)) {
+            $config = $this->parseDsn($config);
+        } elseif (is_array($config)) {
+        } else {
+            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+        }
+
+        $this->config = array_replace($this->defaultConfig(), $config);
     }
 
     /**
@@ -71,5 +87,53 @@ class StompConnectionFactory implements PsrConnectionFactory
         }
 
         return $this->stomp;
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return array
+     */
+    private function parseDsn($dsn)
+    {
+        if (false === strpos($dsn, 'stomp:')) {
+            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "stomp:".', $dsn));
+        }
+
+        if (false === $config = parse_url($dsn)) {
+            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        }
+
+        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
+            $queryConfig = [];
+            parse_str($query, $queryConfig);
+
+            $config = array_replace($queryConfig, $config);
+        }
+
+        unset($config['query'], $config['scheme']);
+
+        $config['sync'] = empty($config['sync']) ? false : true;
+        $config['lazy'] = empty($config['lazy']) ? false : true;
+
+        return $config;
+    }
+
+    /**
+     * @return array
+     */
+    private function defaultConfig()
+    {
+        return [
+            'host' => 'localhost',
+            'port' => 61613,
+            'login' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'buffer_size' => 1000,
+            'connection_timeout' => 1,
+            'sync' => false,
+            'lazy' => true,
+        ];
     }
 }

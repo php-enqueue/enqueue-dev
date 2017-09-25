@@ -9,9 +9,13 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
+use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\Sqs\SqsConnectionFactory;
+use Enqueue\Stomp\StompConnectionFactory;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
 
@@ -32,7 +36,7 @@ function dsn_to_connection_factory($dsn)
         $map['amqp+ext'] = AmqpExtConnectionFactory::class;
     }
     if (class_exists(AmqpBunnyConnectionFactory::class)) {
-        $map['amqp+lib'] = AmqpBunnyConnectionFactory::class;
+        $map['amqp+lib'] = AmqpLibConnectionFactory::class;
     }
     if (class_exists(AmqpLibConnectionFactory::class)) {
         $map['amqp+bunny'] = AmqpBunnyConnectionFactory::class;
@@ -80,8 +84,24 @@ function dsn_to_connection_factory($dsn)
         $map['rdkafka'] = RdKafkaConnectionFactory::class;
     }
 
-    list($scheme) = explode('://', $dsn);
-    if (false == $scheme || false === strpos($dsn, '://')) {
+    if (class_exists(RedisConnectionFactory::class)) {
+        $map['redis'] = RedisConnectionFactory::class;
+    }
+
+    if (class_exists(StompConnectionFactory::class)) {
+        $map['stomp'] = StompConnectionFactory::class;
+    }
+
+    if (class_exists(SqsConnectionFactory::class)) {
+        $map['sqs'] = SqsConnectionFactory::class;
+    }
+
+    if (class_exists(GpsConnectionFactory::class)) {
+        $map['gps'] = GpsConnectionFactory::class;
+    }
+
+    list($scheme) = explode(':', $dsn, 2);
+    if (false == $scheme || false === strpos($dsn, ':')) {
         throw new \LogicException(sprintf('The scheme could not be parsed from DSN "%s"', $dsn));
     }
 

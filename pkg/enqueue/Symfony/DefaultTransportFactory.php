@@ -2,14 +2,26 @@
 
 namespace Enqueue\Symfony;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpBunny\Symfony\AmqpBunnyTransportFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
 use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
+use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Gps\GpsConnectionFactory;
+use Enqueue\Gps\Symfony\GpsTransportFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\Redis\Symfony\RedisTransportFactory;
+use Enqueue\Sqs\SqsConnectionFactory;
+use Enqueue\Sqs\Symfony\SqsTransportFactory;
+use Enqueue\Stomp\StompConnectionFactory;
+use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use function Enqueue\dsn_to_connection_factory;
@@ -167,27 +179,51 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
      */
     private function findFactory($dsn)
     {
-        $connectionFactory = dsn_to_connection_factory($dsn);
+        $factory = dsn_to_connection_factory($dsn);
 
-        if ($connectionFactory instanceof AmqpConnectionFactory) {
-            return new AmqpTransportFactory('default_amqp');
+        if ($factory instanceof AmqpExtConnectionFactory) {
+            return new AmqpTransportFactory('default_amqp_ext');
         }
 
-        if ($connectionFactory instanceof FsConnectionFactory) {
+        if ($factory instanceof AmqpLibConnectionFactory) {
+            return new AmqpLibTransportFactory('default_amqp_lib');
+        }
+
+        if ($factory instanceof AmqpBunnyConnectionFactory) {
+            return new AmqpBunnyTransportFactory('default_amqp_bunny');
+        }
+
+        if ($factory instanceof FsConnectionFactory) {
             return new FsTransportFactory('default_fs');
         }
 
-        if ($connectionFactory instanceof DbalConnectionFactory) {
+        if ($factory instanceof DbalConnectionFactory) {
             return new DbalTransportFactory('default_dbal');
         }
 
-        if ($connectionFactory instanceof NullConnectionFactory) {
+        if ($factory instanceof NullConnectionFactory) {
             return new NullTransportFactory('default_null');
+        }
+
+        if ($factory instanceof GpsConnectionFactory) {
+            return new GpsTransportFactory('default_gps');
+        }
+
+        if ($factory instanceof RedisConnectionFactory) {
+            return new RedisTransportFactory('default_redis');
+        }
+
+        if ($factory instanceof SqsConnectionFactory) {
+            return new SqsTransportFactory('default_sqs');
+        }
+
+        if ($factory instanceof StompConnectionFactory) {
+            return new StompTransportFactory('default_stomp');
         }
 
         throw new \LogicException(sprintf(
             'There is no supported transport factory for the connection factory "%s" created from DSN "%s"',
-            get_class($connectionFactory),
+            get_class($factory),
             $dsn
         ));
     }

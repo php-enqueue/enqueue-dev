@@ -28,19 +28,25 @@ class SqsConnectionFactory implements PsrConnectionFactory
      *   'lazy' => true,            - Enable lazy connection (boolean)
      * ].
      *
-     * @param $config
+     * or
+     *
+     * sqs:
+     * sqs::?key=aKey&secret=aSecret&token=aToken
+     *
+     * @param array|string|null $config
      */
-    public function __construct(array $config = [])
+    public function __construct($config = 'sqs:')
     {
-        $this->config = array_replace([
-            'key' => null,
-            'secret' => null,
-            'token' => null,
-            'region' => null,
-            'retries' => 3,
-            'version' => '2012-11-05',
-            'lazy' => true,
-        ], $config);
+        if (empty($config) || 'sqs:' === $config) {
+            $config = [];
+        } elseif (is_string($config)) {
+            $config = $this->parseDsn($config);
+        } elseif (is_array($config)) {
+        } else {
+            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+        }
+
+        $this->config = array_replace($this->defaultConfig(), $config);
     }
 
     /**
@@ -95,5 +101,50 @@ class SqsConnectionFactory implements PsrConnectionFactory
         $this->client = new SqsClient($config);
 
         return $this->client;
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return array
+     */
+    private function parseDsn($dsn)
+    {
+        if (false === strpos($dsn, 'sqs:')) {
+            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "sqs:".', $dsn));
+        }
+
+        if (false === $config = parse_url($dsn)) {
+            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        }
+
+        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
+            $queryConfig = [];
+            parse_str($query, $queryConfig);
+
+            $config = array_replace($queryConfig, $config);
+        }
+
+        unset($config['query'], $config['scheme']);
+
+        $config['lazy'] = empty($config['lazy']) ? false : true;
+
+        return $config;
+    }
+
+    /**
+     * @return array
+     */
+    private function defaultConfig()
+    {
+        return [
+            'key' => null,
+            'secret' => null,
+            'token' => null,
+            'region' => null,
+            'retries' => 3,
+            'version' => '2012-11-05',
+            'lazy' => true,
+        ];
     }
 }

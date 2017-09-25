@@ -16,40 +16,6 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(PsrConnectionFactory::class, StompConnectionFactory::class);
     }
 
-    public function testCouldBeConstructedWithEmptyConfiguration()
-    {
-        $factory = new StompConnectionFactory([]);
-
-        $this->assertAttributeEquals([
-            'host' => null,
-            'port' => null,
-            'login' => null,
-            'password' => null,
-            'vhost' => null,
-            'buffer_size' => 1000,
-            'connection_timeout' => 1,
-            'sync' => false,
-            'lazy' => true,
-        ], 'config', $factory);
-    }
-
-    public function testCouldBeConstructedWithCustomConfiguration()
-    {
-        $factory = new StompConnectionFactory(['host' => 'theCustomHost']);
-
-        $this->assertAttributeEquals([
-            'host' => 'theCustomHost',
-            'port' => null,
-            'login' => null,
-            'password' => null,
-            'vhost' => null,
-            'buffer_size' => 1000,
-            'connection_timeout' => 1,
-            'sync' => false,
-            'lazy' => true,
-        ], 'config', $factory);
-    }
-
     public function testShouldCreateLazyContext()
     {
         $factory = new StompConnectionFactory(['lazy' => true]);

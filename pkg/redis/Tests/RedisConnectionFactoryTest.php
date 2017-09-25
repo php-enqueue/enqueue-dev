@@ -6,46 +6,15 @@ use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrConnectionFactory;
+use PHPUnit\Framework\TestCase;
 
-class RedisConnectionFactoryTest extends \PHPUnit\Framework\TestCase
+class RedisConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {
         $this->assertClassImplements(PsrConnectionFactory::class, RedisConnectionFactory::class);
-    }
-
-    public function testCouldBeConstructedWithEmptyConfiguration()
-    {
-        $factory = new RedisConnectionFactory([]);
-
-        $this->assertAttributeEquals([
-            'host' => null,
-            'port' => null,
-            'timeout' => null,
-            'reserved' => null,
-            'retry_interval' => null,
-            'persisted' => false,
-            'lazy' => true,
-            'vendor' => 'phpredis',
-        ], 'config', $factory);
-    }
-
-    public function testCouldBeConstructedWithCustomConfiguration()
-    {
-        $factory = new RedisConnectionFactory(['host' => 'theCustomHost']);
-
-        $this->assertAttributeEquals([
-            'host' => 'theCustomHost',
-            'port' => null,
-            'timeout' => null,
-            'reserved' => null,
-            'retry_interval' => null,
-            'persisted' => false,
-            'lazy' => true,
-            'vendor' => 'phpredis',
-        ], 'config', $factory);
     }
 
     public function testShouldCreateLazyContext()
