@@ -25,7 +25,7 @@ use Enqueue\RdKafka\RdKafkaConnectionFactory;
 $connectionFactory = new RdKafkaConnectionFactory();
 
 // same as above
-$connectionFactory = new RdKafkaConnectionFactory('rdkafka://');
+$connectionFactory = new RdKafkaConnectionFactory('kafka:');
 
 // same as above
 $connectionFactory = new RdKafkaConnectionFactory([]);
@@ -43,6 +43,9 @@ $connectionFactory = new RdKafkaConnectionFactory([
 ]);
 
 $psrContext = $connectionFactory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('kafka:');
 ```
 
 ## Send message to topic 

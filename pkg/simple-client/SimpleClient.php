@@ -37,10 +37,10 @@ final class SimpleClient
     /**
      * The config could be a transport DSN (string) or an array, here's an example of a few DSNs:.
      *
-     * amqp://
+     * amqp:
      * amqp://guest:guest@localhost:5672/%2f?lazy=1&persisted=1
      * file://foo/bar/
-     * null://
+     * null:
      *
      * or an array, the most simple:
      *

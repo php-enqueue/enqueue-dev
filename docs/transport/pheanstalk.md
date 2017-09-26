@@ -26,7 +26,7 @@ use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 $factory = new PheanstalkConnectionFactory();
 
 // same as above
-$factory = new PheanstalkConnectionFactory('beanstalk://');
+$factory = new PheanstalkConnectionFactory('beanstalk:');
 
 // connects to example host and port 5555
 $factory = new PheanstalkConnectionFactory('beanstalk://example:5555');
@@ -36,6 +36,11 @@ $factory = new PheanstalkConnectionFactory([
     'host' => 'example',
     'port' => 5555
 ]);
+
+$psrContext = $factory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('beanstalk:');
 ```
 
 ## Send message to topic

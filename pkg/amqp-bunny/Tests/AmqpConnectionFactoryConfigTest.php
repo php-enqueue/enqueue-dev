@@ -148,7 +148,7 @@ class AmqpConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'amqp://',
+            'amqp:',
             [
                 'host' => 'localhost',
                 'port' => 5672,

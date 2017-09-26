@@ -25,9 +25,9 @@ class GearmanConnectionFactory implements PsrConnectionFactory
      *
      * @param array|string $config
      */
-    public function __construct($config = 'gearman://')
+    public function __construct($config = 'gearman:')
     {
-        if (empty($config) || 'gearman://' === $config) {
+        if (empty($config) || 'gearman:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);

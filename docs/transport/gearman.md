@@ -26,7 +26,7 @@ use Enqueue\Gearman\GearmanConnectionFactory;
 $factory = new GearmanConnectionFactory();
 
 // same as above
-$factory = new GearmanConnectionFactory('gearman://');
+$factory = new GearmanConnectionFactory('gearman:');
 
 // connects to example host and port 5555
 $factory = new GearmanConnectionFactory('gearman://example:5555');
@@ -36,6 +36,11 @@ $factory = new GearmanConnectionFactory([
     'host' => 'example',
     'port' => 5555
 ]);
+
+$psrContext = $factory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('gearman:');
 ```
 
 ## Send message to topic

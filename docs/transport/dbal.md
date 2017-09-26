@@ -28,6 +28,9 @@ use Enqueue\Dbal\DbalConnectionFactory;
 
 $factory = new DbalConnectionFactory('mysql://user:pass@localhost:3306/mqdev');
 
+// connects to localhost
+$factory = new DbalConnectionFactory('mysql:');
+
 $psrContext = $factory->createContext();
 ```
 
@@ -45,6 +48,9 @@ $factory = new ManagerRegistryConnectionFactory($registry, [
 ]);
 
 $psrContext = $factory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('mysql:');
 ```
 
 ## Init database

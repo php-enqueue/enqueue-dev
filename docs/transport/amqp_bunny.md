@@ -29,16 +29,16 @@ $ composer require enqueue/amqp-bunny
 use Enqueue\AmqpBunny\AmqpConnectionFactory;
 
 // connects to localhost
-$connectionFactory = new AmqpConnectionFactory();
+$factory = new AmqpConnectionFactory();
 
 // same as above
-$connectionFactory = new AmqpConnectionFactory('amqp://');
+$factory = new AmqpConnectionFactory('amqp:');
 
 // same as above
-$connectionFactory = new AmqpConnectionFactory([]);
+$factory = new AmqpConnectionFactory([]);
 
 // connect to AMQP broker at example.com
-$connectionFactory = new AmqpConnectionFactory([
+$factory = new AmqpConnectionFactory([
     'host' => 'example.com',
     'port' => 1000,
     'vhost' => '/',
@@ -48,9 +48,13 @@ $connectionFactory = new AmqpConnectionFactory([
 ]);
 
 // same as above but given as DSN string
-$connectionFactory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
+$factory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
-$psrContext = $connectionFactory->createContext();
+$psrContext = $factory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('amqp:');
+$psrContext = \Enqueue\dsn_to_context('amqp+bunny:');
 ```
 
 ## Declare topic.

@@ -34,10 +34,10 @@ class DbalConnectionFactory implements PsrConnectionFactory
      *
      * @param array|string|null $config
      */
-    public function __construct($config = 'mysql://')
+    public function __construct($config = 'mysql:')
     {
         if (empty($config)) {
-            $config = $this->parseDsn('mysql://');
+            $config = $this->parseDsn('mysql:');
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
@@ -94,11 +94,14 @@ class DbalConnectionFactory implements PsrConnectionFactory
      */
     private function parseDsn($dsn)
     {
-        if (false === strpos($dsn, '://')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not valid. Must contain "://".', $dsn));
+        if (false === parse_url($dsn)) {
+            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
         }
 
-        list($schema, $rest) = explode('://', $dsn, 2);
+        $schema = parse_url($dsn, PHP_URL_SCHEME);
+        if (empty($schema)) {
+            throw new \LogicException('Schema is empty');
+        }
 
         $supported = [
             'db2' => true,
@@ -128,7 +131,7 @@ class DbalConnectionFactory implements PsrConnectionFactory
         return [
             'lazy' => true,
             'connection' => [
-                'url' => empty($rest) ? $schema.'://root@localhost' : $dsn,
+                'url' => $schema.':' === $dsn ? $schema.'://root@localhost' : $dsn,
             ],
         ];
     }

@@ -62,7 +62,7 @@ class GearmanConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'gearman://',
+            'gearman:',
             [
                 'host' => 'localhost',
                 'port' => 4730,
