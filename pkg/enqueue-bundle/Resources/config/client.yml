@@ -136,7 +136,7 @@ services:
         tags:
             -
               name: 'data_collector'
-              template: 'EnqueueBundle:Profiler:panel.html.twig'
+              template: '@Enqueue/Profiler/panel.html.twig'
               id: 'enqueue.message_queue'
 
     enqueue.flush_spool_producer_listener:
