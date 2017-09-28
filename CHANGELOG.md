@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.16](https://github.com/php-enqueue/enqueue-dev/tree/0.7.16) (2017-09-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.15...0.7.16)
+
+- Fixes the notation for Twig template names in the data collector [\#207](https://github.com/php-enqueue/enqueue-dev/pull/207) ([Lctrs](https://github.com/Lctrs))
+
+- \[BC Break\]\[dsn\] replace xxx:// to xxx: [\#205](https://github.com/php-enqueue/enqueue-dev/pull/205) ([makasim](https://github.com/makasim))
+
 ## [0.7.15](https://github.com/php-enqueue/enqueue-dev/tree/0.7.15) (2017-09-25)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.14...0.7.15)
 
