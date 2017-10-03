@@ -5,6 +5,7 @@ namespace Enqueue\Bundle\Profiler;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
+use Enqueue\Util\JSON;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -65,19 +66,13 @@ class MessageQueueCollector extends DataCollector
     }
 
     /**
-     * @param string $message
+     * @param mixed $body
      *
      * @return string
      */
-    public function prettyPrintMessage($message)
+    public function ensureString($body)
     {
-        if (is_scalar($message)) {
-            return htmlspecialchars($message);
-        }
-
-        return htmlspecialchars(
-            json_encode($message, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-        );
+        return is_string($body) ? $body : JSON::encode($body);
     }
 
     /**
