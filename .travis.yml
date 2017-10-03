@@ -16,9 +16,9 @@ matrix:
     - php: 7.0
       env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
     - php: 5.6
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true SYMFONY_DEPRECATIONS_HELPER=weak
+      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
     - php: 7.0
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true SYMFONY_DEPRECATIONS_HELPER=weak
+      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
     - php: 7.1
       services: docker
       env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true
