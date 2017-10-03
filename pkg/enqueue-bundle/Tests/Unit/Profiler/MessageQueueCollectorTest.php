@@ -71,21 +71,19 @@ class MessageQueueCollectorTest extends TestCase
         $this->assertEquals('unknownPriority', $collector->prettyPrintPriority('unknownPriority'));
     }
 
-    public function testShouldPrettyPrintScalarMessage()
+    public function testShouldEnsureStringKeepStringSame()
     {
         $collector = new MessageQueueCollector($this->createProducerMock());
 
-        $this->assertEquals('foo', $collector->prettyPrintMessage('foo'));
-        $this->assertEquals('&lt;p&gt;', $collector->prettyPrintMessage('<p>'));
+        $this->assertEquals('foo', $collector->ensureString('foo'));
+        $this->assertEquals('bar baz', $collector->ensureString('bar baz'));
     }
 
-    public function testShouldPrettyPrintArrayMessage()
+    public function testShouldEnsureStringEncodeArrayToJson()
     {
         $collector = new MessageQueueCollector($this->createProducerMock());
 
-        $expected = "[\n    &quot;foo&quot;,\n    &quot;bar&quot;\n]";
-
-        $this->assertEquals($expected, $collector->prettyPrintMessage(['foo', 'bar']));
+        $this->assertEquals('["foo","bar"]', $collector->ensureString(['foo', 'bar']));
     }
 
     /**

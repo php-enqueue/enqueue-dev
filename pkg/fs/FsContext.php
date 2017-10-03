@@ -2,6 +2,7 @@
 
 namespace Enqueue\Fs;
 
+use Doctrine\ORM\Cache\Lock;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
@@ -94,6 +95,11 @@ class FsContext implements PsrContext
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
         set_error_handler(function ($severity, $message, $file, $line) {
+            // do not throw on a deprecation notice.
+            if (E_USER_DEPRECATED === $severity && false !== strpos($message, LockHandler::class)) {
+                return;
+            }
+
             throw new \ErrorException($message, 0, $severity, $file, $line);
         });
 
