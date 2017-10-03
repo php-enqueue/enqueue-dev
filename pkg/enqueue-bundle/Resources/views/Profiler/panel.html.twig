@@ -44,7 +44,10 @@
                 <td>{{ sentMessage.topic }}</td>
                 <td style="width: 70%">
                         <span class="metadata">
-                            <span>{{ sentMessage.body[0:40] }}... </span><a class="btn btn-link text-small sf-toggle" data-toggle-selector="#message-body-{{ loop.index }}" data-toggle-alt-content="Hide trace">Show trace</a>
+                            <span>
+                                {{ collector.ensureString(sentMessage.body)[0:40] }}{% if collector.ensureString(sentMessage.body)[0:40] != collector.ensureString(sentMessage.body) %}...{% endif %}
+                            </span>
+                            <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#message-body-{{ loop.index }}" data-toggle-alt-content="Hide trace">Show trace</a>
 
                             <div id="message-body-{{ loop.index }}" class="context sf-toggle-content sf-toggle-hidden">
                                 {{ profiler_dump(sentMessage.body) }}
