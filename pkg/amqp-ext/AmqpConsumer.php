@@ -189,6 +189,52 @@ class AmqpConsumer implements InteropAmqpConsumer
     }
 
     /**
+     * @param float|int $timeout  milliseconds, consumes endlessly if zero set
+     * @param callable  $callback A callback function to which the
+     *                            consumed message will be passed. The
+     *                            function must accept at a minimum
+     *                            one parameter, an \Interop\Amqp\AmqpMessage object,
+     *                            and an optional second parameter
+     *                            the \Interop\Amqp\AmqpConsumer from which the message was
+     *                            consumed. The \Interop\Amqp\AmqpConsumer::consume() will
+     *                            not return the processing thread back to
+     *                            the PHP script until the callback
+     *                            function returns FALSE.
+     */
+    public function basicConsume($timeout, callable $callback = null)
+    {
+        /** @var \AMQPQueue $extQueue */
+        $extConnection = $this->getExtQueue()->getChannel()->getConnection();
+
+        $originalTimeout = $extConnection->getReadTimeout();
+        try {
+            $extConnection->setReadTimeout($timeout / 1000);
+
+            if ($callback) {
+                $this->getExtQueue()->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) use (&$callback) {
+                    $message = $this->convertMessage($extEnvelope);
+                    $message->setConsumerTag($q->getConsumerTag());
+
+                    $queue = $this->context->createQueue($q->getName());
+                    $consumer = $this->context->createConsumer($queue);
+
+                    return call_user_func($callback, $message, $consumer);
+                }, AMQP_JUST_CONSUME);
+            } else {
+                $this->getExtQueue()->consume(null, Flags::convertConsumerFlags($this->flags), $this->consumerTag);
+            }
+        } catch (\AMQPQueueException $e) {
+            if ('Consumer timeout exceed' == $e->getMessage()) {
+                return null;
+            }
+
+            throw $e;
+        } finally {
+            $extConnection->setReadTimeout($originalTimeout);
+        }
+    }
+
+    /**
      * @param int $timeout
      *
      * @return InteropAmqpMessage|null
