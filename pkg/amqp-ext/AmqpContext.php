@@ -314,6 +314,10 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function basicConsumeSubscribe(InteropAmqpConsumer $consumer, callable $callback)
     {
+        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->basicConsumeSubscribers)) {
+            return;
+        }
+
         $extQueue = new \AMQPQueue($this->getExtChannel());
         $extQueue->setName($consumer->getQueue()->getQueueName());
 
@@ -326,16 +330,18 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
     public function basicConsumeUnsubscribe(InteropAmqpConsumer $consumer)
     {
-//        if ($consumer->getConsumerTag()) {
-//            $consumerTag = $consumer->getConsumerTag();
-//            $consumer->setConsumerTag(null);
-//
-//            $extQueue = new \AMQPQueue($this->getExtChannel());
-//            $extQueue->setName($consumer->getQueue()->getQueueName());
-//
-//            $extQueue->cancel($consumerTag);
-//            unset($this->basicConsumeSubscribers[$consumerTag]);
-//        }
+        if (false == $consumer->getConsumerTag()) {
+            return;
+        }
+
+        $consumerTag = $consumer->getConsumerTag();
+        $consumer->setConsumerTag(null);
+
+        $extQueue = new \AMQPQueue($this->getExtChannel());
+        $extQueue->setName($consumer->getQueue()->getQueueName());
+
+        $extQueue->cancel($consumerTag);
+        unset($this->basicConsumeSubscribers[$consumerTag]);
     }
 
     /**
