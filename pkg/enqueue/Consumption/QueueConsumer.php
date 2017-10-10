@@ -3,7 +3,6 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\AmqpExt\AmqpConsumer;
-use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
@@ -146,17 +145,15 @@ class QueueConsumer
      */
     public function consume(ExtensionInterface $runtimeExtension = null)
     {
+        if (empty($this->boundProcessors)) {
+            throw new \LogicException('There is nothing to consume. It is required to bind something before calling consume method.');
+        }
+
         /** @var PsrConsumer[] $consumers */
         $consumers = [];
         /** @var PsrQueue $queue */
         foreach ($this->boundProcessors as list($queue, $processor)) {
             $consumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
-        }
-
-        foreach ($consumers as $consumer) {
-            if ($consumer instanceof AmqpConsumer) {
-                $consumer->basicConsume($this->receiveTimeout, null);
-            }
         }
 
         $extension = $this->extension ?: new ChainExtension([]);
@@ -170,13 +167,19 @@ class QueueConsumer
         $logger = $context->getLogger() ?: new NullLogger();
         $logger->info('Start consuming');
 
+        $amqpConsumer = null;
+        foreach ($consumers as $consumer) {
+            if ($consumer instanceof AmqpConsumer) {
+                $consumer->basicConsume($this->receiveTimeout, null);
+
+                $amqpConsumer = $consumer;
+            }
+        }
+
         while (true) {
             try {
-                if ($this->psrContext instanceof AmqpContext) {
-                    reset($consumers);
-                    /** @var AmqpConsumer $consumer */
-                    $consumer = current($consumers);
-                    $consumer->basicConsume($this->receiveTimeout, function (AmqpMessage $message, AmqpConsumer $consumer) use ($extension, $logger) {
+                if ($amqpConsumer) {
+                    $amqpConsumer->basicConsume($this->receiveTimeout, function (AmqpMessage $message, AmqpConsumer $consumer) use ($extension, $logger) {
                         $currentProcessor = null;
 
                         /** @var PsrQueue $queue */
