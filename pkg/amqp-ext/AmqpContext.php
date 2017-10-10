@@ -43,9 +43,11 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     private $receiveMethod;
 
     /**
+     * an item contains an array: [AmqpConsumerInterop $consumer, callable $callback];.
+     *
      * @var array
      */
-    private $basicConsumeSubscribers;
+    private $subscribers;
 
     /**
      * Callable must return instance of \AMQPChannel once called.
@@ -66,7 +68,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         $this->buffer = new Buffer();
-        $this->basicConsumeSubscribers = [];
+        $this->subscribers = [];
     }
 
     /**
@@ -298,23 +300,11 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
-     * Notify broker that the channel is interested in consuming messages from this queue.
-     *
-     * @param InteropAmqpConsumer $consumer
-     * @param callable            $callback A callback function to which the
-     *                                      consumed message will be passed. The
-     *                                      function must accept at a minimum
-     *                                      one parameter, an \Interop\Amqp\AmqpMessage object,
-     *                                      and an optional second parameter
-     *                                      the \Interop\Amqp\AmqpConsumer from which the message was
-     *                                      consumed. The \Interop\Amqp\AmqpContext::basicConsume() will
-     *                                      not return the processing thread back to
-     *                                      the PHP script until the callback
-     *                                      function returns FALSE.
+     * {@inheritdoc}
      */
-    public function basicConsumeSubscribe(InteropAmqpConsumer $consumer, callable $callback)
+    public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
     {
-        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->basicConsumeSubscribers)) {
+        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
             return;
         }
 
@@ -325,10 +315,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         $consumerTag = $extQueue->getConsumerTag();
         $consumer->setConsumerTag($consumerTag);
-        $this->basicConsumeSubscribers[$consumerTag] = [$consumer, $callback];
+        $this->subscribers[$consumerTag] = [$consumer, $callback];
     }
 
-    public function basicConsumeUnsubscribe(InteropAmqpConsumer $consumer)
+    /**
+     * {@inheritdoc}
+     */
+    public function unsubscribe(InteropAmqpConsumer $consumer)
     {
         if (false == $consumer->getConsumerTag()) {
             return;
@@ -341,15 +334,15 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         $extQueue->setName($consumer->getQueue()->getQueueName());
 
         $extQueue->cancel($consumerTag);
-        unset($this->basicConsumeSubscribers[$consumerTag]);
+        unset($this->subscribers[$consumerTag]);
     }
 
     /**
-     * @param float|int $timeout milliseconds, consumes endlessly if zero set
+     * {@inheritdoc}
      */
-    public function basicConsume($timeout = 0)
+    public function consume($timeout = 0)
     {
-        if (empty($this->basicConsumeSubscribers)) {
+        if (empty($this->subscribers)) {
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
@@ -360,9 +353,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         try {
             $extConnection->setReadTimeout($timeout / 1000);
 
-            reset($this->basicConsumeSubscribers);
+            reset($this->subscribers);
             /** @var $consumer AmqpConsumer */
-            list($consumer) = current($this->basicConsumeSubscribers);
+            list($consumer) = current($this->subscribers);
 
             $extQueue = new \AMQPQueue($this->getExtChannel());
             $extQueue->setName($consumer->getQueue()->getQueueName());
@@ -374,7 +367,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                  * @var AmqpConsumer
                  * @var callable     $callback
                  */
-                list($consumer, $callback) = $this->basicConsumeSubscribers[$q->getConsumerTag()];
+                list($consumer, $callback) = $this->subscribers[$q->getConsumerTag()];
 
                 return call_user_func($callback, $message, $consumer);
             }, AMQP_JUST_CONSUME);

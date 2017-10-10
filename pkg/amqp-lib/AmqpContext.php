@@ -5,6 +5,7 @@ namespace Enqueue\AmqpLib;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
@@ -44,6 +45,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      * @var Buffer
      */
     private $buffer;
+
+    /**
+     * an item contains an array: [AmqpConsumerInterop $consumer, callable $callback];.
+     *
+     * @var array
+     */
+    private $subscribers;
 
     /**
      * @param AbstractConnection $connection
@@ -300,6 +308,38 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     public function setQos($prefetchSize, $prefetchCount, $global)
     {
         $this->getChannel()->basic_qos($prefetchSize, $prefetchCount, $global);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
+    {
+        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
+            return;
+        }
+
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unsubscribe(InteropAmqpConsumer $consumer)
+    {
+        throw new \LogicException('Not implemented');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function consume($timeout = 0)
+    {
+        if (empty($this->subscribers)) {
+            throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
+        }
+
+        throw new \LogicException('Not implemented');
     }
 
     /**

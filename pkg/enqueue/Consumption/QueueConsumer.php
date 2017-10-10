@@ -7,6 +7,7 @@ use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Util\VarExport;
+use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
@@ -167,19 +168,10 @@ class QueueConsumer
         $logger = $context->getLogger() ?: new NullLogger();
         $logger->info('Start consuming');
 
-        $amqpConsumer = null;
-        foreach ($consumers as $consumer) {
-            if ($consumer instanceof AmqpConsumer) {
-                $consumer->basicConsume($this->receiveTimeout, null);
-
-                $amqpConsumer = $consumer;
-            }
-        }
-
         while (true) {
             try {
-                if ($amqpConsumer) {
-                    $amqpConsumer->basicConsume($this->receiveTimeout, function (AmqpMessage $message, AmqpConsumer $consumer) use ($extension, $logger) {
+                if ($this->psrContext instanceof AmqpContext) {
+                    $callback = function (AmqpMessage $message, AmqpConsumer $consumer) use ($extension, $logger) {
                         $currentProcessor = null;
 
                         /** @var PsrQueue $queue */
@@ -203,7 +195,15 @@ class QueueConsumer
                         $this->doConsume($extension, $context);
 
                         return true;
-                    });
+                    };
+
+                    foreach ($consumers as $consumer) {
+                        /* @var AmqpConsumer $consumer */
+
+                        $this->psrContext->subscribe($consumer, $callback);
+                    }
+
+                    $this->psrContext->consume($this->receiveTimeout);
                 } else {
                     /** @var PsrQueue $queue */
                     foreach ($this->boundProcessors as list($queue, $processor)) {
