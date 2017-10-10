@@ -4,6 +4,7 @@ namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\Meta\QueueMeta;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
@@ -13,6 +14,7 @@ use Enqueue\Symfony\Consumption\QueueConsumerOptionsCommandTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -78,6 +80,7 @@ class ConsumeMessagesCommand extends Command
                 'By default it connects to default queue. '.
                 'It select an appropriate message processor based on a message headers')
             ->addArgument('client-queue-names', InputArgument::IS_ARRAY, 'Queues to consume messages from')
+            ->addOption('skip', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Queues to skip consumption of messages from', [])
         ;
     }
 
@@ -94,7 +97,14 @@ class ConsumeMessagesCommand extends Command
                 $queueMetas[] = $this->queueMetaRegistry->getQueueMeta($clientQueueName);
             }
         } else {
-            $queueMetas = $this->queueMetaRegistry->getQueuesMeta();
+            /** @var QueueMeta[] $queueMetas */
+            $queueMetas = iterator_to_array($this->queueMetaRegistry->getQueuesMeta());
+
+            foreach ($queueMetas as $index => $queueMeta) {
+                if (in_array($queueMeta->getClientName(), $input->getOption('skip'), true)) {
+                    unset($queueMetas[$index]);
+                }
+            }
         }
 
         foreach ($queueMetas as $queueMeta) {
