@@ -5,6 +5,7 @@ namespace Enqueue\AmqpExt;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
@@ -42,6 +43,11 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     private $receiveMethod;
 
     /**
+     * @var array
+     */
+    private $basicConsumeSubscribers;
+
+    /**
      * Callable must return instance of \AMQPChannel once called.
      *
      * @param \AMQPChannel|callable $extChannel
@@ -60,6 +66,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         $this->buffer = new Buffer();
+        $this->basicConsumeSubscribers = [];
     }
 
     /**
@@ -288,5 +295,122 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         return $this->extChannel;
+    }
+
+    /**
+     * Notify broker that the channel is interested in consuming messages from this queue.
+     *
+     * @param InteropAmqpConsumer $consumer
+     * @param callable            $callback A callback function to which the
+     *                                      consumed message will be passed. The
+     *                                      function must accept at a minimum
+     *                                      one parameter, an \Interop\Amqp\AmqpMessage object,
+     *                                      and an optional second parameter
+     *                                      the \Interop\Amqp\AmqpConsumer from which the message was
+     *                                      consumed. The \Interop\Amqp\AmqpContext::basicConsume() will
+     *                                      not return the processing thread back to
+     *                                      the PHP script until the callback
+     *                                      function returns FALSE.
+     */
+    public function basicConsumeSubscribe(InteropAmqpConsumer $consumer, callable $callback)
+    {
+        $extQueue = new \AMQPQueue($this->getExtChannel());
+        $extQueue->setName($consumer->getQueue()->getQueueName());
+
+        $extQueue->consume(null, Flags::convertConsumerFlags($consumer->getFlags()), $consumer->getConsumerTag());
+
+        $consumerTag = $extQueue->getConsumerTag();
+        $consumer->setConsumerTag($consumerTag);
+        $this->basicConsumeSubscribers[$consumerTag] = [$consumer, $callback];
+    }
+
+    public function basicConsumeUnsubscribe(InteropAmqpConsumer $consumer)
+    {
+//        if ($consumer->getConsumerTag()) {
+//            $consumerTag = $consumer->getConsumerTag();
+//            $consumer->setConsumerTag(null);
+//
+//            $extQueue = new \AMQPQueue($this->getExtChannel());
+//            $extQueue->setName($consumer->getQueue()->getQueueName());
+//
+//            $extQueue->cancel($consumerTag);
+//            unset($this->basicConsumeSubscribers[$consumerTag]);
+//        }
+    }
+
+    /**
+     * @param float|int $timeout milliseconds, consumes endlessly if zero set
+     */
+    public function basicConsume($timeout = 0)
+    {
+        if (empty($this->basicConsumeSubscribers)) {
+            throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
+        }
+
+        /** @var \AMQPQueue $extQueue */
+        $extConnection = $this->getExtChannel()->getConnection();
+
+        $originalTimeout = $extConnection->getReadTimeout();
+        try {
+            $extConnection->setReadTimeout($timeout / 1000);
+
+            reset($this->basicConsumeSubscribers);
+            /** @var $consumer AmqpConsumer */
+            list($consumer) = current($this->basicConsumeSubscribers);
+
+            $extQueue = new \AMQPQueue($this->getExtChannel());
+            $extQueue->setName($consumer->getQueue()->getQueueName());
+            $extQueue->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) {
+                $message = $this->convertMessage($extEnvelope);
+                $message->setConsumerTag($q->getConsumerTag());
+
+                /**
+                 * @var AmqpConsumer
+                 * @var callable     $callback
+                 */
+                list($consumer, $callback) = $this->basicConsumeSubscribers[$q->getConsumerTag()];
+
+                return call_user_func($callback, $message, $consumer);
+            }, AMQP_JUST_CONSUME);
+        } catch (\AMQPQueueException $e) {
+            if ('Consumer timeout exceed' == $e->getMessage()) {
+                return null;
+            }
+
+            throw $e;
+        } finally {
+            $extConnection->setReadTimeout($originalTimeout);
+        }
+    }
+
+    /**
+     * @param \AMQPEnvelope $extEnvelope
+     *
+     * @return AmqpMessage
+     */
+    private function convertMessage(\AMQPEnvelope $extEnvelope)
+    {
+        $message = new AmqpMessage(
+            $extEnvelope->getBody(),
+            $extEnvelope->getHeaders(),
+            [
+                'message_id' => $extEnvelope->getMessageId(),
+                'correlation_id' => $extEnvelope->getCorrelationId(),
+                'app_id' => $extEnvelope->getAppId(),
+                'type' => $extEnvelope->getType(),
+                'content_encoding' => $extEnvelope->getContentEncoding(),
+                'content_type' => $extEnvelope->getContentType(),
+                'expiration' => $extEnvelope->getExpiration(),
+                'priority' => $extEnvelope->getPriority(),
+                'reply_to' => $extEnvelope->getReplyTo(),
+                'timestamp' => $extEnvelope->getTimeStamp(),
+                'user_id' => $extEnvelope->getUserId(),
+            ]
+        );
+        $message->setRedelivered($extEnvelope->isRedelivery());
+        $message->setDeliveryTag($extEnvelope->getDeliveryTag());
+        $message->setRoutingKey($extEnvelope->getRoutingKey());
+
+        return $message;
     }
 }
