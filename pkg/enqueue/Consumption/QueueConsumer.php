@@ -2,10 +2,13 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\AmqpExt\AmqpConsumer;
+use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Util\VarExport;
+use Interop\Amqp\AmqpMessage;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrProcessor;
@@ -150,6 +153,12 @@ class QueueConsumer
             $consumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
         }
 
+        foreach ($consumers as $consumer) {
+            if ($consumer instanceof AmqpConsumer) {
+                $consumer->basicConsume($this->receiveTimeout, null);
+            }
+        }
+
         $extension = $this->extension ?: new ChainExtension([]);
         if ($runtimeExtension) {
             $extension = new ChainExtension([$extension, $runtimeExtension]);
@@ -163,17 +172,48 @@ class QueueConsumer
 
         while (true) {
             try {
-                /** @var PsrQueue $queue */
-                foreach ($this->boundProcessors as list($queue, $processor)) {
-                    $consumer = $consumers[$queue->getQueueName()];
+                if ($this->psrContext instanceof AmqpContext) {
+                    reset($consumers);
+                    /** @var AmqpConsumer $consumer */
+                    $consumer = current($consumers);
+                    $consumer->basicConsume($this->receiveTimeout, function (AmqpMessage $message, AmqpConsumer $consumer) use ($extension, $logger) {
+                        $currentProcessor = null;
 
-                    $context = new Context($this->psrContext);
-                    $context->setLogger($logger);
-                    $context->setPsrQueue($queue);
-                    $context->setPsrConsumer($consumer);
-                    $context->setPsrProcessor($processor);
+                        /** @var PsrQueue $queue */
+                        foreach ($this->boundProcessors as list($queue, $processor)) {
+                            if ($queue->getQueueName() === $consumer->getQueue()->getQueueName()) {
+                                $currentProcessor = $processor;
+                            }
+                        }
 
-                    $this->doConsume($extension, $context);
+                        if (false == $currentProcessor) {
+                            throw new \LogicException(sprintf('The processor for the queue "%s" could not be found.', $consumer->getQueue()->getQueueName()));
+                        }
+
+                        $context = new Context($this->psrContext);
+                        $context->setLogger($logger);
+                        $context->setPsrQueue($consumer->getQueue());
+                        $context->setPsrConsumer($consumer);
+                        $context->setPsrProcessor($currentProcessor);
+                        $context->setPsrMessage($message);
+
+                        $this->doConsume($extension, $context);
+
+                        return true;
+                    });
+                } else {
+                    /** @var PsrQueue $queue */
+                    foreach ($this->boundProcessors as list($queue, $processor)) {
+                        $consumer = $consumers[$queue->getQueueName()];
+
+                        $context = new Context($this->psrContext);
+                        $context->setLogger($logger);
+                        $context->setPsrQueue($queue);
+                        $context->setPsrConsumer($consumer);
+                        $context->setPsrProcessor($processor);
+
+                        $this->doConsume($extension, $context);
+                    }
                 }
             } catch (ConsumptionInterruptedException $e) {
                 $logger->info(sprintf('Consuming interrupted'));
@@ -218,7 +258,7 @@ class QueueConsumer
             throw new ConsumptionInterruptedException();
         }
 
-        if ($message = $consumer->receive($this->receiveTimeout)) {
+        if ($context->getPsrMessage() || $message = $consumer->receive($this->receiveTimeout)) {
             $logger->info('Message received from the queue: '.$context->getPsrQueue()->getQueueName());
             $logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
             $logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
