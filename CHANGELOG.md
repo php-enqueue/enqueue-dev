@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.18](https://github.com/php-enqueue/enqueue-dev/tree/0.7.18) (2017-10-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.17...0.7.18)
+
+- \[consumption\]\[client\] Add --skip option to consume commands. [\#216](https://github.com/php-enqueue/enqueue-dev/issues/216)
+- \[json\] jsonSerialize could throw an a exception.  [\#132](https://github.com/php-enqueue/enqueue-dev/issues/132)
+- \[client\] Add --skip option to consume command. [\#218](https://github.com/php-enqueue/enqueue-dev/pull/218) ([makasim](https://github.com/makasim))
+
 ## [0.7.17](https://github.com/php-enqueue/enqueue-dev/tree/0.7.17) (2017-10-03)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.16...0.7.17)
 
