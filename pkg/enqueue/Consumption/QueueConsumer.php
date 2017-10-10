@@ -258,13 +258,18 @@ class QueueConsumer
             throw new ConsumptionInterruptedException();
         }
 
-        if ($context->getPsrMessage() || $message = $consumer->receive($this->receiveTimeout)) {
+        $message = $context->getPsrMessage();
+        if (false == $message) {
+            if ($message = $consumer->receive($this->receiveTimeout)) {
+                $context->setPsrMessage($message);
+            }
+        }
+
+        if ($message) {
             $logger->info('Message received from the queue: '.$context->getPsrQueue()->getQueueName());
             $logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
             $logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
             $logger->debug('Payload: {payload}', ['payload' => new VarExport($message->getBody())]);
-
-            $context->setPsrMessage($message);
 
             $extension->onPreReceived($context);
             if (!$context->getResult()) {
