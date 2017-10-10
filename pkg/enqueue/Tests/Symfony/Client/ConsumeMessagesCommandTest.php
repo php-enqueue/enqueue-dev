@@ -61,16 +61,17 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(6, $options);
+        $this->assertCount(7, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
         $this->assertArrayHasKey('setup-broker', $options);
         $this->assertArrayHasKey('idle-timeout', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
+        $this->assertArrayHasKey('skip', $options);
     }
 
-    public function testShouldHaveExpectedAttributes()
+    public function testShouldHaveExpectedArguments()
     {
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
@@ -168,6 +169,63 @@ class ConsumeMessagesCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute([
             'client-queue-names' => ['non-default-queue'],
+        ]);
+    }
+
+    public function testShouldSkipQueueConsumptionAndUseCustomClientDestinationName()
+    {
+        $queue = new NullQueue('');
+
+        $processor = $this->createDelegateProcessorMock();
+
+        $context = $this->createPsrContextMock();
+        $context
+            ->expects($this->never())
+            ->method('close')
+        ;
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->exactly(2))
+            ->method('bind')
+        ;
+        $consumer
+            ->expects($this->once())
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $queueMetaRegistry = $this->createQueueMetaRegistry([
+            'fooQueue' => [
+                'transportName' => 'fooTransportQueue',
+            ],
+            'barQueue' => [
+                'transportName' => 'barTransportQueue',
+            ],
+            'ololoQueue' => [
+                'transportName' => 'ololoTransportQueue',
+            ],
+        ]);
+
+        $driver = $this->createDriverMock();
+        $driver
+            ->expects($this->at(0))
+            ->method('createQueue')
+            ->with('fooQueue')
+            ->willReturn($queue)
+        ;
+        $driver
+            ->expects($this->at(1))
+            ->method('createQueue')
+            ->with('ololoQueue')
+            ->willReturn($queue)
+        ;
+
+        $command = new ConsumeMessagesCommand($consumer, $processor, $queueMetaRegistry, $driver);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--skip' => ['barQueue'],
         ]);
     }
 
