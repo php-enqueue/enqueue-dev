@@ -12,7 +12,7 @@ class AmqpBasicConsumeShouldRemoveConsumerTagOnUnsubscribeTest extends BasicCons
 {
     public function test()
     {
-        $this->markTestSkipped('Seg fault.');
+        $this->markTestIncomplete('Seg fault.');
     }
 
     /**
