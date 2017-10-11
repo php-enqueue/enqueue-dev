@@ -20,6 +20,8 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
+use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpContext implements InteropAmqpContext, DelayStrategyAware
@@ -319,7 +321,38 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             return;
         }
 
-        throw new \LogicException('Not implemented');
+        $libCallback = function (LibAMQPMessage $message) {
+            $receivedMessage = $this->convertMessage($message);
+            $receivedMessage->setConsumerTag($message->delivery_info['consumer_tag']);
+
+            /**
+             * @var AmqpConsumer
+             * @var callable     $callback
+             */
+            list($consumer, $callback) = $this->subscribers[$message->delivery_info['consumer_tag']];
+
+            if (false === call_user_func($callback, $receivedMessage, $consumer)) {
+                throw new StopBasicConsumptionException();
+            }
+        };
+
+        $consumerTag = $this->getChannel()->basic_consume(
+            $consumer->getQueue()->getQueueName(),
+            $consumer->getConsumerTag(),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT),
+            $libCallback
+        );
+
+        if (empty($consumerTag)) {
+            throw new Exception('Got empty consumer tag');
+        }
+
+        $consumer->setConsumerTag($consumerTag);
+
+        $this->subscribers[$consumerTag] = [$consumer, $callback];
     }
 
     /**
@@ -327,7 +360,16 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function unsubscribe(InteropAmqpConsumer $consumer)
     {
-        throw new \LogicException('Not implemented');
+        if (false == $consumer->getConsumerTag()) {
+            return;
+        }
+
+        $consumerTag = $consumer->getConsumerTag();
+
+        $this->getChannel()->basic_cancel($consumerTag);
+
+        $consumer->setConsumerTag(null);
+        unset($this->subscribers[$consumerTag], $this->getChannel()->callbacks[$consumerTag]);
     }
 
     /**
@@ -339,7 +381,27 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
-        throw new \LogicException('Not implemented');
+        try {
+            while (true) {
+                $start = microtime(true);
+
+                $this->channel->wait(null, false, $timeout / 1000);
+
+                if ($timeout <= 0) {
+                    continue;
+                }
+
+                // compute remaining timeout and continue until time is up
+                $stop = microtime(true);
+                $timeout -= ($stop - $start) * 1000;
+
+                if ($timeout <= 0) {
+                    break;
+                }
+            }
+        } catch (AMQPTimeoutException $e) {
+        } catch (StopBasicConsumptionException $e) {
+        }
     }
 
     /**
@@ -357,5 +419,29 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         return $this->channel;
+    }
+
+    /**
+     * @param LibAMQPMessage $amqpMessage
+     *
+     * @return InteropAmqpMessage
+     */
+    private function convertMessage(LibAMQPMessage $amqpMessage)
+    {
+        $headers = new AMQPTable($amqpMessage->get_properties());
+        $headers = $headers->getNativeData();
+
+        $properties = [];
+        if (isset($headers['application_headers'])) {
+            $properties = $headers['application_headers'];
+        }
+        unset($headers['application_headers']);
+
+        $message = new AmqpMessage($amqpMessage->getBody(), $properties, $headers);
+        $message->setDeliveryTag($amqpMessage->delivery_info['delivery_tag']);
+        $message->setRedelivered($amqpMessage->delivery_info['redelivered']);
+        $message->setRoutingKey($amqpMessage->delivery_info['routing_key']);
+
+        return $message;
     }
 }

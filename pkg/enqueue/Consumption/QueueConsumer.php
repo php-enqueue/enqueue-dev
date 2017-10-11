@@ -221,6 +221,14 @@ class QueueConsumer
             } catch (ConsumptionInterruptedException $e) {
                 $logger->info(sprintf('Consuming interrupted'));
 
+                if ($this->psrContext instanceof AmqpContext) {
+                    foreach ($consumers as $consumer) {
+                        /* @var AmqpConsumer $consumer */
+
+                        $this->psrContext->unsubscribe($consumer);
+                    }
+                }
+
                 $context->setExecutionInterrupted(true);
 
                 $extension->onInterrupted($context);
