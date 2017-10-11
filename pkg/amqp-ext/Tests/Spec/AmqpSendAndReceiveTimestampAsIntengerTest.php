@@ -3,18 +3,13 @@
 namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Interop\Queue\Spec\Amqp\BasicConsumeUntilUnsubscribedSpec;
+use Interop\Queue\Spec\Amqp\SendAndReceiveTimestampAsIntegerSpec;
 
 /**
  * @group functional
  */
-class AmqpBasicConsumeUntilUnsubscribedTest extends BasicConsumeUntilUnsubscribedSpec
+class AmqpSendAndReceiveTimestampAsIntengerTest extends SendAndReceiveTimestampAsIntegerSpec
 {
-    public function test()
-    {
-        $this->markTestIncomplete('Seg fault');
-    }
-
     /**
      * {@inheritdoc}
      */
