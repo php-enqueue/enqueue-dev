@@ -7,7 +7,7 @@
     "require": {
         "php": ">=5.6",
 
-        "queue-interop/amqp-interop": "^0.6@dev",
+        "queue-interop/amqp-interop": "^0.7@dev",
         "bunny/bunny": "^0.2.4",
         "enqueue/amqp-tools": "^0.8@dev"
     },
