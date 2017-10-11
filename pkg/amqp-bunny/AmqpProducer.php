@@ -77,6 +77,10 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
 
         $amqpProperties = $message->getHeaders();
 
+        if (array_key_exists('timestamp', $amqpProperties)) {
+            $amqpProperties['timestamp'] = \DateTime::createFromFormat('U', $amqpProperties['timestamp']);
+        }
+
         if ($appProperties = $message->getProperties()) {
             $amqpProperties['application_headers'] = $appProperties;
         }
