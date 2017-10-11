@@ -2,11 +2,11 @@
 
 namespace Enqueue\Consumption;
 
-use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Util\VarExport;
+use Interop\Amqp\AmqpConsumer;
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Queue\PsrConsumer;
