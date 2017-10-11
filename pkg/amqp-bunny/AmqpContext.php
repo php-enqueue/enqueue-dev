@@ -425,6 +425,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
         unset($headers['application_headers']);
 
+        if (array_key_exists('timestamp', $headers)) {
+            /** @var \DateTime $date */
+            $date = $headers['timestamp'];
+
+            $headers['timestamp'] = (int) $date->format('U');
+        }
+
         $message = new AmqpMessage($bunnyMessage->content, $properties, $headers);
         $message->setDeliveryTag($bunnyMessage->deliveryTag);
         $message->setRedelivered($bunnyMessage->redelivered);
