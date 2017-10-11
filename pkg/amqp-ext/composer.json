@@ -16,7 +16,7 @@
         "enqueue/test": "^0.8@dev",
         "enqueue/enqueue": "^0.8@dev",
         "enqueue/null": "^0.8@dev",
-        "queue-interop/queue-spec": "^0.5@dev",
+        "queue-interop/queue-spec": "^0.5.1@dev",
         "empi89/php-amqp-stubs": "*@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
