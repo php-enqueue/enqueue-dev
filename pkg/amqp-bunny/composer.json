@@ -7,7 +7,7 @@
     "require": {
         "php": ">=5.6",
 
-        "queue-interop/amqp-interop": "^0.6@dev",
+        "queue-interop/amqp-interop": "^0.7@dev",
         "bunny/bunny": "^0.2.4",
         "enqueue/amqp-tools": "^0.8@dev"
     },
@@ -16,7 +16,7 @@
         "enqueue/test": "^0.8@dev",
         "enqueue/enqueue": "^0.8@dev",
         "enqueue/null": "^0.8@dev",
-        "queue-interop/queue-spec": "^0.5@dev",
+        "queue-interop/queue-spec": "^0.5.1@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
     },

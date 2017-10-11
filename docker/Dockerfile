@@ -17,6 +17,7 @@ RUN echo "extension=rdkafka.so" > /etc/php/7.1/cli/conf.d/10-rdkafka.ini
 RUN echo "extension=rdkafka.so" > /etc/php/7.1/fpm/conf.d/10-rdkafka.ini
 
 COPY ./php/cli.ini /etc/php/7.1/cli/conf.d/1-dev_cli.ini
+COPY ./php/amqp.so /usr/lib/php/20160303/amqp.so
 COPY ./bin/dev_entrypoiny.sh /usr/local/bin/entrypoint.sh
 RUN chmod u+x /usr/local/bin/entrypoint.sh
 
