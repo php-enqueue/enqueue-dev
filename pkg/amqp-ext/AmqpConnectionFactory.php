@@ -34,8 +34,9 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
      *     'connect_timeout' => 'Connection timeout. Note: 0 or greater seconds. May be fractional.',
      *     'persisted' => 'bool, Whether it use single persisted connection or open a new one for every context',
      *     'lazy' => 'the connection will be performed as later as possible, if the option set to true',
-     *     'pre_fetch_count' => 'Controls how many messages could be prefetched',
-     *     'pre_fetch_size' => 'Controls how many messages could be prefetched',
+     *     'qos_prefetch_size' => 'The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"',
+     *     'qos_prefetch_count' => 'Specifies a prefetch window in terms of whole messages.',
+     *     'qos_global' => 'If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.',
      *     'receive_method' => 'Could be either basic_get or basic_consume',
      * ]
      *
@@ -72,7 +73,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
         }
 
         if ('basic_consume' == $this->config['receive_method']) {
-            if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || phpversion('amqp') == '1.9.1-dev')) {
+            if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || '1.9.1-dev' == phpversion('amqp'))) {
                 // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
                 throw new \LogicException('The "basic_consume" method does not work on amqp extension prior 1.9.1 version.');
             }
@@ -88,7 +89,10 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     {
         if ($this->config['lazy']) {
             $context = new AmqpContext(function () {
-                return $this->createExtContext($this->establishConnection());
+                $extContext = $this->createExtContext($this->establishConnection());
+                $extContext->qos($this->config['qos_prefetch_size'], $this->config['qos_prefetch_count']);
+
+                return $extContext;
             }, $this->config['receive_method']);
             $context->setDelayStrategy($this->delayStrategy);
 
@@ -97,6 +101,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
 
         $context = new AmqpContext($this->createExtContext($this->establishConnection()), $this->config['receive_method']);
         $context->setDelayStrategy($this->delayStrategy);
+        $context->setQos($this->config['qos_prefetch_size'], $this->config['qos_prefetch_count'], $this->config['qos_global']);
 
         return $context;
     }
@@ -108,16 +113,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
      */
     private function createExtContext(\AMQPConnection $extConnection)
     {
-        $channel = new \AMQPChannel($extConnection);
-        if (false == empty($this->config['pre_fetch_count'])) {
-            $channel->setPrefetchCount((int) $this->config['pre_fetch_count']);
-        }
-
-        if (false == empty($this->config['pre_fetch_size'])) {
-            $channel->setPrefetchSize((int) $this->config['pre_fetch_size']);
-        }
-
-        return $channel;
+        return new \AMQPChannel($extConnection);
     }
 
     /**
@@ -183,6 +179,22 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             return urldecode($value);
         }, $config);
 
+        if (array_key_exists('qos_global', $config)) {
+            $config['qos_global'] = (bool) $config['qos_global'];
+        }
+        if (array_key_exists('qos_prefetch_count', $config)) {
+            $config['qos_prefetch_count'] = (int) $config['qos_prefetch_count'];
+        }
+        if (array_key_exists('qos_prefetch_size', $config)) {
+            $config['qos_prefetch_size'] = (int) $config['qos_prefetch_size'];
+        }
+        if (array_key_exists('lazy', $config)) {
+            $config['lazy'] = (bool) $config['lazy'];
+        }
+        if (array_key_exists('persisted', $config)) {
+            $config['persisted'] = (bool) $config['persisted'];
+        }
+
         return $config;
     }
 
@@ -202,8 +214,9 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             'connect_timeout' => null,
             'persisted' => false,
             'lazy' => true,
-            'pre_fetch_count' => null,
-            'pre_fetch_size' => null,
+            'qos_prefetch_size' => 0,
+            'qos_prefetch_count' => 1,
+            'qos_global' => false,
             'receive_method' => 'basic_get',
         ];
     }

@@ -63,7 +63,21 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
 
-        $this->config = array_replace($this->defaultConfig(), $config);
+        $config = array_replace($this->defaultConfig(), $config);
+        if (array_key_exists('qos_global', $config)) {
+            $config['qos_global'] = (bool) $config['qos_global'];
+        }
+        if (array_key_exists('qos_prefetch_count', $config)) {
+            $config['qos_prefetch_count'] = (int) $config['qos_prefetch_count'];
+        }
+        if (array_key_exists('qos_prefetch_size', $config)) {
+            $config['qos_prefetch_size'] = (int) $config['qos_prefetch_size'];
+        }
+        if (array_key_exists('lazy', $config)) {
+            $config['lazy'] = (bool) $config['lazy'];
+        }
+
+        $this->config = $config;
 
         $supportedMethods = ['basic_get', 'basic_consume'];
         if (false == in_array($this->config['receive_method'], $supportedMethods, true)) {
@@ -207,11 +221,11 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
 
         unset($dsnConfig['scheme'], $dsnConfig['query'], $dsnConfig['fragment'], $dsnConfig['path']);
 
-        $dsnConfig = array_map(function ($value) {
+        $config = array_map(function ($value) {
             return urldecode($value);
         }, $dsnConfig);
 
-        return $dsnConfig;
+        return $config;
     }
 
     /**

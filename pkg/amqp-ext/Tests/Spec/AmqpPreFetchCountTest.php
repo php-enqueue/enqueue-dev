@@ -3,18 +3,13 @@
 namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Interop\Queue\Spec\Amqp\BasicConsumeUntilUnsubscribedSpec;
+use Interop\Queue\Spec\Amqp\PreFetchCountSpec;
 
 /**
  * @group functional
  */
-class AmqpBasicConsumeUntilUnsubscribedTest extends BasicConsumeUntilUnsubscribedSpec
+class AmqpPreFetchCountTest extends PreFetchCountSpec
 {
-    public function test()
-    {
-        $this->markTestIncomplete('Seg fault');
-    }
-
     /**
      * {@inheritdoc}
      */

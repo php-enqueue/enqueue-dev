@@ -2,7 +2,7 @@
 
 namespace Enqueue\AmqpExt\Tests\Spec;
 
-use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
