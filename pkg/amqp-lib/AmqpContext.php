@@ -120,10 +120,10 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this->getLibChannel(), $queue, $this->buffer, $this->config['receive_method']);
+            return new AmqpConsumer($this, $queue, $this->buffer, $this->config['receive_method']);
         }
 
-        return new AmqpConsumer($this->getLibChannel(), $destination, $this->buffer, $this->config['receive_method']);
+        return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
     }
 
     /**
@@ -422,11 +422,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @internal It must be used here and in the consumer only
+     *
      * @param LibAMQPMessage $amqpMessage
      *
      * @return InteropAmqpMessage
      */
-    private function convertMessage(LibAMQPMessage $amqpMessage)
+    public function convertMessage(LibAMQPMessage $amqpMessage)
     {
         $headers = new AMQPTable($amqpMessage->get_properties());
         $headers = $headers->getNativeData();
