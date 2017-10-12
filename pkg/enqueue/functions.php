@@ -35,7 +35,7 @@ function dsn_to_connection_factory($dsn)
     if (class_exists(AmqpExtConnectionFactory::class)) {
         $map['amqp+ext'] = AmqpExtConnectionFactory::class;
     }
-    if (class_exists(AmqpBunnyConnectionFactory::class)) {
+    if (class_exists(AmqpLibConnectionFactory::class)) {
         $map['amqp+lib'] = AmqpLibConnectionFactory::class;
     }
     if (class_exists(AmqpBunnyConnectionFactory::class)) {
