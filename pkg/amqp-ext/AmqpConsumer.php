@@ -6,7 +6,6 @@ use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\Impl\AmqpMessage;
-use Interop\Queue\Exception;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrMessage;
 
@@ -31,11 +30,6 @@ class AmqpConsumer implements InteropAmqpConsumer
      * @var \AMQPQueue
      */
     private $extQueue;
-
-    /**
-     * @var bool
-     */
-    private $isInit;
 
     /**
      * @var string
@@ -65,8 +59,6 @@ class AmqpConsumer implements InteropAmqpConsumer
         $this->buffer = $buffer;
         $this->receiveMethod = $receiveMethod;
         $this->flags = self::FLAG_NOPARAM;
-
-        $this->isInit = false;
     }
 
     /**
@@ -74,10 +66,6 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     public function setConsumerTag($consumerTag)
     {
-        if ($this->isInit) {
-            throw new Exception('Consumer tag is not mutable after it has been subscribed to broker');
-        }
-
         $this->consumerTag = $consumerTag;
     }
 
@@ -157,7 +145,7 @@ class AmqpConsumer implements InteropAmqpConsumer
     public function receiveNoWait()
     {
         if ($extMessage = $this->getExtQueue()->get(Flags::convertConsumerFlags($this->flags))) {
-            return $this->convertMessage($extMessage);
+            return $this->context->convertMessage($extMessage);
         }
     }
 
@@ -213,83 +201,42 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     private function receiveBasicConsume($timeout)
     {
-        if ($this->isInit && $message = $this->buffer->pop($this->getExtQueue()->getConsumerTag())) {
+        if (false == $this->consumerTag) {
+            $this->context->subscribe($this, function (InteropAmqpMessage $message) {
+                $this->buffer->push($message->getConsumerTag(), $message);
+
+                return false;
+            });
+        }
+
+        if ($message = $this->buffer->pop($this->consumerTag)) {
             return $message;
         }
 
-        /** @var \AMQPQueue $extQueue */
-        $extConnection = $this->getExtQueue()->getChannel()->getConnection();
+        while (true) {
+            $start = microtime(true);
 
-        $originalTimeout = $extConnection->getReadTimeout();
-        try {
-            $extConnection->setReadTimeout($timeout / 1000);
+            $this->context->consume($timeout);
 
-            if (false == $this->isInit) {
-                $this->getExtQueue()->consume(null, Flags::convertConsumerFlags($this->flags), $this->consumerTag);
-
-                $this->isInit = true;
+            if ($message = $this->buffer->pop($this->consumerTag)) {
+                return $message;
             }
 
-            /** @var AmqpMessage|null $message */
-            $message = null;
+            // is here when consumed message is not for this consumer
 
-            $this->getExtQueue()->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) use (&$message) {
-                $message = $this->convertMessage($extEnvelope);
-                $message->setConsumerTag($q->getConsumerTag());
-
-                if ($this->getExtQueue()->getConsumerTag() == $q->getConsumerTag()) {
-                    return false;
-                }
-
-                // not our message, put it to buffer and continue.
-                $this->buffer->push($q->getConsumerTag(), $message);
-
-                $message = null;
-
-                return true;
-            }, AMQP_JUST_CONSUME);
-
-            return $message;
-        } catch (\AMQPQueueException $e) {
-            if ('Consumer timeout exceed' == $e->getMessage()) {
-                return null;
+            // as timeout is infinite have to continue consumption, but it can overflow message buffer
+            if ($timeout <= 0) {
+                continue;
             }
 
-            throw $e;
-        } finally {
-            $extConnection->setReadTimeout($originalTimeout);
+            // compute remaining timeout and continue until time is up
+            $stop = microtime(true);
+            $timeout -= ($stop - $start) * 1000;
+
+            if ($timeout <= 0) {
+                break;
+            }
         }
-    }
-
-    /**
-     * @param \AMQPEnvelope $extEnvelope
-     *
-     * @return AmqpMessage
-     */
-    private function convertMessage(\AMQPEnvelope $extEnvelope)
-    {
-        $message = new AmqpMessage(
-            $extEnvelope->getBody(),
-            $extEnvelope->getHeaders(),
-            [
-                'message_id' => $extEnvelope->getMessageId(),
-                'correlation_id' => $extEnvelope->getCorrelationId(),
-                'app_id' => $extEnvelope->getAppId(),
-                'type' => $extEnvelope->getType(),
-                'content_encoding' => $extEnvelope->getContentEncoding(),
-                'content_type' => $extEnvelope->getContentType(),
-                'expiration' => $extEnvelope->getExpiration(),
-                'priority' => $extEnvelope->getPriority(),
-                'reply_to' => $extEnvelope->getReplyTo(),
-                'timestamp' => $extEnvelope->getTimeStamp(),
-                'user_id' => $extEnvelope->getUserId(),
-            ]
-        );
-        $message->setRedelivered($extEnvelope->isRedelivery());
-        $message->setDeliveryTag($extEnvelope->getDeliveryTag());
-        $message->setRoutingKey($extEnvelope->getRoutingKey());
-
-        return $message;
     }
 
     /**

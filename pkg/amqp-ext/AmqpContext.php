@@ -384,11 +384,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @internal It must be used here and in the consumer only
+     *
      * @param \AMQPEnvelope $extEnvelope
      *
      * @return AmqpMessage
      */
-    private function convertMessage(\AMQPEnvelope $extEnvelope)
+    public function convertMessage(\AMQPEnvelope $extEnvelope)
     {
         $message = new AmqpMessage(
             $extEnvelope->getBody(),

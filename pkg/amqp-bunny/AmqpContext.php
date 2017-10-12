@@ -127,10 +127,10 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this->getBunnyChannel(), $queue, $this->buffer, $this->config['receive_method']);
+            return new AmqpConsumer($this, $queue, $this->buffer, $this->config['receive_method']);
         }
 
-        return new AmqpConsumer($this->getBunnyChannel(), $destination, $this->buffer, $this->config['receive_method']);
+        return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
     }
 
     /**
@@ -411,11 +411,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @internal It must be used here and in the consumer only
+     *
      * @param Message $bunnyMessage
      *
      * @return InteropAmqpMessage
      */
-    private function convertMessage(Message $bunnyMessage)
+    public function convertMessage(Message $bunnyMessage)
     {
         $headers = $bunnyMessage->headers;
 
@@ -425,7 +427,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
         unset($headers['application_headers']);
 
-        if (array_key_exists('timestamp', $headers)) {
+        if (array_key_exists('timestamp', $headers) && $headers['timestamp']) {
             /** @var \DateTime $date */
             $date = $headers['timestamp'];
 
