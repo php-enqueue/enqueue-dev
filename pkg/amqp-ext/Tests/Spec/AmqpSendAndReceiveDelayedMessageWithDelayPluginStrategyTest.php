@@ -3,6 +3,7 @@
 namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpTools\RabbitMqDelayPluginDelayStrategy;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
@@ -24,6 +25,8 @@ class AmqpSendAndReceiveDelayedMessageWithDelayPluginStrategyTest extends SendAn
     }
 
     /**
+     * @param AmqpContext $context
+     *
      * {@inheritdoc}
      */
     protected function createQueue(PsrContext $context, $queueName)
@@ -31,6 +34,7 @@ class AmqpSendAndReceiveDelayedMessageWithDelayPluginStrategyTest extends SendAn
         $queue = parent::createQueue($context, $queueName);
 
         $context->declareQueue($queue);
+        $context->purgeQueue($queue);
 
         return $queue;
     }
