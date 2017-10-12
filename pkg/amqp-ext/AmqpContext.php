@@ -360,17 +360,24 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
             $extQueue = new \AMQPQueue($this->getExtChannel());
             $extQueue->setName($consumer->getQueue()->getQueueName());
-            $extQueue->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) {
-                $message = $this->convertMessage($extEnvelope);
-                $message->setConsumerTag($q->getConsumerTag());
+            $extQueue->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) use ($originalTimeout, $extConnection) {
+                $consumeTimeout = $extConnection->getReadTimeout();
+                try {
+                    $extConnection->setReadTimeout($originalTimeout);
 
-                /**
-                 * @var AmqpConsumer
-                 * @var callable     $callback
-                 */
-                list($consumer, $callback) = $this->subscribers[$q->getConsumerTag()];
+                    $message = $this->convertMessage($extEnvelope);
+                    $message->setConsumerTag($q->getConsumerTag());
 
-                return call_user_func($callback, $message, $consumer);
+                    /**
+                     * @var AmqpConsumer
+                     * @var callable     $callback
+                     */
+                    list($consumer, $callback) = $this->subscribers[$q->getConsumerTag()];
+
+                    return call_user_func($callback, $message, $consumer);
+                } finally {
+                    $extConnection->setReadTimeout($consumeTimeout);
+                }
             }, AMQP_JUST_CONSUME);
         } catch (\AMQPQueueException $e) {
             if ('Consumer timeout exceed' == $e->getMessage()) {
