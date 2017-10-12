@@ -14,7 +14,7 @@
         "enqueue/test": "^0.8@dev",
         "enqueue/enqueue": "^0.8@dev",
         "enqueue/null": "^0.8@dev",
-        "queue-interop/queue-spec": "^0.5@dev",
+        "queue-interop/queue-spec": "^0.5.3@dev",
         "kwn/php-rdkafka-stubs": "^1.0.2"
     },
     "autoload": {

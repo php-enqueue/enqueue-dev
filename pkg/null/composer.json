@@ -12,7 +12,7 @@
         "phpunit/phpunit": "~5.5",
         "enqueue/enqueue": "^0.8@dev",
         "enqueue/test": "^0.8@dev",
-        "queue-interop/queue-spec": "^0.5@dev",
+        "queue-interop/queue-spec": "^0.5.3@dev",
         "symfony/dependency-injection": "^2.8|^3",
         "symfony/config": "^2.8|^3"
     },
