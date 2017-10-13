@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.7.19](https://github.com/php-enqueue/enqueue-dev/tree/0.7.19) (2017-10-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.18...0.7.19)
+
+- Amqp basic consume fixes [\#223](https://github.com/php-enqueue/enqueue-dev/pull/223) ([makasim](https://github.com/makasim))
+- Adds to small extension points to JobProcessor [\#222](https://github.com/php-enqueue/enqueue-dev/pull/222) ([iainmckay](https://github.com/iainmckay))
+- \[BC break\]\[amqp\] Use same qos options across all all AMQP transports [\#221](https://github.com/php-enqueue/enqueue-dev/pull/221) ([makasim](https://github.com/makasim))
+- \[BC break\] Amqp add basic consume support [\#217](https://github.com/php-enqueue/enqueue-dev/pull/217) ([makasim](https://github.com/makasim))
+
+- Amqp basic consume fixes [\#223](https://github.com/php-enqueue/enqueue-dev/pull/223) ([makasim](https://github.com/makasim))
+
+- Fix typo [\#227](https://github.com/php-enqueue/enqueue-dev/pull/227) ([f3ath](https://github.com/f3ath))
+
 ## [0.7.18](https://github.com/php-enqueue/enqueue-dev/tree/0.7.18) (2017-10-10)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.17...0.7.18)
 
