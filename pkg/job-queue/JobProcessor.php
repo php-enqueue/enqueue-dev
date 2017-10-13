@@ -243,11 +243,21 @@ class JobProcessor
         });
     }
 
+    /**
+     * @link https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
+     *
+     * @param Job $job
+     */
     protected function saveJob(Job $job)
     {
         $this->jobStorage->saveJob($job);
     }
 
+    /**
+     * @link https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
+     *
+     * @param Job $job
+     */
     protected function sendCalculateRootJobStatusEvent(Job $job)
     {
         $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
