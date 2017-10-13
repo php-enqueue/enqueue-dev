@@ -35,7 +35,7 @@ class ConnectionConfigTest extends TestCase
         $this->expectExceptionMessage('The given DSN scheme "http" is not supported. Could be one of "amqp", "amqp+foo" only.');
 
         (new ConnectionConfig('http://example.com'))
-            ->addSupportedSchemes('amqp+foo')
+            ->addSupportedScheme('amqp+foo')
             ->parse()
         ;
     }
@@ -51,7 +51,7 @@ class ConnectionConfigTest extends TestCase
     public function testShouldParseEmptyDsnWithDriverSet()
     {
         $config = (new ConnectionConfig('amqp+foo:'))
-            ->addSupportedSchemes('amqp+foo')
+            ->addSupportedScheme('amqp+foo')
             ->parse()
         ;
 
@@ -76,7 +76,7 @@ class ConnectionConfigTest extends TestCase
     public function testShouldParseCustomDsnWithDriverSet()
     {
         $config = (new ConnectionConfig('amqp+foo://user:pass@host:10000/vhost'))
-            ->addSupportedSchemes('amqp+foo')
+            ->addSupportedScheme('amqp+foo')
             ->parse()
         ;
 

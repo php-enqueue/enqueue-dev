@@ -75,7 +75,7 @@ class ConnectionConfig
             'qos_prefetch_count' => 1,
         ];
 
-        $this->addSupportedSchemes('amqp');
+        $this->addSupportedScheme('amqp');
     }
 
     /**
@@ -83,7 +83,7 @@ class ConnectionConfig
      *
      * @return self
      */
-    public function addSupportedSchemes($schema)
+    public function addSupportedScheme($schema)
     {
         $this->supportedSchemes[] = $schema;
         $this->supportedSchemes = array_unique($this->supportedSchemes);

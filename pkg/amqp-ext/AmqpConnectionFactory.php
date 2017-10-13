@@ -32,7 +32,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     public function __construct($config = 'amqp:')
     {
         $this->config = (new ConnectionConfig($config))
-            ->addSupportedSchemes('amqp+ext')
+            ->addSupportedScheme('amqp+ext')
             ->addDefaultOption('receive_method', 'basic_get')
             ->parse()
         ;
