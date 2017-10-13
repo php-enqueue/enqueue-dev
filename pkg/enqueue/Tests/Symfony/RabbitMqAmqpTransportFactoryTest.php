@@ -1,13 +1,13 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests\Symfony;
+namespace Enqueue\Tests\Symfony;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Client\Amqp\RabbitMqDriver;
+use Enqueue\Symfony\AmqpTransportFactory;
+use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Amqp\AmqpConnectionFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
@@ -30,21 +30,21 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
 
     public function testCouldBeConstructedWithDefaultName()
     {
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
 
         $this->assertEquals('rabbitmq_amqp', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
     {
-        $transport = new RabbitMqAmqpTransportFactory('theCustomName');
+        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass(), 'theCustomName');
 
         $this->assertEquals('theCustomName', $transport->getName());
     }
 
     public function testShouldAllowAddConfiguration()
     {
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -53,15 +53,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
         $config = $processor->process($tb->buildTree(), []);
 
         $this->assertEquals([
-            'host' => 'localhost',
-            'port' => 5672,
-            'user' => 'guest',
-            'pass' => 'guest',
-            'vhost' => '/',
-            'persisted' => false,
             'delay_strategy' => 'dlx',
-            'lazy' => true,
-            'receive_method' => 'basic_get',
         ], $config);
     }
 
@@ -69,7 +61,9 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory();
+        $expectedClass = $this->createAmqpConnectionFactoryClass();
+
+        $transport = new RabbitMqAmqpTransportFactory($expectedClass);
 
         $serviceId = $transport->createConnectionFactory($container, [
             'host' => 'localhost',
@@ -83,7 +77,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+        $this->assertEquals($expectedClass, $factory->getClass());
         $this->assertSame([[
             'host' => 'localhost',
             'port' => 5672,
@@ -99,7 +93,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
 
         $serviceId = $transport->createContext($container, [
             'host' => 'localhost',
@@ -124,7 +118,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory();
+        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
 
         $serviceId = $transport->createDriver($container, []);
 
@@ -133,5 +127,13 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
 
         $driver = $container->getDefinition($serviceId);
         $this->assertSame(RabbitMqDriver::class, $driver->getClass());
+    }
+
+    /**
+     * @return string
+     */
+    private function createAmqpConnectionFactoryClass()
+    {
+        return $this->getMockClass(AmqpConnectionFactory::class);
     }
 }

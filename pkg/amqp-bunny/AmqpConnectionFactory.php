@@ -2,7 +2,6 @@
 
 namespace Enqueue\AmqpBunny;
 
-use Bunny\Client;
 use Enqueue\AmqpTools\ConnectionConfig;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
@@ -18,7 +17,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     private $config;
 
     /**
-     * @var Client
+     * @var BunnyClient
      */
     private $client;
 
@@ -82,7 +81,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     }
 
     /**
-     * @return Client
+     * @return BunnyClient
      */
     private function establishConnection()
     {
@@ -96,9 +95,10 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             $bunnyConfig['read_write_timeout'] = min($this->config->getReadTimeout(), $this->config->getWriteTimeout());
             $bunnyConfig['timeout'] = $this->config->getConnectionTimeout();
 
+            // @see https://github.com/php-enqueue/enqueue-dev/issues/229
 //            $bunnyConfig['persistent'] = $this->config->isPersisted();
 //            if ($this->config->isPersisted()) {
-//                $bunnyConfig['path'] = $this->config->getOption('path', $this->config->getOption('vhost'));
+//                $bunnyConfig['path'] = 'enqueue';//$this->config->getOption('path', $this->config->getOption('vhost'));
 //            }
 
             if ($this->config->getHeartbeat()) {
@@ -109,7 +109,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
                 $bunnyConfig['tcp_nodelay'] = $this->config->getOption('tcp_nodelay');
             }
 
-            $this->client = new Client($bunnyConfig);
+            $this->client = new BunnyClient($bunnyConfig);
             $this->client->connect();
         }
 

@@ -250,11 +250,11 @@ class DefaultTransportFactoryTest extends TestCase
 
     public static function provideDSNs()
     {
-        yield ['amqp+ext:', 'default_amqp_ext'];
+        yield ['amqp+ext:', 'default_amqp'];
 
-        yield ['amqp+lib:', 'default_amqp_lib'];
+        yield ['amqp+lib:', 'default_amqp'];
 
-        yield ['amqp+bunny:', 'default_amqp_bunny'];
+        yield ['amqp+bunny:', 'default_amqp'];
 
         yield ['null:', 'default_null'];
 

@@ -13,7 +13,7 @@ namespace Enqueue\AmqpTools;
  *   pass - Password. Note: Max 128 characters
  *   read_timeout - Timeout in for income activity. Note: 0 or greater seconds. May be fractional
  *   write_timeout - Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional
- *   connect_timeout - Connection timeout. Note: 0 or greater seconds. May be fractional
+ *   connection_timeout - Connection timeout. Note: 0 or greater seconds. May be fractional
  *   heartbeat - how often to send heartbeat. 0 means off
  *   persisted - bool, Whether it use single persisted connection or open a new one for every context
  *   lazy - the connection will be performed as later as possible, if the option set to true
@@ -68,7 +68,7 @@ class ConnectionConfig
             'write_timeout' => 3.,
             'connection_timeout' => 3.,
             'heartbeat' => 0,
-            'persisted' => true,
+            'persisted' => false,
             'lazy' => true,
             'qos_global' => false,
             'qos_prefetch_size' => 0,

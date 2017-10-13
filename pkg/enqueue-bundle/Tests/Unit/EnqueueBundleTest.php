@@ -2,12 +2,9 @@
 
 namespace Enqueue\Bundle\Tests\Unit;
 
-use Enqueue\AmqpBunny\Symfony\AmqpBunnyTransportFactory;
-use Enqueue\AmqpBunny\Symfony\RabbitMqAmqpBunnyTransportFactory;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
-use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
-use Enqueue\AmqpLib\Symfony\RabbitMqAmqpLibTransportFactory;
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
@@ -23,6 +20,8 @@ use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
+use Enqueue\Symfony\AmqpTransportFactory;
+use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -114,7 +113,7 @@ class EnqueueBundleTest extends TestCase
         $bundle->build($container);
     }
 
-    public function testShouldRegisterAmqpAndRabbitMqAmqpTransportFactories()
+    public function testShouldRegisterAmqpExtAndRabbitMqAmqpExtTransportFactories()
     {
         $extensionMock = $this->createEnqueueExtensionMock();
 
@@ -125,11 +124,17 @@ class EnqueueBundleTest extends TestCase
             ->expects($this->at(2))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(AmqpTransportFactory::class))
+            ->willReturnCallback(function (AmqpTransportFactory $factory) {
+                $this->assertSame(AmqpExtConnectionFactory::class, $factory->getAmqpConnectionFactoryClass());
+            })
         ;
         $extensionMock
             ->expects($this->at(3))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(RabbitMqAmqpTransportFactory::class))
+            ->willReturnCallback(function (AmqpTransportFactory $factory) {
+                $this->assertSame(AmqpExtConnectionFactory::class, $factory->getAmqpConnectionFactoryClass());
+            })
         ;
 
         $bundle = new EnqueueBundle();
@@ -146,12 +151,18 @@ class EnqueueBundleTest extends TestCase
         $extensionMock
             ->expects($this->at(4))
             ->method('addTransportFactory')
-            ->with($this->isInstanceOf(AmqpLibTransportFactory::class))
+            ->with($this->isInstanceOf(AmqpTransportFactory::class))
+            ->willReturnCallback(function (AmqpTransportFactory $factory) {
+                $this->assertSame(AmqpLibConnectionFactory::class, $factory->getAmqpConnectionFactoryClass());
+            })
         ;
         $extensionMock
             ->expects($this->at(5))
             ->method('addTransportFactory')
-            ->with($this->isInstanceOf(RabbitMqAmqpLibTransportFactory::class))
+            ->with($this->isInstanceOf(RabbitMqAmqpTransportFactory::class))
+            ->willReturnCallback(function (AmqpTransportFactory $factory) {
+                $this->assertSame(AmqpLibConnectionFactory::class, $factory->getAmqpConnectionFactoryClass());
+            })
         ;
 
         $bundle = new EnqueueBundle();
@@ -236,12 +247,18 @@ class EnqueueBundleTest extends TestCase
         $extensionMock
             ->expects($this->at(10))
             ->method('addTransportFactory')
-            ->with($this->isInstanceOf(AmqpBunnyTransportFactory::class))
+            ->with($this->isInstanceOf(AmqpTransportFactory::class))
+            ->willReturnCallback(function (AmqpTransportFactory $factory) {
+                $this->assertSame(AmqpBunnyConnectionFactory::class, $factory->getAmqpConnectionFactoryClass());
+            })
         ;
         $extensionMock
             ->expects($this->at(11))
             ->method('addTransportFactory')
-            ->with($this->isInstanceOf(RabbitMqAmqpBunnyTransportFactory::class))
+            ->with($this->isInstanceOf(RabbitMqAmqpTransportFactory::class))
+            ->willReturnCallback(function (AmqpTransportFactory $factory) {
+                $this->assertSame(AmqpBunnyConnectionFactory::class, $factory->getAmqpConnectionFactoryClass());
+            })
         ;
 
         $bundle = new EnqueueBundle();

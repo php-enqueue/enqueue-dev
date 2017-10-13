@@ -73,7 +73,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             return $context;
         }
 
-        $context = new AmqpContext($this->createExtContext($this->establishConnection()), $this->config['receive_method']);
+        $context = new AmqpContext($this->createExtContext($this->establishConnection()), $this->config->getOption('receive_method'));
         $context->setDelayStrategy($this->delayStrategy);
         $context->setQos($this->config->getQosPrefetchSize(), $this->config->getQosPrefetchCount(), $this->config->isQosGlobal());
 
