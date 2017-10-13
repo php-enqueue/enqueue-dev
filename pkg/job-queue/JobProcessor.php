@@ -63,7 +63,7 @@ class JobProcessor
         $job->setUnique((bool) $unique);
 
         try {
-            $this->jobStorage->saveJob($job);
+            $this->saveJob($job);
 
             return $job;
         } catch (DuplicateJobException $e) {
@@ -97,11 +97,9 @@ class JobProcessor
         $job->setCreatedAt(new \DateTime());
         $job->setRootJob($rootJob);
 
-        $this->jobStorage->saveJob($job);
+        $this->saveJob($job);
 
-        $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
-            'jobId' => $job->getId(),
-        ]);
+        $this->sendCalculateRootJobStatusEvent($job);
 
         return $job;
     }
@@ -128,11 +126,9 @@ class JobProcessor
         $job->setStatus(Job::STATUS_RUNNING);
         $job->setStartedAt(new \DateTime());
 
-        $this->jobStorage->saveJob($job);
+        $this->saveJob($job);
 
-        $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
-            'jobId' => $job->getId(),
-        ]);
+        $this->sendCalculateRootJobStatusEvent($job);
     }
 
     /**
@@ -157,11 +153,9 @@ class JobProcessor
         $job->setStatus(Job::STATUS_SUCCESS);
         $job->setStoppedAt(new \DateTime());
 
-        $this->jobStorage->saveJob($job);
+        $this->saveJob($job);
 
-        $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
-            'jobId' => $job->getId(),
-        ]);
+        $this->sendCalculateRootJobStatusEvent($job);
     }
 
     /**
@@ -186,11 +180,9 @@ class JobProcessor
         $job->setStatus(Job::STATUS_FAILED);
         $job->setStoppedAt(new \DateTime());
 
-        $this->jobStorage->saveJob($job);
+        $this->saveJob($job);
 
-        $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
-            'jobId' => $job->getId(),
-        ]);
+        $this->sendCalculateRootJobStatusEvent($job);
     }
 
     /**
@@ -219,11 +211,9 @@ class JobProcessor
             $job->setStartedAt($stoppedAt);
         }
 
-        $this->jobStorage->saveJob($job);
+        $this->saveJob($job);
 
-        $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
-            'jobId' => $job->getId(),
-        ]);
+        $this->sendCalculateRootJobStatusEvent($job);
     }
 
     /**
@@ -251,5 +241,27 @@ class JobProcessor
                 $job->setStoppedAt(new \DateTime());
             }
         });
+    }
+
+    /**
+     * @link https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
+     *
+     * @param Job $job
+     */
+    protected function saveJob(Job $job)
+    {
+        $this->jobStorage->saveJob($job);
+    }
+
+    /**
+     * @link https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
+     *
+     * @param Job $job
+     */
+    protected function sendCalculateRootJobStatusEvent(Job $job)
+    {
+        $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
+            'jobId' => $job->getId(),
+        ]);
     }
 }
