@@ -33,8 +33,8 @@ class SimpleClientTest extends TestCase
     {
         yield 'amqp' => [[
             'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
+                'default' => 'amqp_ext',
+                'amqp_ext' => [
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
                     'user' => getenv('SYMFONY__RABBITMQ__USER'),
@@ -48,8 +48,8 @@ class SimpleClientTest extends TestCase
 
         yield 'amqp_dsn' => [[
             'transport' => [
-                'default' => 'amqp',
-                'amqp' => getenv('AMQP_DSN'),
+                'default' => 'amqp_ext',
+                'amqp_ext' => getenv('AMQP_DSN'),
             ],
         ]];
 
@@ -61,8 +61,8 @@ class SimpleClientTest extends TestCase
 
         yield [[
             'transport' => [
-                'default' => 'rabbitmq_amqp',
-                'rabbitmq_amqp' => [
+                'default' => 'rabbitmq_amqp_ext',
+                'rabbitmq_amqp_ext' => [
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
                     'user' => getenv('SYMFONY__RABBITMQ__USER'),
