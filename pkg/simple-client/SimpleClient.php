@@ -2,8 +2,9 @@
 
 namespace Enqueue\SimpleClient;
 
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
@@ -22,7 +23,9 @@ use Enqueue\Rpc\Promise;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
+use Enqueue\Symfony\AmqpTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -46,8 +49,8 @@ final class SimpleClient
      *
      *$config = [
      *   'transport' => [
-     *     'default' => 'amqp',
-     *     'amqp'          => [], // amqp options here
+     *     'default' => 'amqp_ext',
+     *     'amqp_ext'          => [], // amqp options here
      *   ],
      * ]
      *
@@ -55,8 +58,8 @@ final class SimpleClient
      *
      * $config = [
      *   'transport' => [
-     *     'default' => 'amqp',
-     *     'amqp'          => [],
+     *     'default' => 'amqp_ext',
+     *     'amqp_ext'          => [],
      *     ....
      *   ],
      *   'client' => [
@@ -275,8 +278,6 @@ final class SimpleClient
     {
         $map = [
             'default' => DefaultTransportFactory::class,
-            'amqp' => AmqpTransportFactory::class,
-            'rabbitmq_amqp' => RabbitMqAmqpTransportFactory::class,
             'dbal' => DbalTransportFactory::class,
             'fs' => FsTransportFactory::class,
             'redis' => RedisTransportFactory::class,
@@ -291,6 +292,21 @@ final class SimpleClient
             if (class_exists($factoryClass)) {
                 $extension->addTransportFactory(new $factoryClass($name));
             }
+        }
+
+        if (class_exists(AmqpExtConnectionFactory::class)) {
+            $extension->addTransportFactory(new AmqpTransportFactory(AmqpExtConnectionFactory::class, 'amqp_ext'));
+            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpExtConnectionFactory::class, 'rabbitmq_amqp_ext'));
+        }
+
+        if (class_exists(AmqpLibConnectionFactory::class)) {
+            $extension->addTransportFactory(new AmqpTransportFactory(AmqpLibConnectionFactory::class, 'amqp_lib'));
+            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpLibConnectionFactory::class, 'rabbitmq_amqp_lib'));
+        }
+
+        if (class_exists(AmqpBunnyConnectionFactory::class)) {
+            $extension->addTransportFactory(new AmqpTransportFactory(AmqpBunnyConnectionFactory::class, 'amqp_bunny'));
+            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpBunnyConnectionFactory::class, 'rabbitmq_amqp_bunny'));
         }
 
         return $extension;
