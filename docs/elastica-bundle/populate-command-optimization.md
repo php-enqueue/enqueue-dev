@@ -62,6 +62,7 @@ Here's an example of what your EnqueueBundle configuration may look like:
 enqueue:
     transport:
         default: 'file://%kernel.root_dir%/../var/messages'
+    client: ~
 ```
 
 Sure you can configure other transports like: [rabbitmq, amqp, stomp and so on](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/config_reference.md)
