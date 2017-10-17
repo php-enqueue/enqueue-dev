@@ -263,7 +263,9 @@ class QueueConsumer
         $consumer = $context->getPsrConsumer();
         $logger = $context->getLogger();
 
-        $extension->onBeforeReceive($context);
+        if (false == $context->getPsrMessage() instanceof AmqpContext) {
+            $extension->onBeforeReceive($context);
+        }
 
         if ($context->isExecutionInterrupted()) {
             throw new ConsumptionInterruptedException();
@@ -307,6 +309,10 @@ class QueueConsumer
             $logger->info(sprintf('Message processed: %s', $context->getResult()));
 
             $extension->onPostReceived($context);
+
+            if ($context->getPsrMessage() instanceof AmqpContext) {
+                $extension->onBeforeReceive($context);
+            }
         } else {
             usleep($this->idleTimeout * 1000);
             $extension->onIdle($context);
