@@ -177,7 +177,7 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
         $factory = dsn_to_connection_factory($dsn);
 
         if ($factory instanceof AmqpConnectionFactory) {
-            return new AmqpTransportFactory(get_class($factory), 'default_amqp');
+            return new AmqpTransportFactory('default_amqp');
         }
 
         if ($factory instanceof FsConnectionFactory) {

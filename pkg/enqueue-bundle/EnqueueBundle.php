@@ -2,9 +2,6 @@
 
 namespace Enqueue\Bundle;
 
-use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
-use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
-use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventsPass;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncTransformersPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
@@ -55,15 +52,8 @@ class EnqueueBundle extends Bundle
             $extension->addTransportFactory(new RabbitMqStompTransportFactory());
         }
 
-        if (class_exists(AmqpExtConnectionFactory::class)) {
-            $extension->addTransportFactory(new AmqpTransportFactory(AmqpExtConnectionFactory::class, 'amqp_ext'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpExtConnectionFactory::class, 'rabbitmq_amqp_ext'));
-        }
-
-        if (class_exists(AmqpLibConnectionFactory::class)) {
-            $extension->addTransportFactory(new AmqpTransportFactory(AmqpLibConnectionFactory::class, 'amqp_lib'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpLibConnectionFactory::class, 'rabbitmq_amqp_lib'));
-        }
+        $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
+        $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
 
         if (class_exists(FsConnectionFactory::class)) {
             $extension->addTransportFactory(new FsTransportFactory());
@@ -79,11 +69,6 @@ class EnqueueBundle extends Bundle
 
         if (class_exists(SqsConnectionFactory::class)) {
             $extension->addTransportFactory(new SqsTransportFactory());
-        }
-
-        if (class_exists(AmqpBunnyConnectionFactory::class)) {
-            $extension->addTransportFactory(new AmqpTransportFactory(AmqpBunnyConnectionFactory::class, 'amqp_bunny'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpBunnyConnectionFactory::class, 'rabbitmq_amqp_bunny'));
         }
 
         $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

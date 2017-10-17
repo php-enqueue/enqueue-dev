@@ -2,9 +2,6 @@
 
 namespace Enqueue\SimpleClient;
 
-use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
-use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
-use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
@@ -49,8 +46,8 @@ final class SimpleClient
      *
      *$config = [
      *   'transport' => [
-     *     'default' => 'amqp_ext',
-     *     'amqp_ext'          => [], // amqp options here
+     *     'default' => 'amqp',
+     *     'amqp'          => [], // amqp options here
      *   ],
      * ]
      *
@@ -58,8 +55,8 @@ final class SimpleClient
      *
      * $config = [
      *   'transport' => [
-     *     'default' => 'amqp_ext',
-     *     'amqp_ext'          => [],
+     *     'default' => 'amqp',
+     *     'amqp'          => [],
      *     ....
      *   ],
      *   'client' => [
@@ -294,20 +291,8 @@ final class SimpleClient
             }
         }
 
-        if (class_exists(AmqpExtConnectionFactory::class)) {
-            $extension->addTransportFactory(new AmqpTransportFactory(AmqpExtConnectionFactory::class, 'amqp_ext'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpExtConnectionFactory::class, 'rabbitmq_amqp_ext'));
-        }
-
-        if (class_exists(AmqpLibConnectionFactory::class)) {
-            $extension->addTransportFactory(new AmqpTransportFactory(AmqpLibConnectionFactory::class, 'amqp_lib'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpLibConnectionFactory::class, 'rabbitmq_amqp_lib'));
-        }
-
-        if (class_exists(AmqpBunnyConnectionFactory::class)) {
-            $extension->addTransportFactory(new AmqpTransportFactory(AmqpBunnyConnectionFactory::class, 'amqp_bunny'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory(AmqpBunnyConnectionFactory::class, 'rabbitmq_amqp_bunny'));
-        }
+        $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
+        $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
 
         return $extension;
     }
