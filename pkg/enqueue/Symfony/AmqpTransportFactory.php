@@ -2,32 +2,30 @@
 
 namespace Enqueue\Symfony;
 
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Client\Amqp\AmqpDriver;
+use Interop\Amqp\AmqpConnectionFactory;
 use Interop\Amqp\AmqpContext;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use function Enqueue\dsn_to_connection_factory;
 
 class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
     /**
      * @var string
      */
-    private $amqpConnectionFactoryClass;
-
-    /**
-     * @var string
-     */
     private $name;
 
     /**
-     * @param string $amqpConnectionFactoryClass
      * @param string $name
      */
-    public function __construct($amqpConnectionFactoryClass, $name = 'amqp')
+    public function __construct($name = 'amqp')
     {
-        $this->amqpConnectionFactoryClass = $amqpConnectionFactoryClass;
         $this->name = $name;
     }
 
@@ -36,14 +34,32 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
      */
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
+        $drivers = [];
+        if (class_exists(AmqpExtConnectionFactory::class)) {
+            $drivers[] = 'ext';
+        }
+        if (class_exists(AmqpLibConnectionFactory::class)) {
+            $drivers[] = 'lib';
+        }
+        if (class_exists(AmqpBunnyConnectionFactory::class)) {
+            $drivers[] = 'bunny';
+        }
+
         $builder
             ->beforeNormalization()
-            ->ifString()
+                ->ifEmpty()
+                ->then(function ($v) {
+                    return ['dsn' => 'amqp:'];
+                })
+                ->ifString()
                 ->then(function ($v) {
                     return ['dsn' => $v];
                 })
             ->end()
             ->children()
+                ->enumNode('driver')
+                    ->values($drivers)
+                ->end()
                 ->scalarNode('dsn')
                     ->info('The connection to AMQP broker set as a string. Other parameters could be used as defaults')
                 ->end()
@@ -113,7 +129,8 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
             $config = array_replace($driverOptions, $config);
         }
 
-        $factory = new Definition($this->amqpConnectionFactoryClass);
+        $factory = new Definition(AmqpConnectionFactory::class);
+        $factory->setFactory([self::class, 'createConnectionFactoryFactory']);
         $factory->setArguments([$config]);
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
@@ -164,11 +181,31 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getAmqpConnectionFactoryClass()
+    public static function createConnectionFactoryFactory(array $config)
     {
-        return $this->amqpConnectionFactoryClass;
+        if (array_key_exists('driver', $config)) {
+            if ('ext' == $config['driver']) {
+                return new AmqpExtConnectionFactory($config);
+            }
+            if ('lib' == $config['driver']) {
+                return new AmqpLibConnectionFactory($config);
+            }
+            if ('bunny' == $config['driver']) {
+                return new AmqpBunnyConnectionFactory($config);
+            }
+
+            throw new \LogicException(sprintf('Unexpected driver given "%s"', $config['driver']));
+        }
+
+        $dsn = array_key_exists('dsn', $config) ? $config['dsn'] : 'amqp:';
+        $factory = dsn_to_connection_factory($dsn);
+
+        if (false == $factory instanceof  AmqpConnectionFactory) {
+            throw new \LogicException(sprintf('Factory must be instance of "%s" but got "%s"', AmqpConnectionFactory::class, get_class($factory)));
+        }
+
+        $factoryClass = get_class($factory);
+
+        return new $factoryClass($config);
     }
 }

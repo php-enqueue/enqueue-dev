@@ -30,21 +30,21 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
 
     public function testCouldBeConstructedWithDefaultName()
     {
-        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new RabbitMqAmqpTransportFactory();
 
         $this->assertEquals('rabbitmq_amqp', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
     {
-        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass(), 'theCustomName');
+        $transport = new RabbitMqAmqpTransportFactory('theCustomName');
 
         $this->assertEquals('theCustomName', $transport->getName());
     }
 
     public function testShouldAllowAddConfiguration()
     {
-        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new RabbitMqAmqpTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -61,9 +61,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $expectedClass = $this->createAmqpConnectionFactoryClass();
-
-        $transport = new RabbitMqAmqpTransportFactory($expectedClass);
+        $transport = new RabbitMqAmqpTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
             'host' => 'localhost',
@@ -77,7 +75,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals($expectedClass, $factory->getClass());
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
         $this->assertSame([[
             'host' => 'localhost',
             'port' => 5672,
@@ -93,7 +91,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new RabbitMqAmqpTransportFactory();
 
         $serviceId = $transport->createContext($container, [
             'host' => 'localhost',
@@ -118,7 +116,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new RabbitMqAmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new RabbitMqAmqpTransportFactory();
 
         $serviceId = $transport->createDriver($container, []);
 
@@ -127,13 +125,5 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
 
         $driver = $container->getDefinition($serviceId);
         $this->assertSame(RabbitMqDriver::class, $driver->getClass());
-    }
-
-    /**
-     * @return string
-     */
-    private function createAmqpConnectionFactoryClass()
-    {
-        return $this->getMockClass(AmqpConnectionFactory::class);
     }
 }

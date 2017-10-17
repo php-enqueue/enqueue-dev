@@ -14,12 +14,11 @@ class RabbitMqAmqpTransportFactory extends AmqpTransportFactory
     use DelayStrategyTransportFactoryTrait;
 
     /**
-     * @param string $amqpConnectionFactoryClass
      * @param string $name
      */
-    public function __construct($amqpConnectionFactoryClass, $name = 'rabbitmq_amqp')
+    public function __construct($name = 'rabbitmq_amqp')
     {
-        parent::__construct($amqpConnectionFactoryClass, $name);
+        parent::__construct($name);
     }
 
     /**

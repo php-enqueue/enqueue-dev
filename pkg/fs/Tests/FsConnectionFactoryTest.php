@@ -19,7 +19,7 @@ class FsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
     public function testShouldCreateContext()
     {
         $factory = new FsConnectionFactory([
-            'path' => 'theDir',
+            'path' => __DIR__,
             'pre_fetch_count' => 123,
             'chmod' => 0765,
         ]);
@@ -28,7 +28,7 @@ class FsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(FsContext::class, $context);
 
-        $this->assertAttributeSame('theDir', 'storeDir', $context);
+        $this->assertAttributeSame(__DIR__, 'storeDir', $context);
         $this->assertAttributeSame(123, 'preFetchCount', $context);
         $this->assertAttributeSame(0765, 'chmod', $context);
     }

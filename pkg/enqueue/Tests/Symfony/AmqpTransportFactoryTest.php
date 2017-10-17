@@ -25,21 +25,28 @@ class AmqpTransportFactoryTest extends TestCase
 
     public function testCouldBeConstructedWithDefaultName()
     {
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
 
         $this->assertEquals('amqp', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
     {
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass(), 'theCustomName');
+        $transport = new AmqpTransportFactory('theCustomName');
+
+        $this->assertEquals('theCustomName', $transport->getName());
+    }
+
+    public function testThrowIfCouldBeConstructedWithCustomName()
+    {
+        $transport = new AmqpTransportFactory('theCustomName');
 
         $this->assertEquals('theCustomName', $transport->getName());
     }
 
     public function testShouldAllowAddConfiguration()
     {
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -84,7 +91,7 @@ class AmqpTransportFactoryTest extends TestCase
 
     public function testShouldAllowAddConfigurationWithDriverOptions()
     {
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -107,7 +114,7 @@ class AmqpTransportFactoryTest extends TestCase
 
     public function testShouldAllowAddConfigurationAsString()
     {
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -122,7 +129,7 @@ class AmqpTransportFactoryTest extends TestCase
 
     public function testThrowIfInvalidReceiveMethodIsSet()
     {
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -138,7 +145,7 @@ class AmqpTransportFactoryTest extends TestCase
 
     public function testShouldAllowChangeReceiveMethod()
     {
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
@@ -157,15 +164,14 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $expectedClass = $this->createAmqpConnectionFactoryClass();
-
-        $transport = new AmqpTransportFactory($expectedClass);
+        $transport = new AmqpTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, []);
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals($expectedClass, $factory->getClass());
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+
         $this->assertSame([[]], $factory->getArguments());
     }
 
@@ -173,27 +179,23 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $expectedClass = $this->createAmqpConnectionFactoryClass();
-
-        $transport = new AmqpTransportFactory($expectedClass);
+        $transport = new AmqpTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
-            'dsn' => 'theConnectionDSN',
+            'dsn' => 'theConnectionDSN:',
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals($expectedClass, $factory->getClass());
-        $this->assertSame([['dsn' => 'theConnectionDSN']], $factory->getArguments());
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
+        $this->assertSame([['dsn' => 'theConnectionDSN:']], $factory->getArguments());
     }
 
     public function testShouldCreateConnectionFactoryAndMergeDriverOptionsIfSet()
     {
         $container = new ContainerBuilder();
 
-        $expectedClass = $this->createAmqpConnectionFactoryClass();
-
-        $transport = new AmqpTransportFactory($expectedClass);
+        $transport = new AmqpTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
             'host' => 'aHost',
@@ -204,7 +206,7 @@ class AmqpTransportFactoryTest extends TestCase
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals($expectedClass, $factory->getClass());
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
         $this->assertSame([['foo' => 'fooVal', 'host' => 'aHost']], $factory->getArguments());
     }
 
@@ -212,12 +214,9 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $expectedClass = $this->createAmqpConnectionFactoryClass();
-
-        $transport = new AmqpTransportFactory($expectedClass);
+        $transport = new AmqpTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
-            'dsn' => 'theConnectionDSN',
             'host' => 'localhost',
             'port' => 5672,
             'user' => 'guest',
@@ -228,9 +227,8 @@ class AmqpTransportFactoryTest extends TestCase
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
-        $this->assertEquals($expectedClass, $factory->getClass());
+        $this->assertEquals(AmqpConnectionFactory::class, $factory->getClass());
         $this->assertSame([[
-            'dsn' => 'theConnectionDSN',
             'host' => 'localhost',
             'port' => 5672,
             'user' => 'guest',
@@ -244,7 +242,7 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
 
         $serviceId = $transport->createContext($container, [
             'host' => 'localhost',
@@ -268,7 +266,7 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $container = new ContainerBuilder();
 
-        $transport = new AmqpTransportFactory($this->createAmqpConnectionFactoryClass());
+        $transport = new AmqpTransportFactory();
 
         $serviceId = $transport->createDriver($container, []);
 
@@ -288,11 +286,61 @@ class AmqpTransportFactoryTest extends TestCase
         $this->assertEquals('enqueue.client.meta.queue_meta_registry', (string) $driver->getArgument(2));
     }
 
-    /**
-     * @return string
-     */
-    private function createAmqpConnectionFactoryClass()
+    public function testShouldCreateAmqpExtConnectionFactoryBySetDriver()
     {
-        return $this->getMockClass(AmqpConnectionFactory::class);
+        $factory = AmqpTransportFactory::createConnectionFactoryFactory(['driver' => 'ext']);
+
+        $this->assertInstanceOf(\Enqueue\AmqpExt\AmqpConnectionFactory::class, $factory);
+    }
+
+    public function testShouldCreateAmqpLibConnectionFactoryBySetDriver()
+    {
+        $factory = AmqpTransportFactory::createConnectionFactoryFactory(['driver' => 'lib']);
+
+        $this->assertInstanceOf(\Enqueue\AmqpLib\AmqpConnectionFactory::class, $factory);
+    }
+
+    public function testShouldCreateAmqpBunnyConnectionFactoryBySetDriver()
+    {
+        $factory = AmqpTransportFactory::createConnectionFactoryFactory(['driver' => 'bunny']);
+
+        $this->assertInstanceOf(\Enqueue\AmqpBunny\AmqpConnectionFactory::class, $factory);
+    }
+
+    public function testShouldCreateAmqpExtFromConfigWithoutDriverAndDsn()
+    {
+        $factory = AmqpTransportFactory::createConnectionFactoryFactory(['host' => 'aHost']);
+
+        $this->assertInstanceOf(\Enqueue\AmqpExt\AmqpConnectionFactory::class, $factory);
+    }
+
+    public function testThrowIfInvalidDriverGiven()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unexpected driver given "invalidDriver"');
+
+        AmqpTransportFactory::createConnectionFactoryFactory(['driver' => 'invalidDriver']);
+    }
+
+    public function testShouldCreateAmqpExtFromDsn()
+    {
+        $factory = AmqpTransportFactory::createConnectionFactoryFactory(['dsn' => 'amqp:']);
+
+        $this->assertInstanceOf(\Enqueue\AmqpExt\AmqpConnectionFactory::class, $factory);
+    }
+
+    public function testShouldCreateAmqpBunnyFromDsnWithDriver()
+    {
+        $factory = AmqpTransportFactory::createConnectionFactoryFactory(['dsn' => 'amqp+bunny:']);
+
+        $this->assertInstanceOf(\Enqueue\AmqpBunny\AmqpConnectionFactory::class, $factory);
+    }
+
+    public function testThrowIfNotAmqpDsnProvided()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Factory must be instance of "Interop\Amqp\AmqpConnectionFactory" but got "Enqueue\Sqs\SqsConnectionFactory"');
+
+        AmqpTransportFactory::createConnectionFactoryFactory(['dsn' => 'sqs:']);
     }
 }

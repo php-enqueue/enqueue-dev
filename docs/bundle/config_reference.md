@@ -38,7 +38,8 @@ enqueue:
 
             # The option tells whether RabbitMQ broker has delay plugin installed or not
             delay_plugin_installed: false
-        amqp_ext:
+        amqp:
+            driver:               ~ # One of "ext"; "lib"; "bunny"
 
             # The connection to AMQP broker set as a string. Other parameters could be used as defaults
             dsn:                  ~
@@ -86,106 +87,8 @@ enqueue:
 
             # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
             driver_options:       ~
-        rabbitmq_amqp_ext:
-
-            # The connection to AMQP broker set as a string. Other parameters could be used as defaults
-            dsn:                  ~
-
-            # The host to connect too. Note: Max 1024 characters
-            host:                 ~
-
-            # Port on the host.
-            port:                 ~
-
-            # The user name to use. Note: Max 128 characters.
-            user:                 ~
-
-            # Password. Note: Max 128 characters.
-            pass:                 ~
-
-            # The virtual host on the host. Note: Max 128 characters.
-            vhost:                ~
-
-            # Connection timeout. Note: 0 or greater seconds. May be fractional.
-            connection_timeout:   ~
-
-            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
-            read_timeout:         ~
-
-            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
-            write_timeout:        ~
-
-            # How often to send heartbeat. 0 means off.
-            heartbeat:            ~
-            persisted:            ~
-            lazy:                 ~
-
-            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
-            receive_method:       ~ # One of "basic_get"; "basic_consume"
-
-            # The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"
-            qos_prefetch_size:    ~
-
-            # Specifies a prefetch window in terms of whole messages
-            qos_prefetch_count:   ~
-
-            # If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.
-            qos_global:           ~
-
-            # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
-            driver_options:       ~
-
-            # The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id
-            delay_strategy:       dlx
-        amqp_lib:
-
-            # The connection to AMQP broker set as a string. Other parameters could be used as defaults
-            dsn:                  ~
-
-            # The host to connect too. Note: Max 1024 characters
-            host:                 ~
-
-            # Port on the host.
-            port:                 ~
-
-            # The user name to use. Note: Max 128 characters.
-            user:                 ~
-
-            # Password. Note: Max 128 characters.
-            pass:                 ~
-
-            # The virtual host on the host. Note: Max 128 characters.
-            vhost:                ~
-
-            # Connection timeout. Note: 0 or greater seconds. May be fractional.
-            connection_timeout:   ~
-
-            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
-            read_timeout:         ~
-
-            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
-            write_timeout:        ~
-
-            # How often to send heartbeat. 0 means off.
-            heartbeat:            ~
-            persisted:            ~
-            lazy:                 ~
-
-            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
-            receive_method:       ~ # One of "basic_get"; "basic_consume"
-
-            # The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"
-            qos_prefetch_size:    ~
-
-            # Specifies a prefetch window in terms of whole messages
-            qos_prefetch_count:   ~
-
-            # If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.
-            qos_global:           ~
-
-            # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
-            driver_options:       ~
-        rabbitmq_amqp_lib:
+        rabbitmq_amqp:
+            driver:               ~ # One of "ext"; "lib"; "bunny"
 
             # The connection to AMQP broker set as a string. Other parameters could be used as defaults
             dsn:                  ~
@@ -293,105 +196,6 @@ enqueue:
 
             # the connection will be performed as later as possible, if the option set to true
             lazy:                 true
-        amqp_bunny:
-
-            # The connection to AMQP broker set as a string. Other parameters could be used as defaults
-            dsn:                  ~
-
-            # The host to connect too. Note: Max 1024 characters
-            host:                 ~
-
-            # Port on the host.
-            port:                 ~
-
-            # The user name to use. Note: Max 128 characters.
-            user:                 ~
-
-            # Password. Note: Max 128 characters.
-            pass:                 ~
-
-            # The virtual host on the host. Note: Max 128 characters.
-            vhost:                ~
-
-            # Connection timeout. Note: 0 or greater seconds. May be fractional.
-            connection_timeout:   ~
-
-            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
-            read_timeout:         ~
-
-            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
-            write_timeout:        ~
-
-            # How often to send heartbeat. 0 means off.
-            heartbeat:            ~
-            persisted:            ~
-            lazy:                 ~
-
-            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
-            receive_method:       ~ # One of "basic_get"; "basic_consume"
-
-            # The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"
-            qos_prefetch_size:    ~
-
-            # Specifies a prefetch window in terms of whole messages
-            qos_prefetch_count:   ~
-
-            # If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.
-            qos_global:           ~
-
-            # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
-            driver_options:       ~
-        rabbitmq_amqp_bunny:
-
-            # The connection to AMQP broker set as a string. Other parameters could be used as defaults
-            dsn:                  ~
-
-            # The host to connect too. Note: Max 1024 characters
-            host:                 ~
-
-            # Port on the host.
-            port:                 ~
-
-            # The user name to use. Note: Max 128 characters.
-            user:                 ~
-
-            # Password. Note: Max 128 characters.
-            pass:                 ~
-
-            # The virtual host on the host. Note: Max 128 characters.
-            vhost:                ~
-
-            # Connection timeout. Note: 0 or greater seconds. May be fractional.
-            connection_timeout:   ~
-
-            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
-            read_timeout:         ~
-
-            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
-            write_timeout:        ~
-
-            # How often to send heartbeat. 0 means off.
-            heartbeat:            ~
-            persisted:            ~
-            lazy:                 ~
-
-            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
-            receive_method:       ~ # One of "basic_get"; "basic_consume"
-
-            # The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"
-            qos_prefetch_size:    ~
-
-            # Specifies a prefetch window in terms of whole messages
-            qos_prefetch_count:   ~
-
-            # If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.
-            qos_global:           ~
-
-            # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
-            driver_options:       ~
-
-            # The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id
-            delay_strategy:       dlx
     client:
         traceable_producer:   false
         prefix:               enqueue

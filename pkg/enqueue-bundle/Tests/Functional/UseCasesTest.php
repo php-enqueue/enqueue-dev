@@ -23,10 +23,11 @@ class UseCasesTest extends WebTestCase
 
     public function provideEnqueueConfigs()
     {
-        yield 'amqp_ext' => [[
+        yield 'amqp' => [[
             'transport' => [
-                'default' => 'amqp_ext',
-                'amqp_ext' => [
+                'default' => 'amqp',
+                'amqp' => [
+                    'driver' => 'ext',
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
                     'user' => getenv('SYMFONY__RABBITMQ__USER'),
@@ -39,8 +40,8 @@ class UseCasesTest extends WebTestCase
 
         yield 'amqp_dsn' => [[
             'transport' => [
-                'default' => 'amqp_ext',
-                'amqp_ext' => getenv('AMQP_DSN'),
+                'default' => 'amqp',
+                'amqp' => getenv('AMQP_DSN'),
             ],
         ]];
 
