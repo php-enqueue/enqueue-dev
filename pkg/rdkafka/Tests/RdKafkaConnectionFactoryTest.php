@@ -5,6 +5,9 @@ namespace Enqueue\RdKafka\Tests;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaConnectionFactoryTest extends TestCase
 {
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()

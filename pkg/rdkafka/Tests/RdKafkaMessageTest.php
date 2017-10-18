@@ -6,6 +6,9 @@ use Enqueue\RdKafka\RdKafkaMessage;
 use PHPUnit\Framework\TestCase;
 use RdKafka\Message;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaMessageTest extends TestCase
 {
     public function testCouldSetGetPartition()

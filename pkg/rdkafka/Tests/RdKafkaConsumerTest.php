@@ -11,6 +11,9 @@ use PHPUnit\Framework\TestCase;
 use RdKafka\KafkaConsumer;
 use RdKafka\Message;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaConsumerTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
