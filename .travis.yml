@@ -5,11 +5,9 @@ git:
 
 language: php
 
+env:
+
 matrix:
-  allow_failures:
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true
   include:
     - php: 5.6
       env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
@@ -35,6 +33,10 @@ matrix:
     - php: 7.1
       services: docker
       env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true
+  allow_failures:
+    - php: 7.1
+      services: docker
+      env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true
 
 cache:
     directories:
