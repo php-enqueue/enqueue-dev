@@ -47,7 +47,9 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
 
         $builder
             ->beforeNormalization()
-                ->ifEmpty()
+                ->ifTrue(function ($v) {
+                    return empty($v);
+                })
                 ->then(function ($v) {
                     return ['dsn' => 'amqp:'];
                 })
