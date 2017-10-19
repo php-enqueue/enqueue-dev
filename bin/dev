@@ -21,7 +21,7 @@ while getopts "bustefcd" OPTION; do
       ./bin/php-cs-fixer fix
       ;;
     t)
-      COMPOSE_PROJECT_NAME=mqdev docker-compose run --workdir="/mqdev" --rm dev ./bin/test "$2"
+      ./bin/run-fun-test.sh "$2"
       ;;
     c)
       COMPOSE_PROJECT_NAME=mqdev docker-compose run -e CHANGELOG_GITHUB_TOKEN=${CHANGELOG_GITHUB_TOKEN:-""} --workdir="/mqdev" --rm generate-changelog github_changelog_generator --future-release "$2" --simple-list

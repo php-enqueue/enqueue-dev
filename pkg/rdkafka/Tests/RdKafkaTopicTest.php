@@ -6,6 +6,9 @@ use Enqueue\RdKafka\RdKafkaTopic;
 use PHPUnit\Framework\TestCase;
 use RdKafka\TopicConf;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaTopicTest extends TestCase
 {
     public function testCouldSetGetPartition()

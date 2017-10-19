@@ -9,6 +9,9 @@ use Enqueue\RdKafka\Serializer;
 use Interop\Queue\InvalidDestinationException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaContextTest extends TestCase
 {
     public function testThrowNotImplementedOnCreateTemporaryQueue()

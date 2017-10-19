@@ -8,6 +8,9 @@ use Enqueue\RdKafka\Serializer;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group rdkafka
+ */
 class JsonSerializerTest extends TestCase
 {
     use ClassExtensionTrait;

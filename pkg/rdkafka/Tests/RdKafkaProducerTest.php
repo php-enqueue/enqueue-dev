@@ -15,6 +15,9 @@ use RdKafka\Producer;
 use RdKafka\ProducerTopic;
 use RdKafka\TopicConf;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaProducerTest extends TestCase
 {
     public function testCouldBeConstructedWithKafkaProducerAndSerializerAsArguments()

@@ -5,6 +5,9 @@ namespace Enqueue\RdKafka\Tests\Spec;
 use Enqueue\RdKafka\RdKafkaTopic;
 use Interop\Queue\Spec\PsrTopicSpec;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaTopicTest extends PsrTopicSpec
 {
     /**
