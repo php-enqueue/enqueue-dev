@@ -38,7 +38,7 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
     {
         $message = new DbalMessage();
 
-        $this->assertNull($message->getDelay());
+        $this->assertNull($message->getDeliveryDelay());
     }
 
     public function testShouldSetCorrelationIdAsHeader()

@@ -169,31 +169,7 @@ class DbalConsumer implements PsrConsumer
         try {
             $now = time();
 
-            $query = $this->dbal->createQueryBuilder();
-            $query
-                ->select('*')
-                ->from($this->context->getTableName())
-                ->where('queue = :queue')
-                ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-                ->orderBy('priority', 'desc')
-                ->addOrderBy('id', 'asc')
-                ->setMaxResults(1)
-            ;
-
-            $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
-
-            $dbalMessage = $this->dbal->executeQuery(
-                $sql,
-                [
-                    'queue' => $this->queue->getQueueName(),
-                    'delayedUntil' => $now,
-                ],
-                [
-                    'queue' => Type::STRING,
-                    'delayedUntil' => Type::INTEGER,
-                ]
-            )->fetch();
-
+            $dbalMessage = $this->fetchPrioritizedMessage($now) ?: $dbalMessage = $this->fetchMessage($now);
             if (false == $dbalMessage) {
                 $this->dbal->commit();
 
@@ -211,9 +187,12 @@ class DbalConsumer implements PsrConsumer
 
             $this->dbal->commit();
 
-            return $this->convertMessage($dbalMessage);
+            if (empty($dbalMessage['time_to_live']) || $dbalMessage['time_to_live'] > time()) {
+                return $this->convertMessage($dbalMessage);
+            }
         } catch (\Exception $e) {
             $this->dbal->rollBack();
+
             throw $e;
         }
     }
@@ -240,5 +219,71 @@ class DbalConsumer implements PsrConsumer
         }
 
         return $message;
+    }
+
+    /**
+     * @param int $now
+     *
+     * @return array|null
+     */
+    private function fetchPrioritizedMessage($now)
+    {
+        $query = $this->dbal->createQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->context->getTableName())
+            ->andWhere('queue = :queue')
+            ->andWhere('priority IS NOT NULL')
+            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
+            ->addOrderBy('priority', 'desc')
+            ->setMaxResults(1)
+        ;
+
+        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
+
+        return $this->dbal->executeQuery(
+            $sql,
+            [
+                'queue' => $this->queue->getQueueName(),
+                'delayedUntil' => $now,
+            ],
+            [
+                'queue' => Type::STRING,
+                'delayedUntil' => Type::INTEGER,
+            ]
+        )->fetch();
+    }
+
+    /**
+     * @param int $now
+     *
+     * @return array|null
+     */
+    private function fetchMessage($now)
+    {
+        $query = $this->dbal->createQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->context->getTableName())
+            ->andWhere('queue = :queue')
+            ->andWhere('priority IS NULL')
+            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
+            ->addOrderBy('published_at', 'asc')
+            ->setMaxResults(1)
+        ;
+
+        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
+
+        return $this->dbal->executeQuery(
+            $sql,
+            [
+                'queue' => $this->queue->getQueueName(),
+                'delayedUntil' => $now,
+            ],
+            [
+                'queue' => Type::STRING,
+                'delayedUntil' => Type::INTEGER,
+            ]
+        )->fetch();
     }
 }

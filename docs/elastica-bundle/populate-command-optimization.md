@@ -16,6 +16,8 @@ Add bundles to `AppKernel`
 
 ```php
 <?php
+// app/AppKernel.php
+
 use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
@@ -38,6 +40,8 @@ class AppKernel extends Kernel
 Here's an example of what your `FOSElasticaBundle` configuration may look like:
 
 ```yaml
+# app/config/config.yml
+
 fos_elastica:
     clients:
         default: { host: %elasticsearch_host%, port: %elasticsearch_port% }
@@ -59,6 +63,8 @@ fos_elastica:
 Here's an example of what your EnqueueBundle configuration may look like:
 
 ```yaml
+# app/config/config.yml
+
 enqueue:
     transport:
         default: 'file://%kernel.root_dir%/../var/messages'

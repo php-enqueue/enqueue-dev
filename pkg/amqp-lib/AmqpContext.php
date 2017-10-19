@@ -5,6 +5,7 @@ namespace Enqueue\AmqpLib;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
@@ -19,6 +20,8 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
+use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
 class AmqpContext implements InteropAmqpContext, DelayStrategyAware
@@ -44,6 +47,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      * @var Buffer
      */
     private $buffer;
+
+    /**
+     * an item contains an array: [AmqpConsumerInterop $consumer, callable $callback];.
+     *
+     * @var array
+     */
+    private $subscribers;
 
     /**
      * @param AbstractConnection $connection
@@ -110,10 +120,10 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this->getChannel(), $queue, $this->buffer, $this->config['receive_method']);
+            return new AmqpConsumer($this, $queue, $this->buffer, $this->config['receive_method']);
         }
 
-        return new AmqpConsumer($this->getChannel(), $destination, $this->buffer, $this->config['receive_method']);
+        return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
     }
 
     /**
@@ -121,7 +131,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function createProducer()
     {
-        $producer = new AmqpProducer($this->getChannel(), $this);
+        $producer = new AmqpProducer($this->getLibChannel(), $this);
         $producer->setDelayStrategy($this->delayStrategy);
 
         return $producer;
@@ -132,7 +142,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function createTemporaryQueue()
     {
-        list($name) = $this->getChannel()->queue_declare('', false, false, true, false);
+        list($name) = $this->getLibChannel()->queue_declare('', false, false, true, false);
 
         $queue = $this->createQueue($name);
         $queue->addFlag(InteropAmqpQueue::FLAG_EXCLUSIVE);
@@ -145,7 +155,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function declareTopic(InteropAmqpTopic $topic)
     {
-        $this->getChannel()->exchange_declare(
+        $this->getLibChannel()->exchange_declare(
             $topic->getTopicName(),
             $topic->getType(),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_PASSIVE),
@@ -162,7 +172,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function deleteTopic(InteropAmqpTopic $topic)
     {
-        $this->getChannel()->exchange_delete(
+        $this->getLibChannel()->exchange_delete(
             $topic->getTopicName(),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_IFUNUSED),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT)
@@ -174,7 +184,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function declareQueue(InteropAmqpQueue $queue)
     {
-        list(, $messageCount) = $this->getChannel()->queue_declare(
+        list(, $messageCount) = $this->getLibChannel()->queue_declare(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_PASSIVE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_DURABLE),
@@ -192,7 +202,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function deleteQueue(InteropAmqpQueue $queue)
     {
-        $this->getChannel()->queue_delete(
+        $this->getLibChannel()->queue_delete(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFUNUSED),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_IFEMPTY),
@@ -205,7 +215,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function purgeQueue(InteropAmqpQueue $queue)
     {
-        $this->getChannel()->queue_purge(
+        $this->getLibChannel()->queue_purge(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT)
         );
@@ -222,7 +232,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         // bind exchange to exchange
         if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
-            $this->getChannel()->exchange_bind(
+            $this->getLibChannel()->exchange_bind(
                 $bind->getTarget()->getTopicName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -231,7 +241,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             );
             // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
-            $this->getChannel()->queue_bind(
+            $this->getLibChannel()->queue_bind(
                 $bind->getSource()->getQueueName(),
                 $bind->getTarget()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -240,7 +250,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             );
             // bind exchange to queue
         } else {
-            $this->getChannel()->queue_bind(
+            $this->getLibChannel()->queue_bind(
                 $bind->getTarget()->getQueueName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -261,7 +271,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         // bind exchange to exchange
         if ($bind->getSource() instanceof InteropAmqpTopic && $bind->getTarget() instanceof InteropAmqpTopic) {
-            $this->getChannel()->exchange_unbind(
+            $this->getLibChannel()->exchange_unbind(
                 $bind->getTarget()->getTopicName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -270,7 +280,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             );
             // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
-            $this->getChannel()->queue_unbind(
+            $this->getLibChannel()->queue_unbind(
                 $bind->getSource()->getQueueName(),
                 $bind->getTarget()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -278,7 +288,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             );
             // bind exchange to queue
         } else {
-            $this->getChannel()->queue_unbind(
+            $this->getLibChannel()->queue_unbind(
                 $bind->getTarget()->getQueueName(),
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
@@ -299,13 +309,105 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function setQos($prefetchSize, $prefetchCount, $global)
     {
-        $this->getChannel()->basic_qos($prefetchSize, $prefetchCount, $global);
+        $this->getLibChannel()->basic_qos($prefetchSize, $prefetchCount, $global);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
+    {
+        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
+            return;
+        }
+
+        $libCallback = function (LibAMQPMessage $message) {
+            $receivedMessage = $this->convertMessage($message);
+            $receivedMessage->setConsumerTag($message->delivery_info['consumer_tag']);
+
+            /**
+             * @var AmqpConsumer
+             * @var callable     $callback
+             */
+            list($consumer, $callback) = $this->subscribers[$message->delivery_info['consumer_tag']];
+
+            if (false === call_user_func($callback, $receivedMessage, $consumer)) {
+                throw new StopBasicConsumptionException();
+            }
+        };
+
+        $consumerTag = $this->getLibChannel()->basic_consume(
+            $consumer->getQueue()->getQueueName(),
+            $consumer->getConsumerTag(),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT),
+            $libCallback
+        );
+
+        if (empty($consumerTag)) {
+            throw new Exception('Got empty consumer tag');
+        }
+
+        $consumer->setConsumerTag($consumerTag);
+
+        $this->subscribers[$consumerTag] = [$consumer, $callback];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unsubscribe(InteropAmqpConsumer $consumer)
+    {
+        if (false == $consumer->getConsumerTag()) {
+            return;
+        }
+
+        $consumerTag = $consumer->getConsumerTag();
+
+        $this->getLibChannel()->basic_cancel($consumerTag);
+
+        $consumer->setConsumerTag(null);
+        unset($this->subscribers[$consumerTag], $this->getLibChannel()->callbacks[$consumerTag]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function consume($timeout = 0)
+    {
+        if (empty($this->subscribers)) {
+            throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
+        }
+
+        try {
+            while (true) {
+                $start = microtime(true);
+
+                $this->channel->wait(null, false, $timeout / 1000);
+
+                if ($timeout <= 0) {
+                    continue;
+                }
+
+                // compute remaining timeout and continue until time is up
+                $stop = microtime(true);
+                $timeout -= ($stop - $start) * 1000;
+
+                if ($timeout <= 0) {
+                    break;
+                }
+            }
+        } catch (AMQPTimeoutException $e) {
+        } catch (StopBasicConsumptionException $e) {
+        }
     }
 
     /**
      * @return AMQPChannel
      */
-    private function getChannel()
+    public function getLibChannel()
     {
         if (null === $this->channel) {
             $this->channel = $this->connection->channel();
@@ -317,5 +419,31 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         return $this->channel;
+    }
+
+    /**
+     * @internal It must be used here and in the consumer only
+     *
+     * @param LibAMQPMessage $amqpMessage
+     *
+     * @return InteropAmqpMessage
+     */
+    public function convertMessage(LibAMQPMessage $amqpMessage)
+    {
+        $headers = new AMQPTable($amqpMessage->get_properties());
+        $headers = $headers->getNativeData();
+
+        $properties = [];
+        if (isset($headers['application_headers'])) {
+            $properties = $headers['application_headers'];
+        }
+        unset($headers['application_headers']);
+
+        $message = new AmqpMessage($amqpMessage->getBody(), $properties, $headers);
+        $message->setDeliveryTag($amqpMessage->delivery_info['delivery_tag']);
+        $message->setRedelivered($amqpMessage->delivery_info['redelivered']);
+        $message->setRoutingKey($amqpMessage->delivery_info['routing_key']);
+
+        return $message;
     }
 }

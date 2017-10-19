@@ -27,6 +27,7 @@ class UseCasesTest extends WebTestCase
             'transport' => [
                 'default' => 'amqp',
                 'amqp' => [
+                    'driver' => 'ext',
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
                     'user' => getenv('SYMFONY__RABBITMQ__USER'),

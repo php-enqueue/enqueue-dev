@@ -35,6 +35,7 @@ class SimpleClientTest extends TestCase
             'transport' => [
                 'default' => 'amqp',
                 'amqp' => [
+                    'driver' => 'ext',
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
                     'user' => getenv('SYMFONY__RABBITMQ__USER'),
@@ -63,6 +64,7 @@ class SimpleClientTest extends TestCase
             'transport' => [
                 'default' => 'rabbitmq_amqp',
                 'rabbitmq_amqp' => [
+                    'driver' => 'ext',
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
                     'user' => getenv('SYMFONY__RABBITMQ__USER'),

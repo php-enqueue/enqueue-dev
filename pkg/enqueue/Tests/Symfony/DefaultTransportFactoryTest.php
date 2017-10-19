@@ -82,10 +82,10 @@ class DefaultTransportFactoryTest extends TestCase
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [null]);
-        $this->assertEquals(['dsn' => 'null://'], $config);
+        $this->assertEquals(['dsn' => 'null:'], $config);
 
         $config = $processor->process($tb->buildTree(), ['']);
-        $this->assertEquals(['dsn' => 'null://'], $config);
+        $this->assertEquals(['dsn' => 'null:'], $config);
     }
 
     public function testThrowIfNeitherDsnNorAliasConfigured()
@@ -250,19 +250,19 @@ class DefaultTransportFactoryTest extends TestCase
 
     public static function provideDSNs()
     {
-        yield ['amqp+ext://', 'default_amqp_ext'];
+        yield ['amqp+ext:', 'default_amqp'];
 
-        yield ['amqp+lib:', 'default_amqp_lib'];
+        yield ['amqp+lib:', 'default_amqp'];
 
-        yield ['amqp+bunny://', 'default_amqp_bunny'];
+        yield ['amqp+bunny:', 'default_amqp'];
 
-        yield ['null://', 'default_null'];
+        yield ['null:', 'default_null'];
 
-        yield ['file://', 'default_fs'];
+        yield ['file:', 'default_fs'];
 
-        yield ['mysql://', 'default_dbal'];
+        yield ['mysql:', 'default_dbal'];
 
-        yield ['pgsql://', 'default_dbal'];
+        yield ['pgsql:', 'default_dbal'];
 
         yield ['gps:', 'default_gps'];
 

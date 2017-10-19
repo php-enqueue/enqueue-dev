@@ -56,25 +56,25 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
 
     public static function provideDSNs()
     {
-        yield ['amqp://', AmqpConnectionFactory::class];
+        yield ['amqp:', AmqpConnectionFactory::class];
 
         yield ['amqp://user:pass@foo/vhost', AmqpConnectionFactory::class];
 
-        yield ['file://', FsConnectionFactory::class];
+        yield ['file:', FsConnectionFactory::class];
 
         yield ['file:///foo/bar/baz', FsConnectionFactory::class];
 
-        yield ['null://', NullConnectionFactory::class];
+        yield ['null:', NullConnectionFactory::class];
 
-        yield ['mysql://', DbalConnectionFactory::class];
+        yield ['mysql:', DbalConnectionFactory::class];
 
-        yield ['pgsql://', DbalConnectionFactory::class];
+        yield ['pgsql:', DbalConnectionFactory::class];
 
-        yield ['beanstalk://', PheanstalkConnectionFactory::class];
+        yield ['beanstalk:', PheanstalkConnectionFactory::class];
 
-        //        yield ['gearman://', GearmanConnectionFactory::class];
+        //        yield ['gearman:', GearmanConnectionFactory::class];
 
-        yield ['rdkafka://', RdKafkaConnectionFactory::class];
+        yield ['kafka:', RdKafkaConnectionFactory::class];
 
         yield ['redis:', RedisConnectionFactory::class];
 

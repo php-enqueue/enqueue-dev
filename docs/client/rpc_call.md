@@ -1,55 +1,14 @@
 # Client. RPC call
 
 The client's [quick tour](quick_tour.md) describes how to get the client object. 
-Here we'll use `Enqueue\SimpleClient\SimpleClient` though it is not required.
-You can get all that stuff from manually built client or get objects from a container (Symfony).
+Here we'll show you how to use Enqueue Client to perform a [RPC call](https://en.wikipedia.org/wiki/Remote_procedure_call).
+You can do it by defining a command which returns something.
 
-The simple client could be created like this:
+## The consumer side
 
-## The client side
+On the consumer side we have to register a command processor which computes the result and send it back to the sender.
+Pay attention that you have to add reply extension. It wont work without it.
 
-There is a handy class RpcClient shipped with the client component. 
-It allows you to easily perform [RPC calls](https://en.wikipedia.org/wiki/Remote_procedure_call).
-It send a message and wait for a reply.
- 
-```php
-<?php
-use Enqueue\Client\RpcClient;
-use Enqueue\SimpleClient\SimpleClient;
-
-$client = new SimpleClient('amqp://');
-
-$rpcClient = new RpcClient($client->getProducer(), $context);
-
-$replyMessage = $rpcClient->call('greeting_topic', 'Hi Thomas!', 5);
-```
-
-You can perform several requests asynchronously with `callAsync` and request replays later.
- 
-```php
-<?php
-use Enqueue\Client\RpcClient;
-use Enqueue\SimpleClient\SimpleClient;
-
-$client = new SimpleClient('amqp://');
-
-$rpcClient = new RpcClient($client->getProducer(), $context);
-
-$promises = [];
-$promises[] = $rpcClient->callAsync('greeting_topic', 'Hi Thomas!', 5);
-$promises[] = $rpcClient->callAsync('greeting_topic', 'Hi Thomas!', 5);
-$promises[] = $rpcClient->callAsync('greeting_topic', 'Hi Thomas!', 5);
-$promises[] = $rpcClient->callAsync('greeting_topic', 'Hi Thomas!', 5);
-
-$replyMessages = [];
-foreach ($promises as $promise) {
-    $replyMessages[] = $promise->receive();
-}
-```
-
-## The server side
-
-On the server side you may register a processor which returns a result object with a reply message set.
 Of course it is possible to implement rpc server side based on transport classes only. That would require a bit more work to do. 
 
 ```php
@@ -60,19 +19,61 @@ use Interop\Queue\PsrContext;
 use Enqueue\Consumption\Result;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
+use Enqueue\Client\Config;
 use Enqueue\SimpleClient\SimpleClient;
 
 /** @var \Interop\Queue\PsrContext $context */
 
-$client = new SimpleClient('amqp://');
+// composer require enqueue/amqp-ext # or enqueue/amqp-bunny, enqueue/amqp-lib
+$client = new SimpleClient('amqp:');
 
-$client->bind('greeting_topic', 'greeting_processor', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
-    echo $message->getBody();
+$client->bind(Config::COMMAND_TOPIC, 'square', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
+    $number = (int) $message->getBody();
     
-    return Result::reply($context->createMessage('Hi there! I am John.'));
+    return Result::reply($context->createMessage($number ^ 2));
 });
 
 $client->consume(new ChainExtension([new ReplyExtension()]));
 ```
 
 [back to index](../index.md)
+
+## The sender side
+
+On the sender's side we need a client which send a command and wait for reply messages. 
+ 
+```php
+<?php
+use Enqueue\SimpleClient\SimpleClient;
+
+$client = new SimpleClient('amqp:');
+
+echo $client->sendCommand('square', 5, true)->receive(5000 /* 5 sec */)->getBody();
+```
+
+You can perform several requests asynchronously with `sendCommand` and ask for replays later.
+ 
+```php
+<?php
+use Enqueue\SimpleClient\SimpleClient;
+
+$client = new SimpleClient('amqp:');
+
+/** @var \Enqueue\Rpc\Promise[] $promises */
+$promises = [];
+$promises[] = $client->sendCommand('square', 5, true);
+$promises[] = $client->sendCommand('square', 10, true);
+$promises[] = $client->sendCommand('square', 7, true);
+$promises[] = $client->sendCommand('square', 12, true);
+
+$replyMessages = [];
+while ($promises) {
+    foreach ($promises as $index => $promise) {
+        if ($replyMessage = $promise->receiveNoWait()) {
+            $replyMessages[$index] = $replyMessage;
+            
+            unset($promises[$index]);
+        }
+    }
+}
+```

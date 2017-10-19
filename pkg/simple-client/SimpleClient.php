@@ -2,8 +2,6 @@
 
 namespace Enqueue\SimpleClient;
 
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
@@ -22,7 +20,9 @@ use Enqueue\Rpc\Promise;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
+use Enqueue\Symfony\AmqpTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,10 +37,10 @@ final class SimpleClient
     /**
      * The config could be a transport DSN (string) or an array, here's an example of a few DSNs:.
      *
-     * amqp://
+     * amqp:
      * amqp://guest:guest@localhost:5672/%2f?lazy=1&persisted=1
      * file://foo/bar/
-     * null://
+     * null:
      *
      * or an array, the most simple:
      *
@@ -275,8 +275,6 @@ final class SimpleClient
     {
         $map = [
             'default' => DefaultTransportFactory::class,
-            'amqp' => AmqpTransportFactory::class,
-            'rabbitmq_amqp' => RabbitMqAmqpTransportFactory::class,
             'dbal' => DbalTransportFactory::class,
             'fs' => FsTransportFactory::class,
             'redis' => RedisTransportFactory::class,
@@ -292,6 +290,9 @@ final class SimpleClient
                 $extension->addTransportFactory(new $factoryClass($name));
             }
         }
+
+        $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
+        $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
 
         return $extension;
     }

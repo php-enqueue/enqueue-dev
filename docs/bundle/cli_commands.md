@@ -29,6 +29,7 @@ Options:
       --setup-broker                     Creates queues, topics, exchanges, binding etc on broker side.
       --idle-timeout=IDLE-TIMEOUT        The time in milliseconds queue consumer idle if no message has been received.
       --receive-timeout=RECEIVE-TIMEOUT  The time in milliseconds queue consumer waits for a message.
+      --skip[=SKIP]                      Queues to skip consumption of messages from (multiple values allowed)
   -h, --help                             Display this help message
   -q, --quiet                            Do not output any message
   -V, --version                          Display this application version

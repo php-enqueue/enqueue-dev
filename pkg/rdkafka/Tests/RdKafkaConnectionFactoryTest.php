@@ -21,7 +21,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
     public function testThrowIfSchemeIsNotBeanstalkAmqp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN scheme "http" is not supported. Could be "rdkafka" only.');
+        $this->expectExceptionMessage('The given DSN scheme "http" is not supported. Could be "kafka" only.');
 
         new RdKafkaConnectionFactory('http://example.com');
     }
@@ -29,9 +29,9 @@ class RdKafkaConnectionFactoryTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN "rdkafka://:@/"');
+        $this->expectExceptionMessage('Failed to parse DSN "kafka://:@/"');
 
-        new RdKafkaConnectionFactory('rdkafka://:@/');
+        new RdKafkaConnectionFactory('kafka://:@/');
     }
 
     public function testShouldBeExpectedDefaultConfig()
@@ -53,7 +53,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
 
     public function testShouldBeExpectedDefaultDsnConfig()
     {
-        $factory = new RdKafkaConnectionFactory('rdkafka://');
+        $factory = new RdKafkaConnectionFactory('kafka:');
 
         $config = $this->getObjectAttribute($factory, 'config');
 
@@ -84,7 +84,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
     public static function provideConfigs()
     {
         yield [
-            'rdkafka://theHost:1234?global%5Bgroup.id%5D=group-id',
+            'kafka://theHost:1234?global%5Bgroup.id%5D=group-id',
             [
                 'global' => [
                     'metadata.broker.list' => 'theHost:1234',

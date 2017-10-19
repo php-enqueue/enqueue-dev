@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "enqueue/enqueue": "^0.7@dev",
+        "enqueue/enqueue": "^0.8@dev",
         "symfony/event-dispatcher": "^2.8|^3"
     },
     "require-dev": {
@@ -15,9 +15,9 @@
         "symfony/config": "^2.8|^3",
         "symfony/http-kernel": "^2.8|^3",
         "symfony/filesystem": "^2.8|^3",
-        "enqueue/null": "^0.7@dev",
-        "enqueue/fs": "^0.7@dev",
-        "enqueue/test": "^0.7@dev"
+        "enqueue/null": "^0.8@dev",
+        "enqueue/fs": "^0.8@dev",
+        "enqueue/test": "^0.8@dev"
     },
     "suggest": {
         "symfony/dependency-injection": "^2.8|^3 If you'd like to use async event dispatcher container extension."
@@ -30,7 +30,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.7.x-dev"
+            "dev-master": "0.8.x-dev"
         }
     }
 }

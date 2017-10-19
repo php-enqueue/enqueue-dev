@@ -3,18 +3,20 @@
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
-use Bunny\Client;
 use Bunny\Message;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
-use Interop\Amqp\Impl\AmqpMessage;
-use Interop\Queue\Exception;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrMessage;
 
 class AmqpConsumer implements InteropAmqpConsumer
 {
+    /**
+     * @var AmqpContext
+     */
+    private $context;
+
     /**
      * @var Channel
      */
@@ -29,11 +31,6 @@ class AmqpConsumer implements InteropAmqpConsumer
      * @var Buffer
      */
     private $buffer;
-
-    /**
-     * @var bool
-     */
-    private $isInit;
 
     /**
      * @var string
@@ -51,25 +48,19 @@ class AmqpConsumer implements InteropAmqpConsumer
     private $consumerTag;
 
     /**
-     * @var Message
-     */
-    private $bunnyMessages = [];
-
-    /**
-     * @param Channel          $channel
+     * @param AmqpContext      $context
      * @param InteropAmqpQueue $queue
      * @param Buffer           $buffer
      * @param string           $receiveMethod
      */
-    public function __construct(Channel $channel, InteropAmqpQueue $queue, Buffer $buffer, $receiveMethod)
+    public function __construct(AmqpContext $context, InteropAmqpQueue $queue, Buffer $buffer, $receiveMethod)
     {
-        $this->channel = $channel;
+        $this->context = $context;
+        $this->channel = $context->getBunnyChannel();
         $this->queue = $queue;
         $this->buffer = $buffer;
         $this->receiveMethod = $receiveMethod;
         $this->flags = self::FLAG_NOPARAM;
-
-        $this->isInit = false;
     }
 
     /**
@@ -77,10 +68,6 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     public function setConsumerTag($consumerTag)
     {
-        if ($this->isInit) {
-            throw new Exception('Consumer tag is not mutable after it has been subscribed to broker');
-        }
-
         $this->consumerTag = $consumerTag;
     }
 
@@ -154,9 +141,7 @@ class AmqpConsumer implements InteropAmqpConsumer
     public function receiveNoWait()
     {
         if ($message = $this->channel->get($this->queue->getQueueName(), (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK))) {
-            $this->bunnyMessages[$message->deliveryTag] = $message;
-
-            return $this->convertMessage($message);
+            return $this->context->convertMessage($message);
         }
     }
 
@@ -167,11 +152,8 @@ class AmqpConsumer implements InteropAmqpConsumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-        if (isset($this->bunnyMessages[$message->getDeliveryTag()])) {
-            $this->channel->ack($this->bunnyMessages[$message->getDeliveryTag()]);
-
-            unset($this->bunnyMessages[$message->getDeliveryTag()]);
-        }
+        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
+        $this->channel->ack($bunnyMessage);
     }
 
     /**
@@ -182,41 +164,8 @@ class AmqpConsumer implements InteropAmqpConsumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-        if (isset($this->bunnyMessages[$message->getDeliveryTag()])) {
-            $this->channel->reject($this->bunnyMessages[$message->getDeliveryTag()], $requeue);
-
-            unset($this->bunnyMessages[$message->getDeliveryTag()]);
-        }
-    }
-
-    /**
-     * @param Message $bunnyMessage
-     *
-     * @return InteropAmqpMessage
-     */
-    private function convertMessage(Message $bunnyMessage)
-    {
-        $headers = $bunnyMessage->headers;
-
-        $properties = [];
-        if (isset($headers['application_headers'])) {
-            $properties = $headers['application_headers'];
-        }
-        unset($headers['application_headers']);
-
-        if (array_key_exists('timestamp', $headers)) {
-            /** @var \DateTime $date */
-            $date = $headers['timestamp'];
-
-            $headers['timestamp'] = (int) $date->format('U');
-        }
-
-        $message = new AmqpMessage($bunnyMessage->content, $properties, $headers);
-        $message->setDeliveryTag($bunnyMessage->deliveryTag);
-        $message->setRedelivered($bunnyMessage->redelivered);
-        $message->setRoutingKey($bunnyMessage->routingKey);
-
-        return $message;
+        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
+        $this->channel->reject($bunnyMessage, $requeue);
     }
 
     /**
@@ -244,34 +193,12 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     private function receiveBasicConsume($timeout)
     {
-        if (false === $this->isInit) {
-            $callback = function (Message $message, Channel $channel, Client $bunny) {
-                $receivedMessage = $this->convertMessage($message);
-                $receivedMessage->setConsumerTag($message->consumerTag);
+        if (false == $this->consumerTag) {
+            $this->context->subscribe($this, function (InteropAmqpMessage $message) {
+                $this->buffer->push($message->getConsumerTag(), $message);
 
-                $this->bunnyMessages[$message->deliveryTag] = $message;
-                $this->buffer->push($receivedMessage->getConsumerTag(), $receivedMessage);
-
-                $bunny->stop();
-            };
-
-            $frame = $this->channel->consume(
-                $callback,
-                $this->queue->getQueueName(),
-                $this->getConsumerTag() ?: $this->getQueue()->getConsumerTag(),
-                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
-                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
-                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
-                (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT)
-            );
-
-            $this->consumerTag = $frame->consumerTag;
-
-            if (empty($this->consumerTag)) {
-                throw new Exception('Got empty consumer tag');
-            }
-
-            $this->isInit = true;
+                return false;
+            });
         }
 
         if ($message = $this->buffer->pop($this->consumerTag)) {
@@ -281,7 +208,7 @@ class AmqpConsumer implements InteropAmqpConsumer
         while (true) {
             $start = microtime(true);
 
-            $this->channel->getClient()->run($timeout / 1000);
+            $this->context->consume($timeout);
 
             if ($message = $this->buffer->pop($this->consumerTag)) {
                 return $message;

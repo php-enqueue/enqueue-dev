@@ -7,7 +7,7 @@
     "require": {
         "php": ">=5.6",
         "queue-interop/queue-interop": "^0.6@dev",
-        "enqueue/null": "^0.7@dev",
+        "enqueue/null": "^0.8@dev",
         "ramsey/uuid": "^2|^3.5",
         "psr/log": "^1"
     },
@@ -18,20 +18,20 @@
         "symfony/config": "^2.8|^3",
         "symfony/event-dispatcher": "^2.8|^3",
         "symfony/http-kernel": "^2.8|^3",
-        "enqueue/amqp-ext": "^0.7@dev",
-        "enqueue/amqp-lib": "^0.7@dev",
-        "enqueue/amqp-bunny": "^0.7@dev",
-        "enqueue/pheanstalk": "^0.7@dev",
-        "enqueue/gearman": "^0.7@dev",
-        "enqueue/rdkafka": "^0.7@dev",
-        "enqueue/dbal": "^0.7@dev",
-        "enqueue/fs": "^0.7@dev",
-        "enqueue/gps": "^0.7@dev",
-        "enqueue/redis": "^0.7@dev",
-        "enqueue/sqs": "^0.7@dev",
-        "enqueue/stomp": "^0.7@dev",
-        "enqueue/test": "^0.7@dev",
-        "enqueue/simple-client": "^0.7@dev",
+        "enqueue/amqp-ext": "^0.8@dev",
+        "enqueue/amqp-lib": "^0.8@dev",
+        "enqueue/amqp-bunny": "^0.8@dev",
+        "enqueue/pheanstalk": "^0.8@dev",
+        "enqueue/gearman": "^0.8@dev",
+        "enqueue/rdkafka": "^0.8@dev",
+        "enqueue/dbal": "^0.8@dev",
+        "enqueue/fs": "^0.8@dev",
+        "enqueue/gps": "^0.8@dev",
+        "enqueue/redis": "^0.8@dev",
+        "enqueue/sqs": "^0.8@dev",
+        "enqueue/stomp": "^0.8@dev",
+        "enqueue/test": "^0.8@dev",
+        "enqueue/simple-client": "^0.8@dev",
         "empi89/php-amqp-stubs": "*@dev"
     },
     "suggest": {
@@ -55,7 +55,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.7.x-dev"
+            "dev-master": "0.8.x-dev"
         }
     }
 }

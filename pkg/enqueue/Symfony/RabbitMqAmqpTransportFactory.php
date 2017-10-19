@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\AmqpLib\Symfony;
+namespace Enqueue\Symfony;
 
 use Enqueue\AmqpTools\DelayStrategyTransportFactoryTrait;
 use Enqueue\Client\Amqp\RabbitMqDriver;
@@ -9,14 +9,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RabbitMqAmqpLibTransportFactory extends AmqpLibTransportFactory
+class RabbitMqAmqpTransportFactory extends AmqpTransportFactory
 {
     use DelayStrategyTransportFactoryTrait;
 
     /**
      * @param string $name
      */
-    public function __construct($name = 'rabbitmq_amqp_lib')
+    public function __construct($name = 'rabbitmq_amqp')
     {
         parent::__construct($name);
     }

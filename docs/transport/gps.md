@@ -27,7 +27,13 @@ putenv('PUBSUB_EMULATOR_HOST=http://localhost:8900');
 
 $connectionFactory = new GpsConnectionFactory();
 
+// save as above 
+$connectionFactory = new GpsConnectionFactory('gps:');
+
 $psrContext = $connectionFactory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('gps:');
 ```
 
 ## Send message to topic

@@ -70,7 +70,7 @@ return [
             'connection_factory_class' => \Enqueue\AmqpBunny\AmqpConnectionFactory::class,
             
             // connects to localhost
-            'dsn' => 'amqp://',
+            'dsn' => 'amqp:',
             
             // could be "rabbitmq_dlx", "rabbitmq_delay_plugin", instance of DelayStrategy interface or null 
             // 'delay_strategy' => 'rabbitmq_dlx' 

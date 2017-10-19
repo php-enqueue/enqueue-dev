@@ -58,6 +58,9 @@ $factory = new RedisConnectionFactory([
 $factory = new RedisConnectionFactory('redis://example.com:1000?vendor=phpredis');
 
 $psrContext = $factory->createContext();
+
+// if you have enqueue/enqueue library installed you can use a function from there to create the context
+$psrContext = \Enqueue\dsn_to_context('redis:');
 ```
 
 * With predis library:

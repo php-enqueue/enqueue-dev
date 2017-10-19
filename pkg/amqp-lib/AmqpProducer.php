@@ -4,11 +4,13 @@ namespace Enqueue\AmqpLib;
 
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Interop\Amqp\AmqpDestination as InteropAmqpDestination;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
 use Interop\Queue\DeliveryDelayNotSupportedException;
+use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
@@ -58,6 +60,8 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @param InteropAmqpTopic|InteropAmqpQueue $destination
      * @param InteropAmqpMessage                $message
      */
@@ -70,40 +74,10 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
 
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-        if (null !== $this->priority && null === $message->getPriority()) {
-            $message->setPriority($this->priority);
-        }
-
-        if (null !== $this->timeToLive && null === $message->getExpiration()) {
-            $message->setExpiration($this->timeToLive);
-        }
-
-        $amqpProperties = $message->getHeaders();
-
-        if ($appProperties = $message->getProperties()) {
-            $amqpProperties['application_headers'] = new AMQPTable($appProperties);
-        }
-
-        $amqpMessage = new LibAMQPMessage($message->getBody(), $amqpProperties);
-
-        if ($this->deliveryDelay) {
-            $this->delayStrategy->delayMessage($this->context, $destination, $message, $this->deliveryDelay);
-        } elseif ($destination instanceof InteropAmqpTopic) {
-            $this->channel->basic_publish(
-                $amqpMessage,
-                $destination->getTopicName(),
-                $message->getRoutingKey(),
-                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
-                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
-            );
-        } else {
-            $this->channel->basic_publish(
-                $amqpMessage,
-                '',
-                $destination->getQueueName(),
-                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
-                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
-            );
+        try {
+            $this->doSend($destination, $message);
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -161,5 +135,44 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     public function getTimeToLive()
     {
         return $this->timeToLive;
+    }
+
+    private function doSend(InteropAmqpDestination $destination, InteropAmqpMessage $message)
+    {
+        if (null !== $this->priority && null === $message->getPriority()) {
+            $message->setPriority($this->priority);
+        }
+
+        if (null !== $this->timeToLive && null === $message->getExpiration()) {
+            $message->setExpiration($this->timeToLive);
+        }
+
+        $amqpProperties = $message->getHeaders();
+
+        if ($appProperties = $message->getProperties()) {
+            $amqpProperties['application_headers'] = new AMQPTable($appProperties);
+        }
+
+        $amqpMessage = new LibAMQPMessage($message->getBody(), $amqpProperties);
+
+        if ($this->deliveryDelay) {
+            $this->delayStrategy->delayMessage($this->context, $destination, $message, $this->deliveryDelay);
+        } elseif ($destination instanceof InteropAmqpTopic) {
+            $this->channel->basic_publish(
+                $amqpMessage,
+                $destination->getTopicName(),
+                $message->getRoutingKey(),
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
+            );
+        } else {
+            $this->channel->basic_publish(
+                $amqpMessage,
+                '',
+                $destination->getQueueName(),
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
+                (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
+            );
+        }
     }
 }

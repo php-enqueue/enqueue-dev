@@ -3,9 +3,12 @@
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
+use Bunny\Client;
+use Bunny\Message;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
+use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
@@ -42,6 +45,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      * @var Buffer
      */
     private $buffer;
+
+    /**
+     * an item contains an array: [AmqpConsumerInterop $consumer, callable $callback];.
+     *
+     * @var array
+     */
+    private $subscribers;
 
     /**
      * Callable must return instance of \Bunny\Channel once called.
@@ -117,10 +127,10 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this->getBunnyChannel(), $queue, $this->buffer, $this->config['receive_method']);
+            return new AmqpConsumer($this, $queue, $this->buffer, $this->config['receive_method']);
         }
 
-        return new AmqpConsumer($this->getBunnyChannel(), $destination, $this->buffer, $this->config['receive_method']);
+        return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
     }
 
     /**
@@ -310,6 +320,77 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
+    {
+        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
+            return;
+        }
+
+        $bunnyCallback = function (Message $message, Channel $channel, Client $bunny) {
+            $receivedMessage = $this->convertMessage($message);
+            $receivedMessage->setConsumerTag($message->consumerTag);
+
+            /**
+             * @var AmqpConsumer
+             * @var callable     $callback
+             */
+            list($consumer, $callback) = $this->subscribers[$message->consumerTag];
+
+            if (false === call_user_func($callback, $receivedMessage, $consumer)) {
+                $bunny->stop();
+            }
+        };
+
+        $frame = $this->getBunnyChannel()->consume(
+            $bunnyCallback,
+            $consumer->getQueue()->getQueueName(),
+            $consumer->getConsumerTag(),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
+            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT)
+        );
+
+        if (empty($frame->consumerTag)) {
+            throw new Exception('Got empty consumer tag');
+        }
+
+        $consumer->setConsumerTag($frame->consumerTag);
+
+        $this->subscribers[$frame->consumerTag] = [$consumer, $callback];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unsubscribe(InteropAmqpConsumer $consumer)
+    {
+        if (false == $consumer->getConsumerTag()) {
+            return;
+        }
+
+        $consumerTag = $consumer->getConsumerTag();
+
+        $this->getBunnyChannel()->cancel($consumerTag);
+        $consumer->setConsumerTag(null);
+        unset($this->subscribers[$consumerTag]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function consume($timeout = 0)
+    {
+        if (empty($this->subscribers)) {
+            throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
+        }
+
+        $this->getBunnyChannel()->getClient()->run($timeout / 1000);
+    }
+
+    /**
      * @return Channel
      */
     public function getBunnyChannel()
@@ -327,5 +408,37 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         return $this->bunnyChannel;
+    }
+
+    /**
+     * @internal It must be used here and in the consumer only
+     *
+     * @param Message $bunnyMessage
+     *
+     * @return InteropAmqpMessage
+     */
+    public function convertMessage(Message $bunnyMessage)
+    {
+        $headers = $bunnyMessage->headers;
+
+        $properties = [];
+        if (isset($headers['application_headers'])) {
+            $properties = $headers['application_headers'];
+        }
+        unset($headers['application_headers']);
+
+        if (array_key_exists('timestamp', $headers) && $headers['timestamp']) {
+            /** @var \DateTime $date */
+            $date = $headers['timestamp'];
+
+            $headers['timestamp'] = (int) $date->format('U');
+        }
+
+        $message = new AmqpMessage($bunnyMessage->content, $properties, $headers);
+        $message->setDeliveryTag($bunnyMessage->deliveryTag);
+        $message->setRedelivered($bunnyMessage->redelivered);
+        $message->setRoutingKey($bunnyMessage->routingKey);
+
+        return $message;
     }
 }

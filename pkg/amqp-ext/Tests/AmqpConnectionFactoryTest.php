@@ -17,6 +17,16 @@ class AmqpConnectionFactoryTest extends TestCase
         $this->assertClassImplements(PsrConnectionFactory::class, AmqpConnectionFactory::class);
     }
 
+    public function testShouldSupportAmqpExtScheme()
+    {
+        // no exception here
+        new AmqpConnectionFactory('amqp+ext:');
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The given DSN scheme "amqp+foo" is not supported. Could be one of "amqp", "amqp+ext" only.');
+        new AmqpConnectionFactory('amqp+foo:');
+    }
+
     public function testShouldCreateLazyContext()
     {
         $factory = new AmqpConnectionFactory(['lazy' => true]);

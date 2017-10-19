@@ -1,13 +1,13 @@
 <?php
 
-namespace Enqueue\AmqpExt\Tests\Symfony;
+namespace Enqueue\Tests\Symfony;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpExt\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Client\Amqp\RabbitMqDriver;
+use Enqueue\Symfony\AmqpTransportFactory;
+use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Amqp\AmqpConnectionFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
@@ -53,15 +53,7 @@ class RabbitMqAmqpTransportFactoryTest extends TestCase
         $config = $processor->process($tb->buildTree(), []);
 
         $this->assertEquals([
-            'host' => 'localhost',
-            'port' => 5672,
-            'user' => 'guest',
-            'pass' => 'guest',
-            'vhost' => '/',
-            'persisted' => false,
             'delay_strategy' => 'dlx',
-            'lazy' => true,
-            'receive_method' => 'basic_get',
         ], $config);
     }
 

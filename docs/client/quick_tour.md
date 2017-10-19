@@ -22,7 +22,7 @@ use Enqueue\SimpleClient\SimpleClient;
 
 include __DIR__.'/vendor/autoload.php';
 
-$client = new SimpleClient('amqp://');
+$client = new SimpleClient('amqp:');
 ```
 
 ## Produce message

@@ -19,6 +19,16 @@ class DbalProducer implements PsrProducer
     private $priority;
 
     /**
+     * @var int|float|null
+     */
+    private $deliveryDelay;
+
+    /**
+     * @var int|float|null
+     */
+    private $timeToLive;
+
+    /**
      * @var DbalContext
      */
     private $context;
@@ -47,6 +57,12 @@ class DbalProducer implements PsrProducer
         if (null !== $this->priority && null === $message->getPriority()) {
             $message->setPriority($this->priority);
         }
+        if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
+            $message->setDeliveryDelay($this->deliveryDelay);
+        }
+        if (null !== $this->timeToLive && null === $message->getTimeToLive()) {
+            $message->setTimeToLive($this->timeToLive);
+        }
 
         $body = $message->getBody();
         if (is_scalar($body) || null === $body) {
@@ -58,7 +74,16 @@ class DbalProducer implements PsrProducer
             ));
         }
 
+        $sql = 'SELECT '.$this->context->getDbalConnection()->getDatabasePlatform()->getGuidExpression();
+        $uuid = $this->context->getDbalConnection()->query($sql)->fetchColumn(0);
+
+        if (empty($uuid)) {
+            throw new \LogicException('The generated uuid is empty');
+        }
+
         $dbalMessage = [
+            'id' => $uuid,
+            'published_at' => (int) microtime(true) * 10000,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
@@ -66,7 +91,7 @@ class DbalProducer implements PsrProducer
             'queue' => $destination->getQueueName(),
         ];
 
-        $delay = $message->getDelay();
+        $delay = $message->getDeliveryDelay();
         if ($delay) {
             if (!is_int($delay)) {
                 throw new \LogicException(sprintf(
@@ -79,16 +104,35 @@ class DbalProducer implements PsrProducer
                 throw new \LogicException(sprintf('Delay must be positive integer but got: "%s"', $delay));
             }
 
-            $dbalMessage['delayed_until'] = time() + $delay;
+            $dbalMessage['delayed_until'] = time() + (int) $delay / 1000;
+        }
+
+        $timeToLive = $message->getTimeToLive();
+        if ($timeToLive) {
+            if (!is_int($timeToLive)) {
+                throw new \LogicException(sprintf(
+                    'TimeToLive must be integer but got: "%s"',
+                    is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)
+                ));
+            }
+
+            if ($timeToLive <= 0) {
+                throw new \LogicException(sprintf('TimeToLive must be positive integer but got: "%s"', $timeToLive));
+            }
+
+            $dbalMessage['time_to_live'] = time() + (int) $timeToLive / 1000;
         }
 
         try {
             $this->context->getDbalConnection()->insert($this->context->getTableName(), $dbalMessage, [
+                'id' => Type::GUID,
+                'published_at' => Type::INTEGER,
                 'body' => Type::TEXT,
                 'headers' => Type::TEXT,
                 'properties' => Type::TEXT,
                 'priority' => Type::SMALLINT,
                 'queue' => Type::STRING,
+                'time_to_live' => Type::INTEGER,
                 'delayed_until' => Type::INTEGER,
             ]);
         } catch (\Exception $e) {
@@ -101,11 +145,9 @@ class DbalProducer implements PsrProducer
      */
     public function setDeliveryDelay($deliveryDelay)
     {
-        if (null === $deliveryDelay) {
-            return;
-        }
+        $this->deliveryDelay = $deliveryDelay;
 
-        throw new \LogicException('Not implemented');
+        return $this;
     }
 
     /**
@@ -113,7 +155,7 @@ class DbalProducer implements PsrProducer
      */
     public function getDeliveryDelay()
     {
-        return null;
+        return $this->deliveryDelay;
     }
 
     /**
@@ -139,11 +181,7 @@ class DbalProducer implements PsrProducer
      */
     public function setTimeToLive($timeToLive)
     {
-        if (null === $timeToLive) {
-            return;
-        }
-
-        throw new \LogicException('Not implemented');
+        $this->timeToLive = $timeToLive;
     }
 
     /**
@@ -151,6 +189,6 @@ class DbalProducer implements PsrProducer
      */
     public function getTimeToLive()
     {
-        return null;
+        return $this->timeToLive;
     }
 }

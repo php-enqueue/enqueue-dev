@@ -32,7 +32,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN "invalidDSN" is not valid. Must contain "://".');
+        $this->expectExceptionMessage('Schema is empty');
 
         new DbalConnectionFactory('invalidDSN');
     }
@@ -63,7 +63,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'mysql://',
+            'mysql:',
             [
                 'lazy' => true,
                 'connection' => [
@@ -73,7 +73,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'pgsql://',
+            'pgsql:',
             [
                 'lazy' => true,
                 'connection' => [

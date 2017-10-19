@@ -15,7 +15,7 @@
         "enqueue/enqueue": "^0.7",
         "enqueue/null": "^0.7",
         "enqueue/test": "^0.7",
-        "queue-interop/queue-spec": "^0.5",
+        "queue-interop/queue-spec": "^0.5.3@dev",
         "symfony/dependency-injection": "^2.8|^3@stable",
         "symfony/config": "^2.8|^3@stable",
         "symfony/phpunit-bridge": "^2.8|^3@stable"
@@ -29,7 +29,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.7.x-dev"
+            "dev-master": "0.8.x-dev"
         }
     }
 }

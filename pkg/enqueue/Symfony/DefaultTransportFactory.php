@@ -2,12 +2,6 @@
 
 namespace Enqueue\Symfony;
 
-use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
-use Enqueue\AmqpBunny\Symfony\AmqpBunnyTransportFactory;
-use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
-use Enqueue\AmqpExt\Symfony\AmqpTransportFactory;
-use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
-use Enqueue\AmqpLib\Symfony\AmqpLibTransportFactory;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsConnectionFactory;
@@ -22,6 +16,7 @@ use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
+use Interop\Amqp\AmqpConnectionFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use function Enqueue\dsn_to_connection_factory;
@@ -58,7 +53,7 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
                     }
 
                     if (empty($v)) {
-                        return ['dsn' => 'null://'];
+                        return ['dsn' => 'null:'];
                     }
 
                     if (is_string($v)) {
@@ -181,16 +176,8 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
     {
         $factory = dsn_to_connection_factory($dsn);
 
-        if ($factory instanceof AmqpExtConnectionFactory) {
-            return new AmqpTransportFactory('default_amqp_ext');
-        }
-
-        if ($factory instanceof AmqpLibConnectionFactory) {
-            return new AmqpLibTransportFactory('default_amqp_lib');
-        }
-
-        if ($factory instanceof AmqpBunnyConnectionFactory) {
-            return new AmqpBunnyTransportFactory('default_amqp_bunny');
+        if ($factory instanceof AmqpConnectionFactory) {
+            return new AmqpTransportFactory('default_amqp');
         }
 
         if ($factory instanceof FsConnectionFactory) {
