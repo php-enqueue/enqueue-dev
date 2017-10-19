@@ -1,5 +1,24 @@
 # Change Log
 
+## [0.8.0](https://github.com/php-enqueue/enqueue-dev/tree/0.8.0) (2017-10-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.19...0.8.0)
+
+- \[amqp-lib\] The context should allow to get the lib's channel.  [\#146](https://github.com/php-enqueue/enqueue-dev/issues/146)
+- 0.8v goes stable. [\#238](https://github.com/php-enqueue/enqueue-dev/pull/238) ([makasim](https://github.com/makasim))
+- \[travis\] allow kafka tests to fail. [\#237](https://github.com/php-enqueue/enqueue-dev/pull/237) ([makasim](https://github.com/makasim))
+- \[amqp\] One single transport factory for all supported amqp implementa… [\#233](https://github.com/php-enqueue/enqueue-dev/pull/233) ([makasim](https://github.com/makasim))
+- \[BC break\]\[amqp\] Introduce connection config. Make it same across all transports. [\#228](https://github.com/php-enqueue/enqueue-dev/pull/228) ([makasim](https://github.com/makasim))
+
+- \[amqp-bunny\] High CPU usage while using basic.consume.  [\#226](https://github.com/php-enqueue/enqueue-dev/issues/226)
+- Amqp basic consume should restore default timeout inside consume callback.  [\#225](https://github.com/php-enqueue/enqueue-dev/issues/225)
+- AmqpProducer::send method must throw only interop exception. [\#224](https://github.com/php-enqueue/enqueue-dev/issues/224)
+- 0.8v goes stable. [\#238](https://github.com/php-enqueue/enqueue-dev/pull/238) ([makasim](https://github.com/makasim))
+- \[consumption\]\[amqp\] move beforeReceive call at the end of the cycle f… [\#234](https://github.com/php-enqueue/enqueue-dev/pull/234) ([makasim](https://github.com/makasim))
+- \\[BC break\\]\\[amqp\\] Introduce connection config. Make it same across all transports. [\#228](https://github.com/php-enqueue/enqueue-dev/pull/228) ([makasim](https://github.com/makasim))
+
+- Missing client configuration in the documentation [\#231](https://github.com/php-enqueue/enqueue-dev/pull/231) ([lsv](https://github.com/lsv))
+- Added MIT license badge [\#230](https://github.com/php-enqueue/enqueue-dev/pull/230) ([tarlepp](https://github.com/tarlepp))
+
 ## [0.7.19](https://github.com/php-enqueue/enqueue-dev/tree/0.7.19) (2017-10-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.18...0.7.19)
 
