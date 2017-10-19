@@ -9,31 +9,33 @@ matrix:
   include:
     - php: 5.6
       env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
-    - php: 7.1
-      env: SYMFONY_VERSION=3.0.* PHPSTAN=true
-    - php: 7.1
-      env: SYMFONY_VERSION=3.0.* PHP_CS_FIXER=true
-    - php: 7.0
-      env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
-    - php: 5.6
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
-    - php: 7.0
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=3.2.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+#    - php: 7.1
+#      env: SYMFONY_VERSION=3.0.* PHPSTAN=true
+#    - php: 7.1
+#      env: SYMFONY_VERSION=3.0.* PHP_CS_FIXER=true
+#    - php: 7.0
+#      env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
+#    - php: 5.6
+#      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
+#    - php: 7.0
+#      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
+#    - php: 7.1
+#      services: docker
+#      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+#    - php: 7.1
+#      services: docker
+#      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+#    - php: 7.1
+#      services: docker
+#      env: SYMFONY_VERSION=3.2.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+#    - php: 7.1
+#      services: docker
+#      env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
       services: docker
       env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
+  allow_failures:
+    - env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
 
 cache:
     directories:
@@ -54,7 +56,7 @@ script:
     - if [ "$PHP_CS_FIXER" = true ]; then ./bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no --path-mode=intersection -- "${COMMIT_SCA_FILES[@]}"; fi
     - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/run-fun-test.sh --exclude-group=rdkafka; fi
-    - if [ "RDKAFKA_TESTS" = true ]; then bin/run-fun-test.sh --group=rdkafka || true; fi
+    - if [ "RDKAFKA_TESTS" = true ]; then bin/run-fun-test.sh --group=rdkafka; fi
     
 notifications:
   webhooks:
