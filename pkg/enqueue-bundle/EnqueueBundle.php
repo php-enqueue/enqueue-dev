@@ -16,6 +16,8 @@ use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Gps\GpsConnectionFactory;
+use Enqueue\Gps\Symfony\GpsTransportFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
@@ -69,6 +71,10 @@ class EnqueueBundle extends Bundle
 
         if (class_exists(SqsConnectionFactory::class)) {
             $extension->addTransportFactory(new SqsTransportFactory());
+        }
+
+        if (class_exists(GpsConnectionFactory::class)) {
+            $extension->addTransportFactory(new GpsTransportFactory());
         }
 
         $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

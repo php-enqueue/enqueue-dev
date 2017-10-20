@@ -13,6 +13,7 @@ use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\EnqueueBundle;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Gps\Symfony\GpsTransportFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
@@ -200,6 +201,23 @@ class EnqueueBundleTest extends TestCase
             ->expects($this->at(7))
             ->method('addTransportFactory')
             ->with($this->isInstanceOf(SqsTransportFactory::class))
+        ;
+
+        $bundle = new EnqueueBundle();
+        $bundle->build($container);
+    }
+
+    public function testShouldRegisterGpsTransportFactory()
+    {
+        $extensionMock = $this->createEnqueueExtensionMock();
+
+        $container = new ContainerBuilder();
+        $container->registerExtension($extensionMock);
+
+        $extensionMock
+            ->expects($this->at(8))
+            ->method('addTransportFactory')
+            ->with($this->isInstanceOf(GpsTransportFactory::class))
         ;
 
         $bundle = new EnqueueBundle();
