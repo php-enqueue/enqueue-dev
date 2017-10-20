@@ -23,6 +23,7 @@
         "enqueue/redis": "^0.8@dev",
         "enqueue/dbal": "^0.8@dev",
         "enqueue/sqs": "^0.8@dev",
+        "enqueue/gps": "^0.8@dev",
         "enqueue/test": "^0.8@dev",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/monolog-bundle": "^2.8|^3",

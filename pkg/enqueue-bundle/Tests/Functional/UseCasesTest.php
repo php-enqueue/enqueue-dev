@@ -159,6 +159,13 @@ class UseCasesTest extends WebTestCase
                 ],
             ],
         ]];
+
+        yield 'gps' => [[
+            'transport' => [
+                'default' => 'gps',
+                'gps' => [],
+            ],
+        ]];
     }
 
     /**
