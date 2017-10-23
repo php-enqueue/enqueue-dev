@@ -2,6 +2,9 @@
 
 namespace Enqueue\Bundle;
 
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventsPass;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncTransformersPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
@@ -54,8 +57,14 @@ class EnqueueBundle extends Bundle
             $extension->addTransportFactory(new RabbitMqStompTransportFactory());
         }
 
-        $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
-        $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
+        if (
+            class_exists(AmqpBunnyConnectionFactory::class) ||
+            class_exists(AmqpExtConnectionFactory::class) ||
+            class_exists(AmqpLibConnectionFactory::class)
+        ) {
+            $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
+            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
+        }
 
         if (class_exists(FsConnectionFactory::class)) {
             $extension->addTransportFactory(new FsTransportFactory());
