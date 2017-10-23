@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.8.1](https://github.com/php-enqueue/enqueue-dev/tree/0.8.1) (2017-10-23)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.0...0.8.1)
+
+- Allow kafka tests to fail.  [\#232](https://github.com/php-enqueue/enqueue-dev/issues/232)
+- GPS Integration [\#239](https://github.com/php-enqueue/enqueue-dev/pull/239) ([ASKozienko](https://github.com/ASKozienko))
+
+- GPSTransportFactory registration is missing from EnqueueBundle [\#235](https://github.com/php-enqueue/enqueue-dev/issues/235)
+
+- Only add Ampq transport factories when packages are found [\#241](https://github.com/php-enqueue/enqueue-dev/pull/241) ([jverdeyen](https://github.com/jverdeyen))
+
 ## [0.8.0](https://github.com/php-enqueue/enqueue-dev/tree/0.8.0) (2017-10-19)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.19...0.8.0)
 
