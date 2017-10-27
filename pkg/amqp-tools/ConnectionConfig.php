@@ -20,11 +20,17 @@ namespace Enqueue\AmqpTools;
  *   qos_prefetch_size - The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"
  *   qos_prefetch_count - Specifies a prefetch window in terms of whole messages
  *   qos_global - If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.
+ *   ssl_on - Should be true if you want to use secure connections. False by default
+ *   ssl_verify - This option determines whether ssl client verifies that the server cert is for the server it is known as. True by default.
+ *   ssl_cacert - Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.
+ *   ssl_cert - Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string
+ *   ssl_key - A string.
  *
- * 2. null - in this case it tries to connect to locahost with default settings
+ * 2. null - in this case it tries to connect to localhost with default settings
  * 3. amqp: same as 2.
  * 4. amqp://user:pass@host:10000/vhost?lazy=true&persisted=false&read_timeout=2
  * 5. amqp+foo: - the scheme driver could be used. (make sure you added it to the list of supported schemes)
+ * 6. amqps: - secure connection to localhost
  *
  * @see https://www.rabbitmq.com/uri-spec.html
  */
@@ -73,9 +79,15 @@ class ConnectionConfig
             'qos_global' => false,
             'qos_prefetch_size' => 0,
             'qos_prefetch_count' => 1,
+            'ssl_on' => false,
+            'ssl_verify' => true,
+            'ssl_cacert' => null,
+            'ssl_cert' => null,
+            'ssl_key' => null,
         ];
 
         $this->addSupportedScheme('amqp');
+        $this->addSupportedScheme('amqps');
     }
 
     /**
@@ -139,6 +151,11 @@ class ConnectionConfig
         $config['qos_global'] = !empty($config['qos_global']);
         $config['qos_prefetch_count'] = max((int) ($config['qos_prefetch_count']), 0);
         $config['qos_prefetch_size'] = max((int) ($config['qos_prefetch_size']), 0);
+        $config['ssl_on'] = !empty($config['ssl_on']);
+        $config['ssl_verify'] = !empty($config['ssl_verify']);
+        $config['ssl_cacert'] = (string) $config['ssl_cacert'];
+        $config['ssl_cert'] = (string) $config['ssl_cert'];
+        $config['ssl_key'] = (string) $config['ssl_key'];
 
         $this->config = $config;
 
@@ -258,6 +275,46 @@ class ConnectionConfig
     }
 
     /**
+     * @return bool
+     */
+    public function isSslOn()
+    {
+        return $this->getOption('ssl_on');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSslVerify()
+    {
+        return $this->getOption('ssl_verify');
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSslCaCert()
+    {
+        return $this->getOption('ssl_cacert');
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSslCert()
+    {
+        return $this->getOption('ssl_cert');
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSslKey()
+    {
+        return $this->getOption('ssl_key');
+    }
+
+    /**
      * @param string $name
      * @param mixed  $default
      *
@@ -324,6 +381,10 @@ class ConnectionConfig
 
         if ($path = parse_url($dsn, PHP_URL_PATH)) {
             $config['vhost'] = ltrim($path, '/');
+        }
+
+        if (0 === strpos($scheme, 'amqps')) {
+            $config['ssl_on'] = true;
         }
 
         return array_map('urldecode', $config);
