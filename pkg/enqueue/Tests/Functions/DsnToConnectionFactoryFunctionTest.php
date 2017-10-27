@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Functions;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
@@ -58,6 +59,16 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
     {
         yield ['amqp:', AmqpConnectionFactory::class];
 
+        yield ['amqps:', AmqpConnectionFactory::class];
+
+        yield ['amqp+ext:', AmqpConnectionFactory::class];
+
+        yield ['amqps+ext:', AmqpConnectionFactory::class];
+
+        yield ['amqp+lib:', AmqpLibConnectionFactory::class];
+
+        yield ['amqps+lib:', AmqpLibConnectionFactory::class];
+
         yield ['amqp://user:pass@foo/vhost', AmqpConnectionFactory::class];
 
         yield ['file:', FsConnectionFactory::class];
@@ -72,7 +83,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
 
         yield ['beanstalk:', PheanstalkConnectionFactory::class];
 
-        //        yield ['gearman:', GearmanConnectionFactory::class];
+        yield ['gearman:', GearmanConnectionFactory::class];
 
         yield ['kafka:', RdKafkaConnectionFactory::class];
 
