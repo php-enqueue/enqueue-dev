@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.8.2](https://github.com/php-enqueue/enqueue-dev/tree/0.8.2) (2017-10-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.1...0.8.2)
+
+- \[amqp\] add ssl support  [\#147](https://github.com/php-enqueue/enqueue-dev/issues/147)
+- \[amqp\] Add AMQP secure \(SSL\) connections support [\#246](https://github.com/php-enqueue/enqueue-dev/pull/246) ([makasim](https://github.com/makasim))
+
 ## [0.8.1](https://github.com/php-enqueue/enqueue-dev/tree/0.8.1) (2017-10-23)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.0...0.8.1)
 
