@@ -24,7 +24,7 @@ namespace Enqueue\AmqpTools;
  *   ssl_verify - This option determines whether ssl client verifies that the server cert is for the server it is known as. True by default.
  *   ssl_cacert - Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.
  *   ssl_cert - Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string
- *   ssl_key - A string.
+ *   ssl_key - Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.
  *
  * 2. null - in this case it tries to connect to localhost with default settings
  * 3. amqp: same as 2.
