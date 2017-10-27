@@ -11,7 +11,7 @@ Features:
 * [Feature rich](docs/quick_tour.md).
 * Implements [JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) like transports based on [queue-interop](https://github.com/queue-interop/queue-interop) interfaces.
 * Supported  transports 
-    * Amqp based on [the ext](docs/transport/amqp.md), [bunny](docs/transport/amqp_bunny.md), [the lib](docs/transport/amqp_lib.md) 
+    * AMQP(S) based on [the ext](docs/transport/amqp.md), [bunny](docs/transport/amqp_bunny.md), [the lib](docs/transport/amqp_lib.md) 
     * [Beanstalk](docs/transport/pheanstalk.md)
     * [STOMP](docs/transport/stomp.md)
     * [Amazon SQS](docs/transport/sqs.md)

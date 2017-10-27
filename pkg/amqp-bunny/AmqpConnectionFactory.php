@@ -85,6 +85,10 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
      */
     private function establishConnection()
     {
+        if ($this->config->isSslOn()) {
+            throw new \LogicException('The bunny library does not support SSL connections');
+        }
+
         if (false == $this->client) {
             $bunnyConfig = [];
             $bunnyConfig['host'] = $this->config->getHost();

@@ -9,6 +9,7 @@ bin/jp.php
 bin/php-parse
 bin/google-cloud-batch
 vendor
+var
 .php_cs
 .php_cs.cache
 composer.lock

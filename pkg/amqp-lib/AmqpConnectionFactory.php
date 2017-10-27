@@ -10,6 +10,7 @@ use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
 use PhpAmqpLib\Connection\AMQPLazySocketConnection;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
+use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrategyAware
@@ -38,6 +39,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     {
         $this->config = (new ConnectionConfig($config))
             ->addSupportedScheme('amqp+lib')
+            ->addSupportedScheme('amqps+lib')
             ->addDefaultOption('stream', true)
             ->addDefaultOption('insist', false)
             ->addDefaultOption('login_method', 'AMQPLAIN')
@@ -84,7 +86,32 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     {
         if (false == $this->connection) {
             if ($this->config->getOption('stream')) {
-                if ($this->config->isLazy()) {
+                if ($this->config->isSslOn()) {
+                    $con = new AMQPSSLConnection(
+                        $this->config->getHost(),
+                        $this->config->getPort(),
+                        $this->config->getUser(),
+                        $this->config->getPass(),
+                        $this->config->getVHost(),
+                        [
+                            'cafile' => $this->config->getSslCaCert(),
+                            'local_cert' => $this->config->getSslCert(),
+                            'local_pk' => $this->config->getSslKey(),
+                            'verify_peer' => $this->config->isSslVerify(),
+                            'verify_peer_name' => $this->config->isSslVerify(),
+                        ],
+                        [
+                            'insist' => $this->config->getOption('insist'),
+                            'login_method' => $this->config->getOption('login_method'),
+                            'login_response' => $this->config->getOption('login_response'),
+                            'locale' => $this->config->getOption('locale'),
+                            'connection_timeout' => $this->config->getConnectionTimeout(),
+                            'read_write_timeout' => (int) round(min($this->config->getReadTimeout(), $this->config->getWriteTimeout())),
+                            'keepalive' => $this->config->getOption('keepalive'),
+                            'heartbeat' => (int) round($this->config->getHeartbeat()),
+                        ]
+                    );
+                } elseif ($this->config->isLazy()) {
                     $con = new AMQPLazyConnection(
                         $this->config->getHost(),
                         $this->config->getPort(),
@@ -120,6 +147,10 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
                     );
                 }
             } else {
+                if ($this->config->isSslOn()) {
+                    throw new \LogicException('The socket connection implementation does not support ssl connections.');
+                }
+
                 if ($this->config->isLazy()) {
                     $con = new AMQPLazySocketConnection(
                         $this->config->getHost(),

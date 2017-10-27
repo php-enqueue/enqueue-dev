@@ -23,6 +23,14 @@ class UseCasesTest extends WebTestCase
 
     public function provideEnqueueConfigs()
     {
+        $baseDir = realpath(__DIR__.'/../../../../');
+
+        // guard
+        $this->assertNotEmpty($baseDir);
+
+        $certDir = $baseDir.'/var/rabbitmq_certificates';
+        $this->assertDirectoryExists($certDir);
+
         yield 'amqp' => [[
             'transport' => [
                 'default' => 'amqp',
@@ -42,6 +50,19 @@ class UseCasesTest extends WebTestCase
             'transport' => [
                 'default' => 'amqp',
                 'amqp' => getenv('AMQP_DSN'),
+            ],
+        ]];
+
+        yield 'amqps_dsn' => [[
+            'transport' => [
+                'default' => 'amqp',
+                'amqp' => [
+                    'dsn' => getenv('AMQPS_DSN'),
+                    'ssl_verify' => false,
+                    'ssl_cacert' => $certDir.'/cacert.pem',
+                    'ssl_cert' => $certDir.'/cert.pem',
+                    'ssl_key' => $certDir.'/key.pem',
+                ],
             ],
         ]];
 

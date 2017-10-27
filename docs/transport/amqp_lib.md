@@ -50,6 +50,14 @@ $factory = new AmqpConnectionFactory([
 // same as above but given as DSN string
 $factory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
+// SSL or secure connection 
+$factory = new AmqpConnectionFactory([
+    'dsn' => 'amqps:',
+    'ssl_cacert' => '/path/to/cacert.pem',
+    'ssl_cert' => '/path/to/cert.pem',
+    'ssl_key' => '/path/to/key.pem',
+]);
+
 $psrContext = $factory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a function from there to create the context

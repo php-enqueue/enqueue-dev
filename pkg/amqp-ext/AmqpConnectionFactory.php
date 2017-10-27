@@ -33,6 +33,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     {
         $this->config = (new ConnectionConfig($config))
             ->addSupportedScheme('amqp+ext')
+            ->addSupportedScheme('amqps+ext')
             ->addDefaultOption('receive_method', 'basic_get')
             ->parse()
         ;
@@ -113,11 +114,20 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             $extConfig['read_timeout'] = $this->config->getReadTimeout();
             $extConfig['write_timeout'] = $this->config->getWriteTimeout();
             $extConfig['connect_timeout'] = $this->config->getConnectionTimeout();
+            $extConfig['heartbeat'] = $this->config->getHeartbeat();
+
+            if ($this->config->isSslOn()) {
+                $extConfig['verify'] = $this->config->isSslVerify();
+                $extConfig['cacert'] = $this->config->getSslCaCert();
+                $extConfig['cert'] = $this->config->getSslCert();
+                $extConfig['key'] = $this->config->getSslKey();
+            }
 
             $this->connection = new \AMQPConnection($extConfig);
 
             $this->config->isPersisted() ? $this->connection->pconnect() : $this->connection->connect();
         }
+
         if (false == $this->connection->isConnected()) {
             $this->config->isPersisted() ? $this->connection->preconnect() : $this->connection->reconnect();
         }

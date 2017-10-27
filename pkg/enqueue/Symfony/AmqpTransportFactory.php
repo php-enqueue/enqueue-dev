@@ -116,6 +116,21 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
                 ->variableNode('driver_options')
                     ->info('The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.')
                 ->end()
+                ->booleanNode('ssl_on')
+                    ->info('Should be true if you want to use secure connections. False by default')
+                ->end()
+                ->booleanNode('ssl_verify')
+                    ->info('This option determines whether ssl client verifies that the server cert is for the server it is known as. True by default.')
+                ->end()
+                ->scalarNode('ssl_cacert')
+                    ->info('Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.')
+                ->end()
+                ->scalarNode('ssl_cert')
+                    ->info('Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string')
+                ->end()
+                ->scalarNode('ssl_key')
+                    ->info('Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.')
+                ->end()
         ;
     }
 
