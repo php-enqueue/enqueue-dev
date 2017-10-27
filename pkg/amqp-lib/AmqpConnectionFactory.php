@@ -39,6 +39,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     {
         $this->config = (new ConnectionConfig($config))
             ->addSupportedScheme('amqp+lib')
+            ->addSupportedScheme('amqps+lib')
             ->addDefaultOption('stream', true)
             ->addDefaultOption('insist', false)
             ->addDefaultOption('login_method', 'AMQPLAIN')
