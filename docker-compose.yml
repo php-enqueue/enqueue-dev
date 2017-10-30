@@ -6,7 +6,6 @@ services:
     # build: { context: docker, dockerfile: Dockerfile }
     depends_on:
       - rabbitmq
-      - rabbitmq_ssl
       - mysql
       - redis
       - beanstalkd
@@ -14,11 +13,12 @@ services:
       - kafka
       - zookeeper
       - google-pubsub
+      - rabbitmqssl
     volumes:
       - './:/mqdev'
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
-      - AMQPS_DSN=amqps://guest:guest@rabbitmq_ssl:5671
+      - AMQPS_DSN=amqps://guest:guest@rabbitmqssl:5671
       - DOCTINE_DSN=mysql://root:rootpass@mysql/mqdev
       - SYMFONY__RABBITMQ__HOST=rabbitmq
       - SYMFONY__RABBITMQ__USER=guest
@@ -47,7 +47,7 @@ services:
       - GCLOUD_PROJECT=mqdev
 
   rabbitmq:
-    image: enqueue/rabbitmq:latest
+    image: 'enqueue/rabbitmq:latest'
     # build: { context: docker, dockerfile: Dockerfile.rabbitmq }
     environment:
       - RABBITMQ_DEFAULT_USER=guest
@@ -56,13 +56,11 @@ services:
     ports:
       - "15677:15672"
 
-  rabbitmq_ssl:
-    image: enqueue/rabbitmq-ssl:latest
+  rabbitmqssl:
+    image: 'enqueue/rabbitmq-ssl:latest'
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    volumes:
-      - './var/rabbitmq_certificates:/home/client'
+      - 'RABBITMQ_DEFAULT_USER=guest'
+      - 'RABBITMQ_DEFAULT_PASS=guest'
 
   beanstalkd:
       image: 'jonbaldie/beanstalkd'

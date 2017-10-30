@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 set -e
 set -x
 
@@ -15,6 +14,4 @@ rm -rf /tmp/roboconf/*
 (cd /tmp/roboconf/rabbitmq-with-ssl-in-docker && docker push "enqueue/rabbitmq-ssl:latest")
 
 docker run --rm -v "`pwd`/var/rabbitmq_certificates:/enqueue" "enqueue/rabbitmq-ssl:latest" cp /home/testca/cacert.pem /enqueue/cacert.pem
-
-
-
+docker run --rm -v "`pwd`/var/rabbitmq_certificates:/enqueue" "enqueue/rabbitmq-ssl:latest" /bin/bash -c "/bin/bash /home/generate-client-keys.sh && cp /home/client/key.pem /enqueue/key.pem && cp /home/client/cert.pem /enqueue/cert.pem"

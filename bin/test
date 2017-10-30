@@ -30,7 +30,7 @@ function waitForService()
 trap "FORCE_EXIT=true" SIGTERM SIGINT
 
 waitForService rabbitmq 5672 50
-waitForService rabbitmq_ssl 5671 50
+waitForService rabbitmqssl 5671 50
 waitForService mysql 3306 50
 waitForService redis 6379 50
 waitForService beanstalkd 11300 50

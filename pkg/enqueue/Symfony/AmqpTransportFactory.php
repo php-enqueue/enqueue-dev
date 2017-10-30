@@ -34,16 +34,7 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
      */
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
-        $drivers = [];
-        if (class_exists(AmqpExtConnectionFactory::class)) {
-            $drivers[] = 'ext';
-        }
-        if (class_exists(AmqpLibConnectionFactory::class)) {
-            $drivers[] = 'lib';
-        }
-        if (class_exists(AmqpBunnyConnectionFactory::class)) {
-            $drivers[] = 'bunny';
-        }
+        $transportsMap = static::getAvailableTransportsMap();
 
         $builder
             ->beforeNormalization()
@@ -59,8 +50,19 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
                 })
             ->end()
             ->children()
-                ->enumNode('driver')
-                    ->values($drivers)
+                ->scalarNode('driver')
+                    ->validate()
+                    ->always(function ($v) use ($transportsMap) {
+                        $drivers = array_keys($transportsMap);
+                        if (empty($transportsMap)) {
+                            throw new \InvalidArgumentException('There is no amqp driver available. Please consider installing one of the packages: enqueue/amqp-ext, enqueue/amqp-lib, enqueue/amqp-bunny.');
+                        }
+
+                        if (isset($v['driver']) && false == in_array($v['driver'], $drivers, true)) {
+                            throw new \InvalidArgumentException(sprintf('Unexpected driver given "invalidDriver". Available are "%s"', implode('", "', $drivers)));
+                        }
+                    })
+                    ->end()
                 ->end()
                 ->scalarNode('dsn')
                     ->info('The connection to AMQP broker set as a string. Other parameters could be used as defaults')
@@ -200,18 +202,18 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
 
     public static function createConnectionFactoryFactory(array $config)
     {
-        if (array_key_exists('driver', $config)) {
-            if ('ext' == $config['driver']) {
-                return new AmqpExtConnectionFactory($config);
-            }
-            if ('lib' == $config['driver']) {
-                return new AmqpLibConnectionFactory($config);
-            }
-            if ('bunny' == $config['driver']) {
-                return new AmqpBunnyConnectionFactory($config);
+        if (false == empty($config['driver'])) {
+            $transportsMap = static::getAvailableTransportsMap();
+
+            if (false == array_key_exists($config['driver'], $transportsMap)) {
+                throw new \InvalidArgumentException(sprintf('Unexpected driver given "invalidDriver". Available are "%s"', implode('", "', array_keys($transportsMap))));
             }
 
-            throw new \LogicException(sprintf('Unexpected driver given "%s"', $config['driver']));
+            $connectionFactoryClass = $transportsMap[$config['driver']];
+
+            unset($config['driver']);
+
+            return new $connectionFactoryClass($config);
         }
 
         $dsn = array_key_exists('dsn', $config) ? $config['dsn'] : 'amqp:';
@@ -224,5 +226,24 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
         $factoryClass = get_class($factory);
 
         return new $factoryClass($config);
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function getAvailableTransportsMap()
+    {
+        $map = [];
+        if (class_exists(AmqpExtConnectionFactory::class)) {
+            $map['ext'] = AmqpExtConnectionFactory::class;
+        }
+        if (class_exists(AmqpLibConnectionFactory::class)) {
+            $map['lib'] = AmqpLibConnectionFactory::class;
+        }
+        if (class_exists(AmqpBunnyConnectionFactory::class)) {
+            $map['bunny'] = AmqpBunnyConnectionFactory::class;
+        }
+
+        return $map;
     }
 }
