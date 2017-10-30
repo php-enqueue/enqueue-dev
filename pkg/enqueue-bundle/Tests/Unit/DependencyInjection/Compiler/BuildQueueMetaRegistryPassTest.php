@@ -8,6 +8,7 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTop
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
+use Enqueue\Client\Meta\QueueMetaRegistry;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -45,7 +46,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
 
@@ -67,7 +68,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);
@@ -91,7 +92,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);
@@ -116,7 +117,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);
@@ -138,7 +139,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);
@@ -160,7 +161,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);
@@ -182,7 +183,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);
@@ -204,7 +205,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);
@@ -226,7 +227,7 @@ class BuildQueueMetaRegistryPassTest extends TestCase
 
         $registry = new Definition();
         $registry->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.meta.queue_meta_registry', $registry);
+        $container->setDefinition(QueueMetaRegistry::class, $registry);
 
         $pass = new BuildQueueMetaRegistryPass();
         $pass->process($container);

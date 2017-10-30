@@ -6,6 +6,7 @@ use Enqueue\Client\ProcessorRegistryInterface;
 use Interop\Queue\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\HttpKernel\Kernel;
 
 class ContainerAwareProcessorRegistry implements ProcessorRegistryInterface, ContainerAwareInterface
 {
@@ -38,6 +39,12 @@ class ContainerAwareProcessorRegistry implements ProcessorRegistryInterface, Con
      */
     public function get($processorName)
     {
+        if (30300 > Kernel::VERSION_ID) {
+            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
+            // To be removed when dropping support for Symfony < 3.3.
+            $processorName = strtolower($processorName);
+        }
+
         if (false == isset($this->processors[$processorName])) {
             throw new \LogicException(sprintf('Processor was not found. processorName: "%s"', $processorName));
         }

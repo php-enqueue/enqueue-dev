@@ -3,6 +3,7 @@
 namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
 use Enqueue\Client\Config;
+use Enqueue\Client\RouterProcessor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -16,7 +17,7 @@ class BuildClientRoutingPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $processorTagName = 'enqueue.client.processor';
-        $routerId = 'enqueue.client.router_processor';
+        $routerId = RouterProcessor::class;
 
         if (false == $container->hasDefinition($routerId)) {
             return;

@@ -4,6 +4,7 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
+use Enqueue\Client\RouterProcessor;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
@@ -144,7 +145,7 @@ class ConfigurationTest extends TestCase
             'client' => [
                 'prefix' => 'enqueue',
                 'app_name' => 'app',
-                'router_processor' => 'enqueue.client.router_processor',
+                'router_processor' => RouterProcessor::class,
                 'router_topic' => 'default',
                 'router_queue' => 'default',
                 'default_processor_queue' => 'default',

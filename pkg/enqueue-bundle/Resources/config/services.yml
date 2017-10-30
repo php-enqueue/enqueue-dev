@@ -5,7 +5,7 @@ services:
         arguments:
             - []
 
-    enqueue.consumption.queue_consumer:
+    Enqueue\Consumption\QueueConsumer:
         class: 'Enqueue\Consumption\QueueConsumer'
         arguments:
             - '@enqueue.transport.context'
@@ -13,12 +13,20 @@ services:
             - ~
             - ~
 
-    enqueue.command.consume_messages:
+    # Deprecated. To be removed in 0.10.
+    enqueue.consumption.queue_consumer:
+        alias: 'Enqueue\Consumption\QueueConsumer'
+
+    Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand:
         class: 'Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand'
         arguments:
-            - '@enqueue.consumption.queue_consumer'
+            - '@Enqueue\Consumption\QueueConsumer'
         tags:
             - { name: 'console.command' }
+
+    # Deprecated. To be removed in 0.10.
+    enqueue.command.consume_messages:
+        alias: 'Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand'
 
     enqueue.transport.rpc_factory:
         class: 'Enqueue\Rpc\RpcFactory'
@@ -26,8 +34,12 @@ services:
         arguments:
             - '@enqueue.transport.context'
 
-    enqueue.transport.rpc_client:
+    Enqueue\Rpc\RpcClient:
         class: 'Enqueue\Rpc\RpcClient'
         arguments:
             - '@enqueue.transport.context'
             - '@enqueue.transport.rpc_factory'
+
+    # Deprecated. To be removed in 0.10.
+    enqueue.transport.rpc_client:
+        alias: 'Enqueue\Rpc\RpcClient'

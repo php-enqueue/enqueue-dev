@@ -11,7 +11,7 @@ class RpcClientTest extends WebTestCase
 {
     public function testTransportRpcClientCouldBeGetFromContainerAsService()
     {
-        $connection = $this->container->get('enqueue.transport.rpc_client');
+        $connection = $this->container->get(RpcClient::class);
 
         $this->assertInstanceOf(RpcClient::class, $connection);
     }

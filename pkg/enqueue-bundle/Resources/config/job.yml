@@ -2,49 +2,77 @@ parameters:
     enqueue.job.unique_job_table_name: 'enqueue_job_unique'
 
 services:
-    enqueue.job.storage:
+    Enqueue\JobQueue\Doctrine\JobStorage:
         class: 'Enqueue\JobQueue\Doctrine\JobStorage'
         arguments:
             - '@doctrine'
             - 'Enqueue\JobQueue\Doctrine\Entity\Job'
             - '%enqueue.job.unique_job_table_name%'
 
-    enqueue.job.processor:
+    # Deprecated. To be removed in 0.10.
+    enqueue.job.storage:
+        alias: 'Enqueue\JobQueue\Doctrine\JobStorage'
+
+    Enqueue\JobQueue\JobProcessor:
         class: 'Enqueue\JobQueue\JobProcessor'
         arguments:
-            - '@enqueue.job.storage'
-            - '@enqueue.client.producer'
+            - '@Enqueue\JobQueue\Doctrine\JobStorage'
+            - '@Enqueue\Client\Producer'
 
-    enqueue.job.runner:
+    # Deprecated. To be removed in 0.10.
+    enqueue.job.processor:
+        alias: 'Enqueue\JobQueue\JobProcessor'
+
+    Enqueue\JobQueue\JobRunner:
         class: 'Enqueue\JobQueue\JobRunner'
         arguments:
-            - '@enqueue.job.processor'
+            - '@Enqueue\JobQueue\JobProcessor'
 
-    enqueue.job.calculate_root_job_status_service:
+    # Deprecated. To be removed in 0.10.
+    enqueue.job.runner:
+        alias: 'Enqueue\JobQueue\JobRunner'
+
+    Enqueue\JobQueue\CalculateRootJobStatusService:
         class: 'Enqueue\JobQueue\CalculateRootJobStatusService'
         arguments:
-            - '@enqueue.job.storage'
+            - '@Enqueue\JobQueue\Doctrine\JobStorage'
 
-    enqueue.job.calculate_root_job_status_processor:
+    # Deprecated. To be removed in 0.10.
+    enqueue.job.calculate_root_job_status_service:
+        alias: 'Enqueue\JobQueue\CalculateRootJobStatusService'
+
+    Enqueue\JobQueue\CalculateRootJobStatusProcessor:
         class: 'Enqueue\JobQueue\CalculateRootJobStatusProcessor'
         arguments:
-            - '@enqueue.job.storage'
-            - '@enqueue.job.calculate_root_job_status_service'
-            - '@enqueue.client.producer'
+            - '@Enqueue\JobQueue\Doctrine\JobStorage'
+            - '@Enqueue\JobQueue\CalculateRootJobStatusService'
+            - '@Enqueue\Client\Producer'
             - '@logger'
         tags:
             - { name: 'enqueue.client.processor' }
 
-    enqueue.job.dependent_job_processor:
+    # Deprecated. To be removed in 0.10.
+    enqueue.job.calculate_root_job_status_processor:
+        alias: 'Enqueue\JobQueue\CalculateRootJobStatusProcessor'
+
+    Enqueue\JobQueue\DependentJobProcessor:
         class: 'Enqueue\JobQueue\DependentJobProcessor'
         arguments:
-            - '@enqueue.job.storage'
-            - '@enqueue.client.producer'
+            - '@Enqueue\JobQueue\Doctrine\JobStorage'
+            - '@Enqueue\Client\Producer'
             - '@logger'
         tags:
             - { name: 'enqueue.client.processor' }
 
-    enqueue.job.dependent_job_service:
+    # Deprecated. To be removed in 0.10.
+    enqueue.job.dependent_job_processor:
+        alias: 'Enqueue\JobQueue\DependentJobProcessor'
+
+    Enqueue\JobQueue\DependentJobService:
         class: 'Enqueue\JobQueue\DependentJobService'
         arguments:
-            - '@enqueue.job.storage'
+            - '@Enqueue\JobQueue\Doctrine\JobStorage'
+
+    # Deprecated. To be removed in 0.10.
+    enqueue.job.dependent_job_service:
+        alias: 'Enqueue\JobQueue\DependentJobService'

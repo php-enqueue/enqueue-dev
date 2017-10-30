@@ -3,6 +3,7 @@
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\AddTopicMetaPass;
+use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -56,7 +57,7 @@ class AddTopicMetaPassTest extends TestCase
         $registry = new Definition(null, [[
             'bazTopic' => [],
         ]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $registry);
+        $container->setDefinition(TopicMetaRegistry::class, $registry);
 
         $pass = AddTopicMetaPass::create()
             ->add('fooTopic')
