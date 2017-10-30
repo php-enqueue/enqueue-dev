@@ -4,7 +4,10 @@ namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Bundle\Tests\Functional\App\CustomAppKernel;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
+use Enqueue\Symfony\Client\ConsumeMessagesCommand;
+use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -237,7 +240,7 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
-        $command = $this->container->get('enqueue.client.consume_messages_command');
+        $command = $this->container->get(ConsumeMessagesCommand::class);
         $processor = $this->container->get('test.message.command_processor');
 
         $expectedBody = __METHOD__.time();
@@ -262,7 +265,7 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
-        $command = $this->container->get('enqueue.client.consume_messages_command');
+        $command = $this->container->get(ConsumeMessagesCommand::class);
         $processor = $this->container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, 'test message body');
@@ -285,7 +288,7 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
-        $command = $this->container->get('enqueue.command.consume_messages');
+        $command = $this->container->get(ContainerAwareConsumeMessagesCommand::class);
         $command->setContainer($this->container);
         $processor = $this->container->get('test.message.processor');
 
@@ -356,7 +359,7 @@ class UseCasesTest extends WebTestCase
      */
     private function getMessageProducer()
     {
-        return $this->container->get('enqueue.client.producer');
+        return $this->container->get(Producer::class);
     }
 
     /**

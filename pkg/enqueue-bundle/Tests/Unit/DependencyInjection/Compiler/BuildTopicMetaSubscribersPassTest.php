@@ -9,6 +9,7 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\OnlyTopicNameTop
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCommandSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Client\Config;
+use Enqueue\Client\Meta\TopicMetaRegistry;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -33,7 +34,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -57,7 +58,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
 
@@ -81,7 +82,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
         $topicMetaRegistry->setArguments([[
             'topic' => ['description' => 'aDescription', 'processors' => ['fooProcessorName']],
         ]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -112,7 +113,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
             'fooTopic' => ['description' => 'aDescription', 'processors' => ['fooProcessorName']],
             'barTopic' => ['description' => 'aBarDescription'],
         ]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -148,7 +149,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -184,7 +185,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
         $topicMetaRegistry->setArguments([[
             'fooTopic' => ['description' => 'aDescription', 'processors' => ['bazProcessorName']],
         ]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -209,7 +210,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
 
@@ -230,7 +231,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -252,7 +253,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -274,7 +275,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -296,7 +297,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
 
@@ -316,7 +317,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);
@@ -338,7 +339,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
 
         $topicMetaRegistry = new Definition();
         $topicMetaRegistry->setArguments([[]]);
-        $container->setDefinition('enqueue.client.meta.topic_meta_registry', $topicMetaRegistry);
+        $container->setDefinition(TopicMetaRegistry::class, $topicMetaRegistry);
 
         $pass = new BuildTopicMetaSubscribersPass();
         $pass->process($container);

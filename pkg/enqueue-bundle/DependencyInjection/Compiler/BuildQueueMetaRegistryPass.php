@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
+use Enqueue\Client\Meta\QueueMetaRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -15,7 +16,7 @@ class BuildQueueMetaRegistryPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $processorTagName = 'enqueue.client.processor';
-        $queueMetaRegistryId = 'enqueue.client.meta.queue_meta_registry';
+        $queueMetaRegistryId = QueueMetaRegistry::class;
         if (false == $container->hasDefinition($queueMetaRegistryId)) {
             return;
         }

@@ -12,7 +12,7 @@ class ProduceMessageCommandTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $command = $this->container->get('enqueue.client.produce_message_command');
+        $command = $this->container->get(ProduceMessageCommand::class);
 
         $this->assertInstanceOf(ProduceMessageCommand::class, $command);
     }

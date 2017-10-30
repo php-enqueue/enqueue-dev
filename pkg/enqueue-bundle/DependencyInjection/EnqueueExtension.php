@@ -3,7 +3,9 @@
 namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
+use Enqueue\Client\Producer;
 use Enqueue\Client\TraceableProducer;
+use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\Job;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
@@ -94,10 +96,9 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             $container->setParameter('enqueue.client.default_queue_name', $config['client']['default_processor_queue']);
 
             if (false == empty($config['client']['traceable_producer'])) {
-                $producerId = 'enqueue.client.traceable_producer';
-                $container->register($producerId, TraceableProducer::class)
-                    ->setDecoratedService('enqueue.client.producer')
-                    ->addArgument(new Reference('enqueue.client.traceable_producer.inner'))
+                $container->register(TraceableProducer::class, TraceableProducer::class)
+                    ->setDecoratedService(Producer::class)
+                    ->addArgument(new Reference(sprintf('%s.inner', TraceableProducer::class)))
                 ;
             }
 
@@ -111,7 +112,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         }
 
         // configure queue consumer
-        $container->getDefinition('enqueue.consumption.queue_consumer')
+        $container->getDefinition(QueueConsumer::class)
             ->replaceArgument(2, $config['consumption']['idle_timeout'])
             ->replaceArgument(3, $config['consumption']['receive_timeout'])
         ;

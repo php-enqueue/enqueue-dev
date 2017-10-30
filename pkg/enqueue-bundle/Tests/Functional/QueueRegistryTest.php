@@ -11,7 +11,7 @@ class QueueRegistryTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $connection = $this->container->get('enqueue.client.meta.queue_meta_registry');
+        $connection = $this->container->get(QueueMetaRegistry::class);
 
         $this->assertInstanceOf(QueueMetaRegistry::class, $connection);
     }

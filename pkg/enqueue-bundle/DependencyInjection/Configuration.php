@@ -3,6 +3,7 @@
 namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\Client\Config;
+use Enqueue\Client\RouterProcessor;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -46,7 +47,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('app_name')->defaultValue('app')->end()
                 ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
                 ->scalarNode('router_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
-                ->scalarNode('router_processor')->defaultValue('enqueue.client.router_processor')->end()
+                ->scalarNode('router_processor')->defaultValue(RouterProcessor::class)->end()
                 ->scalarNode('default_processor_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
                 ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
             ->end()->end()

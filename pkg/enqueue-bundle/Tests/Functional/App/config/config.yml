@@ -73,4 +73,4 @@ services:
     # overwrite async listener with one based on client producer. so we can use traceable producer.
     enqueue.events.async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\AsyncListener'
-        arguments: ['@enqueue.client.producer', '@enqueue.events.registry']
+        arguments: ['@Enqueue\Client\Producer', '@enqueue.events.registry']
