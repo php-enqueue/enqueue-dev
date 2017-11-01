@@ -9,7 +9,7 @@
         "ext-amqp": "^1.6",
         
         "queue-interop/amqp-interop": "^0.7@dev",
-        "enqueue/amqp-tools": "^0.8@dev"
+        "enqueue/amqp-tools": "^0.8.4@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
