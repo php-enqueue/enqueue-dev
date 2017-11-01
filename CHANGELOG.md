@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.8.3](https://github.com/php-enqueue/enqueue-dev/tree/0.8.3) (2017-11-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.2...0.8.3)
+
+- \[Symfony\]\[Minor\] profiler view when no messages collected during the request [\#243](https://github.com/php-enqueue/enqueue-dev/issues/243)
+- \[bundle\] streamline profiler view when no messages were sent [\#247](https://github.com/php-enqueue/enqueue-dev/pull/247) ([dkarlovi](https://github.com/dkarlovi))
+- \[bundle\] Renamed exposed services' name to classes' FQCN [\#242](https://github.com/php-enqueue/enqueue-dev/pull/242) ([Lctrs](https://github.com/Lctrs))
+
 ## [0.8.2](https://github.com/php-enqueue/enqueue-dev/tree/0.8.2) (2017-10-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.1...0.8.2)
 
