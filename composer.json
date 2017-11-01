@@ -1,5 +1,5 @@
 {
-  "name": "enqueue/dev-message-queue",
+  "name": "enqueue/enqueue-dev",
   "type": "project",
   "minimum-stability": "stable",
   "require": {

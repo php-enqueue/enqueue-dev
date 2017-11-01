@@ -150,6 +150,31 @@ class ConnectionConfigTest extends TestCase
         ];
 
         yield [
+            ['dsn' => null],
+            [
+                'host' => 'localhost',
+                'port' => 5672,
+                'vhost' => '/',
+                'user' => 'guest',
+                'pass' => 'guest',
+                'read_timeout' => 3.,
+                'write_timeout' => 3.,
+                'connection_timeout' => 3.,
+                'persisted' => false,
+                'lazy' => true,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
+                'heartbeat' => 0.0,
+                'ssl_on' => false,
+                'ssl_verify' => true,
+                'ssl_cacert' => null,
+                'ssl_cert' => null,
+                'ssl_key' => null,
+            ],
+        ];
+
+        yield [
             'amqp:',
             [
                 'host' => 'localhost',

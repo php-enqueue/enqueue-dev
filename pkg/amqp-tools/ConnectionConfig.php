@@ -131,7 +131,9 @@ class ConnectionConfig
                 $dsn = $config['dsn'];
                 unset($config['dsn']);
 
-                $config = array_replace($config, $this->parseDsn($dsn));
+                if ($dsn) {
+                    $config = array_replace($config, $this->parseDsn($dsn));
+                }
             }
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
