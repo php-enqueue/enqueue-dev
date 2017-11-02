@@ -87,19 +87,21 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
         if (false == $this->connection) {
             if ($this->config->getOption('stream')) {
                 if ($this->config->isSslOn()) {
+                    $sslOptions = array_filter([
+                        'cafile' => $this->config->getSslCaCert(),
+                        'local_cert' => $this->config->getSslCert(),
+                        'local_pk' => $this->config->getSslKey(),
+                        'verify_peer' => $this->config->isSslVerify(),
+                        'verify_peer_name' => $this->config->isSslVerify(),
+                    ], function ($value) { return '' !== $value; });
+
                     $con = new AMQPSSLConnection(
                         $this->config->getHost(),
                         $this->config->getPort(),
                         $this->config->getUser(),
                         $this->config->getPass(),
                         $this->config->getVHost(),
-                        [
-                            'cafile' => $this->config->getSslCaCert(),
-                            'local_cert' => $this->config->getSslCert(),
-                            'local_pk' => $this->config->getSslKey(),
-                            'verify_peer' => $this->config->isSslVerify(),
-                            'verify_peer_name' => $this->config->isSslVerify(),
-                        ],
+                        $sslOptions,
                         [
                             'insist' => $this->config->getOption('insist'),
                             'login_method' => $this->config->getOption('login_method'),
