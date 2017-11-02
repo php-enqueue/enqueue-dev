@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.8.5](https://github.com/php-enqueue/enqueue-dev/tree/0.8.5) (2017-11-02)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.4...0.8.5)
+
+- Amqp add ssl pass phrase option [\#249](https://github.com/php-enqueue/enqueue-dev/pull/249) ([makasim](https://github.com/makasim))
+
+- \[amqp-lib\] Ignore empty ssl options. [\#248](https://github.com/php-enqueue/enqueue-dev/pull/248) ([makasim](https://github.com/makasim))
+
+## [0.8.4](https://github.com/php-enqueue/enqueue-dev/tree/0.8.4) (2017-11-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.3...0.8.4)
+
 ## [0.8.3](https://github.com/php-enqueue/enqueue-dev/tree/0.8.3) (2017-11-01)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.2...0.8.3)
 
