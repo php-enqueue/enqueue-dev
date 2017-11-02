@@ -296,7 +296,7 @@ class ConnectionConfig
     }
 
     /**
-     * @return bool
+     * @return string
      */
     public function getSslCaCert()
     {
@@ -304,7 +304,7 @@ class ConnectionConfig
     }
 
     /**
-     * @return bool
+     * @return string
      */
     public function getSslCert()
     {
@@ -312,7 +312,7 @@ class ConnectionConfig
     }
 
     /**
-     * @return bool
+     * @return string
      */
     public function getSslKey()
     {
@@ -331,7 +331,7 @@ class ConnectionConfig
      * @param string $name
      * @param mixed  $default
      *
-     * @return bool
+     * @return mixed
      */
     public function getOption($name, $default = null)
     {
