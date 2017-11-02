@@ -25,6 +25,7 @@ namespace Enqueue\AmqpTools;
  *   ssl_cacert - Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.
  *   ssl_cert - Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string
  *   ssl_key - Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.
+ *   ssl_passphrase - Passphrase with which your local_cert file was encoded. A string
  *
  * 2. null - in this case it tries to connect to localhost with default settings
  * 3. amqp: same as 2.
@@ -81,9 +82,10 @@ class ConnectionConfig
             'qos_prefetch_count' => 1,
             'ssl_on' => false,
             'ssl_verify' => true,
-            'ssl_cacert' => null,
-            'ssl_cert' => null,
-            'ssl_key' => null,
+            'ssl_cacert' => '',
+            'ssl_cert' => '',
+            'ssl_key' => '',
+            'ssl_passphrase' => '',
         ];
 
         $this->addSupportedScheme('amqp');
@@ -158,6 +160,7 @@ class ConnectionConfig
         $config['ssl_cacert'] = (string) $config['ssl_cacert'];
         $config['ssl_cert'] = (string) $config['ssl_cert'];
         $config['ssl_key'] = (string) $config['ssl_key'];
+        $config['ssl_passphrase'] = (string) $config['ssl_passphrase'];
 
         $this->config = $config;
 
@@ -314,6 +317,14 @@ class ConnectionConfig
     public function getSslKey()
     {
         return $this->getOption('ssl_key');
+    }
+
+    /**
+     * @return string
+     */
+    public function getSslPassPhrase()
+    {
+        return $this->getOption('ssl_passphrase');
     }
 
     /**
