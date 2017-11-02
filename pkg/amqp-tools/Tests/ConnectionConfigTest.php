@@ -72,9 +72,10 @@ class ConnectionConfigTest extends TestCase
             'heartbeat' => 0.0,
             'ssl_on' => false,
             'ssl_verify' => true,
-            'ssl_cacert' => null,
-            'ssl_cert' => null,
-            'ssl_key' => null,
+            'ssl_cacert' => '',
+            'ssl_cert' => '',
+            'ssl_key' => '',
+            'ssl_passphrase' => '',
         ], $config->getConfig());
     }
 
@@ -102,9 +103,10 @@ class ConnectionConfigTest extends TestCase
             'heartbeat' => 0.0,
             'ssl_on' => false,
             'ssl_verify' => true,
-            'ssl_cacert' => null,
-            'ssl_cert' => null,
-            'ssl_key' => null,
+            'ssl_cacert' => '',
+            'ssl_cert' => '',
+            'ssl_key' => '',
+            'ssl_passphrase' => '',
         ], $config->getConfig());
     }
 
@@ -143,9 +145,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -168,9 +171,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -193,9 +197,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -218,9 +223,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => true,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -243,9 +249,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -268,9 +275,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -293,9 +301,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 23.3,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -318,9 +327,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -343,9 +353,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -368,9 +379,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -393,9 +405,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -418,9 +431,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -449,9 +463,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => false,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
 
@@ -477,9 +492,10 @@ class ConnectionConfigTest extends TestCase
                 'heartbeat' => 0.0,
                 'ssl_on' => true,
                 'ssl_verify' => true,
-                'ssl_cacert' => null,
-                'ssl_cert' => null,
-                'ssl_key' => null,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
             ],
         ];
     }
