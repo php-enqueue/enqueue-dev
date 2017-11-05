@@ -136,41 +136,43 @@ class RdKafkaContext implements PsrContext
      */
     private function getConf()
     {
-        if (null === $this->conf) {
-            $topicConf = new TopicConf();
-
-            if (isset($this->config['topic']) && is_array($this->config['topic'])) {
-                foreach ($this->config['topic'] as $key => $value) {
-                    $topicConf->set($key, $value);
-                }
-            }
-
-            if (isset($this->config['partitioner'])) {
-                $topicConf->setPartitioner($this->config['partitioner']);
-            }
-
-            $this->conf = new Conf();
-
-            if (isset($this->config['global']) && is_array($this->config['global'])) {
-                foreach ($this->config['global'] as $key => $value) {
-                    $this->conf->set($key, $value);
-                }
-            }
-
-            if (isset($this->config['dr_msg_cb'])) {
-                $this->conf->setDrMsgCb($this->config['dr_msg_cb']);
-            }
-
-            if (isset($this->config['error_cb'])) {
-                $this->conf->setErrorCb($this->config['error_cb']);
-            }
-
-            if (isset($this->config['rebalance_cb'])) {
-                $this->conf->setRebalanceCb($this->config['rebalance_cb']);
-            }
-
-            $this->conf->setDefaultTopicConf($topicConf);
+        if (null !== $this->conf) {
+            return $this->conf;
         }
+
+        $topicConf = new TopicConf();
+
+        if (isset($this->config['topic']) && is_array($this->config['topic'])) {
+            foreach ($this->config['topic'] as $key => $value) {
+                $topicConf->set($key, $value);
+            }
+        }
+
+        if (isset($this->config['partitioner'])) {
+            $topicConf->setPartitioner($this->config['partitioner']);
+        }
+
+        $this->conf = new Conf();
+
+        if (isset($this->config['global']) && is_array($this->config['global'])) {
+            foreach ($this->config['global'] as $key => $value) {
+                $this->conf->set($key, $value);
+            }
+        }
+
+        if (isset($this->config['dr_msg_cb'])) {
+            $this->conf->setDrMsgCb($this->config['dr_msg_cb']);
+        }
+
+        if (isset($this->config['error_cb'])) {
+            $this->conf->setErrorCb($this->config['error_cb']);
+        }
+
+        if (isset($this->config['rebalance_cb'])) {
+            $this->conf->setRebalanceCb($this->config['rebalance_cb']);
+        }
+
+        $this->conf->setDefaultTopicConf($topicConf);
 
         return $this->conf;
     }
