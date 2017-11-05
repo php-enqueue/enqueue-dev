@@ -95,6 +95,45 @@ class RdKafkaProducerTest extends TestCase
         $this->assertSame($expectedSerializer, $producer->getSerializer());
     }
 
+    public function testShouldAllowSerializersToSerializeKeys()
+    {
+        $message = new RdKafkaMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
+        $message->setKey('key');
+
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('produce')
+            ->with(
+                RD_KAFKA_PARTITION_UA,
+                0,
+                'theSerializedMessage',
+                'theSerializedKey'
+            )
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->willReturn($kafkaTopic)
+        ;
+
+        $serializer = $this->createSerializerMock();
+        $serializer
+            ->expects($this->once())
+            ->method('toString')
+            ->willReturnCallback(function () use ($message) {
+                $message->setKey('theSerializedKey');
+
+                return 'theSerializedMessage';
+            })
+        ;
+
+        $producer = new RdKafkaProducer($kafkaProducer, $serializer);
+        $producer->send(new RdKafkaTopic('theQueueName'), $message);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ProducerTopic
      */
