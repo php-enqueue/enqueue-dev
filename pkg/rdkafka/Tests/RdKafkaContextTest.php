@@ -5,6 +5,7 @@ namespace Enqueue\RdKafka\Tests;
 use Enqueue\Null\NullQueue;
 use Enqueue\RdKafka\JsonSerializer;
 use Enqueue\RdKafka\RdKafkaContext;
+use Enqueue\RdKafka\RdKafkaTopic;
 use Enqueue\RdKafka\Serializer;
 use Interop\Queue\InvalidDestinationException;
 use PHPUnit\Framework\TestCase;
@@ -67,5 +68,21 @@ class RdKafkaContextTest extends TestCase
         $producer = $context->createConsumer($context->createQueue('aQueue'));
 
         $this->assertSame($context->getSerializer(), $producer->getSerializer());
+    }
+
+    public function testTopicCreatedByContextShouldContainDefaultTopicConf()
+    {
+        $context = new RdKafkaContext(
+            [
+                'topic' => [
+                    'request.required.acks' => '-1', // all ISRs must ack the message
+                ],
+            ]
+        );
+
+        $rdKafkaTopic = $context->createTopic('test-topic');
+
+        $this->assertInstanceOf(RdKafkaTopic::class, $rdKafkaTopic);
+        $this->assertSame('-1', $rdKafkaTopic->getConf()->dump()['request.required.acks']);
     }
 }

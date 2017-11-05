@@ -25,6 +25,11 @@ class RdKafkaContext implements PsrContext
     private $conf;
 
     /**
+     * @var TopicConf
+     */
+    private $defaultTopicConf;
+
+    /**
      * @var Producer
      */
     private $producer;
@@ -54,7 +59,7 @@ class RdKafkaContext implements PsrContext
      */
     public function createTopic($topicName)
     {
-        return new RdKafkaTopic($topicName);
+        return new RdKafkaTopic($topicName, $this->getTopicConf());
     }
 
     /**
@@ -64,7 +69,7 @@ class RdKafkaContext implements PsrContext
      */
     public function createQueue($queueName)
     {
-        return new RdKafkaTopic($queueName);
+        return new RdKafkaTopic($queueName, $this->getTopicConf());
     }
 
     /**
@@ -140,16 +145,16 @@ class RdKafkaContext implements PsrContext
             return $this->conf;
         }
 
-        $topicConf = new TopicConf();
+        $this->defaultTopicConf = new TopicConf();
 
         if (isset($this->config['topic']) && is_array($this->config['topic'])) {
             foreach ($this->config['topic'] as $key => $value) {
-                $topicConf->set($key, $value);
+                $this->defaultTopicConf->set($key, $value);
             }
         }
 
         if (isset($this->config['partitioner'])) {
-            $topicConf->setPartitioner($this->config['partitioner']);
+            $this->defaultTopicConf->setPartitioner($this->config['partitioner']);
         }
 
         $this->conf = new Conf();
@@ -172,8 +177,18 @@ class RdKafkaContext implements PsrContext
             $this->conf->setRebalanceCb($this->config['rebalance_cb']);
         }
 
-        $this->conf->setDefaultTopicConf($topicConf);
+        $this->conf->setDefaultTopicConf($this->defaultTopicConf);
 
         return $this->conf;
+    }
+
+    /**
+     * @return TopicConf
+     */
+    private function getTopicConf()
+    {
+        $this->getConf();
+
+        return $this->defaultTopicConf;
     }
 }
