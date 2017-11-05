@@ -18,6 +18,8 @@ Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 
 ## Installation
 
+_**Warning**: You need amqp extension of at least 1.9.3 version. Though there are some cruicial changes that has not been released yet (it is supposed to be 1.10). Consider comiling the extension from source._
+
 ```bash
 $ composer require enqueue/amqp-ext
 ```
