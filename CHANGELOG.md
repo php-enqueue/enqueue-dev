@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.8.6](https://github.com/php-enqueue/enqueue-dev/tree/0.8.6) (2017-11-05)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.5...0.8.6)
+
+- \[RdKafka\] Enable serializers to serialize message keys [\#254](https://github.com/php-enqueue/enqueue-dev/pull/254) ([tPl0ch](https://github.com/tPl0ch))
+
+- \[Elastica Bundle\] tag 0.8 [\#253](https://github.com/php-enqueue/enqueue-dev/issues/253)
+
 ## [0.8.5](https://github.com/php-enqueue/enqueue-dev/tree/0.8.5) (2017-11-02)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.4...0.8.5)
 
