@@ -41,8 +41,8 @@ class RdKafkaProducer implements PsrProducer
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
         $partition = $message->getPartition() ?: $destination->getPartition() ?: RD_KAFKA_PARTITION_UA;
-        $key = $message->getKey() ?: $destination->getKey() ?: null;
         $payload = $this->serializer->toString($message);
+        $key = $message->getKey() ?: $destination->getKey() ?: null;
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
         $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
