@@ -81,8 +81,9 @@ class RdKafkaContextTest extends TestCase
         );
 
         $rdKafkaTopic = $context->createTopic('test-topic');
+        $configDump = $rdKafkaTopic->getConf()->dump();
 
         $this->assertInstanceOf(RdKafkaTopic::class, $rdKafkaTopic);
-        $this->assertSame('-1', $rdKafkaTopic->getConf()->dump()['request.required.acks']);
+        $this->assertSame('-1', $configDump['request.required.acks']);
     }
 }
