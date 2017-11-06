@@ -44,6 +44,7 @@
   "autoload": {
     "files": [
       "pkg/enqueue/functions_include.php",
+      "pkg/rdkafka/functions.php",
       "pkg/rdkafka/Tests/bootstrap.php"
     ],
     "psr-0": {

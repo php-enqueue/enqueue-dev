@@ -21,6 +21,9 @@
         "psr-4": { "Enqueue\\RdKafka\\": "" },
         "exclude-from-classmap": [
             "/Tests/"
+        ],
+        "files": [
+            "functions.php"
         ]
     },
     "autoload-dev": {
