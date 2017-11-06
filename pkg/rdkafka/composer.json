@@ -23,7 +23,7 @@
             "/Tests/"
         ],
         "files": [
-            "functions.php"
+            "functions_include.php"
         ]
     },
     "autoload-dev": {
