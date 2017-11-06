@@ -29,7 +29,7 @@ class RdKafkaProducer implements PsrProducer
         $this->producer = $producer;
 
         if (!$keySerializer) {
-            $keySerializer = new NoOpKeySerializer();
+            $keySerializer = new DefaultKeySerializer();
         }
 
         $this->setSerializer($serializer);

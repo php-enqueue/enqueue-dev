@@ -2,14 +2,14 @@
 
 namespace Enqueue\RdKafka;
 
-class NoOpKeySerializer implements KeySerializer
+class DefaultKeySerializer implements KeySerializer
 {
     /**
      * {@inheritdoc}
      */
     public function toString($key)
     {
-        return $key;
+        return (string) $key;
     }
 
     /**

@@ -2,12 +2,12 @@
 
 namespace Enqueue\RdKafka\Tests;
 
-use Enqueue\RdKafka\NoOpKeySerializer;
+use Enqueue\RdKafka\DefaultKeySerializer;
 
 /**
  * @group rdkafka
  */
-class NoOpKeySerializerTest extends \PHPUnit_Framework_TestCase
+class DefaultKeySerializerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider provideKeyData
@@ -16,7 +16,7 @@ class NoOpKeySerializerTest extends \PHPUnit_Framework_TestCase
      */
     public function testItShouldReturnKeyAsIsInToString($key)
     {
-        $noOp = new NoOpKeySerializer();
+        $noOp = new DefaultKeySerializer();
         $this->assertSame($key, $noOp->toString($key));
     }
 
@@ -27,7 +27,7 @@ class NoOpKeySerializerTest extends \PHPUnit_Framework_TestCase
      */
     public function testItShouldNotConvertInToKey($key)
     {
-        $noOp = new NoOpKeySerializer();
+        $noOp = new DefaultKeySerializer();
         $this->assertSame($key, $noOp->toString($key));
     }
 
