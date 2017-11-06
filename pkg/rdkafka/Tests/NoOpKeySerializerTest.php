@@ -1,6 +1,7 @@
 <?php
 
 namespace Enqueue\RdKafka\Tests;
+
 use Enqueue\RdKafka\NoOpKeySerializer;
 
 /**
