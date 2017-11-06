@@ -12,6 +12,7 @@ use RdKafka\Producer;
 class RdKafkaProducer implements PsrProducer
 {
     use SerializerAwareTrait;
+    use KeySerializerAwareTrait;
 
     /**
      * @var Producer
@@ -19,14 +20,20 @@ class RdKafkaProducer implements PsrProducer
     private $producer;
 
     /**
-     * @param Producer   $producer
-     * @param Serializer $serializer
+     * @param Producer           $producer
+     * @param Serializer         $serializer
+     * @param KeySerializer|null $keySerializer
      */
-    public function __construct(Producer $producer, Serializer $serializer)
+    public function __construct(Producer $producer, Serializer $serializer, KeySerializer $keySerializer = null)
     {
         $this->producer = $producer;
 
+        if (!$keySerializer) {
+            $keySerializer = new NoOpKeySerializer();
+        }
+
         $this->setSerializer($serializer);
+        $this->setKeySerializer($keySerializer);
     }
 
     /**
@@ -41,8 +48,13 @@ class RdKafkaProducer implements PsrProducer
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
         $partition = $message->getPartition() ?: $destination->getPartition() ?: RD_KAFKA_PARTITION_UA;
-        $payload = $this->serializer->toString($message);
         $key = $message->getKey() ?: $destination->getKey() ?: null;
+
+        if (null !== $key) {
+            $key = $this->keySerializer->toString($key);
+        }
+
+        $payload = $this->serializer->toString($message);
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
         $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
