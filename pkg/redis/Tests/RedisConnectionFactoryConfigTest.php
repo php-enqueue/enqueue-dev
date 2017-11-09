@@ -101,6 +101,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'vendor' => 'phpredis',
                 'persisted' => false,
                 'lazy' => true,
+                'database' => 0,
             ],
         ];
 
