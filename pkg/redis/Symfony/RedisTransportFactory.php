@@ -54,6 +54,10 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
                     ->defaultTrue()
                     ->info('the connection will be performed as later as possible, if the option set to true')
                 ->end()
+                ->integerNode('database')
+                    ->defaultValue(0)
+                    ->info('Database index to select when connected.')
+                ->end()
         ;
     }
 

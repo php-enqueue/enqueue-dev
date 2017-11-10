@@ -58,6 +58,7 @@ class RedisTransportFactoryTest extends TestCase
             'vendor' => 'phpredis',
             'persisted' => true,
             'lazy' => false,
+            'database' => 0,
         ], $config);
     }
 
