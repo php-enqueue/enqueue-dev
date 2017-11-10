@@ -30,6 +30,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
     public function testShouldSetRouterProcessorPropertyIfNotSetAndOnRouterQueue()
     {
         $config = Config::create('test', '', '', 'router-queue', '', 'router-processor-name');
+        $queue = new NullQueue('test.router-queue');
 
         $driver = $this->createDriverMock();
         $driver
@@ -37,6 +38,12 @@ class SetRouterPropertiesExtensionTest extends TestCase
             ->method('getConfig')
             ->willReturn($config)
         ;
+
+        $driver
+            ->expects($this->once())
+            ->method('createQueue')
+            ->willReturn($queue)
+        ;        
 
         $message = new NullMessage();
 
@@ -56,12 +63,19 @@ class SetRouterPropertiesExtensionTest extends TestCase
     public function testShouldNotSetRouterProcessorPropertyIfNotSetAndNotOnRouterQueue()
     {
         $config = Config::create('test', '', '', 'router-queue', '', 'router-processor-name');
+        $queue = new NullQueue('test.router-queue');
 
         $driver = $this->createDriverMock();
         $driver
             ->expects($this->once())
             ->method('getConfig')
             ->willReturn($config)
+        ;
+
+        $driver
+            ->expects($this->once())
+            ->method('createQueue')
+            ->willReturn($queue)
         ;
 
         $message = new NullMessage();
