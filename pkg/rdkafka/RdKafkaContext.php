@@ -25,6 +25,11 @@ class RdKafkaContext implements PsrContext
     private $conf;
 
     /**
+     * @var TopicConf
+     */
+    private $defaultTopicConf;
+
+    /**
      * @var Producer
      */
     private $producer;
@@ -54,7 +59,7 @@ class RdKafkaContext implements PsrContext
      */
     public function createTopic($topicName)
     {
-        return new RdKafkaTopic($topicName);
+        return new RdKafkaTopic($topicName, $this->getTopicConf());
     }
 
     /**
@@ -64,7 +69,7 @@ class RdKafkaContext implements PsrContext
      */
     public function createQueue($queueName)
     {
-        return new RdKafkaTopic($queueName);
+        return new RdKafkaTopic($queueName, $this->getTopicConf());
     }
 
     /**
@@ -136,42 +141,54 @@ class RdKafkaContext implements PsrContext
      */
     private function getConf()
     {
-        if (null === $this->conf) {
-            $topicConf = new TopicConf();
-
-            if (isset($this->config['topic']) && is_array($this->config['topic'])) {
-                foreach ($this->config['topic'] as $key => $value) {
-                    $topicConf->set($key, $value);
-                }
-            }
-
-            if (isset($this->config['partitioner'])) {
-                $topicConf->setPartitioner($this->config['partitioner']);
-            }
-
-            $this->conf = new Conf();
-
-            if (isset($this->config['global']) && is_array($this->config['global'])) {
-                foreach ($this->config['global'] as $key => $value) {
-                    $this->conf->set($key, $value);
-                }
-            }
-
-            if (isset($this->config['dr_msg_cb'])) {
-                $this->conf->setDrMsgCb($this->config['dr_msg_cb']);
-            }
-
-            if (isset($this->config['error_cb'])) {
-                $this->conf->setErrorCb($this->config['error_cb']);
-            }
-
-            if (isset($this->config['rebalance_cb'])) {
-                $this->conf->setRebalanceCb($this->config['rebalance_cb']);
-            }
-
-            $this->conf->setDefaultTopicConf($topicConf);
+        if (null !== $this->conf) {
+            return $this->conf;
         }
 
+        $this->defaultTopicConf = new TopicConf();
+
+        if (isset($this->config['topic']) && is_array($this->config['topic'])) {
+            foreach ($this->config['topic'] as $key => $value) {
+                $this->defaultTopicConf->set($key, $value);
+            }
+        }
+
+        if (isset($this->config['partitioner'])) {
+            $this->defaultTopicConf->setPartitioner($this->config['partitioner']);
+        }
+
+        $this->conf = new Conf();
+
+        if (isset($this->config['global']) && is_array($this->config['global'])) {
+            foreach ($this->config['global'] as $key => $value) {
+                $this->conf->set($key, $value);
+            }
+        }
+
+        if (isset($this->config['dr_msg_cb'])) {
+            $this->conf->setDrMsgCb($this->config['dr_msg_cb']);
+        }
+
+        if (isset($this->config['error_cb'])) {
+            $this->conf->setErrorCb($this->config['error_cb']);
+        }
+
+        if (isset($this->config['rebalance_cb'])) {
+            $this->conf->setRebalanceCb($this->config['rebalance_cb']);
+        }
+
+        $this->conf->setDefaultTopicConf($this->defaultTopicConf);
+
         return $this->conf;
+    }
+
+    /**
+     * @return TopicConf
+     */
+    private function getTopicConf()
+    {
+        $this->getConf();
+
+        return $this->defaultTopicConf;
     }
 }

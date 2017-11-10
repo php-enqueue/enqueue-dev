@@ -29,12 +29,18 @@ class RdKafkaTopic implements PsrTopic, PsrQueue
     private $key;
 
     /**
-     * @param string $name
+     * @param string         $name
+     * @param TopicConf|null $conf
      */
-    public function __construct($name)
+    public function __construct($name, TopicConf $conf = null)
     {
         $this->name = $name;
-        $this->conf = new TopicConf();
+
+        if (!$conf) {
+            $conf = new TopicConf();
+        }
+
+        $this->conf = $conf;
     }
 
     /**
