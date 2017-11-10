@@ -43,7 +43,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
             ->expects($this->once())
             ->method('createQueue')
             ->willReturn($queue)
-        ;        
+        ;
 
         $message = new NullMessage();
 
