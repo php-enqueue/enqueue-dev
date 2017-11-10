@@ -204,6 +204,9 @@ class QueueConsumer
                     }
 
                     $this->psrContext->consume($this->receiveTimeout);
+
+                    usleep($this->idleTimeout * 1000);
+                    $extension->onIdle($context);
                 } else {
                     /** @var PsrQueue $queue */
                     foreach ($this->boundProcessors as list($queue, $processor)) {
