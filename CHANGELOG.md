@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.8.7](https://github.com/php-enqueue/enqueue-dev/tree/0.8.7) (2017-11-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.6...0.8.7)
+
+- \[Redis\] add custom database index [\#258](https://github.com/php-enqueue/enqueue-dev/pull/258) ([IndraGunawan](https://github.com/IndraGunawan))
+
+- SetRouterPropertiesExtension does not work with SQS [\#261](https://github.com/php-enqueue/enqueue-dev/issues/261)
+
+- Changes SetRouterPropertiesExtension to use the driver to generate the queue name [\#262](https://github.com/php-enqueue/enqueue-dev/pull/262) ([iainmckay](https://github.com/iainmckay))
+
 ## [0.8.6](https://github.com/php-enqueue/enqueue-dev/tree/0.8.6) (2017-11-05)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.5...0.8.6)
 
