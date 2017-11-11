@@ -171,7 +171,7 @@ class QueueConsumer
         while (true) {
             try {
                 if ($this->psrContext instanceof AmqpContext) {
-                    $callback = function (AmqpMessage $message, AmqpConsumer $consumer) use ($extension, $logger) {
+                    $callback = function (AmqpMessage $message, AmqpConsumer $consumer) use ($extension, $logger, &$context) {
                         $currentProcessor = null;
 
                         /** @var PsrQueue $queue */
