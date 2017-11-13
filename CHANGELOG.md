@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.8.8](https://github.com/php-enqueue/enqueue-dev/tree/0.8.8) (2017-11-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.7...0.8.8)
+
+- \[Redis\] add dsn support for symfony bundle. [\#266](https://github.com/php-enqueue/enqueue-dev/pull/266) ([wilson-ng](https://github.com/wilson-ng))
+
+- onIdle is not triggered [\#260](https://github.com/php-enqueue/enqueue-dev/issues/260)
+- On exception Context is not set  [\#259](https://github.com/php-enqueue/enqueue-dev/issues/259)
+- \[consumption\]\[amqp\] onIdle is never called. [\#265](https://github.com/php-enqueue/enqueue-dev/pull/265) ([makasim](https://github.com/makasim))
+- \[consumption\] fix context is missing message on exception. [\#264](https://github.com/php-enqueue/enqueue-dev/pull/264) ([makasim](https://github.com/makasim))
+
 ## [0.8.7](https://github.com/php-enqueue/enqueue-dev/tree/0.8.7) (2017-11-10)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.6...0.8.7)
 
