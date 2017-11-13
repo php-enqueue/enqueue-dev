@@ -106,7 +106,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'redis://localhost:1234?foo=bar&lazy=0&persisted=true',
+            'redis://localhost:1234?foo=bar&lazy=0&persisted=true&database=5',
             [
                 'host' => 'localhost',
                 'port' => 1234,
@@ -117,7 +117,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => true,
                 'lazy' => false,
                 'foo' => 'bar',
-                'database' => 0,
+                'database' => 5,
             ],
         ];
 
