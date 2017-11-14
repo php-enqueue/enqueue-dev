@@ -64,7 +64,7 @@ class RdKafkaProducerTest extends TestCase
         $kafkaProducer
             ->expects($this->once())
             ->method('newTopic')
-            ->with('theQueueName', $this->isInstanceOf(TopicConf::class))
+            ->with('theQueueName')
             ->willReturn($kafkaTopic)
         ;
 
@@ -79,6 +79,74 @@ class RdKafkaProducerTest extends TestCase
         $producer = new RdKafkaProducer($kafkaProducer, $serializer);
 
         $producer->send(new RdKafkaTopic('theQueueName'), $message);
+    }
+
+    public function testShouldPassNullAsTopicConfigIfNotSetOnTopic()
+    {
+        // guard
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('produce')
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->with('theQueueName', null)
+            ->willReturn($kafkaTopic)
+        ;
+
+        $serializer = $this->createSerializerMock();
+        $serializer
+            ->expects($this->once())
+            ->method('toString')
+            ->willReturn('aSerializedMessage')
+        ;
+
+        $producer = new RdKafkaProducer($kafkaProducer, $serializer);
+
+        $topic = new RdKafkaTopic('theQueueName');
+
+        // guard
+        $this->assertNull($topic->getConf());
+
+        $producer->send($topic, new RdKafkaMessage());
+    }
+
+    public function testShouldPassCustomConfAsTopicConfigIfSetOnTopic()
+    {
+        $conf = new TopicConf();
+
+        // guard
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('produce')
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->with('theQueueName', $this->identicalTo($conf))
+            ->willReturn($kafkaTopic)
+        ;
+
+        $serializer = $this->createSerializerMock();
+        $serializer
+            ->expects($this->once())
+            ->method('toString')
+            ->willReturn('aSerializedMessage')
+        ;
+
+        $producer = new RdKafkaProducer($kafkaProducer, $serializer);
+
+        $topic = new RdKafkaTopic('theQueueName');
+        $topic->setConf($conf);
+
+        $producer->send($topic, new RdKafkaMessage());
     }
 
     public function testShouldAllowGetPreviouslySetSerializer()
