@@ -22,7 +22,7 @@ class SimpleClientTest extends TestCase
 
     public function setUp()
     {
-        if (false == getenv('SYMFONY__RABBITMQ__HOST')) {
+        if (false == getenv('RABBITMQ_HOST')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
@@ -36,11 +36,11 @@ class SimpleClientTest extends TestCase
                 'default' => 'amqp',
                 'amqp' => [
                     'driver' => 'ext',
-                    'host' => getenv('SYMFONY__RABBITMQ__HOST'),
-                    'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
-                    'user' => getenv('SYMFONY__RABBITMQ__USER'),
-                    'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
-                    'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+                    'host' => getenv('RABBITMQ_HOST'),
+                    'port' => getenv('RABBITMQ_AMQP__PORT'),
+                    'user' => getenv('RABBITMQ_USER'),
+                    'pass' => getenv('RABBITMQ_PASSWORD'),
+                    'vhost' => getenv('RABBITMQ_VHOST'),
                 ],
             ],
         ]];
@@ -65,11 +65,11 @@ class SimpleClientTest extends TestCase
                 'default' => 'rabbitmq_amqp',
                 'rabbitmq_amqp' => [
                     'driver' => 'ext',
-                    'host' => getenv('SYMFONY__RABBITMQ__HOST'),
-                    'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
-                    'user' => getenv('SYMFONY__RABBITMQ__USER'),
-                    'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
-                    'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+                    'host' => getenv('RABBITMQ_HOST'),
+                    'port' => getenv('RABBITMQ_AMQP__PORT'),
+                    'user' => getenv('RABBITMQ_USER'),
+                    'pass' => getenv('RABBITMQ_PASSWORD'),
+                    'vhost' => getenv('RABBITMQ_VHOST'),
                 ],
             ],
         ]];

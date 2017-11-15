@@ -20,6 +20,8 @@ matrix:
     - php: 7.0
       env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
     - php: 7.1
+      env: SYMFONY_VERSION=v4.0.0-BETA4 UNIT_TESTS=true
+    - php: 7.1
       services: docker
       env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
@@ -31,6 +33,9 @@ matrix:
     - php: 7.1
       services: docker
       env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+    - php: 7.1
+      services: docker
+      env: SYMFONY_VERSION=v4.0.0-BETA4 FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
       services: docker
       env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true

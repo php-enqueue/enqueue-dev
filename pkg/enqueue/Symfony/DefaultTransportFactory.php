@@ -18,6 +18,7 @@ use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Interop\Amqp\AmqpConnectionFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use function Enqueue\dsn_to_connection_factory;
 
@@ -83,8 +84,8 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
-        $container->setAlias($factoryId, $aliasId);
-        $container->setAlias('enqueue.transport.connection_factory', $factoryId);
+        $container->setAlias($factoryId, new Alias($aliasId, true));
+        $container->setAlias('enqueue.transport.connection_factory', new Alias($factoryId, true));
 
         return $factoryId;
     }
@@ -104,8 +105,8 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
 
-        $container->setAlias($contextId, $aliasId);
-        $container->setAlias('enqueue.transport.context', $contextId);
+        $container->setAlias($contextId, new Alias($aliasId, true));
+        $container->setAlias('enqueue.transport.context', new Alias($contextId, true));
 
         return $contextId;
     }
@@ -125,8 +126,8 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
 
         $driverId = sprintf('enqueue.client.%s.driver', $this->getName());
 
-        $container->setAlias($driverId, $aliasId);
-        $container->setAlias('enqueue.client.driver', $driverId);
+        $container->setAlias($driverId, new Alias($aliasId, true));
+        $container->setAlias('enqueue.client.driver', new Alias($driverId, true));
 
         return $driverId;
     }

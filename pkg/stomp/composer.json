@@ -10,6 +10,7 @@
         "stomp-php/stomp-php": "^4",
         "queue-interop/queue-interop": "^0.6@dev",
         "php-http/guzzle6-adapter": "^1.1",
+        "php-http/client-common": "^1.7@dev",
         "richardfullmer/rabbitmq-management-api": "^2.0"
     },
     "require-dev": {
@@ -18,8 +19,8 @@
         "enqueue/enqueue": "^0.8@dev",
         "enqueue/null": "^0.8@dev",
         "queue-interop/queue-spec": "^0.5.3@dev",
-        "symfony/dependency-injection": "^2.8|^3",
-        "symfony/config": "^2.8|^3"
+        "symfony/dependency-injection": "^2.8|^3|^4",
+        "symfony/config": "^2.8|^3|^4"
     },
     "autoload": {
         "psr-4": { "Enqueue\\Stomp\\": "" },

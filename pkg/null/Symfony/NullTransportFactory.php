@@ -66,7 +66,9 @@ class NullTransportFactory implements TransportFactoryInterface, DriverFactoryIn
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
+
         $context = new Definition(NullContext::class);
+        $context->setPublic(true);
         $context->setFactory([new Reference($factoryId), 'createContext']);
 
         $container->setDefinition($contextId, $context);
@@ -80,6 +82,7 @@ class NullTransportFactory implements TransportFactoryInterface, DriverFactoryIn
     public function createDriver(ContainerBuilder $container, array $config)
     {
         $driver = new Definition(NullDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),

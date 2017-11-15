@@ -44,26 +44,31 @@ enqueue:
 services:
     test_async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncListener'
+        public: true
         tags:
             - { name: 'kernel.event_listener', async: true, event: 'test_async', method: 'onEvent' }
 
     test_command_subscriber_processor:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestCommandSubscriberProcessor'
+        public: true
         tags:
             - { name: 'enqueue.client.processor' }
 
     test_exclusive_command_subscriber_processor:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestExclusiveCommandSubscriberProcessor'
+        public: true
         tags:
             - { name: 'enqueue.client.processor' }
 
     test_async_subscriber:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber'
+        public: true
         tags:
             - { name: 'kernel.event_subscriber', async: true }
 
     test_async_event_transformer:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncEventTransformer'
+        public: true
         arguments:
             - '@enqueue.transport.default.context'
         tags:
@@ -73,4 +78,5 @@ services:
     # overwrite async listener with one based on client producer. so we can use traceable producer.
     enqueue.events.async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\AsyncListener'
+        public: true
         arguments: ['@Enqueue\Client\Producer', '@enqueue.events.registry']

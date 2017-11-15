@@ -18,9 +18,9 @@ if ($autoload) {
 use Enqueue\Sqs\SqsConnectionFactory;
 
 $config = [
-    'key' => getenv('AWS__SQS__KEY'),
-    'secret' => getenv('AWS__SQS__SECRET'),
-    'region' => getenv('AWS__SQS__REGION'),
+    'key' => getenv('AWS_SQS_KEY'),
+    'secret' => getenv('AWS_SQS_SECRET'),
+    'region' => getenv('AWS_SQS_REGION'),
 ];
 
 $factory = new SqsConnectionFactory($config);

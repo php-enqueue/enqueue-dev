@@ -12,13 +12,13 @@ trait RedisExtension
      */
     private function buildPhpRedisContext()
     {
-        if (false == getenv('SYMFONY__REDIS__HOST')) {
+        if (false == getenv('REDIS_HOST')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
         $config = [
-            'host' => getenv('SYMFONY__REDIS__HOST'),
-            'port' => getenv('SYMFONY__REDIS__PORT'),
+            'host' => getenv('REDIS_HOST'),
+            'port' => getenv('REDIS_PORT'),
             'vendor' => 'phpredis',
             'lazy' => false,
         ];
@@ -31,13 +31,13 @@ trait RedisExtension
      */
     private function buildPRedisContext()
     {
-        if (false == getenv('SYMFONY__REDIS__HOST')) {
+        if (false == getenv('REDIS_HOST')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
         $config = [
-            'host' => getenv('SYMFONY__REDIS__HOST'),
-            'port' => getenv('SYMFONY__REDIS__PORT'),
+            'host' => getenv('REDIS_HOST'),
+            'port' => getenv('REDIS_PORT'),
             'vendor' => 'predis',
             'lazy' => false,
         ];

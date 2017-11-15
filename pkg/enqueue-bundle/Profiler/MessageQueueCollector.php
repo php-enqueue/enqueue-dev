@@ -82,4 +82,12 @@ class MessageQueueCollector extends DataCollector
     {
         return 'enqueue.message_queue';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset()
+    {
+        $this->data = [];
+    }
 }

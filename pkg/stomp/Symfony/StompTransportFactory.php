@@ -68,6 +68,7 @@ class StompTransportFactory implements TransportFactoryInterface, DriverFactoryI
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
         $context = new Definition(StompContext::class);
+        $context->setPublic(true);
         $context->setFactory([new Reference($factoryId), 'createContext']);
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
@@ -82,6 +83,7 @@ class StompTransportFactory implements TransportFactoryInterface, DriverFactoryI
     public function createDriver(ContainerBuilder $container, array $config)
     {
         $driver = new Definition(StompDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),
