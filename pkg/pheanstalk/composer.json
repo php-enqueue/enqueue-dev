@@ -3,6 +3,7 @@
     "type": "library",
     "description": "Message Queue Beanstalk transport",
     "keywords": ["messaging", "queue", "Pheanstalk", "Beanstalk"],
+    "homepage": "https://github.com/php-enqueue/enqueue-dev",
     "license": "MIT",
     "require": {
         "php": ">=5.6",

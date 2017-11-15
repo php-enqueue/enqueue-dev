@@ -3,6 +3,7 @@
     "type": "library",
     "description": "Enqueue Null transport",
     "keywords": ["messaging", "queue", "testing"],
+    "homepage": "https://github.com/php-enqueue/enqueue-dev",
     "license": "MIT",
     "require": {
         "php": ">=5.6",

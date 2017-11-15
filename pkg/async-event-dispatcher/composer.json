@@ -1,8 +1,9 @@
 {
     "name": "enqueue/async-event-dispatcher",
     "type": "library",
-    "description": "Symfony async event dispathcer",
+    "description": "Symfony async event dispatcher",
     "keywords": ["messaging", "queue", "async event", "event dispatcher"],
+    "homepage": "https://github.com/php-enqueue/enqueue-dev",
     "license": "MIT",
     "require": {
         "php": ">=5.6",

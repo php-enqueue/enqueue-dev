@@ -2,6 +2,7 @@
   "name": "enqueue/enqueue-dev",
   "type": "project",
   "minimum-stability": "stable",
+  "homepage": "https://github.com/php-enqueue/enqueue-dev",
   "require": {
     "php": ">=5.6",
     "enqueue/enqueue": "*@dev",

@@ -3,6 +3,7 @@
     "type": "library",
     "description": "Message Queue Doctrine DBAL Transport",
     "keywords": ["messaging", "queue", "doctrine", "dbal"],
+    "homepage": "https://github.com/php-enqueue/enqueue-dev",
     "license": "MIT",
     "require": {
         "php": ">=5.6",

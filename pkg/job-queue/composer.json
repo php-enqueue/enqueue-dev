@@ -3,6 +3,7 @@
     "type": "library",
     "description": "Job Queue",
     "keywords": ["messaging", "queue", "jobs"],
+    "homepage": "https://github.com/php-enqueue/enqueue-dev",
     "license": "MIT",
     "require": {
         "php": ">=5.6",

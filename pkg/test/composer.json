@@ -1,5 +1,6 @@
 {
     "name": "enqueue/test",
+    "homepage": "https://github.com/php-enqueue/enqueue-dev",
     "license": "MIT",
     "autoload": {
         "psr-4": { "Enqueue\\Test\\": "" }
