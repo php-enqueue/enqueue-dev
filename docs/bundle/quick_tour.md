@@ -9,7 +9,9 @@ It adds easy to use [configuration layer](config_reference.md), register service
 $ composer require enqueue/enqueue-bundle enqueue/amqp-ext # or enqueue/amqp-bunny, enqueue/amqp-lib
 ```
 
-_**Note**: You could use not only AMQP transport but other available: STOMP, Amazon SQS, Redis, Filesystem, Doctrine DBAL and others._
+_**Note**: You could use not only AMQP transport but any other [available](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/transport)._
+
+_**Note**: If you are looking for a way to migrate from `php-amqplib/rabbitmq-bundle` read this [article](https://blog.forma-pro.com/the-how-and-why-of-the-migration-from-rabbitmqbundle-to-enqueuebundle-6c4054135e2b)._
 
 ## Enable the Bundle
 
