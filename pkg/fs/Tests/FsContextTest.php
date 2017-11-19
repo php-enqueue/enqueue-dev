@@ -182,34 +182,6 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty(file_get_contents($tmpFile));
     }
 
-    public function testShouldReleaseAllLocksOnClose()
-    {
-        new TempFile(sys_get_temp_dir().'/foo');
-        new TempFile(sys_get_temp_dir().'/bar');
-
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
-
-        $fooQueue = $context->createQueue('foo');
-        $barQueue = $context->createTopic('bar');
-
-        $this->assertAttributeCount(0, 'lockHandlers', $context);
-
-        $context->workWithFile($fooQueue, 'r+', function () {
-        });
-        $context->workWithFile($barQueue, 'r+', function () {
-        });
-        $context->workWithFile($fooQueue, 'c+', function () {
-        });
-        $context->workWithFile($barQueue, 'c+', function () {
-        });
-
-        $this->assertAttributeCount(2, 'lockHandlers', $context);
-
-        $context->close();
-
-        $this->assertAttributeCount(0, 'lockHandlers', $context);
-    }
-
     public function testShouldCreateFileOnFilesystemIfNotExistOnDeclareDestination()
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/'.uniqid());
