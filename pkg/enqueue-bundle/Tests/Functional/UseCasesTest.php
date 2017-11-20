@@ -6,11 +6,14 @@ use Enqueue\Bundle\Tests\Functional\App\CustomAppKernel;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
+use Enqueue\Stomp\StompDestination;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
@@ -22,6 +25,17 @@ class UseCasesTest extends WebTestCase
     {
         // do not call parent::setUp.
         // parent::setUp();
+    }
+
+    public function tearDown()
+    {
+        if (static::$kernel) {
+            $fs = new Filesystem();
+            $fs->remove(static::$kernel->getLogDir());
+            $fs->remove(static::$kernel->getCacheDir());
+        }
+
+        parent::tearDown();
     }
 
     public function provideEnqueueConfigs()
@@ -44,7 +58,8 @@ class UseCasesTest extends WebTestCase
                     'user' => getenv('SYMFONY__RABBITMQ__USER'),
                     'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
                     'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
-                    'lazy' => false,
+                    'lazy' => true,
+                    'persisted' => false,
                 ],
             ],
         ]];
@@ -90,15 +105,16 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
-        yield 'stomp' => [[
+        yield 'rabbitmq_stomp' => [[
             'transport' => [
-                'default' => 'stomp',
-                'stomp' => [
+                'default' => 'rabbitmq_stomp',
+                'rabbitmq_stomp' => [
                     'host' => getenv('SYMFONY__RABBITMQ__HOST'),
                     'port' => getenv('SYMFONY__RABBITMQ__STOMP__PORT'),
                     'login' => getenv('SYMFONY__RABBITMQ__USER'),
                     'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
                     'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+                    'management_plugin_installed' => true,
                     'lazy' => false,
                 ],
             ],
@@ -184,12 +200,12 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
-        yield 'gps' => [[
-            'transport' => [
-                'default' => 'gps',
-                'gps' => [],
-            ],
-        ]];
+//        yield 'gps' => [[
+//            'transport' => [
+//                'default' => 'gps',
+//                'gps' => [],
+//            ],
+//        ]];
     }
 
     /**
@@ -199,16 +215,17 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
-        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, 'test message body');
+        $expectedBody = __METHOD__.time();
 
-        $queue = $this->getPsrContext()->createQueue('enqueue.test');
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
-        $consumer = $this->getPsrContext()->createConsumer($queue);
+        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
 
         $message = $consumer->receive(100);
-
         $this->assertInstanceOf(PsrMessage::class, $message);
-        $this->assertSame('test message body', $message->getBody());
+        $consumer->acknowledge($message);
+
+        $this->assertSame($expectedBody, $message->getBody());
     }
 
     /**
@@ -222,11 +239,10 @@ class UseCasesTest extends WebTestCase
 
         $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
 
-        $queue = $this->getPsrContext()->createQueue('enqueue.test');
-
-        $consumer = $this->getPsrContext()->createConsumer($queue);
+        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
 
         $message = $consumer->receive(100);
+        $this->assertInstanceOf(PsrMessage::class, $message);
         $consumer->acknowledge($message);
 
         $this->assertInstanceOf(PsrMessage::class, $message);
@@ -265,10 +281,12 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
+        $expectedBody = __METHOD__.time();
+
         $command = $this->container->get(ConsumeMessagesCommand::class);
         $processor = $this->container->get('test.message.processor');
 
-        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -278,7 +296,7 @@ class UseCasesTest extends WebTestCase
         ]);
 
         $this->assertInstanceOf(PsrMessage::class, $processor->message);
-        $this->assertEquals('test message body', $processor->message->getBody());
+        $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
     /**
@@ -288,22 +306,31 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
+        if ($this->getTestQueue() instanceof StompDestination) {
+            $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
+                'It happens because of the destination options are different from the one used while creating the dest. Nothing to do about it'
+            );
+        }
+
+        $expectedBody = __METHOD__.time();
+
         $command = $this->container->get(ContainerAwareConsumeMessagesCommand::class);
         $command->setContainer($this->container);
         $processor = $this->container->get('test.message.processor');
 
-        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, 'test message body');
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 1,
             '--time-limit' => '+10sec',
-            '--queue' => ['enqueue.test'],
+            '--receive-timeout' => 1000,
+            '--queue' => [$this->getTestQueue()->getQueueName()],
             'processor-service' => 'test.message.processor',
         ]);
 
         $this->assertInstanceOf(PsrMessage::class, $processor->message);
-        $this->assertEquals('test message body', $processor->message->getBody());
+        $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
     /**
@@ -329,16 +356,26 @@ class UseCasesTest extends WebTestCase
         $driver = $this->container->get('enqueue.client.driver');
         $context = $this->getPsrContext();
 
-        $queue = $driver->createQueue('test');
-
-        //guard
-        $this->assertEquals('enqueue.test', $queue->getQueueName());
-
-        if (method_exists($context, 'deleteQueue')) {
-            $context->deleteQueue($queue);
-        }
-
         $driver->setupBroker();
+
+        try {
+            if (method_exists($context, 'purgeQueue')) {
+                $queue = $this->getTestQueue();
+                $context->purgeQueue($queue);
+            }
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
+     * @return PsrQueue
+     */
+    protected function getTestQueue()
+    {
+        /** @var DriverInterface $driver */
+        $driver = $this->container->get('enqueue.client.driver');
+
+        return $driver->createQueue('test');
     }
 
     /**
