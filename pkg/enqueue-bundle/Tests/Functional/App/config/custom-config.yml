@@ -24,10 +24,12 @@ monolog:
 services:
     test.message.processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'
+        public: true
         tags:
             - { name: 'enqueue.client.processor' }
 
     test.message.command_processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestCommandProcessor'
+        public: true
         tags:
             - { name: 'enqueue.client.processor' }

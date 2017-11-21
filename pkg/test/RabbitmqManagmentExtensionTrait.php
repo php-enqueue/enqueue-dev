@@ -9,10 +9,10 @@ trait RabbitmqManagmentExtensionTrait
      */
     private function removeQueue($queueName)
     {
-        $rabbitmqHost = getenv('SYMFONY__RABBITMQ__HOST');
-        $rabbitmqUser = getenv('SYMFONY__RABBITMQ__USER');
-        $rabbitmqPassword = getenv('SYMFONY__RABBITMQ__PASSWORD');
-        $rabbitmqVhost = getenv('SYMFONY__RABBITMQ__VHOST');
+        $rabbitmqHost = getenv('RABBITMQ_HOST');
+        $rabbitmqUser = getenv('RABBITMQ_USER');
+        $rabbitmqPassword = getenv('RABBITMQ_PASSWORD');
+        $rabbitmqVhost = getenv('RABBITMQ_VHOST');
 
         $url = sprintf(
             'http://%s:15672/api/queues/%s/%s',
@@ -46,10 +46,10 @@ trait RabbitmqManagmentExtensionTrait
      */
     private function removeExchange($exchangeName)
     {
-        $rabbitmqHost = getenv('SYMFONY__RABBITMQ__HOST');
-        $rabbitmqUser = getenv('SYMFONY__RABBITMQ__USER');
-        $rabbitmqPassword = getenv('SYMFONY__RABBITMQ__PASSWORD');
-        $rabbitmqVhost = getenv('SYMFONY__RABBITMQ__VHOST');
+        $rabbitmqHost = getenv('RABBITMQ_HOST');
+        $rabbitmqUser = getenv('RABBITMQ_USER');
+        $rabbitmqPassword = getenv('RABBITMQ_PASSWORD');
+        $rabbitmqVhost = getenv('RABBITMQ_VHOST');
 
         $url = sprintf(
             'http://%s:15672/api/exchanges/%s/%s',

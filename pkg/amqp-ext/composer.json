@@ -19,8 +19,8 @@
         "enqueue/null": "^0.8@dev",
         "queue-interop/queue-spec": "^0.5.3@dev",
         "empi89/php-amqp-stubs": "*@dev",
-        "symfony/dependency-injection": "^2.8|^3",
-        "symfony/config": "^2.8|^3"
+        "symfony/dependency-injection": "^2.8|^3|^4",
+        "symfony/config": "^2.8|^3|^4"
     },
     "autoload": {
         "psr-4": { "Enqueue\\AmqpExt\\": "" },

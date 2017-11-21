@@ -166,6 +166,7 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
         $context = new Definition(AmqpContext::class);
+        $context->setPublic(true);
         $context->setFactory([new Reference($factoryId), 'createContext']);
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
@@ -180,6 +181,7 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
     public function createDriver(ContainerBuilder $container, array $config)
     {
         $driver = new Definition(AmqpDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),

@@ -4,6 +4,7 @@ namespace Enqueue\AsyncEventDispatcher\DependencyInjection;
 
 use Enqueue\AsyncEventDispatcher\OldAsyncEventDispatcher;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -20,7 +21,7 @@ class AsyncEventDispatcherExtension extends Extension
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $container->setAlias('enqueue.events.context', $config['context_service']);
+        $container->setAlias('enqueue.events.context', new Alias($config['context_service'], true));
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
