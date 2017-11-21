@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "ext-amqp": "^1.6",
+        "ext-amqp": "^1.9.3",
         
         "queue-interop/amqp-interop": "^0.7@dev",
         "enqueue/amqp-tools": "^0.8.4@dev"

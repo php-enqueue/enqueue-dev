@@ -57,7 +57,7 @@
   "config": {
     "bin-dir": "bin",
     "platform": {
-      "ext-amqp": "1.7",
+      "ext-amqp": "1.9.3",
       "ext-gearman": "1.1",
       "ext-rdkafka": "3.3"
     }
