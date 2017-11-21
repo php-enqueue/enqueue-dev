@@ -125,11 +125,17 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
 
             $this->connection = new \AMQPConnection($extConfig);
 
-            $this->config->isPersisted() ? $this->connection->pconnect() : $this->connection->connect();
+            $this->config->isPersisted() ?
+                $this->connection->pconnect() :
+                $this->connection->connect()
+            ;
         }
 
         if (false == $this->connection->isConnected()) {
-            $this->config->isPersisted() ? $this->connection->preconnect() : $this->connection->reconnect();
+            $this->config->isPersisted() ?
+                $this->connection->preconnect() :
+                $this->connection->reconnect()
+            ;
         }
 
         return $this->connection;

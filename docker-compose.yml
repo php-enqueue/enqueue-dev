@@ -3,7 +3,6 @@ version: '2'
 services:
   dev:
     image: enqueue/dev:latest
-    # build: { context: docker, dockerfile: Dockerfile }
     depends_on:
       - rabbitmq
       - mysql
@@ -48,7 +47,6 @@ services:
 
   rabbitmq:
     image: 'enqueue/rabbitmq:latest'
-    # build: { context: docker, dockerfile: Dockerfile.rabbitmq }
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
