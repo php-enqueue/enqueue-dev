@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.9](https://github.com/php-enqueue/enqueue-dev/tree/0.8.9) (2017-11-21)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.8...0.8.9)
+
+- \[rdkafka\] Introduce KeySerializer  [\#255](https://github.com/php-enqueue/enqueue-dev/issues/255)
+- \[amqp-lib\]\[RabbitMQ\] Publisher Confirms [\#206](https://github.com/php-enqueue/enqueue-dev/issues/206)
+- \[client\]\[amqp\] Idea. Add support of dead queues [\#39](https://github.com/php-enqueue/enqueue-dev/issues/39)
+- \[docker\] Incorporate amqp ext compilation to docker build process. [\#275](https://github.com/php-enqueue/enqueue-dev/pull/275) ([makasim](https://github.com/makasim))
+- \[fs\] Copy past Symfony's LockHandler \(not awailable in Sf4\). [\#272](https://github.com/php-enqueue/enqueue-dev/pull/272) ([makasim](https://github.com/makasim))
+- Add Symfony4 support [\#269](https://github.com/php-enqueue/enqueue-dev/pull/269) ([makasim](https://github.com/makasim))
+- \[bundle\] use enqueue logo in profiler panel. [\#268](https://github.com/php-enqueue/enqueue-dev/pull/268) ([makasim](https://github.com/makasim))
+
+- \[bundle\] Apparently the use case tests have never worked properly. [\#273](https://github.com/php-enqueue/enqueue-dev/pull/273) ([makasim](https://github.com/makasim))
+- \[rdkafka\] do not pass config if it was not set explisitly. [\#263](https://github.com/php-enqueue/enqueue-dev/pull/263) ([makasim](https://github.com/makasim))
+
+- \[amqp-ext\] Problem with consume messages [\#274](https://github.com/php-enqueue/enqueue-dev/issues/274)
+
 ## [0.8.8](https://github.com/php-enqueue/enqueue-dev/tree/0.8.8) (2017-11-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.7...0.8.8)
 
