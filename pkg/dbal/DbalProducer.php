@@ -10,6 +10,7 @@ use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
+use Ramsey\Uuid\Uuid;
 
 class DbalProducer implements PsrProducer
 {
@@ -74,15 +75,11 @@ class DbalProducer implements PsrProducer
             ));
         }
 
-        $sql = 'SELECT '.$this->context->getDbalConnection()->getDatabasePlatform()->getGuidExpression();
-        $uuid = $this->context->getDbalConnection()->query($sql)->fetchColumn(0);
-
-        if (empty($uuid)) {
-            throw new \LogicException('The generated uuid is empty');
-        }
+        $uuid = Uuid::uuid4();
 
         $dbalMessage = [
-            'id' => $uuid,
+            'id' => $uuid->getBytes(),
+            'human_id' => $uuid->toString(),
             'published_at' => (int) microtime(true) * 10000,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),

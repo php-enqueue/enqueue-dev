@@ -170,12 +170,15 @@ class DbalContext implements PsrContext
             return;
         }
 
+        $table = new Table($this->getTableName());
+
         if ($this->getDbalConnection()->getDatabasePlatform()->hasNativeGuidType()) {
-            throw new \LogicException('The platform does not support UUIDs natively');
+            $table->addColumn('id', 'guid');
+        } else {
+            $table->addColumn('id', 'binary', ['length' => 16]);
         }
 
-        $table = new Table($this->getTableName());
-        $table->addColumn('id', 'guid');
+        $table->addColumn('human_id', 'string', ['length' => 36]);
         $table->addColumn('published_at', 'bigint');
         $table->addColumn('body', 'text', ['notnull' => false]);
         $table->addColumn('headers', 'text', ['notnull' => false]);
