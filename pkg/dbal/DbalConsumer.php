@@ -178,7 +178,7 @@ class DbalConsumer implements PsrConsumer
 
             // remove message
             $affectedRows = $this->dbal->delete($this->context->getTableName(), ['id' => $dbalMessage['id']], [
-                'id' => Type::INTEGER,
+                'id' => Type::BINARY,
             ]);
 
             if (1 !== $affectedRows) {
