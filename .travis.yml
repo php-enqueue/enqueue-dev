@@ -22,6 +22,8 @@ matrix:
     - php: 7.1
       env: SYMFONY_VERSION=v4.0.0-BETA4 UNIT_TESTS=true
     - php: 7.1
+      env: SYMFONY_VERSION=3.4.* UNIT_TESTS=true
+    - php: 7.2
       services: docker
       env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
