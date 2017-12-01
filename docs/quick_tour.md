@@ -161,7 +161,7 @@ The goal of the component is hide as much as possible low level details so you c
 For example, It configure a broker for you by creating queuest, exchanges and bind them.
 It provides easy to use services for producing and processing messages. 
 It supports unified format for setting message expiration, delay, timestamp, correlation id.
-It supports message bus so different applications can talk to each other.
+It supports [message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) so different applications can talk to each other.
  
 Here's an example of how you can send and consume event messages.
  
