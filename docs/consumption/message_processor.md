@@ -1,5 +1,13 @@
 # Message processor
 
+* [Basics](#basics)
+* [Reply result](#reply-result)
+* [On exceptions](#on-exceptions)
+* [Examples](#examples)
+
+
+## Basics
+
 The message processor is an object that actually process the message and must return a result status.
 Here's example:
 
@@ -20,9 +28,15 @@ class SendMailProcessor implements PsrProcessor
 }
 ```
 
-Usually there is no need to catch exceptions. 
-The message broker can detect consumer has failed and redeliver the message.
-Sometimes you have to reject messages explicitly. 
+By returning `self::ACK` a processor tells a broker that the message has been processed correctly. 
+
+There are other statuses:
+
+* `self::ACK` - Use this constant when the message is processed successfully and the message could be removed from the queue.
+* `self::REJECT` - Use this constant when the message is not valid or could not be processed. The message is removed from the queue.
+* `self::REQUEUE` - Use this constant when the message is not valid or could not be processed right now but we can try again later 
+
+Look at the next example that shows the message validation before sending a mail. If the message is not valid a processor rejects it.  
 
 ```php
 <?php
@@ -95,7 +109,11 @@ class SendMailProcessor implements PsrProcessor
 }
 ```
 
-The consumption component provide some useful extensions, for example there is an extension that makes RPC processing simplier.
+## Reply result 
+
+The consumption component provide some useful extensions, for example there is an extension that makes RPC processing simpler.
+The producer might wait for a reply from a consumer and in order to send it a processor has to return a reply result.
+Dont forget to add `ReplyExtension`.
  
 ```php
 <?php
@@ -129,5 +147,27 @@ $queueConsumer->bind('foo', new SendMailProcessor());
 
 $queueConsumer->consume();
 ```
+
+
+## On exceptions
+
+It is advised to not catch exceptions and [fail fast](https://en.wikipedia.org/wiki/Fail-fast). 
+Also consider using [supervisord](supervisord.org) or similar process manager to restart exited consumers. 
+
+Despite advising to fail there are some cases where you might want to catch exceptions.
+
+* A message validator throws an exception on invalid message. It is better to catch it and return `REJECT`.
+* Some transports ([Doctrine DBAL](../transport/dbal.md), [Filesystem](../transport/filesystem.md), [Redis](../transport/redis.md)) does notice an error, 
+and therefor won't be able to redeliver the message. The message is completely lost. You might want to catch an exception to properly redelivery\requeue the message. 
+
+# Examples
+
+Feel free to contribute your own.
+
+* [LiipImagineBundle. ResolveCacheProcessor](https://github.com/liip/LiipImagineBundle/blob/713e36f5df353d7c5345daed5a2eefc23c103849/Async/ResolveCacheProcessor.php#L1)
+* [EnqueueElasticaBundle. ElasticaPopulateProcessor](https://github.com/php-enqueue/enqueue-elastica-bundle/blob/7c05c55b1667f9cae98325257ba24fc101f87f97/Async/ElasticaPopulateProcessor.php#L1)
+* [formapro/pvm. HandleAsyncTransitionProcessor](https://github.com/formapro/pvm/blob/d5e989a77eb1540a93e69abacc446b3d7937292d/src/Enqueue/HandleAsyncTransitionProcessor.php#L1)
+* [php-quartz. EnqueueRemoteTransportProcessor](https://github.com/php-quartz/quartz-dev/blob/91690aa535b0322510b4555dab59d6ae9d7044e5/pkg/bridge/Enqueue/EnqueueRemoteTransportProcessor.php#L1)
+* [php-comrade. CreateJobProcessor](https://github.com/php-comrade/comrade-dev/blob/43c0662b74340aae318bceb15d8564670325dcee/apps/jm/src/Queue/CreateJobProcessor.php#L1)
 
 [back to index](../index.md)
