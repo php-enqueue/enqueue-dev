@@ -9,7 +9,9 @@ This is where all development happens. The repository provides a friendly enviro
 Features:
 
 * [Feature rich](docs/quick_tour.md).
-* Implements [JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) like transports based on [queue-interop](https://github.com/queue-interop/queue-interop) interfaces.
+
+* Adopts [queue interoperable](https://github.com/queue-interop/queue-interop) interfaces (inspired by [Java JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html)).
+* Battle-tested. Used in production.
 * Supported  transports 
     * [AMQP(s)](docs/transport/amqp.md) based on [PHP AMQP extension](https://github.com/pdezwart/php-amqp). 
 [![Build Status](https://travis-ci.org/php-enqueue/amqp-ext.png?branch=master)](https://travis-ci.org/php-enqueue/amqp-ext)
@@ -69,8 +71,8 @@ Features:
 * [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
 * [RPC over MQ](https://www.rabbitmq.com/tutorials/tutorial-one-php.html) support.
 * Temporary queues support.
-* Well designed components decoupled and reusable.
-* Carefully tested including unit and functional tests.
+* Well designed, decoupled and reusable components.
+* Carefully tested (unit & functional).
 * For more visit [quick tour](docs/quick_tour.md).
 
 ## Resources
