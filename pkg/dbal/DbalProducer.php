@@ -75,10 +75,11 @@ class DbalProducer implements PsrProducer
             ));
         }
 
+        $hasNativeGuid = $this->context->getDbalConnection()->getDatabasePlatform()->hasNativeGuidType();
         $uuid = Uuid::uuid4();
 
         $dbalMessage = [
-            'id' => $uuid->getBytes(),
+            'id' => $hasNativeGuid ? $uuid->toString() : $uuid->getBytes(),
             'human_id' => $uuid->toString(),
             'published_at' => (int) microtime(true) * 10000,
             'body' => $body,
