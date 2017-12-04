@@ -10,7 +10,9 @@ use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
+use Ramsey\Uuid\Codec\OrderedTimeCodec;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidFactory;
 
 class DbalProducer implements PsrProducer
 {
@@ -35,11 +37,17 @@ class DbalProducer implements PsrProducer
     private $context;
 
     /**
+     * @var OrderedTimeCodec
+     */
+    private $uuidCodec;
+
+    /**
      * @param DbalContext $context
      */
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
+        $this->uuidCodec = new OrderedTimeCodec((new UuidFactory())->getUuidBuilder());
     }
 
     /**
@@ -75,11 +83,10 @@ class DbalProducer implements PsrProducer
             ));
         }
 
-        $hasNativeGuid = $this->context->getDbalConnection()->getDatabasePlatform()->hasNativeGuidType();
-        $uuid = Uuid::uuid4();
+        $uuid = Uuid::uuid1();
 
         $dbalMessage = [
-            'id' => $hasNativeGuid ? $uuid->toString() : $uuid->getBytes(),
+            'id' => $this->uuidCodec->encodeBinary($uuid),
             'human_id' => $uuid->toString(),
             'published_at' => (int) microtime(true) * 10000,
             'body' => $body,

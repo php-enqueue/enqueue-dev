@@ -173,12 +173,7 @@ class DbalContext implements PsrContext
 
         $table = new Table($this->getTableName());
 
-        if ($this->getDbalConnection()->getDatabasePlatform()->hasNativeGuidType()) {
-            $table->addColumn('id', 'guid');
-        } else {
-            $table->addColumn('id', Type::BINARY, ['length' => 16]);
-        }
-
+        $table->addColumn('id', Type::BINARY, ['length' => 16, 'fixed' => true]);
         $table->addColumn('human_id', Type::STRING, ['length' => 36]);
         $table->addColumn('published_at', Type::BIGINT);
         $table->addColumn('body', Type::TEXT, ['notnull' => false]);
