@@ -193,4 +193,16 @@ class DbalContext implements PsrContext
 
         $sm->createTable($table);
     }
+
+    /**
+     * @param DbalDestination $queue
+     */
+    public function purgeQueue(DbalDestination $queue)
+    {
+        $this->getDbalConnection()->delete(
+            $this->getTableName(),
+            ['queue' => $queue->getQueueName()],
+            ['queue' => Type::STRING]
+        );
+    }
 }
