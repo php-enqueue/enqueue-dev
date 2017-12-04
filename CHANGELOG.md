@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.8.10](https://github.com/php-enqueue/enqueue-dev/tree/0.8.10) (2017-12-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.9...0.8.10)
+
+- \[dbal\] Store id \(uuid\) as binary data. [\#279](https://github.com/php-enqueue/enqueue-dev/issues/279)
+- \[doc\] Add a doc with job queue doctrine migration example [\#278](https://github.com/php-enqueue/enqueue-dev/issues/278)
+- Add mongodb support. [\#251](https://github.com/php-enqueue/enqueue-dev/issues/251)
+- Add zeromq support [\#208](https://github.com/php-enqueue/enqueue-dev/issues/208)
+- \[amqp-lib\] It should be possible to create queue without a name,  [\#145](https://github.com/php-enqueue/enqueue-dev/issues/145)
+- \[doc\] Add the doc for client extensions [\#73](https://github.com/php-enqueue/enqueue-dev/issues/73)
+- \[doc\]\[skip ci\] add doc for client on send extensions. [\#285](https://github.com/php-enqueue/enqueue-dev/pull/285) ([makasim](https://github.com/makasim))
+- \[doc\]\[skip ci\] Add processor examples, notes on exception and more. [\#283](https://github.com/php-enqueue/enqueue-dev/pull/283) ([makasim](https://github.com/makasim))
+- \[travis\] add PHP 7.2 to build matrix. [\#281](https://github.com/php-enqueue/enqueue-dev/pull/281) ([makasim](https://github.com/makasim))
+
+- \[enqueue/dbal\] Logic for "The platform does not support UUIDs natively" is incorrect [\#276](https://github.com/php-enqueue/enqueue-dev/issues/276)
+
 ## [0.8.9](https://github.com/php-enqueue/enqueue-dev/tree/0.8.9) (2017-11-21)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.8...0.8.9)
 
