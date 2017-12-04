@@ -169,5 +169,7 @@ Feel free to contribute your own.
 * [formapro/pvm. HandleAsyncTransitionProcessor](https://github.com/formapro/pvm/blob/d5e989a77eb1540a93e69abacc446b3d7937292d/src/Enqueue/HandleAsyncTransitionProcessor.php#L1)
 * [php-quartz. EnqueueRemoteTransportProcessor](https://github.com/php-quartz/quartz-dev/blob/91690aa535b0322510b4555dab59d6ae9d7044e5/pkg/bridge/Enqueue/EnqueueRemoteTransportProcessor.php#L1)
 * [php-comrade. CreateJobProcessor](https://github.com/php-comrade/comrade-dev/blob/43c0662b74340aae318bceb15d8564670325dcee/apps/jm/src/Queue/CreateJobProcessor.php#L1)
+* [prooph/psb-enqueue-producer. EnqueueMessageProcessor](https://github.com/prooph/psb-enqueue-producer/blob/c80914a4092b42b2d0a7ba698b216e0af23bab42/src/EnqueueMessageProcessor.php#L1)
+
 
 [back to index](../index.md)
