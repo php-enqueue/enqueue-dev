@@ -43,6 +43,8 @@
 * [Magento](#magento)
     - [Quick tour](magento/quick_tour.md)
     - [Cli commands](magento/cli_commands.md)
+* [Yii](#yii)
+    - [AMQP Interop driver](yii/amqp_driver.md)
 * [Use cases](#use-cases)
     - [FOSElasticaBundle. Populate command optimizations](elastica-bundle/populate-command-optimization.md)
     - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
