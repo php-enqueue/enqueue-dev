@@ -65,11 +65,12 @@ Features:
 [![Build Status](https://travis-ci.org/php-enqueue/null.png?branch=master)](https://travis-ci.org/php-enqueue/null)
 [![Total Downloads](https://poser.pugx.org/enqueue/null/d/total.png)](https://packagist.org/packages/enqueue/null)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/null/version.png)](https://packagist.org/packages/enqueue/null)
-* [Symfony bundle](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
-* [Magento1 extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/magento/quick_tour.md)
-* [Laravel extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/quick_tour.md)
-* [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
-* [RPC over MQ](https://www.rabbitmq.com/tutorials/tutorial-one-php.html) support.
+* [Symfony bundle](docs/bundle/quick_tour.md)
+* [Magento1 extension](docs/magento/quick_tour.md)
+* [Laravel extension](docs/laravel/quick_tour.md)
+* [Yii2. Amqp driver](docs/yii/amqp_driver.md)
+* [Message bus](docs/quick_tour.md#client) support.
+* [RPC over MQ](docs/quick_tour.md#remote-procedure-call-rpc) support.
 * Temporary queues support.
 * Well designed, decoupled and reusable components.
 * Carefully tested (unit & functional).
@@ -77,9 +78,9 @@ Features:
 
 ## Resources
 
-* [Quick tour](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/quick_tour.md)
-* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
-* [Blog](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md#blogs)
+* [Quick tour](docs/quick_tour.md)
+* [Documentation](docs/index.md)
+* [Blog](docs/index.md#blogs)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
