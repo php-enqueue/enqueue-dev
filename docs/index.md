@@ -1,4 +1,4 @@
-# Documentation.
+## Documentation.
 
 * [Quick tour](quick_tour.md)
 * [Transports](#transports)
@@ -56,7 +56,7 @@
 * [Symfony](#symfony-cookbook)
     - [How to change consume command logger](cookbook/symfony/how-to-change-consume-command-logger.md)
 
-# Blogs
+## Blogs
 
 * [Getting Started with RabbitMQ in PHP](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-php-84d331e20a66)
 * [Getting Started with RabbitMQ in Symfony](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-symfony-cb06e0b674f1)
