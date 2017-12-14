@@ -19,6 +19,13 @@
         "symfony/browser-kit": "^2.8|^3|^4",
         "symfony/expression-language": "^2.8|^3|^4"
     },
+    "support": {
+        "email": "opensource@forma-pro.com",
+        "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
+        "forum": "https://gitter.im/php-enqueue/Lobby",
+        "source": "https://github.com/php-enqueue/enqueue-dev",
+        "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
+    },
     "autoload": {
         "psr-4": { "Enqueue\\JobQueue\\": "" },
         "exclude-from-classmap": [
