@@ -29,7 +29,7 @@
     "enqueue/async-event-dispatcher": "*@dev",
     "queue-interop/queue-interop": "^0.6@dev",
     "queue-interop/amqp-interop": "^0.7@dev",
-    "queue-interop/queue-spec": "^0.5.1@dev",
+    "queue-interop/queue-spec": "^0.5.4@dev",
 
     "phpunit/phpunit": "^5",
     "doctrine/doctrine-bundle": "~1.2",

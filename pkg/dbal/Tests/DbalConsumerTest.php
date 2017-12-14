@@ -10,6 +10,7 @@ use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
+use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
@@ -67,68 +68,56 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $consumer->reject(new InvalidMessage());
     }
 
-    public function testRejectShouldInsertNewMessageOnRequeue()
+    public function testShouldDoNothingOnReject()
     {
-        $expectedMessage = [
-            'body' => 'theBody',
-            'headers' => '[]',
-            'properties' => '[]',
-            'priority' => 0,
-            'queue' => 'queue',
-            'redelivered' => true,
-        ];
+        $queue = new DbalDestination('queue');
 
-        $dbal = $this->createConnectionMock();
-        $dbal
+        $message = new DbalMessage();
+        $message->setBody('theBody');
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->never())
+            ->method('createProducer')
+        ;
+
+        $consumer = new DbalConsumer($context, $queue);
+
+        $consumer->reject($message);
+    }
+
+    public function testRejectShouldReSendMessageToSameQueueOnRequeue()
+    {
+        $queue = new DbalDestination('queue');
+
+        $message = new DbalMessage();
+        $message->setBody('theBody');
+
+        $producerMock = $this->createProducerMock();
+        $producerMock
             ->expects($this->once())
-            ->method('insert')
-            ->with('tableName', $this->equalTo($expectedMessage))
-            ->will($this->returnValue(1))
+            ->method('send')
+            ->with($this->identicalTo($queue), $this->identicalTo($message))
         ;
 
         $context = $this->createContextMock();
         $context
             ->expects($this->once())
-            ->method('getDbalConnection')
-            ->will($this->returnValue($dbal))
-        ;
-        $context
-            ->expects($this->once())
-            ->method('getTableName')
-            ->will($this->returnValue('tableName'))
+            ->method('createProducer')
+            ->will($this->returnValue($producerMock))
         ;
 
-        $message = new DbalMessage();
-        $message->setBody('theBody');
+        $consumer = new DbalConsumer($context, $queue);
 
-        $consumer = new DbalConsumer($context, new DbalDestination('queue'));
         $consumer->reject($message, true);
     }
 
-    public function testRejectShouldThrowIfMessageWasNotInserted()
+    /**
+     * @return DbalProducer|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createProducerMock()
     {
-        $dbal = $this->createConnectionMock();
-        $dbal
-            ->expects($this->once())
-            ->method('insert')
-            ->willReturn(0)
-        ;
-
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('getDbalConnection')
-            ->will($this->returnValue($dbal))
-        ;
-
-        $message = new DbalMessage();
-        $message->setBody('theBody');
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Expected record was inserted but it is not. message:');
-
-        $consumer = new DbalConsumer($context, new DbalDestination('queue'));
-        $consumer->reject($message, true);
+        return $this->createMock(DbalProducer::class);
     }
 
     /**
