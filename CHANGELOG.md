@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.8.11](https://github.com/php-enqueue/enqueue-dev/tree/0.8.11) (2017-12-14)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.10...0.8.11)
+
+- \[job-queue\] Change type hint from Closure to callable [\#286](https://github.com/php-enqueue/enqueue-dev/issues/286)
+- \[job-queue\] Change typehint, allow not only Closure but other callabl… [\#292](https://github.com/php-enqueue/enqueue-dev/pull/292) ([makasim](https://github.com/makasim))
+- \[doc\] yii2-queue amqp driver [\#282](https://github.com/php-enqueue/enqueue-dev/pull/282) ([makasim](https://github.com/makasim))
+
+- Consumer Requeue -\> DBAL NotNullConstraintViolationException [\#290](https://github.com/php-enqueue/enqueue-dev/issues/290)
+- Set custom logger [\#287](https://github.com/php-enqueue/enqueue-dev/issues/287)
+- \[Elastica\] persistence.driver = orm is optional [\#245](https://github.com/php-enqueue/enqueue-dev/issues/245)
+- \[dbal\] Fix message re-queuing. Reuse producer for it. [\#291](https://github.com/php-enqueue/enqueue-dev/pull/291) ([makasim](https://github.com/makasim))
+- \[consumption\] Add ability to overwrite logger. [\#289](https://github.com/php-enqueue/enqueue-dev/pull/289) ([makasim](https://github.com/makasim))
+
+- \[composer\] Add support details to composer.json [\#288](https://github.com/php-enqueue/enqueue-dev/issues/288)
+
 ## [0.8.10](https://github.com/php-enqueue/enqueue-dev/tree/0.8.10) (2017-12-04)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.9...0.8.10)
 
