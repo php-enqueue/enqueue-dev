@@ -1,6 +1,6 @@
 # Yii2Queue. AMQP Interop driver
 
-_**Note: ** This a copy of [AMQP Interop doc](https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/driver-amqp-interop.md) from the yiisoft/yii2-queue [repository](https://github.com/yiisoft/yii2-queue)._
+_**Note:** This a copy of [AMQP Interop doc](https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/driver-amqp-interop.md) from the yiisoft/yii2-queue [repository](https://github.com/yiisoft/yii2-queue)._
 
 
 The driver works with RabbitMQ queues.
