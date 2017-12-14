@@ -51,6 +51,11 @@
 * [Development](#development)
     - [Contribution](contribution.md)
 
+## Cookbook
+
+* [Symfony](#symfony-cookbook)
+    - [How to change consume command logger](cookbook/symfony/how-to-change-consume-command-logger.md)
+
 # Blogs
 
 * [Getting Started with RabbitMQ in PHP](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-php-84d331e20a66)
