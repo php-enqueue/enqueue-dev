@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/php-enqueue/enqueue-dev.png?branch=master)](https://travis-ci.org/php-enqueue/enqueue-dev)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-Enqueue is production ready, battle-tested messaging solution for PHP. Provides a common way for programs to create, send, read messages. 
+**Enqueue** is production ready, battle-tested messaging solution for PHP. Provides a common way for programs to create, send, read messages. 
 
 This is a main development repository. It provides a friendly environment for productive development and testing of all Enqueue related features&packages.
 
