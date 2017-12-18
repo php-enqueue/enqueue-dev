@@ -3,6 +3,7 @@ version: '2'
 services:
   dev:
     image: enqueue/dev:latest
+    working_dir: '/mqdev'
     depends_on:
       - rabbitmq
       - mysql
@@ -24,7 +25,7 @@ services:
       - RABBITMQ_PASSWORD=guest
       - RABBITMQ_VHOST=mqdev
       - RABBITMQ_AMQP__PORT=5672
-      - ﻿RABBITMQ_STOMP_PORT=61613
+      - RABBITMQ_STOMP_PORT=61613
       - DOCTRINE_DRIVER=pdo_mysql
       - DOCTRINE_HOST=mysql
       - DOCTRINE_PORT=3306
@@ -44,6 +45,22 @@ services:
       - RDKAFKA_PORT=9092
       - PUBSUB_EMULATOR_HOST=http://google-pubsub:8085
       - GCLOUD_PROJECT=mqdev
+
+  bench:
+    image: enqueue/dev:latest
+    working_dir: '/mqdev'
+    depends_on:
+      - rabbitmq
+    volumes:
+      - './:/mqdev'
+    environment:
+      - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_VHOST=mqdev
+      - RABBITMQ_AMQP_PORT=5672
+      - BODY_SIZE=$BODY_SIZE
 
   rabbitmq:
     image: 'enqueue/rabbitmq:latest'

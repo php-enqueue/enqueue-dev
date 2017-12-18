@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -x
+set -e
+
+COMPOSE_PROJECT_NAME=mqdev_bench docker-compose stop
+COMPOSE_PROJECT_NAME=mqdev_bench docker-compose down
+COMPOSE_PROJECT_NAME=mqdev_bench docker-compose run --rm bench ./docker/bin/bench "$@"
