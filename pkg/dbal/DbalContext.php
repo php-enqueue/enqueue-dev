@@ -170,7 +170,7 @@ class DbalContext implements PsrContext
             return;
         }
 
-        if ($this->getDbalConnection()->getDatabasePlatform()->hasNativeGuidType()) {
+        if (!$this->getDbalConnection()->getDatabasePlatform()->hasNativeGuidType()) {
             throw new \LogicException('The platform does not support UUIDs natively');
         }
 
