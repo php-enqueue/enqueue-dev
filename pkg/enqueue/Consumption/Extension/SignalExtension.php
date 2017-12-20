@@ -87,7 +87,7 @@ class SignalExtension implements ExtensionInterface
             if ($this->logger) {
                 $this->logger->debug('[SignalExtension] Interrupt execution');
             }
-            
+
             $context->setExecutionInterrupted($this->interruptConsumption);
 
             $this->interruptConsumption = false;
@@ -110,7 +110,7 @@ class SignalExtension implements ExtensionInterface
                 if ($this->logger) {
                     $this->logger->debug('[SignalExtension] Interrupt consumption');
                 }
-                
+
                 $this->interruptConsumption = true;
                 break;
             default:
