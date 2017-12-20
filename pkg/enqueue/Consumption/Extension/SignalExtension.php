@@ -18,7 +18,7 @@ class SignalExtension implements ExtensionInterface
     protected $interruptConsumption = false;
 
     /**
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
     protected $logger;
 
@@ -84,7 +84,10 @@ class SignalExtension implements ExtensionInterface
     public function interruptExecutionIfNeeded(Context $context)
     {
         if (false == $context->isExecutionInterrupted() && $this->interruptConsumption) {
-            $this->logger->debug('[SignalExtension] Interrupt execution');
+            if ($this->logger) {
+                $this->logger->debug('[SignalExtension] Interrupt execution');
+            }
+
             $context->setExecutionInterrupted($this->interruptConsumption);
 
             $this->interruptConsumption = false;
@@ -104,7 +107,10 @@ class SignalExtension implements ExtensionInterface
             case SIGTERM:  // 15 : supervisor default stop
             case SIGQUIT:  // 3  : kill -s QUIT
             case SIGINT:   // 2  : ctrl+c
-                $this->logger->debug('[SignalExtension] Interrupt consumption');
+                if ($this->logger) {
+                    $this->logger->debug('[SignalExtension] Interrupt consumption');
+                }
+
                 $this->interruptConsumption = true;
                 break;
             default:
