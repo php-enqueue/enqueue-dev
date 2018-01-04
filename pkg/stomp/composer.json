@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Message Queue Stomp Transport",
     "keywords": ["messaging", "queue", "stomp"],
-    "homepage": "https://github.com/php-enqueue/enqueue-dev",
+    "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
     "require": {
         "php": ">=5.6",

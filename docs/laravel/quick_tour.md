@@ -11,7 +11,7 @@ The package allows you to use queue interop transport the [laravel way](https://
 You have to install `enqueue/laravel-queue` packages and one of the [supported transports](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/transport).
 
 ```bash
-$ composer require enqueue/larvel-queue enqueue/fs
+$ composer require enqueue/laravel-queue enqueue/fs
 ```
 
 ## Register service provider

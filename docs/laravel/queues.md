@@ -22,7 +22,7 @@ return [
             'connection_factory_class' => \Enqueue\Fs\FsConnectionFactory::class,
             
             // the factory specific options
-            'dsn' => 'file://'.realpath(__DIR__.'/../storage').'/enqueue',
+            'dsn' => 'file://'.storage_path('enqueue'),
         ],
     ],
 ];
