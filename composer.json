@@ -2,7 +2,7 @@
   "name": "enqueue/enqueue-dev",
   "type": "project",
   "minimum-stability": "beta",
-  "homepage": "https://github.com/php-enqueue/enqueue-dev",
+  "homepage": "https://enqueue.forma-pro.com/",
   "require": {
     "php": ">=5.6",
     "enqueue/enqueue": "*@dev",

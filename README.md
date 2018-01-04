@@ -78,6 +78,7 @@ Features:
 
 ## Resources
 
+* [Site](https://enqueue.forma-pro.com/)
 * [Quick tour](docs/quick_tour.md)
 * [Documentation](docs/index.md)
 * [Blog](docs/index.md#blogs)

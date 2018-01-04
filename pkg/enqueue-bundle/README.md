@@ -9,6 +9,7 @@ Integrates message queue components to Symfony application.
 
 ## Resources
 
+* [Site](https://enqueue.forma-pro.com/)
 * [Quick tour](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
 * [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
