@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.12](https://github.com/php-enqueue/enqueue-dev/tree/0.8.12) (2018-01-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.11...0.8.12)
+
+- \[Elastica\] convert the Doctrine listeners to async too [\#244](https://github.com/php-enqueue/enqueue-dev/issues/244)
+- Using Laravel helper to resolve filepath [\#302](https://github.com/php-enqueue/enqueue-dev/pull/302) ([robinvdvleuten](https://github.com/robinvdvleuten))
+- Job queue create tables [\#293](https://github.com/php-enqueue/enqueue-dev/pull/293) ([makasim](https://github.com/makasim))
+
+- \[amqp-ext\] Unrecognized options "login, password, delay\_plugin\_installed" under "enqueue.transport.rabbitmq\_amqp [\#309](https://github.com/php-enqueue/enqueue-dev/issues/309)
+- Symfony Bundle: amqp bunny doesn't stop the execution of the CLI command [\#303](https://github.com/php-enqueue/enqueue-dev/issues/303)
+- \[rdkafka\] Don't do unnecessary subscribe\unsubscribe on every receive call [\#313](https://github.com/php-enqueue/enqueue-dev/pull/313) ([makasim](https://github.com/makasim))
+- \[consumption\] Fix signal handling when AMQP is used. [\#310](https://github.com/php-enqueue/enqueue-dev/pull/310) ([makasim](https://github.com/makasim))
+- Check if logger exists [\#299](https://github.com/php-enqueue/enqueue-dev/pull/299) ([pascaldevink](https://github.com/pascaldevink))
+
+- Changed larvel to laravel [\#301](https://github.com/php-enqueue/enqueue-dev/pull/301) ([robinvdvleuten](https://github.com/robinvdvleuten))
+- Fix reversed logic for native UUID detection [\#297](https://github.com/php-enqueue/enqueue-dev/pull/297) ([msheakoski](https://github.com/msheakoski))
+
 ## [0.8.11](https://github.com/php-enqueue/enqueue-dev/tree/0.8.11) (2017-12-14)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.10...0.8.11)
 
