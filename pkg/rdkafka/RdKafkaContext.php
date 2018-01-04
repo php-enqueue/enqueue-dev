@@ -30,11 +30,17 @@ class RdKafkaContext implements PsrContext
     private $producer;
 
     /**
+     * @var KafkaConsumer[]
+     */
+    private $kafkaConsumers;
+
+    /**
      * @param array $config
      */
     public function __construct(array $config)
     {
         $this->config = $config;
+        $this->kafkaConsumers = [];
 
         $this->setSerializer(new JsonSerializer());
     }
@@ -94,8 +100,10 @@ class RdKafkaContext implements PsrContext
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
 
+        $this->kafkaConsumers[] = $kafkaConsumer = new KafkaConsumer($this->getConf());
+
         $consumer = new RdKafkaConsumer(
-            new KafkaConsumer($this->getConf()),
+            $kafkaConsumer,
             $this,
             $destination,
             $this->getSerializer()
@@ -113,6 +121,12 @@ class RdKafkaContext implements PsrContext
      */
     public function close()
     {
+        $kafkaConsumers = $this->kafkaConsumers;
+        $this->kafkaConsumers = [];
+
+        foreach ($kafkaConsumers as $kafkaConsumer) {
+            $kafkaConsumer->unsubscribe();
+        }
     }
 
     /**

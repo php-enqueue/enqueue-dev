@@ -82,7 +82,11 @@ class RdKafkaConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        $this->consumer->subscribe([$this->topic->getTopicName()]);
+        if (false == $this->subscribed) {
+            $this->consumer->subscribe([$this->topic->getTopicName()]);
+
+            $this->subscribed = true;
+        }
 
         $message = null;
         if ($timeout > 0) {
@@ -94,8 +98,6 @@ class RdKafkaConsumer implements PsrConsumer
                 }
             }
         }
-
-        $this->consumer->unsubscribe();
 
         return $message;
     }
