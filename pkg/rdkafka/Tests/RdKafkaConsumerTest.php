@@ -59,10 +59,6 @@ class RdKafkaConsumerTest extends TestCase
             ->with(1000)
             ->willReturn($kafkaMessage)
         ;
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('unsubscribe')
-        ;
 
         $consumer = new RdKafkaConsumer(
             $kafkaConsumer,
@@ -72,6 +68,37 @@ class RdKafkaConsumerTest extends TestCase
         );
 
         $this->assertNull($consumer->receive(1000));
+    }
+
+    public function testShouldSubscribeOnFirstReceiveOnly()
+    {
+        $destination = new RdKafkaTopic('dest');
+
+        $kafkaMessage = new Message();
+        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+
+        $kafkaConsumer = $this->createKafkaConsumerMock();
+        $kafkaConsumer
+            ->expects($this->once())
+            ->method('subscribe')
+            ->with(['dest'])
+        ;
+        $kafkaConsumer
+            ->expects($this->any())
+            ->method('consume')
+            ->willReturn($kafkaMessage)
+        ;
+
+        $consumer = new RdKafkaConsumer(
+            $kafkaConsumer,
+            $this->createContextMock(),
+            $destination,
+            $this->createSerializerMock()
+        );
+
+        $consumer->receive(1000);
+        $consumer->receive(1000);
+        $consumer->receive(1000);
     }
 
     public function testShouldReceiveFromQueueAndReturnMessageIfMessageInQueue()
@@ -95,10 +122,6 @@ class RdKafkaConsumerTest extends TestCase
             ->method('consume')
             ->with(1000)
             ->willReturn($kafkaMessage)
-        ;
-        $kafkaConsumer
-            ->expects($this->once())
-            ->method('unsubscribe')
         ;
 
         $serializer = $this->createSerializerMock();
