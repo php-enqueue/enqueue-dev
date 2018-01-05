@@ -50,8 +50,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('subscribe')
-            ->with(['dest'])
+            ->method('assign')
         ;
         $kafkaConsumer
             ->expects($this->once())
@@ -70,7 +69,7 @@ class RdKafkaConsumerTest extends TestCase
         $this->assertNull($consumer->receive(1000));
     }
 
-    public function testShouldSubscribeOnFirstReceiveOnly()
+    public function testShouldPassProperlyConfiguredTopicPartitionOnAssign()
     {
         $destination = new RdKafkaTopic('dest');
 
@@ -80,8 +79,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('subscribe')
-            ->with(['dest'])
+            ->method('assign')
         ;
         $kafkaConsumer
             ->expects($this->any())
@@ -101,6 +99,68 @@ class RdKafkaConsumerTest extends TestCase
         $consumer->receive(1000);
     }
 
+    public function testShouldSubscribeOnFirstReceiveOnly()
+    {
+        $destination = new RdKafkaTopic('dest');
+
+        $kafkaMessage = new Message();
+        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+
+        $kafkaConsumer = $this->createKafkaConsumerMock();
+        $kafkaConsumer
+            ->expects($this->once())
+            ->method('assign')
+        ;
+        $kafkaConsumer
+            ->expects($this->any())
+            ->method('consume')
+            ->willReturn($kafkaMessage)
+        ;
+
+        $consumer = new RdKafkaConsumer(
+            $kafkaConsumer,
+            $this->createContextMock(),
+            $destination,
+            $this->createSerializerMock()
+        );
+
+        $consumer->receive(1000);
+        $consumer->receive(1000);
+        $consumer->receive(1000);
+    }
+
+    public function testThrowOnOffsetChangeAfterSubscribing()
+    {
+        $destination = new RdKafkaTopic('dest');
+
+        $kafkaMessage = new Message();
+        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+
+        $kafkaConsumer = $this->createKafkaConsumerMock();
+        $kafkaConsumer
+            ->expects($this->once())
+            ->method('assign')
+        ;
+        $kafkaConsumer
+            ->expects($this->any())
+            ->method('consume')
+            ->willReturn($kafkaMessage)
+        ;
+
+        $consumer = new RdKafkaConsumer(
+            $kafkaConsumer,
+            $this->createContextMock(),
+            $destination,
+            $this->createSerializerMock()
+        );
+
+        $consumer->receive(1000);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The consumer has already subscribed.');
+        $consumer->setOffset(123);
+    }
+
     public function testShouldReceiveFromQueueAndReturnMessageIfMessageInQueue()
     {
         $destination = new RdKafkaTopic('dest');
@@ -114,8 +174,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('subscribe')
-            ->with(['dest'])
+            ->method('assign')
         ;
         $kafkaConsumer
             ->expects($this->once())
