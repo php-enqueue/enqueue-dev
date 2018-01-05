@@ -8,6 +8,7 @@ The transport uses [Kafka](https://kafka.apache.org/) streaming platform as a MQ
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)
 * [Serialize message](#serialize-message)
+* [Chnage offset](#change-offset)
 
 ## Installation
 
@@ -84,6 +85,9 @@ $fooQueue = $psrContext->createQueue('foo');
 
 $consumer = $psrContext->createConsumer($fooQueue);
 
+// Enable async commit to gain better performance. 
+//$consumer->setCommitAsync(true);
+
 $message = $consumer->receive();
 
 // process a message
@@ -113,6 +117,23 @@ class FooSerializer implements Serializer
 /** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
 
 $psrContext->setSerializer(new FooSerializer());
+```
+
+## Change offset
+
+By default consumers starts from the beginning of the topic and updates the offset while you are processing messages.
+There is an ability to change the current offset.
+
+```php
+<?php
+/** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
+
+$fooQueue = $psrContext->createQueue('foo');
+
+$consumer = $psrContext->createConsumer($fooQueue);
+$consumer->setOffset(123);
+
+$message = $consumer->receive(2000);
 ```
 
 [back to index](index.md)

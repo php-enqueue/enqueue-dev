@@ -58,6 +58,27 @@ class RedisTransportFactoryTest extends TestCase
             'vendor' => 'phpredis',
             'persisted' => true,
             'lazy' => false,
+            'database' => 0,
+        ], $config);
+    }
+
+    public function testShouldAllowAddConfigurationFromDSN()
+    {
+        $transport = new RedisTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [[
+            'dsn' => 'redis://localhost:8080?vendor=predis&persisted=false&lazy=true&database=5',
+        ]]);
+
+        $this->assertEquals([
+            'persisted' => false,
+            'lazy' => true,
+            'database' => 0,
+            'dsn' => 'redis://localhost:8080?vendor=predis&persisted=false&lazy=true&database=5',
         ], $config);
     }
 

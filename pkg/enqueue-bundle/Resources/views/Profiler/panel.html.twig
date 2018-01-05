@@ -28,6 +28,7 @@
 
 {% block panel %}
     <h2>Sent messages</h2>
+    {% if collector.sentMessages|length > 0 %}
     <table>
         <thead>
         <tr>
@@ -59,4 +60,9 @@
         </tbody>
 
     </table>
+    {% else %}
+        <div class="empty">
+            <p>No messages were sent.</p>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -18,6 +18,8 @@ Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 
 ## Installation
 
+_**Warning**: You need amqp extension of at least 1.9.3. Here's how you can [compile](https://github.com/php-enqueue/enqueue-dev/blob/09d209447b9dbdf118bff7d983fcb8b0f919e789/docker/Dockerfile#L8) the extension from the [source code](https://github.com/pdezwart/php-amqp)._
+
 ```bash
 $ composer require enqueue/amqp-ext
 ```
@@ -49,6 +51,14 @@ $factory = new AmqpConnectionFactory([
 
 // same as above but given as DSN string
 $factory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
+
+// SSL or secure connection 
+$factory = new AmqpConnectionFactory([
+    'dsn' => 'amqps:',
+    'ssl_cacert' => '/path/to/cacert.pem',
+    'ssl_cert' => '/path/to/cert.pem',
+    'ssl_key' => '/path/to/key.pem',
+]);
 
 $psrContext = $factory->createContext();
 

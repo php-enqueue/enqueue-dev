@@ -130,33 +130,10 @@ class DbalConsumer implements PsrConsumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
-        if (false == $requeue) {
+        if ($requeue) {
+            $this->context->createProducer()->send($this->queue, $message);
+
             return;
-        }
-
-        $dbalMessage = [
-            'body' => $message->getBody(),
-            'headers' => JSON::encode($message->getHeaders()),
-            'properties' => JSON::encode($message->getProperties()),
-            'priority' => $message->getPriority(),
-            'queue' => $this->queue->getQueueName(),
-            'redelivered' => true,
-        ];
-
-        $affectedRows = $this->dbal->insert($this->context->getTableName(), $dbalMessage, [
-            'body' => Type::TEXT,
-            'headers' => Type::TEXT,
-            'properties' => Type::TEXT,
-            'priority' => Type::SMALLINT,
-            'queue' => Type::STRING,
-            'redelivered' => Type::BOOLEAN,
-        ]);
-
-        if (1 !== $affectedRows) {
-            throw new \LogicException(sprintf(
-                'Expected record was inserted but it is not. message: "%s"',
-                JSON::encode($dbalMessage)
-            ));
         }
     }
 

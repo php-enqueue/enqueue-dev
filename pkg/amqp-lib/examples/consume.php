@@ -18,11 +18,11 @@ if ($autoload) {
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 
 $config = [
-    'host' => getenv('SYMFONY__RABBITMQ__HOST'),
-    'port' => getenv('SYMFONY__RABBITMQ__AMQP__PORT'),
-    'user' => getenv('SYMFONY__RABBITMQ__USER'),
-    'pass' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
-    'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+    'host' => getenv('RABBITMQ_HOST'),
+    'port' => getenv('RABBITMQ_AMQP__PORT'),
+    'user' => getenv('RABBITMQ_USER'),
+    'pass' => getenv('RABBITMQ_PASSWORD'),
+    'vhost' => getenv('RABBITMQ_VHOST'),
     'receive_method' => 'basic_consume',
 ];
 

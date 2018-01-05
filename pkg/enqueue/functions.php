@@ -34,9 +34,11 @@ function dsn_to_connection_factory($dsn)
 
     if (class_exists(AmqpExtConnectionFactory::class)) {
         $map['amqp+ext'] = AmqpExtConnectionFactory::class;
+        $map['amqps+ext'] = AmqpExtConnectionFactory::class;
     }
     if (class_exists(AmqpLibConnectionFactory::class)) {
         $map['amqp+lib'] = AmqpLibConnectionFactory::class;
+        $map['amqps+lib'] = AmqpLibConnectionFactory::class;
     }
     if (class_exists(AmqpBunnyConnectionFactory::class)) {
         $map['amqp+bunny'] = AmqpBunnyConnectionFactory::class;
@@ -48,6 +50,12 @@ function dsn_to_connection_factory($dsn)
         $map['amqp'] = AmqpBunnyConnectionFactory::class;
     } elseif (class_exists(AmqpLibConnectionFactory::class)) {
         $map['amqp'] = AmqpLibConnectionFactory::class;
+    }
+
+    if (class_exists(AmqpExtConnectionFactory::class)) {
+        $map['amqps'] = AmqpExtConnectionFactory::class;
+    } elseif (class_exists(AmqpLibConnectionFactory::class)) {
+        $map['amqps'] = AmqpLibConnectionFactory::class;
     }
 
     if (class_exists(NullConnectionFactory::class)) {

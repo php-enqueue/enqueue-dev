@@ -70,6 +70,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         $this->connection = $connection;
         $this->buffer = new Buffer();
+        $this->subscribers = [];
     }
 
     /**

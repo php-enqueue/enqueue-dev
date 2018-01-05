@@ -12,7 +12,7 @@ class DependentJobServiceTest extends WebTestCase
 {
     public function testCouldBeConstructedByContainer()
     {
-        $instance = $this->container->get('enqueue.job.dependent_job_service');
+        $instance = $this->container->get(DependentJobService::class);
 
         $this->assertInstanceOf(DependentJobService::class, $instance);
     }

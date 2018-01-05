@@ -59,6 +59,7 @@ class RabbitMqStompTransportFactory extends StompTransportFactory
         $container->setDefinition($managementId, $management);
 
         $driver = new Definition(RabbitMqStompDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),

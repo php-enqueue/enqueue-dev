@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
+use Enqueue\Client\Meta\TopicMetaRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -44,7 +45,7 @@ class AddTopicMetaPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $metaRegistryId = 'enqueue.client.meta.topic_meta_registry';
+        $metaRegistryId = TopicMetaRegistry::class;
 
         if (false == $container->hasDefinition($metaRegistryId)) {
             return;

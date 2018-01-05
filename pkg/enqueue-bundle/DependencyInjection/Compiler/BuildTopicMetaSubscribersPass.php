@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
+use Enqueue\Client\Meta\TopicMetaRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -16,7 +17,7 @@ class BuildTopicMetaSubscribersPass implements CompilerPassInterface
     {
         $processorTagName = 'enqueue.client.processor';
 
-        if (false == $container->hasDefinition('enqueue.client.meta.topic_meta_registry')) {
+        if (false == $container->hasDefinition(TopicMetaRegistry::class)) {
             return;
         }
 

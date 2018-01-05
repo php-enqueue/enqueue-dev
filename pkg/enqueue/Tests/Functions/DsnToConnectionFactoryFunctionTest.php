@@ -2,7 +2,9 @@
 
 namespace Enqueue\Tests\Functions;
 
-use Enqueue\AmqpExt\AmqpConnectionFactory;
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
@@ -56,9 +58,21 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
 
     public static function provideDSNs()
     {
-        yield ['amqp:', AmqpConnectionFactory::class];
+        yield ['amqp:', AmqpExtConnectionFactory::class];
 
-        yield ['amqp://user:pass@foo/vhost', AmqpConnectionFactory::class];
+        yield ['amqps:', AmqpExtConnectionFactory::class];
+
+        yield ['amqp+ext:', AmqpExtConnectionFactory::class];
+
+        yield ['amqps+ext:', AmqpExtConnectionFactory::class];
+
+        yield ['amqp+lib:', AmqpLibConnectionFactory::class];
+
+        yield ['amqps+lib:', AmqpLibConnectionFactory::class];
+
+        yield ['amqp+bunny:', AmqpBunnyConnectionFactory::class];
+
+        yield ['amqp://user:pass@foo/vhost', AmqpExtConnectionFactory::class];
 
         yield ['file:', FsConnectionFactory::class];
 
@@ -72,7 +86,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
 
         yield ['beanstalk:', PheanstalkConnectionFactory::class];
 
-        //        yield ['gearman:', GearmanConnectionFactory::class];
+//        yield ['gearman:', GearmanConnectionFactory::class];
 
         yield ['kafka:', RdKafkaConnectionFactory::class];
 

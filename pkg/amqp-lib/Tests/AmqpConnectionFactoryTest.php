@@ -20,9 +20,10 @@ class AmqpConnectionFactoryTest extends TestCase
     {
         // no exception here
         new AmqpConnectionFactory('amqp+lib:');
+        new AmqpConnectionFactory('amqps+lib:');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN scheme "amqp+foo" is not supported. Could be one of "amqp", "amqp+lib" only.');
+        $this->expectExceptionMessage('The given DSN scheme "amqp+foo" is not supported. Could be one of "amqp", "amqps", "amqp+lib');
         new AmqpConnectionFactory('amqp+foo:');
     }
 }

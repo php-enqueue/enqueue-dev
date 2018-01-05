@@ -2,14 +2,12 @@
 
 namespace Enqueue\Fs;
 
-use Doctrine\ORM\Cache\Lock;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrQueue;
 use Makasim\File\TempFile;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\LockHandler;
 
 class FsContext implements PsrContext
 {
@@ -29,14 +27,14 @@ class FsContext implements PsrContext
     private $chmod;
 
     /**
-     * @var LockHandler[]
-     */
-    private $lockHandlers;
-
-    /**
      * @var null
      */
     private $pollingInterval;
+
+    /**
+     * @var Lock
+     */
+    private $lock;
 
     /**
      * @param string $storeDir
@@ -54,7 +52,7 @@ class FsContext implements PsrContext
         $this->chmod = $chmod;
         $this->pollingInterval = $pollingInterval;
 
-        $this->lockHandlers = [];
+        $this->lock = new LegacyFilesystemLock();
     }
 
     /**
@@ -95,11 +93,6 @@ class FsContext implements PsrContext
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
         set_error_handler(function ($severity, $message, $file, $line) {
-            // do not throw on a deprecation notice.
-            if (E_USER_DEPRECATED === $severity && false !== strpos($message, LockHandler::class)) {
-                return;
-            }
-
             throw new \ErrorException($message, 0, $severity, $file, $line);
         });
 
@@ -123,20 +116,14 @@ class FsContext implements PsrContext
 
         try {
             $file = fopen($destination->getFileInfo(), $mode);
-            $lockHandler = $this->getLockHandler($destination);
-
-            if (false == $lockHandler->lock(true)) {
-                throw new \LogicException(sprintf('Cannot obtain the lock for destination %s', $destination->getName()));
-            }
+            $this->lock->lock($destination);
 
             return call_user_func($callback, $destination, $file);
         } finally {
             if (isset($file)) {
                 fclose($file);
             }
-            if (isset($lockHandler)) {
-                $lockHandler->release();
-            }
+            $this->lock->release($destination);
 
             restore_error_handler();
         }
@@ -184,11 +171,7 @@ class FsContext implements PsrContext
 
     public function close()
     {
-        foreach ($this->lockHandlers as $lockHandler) {
-            $lockHandler->release();
-        }
-
-        $this->lockHandlers = [];
+        $this->lock->releaseAll();
     }
 
     /**
@@ -233,19 +216,5 @@ class FsContext implements PsrContext
         }
 
         return $this->storeDir;
-    }
-
-    /**
-     * @param FsDestination $destination
-     *
-     * @return LockHandler
-     */
-    private function getLockHandler(FsDestination $destination)
-    {
-        if (false == isset($this->lockHandlers[$destination->getName()])) {
-            $this->lockHandlers[$destination->getName()] = new LockHandler($destination->getName(), $this->storeDir);
-        }
-
-        return $this->lockHandlers[$destination->getName()];
     }
 }

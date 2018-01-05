@@ -5,6 +5,9 @@ namespace Enqueue\JobQueue;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema as BaseSchema;
 
+/**
+ * @deprecated since 0.8, will be removed in 0.9
+ */
 class Schema extends BaseSchema
 {
     /**

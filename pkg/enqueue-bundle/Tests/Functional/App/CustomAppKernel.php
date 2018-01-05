@@ -13,6 +13,8 @@ class CustomAppKernel extends Kernel
 {
     use MicroKernelTrait;
 
+    private $enqueueConfigId;
+
     private $enqueueConfig = [
         'client' => [
             'prefix' => 'enqueue',
@@ -25,11 +27,13 @@ class CustomAppKernel extends Kernel
 
     public function setEnqueueConfig(array $config)
     {
-        $fs = new Filesystem();
-        $fs->remove(sys_get_temp_dir().'/EnqueueBundleCustom/cache');
-        $fs->mkdir(sys_get_temp_dir().'/EnqueueBundleCustom/cache');
-
         $this->enqueueConfig = array_replace_recursive($this->enqueueConfig, $config);
+        $this->enqueueConfig['client']['app_name'] = str_replace('.', '', uniqid(true));
+        $this->enqueueConfigId = md5(json_encode($this->enqueueConfig));
+
+        $fs = new Filesystem();
+        $fs->remove(sys_get_temp_dir().'/EnqueueBundleCustom/cache/'.$this->enqueueConfigId);
+        $fs->mkdir(sys_get_temp_dir().'/EnqueueBundleCustom/cache/'.$this->enqueueConfigId);
     }
 
     /**
@@ -52,7 +56,7 @@ class CustomAppKernel extends Kernel
      */
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/EnqueueBundleCustom/cache';
+        return sys_get_temp_dir().'/EnqueueBundleCustom/cache/'.$this->enqueueConfigId;
     }
 
     /**
@@ -60,12 +64,12 @@ class CustomAppKernel extends Kernel
      */
     public function getLogDir()
     {
-        return sys_get_temp_dir().'/EnqueueBundleCustom/cache/logs';
+        return sys_get_temp_dir().'/EnqueueBundleCustom/cache/logs/'.$this->enqueueConfigId;
     }
 
     protected function getContainerClass()
     {
-        return parent::getContainerClass().'Custom';
+        return parent::getContainerClass().'Custom'.$this->enqueueConfigId;
     }
 
     /**

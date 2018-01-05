@@ -71,6 +71,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'vendor' => 'phpredis',
                 'persisted' => false,
                 'lazy' => true,
+                'database' => 0,
             ],
         ];
 
@@ -85,6 +86,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'vendor' => 'phpredis',
                 'persisted' => false,
                 'lazy' => true,
+                'database' => 0,
             ],
         ];
 
@@ -99,11 +101,12 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'vendor' => 'phpredis',
                 'persisted' => false,
                 'lazy' => true,
+                'database' => 0,
             ],
         ];
 
         yield [
-            'redis://localhost:1234?foo=bar&lazy=0&persisted=true',
+            'redis://localhost:1234?foo=bar&lazy=0&persisted=true&database=5',
             [
                 'host' => 'localhost',
                 'port' => 1234,
@@ -114,6 +117,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => true,
                 'lazy' => false,
                 'foo' => 'bar',
+                'database' => 5,
             ],
         ];
 
@@ -129,6 +133,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => false,
                 'lazy' => true,
                 'foo' => 'bar',
+                'database' => 0,
             ],
         ];
     }

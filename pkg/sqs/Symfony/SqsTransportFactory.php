@@ -69,6 +69,7 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
         $context = new Definition(SqsContext::class);
+        $context->setPublic(true);
         $context->setFactory([new Reference($factoryId), 'createContext']);
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
@@ -83,6 +84,7 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
     public function createDriver(ContainerBuilder $container, array $config)
     {
         $driver = new Definition(SqsDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),

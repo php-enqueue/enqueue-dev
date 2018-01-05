@@ -1,4 +1,4 @@
-# Documentation.
+## Documentation.
 
 * [Quick tour](quick_tour.md)
 * [Transports](#transports)
@@ -22,6 +22,7 @@
     - [Supported brokers](client/supported_brokers.md)
     - [Message bus](client/message_bus.md)
     - [RPC call](client/rpc_call.md)
+    - [Extensions](client/extensions.md)
 * [Job queue](#job-queue)
     - [Run unique job](job_queue/run_unique_job.md)
     - [Run sub job(s)](job_queue/run_sub_job.md)
@@ -43,14 +44,21 @@
 * [Magento](#magento)
     - [Quick tour](magento/quick_tour.md)
     - [Cli commands](magento/cli_commands.md)
+* [Yii](#yii)
+    - [AMQP Interop driver](yii/amqp_driver.md)
+* [EnqueueElasticaBundle. Overview](elastica-bundle/overview.md)
 * [Use cases](#use-cases)
-    - [FOSElasticaBundle. Populate command optimizations](elastica-bundle/populate-command-optimization.md)
     - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
     - [Monolog. Send messages to message queue](monolog/send-messages-to-mq.md)
 * [Development](#development)
     - [Contribution](contribution.md)
 
-# Blogs
+## Cookbook
+
+* [Symfony](#symfony-cookbook)
+    - [How to change consume command logger](cookbook/symfony/how-to-change-consume-command-logger.md)
+
+## Blogs
 
 * [Getting Started with RabbitMQ in PHP](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-php-84d331e20a66)
 * [Getting Started with RabbitMQ in Symfony](https://blog.forma-pro.com/getting-started-with-rabbitmq-in-symfony-cb06e0b674f1)
@@ -63,3 +71,4 @@
 * [Message bus to every PHP application](https://blog.forma-pro.com/message-bus-to-every-php-application-42a7d3fbb30b)
 * [Symfony Async EventDispatcher](https://blog.forma-pro.com/symfony-async-eventdispatcher-d01055a255cf)
 * [Spool Swiftmailer emails to real message queue.](https://blog.forma-pro.com/spool-swiftmailer-emails-to-real-message-queue-9ecb8b53b5de)
+* [Yii PHP Framework has adopted AMQP Interop.](https://blog.forma-pro.com/yii-php-framework-has-adopted-amqp-interop-85ab47c9869f)

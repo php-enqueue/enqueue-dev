@@ -2,6 +2,9 @@
 
 namespace Enqueue\Bundle;
 
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventsPass;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncTransformersPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
@@ -16,6 +19,8 @@ use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Gps\GpsConnectionFactory;
+use Enqueue\Gps\Symfony\GpsTransportFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
@@ -52,8 +57,14 @@ class EnqueueBundle extends Bundle
             $extension->addTransportFactory(new RabbitMqStompTransportFactory());
         }
 
-        $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
-        $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
+        if (
+            class_exists(AmqpBunnyConnectionFactory::class) ||
+            class_exists(AmqpExtConnectionFactory::class) ||
+            class_exists(AmqpLibConnectionFactory::class)
+        ) {
+            $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
+            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
+        }
 
         if (class_exists(FsConnectionFactory::class)) {
             $extension->addTransportFactory(new FsTransportFactory());
@@ -69,6 +80,10 @@ class EnqueueBundle extends Bundle
 
         if (class_exists(SqsConnectionFactory::class)) {
             $extension->addTransportFactory(new SqsTransportFactory());
+        }
+
+        if (class_exists(GpsConnectionFactory::class)) {
+            $extension->addTransportFactory(new GpsTransportFactory());
         }
 
         $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

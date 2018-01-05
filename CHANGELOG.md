@@ -1,5 +1,145 @@
 # Change Log
 
+## [0.8.12](https://github.com/php-enqueue/enqueue-dev/tree/0.8.12) (2018-01-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.11...0.8.12)
+
+- \[Elastica\] convert the Doctrine listeners to async too [\#244](https://github.com/php-enqueue/enqueue-dev/issues/244)
+- Using Laravel helper to resolve filepath [\#302](https://github.com/php-enqueue/enqueue-dev/pull/302) ([robinvdvleuten](https://github.com/robinvdvleuten))
+- Job queue create tables [\#293](https://github.com/php-enqueue/enqueue-dev/pull/293) ([makasim](https://github.com/makasim))
+
+- \[amqp-ext\] Unrecognized options "login, password, delay\_plugin\_installed" under "enqueue.transport.rabbitmq\_amqp [\#309](https://github.com/php-enqueue/enqueue-dev/issues/309)
+- Symfony Bundle: amqp bunny doesn't stop the execution of the CLI command [\#303](https://github.com/php-enqueue/enqueue-dev/issues/303)
+- \[rdkafka\] Don't do unnecessary subscribe\unsubscribe on every receive call [\#313](https://github.com/php-enqueue/enqueue-dev/pull/313) ([makasim](https://github.com/makasim))
+- \[consumption\] Fix signal handling when AMQP is used. [\#310](https://github.com/php-enqueue/enqueue-dev/pull/310) ([makasim](https://github.com/makasim))
+- Check if logger exists [\#299](https://github.com/php-enqueue/enqueue-dev/pull/299) ([pascaldevink](https://github.com/pascaldevink))
+
+- Changed larvel to laravel [\#301](https://github.com/php-enqueue/enqueue-dev/pull/301) ([robinvdvleuten](https://github.com/robinvdvleuten))
+- Fix reversed logic for native UUID detection [\#297](https://github.com/php-enqueue/enqueue-dev/pull/297) ([msheakoski](https://github.com/msheakoski))
+
+## [0.8.11](https://github.com/php-enqueue/enqueue-dev/tree/0.8.11) (2017-12-14)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.10...0.8.11)
+
+- \[job-queue\] Change type hint from Closure to callable [\#286](https://github.com/php-enqueue/enqueue-dev/issues/286)
+- \[job-queue\] Change typehint, allow not only Closure but other callabl… [\#292](https://github.com/php-enqueue/enqueue-dev/pull/292) ([makasim](https://github.com/makasim))
+- \[doc\] yii2-queue amqp driver [\#282](https://github.com/php-enqueue/enqueue-dev/pull/282) ([makasim](https://github.com/makasim))
+
+- Consumer Requeue -\> DBAL NotNullConstraintViolationException [\#290](https://github.com/php-enqueue/enqueue-dev/issues/290)
+- Set custom logger [\#287](https://github.com/php-enqueue/enqueue-dev/issues/287)
+- \[Elastica\] persistence.driver = orm is optional [\#245](https://github.com/php-enqueue/enqueue-dev/issues/245)
+- \[dbal\] Fix message re-queuing. Reuse producer for it. [\#291](https://github.com/php-enqueue/enqueue-dev/pull/291) ([makasim](https://github.com/makasim))
+- \[consumption\] Add ability to overwrite logger. [\#289](https://github.com/php-enqueue/enqueue-dev/pull/289) ([makasim](https://github.com/makasim))
+
+- \[composer\] Add support details to composer.json [\#288](https://github.com/php-enqueue/enqueue-dev/issues/288)
+
+## [0.8.10](https://github.com/php-enqueue/enqueue-dev/tree/0.8.10) (2017-12-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.9...0.8.10)
+
+- \[dbal\] Store id \(uuid\) as binary data. [\#279](https://github.com/php-enqueue/enqueue-dev/issues/279)
+- \[doc\] Add a doc with job queue doctrine migration example [\#278](https://github.com/php-enqueue/enqueue-dev/issues/278)
+- Add mongodb support. [\#251](https://github.com/php-enqueue/enqueue-dev/issues/251)
+- Add zeromq support [\#208](https://github.com/php-enqueue/enqueue-dev/issues/208)
+- \[amqp-lib\] It should be possible to create queue without a name,  [\#145](https://github.com/php-enqueue/enqueue-dev/issues/145)
+- \[doc\] Add the doc for client extensions [\#73](https://github.com/php-enqueue/enqueue-dev/issues/73)
+- \[doc\]\[skip ci\] add doc for client on send extensions. [\#285](https://github.com/php-enqueue/enqueue-dev/pull/285) ([makasim](https://github.com/makasim))
+- \[doc\]\[skip ci\] Add processor examples, notes on exception and more. [\#283](https://github.com/php-enqueue/enqueue-dev/pull/283) ([makasim](https://github.com/makasim))
+- \[travis\] add PHP 7.2 to build matrix. [\#281](https://github.com/php-enqueue/enqueue-dev/pull/281) ([makasim](https://github.com/makasim))
+
+- \[enqueue/dbal\] Logic for "The platform does not support UUIDs natively" is incorrect [\#276](https://github.com/php-enqueue/enqueue-dev/issues/276)
+
+## [0.8.9](https://github.com/php-enqueue/enqueue-dev/tree/0.8.9) (2017-11-21)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.8...0.8.9)
+
+- \[rdkafka\] Introduce KeySerializer  [\#255](https://github.com/php-enqueue/enqueue-dev/issues/255)
+- \[amqp-lib\]\[RabbitMQ\] Publisher Confirms [\#206](https://github.com/php-enqueue/enqueue-dev/issues/206)
+- \[client\]\[amqp\] Idea. Add support of dead queues [\#39](https://github.com/php-enqueue/enqueue-dev/issues/39)
+- \[docker\] Incorporate amqp ext compilation to docker build process. [\#275](https://github.com/php-enqueue/enqueue-dev/pull/275) ([makasim](https://github.com/makasim))
+- \[fs\] Copy past Symfony's LockHandler \(not awailable in Sf4\). [\#272](https://github.com/php-enqueue/enqueue-dev/pull/272) ([makasim](https://github.com/makasim))
+- Add Symfony4 support [\#269](https://github.com/php-enqueue/enqueue-dev/pull/269) ([makasim](https://github.com/makasim))
+- \[bundle\] use enqueue logo in profiler panel. [\#268](https://github.com/php-enqueue/enqueue-dev/pull/268) ([makasim](https://github.com/makasim))
+
+- \[bundle\] Apparently the use case tests have never worked properly. [\#273](https://github.com/php-enqueue/enqueue-dev/pull/273) ([makasim](https://github.com/makasim))
+- \[rdkafka\] do not pass config if it was not set explisitly. [\#263](https://github.com/php-enqueue/enqueue-dev/pull/263) ([makasim](https://github.com/makasim))
+
+- \[amqp-ext\] Problem with consume messages [\#274](https://github.com/php-enqueue/enqueue-dev/issues/274)
+
+## [0.8.8](https://github.com/php-enqueue/enqueue-dev/tree/0.8.8) (2017-11-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.7...0.8.8)
+
+- \[Redis\] add dsn support for symfony bundle. [\#266](https://github.com/php-enqueue/enqueue-dev/pull/266) ([wilson-ng](https://github.com/wilson-ng))
+
+- onIdle is not triggered [\#260](https://github.com/php-enqueue/enqueue-dev/issues/260)
+- On exception Context is not set  [\#259](https://github.com/php-enqueue/enqueue-dev/issues/259)
+- \[consumption\]\[amqp\] onIdle is never called. [\#265](https://github.com/php-enqueue/enqueue-dev/pull/265) ([makasim](https://github.com/makasim))
+- \[consumption\] fix context is missing message on exception. [\#264](https://github.com/php-enqueue/enqueue-dev/pull/264) ([makasim](https://github.com/makasim))
+
+## [0.8.7](https://github.com/php-enqueue/enqueue-dev/tree/0.8.7) (2017-11-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.6...0.8.7)
+
+- \[Redis\] add custom database index [\#258](https://github.com/php-enqueue/enqueue-dev/pull/258) ([IndraGunawan](https://github.com/IndraGunawan))
+
+- SetRouterPropertiesExtension does not work with SQS [\#261](https://github.com/php-enqueue/enqueue-dev/issues/261)
+
+- Changes SetRouterPropertiesExtension to use the driver to generate the queue name [\#262](https://github.com/php-enqueue/enqueue-dev/pull/262) ([iainmckay](https://github.com/iainmckay))
+
+## [0.8.6](https://github.com/php-enqueue/enqueue-dev/tree/0.8.6) (2017-11-05)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.5...0.8.6)
+
+- \[RdKafka\] Enable serializers to serialize message keys [\#254](https://github.com/php-enqueue/enqueue-dev/pull/254) ([tPl0ch](https://github.com/tPl0ch))
+
+- \[Elastica Bundle\] tag 0.8 [\#253](https://github.com/php-enqueue/enqueue-dev/issues/253)
+
+## [0.8.5](https://github.com/php-enqueue/enqueue-dev/tree/0.8.5) (2017-11-02)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.4...0.8.5)
+
+- Amqp add ssl pass phrase option [\#249](https://github.com/php-enqueue/enqueue-dev/pull/249) ([makasim](https://github.com/makasim))
+
+- \[amqp-lib\] Ignore empty ssl options. [\#248](https://github.com/php-enqueue/enqueue-dev/pull/248) ([makasim](https://github.com/makasim))
+
+## [0.8.4](https://github.com/php-enqueue/enqueue-dev/tree/0.8.4) (2017-11-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.3...0.8.4)
+
+## [0.8.3](https://github.com/php-enqueue/enqueue-dev/tree/0.8.3) (2017-11-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.2...0.8.3)
+
+- \[Symfony\]\[Minor\] profiler view when no messages collected during the request [\#243](https://github.com/php-enqueue/enqueue-dev/issues/243)
+- \[bundle\] streamline profiler view when no messages were sent [\#247](https://github.com/php-enqueue/enqueue-dev/pull/247) ([dkarlovi](https://github.com/dkarlovi))
+- \[bundle\] Renamed exposed services' name to classes' FQCN [\#242](https://github.com/php-enqueue/enqueue-dev/pull/242) ([Lctrs](https://github.com/Lctrs))
+
+## [0.8.2](https://github.com/php-enqueue/enqueue-dev/tree/0.8.2) (2017-10-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.1...0.8.2)
+
+- \[amqp\] add ssl support  [\#147](https://github.com/php-enqueue/enqueue-dev/issues/147)
+- \[amqp\] Add AMQP secure \(SSL\) connections support [\#246](https://github.com/php-enqueue/enqueue-dev/pull/246) ([makasim](https://github.com/makasim))
+
+## [0.8.1](https://github.com/php-enqueue/enqueue-dev/tree/0.8.1) (2017-10-23)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.0...0.8.1)
+
+- Allow kafka tests to fail.  [\#232](https://github.com/php-enqueue/enqueue-dev/issues/232)
+- GPS Integration [\#239](https://github.com/php-enqueue/enqueue-dev/pull/239) ([ASKozienko](https://github.com/ASKozienko))
+
+- GPSTransportFactory registration is missing from EnqueueBundle [\#235](https://github.com/php-enqueue/enqueue-dev/issues/235)
+
+- Only add Ampq transport factories when packages are found [\#241](https://github.com/php-enqueue/enqueue-dev/pull/241) ([jverdeyen](https://github.com/jverdeyen))
+
+## [0.8.0](https://github.com/php-enqueue/enqueue-dev/tree/0.8.0) (2017-10-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.19...0.8.0)
+
+- \[amqp-lib\] The context should allow to get the lib's channel.  [\#146](https://github.com/php-enqueue/enqueue-dev/issues/146)
+- 0.8v goes stable. [\#238](https://github.com/php-enqueue/enqueue-dev/pull/238) ([makasim](https://github.com/makasim))
+- \[travis\] allow kafka tests to fail. [\#237](https://github.com/php-enqueue/enqueue-dev/pull/237) ([makasim](https://github.com/makasim))
+- \[amqp\] One single transport factory for all supported amqp implementa… [\#233](https://github.com/php-enqueue/enqueue-dev/pull/233) ([makasim](https://github.com/makasim))
+- \[BC break\]\[amqp\] Introduce connection config. Make it same across all transports. [\#228](https://github.com/php-enqueue/enqueue-dev/pull/228) ([makasim](https://github.com/makasim))
+
+- \[amqp-bunny\] High CPU usage while using basic.consume.  [\#226](https://github.com/php-enqueue/enqueue-dev/issues/226)
+- Amqp basic consume should restore default timeout inside consume callback.  [\#225](https://github.com/php-enqueue/enqueue-dev/issues/225)
+- AmqpProducer::send method must throw only interop exception. [\#224](https://github.com/php-enqueue/enqueue-dev/issues/224)
+- 0.8v goes stable. [\#238](https://github.com/php-enqueue/enqueue-dev/pull/238) ([makasim](https://github.com/makasim))
+- \[consumption\]\[amqp\] move beforeReceive call at the end of the cycle f… [\#234](https://github.com/php-enqueue/enqueue-dev/pull/234) ([makasim](https://github.com/makasim))
+- \\[BC break\\]\\[amqp\\] Introduce connection config. Make it same across all transports. [\#228](https://github.com/php-enqueue/enqueue-dev/pull/228) ([makasim](https://github.com/makasim))
+
+- Missing client configuration in the documentation [\#231](https://github.com/php-enqueue/enqueue-dev/pull/231) ([lsv](https://github.com/lsv))
+- Added MIT license badge [\#230](https://github.com/php-enqueue/enqueue-dev/pull/230) ([tarlepp](https://github.com/tarlepp))
+
 ## [0.7.19](https://github.com/php-enqueue/enqueue-dev/tree/0.7.19) (2017-10-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.7.18...0.7.19)
 

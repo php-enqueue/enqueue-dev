@@ -53,7 +53,10 @@ class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInt
     {
         $contextId = 'foo.context';
 
-        $container->setDefinition($contextId, new Definition(\stdClass::class, [$config]));
+        $context = new Definition(\stdClass::class, [$config]);
+        $context->setPublic(true);
+
+        $container->setDefinition($contextId, $context);
 
         return $contextId;
     }
@@ -62,7 +65,10 @@ class FooTransportFactory implements TransportFactoryInterface, DriverFactoryInt
     {
         $driverId = 'foo.driver';
 
-        $container->setDefinition($driverId, new Definition(\stdClass::class, [$config]));
+        $driver = new Definition(\stdClass::class, [$config]);
+        $driver->setPublic(true);
+
+        $container->setDefinition($driverId, $driver);
 
         return $driverId;
     }

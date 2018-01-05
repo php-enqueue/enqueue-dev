@@ -1,7 +1,8 @@
 {
-  "name": "enqueue/dev-message-queue",
+  "name": "enqueue/enqueue-dev",
   "type": "project",
-  "minimum-stability": "stable",
+  "minimum-stability": "beta",
+  "homepage": "https://enqueue.forma-pro.com/",
   "require": {
     "php": ">=5.6",
     "enqueue/enqueue": "*@dev",
@@ -28,18 +29,19 @@
     "enqueue/async-event-dispatcher": "*@dev",
     "queue-interop/queue-interop": "^0.6@dev",
     "queue-interop/amqp-interop": "^0.7@dev",
-    "queue-interop/queue-spec": "^0.5.1@dev",
+    "queue-interop/queue-spec": "^0.5.4@dev",
 
     "phpunit/phpunit": "^5",
     "doctrine/doctrine-bundle": "~1.2",
     "predis/predis": "^1.1",
-    "symfony/monolog-bundle": "^2.8|^3",
-    "symfony/browser-kit": "^2.8|^3",
-    "symfony/expression-language": "^2.8|^3",
-    "symfony/event-dispatcher": "^2.8|^3",
-    "symfony/console": "^2.8|^3",
+    "symfony/monolog-bundle": "^2.8|^3|^4",
+    "symfony/browser-kit": "^2.8|^3|^4",
+    "symfony/expression-language": "^2.8|^3|^4",
+    "symfony/event-dispatcher": "^2.8|^3|^4",
+    "symfony/console": "^2.8|^3|^4",
     "friendsofphp/php-cs-fixer": "^2",
-    "empi89/php-amqp-stubs": "*@dev"
+    "empi89/php-amqp-stubs": "*@dev",
+    "php-http/client-common": "^1.7@dev"
   },
   "autoload": {
     "files": [
@@ -56,7 +58,7 @@
   "config": {
     "bin-dir": "bin",
     "platform": {
-      "ext-amqp": "1.7",
+      "ext-amqp": "1.9.3",
       "ext-gearman": "1.1",
       "ext-rdkafka": "3.3"
     }

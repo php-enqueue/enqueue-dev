@@ -112,6 +112,31 @@ class AmqpTransportFactoryTest extends TestCase
         ], $config);
     }
 
+    public function testShouldAllowAddSslOptions()
+    {
+        $transport = new AmqpTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [[
+            'ssl_on' => true,
+            'ssl_verify' => false,
+            'ssl_cacert' => '/path/to/cacert.pem',
+            'ssl_cert' => '/path/to/cert.pem',
+            'ssl_key' => '/path/to/key.pem',
+        ]]);
+
+        $this->assertEquals([
+            'ssl_on' => true,
+            'ssl_verify' => false,
+            'ssl_cacert' => '/path/to/cacert.pem',
+            'ssl_cert' => '/path/to/cert.pem',
+            'ssl_key' => '/path/to/key.pem',
+        ], $config);
+    }
+
     public function testShouldAllowAddConfigurationAsString()
     {
         $transport = new AmqpTransportFactory();

@@ -3,7 +3,6 @@ version: '2'
 services:
   dev:
     image: enqueue/dev:latest
-    # build: { context: docker, dockerfile: Dockerfile }
     depends_on:
       - rabbitmq
       - mysql
@@ -13,28 +12,30 @@ services:
       - kafka
       - zookeeper
       - google-pubsub
+      - rabbitmqssl
     volumes:
       - './:/mqdev'
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
+      - AMQPS_DSN=amqps://guest:guest@rabbitmqssl:5671
       - DOCTINE_DSN=mysql://root:rootpass@mysql/mqdev
-      - SYMFONY__RABBITMQ__HOST=rabbitmq
-      - SYMFONY__RABBITMQ__USER=guest
-      - SYMFONY__RABBITMQ__PASSWORD=guest
-      - SYMFONY__RABBITMQ__VHOST=mqdev
-      - SYMFONY__RABBITMQ__AMQP__PORT=5672
-      - SYMFONY__RABBITMQ__STOMP__PORT=61613
-      - SYMFONY__DB__DRIVER=pdo_mysql
-      - SYMFONY__DB__HOST=mysql
-      - SYMFONY__DB__PORT=3306
-      - SYMFONY__DB__NAME=mqdev
-      - SYMFONY__DB__USER=root
-      - SYMFONY__DB__PASSWORD=rootpass
-      - SYMFONY__REDIS__HOST=redis
-      - SYMFONY__REDIS__PORT=6379
-      - AWS__SQS__KEY=$ENQUEUE_AWS__SQS__KEY
-      - AWS__SQS__SECRET=$ENQUEUE_AWS__SQS__SECRET
-      - AWS__SQS__REGION=$ENQUEUE_AWS__SQS__REGION
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_VHOST=mqdev
+      - RABBITMQ_AMQP__PORT=5672
+      - ﻿RABBITMQ_STOMP_PORT=61613
+      - DOCTRINE_DRIVER=pdo_mysql
+      - DOCTRINE_HOST=mysql
+      - DOCTRINE_PORT=3306
+      - DOCTRINE_DB_NAME=mqdev
+      - DOCTRINE_USER=root
+      - DOCTRINE_PASSWORD=rootpass
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AWS_SQS_KEY=$ENQUEUE_AWS__SQS__KEY
+      - AWS_SQS_SECRET=$ENQUEUE_AWS__SQS__SECRET
+      - AWS_SQS_REGION=$ENQUEUE_AWS__SQS__REGION
       - BEANSTALKD_HOST=beanstalkd
       - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
@@ -45,8 +46,7 @@ services:
       - GCLOUD_PROJECT=mqdev
 
   rabbitmq:
-    image: enqueue/rabbitmq:latest
-    # build: { context: docker, dockerfile: Dockerfile.rabbitmq }
+    image: 'enqueue/rabbitmq:latest'
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -54,8 +54,14 @@ services:
     ports:
       - "15677:15672"
 
+  rabbitmqssl:
+    image: 'enqueue/rabbitmq-ssl:latest'
+    environment:
+      - 'RABBITMQ_DEFAULT_USER=guest'
+      - 'RABBITMQ_DEFAULT_PASS=guest'
+
   beanstalkd:
-      image: 'schickling/beanstalkd'
+      image: 'jonbaldie/beanstalkd'
 
   gearmand:
       image: 'artefactual/gearmand'

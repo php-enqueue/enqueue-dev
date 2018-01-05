@@ -3,6 +3,6 @@ services:
         class: 'Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension'
         public: false
         arguments:
-            - '@enqueue.client.spool_producer'
+            - '@Enqueue\Client\SpoolProducer'
         tags:
             - { name: 'enqueue.consumption.extension', priority: -100 }

@@ -10,6 +10,7 @@ use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameCom
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\ProcessorNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\QueueNameTopicSubscriber;
 use Enqueue\Bundle\Tests\Unit\DependencyInjection\Compiler\Mock\WithoutProcessorNameTopicSubscriber;
+use Enqueue\Client\RouterProcessor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -35,7 +36,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -61,7 +62,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, []]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
 
@@ -80,7 +81,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
 
@@ -102,7 +103,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -128,7 +129,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -152,7 +153,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -176,7 +177,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -200,7 +201,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -224,7 +225,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -248,7 +249,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments(['', '']);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
 
@@ -268,7 +269,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);
@@ -291,7 +292,7 @@ class BuildClientRoutingPassTest extends TestCase
 
         $router = new Definition();
         $router->setArguments([null, null, null]);
-        $container->setDefinition('enqueue.client.router_processor', $router);
+        $container->setDefinition(RouterProcessor::class, $router);
 
         $pass = new BuildClientRoutingPass();
         $pass->process($container);

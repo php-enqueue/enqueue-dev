@@ -3,10 +3,10 @@
 set -x
 set -e
 
-while getopts "bustefcd" OPTION; do
+while getopts "bustefcdp" OPTION; do
   case $OPTION in
     b)
-      COMPOSE_PROJECT_NAME=mqdev docker-compose build
+      COMPOSE_PROJECT_NAME=mqdev docker-compose pull && COMPOSE_PROJECT_NAME=mqdev docker-compose build
       ;;
     u)
       COMPOSE_PROJECT_NAME=mqdev docker-compose up

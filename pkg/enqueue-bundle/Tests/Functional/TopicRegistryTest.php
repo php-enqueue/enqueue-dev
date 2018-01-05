@@ -11,7 +11,7 @@ class TopicRegistryTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $connection = $this->container->get('enqueue.client.meta.topic_meta_registry');
+        $connection = $this->container->get(TopicMetaRegistry::class);
 
         $this->assertInstanceOf(TopicMetaRegistry::class, $connection);
     }

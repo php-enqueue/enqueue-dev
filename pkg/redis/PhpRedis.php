@@ -26,6 +26,7 @@ class PhpRedis implements Redis
             'reserved' => null,
             'retry_interval' => null,
             'persisted' => false,
+            'database' => 0,
         ], $config);
     }
 
@@ -80,6 +81,8 @@ class PhpRedis implements Redis
                     $this->config['retry_interval']
                 );
             }
+
+            $this->redis->select($this->config['database']);
         }
 
         return $this->redis;

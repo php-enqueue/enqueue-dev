@@ -151,6 +151,29 @@ class LoggerExtensionTest extends TestCase
         $extension->onPostReceived($context);
     }
 
+    public function testShouldNotSetLoggerIfOneHasBeenSetOnStart()
+    {
+        $logger = $this->createLogger();
+
+        $alreadySetLogger = $this->createLogger();
+        $alreadySetLogger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(sprintf(
+                'Skip setting context\'s logger "%s". Another one "%s" has already been set.',
+                get_class($logger),
+                get_class($alreadySetLogger)
+            ))
+        ;
+
+        $extension = new LoggerExtension($logger);
+
+        $context = new Context($this->createPsrContextMock());
+        $context->setLogger($alreadySetLogger);
+
+        $extension->onStart($context);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
      */

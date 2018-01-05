@@ -8,6 +8,8 @@ use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Bundle\Tests\Unit\Mocks\TransportFactoryWithoutDriverFactory;
 use Enqueue\Client\Producer;
 use Enqueue\Client\TraceableProducer;
+use Enqueue\Consumption\QueueConsumer;
+use Enqueue\JobQueue\JobRunner;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
@@ -17,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\Kernel;
 
 class EnqueueExtensionTest extends TestCase
 {
@@ -182,7 +185,7 @@ class EnqueueExtensionTest extends TestCase
 
         self::assertTrue($container->hasDefinition('foo.driver'));
         self::assertTrue($container->hasDefinition('enqueue.client.config'));
-        self::assertTrue($container->hasDefinition('enqueue.client.producer'));
+        self::assertTrue($container->hasDefinition(Producer::class));
     }
 
     public function testShouldNotCreateDriverIfFactoryDoesNotImplementDriverFactoryInterface()
@@ -223,7 +226,7 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
-        $producer = $container->getDefinition('enqueue.client.producer');
+        $producer = $container->getDefinition(Producer::class);
         self::assertEquals(Producer::class, $producer->getClass());
     }
 
@@ -247,7 +250,7 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
-        $producer = $container->getDefinition('enqueue.client.producer');
+        $producer = $container->getDefinition(Producer::class);
         self::assertEquals(Producer::class, $producer->getClass());
     }
 
@@ -271,16 +274,23 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
-        $producer = $container->getDefinition('enqueue.client.traceable_producer');
+        $producer = $container->getDefinition(TraceableProducer::class);
         self::assertEquals(TraceableProducer::class, $producer->getClass());
         self::assertEquals(
-            ['enqueue.client.producer', null, 0],
+            [Producer::class, null, 0],
             $producer->getDecoratedService()
         );
 
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
+
+        $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
+        if (30300 > Kernel::VERSION_ID) {
+            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
+            $innerServiceName = strtolower($innerServiceName);
+        }
+
         self::assertEquals(
-            'enqueue.client.traceable_producer.inner',
+            $innerServiceName,
             (string) $producer->getArgument(0)
         );
     }
@@ -345,7 +355,7 @@ class EnqueueExtensionTest extends TestCase
             'job' => true,
         ]], $container);
 
-        self::assertTrue($container->hasDefinition('enqueue.job.runner'));
+        self::assertTrue($container->hasDefinition(JobRunner::class));
     }
 
     public function testShouldNotLoadJobServicesIfDisabled()
@@ -360,7 +370,7 @@ class EnqueueExtensionTest extends TestCase
             'job' => false,
         ]], $container);
 
-        self::assertFalse($container->hasDefinition('enqueue.job.runner'));
+        self::assertFalse($container->hasDefinition(JobRunner::class));
     }
 
     public function testShouldAllowGetConfiguration()
@@ -551,7 +561,7 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
-        $def = $container->getDefinition('enqueue.consumption.queue_consumer');
+        $def = $container->getDefinition(QueueConsumer::class);
         $this->assertSame(123, $def->getArgument(2));
         $this->assertSame(456, $def->getArgument(3));
 

@@ -27,6 +27,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
      *  'vendor' => 'The library used internally to interact with Redis server
      *  'persisted' => bool, Whether it use single persisted connection or open a new one for every context
      *  'lazy' => the connection will be performed as later as possible, if the option set to true
+     *  'database' => Database index to select when connected (default value: 0)
      * ].
      *
      * or
@@ -139,6 +140,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
             'vendor' => 'phpredis',
             'persisted' => false,
             'lazy' => true,
+            'database' => 0,
         ];
     }
 }

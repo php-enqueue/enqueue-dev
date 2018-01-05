@@ -87,6 +87,21 @@ enqueue:
 
             # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
             driver_options:       ~
+
+            # Should be true if you want to use secure connections. False by default
+            ssl_on:               ~
+
+            # This option determines whether ssl client verifies that the server cert is for the server it is known as. True by default.
+            ssl_verify:           ~
+
+            # Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.
+            ssl_cacert:           ~
+
+            # Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string
+            ssl_cert:             ~
+
+            # Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.
+            ssl_key:              ~
         rabbitmq_amqp:
             driver:               ~ # One of "ext"; "lib"; "bunny"
 
@@ -136,6 +151,21 @@ enqueue:
 
             # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
             driver_options:       ~
+
+            # Should be true if you want to use secure connections. False by default
+            ssl_on:               ~
+
+            # This option determines whether ssl client verifies that the server cert is for the server it is known as. True by default.
+            ssl_verify:           ~
+
+            # Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.
+            ssl_cacert:           ~
+
+            # Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string
+            ssl_cert:             ~
+
+            # Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.
+            ssl_key:              ~
 
             # The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id
             delay_strategy:       dlx
@@ -195,6 +225,25 @@ enqueue:
             version:              '2012-11-05'
 
             # the connection will be performed as later as possible, if the option set to true
+            lazy:                 true
+        gps:
+
+            # The connection to Google Pub/Sub broker set as a string. Other parameters are ignored if set
+            dsn:                  ~
+
+            # The project ID from the Google Developer's Console.
+            projectId:            ~
+
+            # The full path to your service account credentials.json file retrieved from the Google Developers Console.
+            keyFilePath:          ~
+
+            # Number of retries for a failed request.
+            retries:              3
+
+            # Scopes to be used for the request.
+            scopes:               []
+
+            # The connection will be performed as later as possible, if the option set to true
             lazy:                 true
     client:
         traceable_producer:   false

@@ -19,11 +19,11 @@ use Enqueue\Stomp\StompConnectionFactory;
 use Stomp\Exception\ErrorFrameException;
 
 $config = [
-    'host' => getenv('SYMFONY__RABBITMQ__HOST'),
-    'port' => getenv('SYMFONY__RABBITMQ__STOMP__PORT'),
-    'login' => getenv('SYMFONY__RABBITMQ__USER'),
-    'password' => getenv('SYMFONY__RABBITMQ__PASSWORD'),
-    'vhost' => getenv('SYMFONY__RABBITMQ__VHOST'),
+    'host' => getenv('RABBITMQ_HOST'),
+    'port' => getenv('﻿RABBITMQ_STOMP_PORT'),
+    'login' => getenv('RABBITMQ_USER'),
+    'password' => getenv('RABBITMQ_PASSWORD'),
+    'vhost' => getenv('RABBITMQ_VHOST'),
     'sync' => true,
 ];
 

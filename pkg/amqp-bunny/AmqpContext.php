@@ -77,6 +77,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         $this->buffer = new Buffer();
+        $this->subscribers = [];
     }
 
     /**
@@ -387,7 +388,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
-        $this->getBunnyChannel()->getClient()->run($timeout / 1000);
+        $this->getBunnyChannel()->getClient()->run(0 !== $timeout ? $timeout / 1000 : null);
     }
 
     /**
