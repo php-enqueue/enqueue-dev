@@ -39,11 +39,18 @@ class SqsConnectionFactory implements PsrConnectionFactory
     {
         if (empty($config) || 'sqs:' === $config) {
             $config = [];
-        } elseif (is_string($config)) {
+        }
+
+        if (is_string($config)) {
             $config = $this->parseDsn($config);
-        } elseif (is_array($config)) {
-        } else {
-            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+        }
+
+        if (!is_array($config)) {
+            throw new \LogicException('The config must be either an array of options, a DSN string, or null');
+        }
+
+        if (count($config) == 1 && array_key_exists('dsn', $config)) {
+            $config = $this->parseDsn($config['dsn']);
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
