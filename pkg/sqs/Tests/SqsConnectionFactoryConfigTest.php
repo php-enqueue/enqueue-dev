@@ -103,7 +103,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
             ],
         ];
-        
+
         yield [
             ['dsn' => 'sqs:?key=theKey&secret=theSecret&token=theToken&lazy=0'],
             [
