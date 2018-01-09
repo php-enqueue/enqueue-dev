@@ -4,6 +4,7 @@ namespace Enqueue\AmqpLib;
 
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -20,6 +21,7 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Exception\AMQPIOWaitException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
@@ -382,6 +384,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
+        $socketHelper = new SignalSocketHelper();
+        $socketHelper->beforeSocket();
+
         try {
             while (true) {
                 $start = microtime(true);
@@ -402,6 +407,14 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             }
         } catch (AMQPTimeoutException $e) {
         } catch (StopBasicConsumptionException $e) {
+        } catch (AMQPIOWaitException $e) {
+            if ($socketHelper->wasThereSignal()) {
+                return;
+            }
+
+            throw $e;
+        } finally {
+            $socketHelper->afterSocket();
         }
     }
 

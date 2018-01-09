@@ -31,6 +31,8 @@ class SignalExtension implements ExtensionInterface
             throw new LogicException('The pcntl extension is required in order to catch signals.');
         }
 
+        pcntl_async_signals(true);
+
         pcntl_signal(SIGTERM, [$this, 'handleSignal']);
         pcntl_signal(SIGQUIT, [$this, 'handleSignal']);
         pcntl_signal(SIGINT, [$this, 'handleSignal']);
