@@ -26,6 +26,11 @@ class SignalSocketHelper
 
     public function beforeSocket()
     {
+        // PHP 7.1 and higher
+        if (false == function_exists('pcntl_signal_get_handler')) {
+            return;
+        }
+
         if ($this->handlers) {
             throw new \LogicException('The handlers property should be empty but it is not. The afterSocket method might not have been called.');
         }
@@ -52,6 +57,11 @@ class SignalSocketHelper
 
     public function afterSocket()
     {
+        // PHP 7.1 and higher
+        if (false == function_exists('pcntl_signal_get_handler')) {
+            return;
+        }
+
         $this->wasThereSignal = null;
 
         foreach ($this->signals as $signal) {
