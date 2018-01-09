@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.8.13](https://github.com/php-enqueue/enqueue-dev/tree/0.8.13) (2018-01-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.12...0.8.13)
+
+- \[amqp\] Fix socket and signal issue. [\#317](https://github.com/php-enqueue/enqueue-dev/pull/317) ([makasim](https://github.com/makasim))
+- \[kafka\] add ability to set offset. [\#314](https://github.com/php-enqueue/enqueue-dev/pull/314) ([makasim](https://github.com/makasim))
+
+- AMQPIOWaitException upon docker container shutdown [\#300](https://github.com/php-enqueue/enqueue-dev/issues/300)
+
 ## [0.8.12](https://github.com/php-enqueue/enqueue-dev/tree/0.8.12) (2018-01-04)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.11...0.8.12)
 
