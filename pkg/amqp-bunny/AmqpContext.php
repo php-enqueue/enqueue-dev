@@ -4,9 +4,11 @@ namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
 use Bunny\Client;
+use Bunny\Exception\ClientException;
 use Bunny\Message;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -54,6 +56,11 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     private $subscribers;
 
     /**
+     * @var SignalSocketHelper
+     */
+    private $signalSocketHandler;
+
+    /**
      * Callable must return instance of \Bunny\Channel once called.
      *
      * @param Channel|callable $bunnyChannel
@@ -78,6 +85,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         $this->buffer = new Buffer();
         $this->subscribers = [];
+        $this->signalSocketHandler = new SignalSocketHelper();
     }
 
     /**
@@ -388,7 +396,19 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
-        $this->getBunnyChannel()->getClient()->run(0 !== $timeout ? $timeout / 1000 : null);
+        $this->signalSocketHandler->beforeSocket();
+
+        try {
+            $this->getBunnyChannel()->getClient()->run(0 !== $timeout ? $timeout / 1000 : null);
+        } catch (ClientException $e) {
+            if ('stream_select() failed.' == $e->getMessage() && $this->signalSocketHandler->wasThereSignal()) {
+                return;
+            }
+
+            throw $e;
+        } finally {
+            $this->signalSocketHandler->afterSocket();
+        }
     }
 
     /**

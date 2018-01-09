@@ -58,9 +58,11 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
                             throw new \InvalidArgumentException('There is no amqp driver available. Please consider installing one of the packages: enqueue/amqp-ext, enqueue/amqp-lib, enqueue/amqp-bunny.');
                         }
 
-                        if (isset($v['driver']) && false == in_array($v['driver'], $drivers, true)) {
-                            throw new \InvalidArgumentException(sprintf('Unexpected driver given "invalidDriver". Available are "%s"', implode('", "', $drivers)));
+                        if ($v && false == in_array($v, $drivers, true)) {
+                            throw new \InvalidArgumentException(sprintf('Unexpected driver given "%s". Available are "%s"', $v, implode('", "', $drivers)));
                         }
+
+                        return $v;
                     })
                     ->end()
                 ->end()
