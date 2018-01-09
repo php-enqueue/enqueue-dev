@@ -14,6 +14,11 @@ class SignalSocketHelper
      */
     private $wasThereSignal;
 
+    /**
+     * @var int[]
+     */
+    private $signals = [SIGTERM, SIGQUIT, SIGINT];
+
     public function __construct()
     {
         $this->handlers = [];
@@ -25,22 +30,23 @@ class SignalSocketHelper
             throw new \LogicException('The handlers property should be empty but it is not. The afterSocket method might not have been called.');
         }
         if (null !== $this->wasThereSignal) {
-            throw new \LogicException('The wasSignal property should be null but it is not. The afterSocket method might not have been called.');
+            throw new \LogicException('The wasThereSignal property should be null but it is not. The afterSocket method might not have been called.');
         }
 
         $this->wasThereSignal = false;
 
-        foreach ([SIGTERM, SIGQUIT, SIGINT] as $signal) {
+        foreach ($this->signals as $signal) {
             /** @var callable $handler */
-            if ($handler = pcntl_signal_get_handler(SIGTERM)) {
-                pcntl_signal($signal, function ($signal) use ($handler) {
-                    $this->wasThereSignal = true;
+            $handler = pcntl_signal_get_handler($signal);
 
-                    $handler($signal);
-                });
+            pcntl_signal($signal, function ($signal) use ($handler) {
+                var_dump('fuckk!');
+                $this->wasThereSignal = true;
 
-                $this->handlers[$signal] = $handler;
-            }
+                $handler && $handler($signal);
+            });
+
+            $handler && $this->handlers[$signal] = $handler;
         }
     }
 
@@ -48,7 +54,9 @@ class SignalSocketHelper
     {
         $this->wasThereSignal = null;
 
-        foreach ($this->handlers as $signal => $handler) {
+        foreach ($this->signals as $signal) {
+            $handler = isset($this->handlers[$signal]) ? $this->handlers[$signal] : SIG_DFL;
+
             pcntl_signal($signal, $handler);
         }
 
