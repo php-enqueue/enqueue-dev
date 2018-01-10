@@ -69,6 +69,8 @@ $producer->sendEvent('aFooTopic', 'Something has happened');
 // send command to ONE consumer
 $producer->sendCommand('aProcessorName', 'Something has happened');
 ```
+what is "a" prefix above? 'aFooTopic' 'aProcessorName' i need to put this prefix every time?
+first time ever see this prefix in PHP world.
 
 To consume messages you have to first create a message processor:
 
