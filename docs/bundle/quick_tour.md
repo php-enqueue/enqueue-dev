@@ -44,12 +44,16 @@ class AppKernel extends Kernel
 
 First, you have to configure a transport layer and set one to be default.
 
+please provide working example. Your example below of app/config/config.yml not working!
+what is "amqp:" ? if you mean dsn please give something like this "amqp:?key=key&secret=secret"
+I was look in doc https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/config_reference.md and there are another 'transport' structure! you put wrong example here below.
+
 ```yaml
 # app/config/config.yml
 
 enqueue:
     transport:
-        default: "amqp:"
+        default: "amqp:" 
     client: ~
 ```
 
