@@ -34,8 +34,8 @@ class LoggerExtension implements ExtensionInterface
         if ($context->getLogger()) {
             $context->getLogger()->debug(sprintf(
                 'Skip setting context\'s logger "%s". Another one "%s" has already been set.',
-                get_class($context->getLogger()),
-                get_class($this->logger)
+                get_class($this->logger),
+                get_class($context->getLogger())
             ));
         } else {
             $context->setLogger($this->logger);
