@@ -251,7 +251,7 @@ enqueue:
         app_name:             app
         router_topic:         default
         router_queue:         default
-        router_processor:     enqueue.client.router_processor
+        router_processor:     Enqueue\Client\RouterProcessor
         default_processor_queue: default
         redelivered_delay_time: 0
     consumption:
