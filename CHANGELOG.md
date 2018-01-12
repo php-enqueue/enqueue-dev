@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.15](https://github.com/php-enqueue/enqueue-dev/tree/0.8.15) (2018-01-12)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.14...0.8.15)
+
+- \[consumption\] Correct message in LoggerExtension [\#322](https://github.com/php-enqueue/enqueue-dev/pull/322) ([makasim](https://github.com/makasim))
+
+- \[amqp\] fix signal handler if consume called from consume [\#328](https://github.com/php-enqueue/enqueue-dev/pull/328) ([makasim](https://github.com/makasim))
+
+- SQS via DNS region missing [\#321](https://github.com/php-enqueue/enqueue-dev/issues/321)
+
+- Update config\_reference.md [\#326](https://github.com/php-enqueue/enqueue-dev/pull/326) ([errogaht](https://github.com/errogaht))
+- Update message\_producer.md [\#325](https://github.com/php-enqueue/enqueue-dev/pull/325) ([errogaht](https://github.com/errogaht))
+- Update consumption\_extension.md [\#324](https://github.com/php-enqueue/enqueue-dev/pull/324) ([errogaht](https://github.com/errogaht))
+
+## [0.8.14](https://github.com/php-enqueue/enqueue-dev/tree/0.8.14) (2018-01-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.13...0.8.14)
+
 ## [0.8.13](https://github.com/php-enqueue/enqueue-dev/tree/0.8.13) (2018-01-09)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.12...0.8.13)
 
