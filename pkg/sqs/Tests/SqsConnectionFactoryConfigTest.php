@@ -16,7 +16,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The config must be either an array of options, a DSN string, or null');
+        $this->expectExceptionMessage('The config must be either an array of options, a DSN string or null');
 
         new SqsConnectionFactory(new \stdClass());
     }
