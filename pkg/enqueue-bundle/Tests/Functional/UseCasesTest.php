@@ -193,7 +193,7 @@ class UseCasesTest extends WebTestCase
         ]];
 
         // travis build does not have secret env vars if contribution is from outside.
-        if (false == getenv('AWS_SQS_KEY')) {
+        if (getenv('AWS_SQS_KEY')) {
             yield 'sqs' => [[
                 'transport' => [
                     'default' => 'sqs',
