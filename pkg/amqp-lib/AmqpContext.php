@@ -58,11 +58,6 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     private $subscribers;
 
     /**
-     * @var SignalSocketHelper
-     */
-    private $signalSocketHandler;
-
-    /**
      * @param AbstractConnection $connection
      * @param array              $config
      */
@@ -78,7 +73,6 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         $this->connection = $connection;
         $this->buffer = new Buffer();
         $this->subscribers = [];
-        $this->signalSocketHandler = new SignalSocketHelper();
     }
 
     /**
@@ -390,7 +384,8 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
-        $this->signalSocketHandler->beforeSocket();
+        $signalHandler = new SignalSocketHelper();
+        $signalHandler->beforeSocket();
 
         try {
             while (true) {
@@ -413,13 +408,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         } catch (AMQPTimeoutException $e) {
         } catch (StopBasicConsumptionException $e) {
         } catch (AMQPIOWaitException $e) {
-            if ($this->signalSocketHandler->wasThereSignal()) {
+            if ($signalHandler->wasThereSignal()) {
                 return;
             }
 
             throw $e;
         } finally {
-            $this->signalSocketHandler->afterSocket();
+            $signalHandler->afterSocket();
         }
     }
 
