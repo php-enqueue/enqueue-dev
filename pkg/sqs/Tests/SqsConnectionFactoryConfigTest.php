@@ -105,6 +105,19 @@ class SqsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
+            ['dsn' => 'sqs:?key=theKey&secret=theSecret&token=theToken&lazy=0'],
+            [
+                'key' => 'theKey',
+                'secret' => 'theSecret',
+                'token' => 'theToken',
+                'region' => null,
+                'retries' => 3,
+                'version' => '2012-11-05',
+                'lazy' => false,
+            ],
+        ];
+
+        yield [
             ['key' => 'theKey', 'secret' => 'theSecret', 'token' => 'theToken', 'lazy' => false],
             [
                 'key' => 'theKey',
