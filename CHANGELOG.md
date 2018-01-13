@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.8.16](https://github.com/php-enqueue/enqueue-dev/tree/0.8.16) (2018-01-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.15...0.8.16)
+
+- \[Sqs\] Allow array-based DSN configuration [\#315](https://github.com/php-enqueue/enqueue-dev/pull/315) ([beryllium](https://github.com/beryllium))
+
 ## [0.8.15](https://github.com/php-enqueue/enqueue-dev/tree/0.8.15) (2018-01-12)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.14...0.8.15)
 
