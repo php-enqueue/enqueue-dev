@@ -45,7 +45,12 @@ class DbalConnectionFactory implements PsrConnectionFactory
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
 
-        $this->config = $config;
+        $this->config = array_replace_recursive([
+            'connection' => [],
+            'table_name' => 'enqueue',
+            'polling_interval' => 1000,
+            'lazy' => true,
+        ], $config);
     }
 
     /**

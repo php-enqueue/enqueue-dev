@@ -4,6 +4,7 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
@@ -171,16 +172,18 @@ class DbalContext implements PsrContext
         }
 
         $table = new Table($this->getTableName());
-        $table->addColumn('id', 'guid');
-        $table->addColumn('published_at', 'bigint');
-        $table->addColumn('body', 'text', ['notnull' => false]);
-        $table->addColumn('headers', 'text', ['notnull' => false]);
-        $table->addColumn('properties', 'text', ['notnull' => false]);
-        $table->addColumn('redelivered', 'boolean', ['notnull' => false]);
-        $table->addColumn('queue', 'string');
-        $table->addColumn('priority', 'smallint');
-        $table->addColumn('delayed_until', 'integer', ['notnull' => false]);
-        $table->addColumn('time_to_live', 'integer', ['notnull' => false]);
+
+        $table->addColumn('id', Type::BINARY, ['length' => 16, 'fixed' => true]);
+        $table->addColumn('human_id', Type::STRING, ['length' => 36]);
+        $table->addColumn('published_at', Type::BIGINT);
+        $table->addColumn('body', Type::TEXT, ['notnull' => false]);
+        $table->addColumn('headers', Type::TEXT, ['notnull' => false]);
+        $table->addColumn('properties', Type::TEXT, ['notnull' => false]);
+        $table->addColumn('redelivered', Type::BOOLEAN, ['notnull' => false]);
+        $table->addColumn('queue', Type::STRING);
+        $table->addColumn('priority', Type::SMALLINT);
+        $table->addColumn('delayed_until', Type::INTEGER, ['notnull' => false]);
+        $table->addColumn('time_to_live', Type::INTEGER, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['published_at']);
@@ -189,5 +192,17 @@ class DbalContext implements PsrContext
         $table->addIndex(['delayed_until']);
 
         $sm->createTable($table);
+    }
+
+    /**
+     * @param DbalDestination $queue
+     */
+    public function purgeQueue(DbalDestination $queue)
+    {
+        $this->getDbalConnection()->delete(
+            $this->getTableName(),
+            ['queue' => $queue->getQueueName()],
+            ['queue' => Type::STRING]
+        );
     }
 }
