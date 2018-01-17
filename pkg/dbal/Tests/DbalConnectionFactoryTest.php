@@ -2,7 +2,6 @@
 
 namespace Enqueue\Dbal\Tests;
 
-use Doctrine\DBAL\Connection;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Test\ClassExtensionTrait;
@@ -15,33 +14,6 @@ class DbalConnectionFactoryTest extends \PHPUnit_Framework_TestCase
     public function testShouldImplementConnectionFactoryInterface()
     {
         $this->assertClassImplements(PsrConnectionFactory::class, DbalConnectionFactory::class);
-    }
-
-    public function testCouldBeConstructedWithEmptyConfiguration()
-    {
-        $factory = new DbalConnectionFactory();
-
-        $this->assertAttributeEquals([
-            'lazy' => true,
-            'connection' => ['url' => 'mysql://root@localhost'],
-        ], 'config', $factory);
-    }
-
-    public function testCouldBeConstructedWithCustomConfiguration()
-    {
-        $factory = new DbalConnectionFactory([
-            'connection' => [
-                'dbname' => 'theDbName',
-            ],
-            'lazy' => false,
-        ]);
-
-        $this->assertAttributeEquals([
-            'lazy' => false,
-            'connection' => [
-                'dbname' => 'theDbName',
-            ],
-        ], 'config', $factory);
     }
 
     public function testShouldCreateLazyContext()
