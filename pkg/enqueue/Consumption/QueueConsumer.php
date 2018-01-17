@@ -170,15 +170,25 @@ final class QueueConsumer
             $consumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
         }
 
+        $processors = [];
+        /** @var PsrQueue $queue */
+        foreach ($this->boundProcessors as list($queue, $processor)) {
+            $processors[$queue->getQueueName()] = $processor;
+        }
+
         $this->extension = $runtimeExtension ?
             new ChainExtension([$this->staticExtension, $runtimeExtension]) :
             $this->staticExtension
         ;
 
         $context = new Context($this->psrContext);
-        $this->extension->onStart($context);
+        $onStartContext = new OnStartContext($this->psrContext, new NullLogger(), $processors, $consumers);
+        $this->extension->onStart($onStartContext);
 
-        $this->logger = $context->getLogger() ?: new NullLogger();
+        // BC
+        $context->setLogger($onStartContext->getLogger());
+
+        $this->logger = $context->getLogger();
         $this->logger->info('Start consuming');
 
         if ($this->psrContext instanceof AmqpContext) {

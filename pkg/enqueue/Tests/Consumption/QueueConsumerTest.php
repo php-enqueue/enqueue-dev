@@ -7,6 +7,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\OnStartContext;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullQueue;
@@ -414,17 +415,12 @@ class QueueConsumerTest extends TestCase
         $extension
             ->expects($this->once())
             ->method('onStart')
-            ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use ($contextStub) {
+            ->with($this->isInstanceOf(OnStartContext::class))
+            ->willReturnCallback(function (OnStartContext $context) use ($contextStub, $processorMock, $messageConsumerStub) {
                 $this->assertSame($contextStub, $context->getPsrContext());
-                $this->assertNull($context->getPsrConsumer());
-                $this->assertNull($context->getPsrProcessor());
-                $this->assertNull($context->getLogger());
-                $this->assertNull($context->getPsrMessage());
-                $this->assertNull($context->getException());
-                $this->assertNull($context->getResult());
-                $this->assertNull($context->getPsrQueue());
-                $this->assertFalse($context->isExecutionInterrupted());
+                $this->assertInstanceOf(NullLogger::class, $context->getLogger());
+                $this->assertSame(['aQueueName' => $processorMock], $context->getProcessors());
+                $this->assertSame(['aQueueName' => $messageConsumerStub], $context->getConsumers());
             })
         ;
 
@@ -990,7 +986,7 @@ class QueueConsumerTest extends TestCase
         $runtimeExtension
             ->expects($this->once())
             ->method('onStart')
-            ->with($this->isInstanceOf(Context::class))
+            ->with($this->isInstanceOf(OnStartContext::class))
         ;
         $runtimeExtension
             ->expects($this->once())
@@ -1039,8 +1035,8 @@ class QueueConsumerTest extends TestCase
         $extension
             ->expects($this->atLeastOnce())
             ->method('onStart')
-            ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use ($expectedLogger) {
+            ->with($this->isInstanceOf(OnStartContext::class))
+            ->willReturnCallback(function (OnStartContext $context) use ($expectedLogger) {
                 $context->setLogger($expectedLogger);
             })
         ;

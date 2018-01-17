@@ -6,6 +6,7 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\OnStartContext;
 use Psr\Log\LoggerInterface;
 
 class SignalExtension implements ExtensionInterface
@@ -25,7 +26,7 @@ class SignalExtension implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function onStart(Context $context)
+    public function onStart(OnStartContext $context)
     {
         if (false == extension_loaded('pcntl')) {
             throw new LogicException('The pcntl extension is required in order to catch signals.');

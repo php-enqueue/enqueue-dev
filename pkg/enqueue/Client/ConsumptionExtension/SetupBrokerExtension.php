@@ -3,9 +3,9 @@
 namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\DriverInterface;
-use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\OnStartContext;
 
 class SetupBrokerExtension implements ExtensionInterface
 {
@@ -33,7 +33,7 @@ class SetupBrokerExtension implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function onStart(Context $context)
+    public function onStart(OnStartContext $context)
     {
         if (false == $this->isDone) {
             $this->isDone = true;
