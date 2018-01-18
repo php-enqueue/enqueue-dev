@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.8.17](https://github.com/php-enqueue/enqueue-dev/tree/0.8.17) (2018-01-18)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.16...0.8.17)
+
+- QueueConsumer should be final  [\#311](https://github.com/php-enqueue/enqueue-dev/issues/311)
+- \[consumption\] Make QueueConsumer final [\#336](https://github.com/php-enqueue/enqueue-dev/pull/336) ([makasim](https://github.com/makasim))
+- \[bundle\]\[dx\] Add a message that suggest installing a pkg to use the transport. [\#335](https://github.com/php-enqueue/enqueue-dev/pull/335) ([makasim](https://github.com/makasim))
+- \[0.9\]\[BC break\]\[dbal\] Store UUIDs as binary data. Improves performance [\#280](https://github.com/php-enqueue/enqueue-dev/pull/280) ([makasim](https://github.com/makasim))
+
+- Unrecognized option "amqp" under "enqueue.transport" [\#333](https://github.com/php-enqueue/enqueue-dev/issues/333)
+
+- \[consumption\] Prepare QueueConsumer for changes in 0.9 [\#337](https://github.com/php-enqueue/enqueue-dev/pull/337) ([makasim](https://github.com/makasim))
+
 ## [0.8.16](https://github.com/php-enqueue/enqueue-dev/tree/0.8.16) (2018-01-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.15...0.8.16)
 
