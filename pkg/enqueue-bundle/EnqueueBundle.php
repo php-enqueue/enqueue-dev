@@ -69,7 +69,7 @@ class EnqueueBundle extends Bundle
             $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
             $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
         } else {
-            $amppPackages = ['enqueue/stomp', 'enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
+            $amppPackages = ['enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
             $extension->addTransportFactory(new MissingTransportFactory('amqp', $amppPackages));
             $extension->addTransportFactory(new MissingTransportFactory('rabbitmq_amqp', $amppPackages));
         }
