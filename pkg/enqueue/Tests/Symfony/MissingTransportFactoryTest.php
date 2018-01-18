@@ -53,4 +53,21 @@ class MissingTransportFactoryTest extends TestCase
         $this->expectExceptionMessage('Invalid configuration for path "foo": In order to use the transport "aMissingTransportName" install one of the packages "aFooPackage", "aBarPackage"');
         $processor->process($tb->buildTree(), [[]]);
     }
+
+    public function testThrowEvenIfThereAreSomeOptionsPassed()
+    {
+        $transport = new MissingTransportFactory('aMissingTransportName', ['aFooPackage', 'aBarPackage']);
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('In order to use the transport "aMissingTransportName"');
+        $processor->process($tb->buildTree(), [[
+            'foo' => 'fooVal',
+            'bar' => 'barVal',
+        ]]);
+    }
 }

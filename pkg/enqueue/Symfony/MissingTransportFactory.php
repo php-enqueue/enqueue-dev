@@ -47,9 +47,16 @@ class MissingTransportFactory implements TransportFactoryInterface, DriverFactor
 
         $builder
             ->info($message)
-            ->validate()->always(function () use ($message) {
-                throw new \InvalidArgumentException($message);
-            })
+            ->beforeNormalization()
+                ->always(function () {
+                    return [];
+                })
+                ->end()
+            ->validate()
+                ->always(function () use ($message) {
+                    throw new \InvalidArgumentException($message);
+                })
+                ->end()
         ;
     }
 
