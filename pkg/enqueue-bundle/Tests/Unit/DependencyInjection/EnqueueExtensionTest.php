@@ -13,9 +13,11 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\MissingTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -568,5 +570,21 @@ class EnqueueExtensionTest extends TestCase
         $def = $container->getDefinition('enqueue.client.queue_consumer');
         $this->assertSame(123, $def->getArgument(2));
         $this->assertSame(456, $def->getArgument(3));
+    }
+
+    public function testShouldThrowIfPackageShouldBeInstalledToUseTransport()
+    {
+        $container = new ContainerBuilder();
+
+        $extension = new EnqueueExtension();
+        $extension->addTransportFactory(new MissingTransportFactory('need_package', ['a_package', 'another_package']));
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('In order to use the transport "need_package" install');
+        $extension->load([[
+            'transport' => [
+                'need_package' => true,
+            ],
+        ]], $container);
     }
 }
