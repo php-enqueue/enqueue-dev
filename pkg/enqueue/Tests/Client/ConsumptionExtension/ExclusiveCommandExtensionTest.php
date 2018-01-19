@@ -153,7 +153,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             'aFooQueueName' => 'aFooProcessorName',
         ]);
 
-        $extension->onPreSend('aTopic', $message);
+        $extension->onSend('aTopic', $message);
 
         $this->assertEquals([], $message->getProperties());
     }
@@ -167,7 +167,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             'aFooQueueName' => 'aFooProcessorName',
         ]);
 
-        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
+        $extension->onSend(Config::COMMAND_TOPIC, $message);
 
         $this->assertEquals([
             'enqueue.command_name' => 'theBarProcessorName',
@@ -183,7 +183,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             'aFooQueueName' => 'aFooProcessorName',
         ]);
 
-        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
+        $extension->onSend(Config::COMMAND_TOPIC, $message);
 
         $this->assertEquals([
             'enqueue.command_name' => 'aFooProcessorName',
