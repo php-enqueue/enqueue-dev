@@ -5,18 +5,17 @@ namespace Enqueue\Client;
 interface ExtensionInterface
 {
     /**
-     * @param string  $topic
-     * @param Message $message
-     *
-     * @return
+     * @param OnPrepareMessage $context
      */
-    public function onPreSend($topic, Message $message);
+    public function onPrepareMessage(OnPrepareMessage $context);
 
     /**
-     * @param string  $topic
-     * @param Message $message
-     *
-     * @return
+     * @param OnSend $context
      */
-    public function onPostSend($topic, Message $message);
+    public function onSend(OnSend $context);
+
+    /**
+     * @param OnPostSend $context
+     */
+    public function onPostSend(OnPostSend $context);
 }

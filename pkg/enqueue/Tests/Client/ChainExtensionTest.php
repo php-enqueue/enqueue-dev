@@ -41,7 +41,7 @@ class ChainExtensionTest extends TestCase
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
-        $extensions->onPreSend('topic', $message);
+        $extensions->onSend('topic', $message);
     }
 
     public function testShouldProxyOnPostSendToAllInternalExtensions()

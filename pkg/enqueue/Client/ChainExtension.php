@@ -18,22 +18,32 @@ class ChainExtension implements ExtensionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param OnPrepareMessage $context
      */
-    public function onPreSend($topic, Message $message)
+    public function onPrepareMessage(OnPrepareMessage $context)
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPreSend($topic, $message);
+            $extension->onPrepareMessage($context);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function onPostSend($topic, Message $message)
+    public function onSend(OnSend $context)
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPostSend($topic, $message);
+            $extension->onSend($context);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onPostSend(OnPostSend $context)
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->onPostSend($context);
         }
     }
 }

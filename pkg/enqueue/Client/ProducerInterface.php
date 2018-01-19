@@ -7,15 +7,15 @@ use Enqueue\Rpc\Promise;
 interface ProducerInterface
 {
     /**
-     * @param string               $topic
-     * @param string|array|Message $message
+     * @param string                                 $topic
+     * @param string|array|Message|\JsonSerializable $message
      */
     public function sendEvent($topic, $message);
 
     /**
-     * @param string               $command
-     * @param string|array|Message $message
-     * @param bool                 $needReply
+     * @param string                                 $command
+     * @param string|array|Message|\JsonSerializable $message
+     * @param bool                                   $needReply
      *
      * @return Promise|null the promise is returned if needReply argument is true
      */

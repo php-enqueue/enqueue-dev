@@ -45,6 +45,10 @@ class Producer implements ProducerInterface
      */
     public function sendEvent($topic, $message)
     {
+        $onPrepareMessage = new OnPrepareMessage($message, $topic, null);
+        $this->extension->onPrepareMessage($onPrepareMessage);
+        $message = $onPrepareMessage->getMessage();
+
         if (false == $message instanceof Message) {
             $body = $message;
             $message = new Message();
@@ -67,6 +71,9 @@ class Producer implements ProducerInterface
             $message->setPriority(MessagePriority::NORMAL);
         }
 
+        $onSendMessage = new OnSend($message, $topic, null);
+        $this->extension->onSend($onSendMessage);
+
         if (Message::SCOPE_MESSAGE_BUS == $message->getScope()) {
             if ($message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
                 throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_QUEUE_NAME));
@@ -75,9 +82,7 @@ class Producer implements ProducerInterface
                 throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_NAME));
             }
 
-            $this->extension->onPreSend($topic, $message);
             $this->driver->sendToRouter($message);
-            $this->extension->onPostSend($topic, $message);
         } elseif (Message::SCOPE_APP == $message->getScope()) {
             if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
                 $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->driver->getConfig()->getRouterProcessorName());
@@ -86,12 +91,13 @@ class Producer implements ProducerInterface
                 $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->driver->getConfig()->getRouterQueueName());
             }
 
-            $this->extension->onPreSend($topic, $message);
             $this->driver->sendToProcessor($message);
-            $this->extension->onPostSend($topic, $message);
         } else {
             throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));
         }
+
+        $onPostSendMessage = new OnPostSend($message, $topic, null);
+        $this->extension->onPostSend($onPostSendMessage);
     }
 
     /**
@@ -99,8 +105,28 @@ class Producer implements ProducerInterface
      */
     public function sendCommand($command, $message, $needReply = false)
     {
+        $onPrepareMessage = new OnPrepareMessage($message, null, $command);
+        $this->extension->onPrepareMessage($onPrepareMessage);
+        $message = $onPrepareMessage->getMessage();
+
         if (false == $message instanceof Message) {
-            $message = new Message($message);
+            $body = $message;
+            $message = new Message();
+            $message->setBody($body);
+        }
+
+        $this->prepareBody($message);
+
+        if (!$message->getMessageId()) {
+            $message->setMessageId(UUID::generate());
+        }
+
+        if (!$message->getTimestamp()) {
+            $message->setTimestamp(time());
+        }
+
+        if (!$message->getPriority()) {
+            $message->setPriority(MessagePriority::NORMAL);
         }
 
         $deleteReplyQueue = false;
@@ -121,7 +147,20 @@ class Producer implements ProducerInterface
         $message->setProperty(Config::PARAMETER_COMMAND_NAME, $command);
         $message->setScope(Message::SCOPE_APP);
 
-        $this->sendEvent(Config::COMMAND_TOPIC, $message);
+        if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
+            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->driver->getConfig()->getRouterProcessorName());
+        }
+        if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
+            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->driver->getConfig()->getRouterQueueName());
+        }
+
+        $onSendMessage = new OnSend($message, null, $command);
+        $this->extension->onSend($onSendMessage);
+
+        $this->driver->sendToProcessor($message);
+
+        $onPostSendMessage = new OnPostSend($message, null, $command);
+        $this->extension->onPostSend($onPostSendMessage);
 
         if ($needReply) {
             $promise = $this->rpcFactory->createPromise($replyTo, $message->getCorrelationId(), 60000);
@@ -151,7 +190,7 @@ class Producer implements ProducerInterface
             $contentType = $contentType ?: 'text/plain';
             $body = (string) $body;
         } elseif (is_array($body)) {
-            if ($contentType && $contentType !== 'application/json') {
+            if ($contentType && 'application/json' !== $contentType) {
                 throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
             }
 
@@ -168,7 +207,7 @@ class Producer implements ProducerInterface
             $contentType = 'application/json';
             $body = JSON::encode($body);
         } elseif ($body instanceof \JsonSerializable) {
-            if ($contentType && $contentType !== 'application/json') {
+            if ($contentType && 'application/json' !== $contentType) {
                 throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
             }
 
