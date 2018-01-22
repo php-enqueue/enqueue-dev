@@ -178,7 +178,7 @@ class DbalContext implements PsrContext
         $table->addColumn('properties', 'text', ['notnull' => false]);
         $table->addColumn('redelivered', 'boolean', ['notnull' => false]);
         $table->addColumn('queue', 'string');
-        $table->addColumn('priority', 'smallint');
+        $table->addColumn('priority', 'smallint', ['notnull' => false]);
         $table->addColumn('delayed_until', 'integer', ['notnull' => false]);
         $table->addColumn('time_to_live', 'integer', ['notnull' => false]);
 
