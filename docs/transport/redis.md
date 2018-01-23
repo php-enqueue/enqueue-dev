@@ -78,6 +78,40 @@ $connectionFactory = new RedisConnectionFactory([
 $psrContext = $connectionFactory->createContext();
 ```
 
+* Use an exist php redis object:
+
+```php
+<?
+use Enqueue\Redis\RedisConnectionFactory;
+
+$redis = new \Redis();
+
+$client = $redis->connect('localhost', 6379, 1);
+
+$connectionFactory = new RedisConnectionFactory(array('lazy' => true));
+$connectionFactory->setRedis($client);
+
+$psrContext = $connectionFactory->createContext();
+```
+
+* Use an exist predis object:
+
+```php
+<?
+use Predis\Client;
+use Enqueue\Redis\RedisConnectionFactory;
+
+$redis = new Client(array(
+    'host' => 'localhost',
+    'port' => 6379,
+));
+
+$connectionFactory = new RedisConnectionFactory(array('lazy' => true));
+$connectionFactory->setRedis($redis);
+
+$psrContext = $connectionFactory->createContext();
+```
+
 ## Send message to topic
 
 ```php
