@@ -15,19 +15,23 @@ class PhpRedis implements Redis
     private $config;
 
     /**
-     * @param array $config
+     * @param array|\Redis $param
      */
-    public function __construct(array $config)
+    public function __construct($param)
     {
-        $this->config = array_replace([
-            'host' => null,
-            'port' => null,
-            'timeout' => null,
-            'reserved' => null,
-            'retry_interval' => null,
-            'persisted' => false,
-            'database' => 0,
-        ], $config);
+        if ($param instanceof \Redis) {
+            $this->redis = $param;
+        } else {
+            $this->config = array_replace([
+                'host' => null,
+                'port' => null,
+                'timeout' => null,
+                'reserved' => null,
+                'retry_interval' => null,
+                'persisted' => false,
+                'database' => 0,
+            ], $param);
+        }
     }
 
     /**
