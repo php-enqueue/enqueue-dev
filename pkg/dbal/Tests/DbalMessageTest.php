@@ -27,11 +27,11 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
     }
 
-    public function testShouldSetPriorityToZeroInConstructor()
+    public function testShouldSetPriorityToNullInConstructor()
     {
         $message = new DbalMessage();
 
-        $this->assertSame(0, $message->getPriority());
+        $this->assertNull($message->getPriority());
     }
 
     public function testShouldSetDelayToNullInConstructor()
