@@ -82,6 +82,14 @@ class PhpRedis implements Redis
                 );
             }
 
+            if (array_key_exists('pass', $this->config)) {
+                $this->config['auth'] = $this->config['pass'];
+            }
+
+            if (array_key_exists('auth', $this->config)) {
+                $this->redis->auth($this->config['auth']);
+            }
+
             $this->redis->select($this->config['database']);
         }
 
