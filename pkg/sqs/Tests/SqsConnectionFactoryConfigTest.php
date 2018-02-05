@@ -62,6 +62,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'retries' => 3,
                 'version' => '2012-11-05',
                 'lazy' => true,
+                'endpoint' => null,
             ],
         ];
 
@@ -75,6 +76,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'retries' => 3,
                 'version' => '2012-11-05',
                 'lazy' => true,
+                'endpoint' => null,
             ],
         ];
 
@@ -88,6 +90,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'retries' => 3,
                 'version' => '2012-11-05',
                 'lazy' => true,
+                'endpoint' => null,
             ],
         ];
 
@@ -101,6 +104,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'retries' => 3,
                 'version' => '2012-11-05',
                 'lazy' => false,
+                'endpoint' => null,
             ],
         ];
 
@@ -114,6 +118,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'retries' => 3,
                 'version' => '2012-11-05',
                 'lazy' => false,
+                'endpoint' => null,
             ],
         ];
 
@@ -127,6 +132,27 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'retries' => 3,
                 'version' => '2012-11-05',
                 'lazy' => false,
+                'endpoint' => null,
+            ],
+        ];
+
+        yield [
+            [
+                'key' => 'theKey',
+                'secret' => 'theSecret',
+                'token' => 'theToken',
+                'lazy' => false,
+                'endpoint' => 'http://localstack:1111'
+            ],
+            [
+                'key' => 'theKey',
+                'secret' => 'theSecret',
+                'token' => 'theToken',
+                'region' => null,
+                'retries' => 3,
+                'version' => '2012-11-05',
+                'lazy' => false,
+                'endpoint' => 'http://localstack:1111',
             ],
         ];
     }
