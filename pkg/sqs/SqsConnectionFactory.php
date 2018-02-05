@@ -91,7 +91,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
         $config = [
             'version' => $this->config['version'],
             'retries' => $this->config['retries'],
-            'region' => $this->config['region']
+            'region' => $this->config['region'],
         ];
 
         if (isset($this->config['endpoint'])) {
@@ -101,7 +101,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
         if ($this->config['key'] && $this->config['secret']) {
             $config['credentials'] = [
                 'key' => $this->config['key'],
-                'secret' => $this->config['secret']
+                'secret' => $this->config['secret'],
             ];
 
             if ($this->config['token']) {
@@ -156,7 +156,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
             'retries' => 3,
             'version' => '2012-11-05',
             'lazy' => true,
-            'endpoint' => null
+            'endpoint' => null,
         ];
     }
 }
