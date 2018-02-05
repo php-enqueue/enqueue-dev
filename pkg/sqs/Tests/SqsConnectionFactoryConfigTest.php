@@ -142,7 +142,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'lazy' => false,
-                'endpoint' => 'http://localstack:1111'
+                'endpoint' => 'http://localstack:1111',
             ],
             [
                 'key' => 'theKey',
