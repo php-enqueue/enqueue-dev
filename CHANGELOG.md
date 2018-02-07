@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.18](https://github.com/php-enqueue/enqueue-dev/tree/0.8.18) (2018-02-07)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.17...0.8.18)
+
+- \[SQS\] Allow custom aws endpoint configuration [\#352](https://github.com/php-enqueue/enqueue-dev/issues/352)
+- Added endpoint configuration and updated the tests [\#353](https://github.com/php-enqueue/enqueue-dev/pull/353) ([gitis](https://github.com/gitis))
+
+- Transport is not enabled: amqp: [\#356](https://github.com/php-enqueue/enqueue-dev/issues/356)
+- \[bundle\] DefaultTransportFactory should accept DSN like foo: [\#358](https://github.com/php-enqueue/enqueue-dev/pull/358) ([makasim](https://github.com/makasim))
+- \[dbal\] Consumer never fetches messages ordered by published time [\#343](https://github.com/php-enqueue/enqueue-dev/pull/343) ([f7h](https://github.com/f7h))
+
+- \[SQS\] Unable to connect to FIFO queue [\#342](https://github.com/php-enqueue/enqueue-dev/issues/342)
+- \[dbal\] Consumer never fetches messages ordered by published time [\#340](https://github.com/php-enqueue/enqueue-dev/issues/340)
+
+- Moved symfony/framework-bundle to require-dev [\#348](https://github.com/php-enqueue/enqueue-dev/pull/348) ([prisis](https://github.com/prisis))
+- Gearman PHP 7 support [\#347](https://github.com/php-enqueue/enqueue-dev/pull/347) ([Jawshua](https://github.com/Jawshua))
+
 ## [0.8.17](https://github.com/php-enqueue/enqueue-dev/tree/0.8.17) (2018-01-18)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.16...0.8.17)
 

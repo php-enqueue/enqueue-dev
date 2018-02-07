@@ -58,7 +58,7 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
                     }
 
                     if (is_string($v)) {
-                        return false !== strpos($v, '://') || false !== strpos($v, 'env_') ?
+                        return false !== strpos($v, ':') || false !== strpos($v, 'env_') ?
                             ['dsn' => $v] :
                             ['alias' => $v];
                     }
