@@ -595,6 +595,8 @@ class EnqueueExtensionTest extends TestCase
     }
 
     /**
+     * @param bool $debug
+     *
      * @return ContainerBuilder
      */
     private function getContainerBuilder($debug = true)

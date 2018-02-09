@@ -45,7 +45,7 @@ class Configuration implements ConfigurationInterface
         }
 
         $rootNode->children()
-            ->arrayNode('client')->addDefaultsIfNotSet()->children()
+            ->arrayNode('client')->children()
                 ->booleanNode('traceable_producer')->defaultValue($this->debug)->end()
                 ->scalarNode('prefix')->defaultValue('enqueue')->end()
                 ->scalarNode('app_name')->defaultValue('app')->end()
