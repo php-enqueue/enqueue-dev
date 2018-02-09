@@ -125,6 +125,8 @@ final class SimpleClient
     }
 
     /**
+     * @deprecated since 0.8.18 and will be removed in 0.9. Use sendEvent method instead
+     *
      * @param string       $topic
      * @param string|array $message
      * @param bool         $setupBroker

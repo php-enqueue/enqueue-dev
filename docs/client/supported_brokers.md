@@ -1,5 +1,20 @@
 # Client. Supported brokers
 
+Here's the list of transports supported by Enqueue Client:
+
+| Transport           | Package                                                    |  DSN                            |
+|:-------------------:|:----------------------------------------------------------:|:-------------------------------:|
+| AMQP, RabbitMQ      | [enqueue/amqp-bunny](../transport/amqp_bunny.md)           | amqp: amqp+bunny:               |
+| AMQP, RabbitMQ      | [enqueue/amqp-lib](../transport/amqp_lib.md)               | amqp: amqp+lib:                 |
+| AMQP, RabbitMQ      | [enqueue/amqp-ext](../transport/amqp.md)                   | amqp: amqp+ext:                 |
+| Doctrine DBAL       | [enqueue/dbal](../transport/dbal.md)                       | mysql: pgsql: pdo_pgsql etc     |
+| Filesystem          | [enqueue/fs](../transport/fs.md)                           | file:///foo/bar                 |
+| Google PubSub       | [enqueue/gps](../transport/gps.md)                         | gps:                            |
+| Redis               | [enqueue/gps](../transport/redis.md)                       | redis:                          |
+| Amazon SQS          | [enqueue/sqs](../transport/sqs.md)                         | sqs:                            |
+| STOMP, RabbitMQ     | [enqueue/stomp](../transport/stomp.md)                     | stomp:                          |
+| Null                | [enqueue/null](../transport/null.md)                       | null:                           |
+
 Here's the list of protocols and Client features supported by them 
 
 | Protocol       | Priority | Delay    | Expiration | Setup broker | Message bus |
@@ -11,7 +26,8 @@ Here's the list of protocols and Client features supported by them
 | Filesystem     |   No     |    No    |    No      |     Yes      |     No      |
 | Redis          |   No     |    No    |    No      |  Not needed  |     No      |
 | Doctrine DBAL  |   Yes    |    Yes   |    No      |     Yes      |     No      |
-| AWS SQS        |   No     |    Yes   |    No      |     Yes      |   Not impl  |
+| Amazon SQS     |   No     |    Yes   |    No      |     Yes      |   Not impl  |
+| Google PubSub  | Not impl | Not impl |  Not impl  |     Yes      |   Not impl  |
 
 * \* Possible if a RabbitMQ delay plugin is installed.
 * \*\* Possible if topics (exchanges) are configured on broker side manually.
