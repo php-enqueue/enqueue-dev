@@ -16,6 +16,8 @@ $ composer require enqueue/simple-client enqueue/amqp-ext
 
 ## Configure
 
+The code below shows how to use simple client with AMQP transport. There are other [supported brokers](supported_brokers.md).
+
 ```php
 <?php
 use Enqueue\SimpleClient\SimpleClient;
@@ -27,23 +29,54 @@ $client = new SimpleClient('amqp:');
 
 ## Produce message
 
+There two types of message a client can produce: events and commands.
+Events are used to notify others about something, in other words it is an implementation of [publish-subscribe pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern), sometimes called "fire-and-forget" too.
+With events there is no way to get a reply as a producer is not aware of any subscribed consumers.
+Commands are used to request a job to be done. It is an implementation of one-to-one messaging pattern.
+A producer can request a reply from the consumer though it is up to the consumer whether send it or not. 
+
+Commands work inside the app [scope](message_examples.md#scope) where events work inside the app scope as well as on [message bus](message_bus.md) scope.      
+
+Send event examples:
+  
 ```php
 <?php
 
 /** @var \Enqueue\SimpleClient\SimpleClient $client */
 
-$client->send('a_bar_topic', 'aMessageData');
+$client->setupBroker();
+
+$client->sendEvent('user_updated', 'aMessageData');
 
 // or an array
 
-$client->send('a_bar_topic', ['foo', 'bar']);
+$client->sendEvent('order_price_calculated', ['foo', 'bar']);
 
 // or an json serializable object
-$client->send('a_bar_topic', new class() implements \JsonSerializable {
+$client->sendEvent('user_activated', new class() implements \JsonSerializable {
     public function jsonSerialize() {
         return ['foo', 'bar'];
     }
 });
+```
+
+Send command examples:
+  
+```php
+<?php
+
+/** @var \Enqueue\SimpleClient\SimpleClient $client */
+
+$client->setupBroker();
+
+// accepts same type of arguments as sendEvent method
+$client->sendCommand('calculate_statistics', 'aMessageData');
+
+$reply = $client->sendCommand('build_category_tree', 'aMessageData', true);
+
+$replyMessage = $reply->receive(5000); // wait for reply for 5 seconds
+
+$replyMessage->getBody();
 ```
 
 ## Consume messages
