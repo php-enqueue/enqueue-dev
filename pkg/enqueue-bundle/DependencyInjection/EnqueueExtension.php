@@ -56,7 +56,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $config = $this->processConfiguration(new Configuration($this->factories), $configs);
+        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -77,7 +77,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
                 }
             }
 
-            if (isset($config['transport']['default']['alias']) && false == isset($config['transport'][$config['transport']['default']['alias']])) {
+            if (isset($config['transport']['default']['alias']) && !isset($config['transport'][$config['transport']['default']['alias']])) {
                 throw new \LogicException(sprintf('Transport is not enabled: %s', $config['transport']['default']['alias']));
             }
 
@@ -95,7 +95,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             $container->setParameter('enqueue.client.router_queue_name', $config['client']['router_queue']);
             $container->setParameter('enqueue.client.default_queue_name', $config['client']['default_processor_queue']);
 
-            if (false == empty($config['client']['traceable_producer'])) {
+            if ($config['client']['traceable_producer']) {
                 $container->register(TraceableProducer::class, TraceableProducer::class)
                     ->setDecoratedService(Producer::class)
                     ->addArgument(new Reference(sprintf('%s.inner', TraceableProducer::class)))
@@ -125,7 +125,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         }
 
         if ($config['job']) {
-            if (false == class_exists(Job::class)) {
+            if (!class_exists(Job::class)) {
                 throw new \LogicException('Seems "enqueue/job-queue" is not installed. Please fix this issue.');
             }
 
@@ -167,7 +167,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
 
         $container->addResource(new FileResource($rc->getFileName()));
 
-        return new Configuration($this->factories);
+        return new Configuration($this->factories, $container->getParameter('kernel.debug'));
     }
 
     public function prepend(ContainerBuilder $container)
@@ -177,19 +177,19 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
 
     private function registerJobQueueDoctrineEntityMapping(ContainerBuilder $container)
     {
-        if (false == class_exists(Job::class)) {
+        if (!class_exists(Job::class)) {
             return;
         }
 
         $bundles = $container->getParameter('kernel.bundles');
 
-        if (false == isset($bundles['DoctrineBundle'])) {
+        if (!isset($bundles['DoctrineBundle'])) {
             return;
         }
 
         foreach ($container->getExtensionConfig('doctrine') as $config) {
             // do not register mappings if dbal not configured.
-            if (false == empty($config['dbal'])) {
+            if (!empty($config['dbal'])) {
                 $rc = new \ReflectionClass(Job::class);
                 $jobQueueRootDir = dirname($rc->getFileName());
                 $container->prependExtensionConfig('doctrine', [
