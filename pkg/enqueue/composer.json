@@ -60,6 +60,11 @@
             "/Tests/"
         ]
     },
+    "config": {
+        "platform": {
+            "ext-amqp": "1.9.3"
+        }
+    },
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
