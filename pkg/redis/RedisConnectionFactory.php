@@ -28,6 +28,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
      *  'persisted' => bool, Whether it use single persisted connection or open a new one for every context
      *  'lazy' => the connection will be performed as later as possible, if the option set to true
      *  'database' => Database index to select when connected (default value: 0)
+     *  'options' => options for predis client (default value: ['exceptions' => true])
      * ].
      *
      * or
@@ -87,7 +88,8 @@ class RedisConnectionFactory implements PsrConnectionFactory
             }
 
             if ('predis' == $this->config['vendor'] && false == $this->redis) {
-                $this->redis = new PRedis(new Client($this->config, ['exceptions' => true]));
+                $options = array_replace(['exceptions' => true], empty($this->config['options']) ? [] : $this->config['options']);
+                $this->redis = new PRedis(new Client($this->config, $options));
             }
 
             $this->redis->connect();
