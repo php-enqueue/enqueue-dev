@@ -35,7 +35,7 @@ class RedisConnectionFactoryTest extends TestCase
                           ->setMethods(['createConnection'])
                           ->getMock();
 
-        $factory = new RedisConnectionFactory(['vendor' => 'predis', 'host' => '172.18.0.7', 'options' => ['foo' => 'bar']]);
+        $factory = new RedisConnectionFactory(['vendor' => 'predis', 'options' => ['foo' => 'bar']]);
 
         $context = $factory->createContext();
         $predis = $context->getRedis();
