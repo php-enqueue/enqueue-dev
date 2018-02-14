@@ -213,6 +213,7 @@ class DbalConsumer implements PsrConsumer
             ->andWhere('priority IS NOT NULL')
             ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
             ->addOrderBy('priority', 'desc')
+            ->addOrderBy('published_at', 'asc')
             ->setMaxResults(1)
         ;
 
