@@ -1,9 +1,10 @@
 <?php
 
-namespace Enqueue\Dbal\Tests\Spec;
+namespace Enqueue\Dbal\Tests\Functional;
 
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalMessage;
+use Enqueue\Dbal\Tests\Spec\CreateDbalContextTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
