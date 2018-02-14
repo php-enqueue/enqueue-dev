@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.8.19](https://github.com/php-enqueue/enqueue-dev/tree/0.8.19) (2018-02-14)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.18...0.8.19)
+
+- \[Docs\] Describe difference between command and event messages [\#351](https://github.com/php-enqueue/enqueue-dev/issues/351)
+- Fix typo [\#369](https://github.com/php-enqueue/enqueue-dev/pull/369) ([kubk](https://github.com/kubk))
+- \[client\]\[skip ci\] Explain meaning of sendEvent, sendCommand methods. [\#365](https://github.com/php-enqueue/enqueue-dev/pull/365) ([makasim](https://github.com/makasim))
+- Modify async\_events.md grammar [\#364](https://github.com/php-enqueue/enqueue-dev/pull/364) ([ddproxy](https://github.com/ddproxy))
+
+- Fix wrong argument type [\#361](https://github.com/php-enqueue/enqueue-dev/pull/361) ([olix21](https://github.com/olix21))
+
+- Minor grammatical changes to documentation [\#363](https://github.com/php-enqueue/enqueue-dev/issues/363)
+- \[DbalConsumer\] Issue with id type [\#360](https://github.com/php-enqueue/enqueue-dev/issues/360)
+
+- \[dbal\] Sort priority messages by published at date too.  [\#371](https://github.com/php-enqueue/enqueue-dev/pull/371) ([makasim](https://github.com/makasim))
+
 ## [0.8.18](https://github.com/php-enqueue/enqueue-dev/tree/0.8.18) (2018-02-07)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.17...0.8.18)
 
