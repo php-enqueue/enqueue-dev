@@ -54,7 +54,7 @@ class DbalProducer implements PsrProducer
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
-        if (null !== $this->priority && null === $message->getPriority()) {
+        if (null !== $this->priority && 0 === $message->getPriority()) {
             $message->setPriority($this->priority);
         }
         if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
@@ -81,9 +81,14 @@ class DbalProducer implements PsrProducer
             throw new \LogicException('The generated uuid is empty');
         }
 
+        $publishedAt = null !== $message->getPublishedAt() ?
+            $message->getPublishedAt() :
+            (int) (microtime(true) * 10000)
+        ;
+
         $dbalMessage = [
             'id' => $uuid,
-            'published_at' => (int) (microtime(true) * 10000),
+            'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
