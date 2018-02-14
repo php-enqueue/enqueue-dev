@@ -83,7 +83,7 @@ class DbalProducer implements PsrProducer
 
         $dbalMessage = [
             'id' => $uuid,
-            'published_at' => (int) microtime(true) * 10000,
+            'published_at' => (int) (microtime(true) * 10000),
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),

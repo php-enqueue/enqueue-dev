@@ -233,6 +233,8 @@ $replyMessage = $promise->receive(2000); // 2 sec
 $client->consume([new ReplyExtension()]);
 ```
 
+Read more about events and commands [here](client/quick_tour.md#produce-message). 
+
 ## Cli commands
 
 The library provides handy commands out of the box. 
