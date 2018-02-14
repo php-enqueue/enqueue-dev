@@ -2,10 +2,6 @@
 
 namespace Enqueue\Dbal\Tests;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Statement;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
@@ -121,43 +117,11 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
-     */
-    private function createConnectionMock()
-    {
-        return $this->createMock(Connection::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Statement
-     */
-    private function createStatementMock()
-    {
-        return $this->createMock(Statement::class);
-    }
-
-    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DbalContext
      */
     private function createContextMock()
     {
         return $this->createMock(DbalContext::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueryBuilder
-     */
-    private function createQueryBuilderMock()
-    {
-        return $this->createMock(QueryBuilder::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AbstractPlatform
-     */
-    private function createPlatformMock()
-    {
-        return $this->createMock(AbstractPlatform::class);
     }
 }
 

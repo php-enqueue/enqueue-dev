@@ -186,6 +186,7 @@ class DbalConsumer implements PsrConsumer
         $message->setBody($dbalMessage['body']);
         $message->setPriority((int) $dbalMessage['priority']);
         $message->setRedelivered((bool) $dbalMessage['redelivered']);
+        $message->setPublishedAt((int) $dbalMessage['published_at']);
 
         if ($dbalMessage['headers']) {
             $message->setHeaders(JSON::decode($dbalMessage['headers']));
