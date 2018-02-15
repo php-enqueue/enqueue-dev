@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.8.20](https://github.com/php-enqueue/enqueue-dev/tree/0.8.20) (2018-02-15)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.19...0.8.20)
+
+- \[Redis\] Add ability to pass Redis instance to connection factory [\#372](https://github.com/php-enqueue/enqueue-dev/pull/372) ([makasim](https://github.com/makasim))
+
+- Pass options to predis client when using redis transport [\#367](https://github.com/php-enqueue/enqueue-dev/issues/367)
+- Authentication Support for Redis [\#349](https://github.com/php-enqueue/enqueue-dev/issues/349)
+- Does redis factory supports sentinel or cluster? [\#341](https://github.com/php-enqueue/enqueue-dev/issues/341)
+
 ## [0.8.19](https://github.com/php-enqueue/enqueue-dev/tree/0.8.19) (2018-02-14)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.18...0.8.19)
 
