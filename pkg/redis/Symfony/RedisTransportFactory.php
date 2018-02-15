@@ -35,7 +35,7 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
         $builder
             ->beforeNormalization()
                 ->ifTrue(function ($node) {
-                    return empty($node['dsn']) && (empty($node['host']) || empty($node['vendor']));
+                    return empty($node['dsn']) && empty($node['service']) && (empty($node['host']) || empty($node['vendor']));
                 })
                 ->thenInvalid('Invalid configuration %s')
             ->end()
@@ -65,6 +65,9 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
                     ->defaultValue(0)
                     ->info('Database index to select when connected.')
                 ->end()
+                ->scalarNode('service')
+                    ->defaultNull()
+                ->end()
         ;
     }
 
@@ -75,6 +78,10 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
     {
         $factory = new Definition(RedisConnectionFactory::class);
         $factory->setArguments([isset($config['dsn']) ? $config['dsn'] : $config]);
+
+        if (!empty($config['service'])) {
+            $factory->addMethodCall('setRedis', [new Reference($config['service'])]);
+        }
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);

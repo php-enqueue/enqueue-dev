@@ -4,6 +4,7 @@ namespace Enqueue\Redis;
 
 use Interop\Queue\PsrConnectionFactory;
 use Predis\Client;
+use Predis\ClientInterface;
 
 class RedisConnectionFactory implements PsrConnectionFactory
 {
@@ -13,7 +14,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
     private $config;
 
     /**
-     * @var \Redis
+     * @var Redis
      */
     private $redis;
 
@@ -142,5 +143,24 @@ class RedisConnectionFactory implements PsrConnectionFactory
             'lazy' => true,
             'database' => 0,
         ];
+    }
+
+    /**
+     * @param $redis
+     */
+    public function setRedis($redis)
+    {
+        if ($redis instanceof ClientInterface) {
+            $this->redis = new PRedis($redis);
+        } elseif ($redis instanceof \Redis) {
+            $this->redis = new PhpRedis($redis);
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                'The $redis argument must be either %s or %s instance, bot got %s.',
+                ClientInterface::class,
+                \Redis::class,
+                get_class($redis)
+            ));
+        }
     }
 }
