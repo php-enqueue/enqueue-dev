@@ -26,13 +26,19 @@ use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class SimpleClient
 {
     /**
-     * @var ContainerBuilder
+     * @var ContainerInterface
      */
     private $container;
+
+    /**
+     * @var array|string
+     */
+    private $config;
 
     /**
      * The config could be a transport DSN (string) or an array, here's an example of a few DSNs:.
@@ -73,11 +79,13 @@ final class SimpleClient
      * ]
      *
      *
-     * @param string|array $config
+     * @param string|array          $config
+     * @param ContainerBuilder|null $container
      */
-    public function __construct($config)
+    public function __construct($config, ContainerBuilder $container = null)
     {
-        $this->container = $this->buildContainer($config);
+        $this->container = $this->buildContainer($config, $container ?: new ContainerBuilder());
+        $this->config = $config;
     }
 
     /**
@@ -252,16 +260,16 @@ final class SimpleClient
     }
 
     /**
-     * @param array|string $config
+     * @param array|string     $config
+     * @param ContainerBuilder $container
      *
-     * @return ContainerBuilder
+     * @return ContainerInterface
      */
-    private function buildContainer($config)
+    private function buildContainer($config, ContainerBuilder $container)
     {
         $config = $this->buildConfig($config);
         $extension = $this->buildContainerExtension();
 
-        $container = new ContainerBuilder();
         $container->registerExtension($extension);
         $container->loadFromExtension($extension->getAlias(), $config);
 
