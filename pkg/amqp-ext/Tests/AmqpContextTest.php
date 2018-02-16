@@ -100,7 +100,7 @@ class AmqpContextTest extends TestCase
         $this->assertSame('theName', $queue->getQueueName());
         $this->assertSame(AmqpQueue::FLAG_NOPARAM, $queue->getFlags());
         $this->assertSame([], $queue->getArguments());
-        $this->assertSame(null, $queue->getConsumerTag());
+        $this->assertNull($queue->getConsumerTag());
     }
 
     public function testShouldReturnAmqpProducer()

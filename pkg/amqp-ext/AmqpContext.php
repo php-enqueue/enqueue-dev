@@ -165,12 +165,12 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $exchange = new \AMQPExchange($this->getExtChannel());
             $exchange->setName($bind->getSource()->getTopicName());
             $exchange->bind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getSource()->getQueueName());
             $queue->bind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getTarget()->getQueueName());
@@ -192,12 +192,12 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $exchange = new \AMQPExchange($this->getExtChannel());
             $exchange->setName($bind->getSource()->getTopicName());
             $exchange->unbind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // unbind queue from exchange
+        // unbind queue from exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getSource()->getQueueName());
             $queue->unbind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // unbind exchange from queue
+        // unbind exchange from queue
         } else {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getTarget()->getQueueName());
