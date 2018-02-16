@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.8.21](https://github.com/php-enqueue/enqueue-dev/tree/0.8.21) (2018-02-16)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.20...0.8.21)
+
+- \[symfony\] Print command name [\#374](https://github.com/php-enqueue/enqueue-dev/pull/374) ([makasim](https://github.com/makasim))
+
+- Delayed-message doesn't work on my project ! [\#373](https://github.com/php-enqueue/enqueue-dev/issues/373)
+- \[Symfony\] Command name misses in profiler [\#355](https://github.com/php-enqueue/enqueue-dev/issues/355)
+
 ## [0.8.20](https://github.com/php-enqueue/enqueue-dev/tree/0.8.20) (2018-02-15)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.19...0.8.20)
 
