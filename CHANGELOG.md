@@ -1,5 +1,86 @@
 # Change Log
 
+## [0.8.20](https://github.com/php-enqueue/enqueue-dev/tree/0.8.20) (2018-02-15)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.19...0.8.20)
+
+- \[Redis\] Add ability to pass Redis instance to connection factory [\#372](https://github.com/php-enqueue/enqueue-dev/pull/372) ([makasim](https://github.com/makasim))
+
+- Pass options to predis client when using redis transport [\#367](https://github.com/php-enqueue/enqueue-dev/issues/367)
+- Authentication Support for Redis [\#349](https://github.com/php-enqueue/enqueue-dev/issues/349)
+- Does redis factory supports sentinel or cluster? [\#341](https://github.com/php-enqueue/enqueue-dev/issues/341)
+
+## [0.8.19](https://github.com/php-enqueue/enqueue-dev/tree/0.8.19) (2018-02-14)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.18...0.8.19)
+
+- \[Docs\] Describe difference between command and event messages [\#351](https://github.com/php-enqueue/enqueue-dev/issues/351)
+- Fix typo [\#369](https://github.com/php-enqueue/enqueue-dev/pull/369) ([kubk](https://github.com/kubk))
+- \[client\]\[skip ci\] Explain meaning of sendEvent, sendCommand methods. [\#365](https://github.com/php-enqueue/enqueue-dev/pull/365) ([makasim](https://github.com/makasim))
+- Modify async\_events.md grammar [\#364](https://github.com/php-enqueue/enqueue-dev/pull/364) ([ddproxy](https://github.com/ddproxy))
+
+- Fix wrong argument type [\#361](https://github.com/php-enqueue/enqueue-dev/pull/361) ([olix21](https://github.com/olix21))
+
+- Minor grammatical changes to documentation [\#363](https://github.com/php-enqueue/enqueue-dev/issues/363)
+- \[DbalConsumer\] Issue with id type [\#360](https://github.com/php-enqueue/enqueue-dev/issues/360)
+
+- \[dbal\] Sort priority messages by published at date too.  [\#371](https://github.com/php-enqueue/enqueue-dev/pull/371) ([makasim](https://github.com/makasim))
+
+## [0.8.18](https://github.com/php-enqueue/enqueue-dev/tree/0.8.18) (2018-02-07)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.17...0.8.18)
+
+- \[SQS\] Allow custom aws endpoint configuration [\#352](https://github.com/php-enqueue/enqueue-dev/issues/352)
+- Added endpoint configuration and updated the tests [\#353](https://github.com/php-enqueue/enqueue-dev/pull/353) ([gitis](https://github.com/gitis))
+
+- Transport is not enabled: amqp: [\#356](https://github.com/php-enqueue/enqueue-dev/issues/356)
+- \[bundle\] DefaultTransportFactory should accept DSN like foo: [\#358](https://github.com/php-enqueue/enqueue-dev/pull/358) ([makasim](https://github.com/makasim))
+- \[dbal\] Consumer never fetches messages ordered by published time [\#343](https://github.com/php-enqueue/enqueue-dev/pull/343) ([f7h](https://github.com/f7h))
+
+- \[SQS\] Unable to connect to FIFO queue [\#342](https://github.com/php-enqueue/enqueue-dev/issues/342)
+- \[dbal\] Consumer never fetches messages ordered by published time [\#340](https://github.com/php-enqueue/enqueue-dev/issues/340)
+
+- Moved symfony/framework-bundle to require-dev [\#348](https://github.com/php-enqueue/enqueue-dev/pull/348) ([prisis](https://github.com/prisis))
+- Gearman PHP 7 support [\#347](https://github.com/php-enqueue/enqueue-dev/pull/347) ([Jawshua](https://github.com/Jawshua))
+
+## [0.8.17](https://github.com/php-enqueue/enqueue-dev/tree/0.8.17) (2018-01-18)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.16...0.8.17)
+
+- QueueConsumer should be final  [\#311](https://github.com/php-enqueue/enqueue-dev/issues/311)
+- \[consumption\] Make QueueConsumer final [\#336](https://github.com/php-enqueue/enqueue-dev/pull/336) ([makasim](https://github.com/makasim))
+- \[bundle\]\[dx\] Add a message that suggest installing a pkg to use the transport. [\#335](https://github.com/php-enqueue/enqueue-dev/pull/335) ([makasim](https://github.com/makasim))
+- \[0.9\]\[BC break\]\[dbal\] Store UUIDs as binary data. Improves performance [\#280](https://github.com/php-enqueue/enqueue-dev/pull/280) ([makasim](https://github.com/makasim))
+
+- Unrecognized option "amqp" under "enqueue.transport" [\#333](https://github.com/php-enqueue/enqueue-dev/issues/333)
+
+- \[consumption\] Prepare QueueConsumer for changes in 0.9 [\#337](https://github.com/php-enqueue/enqueue-dev/pull/337) ([makasim](https://github.com/makasim))
+
+## [0.8.16](https://github.com/php-enqueue/enqueue-dev/tree/0.8.16) (2018-01-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.15...0.8.16)
+
+- \[Sqs\] Allow array-based DSN configuration [\#315](https://github.com/php-enqueue/enqueue-dev/pull/315) ([beryllium](https://github.com/beryllium))
+
+## [0.8.15](https://github.com/php-enqueue/enqueue-dev/tree/0.8.15) (2018-01-12)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.14...0.8.15)
+
+- \[consumption\] Correct message in LoggerExtension [\#322](https://github.com/php-enqueue/enqueue-dev/pull/322) ([makasim](https://github.com/makasim))
+
+- \[amqp\] fix signal handler if consume called from consume [\#328](https://github.com/php-enqueue/enqueue-dev/pull/328) ([makasim](https://github.com/makasim))
+
+- SQS via DNS region missing [\#321](https://github.com/php-enqueue/enqueue-dev/issues/321)
+
+- Update config\_reference.md [\#326](https://github.com/php-enqueue/enqueue-dev/pull/326) ([errogaht](https://github.com/errogaht))
+- Update message\_producer.md [\#325](https://github.com/php-enqueue/enqueue-dev/pull/325) ([errogaht](https://github.com/errogaht))
+- Update consumption\_extension.md [\#324](https://github.com/php-enqueue/enqueue-dev/pull/324) ([errogaht](https://github.com/errogaht))
+
+## [0.8.14](https://github.com/php-enqueue/enqueue-dev/tree/0.8.14) (2018-01-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.13...0.8.14)
+
+## [0.8.13](https://github.com/php-enqueue/enqueue-dev/tree/0.8.13) (2018-01-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.12...0.8.13)
+
+- \[amqp\] Fix socket and signal issue. [\#317](https://github.com/php-enqueue/enqueue-dev/pull/317) ([makasim](https://github.com/makasim))
+- \[kafka\] add ability to set offset. [\#314](https://github.com/php-enqueue/enqueue-dev/pull/314) ([makasim](https://github.com/makasim))
+
+- AMQPIOWaitException upon docker container shutdown [\#300](https://github.com/php-enqueue/enqueue-dev/issues/300)
+
 ## [0.8.12](https://github.com/php-enqueue/enqueue-dev/tree/0.8.12) (2018-01-04)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.11...0.8.12)
 

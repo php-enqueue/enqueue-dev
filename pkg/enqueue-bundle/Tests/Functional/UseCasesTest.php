@@ -192,16 +192,19 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
-        yield 'sqs' => [[
-            'transport' => [
-                'default' => 'sqs',
-                'sqs' => [
-                    'key' => getenv('AWS_SQS_KEY'),
-                    'secret' => getenv('AWS_SQS_SECRET'),
-                    'region' => getenv('AWS_SQS_REGION'),
+        // travis build does not have secret env vars if contribution is from outside.
+        if (getenv('AWS_SQS_KEY')) {
+            yield 'sqs' => [[
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'key' => getenv('AWS_SQS_KEY'),
+                        'secret' => getenv('AWS_SQS_SECRET'),
+                        'region' => getenv('AWS_SQS_REGION'),
+                    ],
                 ],
-            ],
-        ]];
+            ]];
+        }
 
 //        yield 'gps' => [[
 //            'transport' => [

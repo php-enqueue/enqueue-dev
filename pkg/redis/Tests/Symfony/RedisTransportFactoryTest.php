@@ -104,6 +104,35 @@ class RedisTransportFactoryTest extends TestCase
         ]], $factory->getArguments());
     }
 
+    public function testShouldCreateConnectionFactoryWithCustomRedisInstance()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new RedisTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'host' => 'localhost',
+            'port' => 123,
+            'vendor' => 'custom',
+            'redis' => 'a.redis.service',
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(RedisConnectionFactory::class, $factory->getClass());
+
+        $config = $factory->getArgument(0);
+
+        $this->assertInternalType('array', $config);
+
+        $this->assertArrayHasKey('vendor', $config);
+        $this->assertSame('custom', $config['vendor']);
+
+        $this->assertArrayHasKey('redis', $config);
+        $this->assertInstanceOf(Reference::class, $config['redis']);
+        $this->assertSame('a.redis.service', (string) $config['redis']);
+    }
+
     public function testShouldCreateContext()
     {
         $container = new ContainerBuilder();

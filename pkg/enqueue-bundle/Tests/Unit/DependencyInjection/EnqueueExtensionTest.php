@@ -594,6 +594,22 @@ class EnqueueExtensionTest extends TestCase
         $this->assertSame(456, $def->getArgument(3));
     }
 
+    public function testShouldThrowIfPackageShouldBeInstalledToUseTransport()
+    {
+        $container = new ContainerBuilder();
+
+        $extension = new EnqueueExtension();
+        $extension->addTransportFactory(new MissingTransportFactory('need_package', ['a_package', 'another_package']));
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('In order to use the transport "need_package" install');
+        $extension->load([[
+            'transport' => [
+                'need_package' => true,
+            ],
+        ]], $container);
+    }
+
     /**
      * @param bool $debug
      *

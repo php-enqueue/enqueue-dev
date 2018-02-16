@@ -2,7 +2,6 @@
 
 namespace Enqueue\Dbal\Tests;
 
-use Doctrine\DBAL\Connection;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
@@ -59,14 +58,6 @@ class DbalProducerTest extends \PHPUnit_Framework_TestCase
     private function createContextMock()
     {
         return $this->createMock(DbalContext::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
-     */
-    private function createConnectionMock()
-    {
-        return $this->createMock(Connection::class);
     }
 }
 
