@@ -33,7 +33,8 @@
         <thead>
         <tr>
             <th>#</th>
-            <th>Topic</th>
+            <th>Type</th>
+            <th>Destination</th>
             <th>Message</th>
             <th>Priority</th>
         </tr>
@@ -42,19 +43,22 @@
         {% for sentMessage in collector.sentMessages %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ sentMessage.topic }}</td>
+                <td>{% if sentMessage.command|default(null) %}Event{% else %}Command{% endif %}</td>
+                <td>{% if sentMessage.command|default(null) %}{{ sentMessage.command }}{% else %}{{ sentMessage.topic }}{% endif %}</td>
                 <td style="width: 70%">
-                        <span class="metadata">
-                            <span>
-                                {{ collector.ensureString(sentMessage.body)[0:40] }}{% if collector.ensureString(sentMessage.body)[0:40] != collector.ensureString(sentMessage.body) %}...{% endif %}
-                            </span>
-                            <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#message-body-{{ loop.index }}" data-toggle-alt-content="Hide trace">Show trace</a>
-
-                            <div id="message-body-{{ loop.index }}" class="context sf-toggle-content sf-toggle-hidden">
-                                {{ profiler_dump(sentMessage.body) }}
-                            </div>
+                    <span class="metadata">
+                        <span>
+                            {{ collector.ensureString(sentMessage.body)[0:40] }}{% if collector.ensureString(sentMessage.body)[0:40] != collector.ensureString(sentMessage.body) %}...{% endif %}
                         </span>
-                <td><span title="{{ sentMessage.priority }}">{{ collector.prettyPrintPriority(sentMessage.priority) }}</span></td>
+                        <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#message-body-{{ loop.index }}" data-toggle-alt-content="Hide trace">Show trace</a>
+
+                        <div id="message-body-{{ loop.index }}" class="context sf-toggle-content sf-toggle-hidden">
+                            {{ profiler_dump(sentMessage.body) }}
+                        </div>
+                    </span>
+                <td>
+                    <span title="{{ sentMessage.priority }}">{{ collector.prettyPrintPriority(sentMessage.priority) }}</span>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
