@@ -24,7 +24,7 @@ class ConfigurationTest extends TestCase
 
     public function testCouldBeConstructedWithFactoriesAsFirstArgument()
     {
-        new Configuration([]);
+        new Configuration([], true);
     }
 
     public function testThrowIfTransportNotConfigured()
@@ -32,7 +32,7 @@ class ConfigurationTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('The child node "transport" at path "enqueue" must be configured.');
 
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $processor->processConfiguration($configuration, [[]]);
@@ -40,7 +40,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldInjectFooTransportFactoryConfig()
     {
-        $configuration = new Configuration([new FooTransportFactory()]);
+        $configuration = new Configuration([new FooTransportFactory()], true);
 
         $processor = new Processor();
         $processor->processConfiguration($configuration, [[
@@ -54,7 +54,7 @@ class ConfigurationTest extends TestCase
 
     public function testThrowExceptionIfFooTransportConfigInvalid()
     {
-        $configuration = new Configuration([new FooTransportFactory()]);
+        $configuration = new Configuration([new FooTransportFactory()], true);
 
         $processor = new Processor();
 
@@ -72,7 +72,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldAllowConfigureDefaultTransport()
     {
-        $configuration = new Configuration([new DefaultTransportFactory()]);
+        $configuration = new Configuration([new DefaultTransportFactory()], true);
 
         $processor = new Processor();
         $processor->processConfiguration($configuration, [[
@@ -84,7 +84,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldAllowConfigureNullTransport()
     {
-        $configuration = new Configuration([new NullTransportFactory()]);
+        $configuration = new Configuration([new NullTransportFactory()], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -106,7 +106,7 @@ class ConfigurationTest extends TestCase
             new NullTransportFactory(),
             new DefaultTransportFactory(),
             new FooTransportFactory(),
-        ]);
+        ], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -128,7 +128,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldSetDefaultConfigurationForClient()
     {
-        $configuration = new Configuration([new DefaultTransportFactory()]);
+        $configuration = new Configuration([new DefaultTransportFactory()], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -149,7 +149,7 @@ class ConfigurationTest extends TestCase
                 'router_topic' => 'default',
                 'router_queue' => 'default',
                 'default_processor_queue' => 'default',
-                'traceable_producer' => false,
+                'traceable_producer' => true,
                 'redelivered_delay_time' => 0,
             ],
         ], $config);
@@ -160,7 +160,7 @@ class ConfigurationTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('The path "enqueue.client.router_topic" cannot contain an empty value, but got "".');
 
-        $configuration = new Configuration([new DefaultTransportFactory()]);
+        $configuration = new Configuration([new DefaultTransportFactory()], true);
 
         $processor = new Processor();
         $processor->processConfiguration($configuration, [[
@@ -178,7 +178,7 @@ class ConfigurationTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('The path "enqueue.client.router_queue" cannot contain an empty value, but got "".');
 
-        $configuration = new Configuration([new DefaultTransportFactory()]);
+        $configuration = new Configuration([new DefaultTransportFactory()], true);
 
         $processor = new Processor();
         $processor->processConfiguration($configuration, [[
@@ -193,7 +193,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldThrowExceptionIfDefaultProcessorQueueIsEmpty()
     {
-        $configuration = new Configuration([new DefaultTransportFactory()]);
+        $configuration = new Configuration([new DefaultTransportFactory()], true);
 
         $processor = new Processor();
 
@@ -211,7 +211,7 @@ class ConfigurationTest extends TestCase
 
     public function testJobShouldBeDisabledByDefault()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -225,7 +225,7 @@ class ConfigurationTest extends TestCase
 
     public function testCouldEnableJob()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -240,7 +240,7 @@ class ConfigurationTest extends TestCase
 
     public function testDoctrinePingConnectionExtensionShouldBeDisabledByDefault()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -256,7 +256,7 @@ class ConfigurationTest extends TestCase
 
     public function testDoctrinePingConnectionExtensionCouldBeEnabled()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -275,7 +275,7 @@ class ConfigurationTest extends TestCase
 
     public function testDoctrineClearIdentityMapExtensionShouldBeDisabledByDefault()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -291,7 +291,7 @@ class ConfigurationTest extends TestCase
 
     public function testDoctrineClearIdentityMapExtensionCouldBeEnabled()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -310,7 +310,7 @@ class ConfigurationTest extends TestCase
 
     public function testSignalExtensionShouldBeEnabledByDefault()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -326,7 +326,7 @@ class ConfigurationTest extends TestCase
 
     public function testSignalExtensionCouldBeDisabled()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -345,7 +345,7 @@ class ConfigurationTest extends TestCase
 
     public function testReplyExtensionShouldBeEnabledByDefault()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -361,7 +361,7 @@ class ConfigurationTest extends TestCase
 
     public function testReplyExtensionCouldBeDisabled()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -380,7 +380,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldDisableAsyncEventsByDefault()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -396,7 +396,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldAllowEnableAsyncEvents()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
 
@@ -427,7 +427,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldSetDefaultConfigurationForConsumption()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
@@ -444,7 +444,7 @@ class ConfigurationTest extends TestCase
 
     public function testShouldAllowConfigureConsumption()
     {
-        $configuration = new Configuration([]);
+        $configuration = new Configuration([], true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[

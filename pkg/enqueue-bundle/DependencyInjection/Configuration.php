@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface
      * @param TransportFactoryInterface[] $factories
      * @param bool                        $debug
      */
-    public function __construct(array $factories, $debug = false)
+    public function __construct(array $factories, $debug)
     {
         $this->factories = $factories;
         $this->debug = $debug;
