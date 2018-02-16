@@ -89,6 +89,8 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
         }
 
         $this->deliveryDelay = $deliveryDelay;
+
+        return $this;
     }
 
     /**

@@ -139,7 +139,7 @@ class StompHeadersEncoder
 
                     break;
                 case self::TYPE_BOOL:
-                    $decoded[$key] = $value === 'true';
+                    $decoded[$key] = 'true' === $value;
 
                     break;
                 default:

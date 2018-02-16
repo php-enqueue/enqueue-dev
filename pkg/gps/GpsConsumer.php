@@ -48,7 +48,7 @@ class GpsConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        if ($timeout === 0) {
+        if (0 === $timeout) {
             while (true) {
                 if ($message = $this->receiveMessage($timeout)) {
                     return $message;

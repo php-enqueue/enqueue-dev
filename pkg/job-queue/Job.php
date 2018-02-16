@@ -219,7 +219,7 @@ class Job
      *
      * @param Job $rootJob
      */
-    public function setRootJob(Job $rootJob)
+    public function setRootJob(self $rootJob)
     {
         $this->rootJob = $rootJob;
     }

@@ -176,7 +176,7 @@ class NullMessage implements PsrMessage
     {
         $value = $this->getHeader('timestamp');
 
-        return $value === null ? null : (int) $value;
+        return null === $value ? null : (int) $value;
     }
 
     /**

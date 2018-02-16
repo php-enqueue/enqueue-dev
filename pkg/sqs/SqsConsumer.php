@@ -100,7 +100,7 @@ class SqsConsumer implements PsrConsumer
     {
         $maxLongPollingTime = 20; // 20 is max allowed long polling value
 
-        if ($timeout === 0) {
+        if (0 === $timeout) {
             while (true) {
                 if ($message = $this->receiveMessage($maxLongPollingTime)) {
                     return $message;

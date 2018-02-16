@@ -49,6 +49,13 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['correlation_id' => 'theCorrelationId'], $message->getHeaders());
     }
 
+    public function testShouldSetPublishedAtToNullInConstructor()
+    {
+        $message = new DbalMessage();
+
+        $this->assertNull($message->getPublishedAt());
+    }
+
     public function testShouldSetMessageIdAsHeader()
     {
         $message = new DbalMessage();
@@ -71,5 +78,14 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
         $message->setReplyTo('theReply');
 
         $this->assertSame(['reply_to' => 'theReply'], $message->getHeaders());
+    }
+
+    public function testShouldAllowGetPreviouslySetPublishedAtTime()
+    {
+        $message = new DbalMessage();
+
+        $message->setPublishedAt(123);
+
+        $this->assertSame(123, $message->getPublishedAt());
     }
 }

@@ -63,7 +63,7 @@ class DbalProducer implements PsrProducer
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
-        if (null !== $this->priority && null === $message->getPriority()) {
+        if (null !== $this->priority && 0 === $message->getPriority()) {
             $message->setPriority($this->priority);
         }
         if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
@@ -85,10 +85,15 @@ class DbalProducer implements PsrProducer
 
         $uuid = Uuid::uuid1();
 
+        $publishedAt = null !== $message->getPublishedAt() ?
+            $message->getPublishedAt() :
+            (int) (microtime(true) * 10000)
+        ;
+
         $dbalMessage = [
             'id' => $this->uuidCodec->encodeBinary($uuid),
             'human_id' => $uuid->toString(),
-            'published_at' => (int) microtime(true) * 10000,
+            'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
