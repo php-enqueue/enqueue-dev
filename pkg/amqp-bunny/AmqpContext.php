@@ -249,7 +249,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getBunnyChannel()->queueBind(
                 $bind->getSource()->getQueueName(),
@@ -258,7 +258,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getBunnyChannel()->queueBind(
                 $bind->getTarget()->getQueueName(),
@@ -288,7 +288,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getBunnyChannel()->queueUnbind(
                 $bind->getSource()->getQueueName(),
@@ -296,7 +296,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getRoutingKey(),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getBunnyChannel()->queueUnbind(
                 $bind->getTarget()->getQueueName(),
