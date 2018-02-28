@@ -34,17 +34,20 @@ The producer has two types on send methods:
 ```php
 <?php
 
+use Enqueue\Client\ProducerInterface;
+use Enqueue\Client\SpoolProducer;
+
 /** @var Symfony\Component\DependencyInjection\ContainerInterface $container */
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer = $container->get('enqueue.producer');
+$producer = $container->get(ProducerInterface::class);
 
 // message is being sent right now
 $producer->sendEvent('a_topic', 'Hello there!');
 
 
 /** @var \Enqueue\Client\SpoolProducer $spoolProducer */
-$spoolProducer = $container->get('enqueue.spool_producer');
+$spoolProducer = $container->get(SpoolProducer::class);
 
 // message is being sent on console.terminate or kernel.terminate event
 $spoolProducer->sendEvent('a_topic', 'Hello there!');
@@ -58,10 +61,13 @@ $spoolProducer->flush();
 ```php
 <?php
 
+use Enqueue\Client\ProducerInterface;
+use Enqueue\Client\SpoolProducer;
+
 /** @var Symfony\Component\DependencyInjection\ContainerInterface $container */
 
 /** @var \Enqueue\Client\ProducerInterface $producer */
-$producer = $container->get('enqueue.producer');
+$producer = $container->get(ProducerInterface::class);
 
 // message is being sent right now, we use it as RPC
 $promise = $producer->sendCommand('a_processor_name', 'Hello there!', $needReply = true);
@@ -70,7 +76,7 @@ $replyMessage = $promise->receive();
 
 
 /** @var \Enqueue\Client\SpoolProducer $spoolProducer */
-$spoolProducer = $container->get('enqueue.spool_producer');
+$spoolProducer = $container->get(SpoolProducer::class);
 
 // message is being sent on console.terminate or kernel.terminate event
 $spoolProducer->sendCommand('a_processor_name', 'Hello there!');
