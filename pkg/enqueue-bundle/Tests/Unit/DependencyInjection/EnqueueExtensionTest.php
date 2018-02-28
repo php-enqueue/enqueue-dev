@@ -7,6 +7,7 @@ use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Bundle\Tests\Unit\Mocks\TransportFactoryWithoutDriverFactory;
 use Enqueue\Client\Producer;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\JobRunner;
@@ -189,6 +190,7 @@ class EnqueueExtensionTest extends TestCase
         self::assertTrue($container->hasDefinition('foo.driver'));
         self::assertTrue($container->hasDefinition('enqueue.client.config'));
         self::assertTrue($container->hasDefinition(Producer::class));
+        self::assertTrue($container->hasAlias(ProducerInterface::class));
     }
 
     public function testShouldNotCreateDriverIfFactoryDoesNotImplementDriverFactoryInterface()
