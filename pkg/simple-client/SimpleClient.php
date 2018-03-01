@@ -2,6 +2,9 @@
 
 namespace Enqueue\SimpleClient;
 
+use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
+use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
+use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
@@ -13,15 +16,24 @@ use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
+use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
+use Enqueue\Gps\GpsConnectionFactory;
+use Enqueue\Gps\Symfony\GpsTransportFactory;
+use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Rpc\Promise;
+use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\Symfony\SqsTransportFactory;
+use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
 use Enqueue\Stomp\Symfony\StompTransportFactory;
 use Enqueue\Symfony\AmqpTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\MissingTransportFactory;
 use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrProcessor;
@@ -283,26 +295,61 @@ final class SimpleClient
      */
     private function buildContainerExtension()
     {
-        $map = [
-            'default' => DefaultTransportFactory::class,
-            'dbal' => DbalTransportFactory::class,
-            'fs' => FsTransportFactory::class,
-            'redis' => RedisTransportFactory::class,
-            'stomp' => StompTransportFactory::class,
-            'rabbitmq_stomp' => RabbitMqStompTransportFactory::class,
-            'sqs' => SqsTransportFactory::class,
-        ];
-
         $extension = new SimpleClientContainerExtension();
 
-        foreach ($map as $name => $factoryClass) {
-            if (class_exists($factoryClass)) {
-                $extension->addTransportFactory(new $factoryClass($name));
-            }
+        $extension->addTransportFactory(new DefaultTransportFactory('default'));
+        $extension->addTransportFactory(new NullTransportFactory('null'));
+
+        if (class_exists(StompConnectionFactory::class)) {
+            $extension->addTransportFactory(new StompTransportFactory('stomp'));
+            $extension->addTransportFactory(new RabbitMqStompTransportFactory('rabbitmq_stomp'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('stomp', ['enqueue/stomp']));
+            $extension->addTransportFactory(new MissingTransportFactory('rabbitmq_stomp', ['enqueue/stomp']));
         }
 
-        $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
-        $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
+        if (
+            class_exists(AmqpBunnyConnectionFactory::class) ||
+            class_exists(AmqpExtConnectionFactory::class) ||
+            class_exists(AmqpLibConnectionFactory::class)
+        ) {
+            $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
+            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
+        } else {
+            $amppPackages = ['enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
+            $extension->addTransportFactory(new MissingTransportFactory('amqp', $amppPackages));
+            $extension->addTransportFactory(new MissingTransportFactory('rabbitmq_amqp', $amppPackages));
+        }
+
+        if (class_exists(FsConnectionFactory::class)) {
+            $extension->addTransportFactory(new FsTransportFactory('fs'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('fs', ['enqueue/fs']));
+        }
+
+        if (class_exists(RedisConnectionFactory::class)) {
+            $extension->addTransportFactory(new RedisTransportFactory('redis'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('redis', ['enqueue/redis']));
+        }
+
+        if (class_exists(DbalConnectionFactory::class)) {
+            $extension->addTransportFactory(new DbalTransportFactory('dbal'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('dbal', ['enqueue/dbal']));
+        }
+
+        if (class_exists(SqsConnectionFactory::class)) {
+            $extension->addTransportFactory(new SqsTransportFactory('sqs'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('sqs', ['enqueue/sqs']));
+        }
+
+        if (class_exists(GpsConnectionFactory::class)) {
+            $extension->addTransportFactory(new GpsTransportFactory('gps'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('gps', ['enqueue/gps']));
+        }
 
         return $extension;
     }
