@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "enqueue/enqueue": "^0.8@dev",
+        "enqueue/enqueue": "^0.8.21@dev",
         "symfony/dependency-injection": "^2.8|^3|^4",
         "symfony/config": "^2.8|^3|^4",
         "symfony/console": "^2.8|^3|^4"
