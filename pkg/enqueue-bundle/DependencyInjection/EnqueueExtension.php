@@ -41,11 +41,22 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
     {
         $name = $transportFactory->getName();
 
-        if (empty($name)) {
-            throw new \LogicException('Transport factory name cannot be empty');
-        }
         if (array_key_exists($name, $this->factories)) {
             throw new \LogicException(sprintf('Transport factory with such name already added. Name %s', $name));
+        }
+
+        $this->setTransportFactory($transportFactory);
+    }
+
+    /**
+     * @param TransportFactoryInterface $transportFactory
+     */
+    public function setTransportFactory(TransportFactoryInterface $transportFactory)
+    {
+        $name = $transportFactory->getName();
+
+        if (empty($name)) {
+            throw new \LogicException('Transport factory name cannot be empty');
         }
 
         $this->factories[$name] = $transportFactory;

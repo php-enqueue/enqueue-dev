@@ -98,12 +98,12 @@ class EnqueueBundleTest extends TestCase
 
         $extensionMock
             ->expects($this->at(0))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(StompTransportFactory::class))
         ;
         $extensionMock
             ->expects($this->at(1))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(RabbitMqStompTransportFactory::class))
         ;
 
@@ -120,7 +120,7 @@ class EnqueueBundleTest extends TestCase
 
         $extensionMock
             ->expects($this->at(2))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(AmqpTransportFactory::class))
             ->willReturnCallback(function (AmqpTransportFactory $factory) {
                 $this->assertSame('amqp', $factory->getName());
@@ -128,7 +128,7 @@ class EnqueueBundleTest extends TestCase
         ;
         $extensionMock
             ->expects($this->at(3))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(RabbitMqAmqpTransportFactory::class))
             ->willReturnCallback(function (RabbitMqAmqpTransportFactory $factory) {
                 $this->assertSame('rabbitmq_amqp', $factory->getName());
@@ -148,7 +148,7 @@ class EnqueueBundleTest extends TestCase
 
         $extensionMock
             ->expects($this->at(4))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(FsTransportFactory::class))
         ;
 
@@ -165,7 +165,7 @@ class EnqueueBundleTest extends TestCase
 
         $extensionMock
             ->expects($this->at(5))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(RedisTransportFactory::class))
         ;
 
@@ -182,7 +182,7 @@ class EnqueueBundleTest extends TestCase
 
         $extensionMock
             ->expects($this->at(6))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(DbalTransportFactory::class))
         ;
 
@@ -199,7 +199,7 @@ class EnqueueBundleTest extends TestCase
 
         $extensionMock
             ->expects($this->at(7))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(SqsTransportFactory::class))
         ;
 
@@ -216,7 +216,7 @@ class EnqueueBundleTest extends TestCase
 
         $extensionMock
             ->expects($this->at(8))
-            ->method('addTransportFactory')
+            ->method('setTransportFactory')
             ->with($this->isInstanceOf(GpsTransportFactory::class))
         ;
 
