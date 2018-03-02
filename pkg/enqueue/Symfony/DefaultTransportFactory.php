@@ -141,27 +141,15 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
     }
 
     /**
-     * This is a quick fix to the exception "Incompatible use of dynamic environment variables "ENQUEUE_DSN" found in parameters."
-     * TODO: We'll have to come up with a better solution.
-     *
      * @param ContainerBuilder $container
-     * @param $dsn
+     * @param string           $dsn
      *
      * @return array|false|string
      */
     private function resolveDSN(ContainerBuilder $container, $dsn)
     {
         if (method_exists($container, 'resolveEnvPlaceholders')) {
-            $dsn = $container->resolveEnvPlaceholders($dsn);
-
-            $matches = [];
-            if (preg_match('/%env\((.*?)\)/', $dsn, $matches)) {
-                if (false === $realDsn = getenv($matches[1])) {
-                    throw new \LogicException(sprintf('The env "%s" var is not defined', $matches[1]));
-                }
-
-                return $realDsn;
-            }
+            return $container->resolveEnvPlaceholders($dsn, true);
         }
 
         return $dsn;

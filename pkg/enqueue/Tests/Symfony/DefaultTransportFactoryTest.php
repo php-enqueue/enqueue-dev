@@ -266,6 +266,58 @@ class DefaultTransportFactoryTest extends TestCase
         $this->assertEquals($driverId, (string) $context);
     }
 
+    public function testShouldCreateConnectionFactoryFromEnvironmentDSN()
+    {
+        $env = str_replace(['\\', ':'], '', strtoupper(uniqid(__METHOD__)));
+        putenv("$env=null:");
+
+        $container = new ContainerBuilder();
+
+        $transport = new DefaultTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, ['dsn' => "%env($env)%"]);
+
+        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.default.connection_factory'));
+        $this->assertEquals(
+            sprintf('enqueue.transport.%s.connection_factory', 'default_null'),
+            (string) $container->getAlias('enqueue.transport.default.connection_factory')
+        );
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
+        $this->assertEquals(
+            'enqueue.transport.default.connection_factory',
+            (string) $container->getAlias('enqueue.transport.connection_factory')
+        );
+    }
+
+    public function testShouldCreateConnectionFactoryFromEnvironmentWithResolveProviderDSN()
+    {
+        $env = str_replace(['\\', ':'], '', strtoupper(uniqid(__METHOD__)));
+        putenv("$env=file:");
+
+        $container = new ContainerBuilder();
+
+        $transport = new DefaultTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, ['dsn' => "%env(resolve:$env)%"]);
+
+        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.default.connection_factory'));
+        $this->assertEquals(
+            sprintf('enqueue.transport.%s.connection_factory', 'default_fs'),
+            (string) $container->getAlias('enqueue.transport.default.connection_factory')
+        );
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
+        $this->assertEquals(
+            'enqueue.transport.default.connection_factory',
+            (string) $container->getAlias('enqueue.transport.connection_factory')
+        );
+    }
+
     public static function provideDSNs()
     {
         yield ['amqp+ext:', 'default_amqp'];
