@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel;
 
 class DefaultTransportFactoryTest extends TestCase
 {
@@ -268,6 +269,10 @@ class DefaultTransportFactoryTest extends TestCase
 
     public function testShouldCreateConnectionFactoryFromEnvironmentDSN()
     {
+        if (version_compare(Kernel::VERSION, '3.4', '<')) {
+            $this->markTestSkipped('This functionality only works on Symfony 3.4 or higher');
+        }
+
         $env = str_replace(['\\', ':'], '', strtoupper(uniqid(__METHOD__)));
         putenv("$env=null:");
 
@@ -294,6 +299,10 @@ class DefaultTransportFactoryTest extends TestCase
 
     public function testShouldCreateConnectionFactoryFromEnvironmentWithResolveProviderDSN()
     {
+        if (version_compare(Kernel::VERSION, '3.4', '<')) {
+            $this->markTestSkipped('This functionality only works on Symfony 3.4 or higher');
+        }
+
         $env = str_replace(['\\', ':'], '', strtoupper(uniqid(__METHOD__)));
         putenv("$env=file:");
 
