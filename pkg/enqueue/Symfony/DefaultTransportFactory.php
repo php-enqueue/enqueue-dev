@@ -20,6 +20,7 @@ use Interop\Amqp\AmqpConnectionFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel;
 use function Enqueue\dsn_to_connection_factory;
 
 class DefaultTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
@@ -149,7 +150,18 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
     private function resolveDSN(ContainerBuilder $container, $dsn)
     {
         if (method_exists($container, 'resolveEnvPlaceholders')) {
-            return $container->resolveEnvPlaceholders($dsn, true);
+            if (version_compare(Kernel::VERSION, '3.4', '>=')) {
+                return $container->resolveEnvPlaceholders($dsn, true);
+            }
+
+            $matches = [];
+            if (preg_match('/%env\((.*?)\)/', $dsn, $matches)) {
+                if (false === $realDsn = getenv($matches[1])) {
+                    throw new \LogicException(sprintf('The env "%s" var is not defined', $matches[1]));
+                }
+
+                return $realDsn;
+            }
         }
 
         return $dsn;
