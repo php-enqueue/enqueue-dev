@@ -17,7 +17,7 @@ use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class QueueConsumer
+final class QueueConsumer
 {
     /**
      * @var PsrContext
@@ -281,7 +281,7 @@ class QueueConsumer
      *
      * @return bool
      */
-    protected function doConsume(ExtensionInterface $extension, Context $context)
+    private function doConsume(ExtensionInterface $extension, Context $context)
     {
         $processor = $context->getPsrProcessor();
         $consumer = $context->getPsrConsumer();
@@ -318,7 +318,7 @@ class QueueConsumer
      *
      * @throws \Exception
      */
-    protected function onInterruptionByException(ExtensionInterface $extension, Context $context)
+    private function onInterruptionByException(ExtensionInterface $extension, Context $context)
     {
         $this->logger = $context->getLogger();
         $this->logger->error(sprintf('Consuming interrupted by exception'));
