@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "queue-interop/queue-interop": "^0.6@dev",
+        "queue-interop/queue-interop": "^0.6@dev|^1.0.0-alpha1",
         "enqueue/null": "^0.8@dev",
         "ramsey/uuid": "^2|^3.5",
         "psr/log": "^1"

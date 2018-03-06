@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "queue-interop/queue-interop": "^0.6",
+        "queue-interop/queue-interop": "^0.6|^1.0.0-alpha1",
         "symfony/filesystem": "^2.8|^3|^4",
         "makasim/temp-file": "^0.2@stable"
     },
