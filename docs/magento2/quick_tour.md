@@ -34,7 +34,12 @@ To send a message you have to take enqueue helper and call `send` method.
 
 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 $enqueueManager = $objectManager->create('Enqueue\Enqueue\Model\EnqueueManager');
-$enqueueManager->send('a_topic', 'aMessage');
+$enqueueManager->sendEvent('a_topic', 'aMessage');
+
+// or a command with a possible reply
+$reply = $enqueueManager->sendCommand('a_topic', 'aMessage', true);
+
+$replyMessage = $reply->receive(5000); // wait for 5 sec
 ```
 
 ## Message Consumption
