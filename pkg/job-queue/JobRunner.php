@@ -29,6 +29,8 @@ class JobRunner
      * @param string   $name
      * @param callable $runCallback
      *
+     * @throws \Throwable|\Exception if $runCallback triggers an exception
+     *
      * @return mixed
      */
     public function runUnique($ownerId, $name, callable $runCallback)
@@ -46,7 +48,15 @@ class JobRunner
 
         $jobRunner = new self($this->jobProcessor, $rootJob);
 
-        $result = call_user_func($runCallback, $jobRunner, $childJob);
+        try {
+            $result = call_user_func($runCallback, $jobRunner, $childJob);
+        } catch (\Throwable $e) {
+            $this->jobProcessor->failChildJob($childJob);
+            throw $e;
+        } catch (\Exception $e) { // needed to support PHP 5.6
+            $this->jobProcessor->failChildJob($childJob);
+            throw $e;
+        }
 
         if (!$childJob->getStoppedAt()) {
             $result

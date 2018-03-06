@@ -1,5 +1,29 @@
 # Change Log
 
+## [0.8.23](https://github.com/php-enqueue/enqueue-dev/tree/0.8.23) (2018-03-06)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.22...0.8.23)
+
+- \[doc\]\[magento2\]\[skip ci\] Add docs for Mangeto2 module. [\#401](https://github.com/php-enqueue/enqueue-dev/pull/401) ([makasim](https://github.com/makasim))
+- Allow queue interop 1.0 alpha. [\#400](https://github.com/php-enqueue/enqueue-dev/pull/400) ([makasim](https://github.com/makasim))
+- Update Travis config to use Symfony 4 release [\#397](https://github.com/php-enqueue/enqueue-dev/pull/397) ([msheakoski](https://github.com/msheakoski))
+- Clean up when a job triggers an exception [\#395](https://github.com/php-enqueue/enqueue-dev/pull/395) ([msheakoski](https://github.com/msheakoski))
+
+## [0.8.22](https://github.com/php-enqueue/enqueue-dev/tree/0.8.22) (2018-03-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.21...0.8.22)
+
+- Runtime exception "\_\_construct\(\)" references interface "Enqueue\Client\ProducerInterface" but no such service exists [\#376](https://github.com/php-enqueue/enqueue-dev/issues/376)
+- \[bundle\] add producer interface alias. [\#382](https://github.com/php-enqueue/enqueue-dev/pull/382) ([makasim](https://github.com/makasim))
+
+- \[Simple Client\] The simple client requires amqp-ext even if you use another brokers [\#386](https://github.com/php-enqueue/enqueue-dev/issues/386)
+- \[symfony bundle\] EnqueueExtension. Transport factory with such name already added. Name stomp [\#383](https://github.com/php-enqueue/enqueue-dev/issues/383)
+- Problem registering SQS transport using DSN string [\#380](https://github.com/php-enqueue/enqueue-dev/issues/380)
+- \[client\] Simple Client should not depend on amqp-ext. [\#389](https://github.com/php-enqueue/enqueue-dev/pull/389) ([makasim](https://github.com/makasim))
+- \[bundle\] fix for "Transport factory with such name already added" [\#388](https://github.com/php-enqueue/enqueue-dev/pull/388) ([makasim](https://github.com/makasim))
+
+- Close Connection [\#384](https://github.com/php-enqueue/enqueue-dev/issues/384)
+- Outdated bundle documentation [\#381](https://github.com/php-enqueue/enqueue-dev/issues/381)
+- \[RFC\] Throttle/debounce [\#378](https://github.com/php-enqueue/enqueue-dev/issues/378)
+
 ## [0.8.21](https://github.com/php-enqueue/enqueue-dev/tree/0.8.21) (2018-02-16)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.20...0.8.21)
 

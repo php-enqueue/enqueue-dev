@@ -163,6 +163,38 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         });
     }
 
+    public function testRunUniqueShouldFailJobIfCallbackThrowsException()
+    {
+        $root = new Job();
+        $child = new Job();
+
+        $jobProcessor = $this->createJobProcessorMock();
+        $jobProcessor
+            ->expects($this->once())
+            ->method('findOrCreateRootJob')
+            ->will($this->returnValue($root))
+        ;
+        $jobProcessor
+            ->expects($this->once())
+            ->method('findOrCreateChildJob')
+            ->will($this->returnValue($child))
+        ;
+        $jobProcessor
+            ->expects($this->never())
+            ->method('successChildJob')
+        ;
+        $jobProcessor
+            ->expects($this->once())
+            ->method('failChildJob')
+        ;
+
+        $jobRunner = new JobRunner($jobProcessor);
+        $this->expectException(\Exception::class);
+        $jobRunner->runUnique('owner-id', 'job-name', function () {
+            throw new \Exception();
+        });
+    }
+
     public function testRunUniqueShouldNotSuccessJobIfJobIsAlreadyStopped()
     {
         $root = new Job();
