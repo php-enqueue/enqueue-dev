@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "queue-interop/queue-interop": "^0.6@dev",
+        "queue-interop/queue-interop": "^0.6@dev|^1.0.0-alpha1",
         "queue-interop/amqp-interop": "^0.7@dev"
     },
     "require-dev": {
