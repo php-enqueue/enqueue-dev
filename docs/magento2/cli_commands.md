@@ -1,4 +1,4 @@
-# Magento. Cli commands
+# Magento2. Cli commands
 
 The enqueue Magento extension provides several commands. 
 The most useful one `enqueue:consume` connects to the broker and process the messages.
@@ -13,7 +13,7 @@ Other commands could be useful during debugging (like `enqueue:topics`) or deplo
 ## enqueue:consume
 
 ```
-php shell/enqueue.php enqueue:consume --help
+php bin/magento enqueue:consume --help
 Usage:
   enqueue:consume [options] [--] [<client-queue-names>]...
   enq:c
@@ -46,7 +46,7 @@ Help:
 ## enqueue:produce
 
 ```
-php shell/enqueue.php enqueue:produce --help
+php bin/magento enqueue:produce --help
 Usage:
   enqueue:produce <topic> <message>
   enq:p
@@ -73,7 +73,7 @@ Help:
 ## enqueue:setup-broker
 
 ```
-php shell/enqueue.php enqueue:setup-broker --help
+php bin/magento enqueue:setup-broker --help
 Usage:
   enqueue:setup-broker
   enq:sb
@@ -96,7 +96,7 @@ Help:
 ## enqueue:queues
 
 ```
-/bin/console enqueue:queues --help
+php bin/magento enqueue:queues --help
 Usage:
   enqueue:queues
   enq:m:q
@@ -120,7 +120,7 @@ Help:
 ## enqueue:topics
 
 ```
-php shell/enqueue.php enqueue:topics --help
+php bin/magento enqueue:topics --help
 Usage:
   enqueue:topics
   enq:m:t
@@ -141,5 +141,5 @@ Help:
   A command shows all available topics and some information about them.
 ```
 
-[back to index](../index.md)
+[back to index](../index.md#magento2)
 

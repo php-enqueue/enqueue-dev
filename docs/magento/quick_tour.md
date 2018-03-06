@@ -1,5 +1,8 @@
 # Magento Enqueue. Quick tour
 
+The module integrates [Enqueue Client](../client/quick_tour.md) with Magento1. You can send and consume messages to different message queues such as RabbitMQ, AMQP, STOMP, Amazon SQS, Kafka, Redis, Google PubSub, Gearman, Beanstalk, Google PubSub and others. Or integrate Magento2 app with other applications or service via [Message Bus](../client/message_bus.md).
+There is [a module](../magento2/quick_tour.md) for Magento2 too.
+
 ## Installation
 
 We use [composer](https://getcomposer.org/) and [cotya/magento-composer-installer](https://github.com/Cotya/magento-composer-installer) plugin to install [magento-enqueue](https://github.com/php-enqueue/magento-enqueue) extension.
