@@ -67,6 +67,7 @@ Features:
 [![Latest Stable Version](https://poser.pugx.org/enqueue/null/version.png)](https://packagist.org/packages/enqueue/null)
 * [Symfony bundle](docs/bundle/quick_tour.md)
 * [Magento1 extension](docs/magento/quick_tour.md)
+* [Magento2 module](docs/magento2/quick_tour.md)
 * [Laravel extension](docs/laravel/quick_tour.md)
 * [Yii2. Amqp driver](docs/yii/amqp_driver.md)
 * [Message bus](docs/quick_tour.md#client) support.
