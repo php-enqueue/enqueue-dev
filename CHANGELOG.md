@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.8.23](https://github.com/php-enqueue/enqueue-dev/tree/0.8.23) (2018-03-06)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.22...0.8.23)
+
+- \[doc\]\[magento2\]\[skip ci\] Add docs for Mangeto2 module. [\#401](https://github.com/php-enqueue/enqueue-dev/pull/401) ([makasim](https://github.com/makasim))
+- Allow queue interop 1.0 alpha. [\#400](https://github.com/php-enqueue/enqueue-dev/pull/400) ([makasim](https://github.com/makasim))
+- Update Travis config to use Symfony 4 release [\#397](https://github.com/php-enqueue/enqueue-dev/pull/397) ([msheakoski](https://github.com/msheakoski))
+- Clean up when a job triggers an exception [\#395](https://github.com/php-enqueue/enqueue-dev/pull/395) ([msheakoski](https://github.com/msheakoski))
+
 ## [0.8.22](https://github.com/php-enqueue/enqueue-dev/tree/0.8.22) (2018-03-01)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.21...0.8.22)
 
