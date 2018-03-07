@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+#set -x
+#set -e
+
+# wait for service
+# $1 host
+# $2 port
+# $3 attempts
+
+FORCE_EXIT=false
+WAITING_FOR_SERVICE=false
+
+function waitForService()
+{
+    ATTEMPTS=0
+    WAITING_FOR_SERVICE=true
+    until nc -z $1 $2; do
+        printf "wait for service %s:%s\n" $1 $2
+        ATTEMPTS=$((ATTEMPTS+1))
+        if [ $ATTEMPTS -ge $3 ]; then
+            printf "service is not running %s:%s\n" $1 $2
+            WAITING_FOR_SERVICE=false
+            exit 1
+        fi
+        if [ "$FORCE_EXIT" = true ]; then
+            WAITING_FOR_SERVICE=false
+            exit;
+        fi
+
+        sleep 1
+    done
+
+    WAITING_FOR_SERVICE=false
+    printf "service is online %s:%s\n" $1 $2
+}
+
+trap "if [ "WAITING_FOR_SERVICE" = true ]; FORCE_EXIT=true; fi" SIGTERM SIGINT
+
+waitForService rabbitmq 5672 50
+
+sleep 5
+
+#bench/go_amqp_produce_bench/go_amqp_produce_bench 1000
+php bin/phpbench.phar run "$@"
