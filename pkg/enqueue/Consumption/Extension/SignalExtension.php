@@ -18,7 +18,7 @@ class SignalExtension implements ExtensionInterface
     protected $interruptConsumption = false;
 
     /**
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
     protected $logger;
 
@@ -29,6 +29,10 @@ class SignalExtension implements ExtensionInterface
     {
         if (false == extension_loaded('pcntl')) {
             throw new LogicException('The pcntl extension is required in order to catch signals.');
+        }
+
+        if (function_exists('pcntl_async_signals')) {
+            pcntl_async_signals(true);
         }
 
         pcntl_signal(SIGTERM, [$this, 'handleSignal']);
@@ -45,7 +49,7 @@ class SignalExtension implements ExtensionInterface
     {
         $this->logger = $context->getLogger();
 
-        pcntl_signal_dispatch();
+        $this->dispatchSignal();
 
         $this->interruptExecutionIfNeeded($context);
     }
@@ -63,7 +67,7 @@ class SignalExtension implements ExtensionInterface
      */
     public function onPostReceived(Context $context)
     {
-        pcntl_signal_dispatch();
+        $this->dispatchSignal();
 
         $this->interruptExecutionIfNeeded($context);
     }
@@ -73,7 +77,7 @@ class SignalExtension implements ExtensionInterface
      */
     public function onIdle(Context $context)
     {
-        pcntl_signal_dispatch();
+        $this->dispatchSignal();
 
         $this->interruptExecutionIfNeeded($context);
     }
@@ -84,7 +88,10 @@ class SignalExtension implements ExtensionInterface
     public function interruptExecutionIfNeeded(Context $context)
     {
         if (false == $context->isExecutionInterrupted() && $this->interruptConsumption) {
-            $this->logger->debug('[SignalExtension] Interrupt execution');
+            if ($this->logger) {
+                $this->logger->debug('[SignalExtension] Interrupt execution');
+            }
+
             $context->setExecutionInterrupted($this->interruptConsumption);
 
             $this->interruptConsumption = false;
@@ -104,11 +111,21 @@ class SignalExtension implements ExtensionInterface
             case SIGTERM:  // 15 : supervisor default stop
             case SIGQUIT:  // 3  : kill -s QUIT
             case SIGINT:   // 2  : ctrl+c
-                $this->logger->debug('[SignalExtension] Interrupt consumption');
+                if ($this->logger) {
+                    $this->logger->debug('[SignalExtension] Interrupt consumption');
+                }
+
                 $this->interruptConsumption = true;
                 break;
             default:
                 break;
+        }
+    }
+
+    private function dispatchSignal()
+    {
+        if (false == function_exists('pcntl_async_signals')) {
+            pcntl_signal_dispatch();
         }
     }
 }

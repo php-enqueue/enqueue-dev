@@ -58,9 +58,11 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
                             throw new \InvalidArgumentException('There is no amqp driver available. Please consider installing one of the packages: enqueue/amqp-ext, enqueue/amqp-lib, enqueue/amqp-bunny.');
                         }
 
-                        if (isset($v['driver']) && false == in_array($v['driver'], $drivers, true)) {
-                            throw new \InvalidArgumentException(sprintf('Unexpected driver given "invalidDriver". Available are "%s"', implode('", "', $drivers)));
+                        if ($v && false == in_array($v, $drivers, true)) {
+                            throw new \InvalidArgumentException(sprintf('Unexpected driver given "%s". Available are "%s"', $v, implode('", "', $drivers)));
                         }
+
+                        return $v;
                     })
                     ->end()
                 ->end()
@@ -166,6 +168,7 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
         $context = new Definition(AmqpContext::class);
+        $context->setPublic(true);
         $context->setFactory([new Reference($factoryId), 'createContext']);
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
@@ -180,6 +183,7 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
     public function createDriver(ContainerBuilder $container, array $config)
     {
         $driver = new Definition(AmqpDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),

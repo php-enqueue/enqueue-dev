@@ -3,21 +3,22 @@
     "type": "library",
     "description": "Message Queue Library",
     "keywords": ["messaging", "queue", "amqp", "rabbitmq"],
+    "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "queue-interop/queue-interop": "^0.6@dev",
+        "queue-interop/queue-interop": "^0.6@dev|^1.0.0-alpha1",
         "enqueue/null": "^0.8@dev",
         "ramsey/uuid": "^2|^3.5",
         "psr/log": "^1"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",
-        "symfony/console": "^2.8|^3",
-        "symfony/dependency-injection": "^2.8|^3",
-        "symfony/config": "^2.8|^3",
-        "symfony/event-dispatcher": "^2.8|^3",
-        "symfony/http-kernel": "^2.8|^3",
+        "symfony/console": "^2.8|^3|^4",
+        "symfony/dependency-injection": "^2.8|^3|^4",
+        "symfony/config": "^2.8|^3|^4",
+        "symfony/event-dispatcher": "^2.8|^3|^4",
+        "symfony/http-kernel": "^2.8|^3|^4",
         "enqueue/amqp-ext": "^0.8@dev",
         "enqueue/amqp-lib": "^0.8@dev",
         "enqueue/amqp-bunny": "^0.8@dev",
@@ -35,9 +36,9 @@
         "empi89/php-amqp-stubs": "*@dev"
     },
     "suggest": {
-        "symfony/console": "^2.8|^3 If you want to use li commands",
-        "symfony/dependency-injection": "^2.8|^3",
-        "symfony/config": "^2.8|^3",
+        "symfony/console": "^2.8|^3|^4 If you want to use li commands",
+        "symfony/dependency-injection": "^2.8|^3|^4",
+        "symfony/config": "^2.8|^3|^4",
         "enqueue/amqp-ext": "AMQP transport (based on php extension)",
         "enqueue/stomp": "STOMP transport",
         "enqueue/fs": "Filesystem transport",
@@ -45,12 +46,24 @@
         "enqueue/dbal": "Doctrine DBAL transport",
         "enqueue/sqs": "Amazon AWS SQS transport"
     },
+    "support": {
+        "email": "opensource@forma-pro.com",
+        "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
+        "forum": "https://gitter.im/php-enqueue/Lobby",
+        "source": "https://github.com/php-enqueue/enqueue-dev",
+        "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
+    },
     "autoload": {
         "psr-4": { "Enqueue\\": "" },
         "files": ["functions_include.php"],
         "exclude-from-classmap": [
             "/Tests/"
         ]
+    },
+    "config": {
+        "platform": {
+            "ext-amqp": "1.9.3"
+        }
     },
     "minimum-stability": "dev",
     "extra": {

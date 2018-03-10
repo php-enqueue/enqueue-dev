@@ -28,6 +28,7 @@ class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'region' => null,
             'retries' => 3,
             'version' => '2012-11-05',
+            'endpoint' => null,
         ], 'config', $factory);
     }
 
@@ -43,6 +44,7 @@ class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'region' => null,
             'retries' => 3,
             'version' => '2012-11-05',
+            'endpoint' => null,
         ], 'config', $factory);
     }
 

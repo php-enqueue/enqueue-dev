@@ -4,6 +4,7 @@ namespace Enqueue\AmqpLib;
 
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -20,6 +21,7 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Exception\AMQPIOWaitException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
@@ -70,6 +72,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         $this->connection = $connection;
         $this->buffer = new Buffer();
+        $this->subscribers = [];
     }
 
     /**
@@ -239,7 +242,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getLibChannel()->queue_bind(
                 $bind->getSource()->getQueueName(),
@@ -248,7 +251,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getLibChannel()->queue_bind(
                 $bind->getTarget()->getQueueName(),
@@ -278,7 +281,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getLibChannel()->queue_unbind(
                 $bind->getSource()->getQueueName(),
@@ -286,7 +289,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getRoutingKey(),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getLibChannel()->queue_unbind(
                 $bind->getTarget()->getQueueName(),
@@ -381,6 +384,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
+        $signalHandler = new SignalSocketHelper();
+        $signalHandler->beforeSocket();
+
         try {
             while (true) {
                 $start = microtime(true);
@@ -401,6 +407,14 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             }
         } catch (AMQPTimeoutException $e) {
         } catch (StopBasicConsumptionException $e) {
+        } catch (AMQPIOWaitException $e) {
+            if ($signalHandler->wasThereSignal()) {
+                return;
+            }
+
+            throw $e;
+        } finally {
+            $signalHandler->afterSocket();
         }
     }
 

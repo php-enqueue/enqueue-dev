@@ -27,11 +27,13 @@ class JobRunner
     /**
      * @param string   $ownerId
      * @param string   $name
-     * @param \Closure $runCallback
+     * @param callable $runCallback
+     *
+     * @throws \Throwable|\Exception if $runCallback triggers an exception
      *
      * @return mixed
      */
-    public function runUnique($ownerId, $name, \Closure $runCallback)
+    public function runUnique($ownerId, $name, callable $runCallback)
     {
         $rootJob = $this->jobProcessor->findOrCreateRootJob($ownerId, $name, true);
         if (!$rootJob) {
@@ -46,7 +48,15 @@ class JobRunner
 
         $jobRunner = new self($this->jobProcessor, $rootJob);
 
-        $result = call_user_func($runCallback, $jobRunner, $childJob);
+        try {
+            $result = call_user_func($runCallback, $jobRunner, $childJob);
+        } catch (\Throwable $e) {
+            $this->jobProcessor->failChildJob($childJob);
+            throw $e;
+        } catch (\Exception $e) { // needed to support PHP 5.6
+            $this->jobProcessor->failChildJob($childJob);
+            throw $e;
+        }
 
         if (!$childJob->getStoppedAt()) {
             $result
@@ -59,11 +69,11 @@ class JobRunner
 
     /**
      * @param string   $name
-     * @param \Closure $startCallback
+     * @param callable $startCallback
      *
      * @return mixed
      */
-    public function createDelayed($name, \Closure $startCallback)
+    public function createDelayed($name, callable $startCallback)
     {
         $childJob = $this->jobProcessor->findOrCreateChildJob($name, $this->rootJob);
 
@@ -74,11 +84,11 @@ class JobRunner
 
     /**
      * @param string   $jobId
-     * @param \Closure $runCallback
+     * @param callable $runCallback
      *
      * @return mixed
      */
-    public function runDelayed($jobId, \Closure $runCallback)
+    public function runDelayed($jobId, callable $runCallback)
     {
         $job = $this->jobProcessor->findJobById($jobId);
         if (!$job) {

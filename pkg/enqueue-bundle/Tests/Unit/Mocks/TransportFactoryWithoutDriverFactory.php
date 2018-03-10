@@ -48,7 +48,10 @@ class TransportFactoryWithoutDriverFactory implements TransportFactoryInterface
     {
         $contextId = 'without_driver.context';
 
-        $container->setDefinition($contextId, new Definition(\stdClass::class, [$config]));
+        $context = new Definition(\stdClass::class, [$config]);
+        $context->setPublic(true);
+
+        $container->setDefinition($contextId, $context);
 
         return $contextId;
     }

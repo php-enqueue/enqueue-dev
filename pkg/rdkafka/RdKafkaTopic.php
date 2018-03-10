@@ -34,7 +34,6 @@ class RdKafkaTopic implements PsrTopic, PsrQueue
     public function __construct($name)
     {
         $this->name = $name;
-        $this->conf = new TopicConf();
     }
 
     /**
@@ -54,11 +53,19 @@ class RdKafkaTopic implements PsrTopic, PsrQueue
     }
 
     /**
-     * @return TopicConf
+     * @return TopicConf|null
      */
     public function getConf()
     {
         return $this->conf;
+    }
+
+    /**
+     * @param TopicConf|null $conf
+     */
+    public function setConf(TopicConf $conf = null)
+    {
+        $this->conf = $conf;
     }
 
     /**

@@ -58,6 +58,27 @@ class RedisTransportFactoryTest extends TestCase
             'vendor' => 'phpredis',
             'persisted' => true,
             'lazy' => false,
+            'database' => 0,
+        ], $config);
+    }
+
+    public function testShouldAllowAddConfigurationFromDSN()
+    {
+        $transport = new RedisTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [[
+            'dsn' => 'redis://localhost:8080?vendor=predis&persisted=false&lazy=true&database=5',
+        ]]);
+
+        $this->assertEquals([
+            'persisted' => false,
+            'lazy' => true,
+            'database' => 0,
+            'dsn' => 'redis://localhost:8080?vendor=predis&persisted=false&lazy=true&database=5',
         ], $config);
     }
 
@@ -81,6 +102,35 @@ class RedisTransportFactoryTest extends TestCase
             'port' => 123,
             'vendor' => 'phpredis',
         ]], $factory->getArguments());
+    }
+
+    public function testShouldCreateConnectionFactoryWithCustomRedisInstance()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new RedisTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, [
+            'host' => 'localhost',
+            'port' => 123,
+            'vendor' => 'custom',
+            'redis' => 'a.redis.service',
+        ]);
+
+        $this->assertTrue($container->hasDefinition($serviceId));
+        $factory = $container->getDefinition($serviceId);
+        $this->assertEquals(RedisConnectionFactory::class, $factory->getClass());
+
+        $config = $factory->getArgument(0);
+
+        $this->assertInternalType('array', $config);
+
+        $this->assertArrayHasKey('vendor', $config);
+        $this->assertSame('custom', $config['vendor']);
+
+        $this->assertArrayHasKey('redis', $config);
+        $this->assertInstanceOf(Reference::class, $config['redis']);
+        $this->assertSame('a.redis.service', (string) $config['redis']);
     }
 
     public function testShouldCreateContext()

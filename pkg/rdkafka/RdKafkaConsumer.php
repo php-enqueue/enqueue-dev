@@ -6,6 +6,7 @@ use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
 use RdKafka\KafkaConsumer;
+use RdKafka\TopicPartition;
 
 class RdKafkaConsumer implements PsrConsumer
 {
@@ -37,6 +38,11 @@ class RdKafkaConsumer implements PsrConsumer
     private $commitAsync;
 
     /**
+     * @var int|null
+     */
+    private $offset;
+
+    /**
      * @param KafkaConsumer  $consumer
      * @param RdKafkaContext $context
      * @param RdKafkaTopic   $topic
@@ -49,6 +55,7 @@ class RdKafkaConsumer implements PsrConsumer
         $this->topic = $topic;
         $this->subscribed = false;
         $this->commitAsync = false;
+        $this->offset = null;
 
         $this->setSerializer($serializer);
     }
@@ -69,6 +76,15 @@ class RdKafkaConsumer implements PsrConsumer
         $this->commitAsync = (bool) $async;
     }
 
+    public function setOffset($offset)
+    {
+        if ($this->subscribed) {
+            throw new \LogicException('The consumer has already subscribed.');
+        }
+
+        $this->offset = $offset;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -82,7 +98,15 @@ class RdKafkaConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        $this->consumer->subscribe([$this->topic->getTopicName()]);
+        if (false == $this->subscribed) {
+            $this->consumer->assign([new TopicPartition(
+                $this->getQueue()->getQueueName(),
+                $this->getQueue()->getPartition(),
+                $this->offset
+            )]);
+
+            $this->subscribed = true;
+        }
 
         $message = null;
         if ($timeout > 0) {
@@ -94,8 +118,6 @@ class RdKafkaConsumer implements PsrConsumer
                 }
             }
         }
-
-        $this->consumer->unsubscribe();
 
         return $message;
     }

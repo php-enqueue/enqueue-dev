@@ -4,9 +4,11 @@ namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
 use Bunny\Client;
+use Bunny\Exception\ClientException;
 use Bunny\Message;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -77,6 +79,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         $this->buffer = new Buffer();
+        $this->subscribers = [];
     }
 
     /**
@@ -246,7 +249,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getBunnyChannel()->queueBind(
                 $bind->getSource()->getQueueName(),
@@ -255,7 +258,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getBunnyChannel()->queueBind(
                 $bind->getTarget()->getQueueName(),
@@ -285,7 +288,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getBunnyChannel()->queueUnbind(
                 $bind->getSource()->getQueueName(),
@@ -293,7 +296,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getRoutingKey(),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getBunnyChannel()->queueUnbind(
                 $bind->getTarget()->getQueueName(),
@@ -387,7 +390,20 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
         }
 
-        $this->getBunnyChannel()->getClient()->run($timeout / 1000);
+        $signalHandler = new SignalSocketHelper();
+        $signalHandler->beforeSocket();
+
+        try {
+            $this->getBunnyChannel()->getClient()->run(0 !== $timeout ? $timeout / 1000 : null);
+        } catch (ClientException $e) {
+            if ('stream_select() failed.' == $e->getMessage() && $signalHandler->wasThereSignal()) {
+                return;
+            }
+
+            throw $e;
+        } finally {
+            $signalHandler->afterSocket();
+        }
     }
 
     /**

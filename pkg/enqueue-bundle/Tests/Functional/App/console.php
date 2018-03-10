@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 namespace Enqueue\Bundle\Tests\Functional\App;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;

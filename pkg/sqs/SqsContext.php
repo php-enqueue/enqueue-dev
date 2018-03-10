@@ -186,12 +186,22 @@ class SqsContext implements PsrContext
     }
 
     /**
+     * @deprecated since 0.8 will be removed 0.9 use self::purgeQueue()
+     *
      * @param SqsDestination $dest
      */
     public function purge(SqsDestination $dest)
     {
+        $this->purgeQueue($dest);
+    }
+
+    /**
+     * @param SqsDestination $destination
+     */
+    public function purgeQueue(SqsDestination $destination)
+    {
         $this->getClient()->purgeQueue([
-            'QueueUrl' => $this->getQueueUrl($dest),
+            'QueueUrl' => $this->getQueueUrl($destination),
         ]);
     }
 }

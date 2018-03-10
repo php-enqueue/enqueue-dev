@@ -115,7 +115,7 @@ class JobProcessor
 
         $job = $this->jobStorage->findJobById($job->getId());
 
-        if ($job->getStatus() !== Job::STATUS_NEW) {
+        if (Job::STATUS_NEW !== $job->getStatus()) {
             throw new \LogicException(sprintf(
                 'Can start only new jobs: id: "%s", status: "%s"',
                 $job->getId(),
@@ -142,7 +142,7 @@ class JobProcessor
 
         $job = $this->jobStorage->findJobById($job->getId());
 
-        if ($job->getStatus() !== Job::STATUS_RUNNING) {
+        if (Job::STATUS_RUNNING !== $job->getStatus()) {
             throw new \LogicException(sprintf(
                 'Can success only running jobs. id: "%s", status: "%s"',
                 $job->getId(),
@@ -169,7 +169,7 @@ class JobProcessor
 
         $job = $this->jobStorage->findJobById($job->getId());
 
-        if ($job->getStatus() !== Job::STATUS_RUNNING) {
+        if (Job::STATUS_RUNNING !== $job->getStatus()) {
             throw new \LogicException(sprintf(
                 'Can fail only running jobs. id: "%s", status: "%s"',
                 $job->getId(),
@@ -244,7 +244,7 @@ class JobProcessor
     }
 
     /**
-     * @link https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
+     * @see https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
      *
      * @param Job $job
      */
@@ -254,7 +254,7 @@ class JobProcessor
     }
 
     /**
-     * @link https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
+     * @see https://github.com/php-enqueue/enqueue-dev/pull/222#issuecomment-336102749 See for rationale
      *
      * @param Job $job
      */

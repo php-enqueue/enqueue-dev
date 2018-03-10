@@ -77,7 +77,7 @@ class BufferedStompClient extends Client
                 return;
             }
 
-            if ($frame->getCommand() !== 'MESSAGE') {
+            if ('MESSAGE' !== $frame->getCommand()) {
                 throw new \LogicException(sprintf('Unexpected frame was received: "%s"', $frame->getCommand()));
             }
 

@@ -40,7 +40,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
     public function testThrowIfVendorIsInvalid()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unsupported redis vendor given. It must be either "predis", "phpredis". Got "invalidVendor"');
+        $this->expectExceptionMessage('Unsupported redis vendor given. It must be either "predis", "phpredis", "custom". Got "invalidVendor"');
 
         new RedisConnectionFactory(['vendor' => 'invalidVendor']);
     }
@@ -71,6 +71,8 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'vendor' => 'phpredis',
                 'persisted' => false,
                 'lazy' => true,
+                'database' => 0,
+                'redis' => null,
             ],
         ];
 
@@ -85,6 +87,8 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'vendor' => 'phpredis',
                 'persisted' => false,
                 'lazy' => true,
+                'database' => 0,
+                'redis' => null,
             ],
         ];
 
@@ -99,11 +103,13 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'vendor' => 'phpredis',
                 'persisted' => false,
                 'lazy' => true,
+                'database' => 0,
+                'redis' => null,
             ],
         ];
 
         yield [
-            'redis://localhost:1234?foo=bar&lazy=0&persisted=true',
+            'redis://localhost:1234?foo=bar&lazy=0&persisted=true&database=5',
             [
                 'host' => 'localhost',
                 'port' => 1234,
@@ -114,6 +120,8 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => true,
                 'lazy' => false,
                 'foo' => 'bar',
+                'database' => 5,
+                'redis' => null,
             ],
         ];
 
@@ -129,6 +137,8 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => false,
                 'lazy' => true,
                 'foo' => 'bar',
+                'database' => 0,
+                'redis' => null,
             ],
         ];
     }

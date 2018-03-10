@@ -47,7 +47,7 @@ class PheanstalkConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
-        if ($timeout === 0) {
+        if (0 === $timeout) {
             while (true) {
                 if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), 5)) {
                     return $this->convertJobToMessage($job);

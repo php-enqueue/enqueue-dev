@@ -1,15 +1,17 @@
-# Message Queue. Development Repository
+**Enqueue** is production ready, battle-tested messaging solution for PHP. Provides a common way for programs to create, send, read messages. 
+
+This is a main development repository. It provides a friendly environment for productive development and testing of all Enqueue related features&packages.
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
 [![Build Status](https://travis-ci.org/php-enqueue/enqueue-dev.png?branch=master)](https://travis-ci.org/php-enqueue/enqueue-dev)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-This is where all development happens. The repository provides a friendly environment for productive development and testing of all enqueue related packages.
-
 Features:
 
 * [Feature rich](docs/quick_tour.md).
-* Implements [JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) like transports based on [queue-interop](https://github.com/queue-interop/queue-interop) interfaces.
+
+* Adopts [queue interoperable](https://github.com/queue-interop/queue-interop) interfaces (inspired by [Java JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html)).
+* Battle-tested. Used in production.
 * Supported  transports 
     * [AMQP(s)](docs/transport/amqp.md) based on [PHP AMQP extension](https://github.com/pdezwart/php-amqp). 
 [![Build Status](https://travis-ci.org/php-enqueue/amqp-ext.png?branch=master)](https://travis-ci.org/php-enqueue/amqp-ext)
@@ -63,21 +65,24 @@ Features:
 [![Build Status](https://travis-ci.org/php-enqueue/null.png?branch=master)](https://travis-ci.org/php-enqueue/null)
 [![Total Downloads](https://poser.pugx.org/enqueue/null/d/total.png)](https://packagist.org/packages/enqueue/null)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/null/version.png)](https://packagist.org/packages/enqueue/null)
-* [Symfony bundle](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
-* [Magento1 extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/magento/quick_tour.md)
-* [Laravel extension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/quick_tour.md)
-* [Message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) support.
-* [RPC over MQ](https://www.rabbitmq.com/tutorials/tutorial-one-php.html) support.
+* [Symfony bundle](docs/bundle/quick_tour.md)
+* [Magento1 extension](docs/magento/quick_tour.md)
+* [Magento2 module](docs/magento2/quick_tour.md)
+* [Laravel extension](docs/laravel/quick_tour.md)
+* [Yii2. Amqp driver](docs/yii/amqp_driver.md)
+* [Message bus](docs/quick_tour.md#client) support.
+* [RPC over MQ](docs/quick_tour.md#remote-procedure-call-rpc) support.
 * Temporary queues support.
-* Well designed components decoupled and reusable.
-* Carefully tested including unit and functional tests.
+* Well designed, decoupled and reusable components.
+* Carefully tested (unit & functional).
 * For more visit [quick tour](docs/quick_tour.md).
 
 ## Resources
 
-* [Quick tour](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/quick_tour.md)
-* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
-* [Blog](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md#blogs)
+* [Site](https://enqueue.forma-pro.com/)
+* [Quick tour](docs/quick_tour.md)
+* [Documentation](docs/index.md)
+* [Blog](docs/index.md#blogs)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 

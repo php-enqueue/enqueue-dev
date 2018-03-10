@@ -26,6 +26,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
      *   'retries' => 3,            - (int, default=int(3)) Configures the maximum number of allowed retries for a client (pass 0 to disable retries).
      *   'version' => '2012-11-05', - (string, required) The version of the webservice to utilize
      *   'lazy' => true,            - Enable lazy connection (boolean)
+     *   'endpoint' => null         - (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
      * ].
      *
      * or
@@ -42,6 +43,12 @@ class SqsConnectionFactory implements PsrConnectionFactory
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
+            $dsn = array_key_exists('dsn', $config) ? $config['dsn'] : null;
+            unset($config['dsn']);
+
+            if ($dsn) {
+                $config = array_replace($config, $this->parseDsn($dsn));
+            }
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
@@ -86,6 +93,10 @@ class SqsConnectionFactory implements PsrConnectionFactory
             'retries' => $this->config['retries'],
             'region' => $this->config['region'],
         ];
+
+        if (isset($this->config['endpoint'])) {
+            $config['endpoint'] = $this->config['endpoint'];
+        }
 
         if ($this->config['key'] && $this->config['secret']) {
             $config['credentials'] = [
@@ -145,6 +156,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
             'retries' => 3,
             'version' => '2012-11-05',
             'lazy' => true,
+            'endpoint' => null,
         ];
     }
 }

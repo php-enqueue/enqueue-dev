@@ -55,7 +55,7 @@ class StompConsumer implements PsrConsumer
         $this->isSubscribed = false;
         $this->ackMode = self::ACK_CLIENT_INDIVIDUAL;
         $this->prefetchCount = 1;
-        $this->subscriptionId = $queue->getType() == StompDestination::TYPE_TEMP_QUEUE ?
+        $this->subscriptionId = StompDestination::TYPE_TEMP_QUEUE == $queue->getType() ?
             $queue->getQueueName() :
             uniqid('', true)
         ;
@@ -114,7 +114,7 @@ class StompConsumer implements PsrConsumer
     {
         $this->subscribe();
 
-        if ($timeout === 0) {
+        if (0 === $timeout) {
             while (true) {
                 if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 0.1)) {
                     return $this->convertMessage($message);
@@ -212,7 +212,7 @@ class StompConsumer implements PsrConsumer
 
         list($headers, $properties) = StompHeadersEncoder::decode($frame->getHeaders());
 
-        $redelivered = isset($headers['redelivered']) && $headers['redelivered'] === 'true';
+        $redelivered = isset($headers['redelivered']) && 'true' === $headers['redelivered'];
 
         unset(
             $headers['redelivered'],

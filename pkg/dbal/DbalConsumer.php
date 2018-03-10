@@ -130,33 +130,10 @@ class DbalConsumer implements PsrConsumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
-        if (false == $requeue) {
+        if ($requeue) {
+            $this->context->createProducer()->send($this->queue, $message);
+
             return;
-        }
-
-        $dbalMessage = [
-            'body' => $message->getBody(),
-            'headers' => JSON::encode($message->getHeaders()),
-            'properties' => JSON::encode($message->getProperties()),
-            'priority' => $message->getPriority(),
-            'queue' => $this->queue->getQueueName(),
-            'redelivered' => true,
-        ];
-
-        $affectedRows = $this->dbal->insert($this->context->getTableName(), $dbalMessage, [
-            'body' => Type::TEXT,
-            'headers' => Type::TEXT,
-            'properties' => Type::TEXT,
-            'priority' => Type::SMALLINT,
-            'queue' => Type::STRING,
-            'redelivered' => Type::BOOLEAN,
-        ]);
-
-        if (1 !== $affectedRows) {
-            throw new \LogicException(sprintf(
-                'Expected record was inserted but it is not. message: "%s"',
-                JSON::encode($dbalMessage)
-            ));
         }
     }
 
@@ -178,7 +155,7 @@ class DbalConsumer implements PsrConsumer
 
             // remove message
             $affectedRows = $this->dbal->delete($this->context->getTableName(), ['id' => $dbalMessage['id']], [
-                'id' => Type::INTEGER,
+                'id' => Type::GUID,
             ]);
 
             if (1 !== $affectedRows) {
@@ -209,6 +186,7 @@ class DbalConsumer implements PsrConsumer
         $message->setBody($dbalMessage['body']);
         $message->setPriority((int) $dbalMessage['priority']);
         $message->setRedelivered((bool) $dbalMessage['redelivered']);
+        $message->setPublishedAt((int) $dbalMessage['published_at']);
 
         if ($dbalMessage['headers']) {
             $message->setHeaders(JSON::decode($dbalMessage['headers']));
@@ -236,6 +214,7 @@ class DbalConsumer implements PsrConsumer
             ->andWhere('priority IS NOT NULL')
             ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
             ->addOrderBy('priority', 'desc')
+            ->addOrderBy('published_at', 'asc')
             ->setMaxResults(1)
         ;
 

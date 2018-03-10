@@ -1,6 +1,6 @@
 # Consumption extension
 
-Here, I show how you can crate a custom extension and register it.
+Here, I show how you can create a custom extension and register it.
 Let's first create an extension itself:
 
 ```php

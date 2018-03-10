@@ -55,6 +55,7 @@ class RabbitMqAmqpTransportFactory extends AmqpTransportFactory
     public function createDriver(ContainerBuilder $container, array $config)
     {
         $driver = new Definition(RabbitMqDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),

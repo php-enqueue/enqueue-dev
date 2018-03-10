@@ -18,6 +18,7 @@ use Enqueue\Symfony\TransportFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\NodeInterface;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
@@ -79,6 +80,7 @@ class SimpleClientContainerExtension extends Extension
         ;
 
         $container->register('enqueue.client.config', Config::class)
+            ->setPublic(true)
             ->setArguments([
                 $config['client']['prefix'],
                 $config['client']['app_name'],
@@ -90,33 +92,38 @@ class SimpleClientContainerExtension extends Extension
         ]);
 
         $container->register('enqueue.client.rpc_factory', RpcFactory::class)
+            ->setPublic(true)
             ->setArguments([
                 new Reference('enqueue.transport.context'),
             ]);
 
         $container->register('enqueue.client.producer', Producer::class)
+            ->setPublic(true)
             ->setArguments([
                 new Reference('enqueue.client.driver'),
                 new Reference('enqueue.client.rpc_factory'),
         ]);
 
-        $container->setAlias('enqueue.client.producer_v2', 'enqueue.client.producer');
+        $container->setAlias('enqueue.client.producer_v2', new Alias('enqueue.client.producer', true));
 
         $container->register('enqueue.client.meta.topic_meta_registry', TopicMetaRegistry::class)
+            ->setPublic(true)
             ->setArguments([[]]);
 
         $container->register('enqueue.client.meta.queue_meta_registry', QueueMetaRegistry::class)
-            ->setArguments([
-                new Reference('enqueue.client.config'),
-                [],
-        ]);
+            ->setPublic(true)
+            ->setArguments([new Reference('enqueue.client.config'), []]);
 
-        $container->register('enqueue.client.processor_registry', ArrayProcessorRegistry::class);
+        $container->register('enqueue.client.processor_registry', ArrayProcessorRegistry::class)
+            ->setPublic(true)
+        ;
 
         $container->register('enqueue.client.delegate_processor', DelegateProcessor::class)
+            ->setPublic(true)
             ->setArguments([new Reference('enqueue.client.processor_registry')]);
 
         $container->register('enqueue.client.queue_consumer', QueueConsumer::class)
+            ->setPublic(true)
             ->setArguments([
                 new Reference('enqueue.transport.context'),
                 new Reference('enqueue.consumption.extensions'),
@@ -124,6 +131,7 @@ class SimpleClientContainerExtension extends Extension
 
         // router
         $container->register('enqueue.client.router_processor', RouterProcessor::class)
+            ->setPublic(true)
             ->setArguments([new Reference('enqueue.client.driver'), []]);
         $container->getDefinition('enqueue.client.processor_registry')
             ->addMethodCall('add', ['enqueue.client.router_processor', new Reference('enqueue.client.router_processor')]);
@@ -134,6 +142,7 @@ class SimpleClientContainerExtension extends Extension
         $extensions = [];
         if ($config['client']['redelivered_delay_time']) {
             $container->register('enqueue.client.delay_redelivered_message_extension', DelayRedeliveredMessageExtension::class)
+                ->setPublic(true)
                 ->setArguments([
                     new Reference('enqueue.client.driver'),
                     $config['client']['redelivered_delay_time'],
@@ -143,11 +152,13 @@ class SimpleClientContainerExtension extends Extension
         }
 
         $container->register('enqueue.client.extension.set_router_properties', SetRouterPropertiesExtension::class)
+            ->setPublic(true)
             ->setArguments([new Reference('enqueue.client.driver')]);
 
         $extensions[] = new Reference('enqueue.client.extension.set_router_properties');
 
         $container->register('enqueue.consumption.extensions', ConsumptionChainExtension::class)
+            ->setPublic(true)
             ->setArguments([$extensions]);
     }
 

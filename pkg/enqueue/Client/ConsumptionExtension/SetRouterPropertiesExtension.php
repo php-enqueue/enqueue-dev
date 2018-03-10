@@ -36,7 +36,8 @@ class SetRouterPropertiesExtension implements ExtensionInterface
         }
 
         $config = $this->driver->getConfig();
-        if ($context->getPsrQueue()->getQueueName() != $config->createTransportQueueName($config->getRouterQueueName())) {
+        $queue = $this->driver->createQueue($config->getRouterQueueName());
+        if ($context->getPsrQueue()->getQueueName() != $queue->getQueueName()) {
             return;
         }
 

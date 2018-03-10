@@ -72,7 +72,7 @@ class FooTest extends WebTestCase
      */
     private function getProducer()
     {
-        return $this->client->getContainer()->get('enqueue.producer');
+        return $this->client->getContainer()->get(TraceableProducer::class);
     }
 }
 ```

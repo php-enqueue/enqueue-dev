@@ -64,7 +64,7 @@ class StompConnectionFactory implements PsrConnectionFactory
             });
         }
 
-        return new StompContext($this->stomp);
+        return new StompContext($this->establishConnection());
     }
 
     /**

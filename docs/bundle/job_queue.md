@@ -1,32 +1,105 @@
 # Jobs
 
-* [Unique job](#unique-job)
-* [Sub jobs](#sub-jobs)
-
-
 Use jobs when your message flow has several steps(tasks) which run one after another.
 Also jobs guaranty that job is unique i.e. you cant start new job with same name
 until previous job has finished.
 
+* [Installation](#installation)
+* [Unique job](#unique-job)
+* [Sub jobs](#sub-jobs)
+* [Dependent Job](#dependent-job)
+
+## Installation
+
+The easiest way to install Enqueue's job queues is to by requiring a `enqueue/job-queue-pack` pack. 
+It installs installs everything you need. It also configures everything for you If you are on Symfony Flex.
+  
+```bash
+$ composer require enqueue/job-queue-pack=^0.8
+```
+
+_**Note:** As long as you are on Symfony Flex you are done. If not, keep reading the installation chapter._
+
+* Register installed bundles
+
+```php
+<?php
+// app/AppKernel.php
+
+use Symfony\Component\HttpKernel\Kernel;
+
+class AppKernel extends Kernel
+{
+    public function registerBundles()
+    {
+        $bundles = [
+            new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new Enqueue\Bundle\EnqueueBundle(),
+        ];
+        
+        return $bundles;
+    }
+}
+````
+
+* Configure installed bundles:
+
+```yaml
+# app/config/config.yml
+
+enqueue:
+    # plus basic bundle configuration
+    
+    job: true
+
+doctrine:
+    # plus basic bundle configuration
+
+    orm:
+        mappings:
+            EnqueueJobQueue:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/vendor/enqueue/job-queue/Doctrine/mapping'
+                prefix: 'Enqueue\JobQueue\Doctrine\Entity'
+
+```
+
+* Run doctrine schema update command
+
+```bash
+$ bin/console doctrine:schema:update
+```
+
 ## Unique job
 
-Guaranty that there is only single job running with such name. 
+Guarantee that there is only one job with such name running at a time.
+For example you have a task that builds a search index. 
+It takes quite a lot of time and you dont want another instance of same task working at the same time.
+Here's how to do it: 
+
+* Write a job processor class:
 
 ```php
 <?php 
+namespace App\Queue;
+
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 use Interop\Queue\PsrContext;
 use Enqueue\Util\JSON;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
+use Enqueue\Client\CommandSubscriberInterface;
 
-class ReindexProcessor implements PsrProcessor
+class SearchReindexProcessor implements PsrProcessor, CommandSubscriberInterface
 {
-    /**
-     * @var JobRunner
-     */
     private $jobRunner;
+    
+    public function __construct(JobRunner $jobRunner) 
+    {
+        $this->jobRunner = $jobRunner;
+    }
 
     public function process(PsrMessage $message, PsrContext $context)
     {
@@ -44,12 +117,42 @@ class ReindexProcessor implements PsrProcessor
 
         return $result ? self::ACK : self::REJECT;
     }
+    
+    public static function getSubscribedCommand() 
+    {
+        return 'search_reindex';
+    }
 }
+```
+
+* Register it
+
+```yaml
+services:
+  app_queue_search_reindex_processor:
+    class: 'App\Queue\SearchReindexProcessor'
+    arguments: ['@Enqueue\JobQueue\JobRunner']
+    tags:
+        - { name: 'enqueue.client.processor' }
+```
+
+* Schedule command
+
+```php
+<?php
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Enqueue\Client\ProducerInterface;
+
+/** @var ContainerInterface $container  */
+
+$producer = $container->get(ProducerInterface::class);
+
+$producer->sendCommand('search_reindex');
 ```
 
 ## Sub jobs
 
-Run several sub jobs in parallel. 
+Run several sub jobs in parallel. The steps are the same as we described above.
 
 ```php
 <?php
@@ -133,6 +236,7 @@ class Step2Processor implements PsrProcessor
 
 Use dependent job when your job flow has several steps but you want to send new message
 just after all steps are finished.
+The steps are the same as we described above.
 
 ```php
 <?php

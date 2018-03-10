@@ -19,12 +19,12 @@ use Enqueue\Dbal\DbalConnectionFactory;
 
 $config = [
     'connection' => [
-        'dbname' => getenv('SYMFONY__DB__NAME'),
-        'user' => getenv('SYMFONY__DB__USER'),
-        'password' => getenv('SYMFONY__DB__PASSWORD'),
-        'host' => getenv('SYMFONY__DB__HOST'),
-        'port' => getenv('SYMFONY__DB__PORT'),
-        'driver' => getenv('SYMFONY__DB__DRIVER'),
+        'dbname' => getenv('DOCTRINE_DB_NAME'),
+        'user' => getenv('DOCTRINE_USER'),
+        'password' => getenv('DOCTRINE_PASSWORD'),
+        'host' => getenv('DOCTRINE_HOST'),
+        'port' => getenv('DOCTRINE_PORT'),
+        'driver' => getenv('DOCTRINE_DRIVER'),
     ],
 ];
 

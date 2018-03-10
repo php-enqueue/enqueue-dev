@@ -15,7 +15,7 @@ It runs four instances of `enqueue:consume` command.
 
 ```ini
 [program:pf_message_consumer]
-command=/path/to/app/console --env=prod --no-debug --time-limit="now + 5 minutes" enqueue:consume
+command=/path/to/bin/console --env=prod --no-debug --time-limit="now + 5 minutes" enqueue:consume
 process_name=%(program_name)s_%(process_num)02d
 numprocs=4
 autostart=true

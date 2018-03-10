@@ -33,18 +33,29 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
         $builder
+            ->beforeNormalization()
+                ->ifTrue(function ($node) {
+                    return empty($node['dsn']) && (empty($node['host']) || empty($node['vendor']));
+                })
+                ->thenInvalid('Invalid configuration %s')
+            ->end()
             ->children()
+                ->scalarNode('dsn')
+                    ->info('The redis connection given as DSN. For example redis://host:port?vendor=predis')
+                ->end()
                 ->scalarNode('host')
-                    ->isRequired()
                     ->cannotBeEmpty()
                     ->info('can be a host, or the path to a unix domain socket')
                 ->end()
                 ->integerNode('port')->end()
                 ->enumNode('vendor')
-                    ->values(['phpredis', 'predis'])
-                    ->isRequired()
+                    ->values(['phpredis', 'predis', 'custom'])
                     ->cannotBeEmpty()
                     ->info('The library used internally to interact with Redis server')
+                ->end()
+                ->scalarNode('redis')
+                    ->cannotBeEmpty()
+                    ->info('A custom redis service id, used with vendor true only')
                 ->end()
                 ->booleanNode('persisted')
                     ->defaultFalse()
@@ -54,6 +65,10 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
                     ->defaultTrue()
                     ->info('the connection will be performed as later as possible, if the option set to true')
                 ->end()
+                ->integerNode('database')
+                    ->defaultValue(0)
+                    ->info('Database index to select when connected.')
+                ->end()
         ;
     }
 
@@ -62,8 +77,12 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
+        if (false == empty($config['redis'])) {
+            $config['redis'] = new Reference($config['redis']);
+        }
+
         $factory = new Definition(RedisConnectionFactory::class);
-        $factory->setArguments([$config]);
+        $factory->setArguments([isset($config['dsn']) ? $config['dsn'] : $config]);
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);
@@ -79,6 +98,7 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
         $context = new Definition(RedisContext::class);
+        $context->setPublic(true);
         $context->setFactory([new Reference($factoryId), 'createContext']);
 
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
@@ -93,6 +113,7 @@ class RedisTransportFactory implements TransportFactoryInterface, DriverFactoryI
     public function createDriver(ContainerBuilder $container, array $config)
     {
         $driver = new Definition(RedisDriver::class);
+        $driver->setPublic(true);
         $driver->setArguments([
             new Reference(sprintf('enqueue.transport.%s.context', $this->getName())),
             new Reference('enqueue.client.config'),

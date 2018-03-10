@@ -161,9 +161,9 @@ The goal of the component is hide as much as possible low level details so you c
 For example, It configure a broker for you by creating queuest, exchanges and bind them.
 It provides easy to use services for producing and processing messages. 
 It supports unified format for setting message expiration, delay, timestamp, correlation id.
-It supports message bus so different applications can talk to each other.
+It supports [message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) so different applications can talk to each other.
  
-Here's an example of how you can send and consume event messages.
+Here's an example of how you can send and consume **event messages**.
  
 ```php
 <?php
@@ -178,7 +178,11 @@ $client = new SimpleClient('file://foo/bar');
 
 $client->setupBroker();
 
+$client->sendEvent('a_foo_topic', 'message');
+
 $client->bind('a_foo_topic', 'fooProcessor', function(PsrMessage $message) {
+    echo $message->getBody().PHP_EOL;
+    
     // your event processor logic here
 });
 
@@ -186,7 +190,7 @@ $client->bind('a_foo_topic', 'fooProcessor', function(PsrMessage $message) {
 $client->consume();
 ```
 
-and command messages: 
+and **command messages**: 
 
 ```php
 <?php
@@ -201,8 +205,7 @@ use Enqueue\Consumption\Result;
 $client = new SimpleClient('amqp:');
 
 // composer require enqueue/fs
-$client = new SimpleClient('file://foo/bar');
-$client->
+//$client = new SimpleClient('file://foo/bar');
 
 $client->setupBroker();
 
@@ -229,6 +232,8 @@ $replyMessage = $promise->receive(2000); // 2 sec
 // this is a blocking call, it'll consume message until it is interrupted 
 $client->consume([new ReplyExtension()]);
 ```
+
+Read more about events and commands [here](client/quick_tour.md#produce-message). 
 
 ## Cli commands
 

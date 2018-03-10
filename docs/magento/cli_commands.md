@@ -1,4 +1,4 @@
-# Cli commands
+# Magento. Cli commands
 
 The enqueue Magento extension provides several commands. 
 The most useful one `enqueue:consume` connects to the broker and process the messages.
@@ -19,22 +19,25 @@ Usage:
   enq:c
 
 Arguments:
-  client-queue-names                 Queues to consume messages from
+  client-queue-names                     Queues to consume messages from
 
 Options:
-      --message-limit=MESSAGE-LIMIT  Consume n messages and exit
-      --time-limit=TIME-LIMIT        Consume messages during this time
-      --memory-limit=MEMORY-LIMIT    Consume messages until process reaches this memory limit in MB
-      --setup-broker                 Creates queues, topics, exchanges, binding etc on broker side.
-  -h, --help                         Display this help message
-  -q, --quiet                        Do not output any message
-  -V, --version                      Display this application version
-      --ansi                         Force ANSI output
-      --no-ansi                      Disable ANSI output
-  -n, --no-interaction               Do not ask any interactive question
-  -e, --env=ENV                      The environment name [default: "dev"]
-      --no-debug                     Switches off debug mode
-  -v|vv|vvv, --verbose               Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+      --message-limit=MESSAGE-LIMIT      Consume n messages and exit
+      --time-limit=TIME-LIMIT            Consume messages during this time
+      --memory-limit=MEMORY-LIMIT        Consume messages until process reaches this memory limit in MB
+      --setup-broker                     Creates queues, topics, exchanges, binding etc on broker side.
+      --idle-timeout=IDLE-TIMEOUT        The time in milliseconds queue consumer idle if no message has been received.
+      --receive-timeout=RECEIVE-TIMEOUT  The time in milliseconds queue consumer waits for a message.
+      --skip[=SKIP]                      Queues to skip consumption of messages from (multiple values allowed)
+  -h, --help                             Display this help message
+  -q, --quiet                            Do not output any message
+  -V, --version                          Display this application version
+      --ansi                             Force ANSI output
+      --no-ansi                          Disable ANSI output
+  -n, --no-interaction                   Do not ask any interactive question
+  -e, --env=ENV                          The environment name [default: "test"]
+      --no-debug                         Switches off debug mode
+  -v|vv|vvv, --verbose                   Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
 Help:
   A client's worker that processes messages. By default it connects to default queue. It select an appropriate message processor based on a message headers

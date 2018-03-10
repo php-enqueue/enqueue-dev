@@ -9,7 +9,9 @@ It adds easy to use [configuration layer](config_reference.md), register service
 $ composer require enqueue/enqueue-bundle enqueue/amqp-ext # or enqueue/amqp-bunny, enqueue/amqp-lib
 ```
 
-_**Note**: You could use not only AMQP transport but other available: STOMP, Amazon SQS, Redis, Filesystem, Doctrine DBAL and others._
+_**Note**: You could use not only AMQP transport but any other [available](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/transport)._
+
+_**Note**: If you are looking for a way to migrate from `php-amqplib/rabbitmq-bundle` read this [article](https://blog.forma-pro.com/the-how-and-why-of-the-migration-from-rabbitmqbundle-to-enqueuebundle-6c4054135e2b)._
 
 ## Enable the Bundle
 
@@ -55,10 +57,10 @@ Once you configured everything you can start producing messages:
 
 ```php
 <?php
-use Enqueue\Client\Producer;
+use Enqueue\Client\ProducerInterface;
 
-/** @var Producer $producer **/
-$producer = $container->get('enqueue.producer');
+/** @var ProducerInterface $producer **/
+$producer = $container->get(ProducerInterface::class);
 
 
 // send event to many consumers
@@ -107,7 +109,7 @@ foo_message_processor:
 Now you can start consuming messages:
 
 ```bash
-$ ./app/console enqueue:consume --setup-broker
+$ ./bin/console enqueue:consume --setup-broker -vvv
 ```
 
 _**Note**: Add -vvv to find out what is going while you are consuming messages. There is a lot of valuable debug info there._

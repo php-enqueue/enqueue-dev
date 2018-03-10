@@ -27,10 +27,20 @@ class RdKafkaTopicTest extends TestCase
         $this->assertSame('key', $topic->getKey());
     }
 
-    public function testShouldReturnConfInstance()
+    public function testShouldReturnNullAsConfIfNotSet()
     {
         $topic = new RdKafkaTopic('topic');
 
-        $this->assertInstanceOf(TopicConf::class, $topic->getConf());
+        $this->assertNull($topic->getConf());
+    }
+
+    public function testShouldAllowGetPreviouslySetConf()
+    {
+        $topic = new RdKafkaTopic('topic');
+
+        $conf = new TopicConf();
+        $topic->setConf($conf);
+
+        $this->assertSame($conf, $topic->getConf());
     }
 }

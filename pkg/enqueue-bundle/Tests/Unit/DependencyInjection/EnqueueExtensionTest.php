@@ -7,15 +7,18 @@ use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Bundle\Tests\Unit\Mocks\TransportFactoryWithoutDriverFactory;
 use Enqueue\Client\Producer;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\Symfony\DefaultTransportFactory;
+use Enqueue\Symfony\MissingTransportFactory;
 use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -78,7 +81,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldEnabledNullTransportAndSetItAsDefault()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -99,7 +102,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldUseNullTransportAsDefaultWhenExplicitlyConfigured()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -122,13 +125,14 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldConfigureFooTransport()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
             'transport' => [
+                'default' => 'foo',
                 'foo' => ['foo_param' => 'aParam'],
             ],
         ]], $container);
@@ -144,7 +148,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldUseFooTransportAsDefault()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
@@ -168,7 +172,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadClientServicesWhenEnabled()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
@@ -186,11 +190,12 @@ class EnqueueExtensionTest extends TestCase
         self::assertTrue($container->hasDefinition('foo.driver'));
         self::assertTrue($container->hasDefinition('enqueue.client.config'));
         self::assertTrue($container->hasDefinition(Producer::class));
+        self::assertTrue($container->hasAlias(ProducerInterface::class));
     }
 
     public function testShouldNotCreateDriverIfFactoryDoesNotImplementDriverFactoryInterface()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new TransportFactoryWithoutDriverFactory());
@@ -210,8 +215,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldUseProducerByDefault()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', false);
+        $container = $this->getContainerBuilder(false);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
@@ -232,8 +236,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldUseMessageProducerIfTraceableProducerOptionSetToFalseExplicitly()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', false);
+        $container = $this->getContainerBuilder(false);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
@@ -254,10 +257,66 @@ class EnqueueExtensionTest extends TestCase
         self::assertEquals(Producer::class, $producer->getClass());
     }
 
-    public function testShouldUseTraceableMessageProducerIfTraceableProducerOptionSetToTrueExplicitly()
+    public function testShouldUseTraceableMessageProducerIfDebugEnabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+        $extension->addTransportFactory(new FooTransportFactory());
+
+        $extension->load([[
+            'transport' => [
+                'default' => 'foo',
+                'foo' => [
+                    'foo_param' => true,
+                ],
+            ],
+            'client' => null,
+        ]], $container);
+
+        $producer = $container->getDefinition(TraceableProducer::class);
+        self::assertEquals(TraceableProducer::class, $producer->getClass());
+        self::assertEquals(
+            [Producer::class, null, 0],
+            $producer->getDecoratedService()
+        );
+
+        self::assertInstanceOf(Reference::class, $producer->getArgument(0));
+
+        $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
+        if (30300 > Kernel::VERSION_ID) {
+            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
+            $innerServiceName = strtolower($innerServiceName);
+        }
+
+        self::assertEquals(
+            $innerServiceName,
+            (string) $producer->getArgument(0)
+        );
+    }
+
+    public function testShouldNotUseTraceableMessageProducerIfDebugDisabledAndNotSetExplicitly()
+    {
+        $container = $this->getContainerBuilder(false);
+
+        $extension = new EnqueueExtension();
+        $extension->addTransportFactory(new FooTransportFactory());
+
+        $extension->load([[
+            'transport' => [
+                'default' => 'foo',
+                'foo' => [
+                    'foo_param' => true,
+                ],
+            ],
+        ]], $container);
+
+        $this->assertFalse($container->hasDefinition(TraceableProducer::class));
+    }
+
+    public function testShouldUseTraceableMessageProducerIfDebugDisabledButTraceableProducerOptionSetToTrueExplicitly()
+    {
+        $container = $this->getContainerBuilder(false);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
@@ -297,8 +356,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadDelayRedeliveredMessageExtensionIfRedeliveredDelayTimeGreaterThenZero()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
@@ -322,8 +380,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldNotLoadDelayRedeliveredMessageExtensionIfRedeliveredDelayTimeIsZero()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
@@ -345,8 +402,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadJobServicesIfEnabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -360,8 +416,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldNotLoadJobServicesIfDisabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -377,15 +432,14 @@ class EnqueueExtensionTest extends TestCase
     {
         $extension = new EnqueueExtension();
 
-        $configuration = $extension->getConfiguration([], new ContainerBuilder());
+        $configuration = $extension->getConfiguration([], $this->getContainerBuilder(true));
 
         self::assertInstanceOf(Configuration::class, $configuration);
     }
 
     public function testShouldLoadDoctrinePingConnectionExtensionServiceIfEnabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -401,8 +455,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldNotLoadDoctrinePingConnectionExtensionServiceIfDisabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -418,8 +471,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadDoctrineClearIdentityMapExtensionServiceIfEnabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -435,8 +487,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldNotLoadDoctrineClearIdentityMapExtensionServiceIfDisabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -452,8 +503,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadSignalExtensionServiceIfEnabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -469,8 +519,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldNotLoadSignalExtensionServiceIfDisabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -486,8 +535,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadReplyExtensionServiceIfEnabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -503,8 +551,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldNotLoadReplyExtensionServiceIfDisabled()
     {
-        $container = new ContainerBuilder();
-        $container->setParameter('kernel.debug', true);
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
@@ -520,7 +567,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldAddJobQueueEntityMapping()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
         $container->setParameter('kernel.bundles', ['DoctrineBundle' => true]);
         $container->prependExtensionConfig('doctrine', ['dbal' => true]);
 
@@ -536,7 +583,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldNotAddJobQueueEntityMappingIfDoctrineBundleIsNotRegistered()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
         $container->setParameter('kernel.bundles', []);
 
         $extension = new EnqueueExtension();
@@ -548,7 +595,7 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldConfigureQueueConsumer()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
         $extension->load([[
@@ -568,5 +615,34 @@ class EnqueueExtensionTest extends TestCase
         $def = $container->getDefinition('enqueue.client.queue_consumer');
         $this->assertSame(123, $def->getArgument(2));
         $this->assertSame(456, $def->getArgument(3));
+    }
+
+    public function testShouldThrowIfPackageShouldBeInstalledToUseTransport()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+        $extension->addTransportFactory(new MissingTransportFactory('need_package', ['a_package', 'another_package']));
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('In order to use the transport "need_package" install');
+        $extension->load([[
+            'transport' => [
+                'need_package' => true,
+            ],
+        ]], $container);
+    }
+
+    /**
+     * @param bool $debug
+     *
+     * @return ContainerBuilder
+     */
+    private function getContainerBuilder($debug)
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.debug', $debug);
+
+        return $container;
     }
 }

@@ -18,6 +18,8 @@ Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 
 ## Installation
 
+_**Warning**: You need amqp extension of at least 1.9.3. Here's how you can [compile](https://github.com/php-enqueue/enqueue-dev/blob/09d209447b9dbdf118bff7d983fcb8b0f919e789/docker/Dockerfile#L8) the extension from the [source code](https://github.com/pdezwart/php-amqp)._
+
 ```bash
 $ composer require enqueue/amqp-ext
 ```
