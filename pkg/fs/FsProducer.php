@@ -53,10 +53,7 @@ class FsProducer implements PsrProducer
             }
 
             $rawMessage = json_encode($message);
-            if (false !== strpos($rawMessage, '|{')) {
-                throw new \LogicException('The delimiter sequence "|{" found in message body.');
-            }
-
+            $rawMessage = str_replace('|{', '\|\{', $rawMessage);
             $rawMessage = '|'.$rawMessage;
 
             if (JSON_ERROR_NONE !== json_last_error()) {

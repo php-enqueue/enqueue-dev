@@ -45,20 +45,4 @@ class FsProducerTest extends TestCase
             file_get_contents(sys_get_temp_dir().'/fs_test_queue')
         );
     }
-
-    /**
-     * @group bug
-     * @group bug390
-     */
-    public function testThrowIfDelimiterSymbolsFoundInMessageBody()
-    {
-        $queue = $this->fsContext->createQueue('fs_test_queue');
-
-        $message = $this->fsContext->createMessage('                             |{"body":"aMessageData","properties":{"enqueue.topic_name":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"co
-rrelation_id":""}}');
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The delimiter sequence "|{" found in message body.');
-        $this->fsContext->createProducer()->send($queue, $message);
-    }
 }
