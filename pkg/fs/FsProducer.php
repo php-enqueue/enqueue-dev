@@ -52,7 +52,12 @@ class FsProducer implements PsrProducer
                 $message->setHeader('x-expire-at', microtime(true) + ($this->timeToLive / 1000));
             }
 
-            $rawMessage = '|'.json_encode($message);
+            $rawMessage = json_encode($message);
+            if (false !== strpos($rawMessage, '|{')) {
+                throw new \LogicException('The delimiter sequence "|{" found in message body.');
+            }
+
+            $rawMessage = '|'.$rawMessage;
 
             if (JSON_ERROR_NONE !== json_last_error()) {
                 throw new \InvalidArgumentException(sprintf(
