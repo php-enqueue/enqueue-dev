@@ -48,7 +48,7 @@ class JsonSerializerTest extends TestCase
         $message = new RdKafkaMessage('theBody', ['aProp' => $resource]);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The malformed json given.');
+        $this->expectExceptionMessage('Could not encode value into json.');
         $serializer->toString($message);
     }
 
