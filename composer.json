@@ -27,6 +27,7 @@
     "enqueue/simple-client": "*@dev",
     "enqueue/test": "*@dev",
     "enqueue/async-event-dispatcher": "*@dev",
+    "enqueue/async-command": "*@dev",
     "queue-interop/queue-interop": "^0.6@dev|^1.0.0-alpha1",
     "queue-interop/amqp-interop": "^0.7@dev",
     "queue-interop/queue-spec": "^0.5.4@dev",
@@ -143,6 +144,10 @@
     {
       "type": "path",
       "url": "pkg/async-event-dispatcher"
+    },
+    {
+      "type": "path",
+      "url": "pkg/async-command"
     }
   ]
 }
