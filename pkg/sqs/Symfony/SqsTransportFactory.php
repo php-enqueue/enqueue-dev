@@ -44,6 +44,7 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
                     ->defaultTrue()
                     ->info('the connection will be performed as later as possible, if the option set to true')
                 ->end()
+                ->scalarNode('endpoint')->defaultNull()->end()
         ;
     }
 
