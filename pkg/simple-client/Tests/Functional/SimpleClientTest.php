@@ -8,7 +8,7 @@ use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
 use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Test\RabbitmqAmqpExtension;
-use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Enqueue\Test\RabbitManagementExtensionTrait;
 use Interop\Queue\PsrMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class SimpleClientTest extends TestCase
 {
     use RabbitmqAmqpExtension;
-    use RabbitmqManagmentExtensionTrait;
+    use RabbitManagementExtensionTrait;
 
     public function setUp()
     {

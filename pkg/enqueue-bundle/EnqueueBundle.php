@@ -69,9 +69,9 @@ class EnqueueBundle extends Bundle
             $extension->setTransportFactory(new AmqpTransportFactory('amqp'));
             $extension->setTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
         } else {
-            $amppPackages = ['enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
-            $extension->setTransportFactory(new MissingTransportFactory('amqp', $amppPackages));
-            $extension->setTransportFactory(new MissingTransportFactory('rabbitmq_amqp', $amppPackages));
+            $amqpPackages = ['enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
+            $extension->setTransportFactory(new MissingTransportFactory('amqp', $amqpPackages));
+            $extension->setTransportFactory(new MissingTransportFactory('rabbitmq_amqp', $amqpPackages));
         }
 
         if (class_exists(FsConnectionFactory::class)) {

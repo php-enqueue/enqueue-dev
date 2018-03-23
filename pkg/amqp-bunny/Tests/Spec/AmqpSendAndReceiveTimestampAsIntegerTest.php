@@ -8,7 +8,7 @@ use Interop\Queue\Spec\Amqp\SendAndReceiveTimestampAsIntegerSpec;
 /**
  * @group functional
  */
-class AmqpSendAndReceiveTimestampAsIntengerTest extends SendAndReceiveTimestampAsIntegerSpec
+class AmqpSendAndReceiveTimestampAsIntegerTest extends SendAndReceiveTimestampAsIntegerSpec
 {
     /**
      * {@inheritdoc}
