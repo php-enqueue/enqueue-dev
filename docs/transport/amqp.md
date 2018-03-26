@@ -78,7 +78,7 @@ use Interop\Amqp\AmqpTopic;
 /** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
 
 $fooTopic = $psrContext->createTopic('foo');
-$fooTopic->addFlag(AmqpTopic::TYPE_FANOUT);
+$fooTopic->setType(AmqpTopic::TYPE_FANOUT);
 $psrContext->declareTopic($fooTopic);
 
 // to remove topic use delete topic method
