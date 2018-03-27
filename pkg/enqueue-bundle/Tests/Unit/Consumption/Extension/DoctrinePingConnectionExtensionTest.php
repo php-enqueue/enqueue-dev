@@ -24,6 +24,11 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $connection = $this->createConnectionMock();
         $connection
             ->expects($this->once())
+            ->method('isConnected')
+            ->will($this->returnValue(true))
+        ;
+        $connection
+            ->expects($this->once())
             ->method('ping')
             ->will($this->returnValue(true))
         ;
@@ -58,6 +63,11 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $connection = $this->createConnectionMock();
         $connection
             ->expects($this->once())
+            ->method('isConnected')
+            ->will($this->returnValue(true))
+        ;
+        $connection
+            ->expects($this->once())
             ->method('ping')
             ->will($this->returnValue(false))
         ;
@@ -87,6 +97,49 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->expects($this->once())
             ->method('getConnections')
             ->will($this->returnValue([$connection]))
+        ;
+
+        $extension = new DoctrinePingConnectionExtension($registry);
+        $extension->onPreReceived($context);
+    }
+
+    public function testShouldSkipIfConnectionWasNotOpened()
+    {
+        $connection1 = $this->createConnectionMock();
+        $connection1
+            ->expects($this->once())
+            ->method('isConnected')
+            ->will($this->returnValue(false))
+        ;
+        $connection1
+            ->expects($this->never())
+            ->method('ping')
+        ;
+
+        // 2nd connection was opened in the past
+        $connection2 = $this->createConnectionMock();
+        $connection2
+            ->expects($this->once())
+            ->method('isConnected')
+            ->will($this->returnValue(true))
+        ;
+        $connection2
+            ->expects($this->once())
+            ->method('ping')
+            ->will($this->returnValue(true))
+        ;
+
+        $context = $this->createPsrContext();
+        $context->getLogger()
+            ->expects($this->never())
+            ->method('debug')
+        ;
+
+        $registry = $this->createRegistryMock();
+        $registry
+            ->expects($this->once())
+            ->method('getConnections')
+            ->will($this->returnValue([$connection1, $connection2]))
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
