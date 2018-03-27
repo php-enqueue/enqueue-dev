@@ -3,8 +3,8 @@
 namespace Enqueue\AmqpExt\Tests\Functional;
 
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitManagementExtensionTrait;
+use Enqueue\Test\RabbitmqAmqpExtension;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpMessage;
 use PHPUnit\Framework\TestCase;
