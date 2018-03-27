@@ -394,6 +394,9 @@ class ConnectionConfig
 
         if ($path = parse_url($dsn, PHP_URL_PATH)) {
             $config['vhost'] = ltrim($path, '/');
+            if (empty($config['vhost'])) {
+                $config['vhost'] = $path;
+            }
         }
 
         if (0 === strpos($scheme, 'amqps')) {
