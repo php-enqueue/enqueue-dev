@@ -104,7 +104,7 @@ class UseCasesTest extends WebTestCase
 
         yield 'default_dbal_as_dsn' => [[
             'transport' => [
-                'default' => getenv('DOCTINE_DSN'),
+                'default' => getenv('DOCTRINE_DSN'),
             ],
         ]];
 
@@ -188,7 +188,7 @@ class UseCasesTest extends WebTestCase
         yield 'dbal_dsn' => [[
             'transport' => [
                 'default' => 'dbal',
-                'dbal' => getenv('DOCTINE_DSN'),
+                'dbal' => getenv('DOCTRINE_DSN'),
             ],
         ]];
 

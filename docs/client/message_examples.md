@@ -82,7 +82,7 @@ $producer->sendEvent('aTopic', $message);
 ## Timestamp, Content type, Message id
 
 Those are self describing things. 
-Usually they are set by Client so you dont have to worry about them. 
+Usually they are set by Client so you don't have to worry about them. 
 If you do not like what Client set you can always set custom values:
  
 ```php

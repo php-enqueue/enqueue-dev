@@ -20,7 +20,7 @@ class ProxyEventDispatcherTest extends TestCase
 
     public function testShouldSetSyncModeForGivenEventNameOnDispatchAsyncListenersOnly()
     {
-        $asyncListenerMock = $this->createAsyncLisenerMock();
+        $asyncListenerMock = $this->createAsyncListenerMock();
         $asyncListenerMock
             ->expects($this->once())
             ->method('resetSyncMode')
@@ -49,7 +49,7 @@ class ProxyEventDispatcherTest extends TestCase
         });
 
         $asyncEventWasCalled = false;
-        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncLisenerMock());
+        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncListenerMock());
         $dispatcher->addListener('theEvent', function () use (&$asyncEventWasCalled) {
             $this->assertInstanceOf(AsyncEventDispatcher::class, func_get_arg(2));
 
@@ -74,7 +74,7 @@ class ProxyEventDispatcherTest extends TestCase
         });
 
         $asyncEventWasCalled = false;
-        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncLisenerMock());
+        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncListenerMock());
         $dispatcher->addListener('theEvent', function () use (&$asyncEventWasCalled) {
             $this->assertInstanceOf(AsyncEventDispatcher::class, func_get_arg(2));
 
@@ -97,7 +97,7 @@ class ProxyEventDispatcherTest extends TestCase
             func_get_arg(2)->dispatch('theOtherAsyncEvent');
         });
 
-        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncLisenerMock());
+        $dispatcher = new AsyncEventDispatcher($trueEventDispatcher, $this->createAsyncListenerMock());
         $dispatcher->addListener('theAsyncEvent', function () {
             func_get_arg(2)->dispatch('theOtherEvent');
         });
@@ -115,7 +115,7 @@ class ProxyEventDispatcherTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|AsyncListener
      */
-    private function createAsyncLisenerMock()
+    private function createAsyncListenerMock()
     {
         return $this->createMock(AsyncListener::class);
     }
