@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.24](https://github.com/php-enqueue/enqueue-dev/tree/0.8.24) (2018-03-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.23...0.8.24)
+
+- \[fs\] Escape special symbols  [\#390](https://github.com/php-enqueue/enqueue-dev/issues/390)
+- \[fs\] Escape delimiter symbols.  [\#402](https://github.com/php-enqueue/enqueue-dev/pull/402) ([makasim](https://github.com/makasim))
+
+- Laravel Usage [\#408](https://github.com/php-enqueue/enqueue-dev/issues/408)
+- \[JobRunner\] Uncaught exceptions leave jobs in "running" state [\#385](https://github.com/php-enqueue/enqueue-dev/issues/385)
+- \[Feature Request\] Closure message body. [\#366](https://github.com/php-enqueue/enqueue-dev/issues/366)
+
+- \[bundle\] Don't ping DBAL connection if it wasn't opened [\#414](https://github.com/php-enqueue/enqueue-dev/pull/414) ([ramunasd](https://github.com/ramunasd))
+- Fix AMQP\(s\) code in amqp.md [\#413](https://github.com/php-enqueue/enqueue-dev/pull/413) ([xdbas](https://github.com/xdbas))
+- Fixed typos [\#412](https://github.com/php-enqueue/enqueue-dev/pull/412) ([pborreli](https://github.com/pborreli))
+- Fixed typo [\#411](https://github.com/php-enqueue/enqueue-dev/pull/411) ([pborreli](https://github.com/pborreli))
+- Update sqs transport factory with missing endpoint parameter [\#404](https://github.com/php-enqueue/enqueue-dev/pull/404) ([asilgalis](https://github.com/asilgalis))
+
 ## [0.8.23](https://github.com/php-enqueue/enqueue-dev/tree/0.8.23) (2018-03-06)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.22...0.8.23)
 
