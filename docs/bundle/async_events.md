@@ -154,7 +154,7 @@ and register it:
 # app/config/config.yml
 
 services:
-    acme.foo_event_transofrmer:
+    acme.foo_event_transformer:
         class: 'AcmeBundle\Listener\FooEventTransformer'
         arguments: ['@doctrine']
         tags:

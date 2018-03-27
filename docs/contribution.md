@@ -23,7 +23,7 @@ To run tests simply run
 
 ## Commit 
 
-When you try to commit changes `php-cs-fixer` is run. It fixes all coding style issues. Dont forget to stage them and commit everything.
+When you try to commit changes `php-cs-fixer` is run. It fixes all coding style issues. Don't forget to stage them and commit everything.
 Once everything is done open a pull request on official repository. 
 
 [back to index](index.md)

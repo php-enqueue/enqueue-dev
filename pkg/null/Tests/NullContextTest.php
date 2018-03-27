@@ -90,7 +90,7 @@ class NullContextTest extends TestCase
         $this->assertInstanceOf(NullProducer::class, $producer);
     }
 
-    public function testShouldCreateTempraryQueueWithUnqiueName()
+    public function testShouldCreateTemporaryQueueWithUniqueName()
     {
         $context = new NullContext();
 

@@ -75,7 +75,7 @@ $ bin/console doctrine:schema:update
 
 Guarantee that there is only one job with such name running at a time.
 For example you have a task that builds a search index. 
-It takes quite a lot of time and you dont want another instance of same task working at the same time.
+It takes quite a lot of time and you don't want another instance of same task working at the same time.
 Here's how to do it: 
 
 * Write a job processor class:

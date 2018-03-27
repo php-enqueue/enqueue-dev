@@ -5,8 +5,8 @@ namespace Enqueue\AmqpExt\Tests\Functional;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
+use Enqueue\Test\RabbitManagementExtensionTrait;
 use Enqueue\Test\RabbitmqAmqpExtension;
-use Enqueue\Test\RabbitmqManagmentExtensionTrait;
 use Interop\Amqp\Impl\AmqpMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class AmqpRpcUseCasesTest extends TestCase
 {
     use RabbitmqAmqpExtension;
-    use RabbitmqManagmentExtensionTrait;
+    use RabbitManagementExtensionTrait;
 
     /**
      * @var AmqpContext

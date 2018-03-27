@@ -277,7 +277,7 @@ class StompDriverTest extends \PHPUnit\Framework\TestCase
         $driver->sendToProcessor($message);
     }
 
-    public function testSetupBrokerShouldOnlyLogMessageThatStompDoesNotSupprtBrokerSetup()
+    public function testSetupBrokerShouldOnlyLogMessageThatStompDoesNotSupportBrokerSetup()
     {
         $driver = new StompDriver(
             $this->createPsrContextMock(),

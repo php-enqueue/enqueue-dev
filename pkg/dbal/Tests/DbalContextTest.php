@@ -135,7 +135,7 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($connection, $context->getDbalConnection());
     }
 
-    public function testShouldThrowBadMethodCallExceptiOnOncreateTemporaryQueueCall()
+    public function testShouldThrowBadMethodCallExceptionOncreateTemporaryQueueCall()
     {
         $context = new DbalContext($connection = $this->createConnectionMock());
 

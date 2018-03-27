@@ -31,6 +31,6 @@ Here's the list of protocols and Client features supported by them
 
 * \* Possible if a RabbitMQ delay plugin is installed.
 * \*\* Possible if topics (exchanges) are configured on broker side manually.
-* \*\*\* Possible if RabbitMQ Managment Plugin is installed.
+* \*\*\* Possible if RabbitMQ Management Plugin is installed.
 
 [back to index](../index.md)
