@@ -42,6 +42,7 @@ If you did so, you can use its methods `getTraces`, `getTopicTraces` or `clearTr
 ```php
 <?php
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
 
 class FooTest extends WebTestCase
@@ -72,7 +73,7 @@ class FooTest extends WebTestCase
      */
     private function getProducer()
     {
-        return $this->client->getContainer()->get(TraceableProducer::class);
+        return $this->client->getContainer()->get(ProducerInterface::class);
     }
 }
 ```
