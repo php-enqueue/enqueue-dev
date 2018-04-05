@@ -16,8 +16,8 @@
         "enqueue/enqueue": "^0.9@dev",
         "enqueue/null": "^0.9@dev",
         "queue-interop/queue-spec": "^0.5.3@dev",
-        "symfony/dependency-injection": "^2.8|^3|^4",
-        "symfony/config": "^2.8|^3|^4"
+        "symfony/dependency-injection": "^3.4|^4",
+        "symfony/config": "^3.4|^4"
     },
     "support": {
         "email": "opensource@forma-pro.com",

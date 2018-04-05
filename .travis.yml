@@ -7,42 +7,27 @@ language: php
 
 matrix:
   include:
-    - php: 5.6
-      env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
     - php: 7.1
-      env: SYMFONY_VERSION=3.0.* PHPSTAN=true
+      env: SYMFONY_VERSION=3.4.* PHPSTAN=true
     - php: 7.1
-      env: SYMFONY_VERSION=3.0.* PHP_CS_FIXER=true
-    - php: 7.0
-      env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
-    - php: 5.6
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
-    - php: 7.0
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
-    - php: 7.1
-      env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
+      env: SYMFONY_VERSION=3.4.* PHP_CS_FIXER=true
     - php: 7.1
       env: SYMFONY_VERSION=3.4.* UNIT_TESTS=true
+    - php: 7.1
+      env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
     - php: 7.2
-      services: docker
-      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
     - php: 7.1
       services: docker
-      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=3.2.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=3.4.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
       services: docker
       env: SYMFONY_VERSION=4.0.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
       services: docker
-      env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=3.4.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
   allow_failures:
-    - env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
+    - env: SYMFONY_VERSION=3.4.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
 
 cache:
     directories:
