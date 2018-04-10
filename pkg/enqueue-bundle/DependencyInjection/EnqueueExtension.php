@@ -109,6 +109,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             if ($config['client']['traceable_producer']) {
                 $container->register(TraceableProducer::class, TraceableProducer::class)
                     ->setDecoratedService(Producer::class)
+                    ->setPublic(true)
                     ->addArgument(new Reference(sprintf('%s.inner', TraceableProducer::class)))
                 ;
             }
