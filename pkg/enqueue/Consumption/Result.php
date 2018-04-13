@@ -90,7 +90,7 @@ class Result
     /**
      * @param string $reason
      *
-     * @return self
+     * @return static
      */
     public static function ack($reason = '')
     {
@@ -100,7 +100,7 @@ class Result
     /**
      * @param string $reason
      *
-     * @return self
+     * @return static
      */
     public static function reject($reason)
     {
@@ -110,7 +110,7 @@ class Result
     /**
      * @param string $reason
      *
-     * @return self
+     * @return static
      */
     public static function requeue($reason = '')
     {
@@ -122,7 +122,7 @@ class Result
      * @param string      $status
      * @param string|null $reason
      *
-     * @return self
+     * @return static
      */
     public static function reply(PsrMessage $replyMessage, $status = self::ACK, $reason = null)
     {
