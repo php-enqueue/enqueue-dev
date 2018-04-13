@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.8.25](https://github.com/php-enqueue/enqueue-dev/tree/0.8.25) (2018-04-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.24...0.8.25)
+
+- gearmand queue library can't not use for php7 [\#270](https://github.com/php-enqueue/enqueue-dev/issues/270)
+- \[bundle\] Make TraceableProducer service public [\#422](https://github.com/php-enqueue/enqueue-dev/pull/422) ([sbacelic](https://github.com/sbacelic))
+
+- Why no packagist support [\#424](https://github.com/php-enqueue/enqueue-dev/issues/424)
+- \[DbalDriver\] does not convert Message::$expire to DbalMessage::$timeToLive [\#391](https://github.com/php-enqueue/enqueue-dev/issues/391)
+
+- \[skip ci\] Update doc block. return value should be "self" [\#425](https://github.com/php-enqueue/enqueue-dev/pull/425) ([makasim](https://github.com/makasim))
+- Fix a tiny little typo in documentation [\#416](https://github.com/php-enqueue/enqueue-dev/pull/416) ([bobey](https://github.com/bobey))
+
 ## [0.8.24](https://github.com/php-enqueue/enqueue-dev/tree/0.8.24) (2018-03-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.23...0.8.24)
 
