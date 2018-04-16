@@ -33,7 +33,7 @@ To send a message you have to take enqueue helper and call `send` method.
 <?php
 
 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-$enqueueManager = $objectManager->create('Enqueue\Enqueue\Model\EnqueueManager');
+$enqueueManager = $objectManager->create('Enqueue\Magento2\Model\EnqueueManager');
 $enqueueManager->sendEvent('a_topic', 'aMessage');
 
 // or a command with a possible reply
