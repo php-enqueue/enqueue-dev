@@ -55,6 +55,7 @@ class StompTransportFactoryTest extends \PHPUnit\Framework\TestCase
             'connection_timeout' => 1,
             'buffer_size' => 1000,
             'lazy' => true,
+            'ssl_on' => false
         ], $config);
     }
 
