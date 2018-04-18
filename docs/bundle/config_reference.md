@@ -21,6 +21,9 @@ enqueue:
             connection_timeout:   1
             buffer_size:          1000
             lazy:                 true
+            
+            # Should be true if you want to use secure connections. False by default
+            ssl_on:               false
         rabbitmq_stomp:
             host:                 localhost
             port:                 61613
