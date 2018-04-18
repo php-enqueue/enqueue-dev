@@ -76,8 +76,8 @@ class StompConnectionFactory implements PsrConnectionFactory
         if (false == $this->stomp) {
             $config = $this->config;
 
-            $scheme = ($config['ssl_on'] === true) ? 'ssl' : 'tcp';
-            $uri = $scheme . '://' . $config['host'] . ':' . $config['port'];
+            $scheme = (true === $config['ssl_on']) ? 'ssl' : 'tcp';
+            $uri = $scheme.'://'.$config['host'].':'.$config['port'];
             $connection = new Connection($uri, $config['connection_timeout']);
 
             $this->stomp = new BufferedStompClient($connection, $config['buffer_size']);
