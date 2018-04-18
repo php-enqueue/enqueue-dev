@@ -28,6 +28,7 @@ class StompConnectionFactory implements PsrConnectionFactory
      * 'connection_timeout' => 1,
      * 'sync' => false,
      * 'lazy' => true,
+     * 'ssl_on' => false,
      * ].
      *
      * or
@@ -75,7 +76,8 @@ class StompConnectionFactory implements PsrConnectionFactory
         if (false == $this->stomp) {
             $config = $this->config;
 
-            $uri = 'tcp://'.$config['host'].':'.$config['port'];
+            $scheme = ($config['ssl_on'] === true) ? 'ssl' : 'tcp';
+            $uri = $scheme . '://' . $config['host'] . ':' . $config['port'];
             $connection = new Connection($uri, $config['connection_timeout']);
 
             $this->stomp = new BufferedStompClient($connection, $config['buffer_size']);
@@ -134,6 +136,7 @@ class StompConnectionFactory implements PsrConnectionFactory
             'connection_timeout' => 1,
             'sync' => false,
             'lazy' => true,
+            'ssl_on' => false,
         ];
     }
 }
