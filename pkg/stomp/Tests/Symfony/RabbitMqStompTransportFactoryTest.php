@@ -59,7 +59,7 @@ class RabbitMqStompTransportFactoryTest extends \PHPUnit\Framework\TestCase
             'management_plugin_installed' => false,
             'management_plugin_port' => 15672,
             'lazy' => true,
-            'ssl_on' => false
+            'ssl_on' => false,
         ], $config);
     }
 
