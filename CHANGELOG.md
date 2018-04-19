@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.8.26](https://github.com/php-enqueue/enqueue-dev/tree/0.8.26) (2018-04-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.25...0.8.26)
+
+- Allow to enable SSL in StompConnectionFactory [\#427](https://github.com/php-enqueue/enqueue-dev/pull/427) ([arjanvdbos](https://github.com/arjanvdbos))
+- Fix namespace in doc [\#426](https://github.com/php-enqueue/enqueue-dev/pull/426) ([Koc](https://github.com/Koc))
+
 ## [0.8.25](https://github.com/php-enqueue/enqueue-dev/tree/0.8.25) (2018-04-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.24...0.8.25)
 
