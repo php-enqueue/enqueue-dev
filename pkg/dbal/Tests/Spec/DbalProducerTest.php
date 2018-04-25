@@ -9,7 +9,7 @@ use Interop\Queue\Spec\PsrProducerSpec;
  */
 class DbalProducerTest extends PsrProducerSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * {@inheritdoc}

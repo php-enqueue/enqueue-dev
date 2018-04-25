@@ -9,7 +9,7 @@ use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
  */
 class DbalSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * {@inheritdoc}

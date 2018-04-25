@@ -4,7 +4,7 @@ namespace Enqueue\Dbal\Tests\Functional;
 
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalMessage;
-use Enqueue\Dbal\Tests\Spec\CreateDbalContextTrait;
+use Enqueue\Dbal\Tests\Spec\CreateMongodbContextTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DbalConsumerTest extends TestCase
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * @var DbalContext
