@@ -9,7 +9,7 @@ use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
  */
 class DbalSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFromQueueSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * {@inheritdoc}

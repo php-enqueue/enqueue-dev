@@ -9,7 +9,7 @@ use Interop\Queue\Spec\SendAndReceiveTimeToLiveMessagesFromQueueSpec;
  */
 class DbalSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTimeToLiveMessagesFromQueueSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * {@inheritdoc}

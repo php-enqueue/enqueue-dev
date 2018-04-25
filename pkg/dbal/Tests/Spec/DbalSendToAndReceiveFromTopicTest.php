@@ -9,7 +9,7 @@ use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
  */
 class DbalSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * {@inheritdoc}

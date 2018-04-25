@@ -9,7 +9,7 @@ use Interop\Queue\Spec\RequeueMessageSpec;
  */
 class DbalRequeueMessageTest extends RequeueMessageSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * {@inheritdoc}

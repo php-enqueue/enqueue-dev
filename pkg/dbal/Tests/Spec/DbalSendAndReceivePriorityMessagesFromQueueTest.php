@@ -12,7 +12,7 @@ use Interop\Queue\Spec\SendAndReceivePriorityMessagesFromQueueSpec;
  */
 class DbalSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceivePriorityMessagesFromQueueSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     private $publishedAt;
 

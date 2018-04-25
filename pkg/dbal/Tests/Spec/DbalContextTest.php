@@ -9,7 +9,7 @@ use Interop\Queue\Spec\PsrContextSpec;
  */
 class DbalContextTest extends PsrContextSpec
 {
-    use CreateDbalContextTrait;
+    use CreateMongodbContextTrait;
 
     /**
      * {@inheritdoc}

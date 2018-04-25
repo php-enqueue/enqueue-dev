@@ -20,6 +20,7 @@
     "enqueue/pheanstalk": "*@dev",
     "enqueue/gearman": "*@dev",
     "enqueue/rdkafka": "*@dev",
+    "enqueue/mongodb": "*@dev",
     "kwn/php-rdkafka-stubs": "^1.0.2",
     "enqueue/gps": "*@dev",
     "enqueue/enqueue-bundle": "*@dev",
@@ -41,7 +42,8 @@
     "symfony/console": "^2.8|^3|^4",
     "friendsofphp/php-cs-fixer": "^2",
     "empi89/php-amqp-stubs": "*@dev",
-    "php-http/client-common": "^1.7@dev"
+    "php-http/client-common": "^1.7@dev",
+    "mongodb/mongodb": "^1.3"
   },
   "autoload": {
     "files": [
@@ -143,6 +145,10 @@
     {
       "type": "path",
       "url": "pkg/async-event-dispatcher"
+    },
+    {
+      "type": "path",
+      "url": "pkg/mongodb"
     }
   ]
 }
