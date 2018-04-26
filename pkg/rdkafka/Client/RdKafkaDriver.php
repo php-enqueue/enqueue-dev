@@ -29,8 +29,8 @@ class RdKafkaDriver implements DriverInterface
     private $queueMetaRegistry;
 
     /**
-     * @param RdKafkaContext $context
-     * @param Config $config
+     * @param RdKafkaContext    $context
+     * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      */
     public function __construct(RdKafkaContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)

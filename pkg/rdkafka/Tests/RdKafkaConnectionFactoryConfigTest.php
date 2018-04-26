@@ -54,8 +54,8 @@ class RdKafkaConnectionFactoryConfigTest extends TestCase
             [
                 'global' => [
                     'group.id' => 'group-id',
-                    'metadata.broker.list' => 'localhost:9092'
-                ]
+                    'metadata.broker.list' => 'localhost:9092',
+                ],
             ],
         ];
 
@@ -64,8 +64,8 @@ class RdKafkaConnectionFactoryConfigTest extends TestCase
             [
                 'global' => [
                     'group.id' => 'group-id',
-                    'metadata.broker.list' => 'localhost:9092'
-                ]
+                    'metadata.broker.list' => 'localhost:9092',
+                ],
             ],
         ];
 
@@ -74,8 +74,8 @@ class RdKafkaConnectionFactoryConfigTest extends TestCase
             [
                 'global' => [
                     'group.id' => 'group-id',
-                    'metadata.broker.list' => 'host:10000'
-                ]
+                    'metadata.broker.list' => 'host:10000',
+                ],
             ],
         ];
 
@@ -84,8 +84,8 @@ class RdKafkaConnectionFactoryConfigTest extends TestCase
             [
                 'global' => [
                     'group.id' => 'group-id',
-                    'metadata.broker.list' => 'localhost:9092'
-                ]
+                    'metadata.broker.list' => 'localhost:9092',
+                ],
             ],
         ];
     }
