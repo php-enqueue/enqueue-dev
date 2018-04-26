@@ -132,7 +132,7 @@ class RdKafkaDriver implements DriverInterface
     public function setupBroker(LoggerInterface $logger = null)
     {
         $logger = $logger ?: new NullLogger();
-        $logger->debug('[RdKasfkaDriver] setup broker');
+        $logger->debug('[RdKafkaDriver] setup broker');
     }
 
     /**
