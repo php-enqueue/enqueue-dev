@@ -13,6 +13,7 @@ services:
       - zookeeper
       - google-pubsub
       - rabbitmqssl
+      - mongo
     volumes:
       - './:/mqdev'
     environment:
@@ -24,7 +25,7 @@ services:
       - RABBITMQ_PASSWORD=guest
       - RABBITMQ_VHOST=mqdev
       - RABBITMQ_AMQP__PORT=5672
-      - ﻿RABBITMQ_STOMP_PORT=61613
+      - RABBITMQ_STOMP_PORT=61613
       - DOCTRINE_DRIVER=pdo_mysql
       - DOCTRINE_HOST=mysql
       - DOCTRINE_PORT=3306
@@ -44,6 +45,7 @@ services:
       - RDKAFKA_PORT=9092
       - PUBSUB_EMULATOR_HOST=http://google-pubsub:8085
       - GCLOUD_PROJECT=mqdev
+      - MONGO_DSN=mongodb://mongo
 
   rabbitmq:
     image: 'enqueue/rabbitmq:latest'
@@ -101,6 +103,11 @@ services:
   google-pubsub:
       image: 'google/cloud-sdk:latest'
       entrypoint: 'gcloud beta emulators pubsub start --host-port=0.0.0.0:8085'
+
+  mongo:
+      image: mongo
+      ports:
+        - "27017:27017"
 
 volumes:
   mysql-data:

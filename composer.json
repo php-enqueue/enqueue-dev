@@ -16,6 +16,7 @@
     "enqueue/fs": "*@dev",
     "enqueue/null": "*@dev",
     "enqueue/dbal": "*@dev",
+    "enqueue/mongodb": "*@dev",
     "enqueue/sqs": "*@dev",
     "enqueue/pheanstalk": "*@dev",
     "enqueue/gearman": "*@dev",
@@ -143,6 +144,10 @@
     {
       "type": "path",
       "url": "pkg/async-event-dispatcher"
+    },
+    {
+      "type": "path",
+      "url": "pkg/mongodb"
     }
   ]
 }
