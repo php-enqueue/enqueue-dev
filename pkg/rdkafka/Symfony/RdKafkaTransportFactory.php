@@ -28,7 +28,7 @@ class RdKafkaTransportFactory implements TransportFactoryInterface, DriverFactor
     }
 
     /**
-     * @param ArrayNodeDefinition $builder
+     * {@inheritdoc}
      */
     public function addConfiguration(ArrayNodeDefinition $builder)
     {
@@ -76,10 +76,7 @@ class RdKafkaTransportFactory implements TransportFactoryInterface, DriverFactor
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array            $config
-     *
-     * @return string The method must return a factory service id
+     * {@inheritdoc}
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
@@ -97,10 +94,7 @@ class RdKafkaTransportFactory implements TransportFactoryInterface, DriverFactor
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array            $config
-     *
-     * @return string The method must return a context service id
+     * {@inheritdoc}
      */
     public function createContext(ContainerBuilder $container, array $config)
     {
@@ -117,10 +111,7 @@ class RdKafkaTransportFactory implements TransportFactoryInterface, DriverFactor
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array            $config
-     *
-     * @return string The method must return a driver service id
+     * {@inheritdoc}
      */
     public function createDriver(ContainerBuilder $container, array $config)
     {
