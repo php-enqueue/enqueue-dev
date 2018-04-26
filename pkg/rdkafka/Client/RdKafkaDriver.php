@@ -79,18 +79,6 @@ class RdKafkaDriver implements DriverInterface
             $clientMessage->setContentType($contentType);
         }
 
-        if ($expiration = $message->getHeader('expiration')) {
-            $clientMessage->setExpire($expiration);
-        }
-
-        if ($delay = $message->getHeader('delay')) {
-            $clientMessage->setDelay($delay);
-        }
-
-        if ($priority = $message->getHeader('priority')) {
-            $clientMessage->setPriority($priority);
-        }
-
         return $clientMessage;
     }
 
