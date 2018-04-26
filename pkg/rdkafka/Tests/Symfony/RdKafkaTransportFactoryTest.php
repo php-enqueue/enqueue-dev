@@ -61,10 +61,10 @@ class RdKafkaTransportFactoryTest extends TestCase
 
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), ['fileDSN']);
+        $config = $processor->process($tb->buildTree(), ['kafkaDSN']);
 
         $this->assertEquals([
-            'dsn' => 'fileDSN',
+            'dsn' => 'kafkaDSN',
             'topics' => [],
             'commit_async' => false
         ], $config);
