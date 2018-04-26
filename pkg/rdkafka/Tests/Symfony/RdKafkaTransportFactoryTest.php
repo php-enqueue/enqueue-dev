@@ -93,13 +93,13 @@ class RdKafkaTransportFactoryTest extends TestCase
         $transport = new RdKafkaTransportFactory();
 
         $serviceId = $transport->createConnectionFactory($container, [
-            'dsn' => 'theFileDSN',
+            'dsn' => 'theKafkaDSN',
         ]);
 
         $this->assertTrue($container->hasDefinition($serviceId));
         $factory = $container->getDefinition($serviceId);
         $this->assertEquals(RdKafkaConnectionFactory::class, $factory->getClass());
-        $this->assertSame(['theFileDSN'], $factory->getArguments());
+        $this->assertSame(['theKafkaDSN'], $factory->getArguments());
     }
 
     public function testShouldCreateContext()
