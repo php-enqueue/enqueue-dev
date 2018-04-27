@@ -42,8 +42,8 @@ class MongodbDriver implements DriverInterface
     ];
 
     /**
-     * @param MongodbContext $context
-     * @param Config $config
+     * @param MongodbContext    $context
+     * @param Config            $config
      * @param QueueMetaRegistry $queueMetaRegistry
      */
     public function __construct(MongodbContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
@@ -161,7 +161,7 @@ class MongodbDriver implements DriverInterface
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
-            $logger->debug(sprintf('[MongodbDriver] ' . $text, ...$args));
+            $logger->debug(sprintf('[MongodbDriver] '.$text, ...$args));
         };
         $contextConfig = $this->context->getConfig();
         $log('Creating database and collection: "%s" "%s"', $contextConfig['dbname'], $contextConfig['collection_name']);

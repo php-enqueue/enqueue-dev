@@ -20,8 +20,6 @@ class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $params = [
             'uri' => 'mongodb://127.0.0.1/',
-            'uriOptions' => [],
-            'driverOptions' => [],
         ];
 
         $factory = new MongodbConnectionFactory();
