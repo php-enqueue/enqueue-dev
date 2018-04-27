@@ -42,6 +42,7 @@ class MongodbTransportFactory implements TransportFactoryInterface, DriverFactor
             ->children()
                 ->scalarNode('dsn')
                     ->info('The Mongodb DSN. Other parameters are ignored if set')
+                    ->isRequired()
                 ->end()
                 ->scalarNode('dbname')
                     ->defaultValue('enqueue')
@@ -64,12 +65,7 @@ class MongodbTransportFactory implements TransportFactoryInterface, DriverFactor
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
-        if (false == empty($config['dsn'])) {
-            $factory = new Definition(MongodbConnectionFactory::class);
-            $factory->setArguments([$config]);
-        } else {
-            throw new \LogicException('Set "dsn" options when you want ot use Mongodb.');
-        }
+        $factory = new Definition(MongodbConnectionFactory::class, [$config]);
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);
