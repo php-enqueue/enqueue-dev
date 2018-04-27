@@ -24,7 +24,7 @@ class MongodbConnectionFactory implements PsrConnectionFactory
      *
      * or
      *
-     * mongodb://127.0.0.1:27017/dbname/collection_name?polling_interval=1000
+     * mongodb://127.0.0.1:27017/dbname?polling_interval=1000&enqueue_collection=enqueue
      *
      * @param array|string|null $config
      */

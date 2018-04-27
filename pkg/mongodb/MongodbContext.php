@@ -80,8 +80,7 @@ class MongodbContext implements PsrContext
     {
         return $this->client
             ->selectDatabase($this->config['dbname'])
-            ->selectCollection($this->config['collection_name'])
-            ;
+            ->selectCollection($this->config['collection_name']);
     }
 
     /**
@@ -98,5 +97,12 @@ class MongodbContext implements PsrContext
     public function getConfig()
     {
         return $this->config;
+    }
+
+    public function createCollection()
+    {
+        $collection = $this->getCollection();
+        $collection->createIndex(['priority' => -1, 'published_at' => 1], ['name' => 'enqueue_priority']);
+        $collection->createIndex(['delayed_until' => 1], ['name' => 'enqueue_delayed']);
     }
 }
