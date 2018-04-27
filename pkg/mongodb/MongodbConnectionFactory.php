@@ -40,6 +40,8 @@ class MongodbConnectionFactory implements PsrConnectionFactory
         }
         $config = array_replace([
             'uri' => 'mongodb://127.0.0.1/',
+            'dbname' => 'enqueue',
+            'collection_name' => 'enqueue',
         ], $config);
 
         $this->config = $config;

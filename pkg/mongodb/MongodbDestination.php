@@ -29,6 +29,15 @@ class MongodbDestination implements PsrTopic, PsrQueue
     }
 
     /**
+     * Alias for getQueueName()
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->getQueueName();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getTopicName()

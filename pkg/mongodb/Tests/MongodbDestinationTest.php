@@ -31,7 +31,7 @@ class MongodbDestinationTest extends \PHPUnit_Framework_TestCase
     {
         $destination = new MongodbDestination('topic-or-queue-name');
 
-        $this->assertSame('topic-or-queue-name', $destination->getQueueName());
+        $this->assertSame('topic-or-queue-name', $destination->getName());
         $this->assertSame('topic-or-queue-name', $destination->getTopicName());
     }
 }

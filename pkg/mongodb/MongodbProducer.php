@@ -83,7 +83,7 @@ class MongodbProducer implements PsrProducer
             'headers' => $message->getHeaders(),
             'properties' => $message->getProperties(),
             'priority' => $message->getPriority(),
-            'queue' => $destination->getQueueName(),
+            'queue' => $destination->getName(),
             'redelivered' => $message->isRedelivered(),
         ];
 

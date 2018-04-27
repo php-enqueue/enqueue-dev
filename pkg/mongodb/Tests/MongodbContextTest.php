@@ -81,7 +81,7 @@ class MongodbContextTest extends \PHPUnit_Framework_TestCase
         $queue = $context->createQueue('queue');
 
         $this->assertInstanceOf(MongodbDestination::class, $queue);
-        $this->assertEquals('queue', $queue->getQueueName());
+        $this->assertEquals('queue', $queue->getName());
     }
 
     public function testShouldCreateProducer()
