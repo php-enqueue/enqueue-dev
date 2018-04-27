@@ -70,14 +70,12 @@ class RdKafkaDriver implements DriverInterface
         $clientMessage->setHeaders($message->getHeaders());
         $clientMessage->setProperties($message->getProperties());
 
+        $clientMessage->setContentType($message->getHeader('content_type'));
+
         $clientMessage->setTimestamp($message->getTimestamp());
         $clientMessage->setMessageId($message->getMessageId());
         $clientMessage->setReplyTo($message->getReplyTo());
         $clientMessage->setCorrelationId($message->getCorrelationId());
-
-        if ($contentType = $message->getHeader('content_type')) {
-            $clientMessage->setContentType($contentType);
-        }
 
         return $clientMessage;
     }
