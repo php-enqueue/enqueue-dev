@@ -7,16 +7,12 @@ language: php
 
 matrix:
   include:
-#    - php: 5.6
-#      env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
     - php: 7.1
       env: SYMFONY_VERSION=3.0.* PHPSTAN=true
     - php: 7.1
       env: SYMFONY_VERSION=3.0.* PHP_CS_FIXER=true
     - php: 7.0
       env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
-    - php: 5.6
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
     - php: 7.0
       env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
     - php: 7.1
