@@ -63,7 +63,7 @@ class DbalProducer implements PsrProducer
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
-        if (null !== $this->priority && 0 === $message->getPriority()) {
+        if (null !== $this->priority && null === $message->getPriority()) {
             $message->setPriority($this->priority);
         }
         if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
