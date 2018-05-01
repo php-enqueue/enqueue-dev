@@ -289,5 +289,7 @@ class DefaultTransportFactoryTest extends TestCase
         yield ['redis:', 'default_redis'];
 
         yield ['stomp:', 'default_stomp'];
+
+        yield ['kafka:', 'default_kafka'];
     }
 }

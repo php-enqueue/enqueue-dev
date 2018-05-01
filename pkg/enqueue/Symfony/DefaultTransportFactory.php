@@ -10,6 +10,8 @@ use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\Symfony\GpsTransportFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\RdKafka\Symfony\RdKafkaTransportFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
@@ -207,6 +209,10 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
 
         if ($factory instanceof StompConnectionFactory) {
             return new StompTransportFactory('default_stomp');
+        }
+
+        if ($factory instanceof RdKafkaConnectionFactory) {
+            return new RdKafkaTransportFactory('default_kafka');
         }
 
         throw new \LogicException(sprintf(
