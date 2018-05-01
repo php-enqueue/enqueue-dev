@@ -48,7 +48,7 @@ class RdKafkaTransportFactoryTest extends TestCase
         ]]);
 
         $this->assertEquals([
-            'topics' => [],
+            'topic' => [],
             'commit_async' => false,
             'global' => [],
         ], $config);
@@ -66,7 +66,7 @@ class RdKafkaTransportFactoryTest extends TestCase
 
         $this->assertEquals([
             'dsn' => 'kafkaDSN',
-            'topics' => [],
+            'topic' => [],
             'commit_async' => false,
             'global' => [],
         ], $config);
