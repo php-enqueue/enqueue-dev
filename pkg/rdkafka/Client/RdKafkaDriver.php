@@ -131,6 +131,21 @@ class RdKafkaDriver implements DriverInterface
     {
         $logger = $logger ?: new NullLogger();
         $logger->debug('[RdKafkaDriver] setup broker');
+        $log = function ($text, ...$args) use ($logger) {
+            $logger->debug(sprintf('[RdKafkaDriver] '.$text, ...$args));
+        };
+
+        // setup router
+        $routerQueue = $this->createQueue($this->config->getRouterQueueName());
+        $log('Create router queue: %s', $routerQueue->getQueueName());
+        $this->context->createConsumer($routerQueue);
+
+        // setup queues
+        foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
+            $queue = $this->createQueue($meta->getClientName());
+            $log('Create processor queue: %s', $queue->getQueueName());
+            $this->context->createConsumer($queue);
+        }
     }
 
     /**
