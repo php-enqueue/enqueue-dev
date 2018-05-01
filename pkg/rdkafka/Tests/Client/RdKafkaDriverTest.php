@@ -290,12 +290,37 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSetupBroker()
     {
+        $routerTopic = new RdKafkaTopic('');
+        $routerQueue = new RdKafkaTopic('');
+
+        $processorTopic = new RdKafkaTopic('');
+
         $context = $this->createPsrContextMock();
+
+        $context
+            ->expects($this->at(0))
+            ->method('createQueue')
+            ->willReturn($routerTopic)
+        ;
+        $context
+            ->expects($this->at(1))
+            ->method('createQueue')
+            ->willReturn($routerQueue)
+        ;
+        $context
+            ->expects($this->at(2))
+            ->method('createQueue')
+            ->willReturn($processorTopic)
+        ;
+
+        $meta = new QueueMetaRegistry($this->createDummyConfig(), [
+            'default' => [],
+        ]);
 
         $driver = new RdKafkaDriver(
             $context,
             $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry()
+            $meta
         );
 
         $driver->setupBroker();
