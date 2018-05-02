@@ -3,7 +3,6 @@
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
-use Enqueue\Util\JSON;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
