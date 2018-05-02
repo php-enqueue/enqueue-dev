@@ -66,8 +66,6 @@ class MongodbMessage implements PsrMessage
         $this->properties = $properties;
         $this->headers = $headers;
         $this->redelivered = false;
-        $this->priority = 0;
-        $this->deliveryDelay = null;
     }
 
     /**

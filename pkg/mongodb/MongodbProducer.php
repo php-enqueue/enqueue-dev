@@ -52,7 +52,7 @@ class MongodbProducer implements PsrProducer
         InvalidDestinationException::assertDestinationInstanceOf($destination, MongodbDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
 
-        if (null !== $this->priority && 0 === $message->getPriority()) {
+        if (null !== $this->priority && null === $message->getPriority()) {
             $message->setPriority($this->priority);
         }
         if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
