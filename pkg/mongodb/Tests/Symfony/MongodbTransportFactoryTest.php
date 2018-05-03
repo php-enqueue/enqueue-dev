@@ -28,7 +28,7 @@ class MongodbTransportFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $transport = new MongodbTransportFactory();
 
-        $this->assertEquals('Mongodb', $transport->getName());
+        $this->assertEquals('mongodb', $transport->getName());
     }
 
     public function testCouldBeConstructedWithCustomName()
