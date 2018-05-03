@@ -46,6 +46,8 @@ cache:
 
 before_install:
     - echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - php -m
+    - php -i | grep -C 15 mongo
 
 install:
     - rm $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini;
