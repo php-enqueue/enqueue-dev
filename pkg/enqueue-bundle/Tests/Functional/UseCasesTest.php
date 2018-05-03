@@ -206,6 +206,13 @@ class UseCasesTest extends WebTestCase
             ]];
         }
 
+        yield 'mongodb_dsn' => [[
+            'transport' => [
+                'default' => 'mongodb',
+                'mongodb' => getenv('MONGO_DSN'),
+            ],
+        ]];
+
 //        yield 'gps' => [[
 //            'transport' => [
 //                'default' => 'gps',
