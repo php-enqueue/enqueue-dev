@@ -22,7 +22,7 @@ class MongodbTransportFactory implements TransportFactoryInterface, DriverFactor
     /**
      * @param string $name
      */
-    public function __construct($name = 'Mongodb')
+    public function __construct($name = 'mongodb')
     {
         $this->name = $name;
     }

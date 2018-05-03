@@ -30,11 +30,11 @@ class MongodbMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
     }
 
-    public function testShouldSetPriorityToZeroInConstructor()
+    public function testShouldSetNullPriorityInConstructor()
     {
         $message = new MongodbMessage();
 
-        $this->assertSame(0, $message->getPriority());
+        $this->assertNull($message->getPriority());
     }
 
     public function testShouldSetDelayToNullInConstructor()
