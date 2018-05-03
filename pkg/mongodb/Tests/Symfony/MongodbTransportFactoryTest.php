@@ -129,12 +129,12 @@ class MongodbTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $serviceId = $transport->createContext($container, []);
 
-        $this->assertEquals('enqueue.transport.Mongodb.context', $serviceId);
+        $this->assertEquals('enqueue.transport.mongodb.context', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
-        $context = $container->getDefinition('enqueue.transport.Mongodb.context');
+        $context = $container->getDefinition('enqueue.transport.mongodb.context');
         $this->assertInstanceOf(Reference::class, $context->getFactory()[0]);
-        $this->assertEquals('enqueue.transport.Mongodb.connection_factory', (string) $context->getFactory()[0]);
+        $this->assertEquals('enqueue.transport.mongodb.connection_factory', (string) $context->getFactory()[0]);
         $this->assertEquals('createContext', $context->getFactory()[1]);
     }
 
@@ -146,14 +146,14 @@ class MongodbTransportFactoryTest extends \PHPUnit_Framework_TestCase
 
         $serviceId = $transport->createDriver($container, []);
 
-        $this->assertEquals('enqueue.client.Mongodb.driver', $serviceId);
+        $this->assertEquals('enqueue.client.mongodb.driver', $serviceId);
         $this->assertTrue($container->hasDefinition($serviceId));
 
         $driver = $container->getDefinition($serviceId);
         $this->assertSame(MongodbDriver::class, $driver->getClass());
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(0));
-        $this->assertEquals('enqueue.transport.Mongodb.context', (string) $driver->getArgument(0));
+        $this->assertEquals('enqueue.transport.mongodb.context', (string) $driver->getArgument(0));
 
         $this->assertInstanceOf(Reference::class, $driver->getArgument(1));
         $this->assertEquals('enqueue.client.config', (string) $driver->getArgument(1));
