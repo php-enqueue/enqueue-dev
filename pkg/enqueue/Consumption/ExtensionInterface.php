@@ -8,9 +8,9 @@ interface ExtensionInterface
      * Executed only once at the very begining of the consumption.
      * At this stage the context does not contain processor, consumer and queue.
      *
-     * @param Context $context
+     * @param OnStartContext $context
      */
-    public function onStart(Context $context);
+    public function onStart(OnStartContext $context);
 
     /**
      * Executed at every new cycle before we asked a broker for a new message.

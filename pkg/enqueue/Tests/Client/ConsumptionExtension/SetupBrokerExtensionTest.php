@@ -4,9 +4,10 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\ConsumptionExtension\SetupBrokerExtension;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\OnStartContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ConsumptionContextMockTrait;
 use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -14,6 +15,7 @@ use Psr\Log\NullLogger;
 class SetupBrokerExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ConsumptionContextMockTrait;
 
     public function testShouldImplementExtensionInterface()
     {
@@ -36,8 +38,7 @@ class SetupBrokerExtensionTest extends TestCase
             ->with($this->identicalTo($logger))
         ;
 
-        $context = new Context($this->createMock(PsrContext::class));
-        $context->setLogger($logger);
+        $context = new OnStartContext($this->createMock(PsrContext::class), $logger, [], []);
 
         $extension = new SetupBrokerExtension($driver);
         $extension->onStart($context);
@@ -54,8 +55,7 @@ class SetupBrokerExtensionTest extends TestCase
             ->with($this->identicalTo($logger))
         ;
 
-        $context = new Context($this->createMock(PsrContext::class));
-        $context->setLogger($logger);
+        $context = new OnStartContext($this->createMock(PsrContext::class), $logger, [], []);
 
         $extension = new SetupBrokerExtension($driver);
         $extension->onStart($context);

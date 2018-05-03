@@ -7,11 +7,13 @@ use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ConsumptionContextMockTrait;
 use PHPUnit\Framework\TestCase;
 
 class FlushSpoolProducerExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ConsumptionContextMockTrait;
 
     public function testShouldImplementExtensionInterface()
     {
@@ -32,7 +34,7 @@ class FlushSpoolProducerExtensionTest extends TestCase
         ;
 
         $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onStart($this->createContextMock());
+        $extension->onStart($this->createOnStartContextMock());
     }
 
     public function testShouldDoNothingOnBeforeReceive()

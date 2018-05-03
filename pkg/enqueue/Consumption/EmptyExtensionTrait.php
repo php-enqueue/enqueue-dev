@@ -5,49 +5,49 @@ namespace Enqueue\Consumption;
 trait EmptyExtensionTrait
 {
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
-    public function onStart(Context $context)
+    public function onStart(OnStartContext $context)
     {
     }
 
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
     public function onBeforeReceive(Context $context)
     {
     }
 
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
     public function onPreReceived(Context $context)
     {
     }
 
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
     public function onResult(Context $context)
     {
     }
 
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
     public function onPostReceived(Context $context)
     {
     }
 
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
     public function onIdle(Context $context)
     {
     }
 
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
     public function onInterrupted(Context $context)
     {

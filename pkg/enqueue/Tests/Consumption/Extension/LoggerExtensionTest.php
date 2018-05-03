@@ -5,17 +5,21 @@ namespace Enqueue\Tests\Consumption\Extension;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\OnStartContext;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ConsumptionContextMockTrait;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LoggerExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ConsumptionContextMockTrait;
 
     public function testShouldImplementExtensionInterface()
     {
@@ -33,7 +37,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new OnStartContext($this->createPsrContextMock(), new NullLogger(), [], []);
 
         $extension->onStart($context);
 
@@ -51,7 +55,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new OnStartContext($this->createPsrContextMock(), new NullLogger(), [], []);
 
         $extension->onStart($context);
     }
@@ -151,7 +155,29 @@ class LoggerExtensionTest extends TestCase
         $extension->onPostReceived($context);
     }
 
-    public function testShouldNotSetLoggerIfOneHasBeenSetOnStart()
+    public function testShouldReplaceLoggerIfReplaceLoggerIsTrue()
+    {
+        $alreadySetLogger = $this->createLogger();
+
+        $logger = $this->createLogger();
+        $logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(sprintf(
+                'Replace context\'s logger "%s" with "%s"',
+                get_class($alreadySetLogger),
+                get_class($logger)
+            ))
+        ;
+
+        $extension = new LoggerExtension($logger, $replaceLogger = true);
+
+        $context = new OnStartContext($this->createPsrContextMock(), $alreadySetLogger, [], []);
+
+        $extension->onStart($context);
+    }
+
+    public function testShouldSkipSettingLoggerIfReplaceLoggerIsFalse()
     {
         $logger = $this->createLogger();
 
@@ -159,17 +185,12 @@ class LoggerExtensionTest extends TestCase
         $alreadySetLogger
             ->expects($this->once())
             ->method('debug')
-            ->with(sprintf(
-                'Skip setting context\'s logger "%s". Another one "%s" has already been set.',
-                get_class($logger),
-                get_class($alreadySetLogger)
-            ))
+            ->with(sprintf('Skip setting a logger "%s"', get_class($logger)))
         ;
 
-        $extension = new LoggerExtension($logger);
+        $extension = new LoggerExtension($logger, $replaceLogger = false);
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setLogger($alreadySetLogger);
+        $context = new OnStartContext($this->createPsrContextMock(), $alreadySetLogger, [], []);
 
         $extension->onStart($context);
     }

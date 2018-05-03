@@ -20,9 +20,9 @@ class ChainExtension implements ExtensionInterface
     }
 
     /**
-     * @param Context $context
+     * {@inheritdoc}
      */
-    public function onStart(Context $context)
+    public function onStart(OnStartContext $context)
     {
         foreach ($this->extensions as $extension) {
             $extension->onStart($context);

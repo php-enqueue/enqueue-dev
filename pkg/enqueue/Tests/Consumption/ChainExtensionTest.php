@@ -6,11 +6,13 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ConsumptionContextMockTrait;
 use PHPUnit\Framework\TestCase;
 
 class ChainExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ConsumptionContextMockTrait;
 
     public function testShouldImplementExtensionInterface()
     {
@@ -24,7 +26,7 @@ class ChainExtensionTest extends TestCase
 
     public function testShouldProxyOnStartToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $context = $this->createOnStartContextMock();
 
         $fooExtension = $this->createExtension();
         $fooExtension
