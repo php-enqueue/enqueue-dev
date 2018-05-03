@@ -6,6 +6,7 @@ use Interop\Queue\Spec\SendToAndReceiveNoWaitFromTopicSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbSendToAndReceiveNoWaitFromTopicTest extends SendToAndReceiveNoWaitFromTopicSpec
 {

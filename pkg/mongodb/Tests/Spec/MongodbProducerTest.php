@@ -6,6 +6,7 @@ use Interop\Queue\Spec\PsrProducerSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbProducerTest extends PsrProducerSpec
 {

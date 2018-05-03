@@ -12,6 +12,9 @@ use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
 
+/**
+ * @group mongodb
+ */
 class MongodbConsumerTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

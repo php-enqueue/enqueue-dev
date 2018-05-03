@@ -5,6 +5,9 @@ namespace Enqueue\Mongodb\Tests;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Test\ClassExtensionTrait;
 
+/**
+ * @group mongodb
+ */
 class MongodbMessageTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

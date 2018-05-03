@@ -13,6 +13,9 @@ use Enqueue\RdKafka\RdKafkaTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrProducer;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

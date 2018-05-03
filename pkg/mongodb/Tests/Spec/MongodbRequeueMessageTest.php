@@ -6,6 +6,7 @@ use Interop\Queue\Spec\RequeueMessageSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbRequeueMessageTest extends RequeueMessageSpec
 {

@@ -7,6 +7,9 @@ use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrConnectionFactory;
 
+/**
+ * @group mongodb
+ */
 class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

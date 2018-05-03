@@ -13,6 +13,9 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @group rdkafka
+ */
 class RdKafkaTransportFactoryTest extends TestCase
 {
     use ClassExtensionTrait;

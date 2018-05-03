@@ -12,6 +12,9 @@ use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrProducer;
 
+/**
+ * @group mongodb
+ */
 class MongodbProducerTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

@@ -6,6 +6,7 @@ use Interop\Queue\Spec\SendAndReceiveTimeToLiveMessagesFromQueueSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTimeToLiveMessagesFromQueueSpec
 {

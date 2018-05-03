@@ -5,6 +5,9 @@ namespace Enqueue\Mongodb\Tests\Spec;
 use Enqueue\Mongodb\MongodbDestination;
 use Interop\Queue\Spec\PsrTopicSpec;
 
+/**
+ * @group mongodb
+ */
 class MongodbTopicTest extends PsrTopicSpec
 {
     /**

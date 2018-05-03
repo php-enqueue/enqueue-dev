@@ -12,6 +12,9 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @group mongodb
+ */
 class MongodbTransportFactoryTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

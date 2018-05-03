@@ -6,6 +6,7 @@ use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {

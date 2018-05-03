@@ -6,6 +6,7 @@ use Interop\Queue\Spec\PsrContextSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbContextTest extends PsrContextSpec
 {

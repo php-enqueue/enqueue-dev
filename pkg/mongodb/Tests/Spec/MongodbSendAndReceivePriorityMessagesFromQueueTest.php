@@ -9,6 +9,7 @@ use Interop\Queue\Spec\SendAndReceivePriorityMessagesFromQueueSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceivePriorityMessagesFromQueueSpec
 {

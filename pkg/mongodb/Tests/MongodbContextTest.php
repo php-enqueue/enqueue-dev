@@ -13,6 +13,9 @@ use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
 use MongoDB\Client;
 
+/**
+ * @group mongodb
+ */
 class MongodbContextTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

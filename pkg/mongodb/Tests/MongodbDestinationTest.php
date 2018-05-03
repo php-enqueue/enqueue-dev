@@ -8,6 +8,9 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 
+/**
+ * @group mongodb
+ */
 class MongodbDestinationTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;

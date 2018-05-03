@@ -6,6 +6,7 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
 /**
  * @group functional
+ * @group mongodb
  */
 class MongodbSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
