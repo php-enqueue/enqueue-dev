@@ -21,6 +21,8 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\Symfony\GpsTransportFactory;
+use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\RdKafka\Symfony\RdKafkaTransportFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
@@ -102,6 +104,12 @@ class EnqueueBundle extends Bundle
             $extension->setTransportFactory(new GpsTransportFactory('gps'));
         } else {
             $extension->setTransportFactory(new MissingTransportFactory('gps', ['enqueue/gps']));
+        }
+
+        if (class_exists(RdKafkaConnectionFactory::class)) {
+            $extension->setTransportFactory(new RdKafkaTransportFactory('rdkafka'));
+        } else {
+            $extension->setTransportFactory(new MissingTransportFactory('rdkafka', ['enqueue/rdkafka']));
         }
 
         $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

@@ -4,7 +4,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
-use Enqueue\Util\JSON;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;

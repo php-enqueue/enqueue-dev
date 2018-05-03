@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.8.27](https://github.com/php-enqueue/enqueue-dev/tree/0.8.27) (2018-05-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.26...0.8.27)
+
+- Kafka symfony transport [\#432](https://github.com/php-enqueue/enqueue-dev/pull/432) ([dheineman](https://github.com/dheineman))
+- Drop PHP5 support, Drop Symfony 2.X support.  [\#419](https://github.com/php-enqueue/enqueue-dev/pull/419) ([makasim](https://github.com/makasim))
+
+- How can I use the Symfony Bundle with Kafka? [\#428](https://github.com/php-enqueue/enqueue-dev/issues/428)
+
 ## [0.8.26](https://github.com/php-enqueue/enqueue-dev/tree/0.8.26) (2018-04-19)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.25...0.8.26)
 
