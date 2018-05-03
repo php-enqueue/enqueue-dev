@@ -45,7 +45,7 @@ cache:
         - $HOME/.composer/cache
 
 before_install:
-    - echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - echo "extension = mongodb.so" >> $HOME/.phpenv/versions/$(phpenv version-name)/etc/php.ini
     - php -m
     - php -i | grep -C 15 mongo
 
