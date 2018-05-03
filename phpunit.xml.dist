@@ -77,6 +77,10 @@
             <directory>pkg/gps/Tests</directory>
         </testsuite>
 
+        <testsuite name="Mongodb transport">
+            <directory>pkg/mongodb/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>
