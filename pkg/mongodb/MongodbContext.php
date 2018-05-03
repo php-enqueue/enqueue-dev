@@ -13,6 +13,7 @@ class MongodbContext implements PsrContext
      * @var array
      */
     private $config;
+
     /**
      * @var Client
      */
@@ -25,6 +26,7 @@ class MongodbContext implements PsrContext
             'collection_name' => 'enqueue',
             'polling_interval' => null,
         ], $config);
+
         $this->client = $client;
     }
 

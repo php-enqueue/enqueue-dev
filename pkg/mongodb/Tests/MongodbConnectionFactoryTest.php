@@ -23,6 +23,8 @@ class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $params = [
             'uri' => 'mongodb://127.0.0.1/',
+            'dbname' => 'enqueue',
+            'collection_name' => 'enqueue',
         ];
 
         $factory = new MongodbConnectionFactory();
@@ -35,6 +37,8 @@ class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
             'uri' => 'mongodb://127.0.0.3/',
             'uriOptions' => ['testValue' => 123],
             'driverOptions' => ['testValue' => 123],
+            'dbname' => 'enqueue',
+            'collection_name' => 'enqueue',
         ];
 
         $factory = new MongodbConnectionFactory($params);
