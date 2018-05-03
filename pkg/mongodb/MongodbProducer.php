@@ -80,8 +80,8 @@ class MongodbProducer implements PsrProducer
         $mongoMessage = [
             'published_at' => $publishedAt,
             'body' => $body,
-            'headers' => $message->getHeaders(),
-            'properties' => $message->getProperties(),
+            'headers' => JSON::encode($message->getHeaders()),
+            'properties' => JSON::encode($message->getProperties()),
             'priority' => $message->getPriority(),
             'queue' => $destination->getName(),
             'redelivered' => $message->isRedelivered(),

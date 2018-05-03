@@ -4,6 +4,7 @@ namespace Enqueue\Mongodb\Tests\Spec;
 
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Mongodb\MongodbMessage;
+use Enqueue\Test\MongodbExtensionTrait;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendAndReceivePriorityMessagesFromQueueSpec;
 
@@ -13,7 +14,7 @@ use Interop\Queue\Spec\SendAndReceivePriorityMessagesFromQueueSpec;
  */
 class MongodbSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceivePriorityMessagesFromQueueSpec
 {
-    use CreateMongodbContextTrait;
+    use MongodbExtensionTrait;
 
     private $publishedAt;
 
@@ -29,7 +30,7 @@ class MongodbSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceiveP
      */
     protected function createContext()
     {
-        return $this->createMongodbContext();
+        return $this->buildMongodbContext();
     }
 
     /**

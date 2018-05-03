@@ -163,7 +163,10 @@ class MongodbConsumer implements PsrConsumer
      */
     protected function convertMessage(array $mongodbMessage)
     {
-        $message = $this->context->createMessage($mongodbMessage['body'], $mongodbMessage['properties'], $mongodbMessage['headers']);
+        $properties = JSON::decode($mongodbMessage['properties']);
+        $headers = JSON::decode($mongodbMessage['headers']);
+
+        $message = $this->context->createMessage($mongodbMessage['body'], $properties, $headers);
         $message->setId((string) $mongodbMessage['_id']);
         $message->setPriority((int) $mongodbMessage['priority']);
         $message->setRedelivered((bool) $mongodbMessage['redelivered']);

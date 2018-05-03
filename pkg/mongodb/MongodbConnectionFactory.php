@@ -16,7 +16,7 @@ class MongodbConnectionFactory implements PsrConnectionFactory
      * The config could be an array, string DSN or null. In case of null it will attempt to connect to Mongodb localhost with default credentials.
      *
      * $config = [
-     *   'uri' => 'mongodb://127.0.0.1/' - Mongodb connection string. see http://docs.mongodb.org/manual/reference/connection-string/
+     *   'dsn' => 'mongodb://127.0.0.1/' - Mongodb connection string. see http://docs.mongodb.org/manual/reference/connection-string/
      *   'dbname' => 'enqueue',          - database name.
      *   'collection_name' => 'enqueue'  - collection name
      *   'polling_interval' => '1000',   - How often query for new messages (milliseconds)
@@ -39,7 +39,7 @@ class MongodbConnectionFactory implements PsrConnectionFactory
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
         $config = array_replace([
-            'uri' => 'mongodb://127.0.0.1/',
+            'dsn' => 'mongodb://127.0.0.1/',
             'dbname' => 'enqueue',
             'collection_name' => 'enqueue',
         ], $config);
@@ -49,7 +49,7 @@ class MongodbConnectionFactory implements PsrConnectionFactory
 
     public function createContext()
     {
-        $client = new Client($this->config['uri']);
+        $client = new Client($this->config['dsn']);
 
         return new MongodbContext($client, $this->config);
     }
@@ -75,10 +75,10 @@ class MongodbConnectionFactory implements PsrConnectionFactory
         }
         if ('mongodb:' === $dsn) {
             return [
-                'uri' => 'mongodb://127.0.0.1/',
+                'dsn' => 'mongodb://127.0.0.1/',
             ];
         }
-        $config['uri'] = $dsn;
+        $config['dsn'] = $dsn;
         if (isset($parsedUrl['path']) && '/' !== $parsedUrl['path']) {
             $pathParts = explode('/', $parsedUrl['path']);
             //DB name

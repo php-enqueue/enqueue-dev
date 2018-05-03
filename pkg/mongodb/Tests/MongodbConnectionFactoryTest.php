@@ -22,7 +22,7 @@ class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCouldBeConstructedWithEmptyConfiguration()
     {
         $params = [
-            'uri' => 'mongodb://127.0.0.1/',
+            'dsn' => 'mongodb://127.0.0.1/',
             'dbname' => 'enqueue',
             'collection_name' => 'enqueue',
         ];
@@ -34,7 +34,7 @@ class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCouldBeConstructedWithCustomConfiguration()
     {
         $params = [
-            'uri' => 'mongodb://127.0.0.3/',
+            'dsn' => 'mongodb://127.0.0.3/',
             'uriOptions' => ['testValue' => 123],
             'driverOptions' => ['testValue' => 123],
             'dbname' => 'enqueue',

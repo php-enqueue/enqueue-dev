@@ -1,18 +1,18 @@
 <?php
 
-namespace Enqueue\Mongodb\Tests\Spec;
+namespace Enqueue\Test;
 
 use Enqueue\Mongodb\MongodbConnectionFactory;
 
-trait CreateMongodbContextTrait
+trait MongodbExtensionTrait
 {
-    protected function createMongodbContext()
+    protected function buildMongodbContext()
     {
         if (false == $env = getenv('MONGO_DSN')) {
             $this->markTestSkipped('The MONGO_DSN env is not available. Skip tests');
         }
 
-        $factory = new MongodbConnectionFactory(['uri' => $env]);
+        $factory = new MongodbConnectionFactory(['dsn' => $env]);
 
         $context = $factory->createContext();
 

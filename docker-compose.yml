@@ -105,7 +105,7 @@ services:
       entrypoint: 'gcloud beta emulators pubsub start --host-port=0.0.0.0:8085'
 
   mongo:
-      image: mongo
+      image: mongo:3.7
       ports:
         - "27017:27017"
 

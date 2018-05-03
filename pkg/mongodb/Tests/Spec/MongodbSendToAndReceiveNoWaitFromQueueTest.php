@@ -2,6 +2,7 @@
 
 namespace Enqueue\Mongodb\Tests\Spec;
 
+use Enqueue\Test\MongodbExtensionTrait;
 use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
 
 /**
@@ -10,13 +11,13 @@ use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
  */
 class MongodbSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFromQueueSpec
 {
-    use CreateMongodbContextTrait;
+    use MongodbExtensionTrait;
 
     /**
      * {@inheritdoc}
      */
     protected function createContext()
     {
-        return $this->createMongodbContext();
+        return $this->buildMongodbContext();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Enqueue\Mongodb\Tests\Spec;
 
+use Enqueue\Test\MongodbExtensionTrait;
 use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
 /**
@@ -10,13 +11,13 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
  */
 class MongodbSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
-    use CreateMongodbContextTrait;
+    use MongodbExtensionTrait;
 
     /**
      * {@inheritdoc}
      */
     protected function createContext()
     {
-        return $this->createMongodbContext();
+        return $this->buildMongodbContext();
     }
 }

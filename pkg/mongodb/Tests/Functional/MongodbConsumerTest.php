@@ -4,7 +4,7 @@ namespace Enqueue\Mongodb\Tests\Functional;
 
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Mongodb\MongodbMessage;
-use Enqueue\Mongodb\Tests\Spec\CreateMongodbContextTrait;
+use Enqueue\Test\MongodbExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MongodbConsumerTest extends TestCase
 {
-    use CreateMongodbContextTrait;
+    use MongodbExtensionTrait;
 
     /**
      * @var MongodbContext
@@ -21,7 +21,7 @@ class MongodbConsumerTest extends TestCase
 
     public function setUp()
     {
-        $this->context = $this->createMongodbContext();
+        $this->context = $this->buildMongodbContext();
     }
 
     protected function tearDown()

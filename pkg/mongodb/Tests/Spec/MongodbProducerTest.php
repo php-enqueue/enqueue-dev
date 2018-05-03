@@ -2,6 +2,7 @@
 
 namespace Enqueue\Mongodb\Tests\Spec;
 
+use Enqueue\Test\MongodbExtensionTrait;
 use Interop\Queue\Spec\PsrProducerSpec;
 
 /**
@@ -10,13 +11,13 @@ use Interop\Queue\Spec\PsrProducerSpec;
  */
 class MongodbProducerTest extends PsrProducerSpec
 {
-    use CreateMongodbContextTrait;
+    use MongodbExtensionTrait;
 
     /**
      * {@inheritdoc}
      */
     protected function createProducer()
     {
-        return $this->createMongodbContext()->createProducer();
+        return $this->buildMongodbContext()->createProducer();
     }
 }
