@@ -13,10 +13,6 @@ RUN set -x && \
     git clone https://github.com/pdezwart/php-amqp.git . && git checkout v1.9.3 && \
     phpize --clean && phpize && ./configure && make install
 
-## confis
-
-# RUN rm -f /etc/php/7.0/cli/conf.d/*xdebug.ini
-
 ## librdkafka
 RUN set -x && \
     apt-get update && \
@@ -27,10 +23,10 @@ RUN set -x && \
     git checkout v0.11.1 && \
     ./configure && make && make install && \
     pecl install rdkafka && \
-    echo "extension=rdkafka.so" > /etc/php/7.1/cli/conf.d/10-rdkafka.ini && \
-    echo "extension=rdkafka.so" > /etc/php/7.1/fpm/conf.d/10-rdkafka.ini
+    echo "extension=rdkafka.so" > /etc/php/7.2/cli/conf.d/10-rdkafka.ini && \
+    echo "extension=rdkafka.so" > /etc/php/7.2/fpm/conf.d/10-rdkafka.ini
 
-COPY ./php/cli.ini /etc/php/7.1/cli/conf.d/1-dev_cli.ini
+COPY ./php/cli.ini /etc/php/7.2/cli/conf.d/1-dev_cli.ini
 COPY ./bin/dev_entrypoiny.sh /usr/local/bin/entrypoint.sh
 RUN chmod u+x /usr/local/bin/entrypoint.sh
 

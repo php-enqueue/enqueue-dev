@@ -16,6 +16,7 @@
     "enqueue/fs": "*@dev",
     "enqueue/null": "*@dev",
     "enqueue/dbal": "*@dev",
+    "enqueue/mongodb": "*@dev",
     "enqueue/sqs": "*@dev",
     "enqueue/pheanstalk": "*@dev",
     "enqueue/gearman": "*@dev",
@@ -60,7 +61,8 @@
     "platform": {
       "ext-amqp": "1.9.3",
       "ext-gearman": "1.1",
-      "ext-rdkafka": "3.3"
+      "ext-rdkafka": "3.3",
+      "ext-mongodb": "1.3"
     }
   },
   "repositories": [
@@ -143,6 +145,10 @@
     {
       "type": "path",
       "url": "pkg/async-event-dispatcher"
+    },
+    {
+      "type": "path",
+      "url": "pkg/mongodb"
     }
   ]
 }

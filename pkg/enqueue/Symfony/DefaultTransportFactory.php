@@ -8,6 +8,8 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\Symfony\GpsTransportFactory;
+use Enqueue\Mongodb\MongodbConnectionFactory;
+use Enqueue\Mongodb\Symfony\MongodbTransportFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
@@ -213,6 +215,10 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
 
         if ($factory instanceof RdKafkaConnectionFactory) {
             return new RdKafkaTransportFactory('default_kafka');
+        }
+
+        if ($factory instanceof MongodbConnectionFactory) {
+            return new MongodbTransportFactory('default_mongodb');
         }
 
         throw new \LogicException(sprintf(

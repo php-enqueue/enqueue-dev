@@ -1,33 +1,31 @@
 <?php
 
-namespace Enqueue\RdKafka\Tests\Client;
+namespace Enqueue\Mongodb\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
+use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\RdKafka\Client\RdKafkaDriver;
-use Enqueue\RdKafka\RdKafkaContext;
-use Enqueue\RdKafka\RdKafkaMessage;
-use Enqueue\RdKafka\RdKafkaTopic;
+use Enqueue\Mongodb\Client\MongodbDriver;
+use Enqueue\Mongodb\MongodbContext;
+use Enqueue\Mongodb\MongodbDestination;
+use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrProducer;
 
-/**
- * @group rdkafka
- */
-class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
+class MongodbDriverTest extends \PHPUnit_Framework_TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementsDriverInterface()
     {
-        $this->assertClassImplements(DriverInterface::class, RdKafkaDriver::class);
+        $this->assertClassImplements(DriverInterface::class, MongodbDriver::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new RdKafkaDriver(
+        new MongodbDriver(
             $this->createPsrContextMock(),
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -38,7 +36,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
     {
         $config = $this->createDummyConfig();
 
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $this->createPsrContextMock(),
             $config,
             $this->createDummyQueueMetaRegistry()
@@ -49,7 +47,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCreateAndReturnQueueInstance()
     {
-        $expectedQueue = new RdKafkaTopic('aName');
+        $expectedQueue = new MongodbDestination('aName');
 
         $context = $this->createPsrContextMock();
         $context
@@ -59,7 +57,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($expectedQueue)
         ;
 
-        $driver = new RdKafkaDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+        $driver = new MongodbDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
         $queue = $driver->createQueue('aFooQueue');
 
@@ -68,7 +66,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
     {
-        $expectedQueue = new RdKafkaTopic('aName');
+        $expectedQueue = new MongodbDestination('aName');
 
         $context = $this->createPsrContextMock();
         $context
@@ -78,7 +76,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($expectedQueue)
         ;
 
-        $driver = new RdKafkaDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
+        $driver = new MongodbDriver($context, $this->createDummyConfig(), $this->createDummyQueueMetaRegistry());
 
         $queue = $driver->createQueue('aBarQueue');
 
@@ -87,15 +85,17 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldConvertTransportMessageToClientMessage()
     {
-        $transportMessage = new RdKafkaMessage();
+        $transportMessage = new MongodbMessage();
         $transportMessage->setBody('body');
         $transportMessage->setHeaders(['hkey' => 'hval']);
         $transportMessage->setProperties(['key' => 'val']);
         $transportMessage->setHeader('content_type', 'ContentType');
         $transportMessage->setMessageId('MessageId');
         $transportMessage->setTimestamp(1000);
+        $transportMessage->setPriority(2);
+        $transportMessage->setDeliveryDelay(12345);
 
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $this->createPsrContextMock(),
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -117,8 +117,10 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('MessageId', $clientMessage->getMessageId());
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
+        $this->assertSame(12345, $clientMessage->getDelay());
 
         $this->assertNull($clientMessage->getExpire());
+        $this->assertSame(MessagePriority::NORMAL, $clientMessage->getPriority());
     }
 
     public function testShouldConvertClientMessageToTransportMessage()
@@ -129,6 +131,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setProperties(['key' => 'val']);
         $clientMessage->setContentType('ContentType');
         $clientMessage->setExpire(123);
+        $clientMessage->setPriority(MessagePriority::VERY_HIGH);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
 
@@ -136,10 +139,10 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
         $context
             ->expects($this->once())
             ->method('createMessage')
-            ->willReturn(new RdKafkaMessage())
+            ->willReturn(new MongodbMessage())
         ;
 
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $context,
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -147,7 +150,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
         $transportMessage = $driver->createTransportMessage($clientMessage);
 
-        $this->assertInstanceOf(RdKafkaMessage::class, $transportMessage);
+        $this->assertInstanceOf(MongodbMessage::class, $transportMessage);
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertSame([
             'hkey' => 'hval',
@@ -155,7 +158,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
             'message_id' => 'MessageId',
             'timestamp' => 1000,
             'reply_to' => null,
-            'correlation_id' => '',
+            'correlation_id' => null,
         ], $transportMessage->getHeaders());
         $this->assertSame([
             'key' => 'val',
@@ -166,8 +169,8 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSendMessageToRouter()
     {
-        $topic = new RdKafkaTopic('queue-name');
-        $transportMessage = new RdKafkaMessage();
+        $topic = new MongodbDestination('queue-name');
+        $transportMessage = new MongodbMessage();
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -178,8 +181,8 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
         $context = $this->createPsrContextMock();
         $context
             ->expects($this->once())
-            ->method('createTopic')
-            ->with('aprefix.router')
+            ->method('createQueue')
+            ->with('aprefix.default')
             ->willReturn($topic)
         ;
         $context
@@ -193,7 +196,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($transportMessage)
         ;
 
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $context,
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -207,7 +210,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionIfTopicParameterIsNotSet()
     {
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $this->createPsrContextMock(),
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -221,8 +224,8 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSendMessageToProcessor()
     {
-        $queue = new RdKafkaTopic('queue-name');
-        $transportMessage = new RdKafkaMessage();
+        $queue = new MongodbDestination('queue-name');
+        $transportMessage = new MongodbMessage();
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -247,7 +250,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($transportMessage)
         ;
 
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $context,
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -262,7 +265,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionIfProcessorNameParameterIsNotSet()
     {
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $this->createPsrContextMock(),
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -276,7 +279,7 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionIfProcessorQueueNameParameterIsNotSet()
     {
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $this->createPsrContextMock(),
             $this->createDummyConfig(),
             $this->createDummyQueueMetaRegistry()
@@ -293,48 +296,28 @@ class RdKafkaDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSetupBroker()
     {
-        $routerTopic = new RdKafkaTopic('');
-        $routerQueue = new RdKafkaTopic('');
-
-        $processorTopic = new RdKafkaTopic('');
-
         $context = $this->createPsrContextMock();
 
         $context
-            ->expects($this->at(0))
-            ->method('createQueue')
-            ->willReturn($routerTopic)
-        ;
-        $context
-            ->expects($this->at(1))
-            ->method('createQueue')
-            ->willReturn($routerQueue)
-        ;
-        $context
-            ->expects($this->at(2))
-            ->method('createQueue')
-            ->willReturn($processorTopic)
+            ->expects($this->once())
+            ->method('createCollection')
         ;
 
-        $meta = new QueueMetaRegistry($this->createDummyConfig(), [
-            'default' => [],
-        ]);
-
-        $driver = new RdKafkaDriver(
+        $driver = new MongodbDriver(
             $context,
             $this->createDummyConfig(),
-            $meta
+            $this->createDummyQueueMetaRegistry()
         );
 
         $driver->setupBroker();
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RdKafkaContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|MongodbContext
      */
     private function createPsrContextMock()
     {
-        return $this->createMock(RdKafkaContext::class);
+        return $this->createMock(MongodbContext::class);
     }
 
     /**
