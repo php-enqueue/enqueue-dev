@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.8.28](https://github.com/php-enqueue/enqueue-dev/tree/0.8.28) (2018-05-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.27...0.8.28)
+
+- Mongodb transport [\#430](https://github.com/php-enqueue/enqueue-dev/pull/430) ([turboboy88](https://github.com/turboboy88))
+
+- Should `enqueue/enqueue` also be added to "require" in composer.json for DBAL package? [\#433](https://github.com/php-enqueue/enqueue-dev/issues/433)
+
+- RouterProcessor "acknowledges" commands and events without a registered processor [\#423](https://github.com/php-enqueue/enqueue-dev/issues/423)
+- \[Symfony\]\[Documentation\] Migrate from JMSJobQueueBundle [\#421](https://github.com/php-enqueue/enqueue-dev/issues/421)
+
+- remove enqueue core dependency [\#434](https://github.com/php-enqueue/enqueue-dev/pull/434) ([ASKozienko](https://github.com/ASKozienko))
+
 ## [0.8.27](https://github.com/php-enqueue/enqueue-dev/tree/0.8.27) (2018-05-01)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.26...0.8.27)
 
