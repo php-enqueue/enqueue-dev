@@ -33,6 +33,7 @@
         "enqueue/stomp": "^0.8@dev",
         "enqueue/test": "^0.8@dev",
         "enqueue/simple-client": "^0.8@dev",
+        "enqueue/mongodb": "^0.8@dev",
         "empi89/php-amqp-stubs": "*@dev"
     },
     "suggest": {
