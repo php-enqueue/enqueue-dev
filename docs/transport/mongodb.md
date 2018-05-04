@@ -1,4 +1,4 @@
-# Mongodb transport
+# Enqueue Mongodb message queue transport
 
 Allows to use [MongoDB](https://www.mongodb.com/) as a message queue broker. 
 
