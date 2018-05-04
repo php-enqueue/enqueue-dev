@@ -33,10 +33,10 @@ $factory = new MongodbConnectionFactory('mongodb:');
 $factory = new MongodbConnectionFactory([]);
 
 $factory = new MongodbConnectionFactory([
-    'uri' => 'mongodb://localhost:27017/db_name',
-     'dbname' => 'enqueue',
-     'collection_name' => 'enqueue',
-     'polling_interval' => '1000',
+    'dsn' => 'mongodb://localhost:27017/db_name',
+    'dbname' => 'enqueue',
+    'collection_name' => 'enqueue',
+    'polling_interval' => '1000',
 ]);
 
 $psrContext = $factory->createContext();
