@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.8.29](https://github.com/php-enqueue/enqueue-dev/tree/0.8.29) (2018-05-08)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.28...0.8.29)
+
+- \[mongodb\] Parse DSN if array [\#438](https://github.com/php-enqueue/enqueue-dev/pull/438) ([makasim](https://github.com/makasim))
+- \[gps\] Add support for google/cloud-pubsub ^1.0 [\#437](https://github.com/php-enqueue/enqueue-dev/pull/437) ([kfb-ts](https://github.com/kfb-ts))
+- fix typo in message\_producer.md [\#436](https://github.com/php-enqueue/enqueue-dev/pull/436) ([halidovz](https://github.com/halidovz))
+
 ## [0.8.28](https://github.com/php-enqueue/enqueue-dev/tree/0.8.28) (2018-05-03)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.27...0.8.28)
 
