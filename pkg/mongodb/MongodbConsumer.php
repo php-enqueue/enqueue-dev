@@ -137,6 +137,7 @@ class MongodbConsumer implements PsrConsumer
         $collection = $this->context->getCollection();
         $message = $collection->findOneAndDelete(
             [
+                'queue' => $this->queue->getName(),
                 '$or' => [
                     ['delayed_until' => ['$exists' => false]],
                     ['delayed_until' => ['$lte' => $now]],
