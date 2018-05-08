@@ -35,6 +35,7 @@ class MongodbConnectionFactory implements PsrConnectionFactory
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
+            $config = $this->parseDsn(empty($config['dsn']) ? 'mongodb:' : $config['dsn']);
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
