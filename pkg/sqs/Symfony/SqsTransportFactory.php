@@ -34,6 +34,7 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
     {
         $builder
             ->children()
+                ->scalarNode('client')->defaultNull()->end()
                 ->scalarNode('key')->defaultNull()->end()
                 ->scalarNode('secret')->defaultNull()->end()
                 ->scalarNode('token')->defaultNull()->end()
