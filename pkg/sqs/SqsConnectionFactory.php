@@ -19,7 +19,6 @@ class SqsConnectionFactory implements PsrConnectionFactory
 
     /**
      * $config = [
-     *   'client' => null,          - Pre-configured instance of Aws\Sqs\SqsClient. If provided, all other settings except for 'lazy' are ignored.
      *   'key' => null              - AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'secret' => null,          - AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'token' => null,           - AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
@@ -35,12 +34,12 @@ class SqsConnectionFactory implements PsrConnectionFactory
      * sqs:
      * sqs::?key=aKey&secret=aSecret&token=aToken
      *
-     * @param array|string|null $config
+     * @param array|string|SqsClient|null $config
      */
     public function __construct($config = 'sqs:')
     {
-        if (is_array($config) && isset($config['client']) && $config['client'] instanceof SqsClient) {
-            $this->client = $config['client'];
+        if ($config instanceof SqsClient) {
+            return $this->client = $config;
         } elseif (empty($config) || 'sqs:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
