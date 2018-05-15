@@ -112,7 +112,7 @@ class FooEventTransformer implements EventTransformer
     public function toMessage($eventName, Event $event = null)
     {
         $entity = $event->getSubject();
-        $entityClass = get_class($event);
+        $entityClass = get_class($entity);
         
         $manager = $this->doctrine->getManagerForClass($entityClass);
         $meta = $manager->getClassMetadata($entityClass);
