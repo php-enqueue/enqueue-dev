@@ -81,7 +81,12 @@ class AsyncListener
             $message->setProperty('event_name', $eventName);
             $message->setProperty('transformer_name', $transformerName);
 
-            $this->context->createProducer()->send($this->eventQueue, $message);
+            $eventQueue = $this->eventQueue;
+            if ($event instanceof AsyncEvent) {
+                $eventQueue = $this->context->createQueue($event->getQueueName());
+            }
+
+            $this->context->createProducer()->send($eventQueue, $message);
         }
     }
 }

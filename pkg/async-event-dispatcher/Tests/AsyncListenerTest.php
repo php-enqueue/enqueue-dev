@@ -3,6 +3,7 @@
 namespace Enqueue\AsyncEventDispatcher\Tests;
 
 use Enqueue\AsyncEventDispatcher\AsyncListener;
+use Enqueue\AsyncEventDispatcher\DummyAsyncEvent;
 use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Null\NullMessage;
@@ -126,6 +127,63 @@ class AsyncListenerTest extends TestCase
             'event_name' => 'fooEvent',
             'transformer_name' => 'fooTrans',
         ], $message->getProperties());
+    }
+
+    public function testShouldUseQueueFromEventIfEventIsAsync()
+    {
+        $event = new DummyAsyncEvent();
+        $event->queueName = 'testQeueue';
+
+        $message = new NullMessage('serializedEvent');
+        $defaultEventQueue = new NullQueue('symfony_events');
+        $eventQueue = new NullQueue('testQeueue');
+
+        $transformerMock = $this->createEventTransformerMock();
+        $transformerMock
+            ->expects($this->once())
+            ->method('toMessage')
+            ->with('fooEvent', $this->identicalTo($event))
+            ->willReturn($message)
+        ;
+
+        $registry = $this->createRegistryMock();
+        $registry
+            ->expects($this->once())
+            ->method('getTransformerNameForEvent')
+            ->with('fooEvent')
+            ->willReturn('fooTrans')
+        ;
+        $registry
+            ->expects($this->once())
+            ->method('getTransformer')
+            ->with('fooTrans')
+            ->willReturn($transformerMock)
+        ;
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($eventQueue), $this->identicalTo($message))
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->exactly(2))
+            ->method('createQueue')
+            ->withConsecutive(['symfony_events'], ['testQeueue'])
+            ->willReturnOnConsecutiveCalls($defaultEventQueue, $eventQueue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->with()
+            ->willReturn($producer)
+        ;
+
+        $listener = new AsyncListener($context, $registry, 'symfony_events');
+
+        $listener->onEvent($event, 'fooEvent');
     }
 
     /**
