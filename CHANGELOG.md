@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.8.31](https://github.com/php-enqueue/enqueue-dev/tree/0.8.31) (2018-05-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.30...0.8.31)
+
+- Improve exception messages for topic-subscribers [\#441](https://github.com/php-enqueue/enqueue-dev/pull/441) ([thePanz](https://github.com/thePanz))
+
+- Gracefull shutdown? [\#440](https://github.com/php-enqueue/enqueue-dev/issues/440)
+
+- Allow newer version of bunny [\#446](https://github.com/php-enqueue/enqueue-dev/pull/446) ([enumag](https://github.com/enumag))
+- Fix mistype at async\_events docs [\#445](https://github.com/php-enqueue/enqueue-dev/pull/445) ([diimpp](https://github.com/diimpp))
+
+## [0.8.30](https://github.com/php-enqueue/enqueue-dev/tree/0.8.30) (2018-05-08)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.29...0.8.30)
+
 ## [0.8.29](https://github.com/php-enqueue/enqueue-dev/tree/0.8.29) (2018-05-08)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.28...0.8.29)
 
