@@ -2,10 +2,6 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-/**
- * Interface AsyncEvent
- * @package Enqueue\AsyncEventDispatcher
- */
 interface AsyncEvent
 {
     /**
