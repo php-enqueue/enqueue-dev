@@ -15,10 +15,17 @@ Once you did it you can work on a feature or bug fix.
 
 ## Testing
 
-To run tests simply run 
+To run tests
 
 ```
 ./bin/dev -t
+```
+
+or for a package only:
+
+
+```
+./bin/dev -t pkg/enqueue
 ```
 
 ## Commit 
