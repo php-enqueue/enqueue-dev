@@ -6,8 +6,10 @@ use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
 use Enqueue\Bundle\Tests\Unit\Mocks\TransportFactoryWithoutDriverFactory;
+use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
+use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\JobRunner;
@@ -631,6 +633,31 @@ class EnqueueExtensionTest extends TestCase
                 'need_package' => true,
             ],
         ]], $container);
+    }
+
+    public function testShouldLoadProcessAutoconfigureChildDefinition()
+    {
+        $container = $this->getContainerBuilder(true);
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'client' => [],
+            'transport' => [],
+        ]], $container);
+
+        if (method_exists($container, 'registerForAutoconfiguration')) {
+            $autoconfigured = $container->getAutoconfiguredInstanceof();
+
+            self::assertArrayHasKey(CommandSubscriberInterface::class, $autoconfigured);
+            self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+            self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->isPublic());
+
+            self::assertArrayHasKey(TopicSubscriberInterface::class, $autoconfigured);
+            self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+            self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->isPublic());
+        } else {
+            $this->assertTrue(true);
+        }
     }
 
     /**
