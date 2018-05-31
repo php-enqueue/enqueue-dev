@@ -1,8 +1,8 @@
 # Contribution
 
-To contribute you have to fork a [enqueue-dev](https://github.com/php-enqueue/enqueue-dev) repository.
-Clone it locally.
- 
+To contribute you have to send a pull request to [enqueue-dev](https://github.com/php-enqueue/enqueue-dev) repository. 
+The pull requests to read only subtree split [repositories](https://github.com/php-enqueue/enqueue-dev/blob/master/bin/subtree-split#L46) will be closed. 
+
 ## Setup environment
 
 ```
