@@ -82,7 +82,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             'x-delayed-type' => 'direct',
         ], $delayedTopic->getArguments());
 
-        $this->assertSame(['x-delay' => 10000], $delayedMessage->getProperties());
+        $this->assertSame(['x-delay' => 10000], $delayedMessage->getHeaders());
         $this->assertSame('the-routing-key', $delayedMessage->getRoutingKey());
     }
 
@@ -141,7 +141,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             'x-delayed-type' => 'direct',
         ], $delayedTopic->getArguments());
 
-        $this->assertSame(['x-delay' => 10000], $delayedMessage->getProperties());
+        $this->assertSame(['x-delay' => 10000], $delayedMessage->getHeaders());
         $this->assertSame('the-queue', $delayedMessage->getRoutingKey());
     }
 
