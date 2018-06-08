@@ -35,8 +35,6 @@ class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $params = [
             'dsn' => 'mongodb://127.0.0.3/',
-            'uriOptions' => ['testValue' => 123],
-            'driverOptions' => ['testValue' => 123],
             'dbname' => 'enqueue',
             'collection_name' => 'enqueue',
         ];
