@@ -14,12 +14,12 @@ class RabbitMqDelayPluginDelayStrategy implements DelayStrategy
 {
     /**
      * {@inheritdoc}
+     *
+     * @throws InvalidDestinationException
      */
     public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, $delayMsec)
     {
-        $delayMessage = $context->createMessage($message->getBody(), $message->getProperties(), $message->getHeaders());
-        $delayMessage->setHeader('x-delay', (int) $delayMsec);
-        $delayMessage->setRoutingKey($message->getRoutingKey());
+        $delayMessage = $this->buildDelayMessage($context, $message, (int) $delayMsec);
 
         if ($dest instanceof AmqpTopic) {
             $delayTopic = $context->createTopic('enqueue.'.$dest->getTopicName().'.delayed');
@@ -53,5 +53,14 @@ class RabbitMqDelayPluginDelayStrategy implements DelayStrategy
         }
 
         $producer->send($delayTopic, $delayMessage);
+    }
+
+    protected function buildDelayMessage(AmqpContext $context, AmqpMessage $message, int $delayMsec): AmqpMessage
+    {
+        $delayMessage = $context->createMessage($message->getBody(), $message->getProperties(), $message->getHeaders());
+        $delayMessage->setProperty('x-delay', $delayMsec);
+        $delayMessage->setRoutingKey($message->getRoutingKey());
+
+        return $delayMessage;
     }
 }

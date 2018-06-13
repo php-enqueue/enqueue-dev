@@ -3,7 +3,7 @@
 namespace Enqueue\AmqpTools\Tests;
 
 use Enqueue\AmqpTools\DelayStrategy;
-use Enqueue\AmqpTools\RabbitMqDelayPluginDelayStrategy;
+use Enqueue\AmqpTools\RabbitMq37XDelayPluginDelayStrategy;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Amqp\AmqpBind;
 use Interop\Amqp\AmqpContext;
@@ -17,13 +17,13 @@ use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use PHPUnit\Framework\TestCase;
 
-class RabbitMqDelayPluginDelayStrategyTest extends TestCase
+class RabbitMq37XDelayPluginDelayStrategyTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementDelayStrategyInterface()
     {
-        $this->assertClassImplements(DelayStrategy::class, RabbitMqDelayPluginDelayStrategy::class);
+        $this->assertClassImplements(DelayStrategy::class, RabbitMq37XDelayPluginDelayStrategy::class);
     }
 
     public function testShouldSendDelayedMessageToTopic()
@@ -73,7 +73,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
         $dest = new AmqpTopic('the-topic');
         $dest->setFlags(12345);
 
-        $strategy = new RabbitMqDelayPluginDelayStrategy();
+        $strategy = new RabbitMq37XDelayPluginDelayStrategy();
         $strategy->delayMessage($context, $dest, $message, 10000);
 
         $this->assertSame(12345, $delayedTopic->getFlags());
@@ -82,7 +82,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             'x-delayed-type' => 'direct',
         ], $delayedTopic->getArguments());
 
-        $this->assertSame(['x-delay' => 10000], $delayedMessage->getProperties());
+        $this->assertSame(['x-delay' => 10000], $delayedMessage->getHeaders());
         $this->assertSame('the-routing-key', $delayedMessage->getRoutingKey());
     }
 
@@ -132,7 +132,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
 
         $dest = new AmqpQueue('the-queue');
 
-        $strategy = new RabbitMqDelayPluginDelayStrategy();
+        $strategy = new RabbitMq37XDelayPluginDelayStrategy();
         $strategy->delayMessage($context, $dest, $message, 10000);
 
         $this->assertSame(AmqpQueue::FLAG_DURABLE, $delayedTopic->getFlags());
@@ -141,7 +141,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             'x-delayed-type' => 'direct',
         ], $delayedTopic->getArguments());
 
-        $this->assertSame(['x-delay' => 10000], $delayedMessage->getProperties());
+        $this->assertSame(['x-delay' => 10000], $delayedMessage->getHeaders());
         $this->assertSame('the-queue', $delayedMessage->getRoutingKey());
     }
 
@@ -156,7 +156,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             ->willReturn($delayedMessage)
         ;
 
-        $strategy = new RabbitMqDelayPluginDelayStrategy();
+        $strategy = new RabbitMq37XDelayPluginDelayStrategy();
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpTopic|Interop\Amqp\AmqpQueue but got');
