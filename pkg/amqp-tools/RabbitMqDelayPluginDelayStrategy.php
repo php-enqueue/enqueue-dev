@@ -55,7 +55,7 @@ class RabbitMqDelayPluginDelayStrategy implements DelayStrategy
         $producer->send($delayTopic, $delayMessage);
     }
 
-    protected function buildDelayMessage(AmqpContext $context, AmqpMessage $message, int $delayMsec): AmqpMessage
+    protected function buildDelayMessage(AmqpContext $context, AmqpMessage $message, $delayMsec)
     {
         $delayMessage = $context->createMessage($message->getBody(), $message->getProperties(), $message->getHeaders());
         $delayMessage->setProperty('x-delay', $delayMsec);

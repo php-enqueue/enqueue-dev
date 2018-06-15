@@ -164,12 +164,12 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
         $strategy->delayMessage($context, $this->createMock(AmqpDestination::class), new AmqpMessage(), 10000);
     }
 
-    protected function buildStrategy(): DelayStrategy
+    protected function buildStrategy()
     {
         return new RabbitMqDelayPluginDelayStrategy();
     }
 
-    protected function assertXDelay(AmqpMessage $delayedMessage, int $xDelay): void
+    protected function assertXDelay(AmqpMessage $delayedMessage, $xDelay)
     {
         $this->assertSame(['x-delay' => $xDelay], $delayedMessage->getProperties());
     }

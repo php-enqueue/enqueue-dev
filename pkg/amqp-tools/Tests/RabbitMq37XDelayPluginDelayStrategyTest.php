@@ -13,12 +13,12 @@ class RabbitMq37XDelayPluginDelayStrategyTest extends RabbitMqDelayPluginDelaySt
         $this->assertClassImplements(DelayStrategy::class, RabbitMq37XDelayPluginDelayStrategy::class);
     }
 
-    protected function buildStrategy(): DelayStrategy
+    protected function buildStrategy()
     {
         return new RabbitMq37XDelayPluginDelayStrategy();
     }
 
-    protected function assertXDelay(AmqpMessage $delayedMessage, int $xDelay): void
+    protected function assertXDelay(AmqpMessage $delayedMessage, $xDelay)
     {
         $this->assertSame(['x-delay' => $xDelay], $delayedMessage->getHeaders());
     }
