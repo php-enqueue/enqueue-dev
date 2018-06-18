@@ -75,3 +75,4 @@
 * [Symfony Async EventDispatcher](https://blog.forma-pro.com/symfony-async-eventdispatcher-d01055a255cf)
 * [Spool Swiftmailer emails to real message queue.](https://blog.forma-pro.com/spool-swiftmailer-emails-to-real-message-queue-9ecb8b53b5de)
 * [Yii PHP Framework has adopted AMQP Interop.](https://blog.forma-pro.com/yii-php-framework-has-adopted-amqp-interop-85ab47c9869f)
+* [(En)queue Symfony console commands](http://tech.yappa.be/enqueue-symfony-console-commands)
