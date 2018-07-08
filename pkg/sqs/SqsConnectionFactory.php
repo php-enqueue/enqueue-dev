@@ -39,7 +39,10 @@ class SqsConnectionFactory implements PsrConnectionFactory
     public function __construct($config = 'sqs:')
     {
         if ($config instanceof SqsClient) {
-            return $this->client = $config;
+            $this->client = $config;
+            $this->config = $this->defaultConfig();
+
+            return;
         } elseif (empty($config) || 'sqs:' === $config) {
             $config = [];
         } elseif (is_string($config)) {

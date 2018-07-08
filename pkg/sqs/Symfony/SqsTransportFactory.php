@@ -38,7 +38,7 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
                 ->scalarNode('key')->defaultNull()->end()
                 ->scalarNode('secret')->defaultNull()->end()
                 ->scalarNode('token')->defaultNull()->end()
-                ->scalarNode('region')->isRequired()->end()
+                ->scalarNode('region')->end()
                 ->integerNode('retries')->defaultValue(3)->end()
                 ->scalarNode('version')->cannotBeEmpty()->defaultValue('2012-11-05')->end()
                 ->booleanNode('lazy')
@@ -54,8 +54,18 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
+        if (empty($config['client']) && empty($config['region'])) {
+            throw new RuntimeException('Either "client" or "region" must be provided to SQS in Enqueue configuration');
+        }
+
+        $arguments = $config;
+
+        if (!empty($config['client'])) {
+            $arguments = new Reference($config['client']);
+        }
+
         $factory = new Definition(SqsConnectionFactory::class);
-        $factory->setArguments([$config]);
+        $factory->setArguments([$arguments]);
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);
