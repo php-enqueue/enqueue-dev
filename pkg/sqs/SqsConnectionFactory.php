@@ -40,7 +40,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
     {
         if ($config instanceof SqsClient) {
             $this->client = $config;
-            $this->config = $this->defaultConfig();
+            $this->config = ['lazy' => false] + $this->defaultConfig();
 
             return;
         } elseif (empty($config) || 'sqs:' === $config) {
