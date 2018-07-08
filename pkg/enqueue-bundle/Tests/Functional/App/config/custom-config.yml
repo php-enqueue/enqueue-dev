@@ -1,7 +1,9 @@
 parameters:
     locale: 'en'
     secret: 'ThisTokenIsNotSoSecretChangeIt'
-
+    env(AWS_SQS_REGION): 'us-east-1'
+    env(AWS_SQS_KEY): 'key'
+    env(AWS_SQS_SECRET): 'secret'
 
 framework:
     #esi:             ~
