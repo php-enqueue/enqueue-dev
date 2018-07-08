@@ -210,7 +210,7 @@ class UseCasesTest extends WebTestCase
                 'transport' => [
                     'default' => 'sqs',
                     'sqs' => [
-                        'client' => '@Aws\Sqs\SqsClient',
+                        'client' => 'test.sqs_client',
                     ],
                 ],
             ]];
