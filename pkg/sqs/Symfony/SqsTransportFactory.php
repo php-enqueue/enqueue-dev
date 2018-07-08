@@ -54,15 +54,7 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
-        if (empty($config['client']) && empty($config['region'])) {
-            throw new RuntimeException('Either "client" or "region" must be provided to SQS in Enqueue configuration');
-        }
-
-        $arguments = $config;
-
-        if (!empty($config['client'])) {
-            $arguments = new Reference($config['client']);
-        }
+        $arguments = empty($config['client']) ? $config : new Reference($config['client']);
 
         $factory = new Definition(SqsConnectionFactory::class);
         $factory->setArguments([$arguments]);
