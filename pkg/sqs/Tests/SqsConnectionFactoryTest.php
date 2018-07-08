@@ -53,7 +53,7 @@ class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $client = $this->createMock(SqsClient::class);
 
-        $factory = new SqsConnectionFactory($client);
+        $factory = new SqsConnectionFactory($client, ['lazy' => false]);
 
         $context = $factory->createContext();
 
