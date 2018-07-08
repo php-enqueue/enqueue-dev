@@ -51,7 +51,7 @@ class UseCasesTest extends WebTestCase
 
         $certDir = $baseDir.'/var/rabbitmq_certificates';
         $this->assertDirectoryExists($certDir);
-/*
+
         yield 'amqp' => [[
             'transport' => [
                 'default' => 'amqp',
@@ -204,7 +204,6 @@ class UseCasesTest extends WebTestCase
                     ],
                 ],
             ]];
-*/
 
             yield 'sqs_client' => [[
                 'transport' => [
@@ -214,7 +213,6 @@ class UseCasesTest extends WebTestCase
                     ],
                 ],
             ]];
-/*
         }
 
         yield 'mongodb_dsn' => [[
@@ -223,7 +221,7 @@ class UseCasesTest extends WebTestCase
                 'mongodb' => getenv('MONGO_DSN'),
             ],
         ]];
- */
+
 //        yield 'gps' => [[
 //            'transport' => [
 //                'default' => 'gps',
