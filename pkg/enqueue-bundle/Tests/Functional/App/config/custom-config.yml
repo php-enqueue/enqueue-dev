@@ -1,7 +1,9 @@
 parameters:
     locale: 'en'
     secret: 'ThisTokenIsNotSoSecretChangeIt'
-
+    env(AWS_SQS_REGION): 'us-east-1'
+    env(AWS_SQS_KEY): 'key'
+    env(AWS_SQS_SECRET): 'secret'
 
 framework:
     #esi:             ~
@@ -33,3 +35,14 @@ services:
         public: true
         tags:
             - { name: 'enqueue.client.processor' }
+
+    test.sqs_client:
+        public: true
+        class: Aws\Sqs\SqsClient
+        arguments:
+            -
+                region: '%env(AWS_SQS_REGION)%'
+                version: '2012-11-05'
+                credentials:
+                    key: '%env(AWS_SQS_KEY)%'
+                    secret: '%env(AWS_SQS_SECRET)%'

@@ -228,6 +228,7 @@ enqueue:
             polling_interval:     1000
             lazy:                 true
         sqs:
+            client:               null
             key:                  null
             secret:               null
             token:                null

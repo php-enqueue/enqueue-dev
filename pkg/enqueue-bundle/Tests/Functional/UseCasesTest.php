@@ -204,6 +204,15 @@ class UseCasesTest extends WebTestCase
                     ],
                 ],
             ]];
+
+            yield 'sqs_client' => [[
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'client' => 'test.sqs_client',
+                    ],
+                ],
+            ]];
         }
 
         yield 'mongodb_dsn' => [[

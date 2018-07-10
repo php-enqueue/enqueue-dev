@@ -64,6 +64,7 @@ class SqsTransportFactoryTest extends TestCase
             'version' => 'theVersion',
             'lazy' => false,
             'endpoint' => 'theEndpoint',
+            'client' => null,
         ], $config);
     }
 

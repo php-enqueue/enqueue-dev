@@ -34,6 +34,10 @@ $factory = new SqsConnectionFactory('sqs:?key=aKey&secret=aSecret&region=aRegion
 
 $psrContext = $factory->createContext();
 
+// using a pre-configured client
+$client = new Aws\Sqs\SqsClient([ /* ... */ ]);
+$factory = new SqsConnectionFactory($client);
+
 // if you have enqueue/enqueue library installed you can use a function from there to create the context
 $psrContext = \Enqueue\dsn_to_context('sqs:');
 ```
