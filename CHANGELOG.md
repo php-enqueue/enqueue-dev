@@ -1,5 +1,22 @@
 # Change Log
 
+## [0.8.32](https://github.com/php-enqueue/enqueue-dev/tree/0.8.32) (2018-07-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.31...0.8.32)
+
+- \[Bundle\] auto-tag services [\#409](https://github.com/php-enqueue/enqueue-dev/issues/409)
+
+- Add documentation the processor services need to be public [\#406](https://github.com/php-enqueue/enqueue-dev/issues/406)
+
+- Is it possible to read messages in batch? [\#472](https://github.com/php-enqueue/enqueue-dev/issues/472)
+- Batch publishing [\#463](https://github.com/php-enqueue/enqueue-dev/issues/463)
+- populating, missing messages and supervisor [\#460](https://github.com/php-enqueue/enqueue-dev/issues/460)
+- Processor was not found. processorName: "enqueue.client.router\_processor" [\#451](https://github.com/php-enqueue/enqueue-dev/issues/451)
+- \[Bundle\] Enqueue\Symfony\Client\ContainerAwareProcessorRegistry expects processors to be public [\#410](https://github.com/php-enqueue/enqueue-dev/issues/410)
+
+- Update of "back to index" link [\#468](https://github.com/php-enqueue/enqueue-dev/pull/468) ([N-M](https://github.com/N-M))
+- PHP\_URL\_SCHEME doesn't support underscores [\#453](https://github.com/php-enqueue/enqueue-dev/pull/453) ([coudenysj](https://github.com/coudenysj))
+- WIP: Add support for using a pre-configured client with the SQS driver [\#444](https://github.com/php-enqueue/enqueue-dev/pull/444) ([elazar](https://github.com/elazar))
+
 ## [0.8.31](https://github.com/php-enqueue/enqueue-dev/tree/0.8.31) (2018-05-24)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.30...0.8.31)
 
