@@ -1,9 +1,6 @@
 parameters:
     locale: 'en'
     secret: 'ThisTokenIsNotSoSecretChangeIt'
-    env(AWS_SQS_REGION): 'us-east-1'
-    env(AWS_SQS_KEY): 'key'
-    env(AWS_SQS_SECRET): 'secret'
 
 framework:
     #esi:             ~
@@ -41,8 +38,9 @@ services:
         class: Aws\Sqs\SqsClient
         arguments:
             -
+                endpoint: '%env(AWS_SQS_ENDPOINT)%'
                 region: '%env(AWS_SQS_REGION)%'
-                version: '2012-11-05'
+                version: '%env(AWS_SQS_VERSION)%'
                 credentials:
                     key: '%env(AWS_SQS_KEY)%'
                     secret: '%env(AWS_SQS_SECRET)%'
