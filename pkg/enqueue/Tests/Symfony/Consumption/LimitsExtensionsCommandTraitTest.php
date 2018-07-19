@@ -5,6 +5,7 @@ namespace Enqueue\Tests\Symfony\Consumption;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumerMemoryExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
+use Enqueue\Consumption\Extension\NicenessExtension;
 use Enqueue\Tests\Symfony\Consumption\Mock\LimitsExtensionsCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -17,10 +18,11 @@ class LimitsExtensionsCommandTraitTest extends TestCase
 
         $options = $trait->getDefinition()->getOptions();
 
-        $this->assertCount(3, $options);
+        $this->assertCount(4, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
+        $this->assertArrayHasKey('niceness', $options);
     }
 
     public function testShouldAddMessageLimitExtension()
@@ -57,7 +59,8 @@ class LimitsExtensionsCommandTraitTest extends TestCase
 
     public function testShouldThrowExceptionIfTimeLimitExpressionIsNotValid()
     {
-        $this->setExpectedException(\Exception::class, 'Failed to parse time string (time is not valid) at position');
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to parse time string (time is not valid) at position');
 
         $command = new LimitsExtensionsCommand('name');
 
@@ -103,5 +106,19 @@ class LimitsExtensionsCommandTraitTest extends TestCase
         $this->assertInstanceOf(LimitConsumedMessagesExtension::class, $result[0]);
         $this->assertInstanceOf(LimitConsumptionTimeExtension::class, $result[1]);
         $this->assertInstanceOf(LimitConsumerMemoryExtension::class, $result[2]);
+    }
+
+    public function testShouldAddNicenessExtension()
+    {
+        $command = new LimitsExtensionsCommand('name');
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--niceness' => 1,
+        ]);
+
+        $result = $command->getExtensions();
+        $this->assertCount(1, $result);
+
+        $this->assertInstanceOf(NicenessExtension::class, $result[0]);
     }
 }

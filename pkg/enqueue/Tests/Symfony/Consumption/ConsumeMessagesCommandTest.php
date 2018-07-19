@@ -29,12 +29,13 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(5, $options);
+        $this->assertCount(6, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
         $this->assertArrayHasKey('idle-timeout', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
+        $this->assertArrayHasKey('niceness', $options);
     }
 
     public function testShouldHaveExpectedAttributes()
