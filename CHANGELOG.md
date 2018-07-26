@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.33](https://github.com/php-enqueue/enqueue-dev/tree/0.8.33) (2018-07-26)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.32...0.8.33)
+
+- \[consumption\] process niceness extension [\#449](https://github.com/php-enqueue/enqueue-dev/issues/449)
+- \[Symfony\] AsyncListener does not use TraceableProducer [\#392](https://github.com/php-enqueue/enqueue-dev/issues/392)
+
+- Fix call debug method on null [\#480](https://github.com/php-enqueue/enqueue-dev/pull/480) ([makasim](https://github.com/makasim))
+
+- Support MQTT [\#477](https://github.com/php-enqueue/enqueue-dev/issues/477)
+- Bugs in RabbitMqDelayPluginDelayStrategy [\#455](https://github.com/php-enqueue/enqueue-dev/issues/455)
+- \[sqs\] Support using a pre-configured SqsClient [\#443](https://github.com/php-enqueue/enqueue-dev/issues/443)
+- IronMQ \(iron.io\) provider ? [\#415](https://github.com/php-enqueue/enqueue-dev/issues/415)
+
+- Add Localstack Docker container for SQS functional tests [\#473](https://github.com/php-enqueue/enqueue-dev/pull/473) ([elazar](https://github.com/elazar))
+- \[consumption\] add process niceness extension [\#467](https://github.com/php-enqueue/enqueue-dev/pull/467) ([ramunasd](https://github.com/ramunasd))
+
 ## [0.8.32](https://github.com/php-enqueue/enqueue-dev/tree/0.8.32) (2018-07-10)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.31...0.8.32)
 
