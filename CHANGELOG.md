@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.34](https://github.com/php-enqueue/enqueue-dev/tree/0.8.34) (2018-08-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.33...0.8.34)
+
+- \[sqs\] Messages should not allow empty bodies [\#435](https://github.com/php-enqueue/enqueue-dev/issues/435)
+- Use the auto-tagging feature for e.g. processors [\#405](https://github.com/php-enqueue/enqueue-dev/issues/405)
+
+- \[simple-client\] `sqs:` DSN not working [\#483](https://github.com/php-enqueue/enqueue-dev/issues/483)
+
+- Adding a signal handler to the consumer [\#485](https://github.com/php-enqueue/enqueue-dev/issues/485)
+- Problem with SQS DSN string with + in secret [\#481](https://github.com/php-enqueue/enqueue-dev/issues/481)
+- Monitoring interface [\#476](https://github.com/php-enqueue/enqueue-dev/issues/476)
+
+- simple client dsn issue [\#486](https://github.com/php-enqueue/enqueue-dev/pull/486) ([makasim](https://github.com/makasim))
+- Update SQS DSN doc sample with mention urlencode [\#484](https://github.com/php-enqueue/enqueue-dev/pull/484) ([dgoujard](https://github.com/dgoujard))
+- Prevent SqsProducer from sending messages with empty bodies [\#478](https://github.com/php-enqueue/enqueue-dev/pull/478) ([elazar](https://github.com/elazar))
+
 ## [0.8.33](https://github.com/php-enqueue/enqueue-dev/tree/0.8.33) (2018-07-26)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.32...0.8.33)
 
@@ -13,6 +29,7 @@
 - \[sqs\] Support using a pre-configured SqsClient [\#443](https://github.com/php-enqueue/enqueue-dev/issues/443)
 - IronMQ \(iron.io\) provider ? [\#415](https://github.com/php-enqueue/enqueue-dev/issues/415)
 
+- Fix AMQPContext::unsubscribe [\#479](https://github.com/php-enqueue/enqueue-dev/pull/479) ([adrienbrault](https://github.com/adrienbrault))
 - Add Localstack Docker container for SQS functional tests [\#473](https://github.com/php-enqueue/enqueue-dev/pull/473) ([elazar](https://github.com/elazar))
 - \[consumption\] add process niceness extension [\#467](https://github.com/php-enqueue/enqueue-dev/pull/467) ([ramunasd](https://github.com/ramunasd))
 
@@ -20,6 +37,7 @@
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.31...0.8.32)
 
 - \[Bundle\] auto-tag services [\#409](https://github.com/php-enqueue/enqueue-dev/issues/409)
+- Add autoconfigure for services extending PsrProcess interface [\#452](https://github.com/php-enqueue/enqueue-dev/pull/452) ([mnavarrocarter](https://github.com/mnavarrocarter))
 
 - Add documentation the processor services need to be public [\#406](https://github.com/php-enqueue/enqueue-dev/issues/406)
 
