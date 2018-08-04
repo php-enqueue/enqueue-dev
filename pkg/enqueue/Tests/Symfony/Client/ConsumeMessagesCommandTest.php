@@ -61,7 +61,7 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(7, $options);
+        $this->assertCount(8, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
@@ -69,6 +69,7 @@ class ConsumeMessagesCommandTest extends TestCase
         $this->assertArrayHasKey('idle-timeout', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('skip', $options);
+        $this->assertArrayHasKey('niceness', $options);
     }
 
     public function testShouldHaveExpectedArguments()

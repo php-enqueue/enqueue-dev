@@ -7,8 +7,8 @@ use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
 use Enqueue\SimpleClient\SimpleClient;
-use Enqueue\Test\RabbitmqAmqpExtension;
 use Enqueue\Test\RabbitManagementExtensionTrait;
+use Enqueue\Test\RabbitmqAmqpExtension;
 use Interop\Queue\PsrMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -71,6 +71,27 @@ class SimpleClientTest extends TestCase
                     'pass' => getenv('RABBITMQ_PASSWORD'),
                     'vhost' => getenv('RABBITMQ_VHOST'),
                 ],
+            ],
+        ]];
+
+        yield [[
+            'transport' => [
+                'default' => 'rabbitmq_amqp',
+                'rabbitmq_amqp' => [
+                    'driver' => 'ext',
+                    'host' => getenv('RABBITMQ_HOST'),
+                    'port' => getenv('RABBITMQ_AMQP__PORT'),
+                    'user' => getenv('RABBITMQ_USER'),
+                    'pass' => getenv('RABBITMQ_PASSWORD'),
+                    'vhost' => getenv('RABBITMQ_VHOST'),
+                ],
+            ],
+        ]];
+
+        yield 'mongodb_dsn' => [[
+            'transport' => [
+                'default' => 'mongodb',
+                'mongodb' => getenv('MONGO_DSN'),
             ],
         ]];
     }

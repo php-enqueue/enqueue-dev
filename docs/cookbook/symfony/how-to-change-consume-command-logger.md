@@ -22,7 +22,7 @@ services:
 
 The logger extension with the highest priority will set its logger.
 
-[back to index](../index.md)  
+[back to index](../../index.md)  
 
 
 

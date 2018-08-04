@@ -83,7 +83,16 @@ trait ExtractProcessorTagSubscriptionsTrait
 
         if (is_subclass_of($processorClass, TopicSubscriberInterface::class)) {
             /** @var TopicSubscriberInterface $processorClass */
-            foreach ($processorClass::getSubscribedTopics() as $topicName => $params) {
+            $topics = $processorClass::getSubscribedTopics();
+            if (!is_array($topics)) {
+                throw new \LogicException(sprintf(
+                    'Topic subscriber configuration is invalid for "%s::getSubscribedTopics()": expected array, got %s.',
+                    $processorClass,
+                    gettype($topics)
+                ));
+            }
+
+            foreach ($topics as $topicName => $params) {
                 if (is_string($params)) {
                     $data[] = [
                         'topicName' => $params,
@@ -102,7 +111,8 @@ trait ExtractProcessorTagSubscriptionsTrait
                     ];
                 } else {
                     throw new \LogicException(sprintf(
-                        'Topic subscriber configuration is invalid. "%s"',
+                        'Topic subscriber configuration is invalid for "%s::getSubscribedTopics()". "%s"',
+                        $processorClass,
                         json_encode($processorClass::getSubscribedTopics())
                     ));
                 }

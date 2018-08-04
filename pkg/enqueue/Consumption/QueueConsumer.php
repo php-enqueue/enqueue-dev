@@ -178,7 +178,13 @@ final class QueueConsumer
         $context = new Context($this->psrContext);
         $this->extension->onStart($context);
 
-        $this->logger = $context->getLogger() ?: new NullLogger();
+        if ($context->getLogger()) {
+            $this->logger = $context->getLogger();
+        } else {
+            $this->logger = new NullLogger();
+            $context->setLogger($this->logger);
+        }
+
         $this->logger->info('Start consuming');
 
         if ($this->psrContext instanceof AmqpContext) {

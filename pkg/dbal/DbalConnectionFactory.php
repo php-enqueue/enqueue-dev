@@ -103,10 +103,10 @@ class DbalConnectionFactory implements PsrConnectionFactory
             throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
         }
 
-        $schema = parse_url($dsn, PHP_URL_SCHEME);
-        if (empty($schema)) {
+        if (!preg_match('/^([0-9a-z_]+):(.+)?$/', $dsn, $matches)) {
             throw new \LogicException('Schema is empty');
         }
+        $schema = $matches[1];
 
         $supported = [
             'db2' => true,

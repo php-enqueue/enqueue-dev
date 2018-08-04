@@ -201,10 +201,27 @@ class UseCasesTest extends WebTestCase
                         'key' => getenv('AWS_SQS_KEY'),
                         'secret' => getenv('AWS_SQS_SECRET'),
                         'region' => getenv('AWS_SQS_REGION'),
+                        'endpoint' => getenv('AWS_SQS_ENDPOINT'),
+                    ],
+                ],
+            ]];
+
+            yield 'sqs_client' => [[
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'client' => 'test.sqs_client',
                     ],
                 ],
             ]];
         }
+
+        yield 'mongodb_dsn' => [[
+            'transport' => [
+                'default' => 'mongodb',
+                'mongodb' => getenv('MONGO_DSN'),
+            ],
+        ]];
 
 //        yield 'gps' => [[
 //            'transport' => [

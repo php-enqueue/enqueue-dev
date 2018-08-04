@@ -33,6 +33,9 @@ cache:
     directories:
         - $HOME/.composer/cache
 
+before_install:
+    - echo "extension = mongodb.so" >> $HOME/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
 install:
     - rm $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini;
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini

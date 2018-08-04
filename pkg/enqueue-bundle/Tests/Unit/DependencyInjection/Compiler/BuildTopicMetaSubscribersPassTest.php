@@ -302,7 +302,7 @@ class BuildTopicMetaSubscribersPassTest extends TestCase
         $pass = new BuildTopicMetaSubscribersPass();
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Topic subscriber configuration is invalid. "[12345]"');
+        $this->expectExceptionMessage('Topic subscriber configuration is invalid');
 
         $pass->process($container);
     }
