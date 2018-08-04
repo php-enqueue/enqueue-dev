@@ -31,7 +31,7 @@ class SqsProducerTest extends \PHPUnit_Framework_TestCase
     public function testShouldThrowIfBodyOfInvalidType()
     {
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message body must be a scalar or null. Got: stdClass');
+        $this->expectExceptionMessage('The message body must be a non-empty string. Got: stdClass');
 
         $producer = new SqsProducer($this->createSqsContextMock());
 
@@ -72,7 +72,7 @@ class SqsProducerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $destination = new SqsDestination('queue-name');
-        $message = new SqsMessage();
+        $message = new SqsMessage('foo');
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Message was not sent');
