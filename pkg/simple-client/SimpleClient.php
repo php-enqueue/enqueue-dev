@@ -377,7 +377,7 @@ final class SimpleClient
      */
     private function buildConfig($config)
     {
-        if (is_string($config) && false !== strpos($config, '://')) {
+        if (is_string($config) && false !== strpos($config, ':')) {
             $extConfig = [
                 'client' => [],
                 'transport' => [
