@@ -73,6 +73,16 @@ class DbalConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
+            'pdo_mysql:',
+            [
+                'lazy' => true,
+                'connection' => [
+                    'url' => 'pdo_mysql://root@localhost',
+                ],
+            ],
+        ];
+
+        yield [
             'pgsql:',
             [
                 'lazy' => true,
@@ -88,6 +98,16 @@ class DbalConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://user:pass@host:10000/db',
+                ],
+            ],
+        ];
+
+        yield [
+            'pdo_mysql://user:pass@host:10001/db',
+            [
+                'lazy' => true,
+                'connection' => [
+                    'url' => 'pdo_mysql://user:pass@host:10001/db',
                 ],
             ],
         ];

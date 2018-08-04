@@ -201,6 +201,16 @@ class UseCasesTest extends WebTestCase
                         'key' => getenv('AWS_SQS_KEY'),
                         'secret' => getenv('AWS_SQS_SECRET'),
                         'region' => getenv('AWS_SQS_REGION'),
+                        'endpoint' => getenv('AWS_SQS_ENDPOINT'),
+                    ],
+                ],
+            ]];
+
+            yield 'sqs_client' => [[
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'client' => 'test.sqs_client',
                     ],
                 ],
             ]];

@@ -12,7 +12,7 @@ trait SqsExtension
      */
     private function buildSqsContext()
     {
-        if (false == getenv('AWS_SQS_KEY')) {
+        if (false == getenv('AWS_SQS_ENDPOINT') && false == getenv('AWS_SQS_KEY')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
@@ -20,6 +20,8 @@ trait SqsExtension
             'key' => getenv('AWS_SQS_KEY'),
             'secret' => getenv('AWS_SQS_SECRET'),
             'region' => getenv('AWS_SQS_REGION'),
+            'version' => getenv('AWS_SQS_VERSION'),
+            'endpoint' => getenv('AWS_SQS_ENDPOINT'),
             'lazy' => false,
         ];
 

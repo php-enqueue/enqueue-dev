@@ -315,7 +315,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         $consumerTag = $extQueue->getConsumerTag();
         $consumer->setConsumerTag($consumerTag);
-        $this->subscribers[$consumerTag] = [$consumer, $callback];
+        $this->subscribers[$consumerTag] = [$consumer, $callback, $extQueue];
     }
 
     /**
@@ -327,15 +327,13 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             return;
         }
 
-        // seg fault
-//        $consumerTag = $consumer->getConsumerTag();
-//        $consumer->setConsumerTag(null);
-//
-//        $extQueue = new \AMQPQueue($this->getExtChannel());
-//        $extQueue->setName($consumer->getQueue()->getQueueName());
-//
-//        $extQueue->cancel($consumerTag);
-//        unset($this->subscribers[$consumerTag]);
+        $consumerTag = $consumer->getConsumerTag();
+        $consumer->setConsumerTag(null);
+
+        list($consumer, $callback, $extQueue) = $this->subscribers[$consumerTag];
+
+        $extQueue->cancel($consumerTag);
+        unset($this->subscribers[$consumerTag]);
     }
 
     /**

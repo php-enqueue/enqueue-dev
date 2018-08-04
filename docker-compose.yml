@@ -14,6 +14,7 @@ services:
       - google-pubsub
       - rabbitmqssl
       - mongo
+      - localstack
     volumes:
       - './:/mqdev'
     environment:
@@ -34,9 +35,11 @@ services:
       - DOCTRINE_PASSWORD=rootpass
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - AWS_SQS_KEY=$ENQUEUE_AWS__SQS__KEY
-      - AWS_SQS_SECRET=$ENQUEUE_AWS__SQS__SECRET
-      - AWS_SQS_REGION=$ENQUEUE_AWS__SQS__REGION
+      - AWS_SQS_KEY=key
+      - AWS_SQS_SECRET=secret
+      - AWS_SQS_REGION=us-east-1
+      - AWS_SQS_ENDPOINT=http://localstack:4576
+      - AWS_SQS_VERSION=latest
       - BEANSTALKD_HOST=beanstalkd
       - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
@@ -108,6 +111,14 @@ services:
       image: mongo:3.7
       ports:
         - "27017:27017"
+
+  localstack:
+    image: 'localstack/localstack:latest'
+    ports:
+      - '4576:4576'
+    environment:
+      HOSTNAME_EXTERNAL: 'localstack'
+      SERVICES: 'sqs'
 
 volumes:
   mysql-data:

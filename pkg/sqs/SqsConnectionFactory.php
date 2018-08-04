@@ -34,11 +34,16 @@ class SqsConnectionFactory implements PsrConnectionFactory
      * sqs:
      * sqs::?key=aKey&secret=aSecret&token=aToken
      *
-     * @param array|string|null $config
+     * @param array|string|SqsClient|null $config
      */
     public function __construct($config = 'sqs:')
     {
-        if (empty($config) || 'sqs:' === $config) {
+        if ($config instanceof SqsClient) {
+            $this->client = $config;
+            $this->config = ['lazy' => false] + $this->defaultConfig();
+
+            return;
+        } elseif (empty($config) || 'sqs:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
