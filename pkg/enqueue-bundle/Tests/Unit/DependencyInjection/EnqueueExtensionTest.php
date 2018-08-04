@@ -637,6 +637,10 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadProcessAutoconfigureChildDefinition()
     {
+        if (30300 >= Kernel::VERSION_ID) {
+            $this->markTestSkipped('The autoconfigure feature is available since Symfony 3.3 version');
+        }
+
         $container = $this->getContainerBuilder(true);
         $extension = new EnqueueExtension();
 
@@ -645,19 +649,15 @@ class EnqueueExtensionTest extends TestCase
             'transport' => [],
         ]], $container);
 
-        if (method_exists($container, 'registerForAutoconfiguration')) {
-            $autoconfigured = $container->getAutoconfiguredInstanceof();
+        $autoconfigured = $container->getAutoconfiguredInstanceof();
 
-            self::assertArrayHasKey(CommandSubscriberInterface::class, $autoconfigured);
-            self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->hasTag('enqueue.client.processor'));
-            self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->isPublic());
+        self::assertArrayHasKey(CommandSubscriberInterface::class, $autoconfigured);
+        self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+        self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->isPublic());
 
-            self::assertArrayHasKey(TopicSubscriberInterface::class, $autoconfigured);
-            self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->hasTag('enqueue.client.processor'));
-            self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->isPublic());
-        } else {
-            $this->assertTrue(true);
-        }
+        self::assertArrayHasKey(TopicSubscriberInterface::class, $autoconfigured);
+        self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+        self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->isPublic());
     }
 
     /**
