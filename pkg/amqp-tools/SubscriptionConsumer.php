@@ -6,6 +6,9 @@ use Interop\Amqp\AmqpContext;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrSubscriptionConsumer;
 
+/**
+ * @deprecated this is BC layer, will be removed in 0.9
+ */
 final class SubscriptionConsumer implements PsrSubscriptionConsumer
 {
     /**
