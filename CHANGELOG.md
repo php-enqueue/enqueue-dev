@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.8.35](https://github.com/php-enqueue/enqueue-dev/tree/0.8.35) (2018-08-06)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.34...0.8.35)
+
+- Improve multi queue consumption. [\#488](https://github.com/php-enqueue/enqueue-dev/pull/488) ([makasim](https://github.com/makasim))
+
 ## [0.8.34](https://github.com/php-enqueue/enqueue-dev/tree/0.8.34) (2018-08-04)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.33...0.8.34)
 
