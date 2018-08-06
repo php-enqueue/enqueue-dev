@@ -8,7 +8,7 @@
     "require": {
         "php": ">=5.6",
         "symfony/framework-bundle": "^2.8|^3|^4",
-        "enqueue/enqueue": "^0.8@dev",
+        "enqueue/enqueue": "^0.8.34@dev",
         "enqueue/null": "^0.8@dev",
         "enqueue/async-event-dispatcher": "^0.8@dev"
     },
