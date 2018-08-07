@@ -5,6 +5,7 @@ namespace Enqueue\AmqpLib;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Enqueue\AmqpTools\SignalSocketHelper;
+use Enqueue\AmqpTools\SubscriptionConsumer;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -18,6 +19,7 @@ use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
@@ -26,7 +28,7 @@ use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
-class AmqpContext implements InteropAmqpContext, DelayStrategyAware
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscriptionConsumerAwareContext
 {
     use DelayStrategyAwareTrait;
 
@@ -127,6 +129,14 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createSubscriptionConsumer()
+    {
+        return new SubscriptionConsumer($this);
     }
 
     /**
@@ -316,6 +326,8 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
@@ -359,6 +371,8 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function unsubscribe(InteropAmqpConsumer $consumer)
@@ -376,6 +390,8 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function consume($timeout = 0)

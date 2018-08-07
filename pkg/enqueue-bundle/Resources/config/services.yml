@@ -1,3 +1,8 @@
+parameters:
+  enqueue.queue_consumer.enable_subscription_consumer: false
+  enqueue.queue_consumer.default_idle_time: 0
+  enqueue.queue_consumer.default_receive_timeout: 10
+
 services:
     enqueue.consumption.extensions:
         class: 'Enqueue\Consumption\ChainExtension'
@@ -11,8 +16,10 @@ services:
         arguments:
             - '@enqueue.transport.context'
             - '@enqueue.consumption.extensions'
-            - ~
-            - ~
+            - '%enqueue.queue_consumer.default_idle_time%'
+            - '%enqueue.queue_consumer.default_receive_timeout%'
+        calls:
+            - ['enableSubscriptionConsumer', ['%enqueue.queue_consumer.enable_subscription_consumer%']]
 
     # Deprecated. To be removed in 0.10.
     enqueue.consumption.queue_consumer:
