@@ -16,7 +16,7 @@ use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-final class QueueConsumer
+class QueueConsumer
 {
     /**
      * @var PsrContext
