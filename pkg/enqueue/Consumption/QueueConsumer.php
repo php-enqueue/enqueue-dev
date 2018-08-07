@@ -6,12 +6,12 @@ use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Util\VarExport;
-use Interop\Amqp\AmqpConsumer;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
 use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -58,6 +58,11 @@ final class QueueConsumer
     private $logger;
 
     /**
+     * @var PsrSubscriptionConsumer
+     */
+    private $fallbackSubscriptionConsumer;
+
+    /**
      * @param PsrContext                             $psrContext
      * @param ExtensionInterface|ChainExtension|null $extension
      * @param int|float                              $idleTimeout    the time in milliseconds queue consumer waits if no message received
@@ -76,6 +81,7 @@ final class QueueConsumer
 
         $this->boundProcessors = [];
         $this->logger = new NullLogger();
+        $this->fallbackSubscriptionConsumer = new FallbackSubscriptionConsumer();
     }
 
     /**
@@ -186,7 +192,7 @@ final class QueueConsumer
 
         $this->logger->info('Start consuming');
 
-        $subscriptionConsumer = new FallbackSubscriptionConsumer();
+        $subscriptionConsumer = $this->fallbackSubscriptionConsumer;
         if ($context instanceof PsrSubscriptionConsumerAwareContext) {
             $subscriptionConsumer = $context->createSubscriptionConsumer();
         }
@@ -222,7 +228,7 @@ final class QueueConsumer
         };
 
         foreach ($consumers as $consumer) {
-            /* @var AmqpConsumer $consumer */
+            /* @var PsrConsumer $consumer */
 
             $subscriptionConsumer->subscribe($consumer, $callback);
         }
@@ -237,7 +243,7 @@ final class QueueConsumer
 
                 $subscriptionConsumer->consume($this->receiveTimeout);
 
-                usleep($this->idleTimeout * 1000);
+                $this->idleTimeout && usleep($this->idleTimeout * 1000);
                 $this->extension->onIdle($context);
             } catch (ConsumptionInterruptedException $e) {
                 $this->logger->info(sprintf('Consuming interrupted'));
@@ -253,31 +259,25 @@ final class QueueConsumer
                 $this->extension->onInterrupted($context);
 
                 return;
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 $context->setExecutionInterrupted(true);
                 $context->setException($exception);
 
-                try {
-                    $this->onInterruptionByException($this->extension, $context);
-                } catch (\Exception $e) {
-                    // for some reason finally does not work here on php5.5
+                $this->onInterruptionByException($this->extension, $context);
 
-                    throw $e;
-                }
+                return;
             }
         }
     }
 
     /**
-     * @param ExtensionInterface $extension
-     * @param Context            $context
+     * @internal
      *
-     * @throws ConsumptionInterruptedException
-     *
-     * @return bool
+     * @param PsrSubscriptionConsumer $fallbackSubscriptionConsumer
      */
-    private function doConsume(ExtensionInterface $extension, Context $context)
+    public function setFallbackSubscriptionConsumer(PsrSubscriptionConsumer $fallbackSubscriptionConsumer): void
     {
+        $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
 
     /**
@@ -331,7 +331,7 @@ final class QueueConsumer
 
         $this->extension->onPreReceived($context);
         if (!$context->getResult()) {
-            $result = $processor->process($message, $this->psrContext);
+            $result = $processor->process($message, $context->getPsrContext());
             $context->setResult($result);
         }
 
