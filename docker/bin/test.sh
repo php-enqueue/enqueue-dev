@@ -39,8 +39,7 @@ waitForService kafka 9092 50
 waitForService mongo 27017 50
 waitForService localstack 4576 50
 
-php pkg/job-queue/Tests/Functional/app/console doctrine:database:create --if-not-exists
-php pkg/job-queue/Tests/Functional/app/console doctrine:schema:update --force
+php docker/bin/refresh-mysql-database.php
 
 #php pkg/enqueue-bundle/Tests/Functional/app/console.php config:dump-reference  enqueue
 bin/phpunit "$@"

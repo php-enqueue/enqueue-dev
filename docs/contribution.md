@@ -18,14 +18,14 @@ Once you did it you can work on a feature or bug fix.
 To run tests
 
 ```
-./bin/dev -t
+./bin/test.sh
 ```
 
 or for a package only:
 
 
 ```
-./bin/dev -t pkg/enqueue
+./bin/test.sh pkg/enqueue
 ```
 
 ## Commit 

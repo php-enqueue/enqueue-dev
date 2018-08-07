@@ -80,10 +80,12 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             'pdo_mysql:',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'pdo_mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
@@ -114,10 +116,12 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             'pdo_mysql://user:pass@host:10001/db',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'pdo_mysql://user:pass@host:10001/db',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
