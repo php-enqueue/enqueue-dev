@@ -245,6 +245,10 @@ final class QueueConsumer
 
                 $this->idleTimeout && usleep($this->idleTimeout * 1000);
                 $this->extension->onIdle($context);
+
+                if ($context->isExecutionInterrupted()) {
+                    throw new ConsumptionInterruptedException();
+                }
             } catch (ConsumptionInterruptedException $e) {
                 $this->logger->info(sprintf('Consuming interrupted'));
 
