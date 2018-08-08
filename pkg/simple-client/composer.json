@@ -7,17 +7,17 @@
     "license": "MIT",
     "require": {
         "php": "^7.1.3",
-        "enqueue/enqueue": "^0.9@dev",
+        "enqueue/enqueue": "0.9.x-dev",
         "symfony/dependency-injection": "^3.4|^4",
         "symfony/config": "^3.4|^4",
         "symfony/console": "^3.4|^4"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",
-        "enqueue/test": "^0.9@dev",
-        "enqueue/amqp-ext": "^0.9@dev",
-        "enqueue/fs": "^0.9@dev",
-        "enqueue/null": "^0.9@dev"
+        "enqueue/test": "0.9.x-dev",
+        "enqueue/amqp-ext": "0.9.x-dev",
+        "enqueue/fs": "0.9.x-dev",
+        "enqueue/null": "0.9.x-dev"
     },
     "support": {
         "email": "opensource@forma-pro.com",

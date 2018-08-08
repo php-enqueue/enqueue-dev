@@ -9,13 +9,13 @@
         "php": "^7.1.3",
         "ext-amqp": "^1.9.3",
         "queue-interop/amqp-interop": "^0.7.4|^0.8@dev",
-        "enqueue/amqp-tools": "^0.9@dev"
+        "enqueue/amqp-tools": "0.9.x-dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
-        "enqueue/test": "^0.9@dev",
-        "enqueue/enqueue": "^0.9@dev",
-        "enqueue/null": "^0.9@dev",
+        "enqueue/test": "0.9.x-dev",
+        "enqueue/enqueue": "0.9.x-dev",
+        "enqueue/null": "0.9.x-dev",
         "queue-interop/queue-spec": "^0.5.3@dev",
         "empi89/php-amqp-stubs": "*@dev",
         "symfony/dependency-injection": "^3.4|^4",
