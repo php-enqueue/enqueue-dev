@@ -12,7 +12,7 @@ class CalculateRootJobStatusProcessorTest extends WebTestCase
 {
     public function testCouldBeConstructedByContainer()
     {
-        $instance = $this->container->get(CalculateRootJobStatusProcessor::class);
+        $instance = static::$container->get(CalculateRootJobStatusProcessor::class);
 
         $this->assertInstanceOf(CalculateRootJobStatusProcessor::class, $instance);
     }

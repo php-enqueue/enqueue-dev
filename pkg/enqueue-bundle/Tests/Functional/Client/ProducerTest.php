@@ -20,27 +20,27 @@ class ProducerTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->container->get(Producer::class)->clearTraces();
+        static::$container->get(Producer::class)->clearTraces();
     }
 
     public function tearDown()
     {
         parent::tearDown();
 
-        $this->container->get(Producer::class)->clearTraces();
+        static::$container->get(Producer::class)->clearTraces();
     }
 
     public function testCouldBeGetFromContainerAsService()
     {
-        $messageProducer = $this->container->get(Producer::class);
+        $messageProducer = static::$container->get(Producer::class);
 
         $this->assertInstanceOf(ProducerInterface::class, $messageProducer);
     }
 
     public function testCouldBeGetFromContainerAsShortenAlias()
     {
-        $messageProducer = $this->container->get(Producer::class);
-        $aliasMessageProducer = $this->container->get('enqueue.producer');
+        $messageProducer = static::$container->get(Producer::class);
+        $aliasMessageProducer = static::$container->get('enqueue.producer');
 
         $this->assertSame($messageProducer, $aliasMessageProducer);
     }
@@ -48,7 +48,7 @@ class ProducerTest extends WebTestCase
     public function testShouldSendEvent()
     {
         /** @var ProducerInterface $producer */
-        $producer = $this->container->get(Producer::class);
+        $producer = static::$container->get(Producer::class);
 
         $producer->sendEvent('theTopic', 'theMessage');
 
@@ -61,7 +61,7 @@ class ProducerTest extends WebTestCase
     public function testShouldSendCommandWithoutNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = $this->container->get(Producer::class);
+        $producer = static::$container->get(Producer::class);
 
         $result = $producer->sendCommand('theCommand', 'theMessage', false);
 
@@ -76,7 +76,7 @@ class ProducerTest extends WebTestCase
     public function testShouldSendMessageInstanceAsCommandWithoutNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = $this->container->get(Producer::class);
+        $producer = static::$container->get(Producer::class);
 
         $message = new Message('theMessage');
 
@@ -99,7 +99,7 @@ class ProducerTest extends WebTestCase
     public function testShouldSendExclusiveCommandWithNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = $this->container->get(Producer::class);
+        $producer = static::$container->get(Producer::class);
 
         $message = new Message('theMessage');
 
@@ -122,7 +122,7 @@ class ProducerTest extends WebTestCase
     public function testShouldSendMessageInstanceCommandWithNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = $this->container->get(Producer::class);
+        $producer = static::$container->get(Producer::class);
 
         $message = new Message('theMessage');
 
@@ -147,6 +147,6 @@ class ProducerTest extends WebTestCase
      */
     private function getTraceableProducer()
     {
-        return $this->container->get(Producer::class);
+        return static::$container->get(Producer::class);
     }
 }
