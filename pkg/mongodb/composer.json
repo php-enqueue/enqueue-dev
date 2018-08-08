@@ -17,6 +17,7 @@
   },
   "require-dev": {
     "phpunit/phpunit": "~5.4.0",
+    "symfony/dependency-injection": "^4",
     "queue-interop/queue-spec": "^0.5.5@dev",
     "enqueue/test": "^0.8.25@dev",
     "enqueue/enqueue": "^0.8@dev",

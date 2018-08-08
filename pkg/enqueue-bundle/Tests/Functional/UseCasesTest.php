@@ -279,8 +279,8 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
-        $command = $this->container->get(ConsumeMessagesCommand::class);
-        $processor = $this->container->get('test.message.command_processor');
+        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $processor = static::$container->get('test.message.command_processor');
 
         $expectedBody = __METHOD__.time();
 
@@ -306,8 +306,8 @@ class UseCasesTest extends WebTestCase
 
         $expectedBody = __METHOD__.time();
 
-        $command = $this->container->get(ConsumeMessagesCommand::class);
-        $processor = $this->container->get('test.message.processor');
+        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $processor = static::$container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
@@ -337,9 +337,9 @@ class UseCasesTest extends WebTestCase
 
         $expectedBody = __METHOD__.time();
 
-        $command = $this->container->get(ContainerAwareConsumeMessagesCommand::class);
-        $command->setContainer($this->container);
-        $processor = $this->container->get('test.message.processor');
+        $command = static::$container->get(ContainerAwareConsumeMessagesCommand::class);
+        $command->setContainer(static::$container);
+        $processor = static::$container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
@@ -373,10 +373,10 @@ class UseCasesTest extends WebTestCase
         $this->client = static::createClient(['enqueue_config' => $enqueueConfig]);
         $this->client->getKernel()->boot();
         static::$kernel = $this->client->getKernel();
-        $this->container = static::$kernel->getContainer();
+        static::$container = static::$kernel->getContainer();
 
         /** @var DriverInterface $driver */
-        $driver = $this->container->get('enqueue.client.driver');
+        $driver = static::$container->get('enqueue.client.driver');
         $context = $this->getPsrContext();
 
         $driver->setupBroker();
@@ -396,7 +396,7 @@ class UseCasesTest extends WebTestCase
     protected function getTestQueue()
     {
         /** @var DriverInterface $driver */
-        $driver = $this->container->get('enqueue.client.driver');
+        $driver = static::$container->get('enqueue.client.driver');
 
         return $driver->createQueue('test');
     }
@@ -419,7 +419,7 @@ class UseCasesTest extends WebTestCase
      */
     private function getMessageProducer()
     {
-        return $this->container->get(Producer::class);
+        return static::$container->get(Producer::class);
     }
 
     /**
@@ -427,6 +427,6 @@ class UseCasesTest extends WebTestCase
      */
     private function getPsrContext()
     {
-        return $this->container->get('enqueue.transport.context');
+        return static::$container->get('enqueue.transport.context');
     }
 }

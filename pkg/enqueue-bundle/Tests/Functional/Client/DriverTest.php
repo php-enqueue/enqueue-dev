@@ -12,7 +12,7 @@ class DriverTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $driver = $this->container->get('enqueue.client.driver');
+        $driver = static::$container->get('enqueue.client.driver');
 
         $this->assertInstanceOf(DriverInterface::class, $driver);
     }

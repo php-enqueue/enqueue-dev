@@ -12,7 +12,7 @@ class JobRunnerTest extends WebTestCase
 {
     public function testCouldBeConstructedByContainer()
     {
-        $instance = $this->container->get(JobRunner::class);
+        $instance = static::$container->get(JobRunner::class);
 
         $this->assertInstanceOf(JobRunner::class, $instance);
     }
