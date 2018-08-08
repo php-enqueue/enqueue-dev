@@ -6,8 +6,13 @@ git:
 language: php
 
 php:
-    - '5.6'
-    - '7.0'
+    - '7.1'
+
+services:
+  - mongodb
+
+before_install:
+    - echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 cache:
     directories:
