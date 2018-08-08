@@ -1,0 +1,25 @@
+sudo: false
+
+php:
+    - '7.1'
+
+git:
+    depth: 10
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+services:
+  - mongodb
+
+before_install:
+    - echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+install:
+    - composer self-update
+    - composer install --prefer-source
+
+script:
+    - vendor/bin/phpunit --exclude-group=functional
+
