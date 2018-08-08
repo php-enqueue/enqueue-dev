@@ -20,9 +20,6 @@ while getopts "bustefcdp" OPTION; do
     f)
       ./bin/php-cs-fixer fix
       ;;
-    t)
-      ./bin/run-fun-test.sh "$2"
-      ;;
     c)
       docker-compose run -e CHANGELOG_GITHUB_TOKEN=${CHANGELOG_GITHUB_TOKEN:-""} --workdir="/mqdev" --rm generate-changelog github_changelog_generator --future-release "$2" --simple-list
       ;;
