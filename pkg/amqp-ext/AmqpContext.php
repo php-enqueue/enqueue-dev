@@ -4,7 +4,6 @@ namespace Enqueue\AmqpExt;
 
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
-use Enqueue\AmqpTools\SubscriptionConsumer;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -45,11 +44,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     private $receiveMethod;
 
     /**
-     * an item contains an array: [AmqpConsumerInterop $consumer, callable $callback];.
-     *
-     * @var array
+     * @var AmqpSubscriptionConsumer
      */
-    private $subscribers;
+    private $bcSubscriptionConsumer;
 
     /**
      * Callable must return instance of \AMQPChannel once called.
@@ -70,7 +67,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         }
 
         $this->buffer = new Buffer();
-        $this->subscribers = [];
+        $this->bcSubscriptionConsumer = $this->createSubscriptionConsumer();
     }
 
     /**
@@ -267,7 +264,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
      */
     public function createSubscriptionConsumer()
     {
-        return new SubscriptionConsumer($this);
+        return new AmqpSubscriptionConsumer($this);
     }
 
     /**
@@ -316,18 +313,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
      */
     public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
     {
-        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
-            return;
-        }
-
-        $extQueue = new \AMQPQueue($this->getExtChannel());
-        $extQueue->setName($consumer->getQueue()->getQueueName());
-
-        $extQueue->consume(null, Flags::convertConsumerFlags($consumer->getFlags()), $consumer->getConsumerTag());
-
-        $consumerTag = $extQueue->getConsumerTag();
-        $consumer->setConsumerTag($consumerTag);
-        $this->subscribers[$consumerTag] = [$consumer, $callback, $extQueue];
+        $this->bcSubscriptionConsumer->subscribe($consumer, $callback);
     }
 
     /**
@@ -337,17 +323,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
      */
     public function unsubscribe(InteropAmqpConsumer $consumer)
     {
-        if (false == $consumer->getConsumerTag()) {
-            return;
-        }
-
-        $consumerTag = $consumer->getConsumerTag();
-        $consumer->setConsumerTag(null);
-
-        list($consumer, $callback, $extQueue) = $this->subscribers[$consumerTag];
-
-        $extQueue->cancel($consumerTag);
-        unset($this->subscribers[$consumerTag]);
+        $this->bcSubscriptionConsumer->unsubscribe($consumer);
     }
 
     /**
@@ -357,51 +333,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
      */
     public function consume($timeout = 0)
     {
-        if (empty($this->subscribers)) {
-            throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
-        }
-
-        /** @var \AMQPQueue $extQueue */
-        $extConnection = $this->getExtChannel()->getConnection();
-
-        $originalTimeout = $extConnection->getReadTimeout();
-        try {
-            $extConnection->setReadTimeout($timeout / 1000);
-
-            reset($this->subscribers);
-            /** @var $consumer AmqpConsumer */
-            list($consumer) = current($this->subscribers);
-
-            $extQueue = new \AMQPQueue($this->getExtChannel());
-            $extQueue->setName($consumer->getQueue()->getQueueName());
-            $extQueue->consume(function (\AMQPEnvelope $extEnvelope, \AMQPQueue $q) use ($originalTimeout, $extConnection) {
-                $consumeTimeout = $extConnection->getReadTimeout();
-                try {
-                    $extConnection->setReadTimeout($originalTimeout);
-
-                    $message = $this->convertMessage($extEnvelope);
-                    $message->setConsumerTag($q->getConsumerTag());
-
-                    /**
-                     * @var AmqpConsumer
-                     * @var callable     $callback
-                     */
-                    list($consumer, $callback) = $this->subscribers[$q->getConsumerTag()];
-
-                    return call_user_func($callback, $message, $consumer);
-                } finally {
-                    $extConnection->setReadTimeout($consumeTimeout);
-                }
-            }, AMQP_JUST_CONSUME);
-        } catch (\AMQPQueueException $e) {
-            if ('Consumer timeout exceed' == $e->getMessage()) {
-                return null;
-            }
-
-            throw $e;
-        } finally {
-            $extConnection->setReadTimeout($originalTimeout);
-        }
+        $this->bcSubscriptionConsumer->consume($timeout);
     }
 
     /**

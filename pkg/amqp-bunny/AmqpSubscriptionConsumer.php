@@ -29,6 +29,8 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
     public function __construct(AmqpContext $context)
     {
         $this->context = $context;
+
+        $this->subscribers = [];
     }
 
     /**
