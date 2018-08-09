@@ -98,6 +98,10 @@
         </testsuite>
     </testsuites>
 
+    <php>
+        <env name="SHELL_VERBOSITY" value="-1"/>
+    </php>
+
     <filter>
         <whitelist>
             <directory suffix=".php">.</directory>
