@@ -3,9 +3,11 @@
 namespace Enqueue\AmqpLib\Tests;
 
 use Enqueue\AmqpLib\AmqpContext;
+use Enqueue\AmqpLib\AmqpSubscriptionConsumer;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Wire\AMQPTable;
@@ -312,6 +314,20 @@ class AmqpContextTest extends TestCase
 
         $context = new AmqpContext($connection);
         $context->setQos(123, 456, true);
+    }
+
+    public function testShouldImplementPsrSubscriptionConsumerAwareInterface()
+    {
+        $rc = new \ReflectionClass(AmqpContext::class);
+
+        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumerAwareContext::class));
+    }
+
+    public function testShouldReturnExpectedSubscriptionConsumerInstance()
+    {
+        $context = new AmqpContext($this->createConnectionMock());
+
+        $this->assertInstanceOf(AmqpSubscriptionConsumer::class, $context->createSubscriptionConsumer());
     }
 
     /**
