@@ -496,11 +496,7 @@ class QueueConsumerTest extends TestCase
             ->expects($this->once())
             ->method('onIdle')
             ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use (
-                $contextStub,
-                $consumerStub,
-                $processorMock
-            ) {
+            ->willReturnCallback(function (Context $context) use ($contextStub) {
                 $this->assertSame($contextStub, $context->getPsrContext());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
                 $this->assertNull($context->getPsrProcessor());
@@ -535,12 +531,7 @@ class QueueConsumerTest extends TestCase
             ->expects($this->once())
             ->method('onBeforeReceive')
             ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use (
-                $contextStub,
-                $consumerStub,
-                $processorMock,
-                $queue
-            ) {
+            ->willReturnCallback(function (Context $context) use ($contextStub) {
                 $this->assertSame($contextStub, $context->getPsrContext());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
                 $this->assertNull($context->getPsrProcessor());
@@ -711,11 +702,7 @@ class QueueConsumerTest extends TestCase
             ->expects($this->once())
             ->method('onInterrupted')
             ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use (
-                $contextStub,
-                $consumerStub,
-                $processorMock
-            ) {
+            ->willReturnCallback(function (Context $context) use ($contextStub) {
                 $this->assertSame($contextStub, $context->getPsrContext());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
                 $this->assertNull($context->getPsrConsumer());
@@ -1222,7 +1209,7 @@ class QueueConsumerTest extends TestCase
             ->expects($this->any())
             ->method('onPreReceived')
             ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use ($processorMock, $queue1, &$actualContexts) {
+            ->willReturnCallback(function (Context $context) use (&$actualContexts) {
                 $actualContexts[] = clone $context;
             })
         ;
