@@ -16,7 +16,7 @@ abstract class WebTestCase extends BaseWebTestCase
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected static $container;
 
     protected function setUp()
     {
@@ -25,7 +25,10 @@ abstract class WebTestCase extends BaseWebTestCase
         static::$class = null;
 
         $this->client = static::createClient();
-        $this->container = static::$kernel->getContainer();
+
+        if (false == static::$container) {
+            static::$container = static::$kernel->getContainer();
+        }
 
         $this->startTransaction();
     }
