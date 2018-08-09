@@ -28,7 +28,7 @@
     "enqueue/simple-client": "0.9.x-dev",
     "enqueue/test": "0.9.x-dev",
     "enqueue/async-event-dispatcher": "0.9.x-dev",
-    "queue-interop/queue-interop": "^0.6@dev|^1.0.0-alpha1",
+    "queue-interop/queue-interop": "^0.6@dev|0.7.x-dev|^1.0.0-alpha1",
     "queue-interop/amqp-interop": "^0.7@dev",
     "queue-interop/queue-spec": "^0.5.4@dev",
 

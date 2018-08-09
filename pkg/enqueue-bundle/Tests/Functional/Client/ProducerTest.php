@@ -25,9 +25,9 @@ class ProducerTest extends WebTestCase
 
     public function tearDown()
     {
-        parent::tearDown();
-
         static::$container->get(Producer::class)->clearTraces();
+
+        parent::tearDown();
     }
 
     public function testCouldBeGetFromContainerAsService()
