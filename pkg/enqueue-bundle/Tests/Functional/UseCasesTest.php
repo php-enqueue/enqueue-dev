@@ -104,7 +104,7 @@ class UseCasesTest extends WebTestCase
 
         yield 'default_dbal_as_dsn' => [[
             'transport' => [
-                'default' => getenv('DOCTINE_DSN'),
+                'default' => getenv('DOCTRINE_DSN'),
             ],
         ]];
 
@@ -188,18 +188,38 @@ class UseCasesTest extends WebTestCase
         yield 'dbal_dsn' => [[
             'transport' => [
                 'default' => 'dbal',
-                'dbal' => getenv('DOCTINE_DSN'),
+                'dbal' => getenv('DOCTRINE_DSN'),
             ],
         ]];
 
-        yield 'sqs' => [[
-            'transport' => [
-                'default' => 'sqs',
-                'sqs' => [
-                    'key' => getenv('AWS_SQS_KEY'),
-                    'secret' => getenv('AWS_SQS_SECRET'),
-                    'region' => getenv('AWS_SQS_REGION'),
+        // travis build does not have secret env vars if contribution is from outside.
+        if (getenv('AWS_SQS_KEY')) {
+            yield 'sqs' => [[
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'key' => getenv('AWS_SQS_KEY'),
+                        'secret' => getenv('AWS_SQS_SECRET'),
+                        'region' => getenv('AWS_SQS_REGION'),
+                        'endpoint' => getenv('AWS_SQS_ENDPOINT'),
+                    ],
                 ],
+            ]];
+
+            yield 'sqs_client' => [[
+                'transport' => [
+                    'default' => 'sqs',
+                    'sqs' => [
+                        'client' => 'test.sqs_client',
+                    ],
+                ],
+            ]];
+        }
+
+        yield 'mongodb_dsn' => [[
+            'transport' => [
+                'default' => 'mongodb',
+                'mongodb' => getenv('MONGO_DSN'),
             ],
         ]];
 
@@ -259,8 +279,8 @@ class UseCasesTest extends WebTestCase
     {
         $this->customSetUp($enqueueConfig);
 
-        $command = $this->container->get(ConsumeMessagesCommand::class);
-        $processor = $this->container->get('test.message.command_processor');
+        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $processor = static::$container->get('test.message.command_processor');
 
         $expectedBody = __METHOD__.time();
 
@@ -286,8 +306,8 @@ class UseCasesTest extends WebTestCase
 
         $expectedBody = __METHOD__.time();
 
-        $command = $this->container->get(ConsumeMessagesCommand::class);
-        $processor = $this->container->get('test.message.processor');
+        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $processor = static::$container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
@@ -317,9 +337,9 @@ class UseCasesTest extends WebTestCase
 
         $expectedBody = __METHOD__.time();
 
-        $command = $this->container->get(ContainerAwareConsumeMessagesCommand::class);
-        $command->setContainer($this->container);
-        $processor = $this->container->get('test.message.processor');
+        $command = static::$container->get(ContainerAwareConsumeMessagesCommand::class);
+        $command->setContainer(static::$container);
+        $processor = static::$container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
@@ -353,10 +373,10 @@ class UseCasesTest extends WebTestCase
         $this->client = static::createClient(['enqueue_config' => $enqueueConfig]);
         $this->client->getKernel()->boot();
         static::$kernel = $this->client->getKernel();
-        $this->container = static::$kernel->getContainer();
+        static::$container = static::$kernel->getContainer();
 
         /** @var DriverInterface $driver */
-        $driver = $this->container->get('enqueue.client.driver');
+        $driver = static::$container->get('enqueue.client.driver');
         $context = $this->getPsrContext();
 
         $driver->setupBroker();
@@ -376,7 +396,7 @@ class UseCasesTest extends WebTestCase
     protected function getTestQueue()
     {
         /** @var DriverInterface $driver */
-        $driver = $this->container->get('enqueue.client.driver');
+        $driver = static::$container->get('enqueue.client.driver');
 
         return $driver->createQueue('test');
     }
@@ -399,7 +419,7 @@ class UseCasesTest extends WebTestCase
      */
     private function getMessageProducer()
     {
-        return $this->container->get(Producer::class);
+        return static::$container->get(Producer::class);
     }
 
     /**
@@ -407,6 +427,6 @@ class UseCasesTest extends WebTestCase
      */
     private function getPsrContext()
     {
-        return $this->container->get('enqueue.transport.context');
+        return static::$container->get('enqueue.transport.context');
     }
 }

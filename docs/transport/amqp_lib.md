@@ -179,7 +179,7 @@ $psrContext->createProducer()
 ## Send delayed message
 
 AMQP specification says nothing about message delaying hence the producer throws `DeliveryDelayNotSupportedException`. 
-Though the producer (and the context) accepts a delivry delay strategy and if it is set it uses it to send delayed message.
+Though the producer (and the context) accepts a delivery delay strategy and if it is set it uses it to send delayed message.
 The `enqueue/amqp-tools` package provides two RabbitMQ delay strategies, to use them you have to install that package
 
 ```php

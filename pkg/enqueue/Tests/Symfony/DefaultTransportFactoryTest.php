@@ -72,6 +72,24 @@ class DefaultTransportFactoryTest extends TestCase
         $this->assertEquals(['dsn' => 'dsn://'], $config);
     }
 
+    /**
+     * @see https://github.com/php-enqueue/enqueue-dev/issues/356
+     *
+     * @group bug
+     */
+    public function testShouldAllowAddConfigurationAsDsnWithoutSlashes()
+    {
+        $transport = new DefaultTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), ['dsn:']);
+
+        $this->assertEquals(['dsn' => 'dsn:'], $config);
+    }
+
     public function testShouldSetNullTransportByDefault()
     {
         $transport = new DefaultTransportFactory();
@@ -271,5 +289,9 @@ class DefaultTransportFactoryTest extends TestCase
         yield ['redis:', 'default_redis'];
 
         yield ['stomp:', 'default_stomp'];
+
+        yield ['kafka:', 'default_kafka'];
+
+        yield ['mongodb:', 'default_mongodb'];
     }
 }

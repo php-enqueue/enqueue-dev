@@ -32,6 +32,10 @@ class DoctrinePingConnectionExtension implements ExtensionInterface
     {
         /** @var Connection $connection */
         foreach ($this->registry->getConnections() as $connection) {
+            if (!$connection->isConnected()) {
+                continue;
+            }
+
             if ($connection->ping()) {
                 return;
             }

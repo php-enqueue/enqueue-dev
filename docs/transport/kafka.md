@@ -8,7 +8,7 @@ The transport uses [Kafka](https://kafka.apache.org/) streaming platform as a MQ
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)
 * [Serialize message](#serialize-message)
-* [Chnage offset](#change-offset)
+* [Change offset](#change-offset)
 
 ## Installation
 

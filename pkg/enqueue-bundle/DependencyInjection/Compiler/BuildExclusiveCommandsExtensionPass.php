@@ -32,7 +32,7 @@ class BuildExclusiveCommandsExtensionPass implements CompilerPassInterface
                     continue;
                 }
 
-                if (false == isset($subscription['exclusive']) || $subscription['exclusive'] === false) {
+                if (false == isset($subscription['exclusive']) || false === $subscription['exclusive']) {
                     continue;
                 }
 

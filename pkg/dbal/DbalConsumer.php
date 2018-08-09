@@ -4,7 +4,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
-use Enqueue\Util\JSON;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
@@ -155,7 +154,7 @@ class DbalConsumer implements PsrConsumer
 
             // remove message
             $affectedRows = $this->dbal->delete($this->context->getTableName(), ['id' => $dbalMessage['id']], [
-                'id' => Type::INTEGER,
+                'id' => Type::GUID,
             ]);
 
             if (1 !== $affectedRows) {
@@ -186,6 +185,7 @@ class DbalConsumer implements PsrConsumer
         $message->setBody($dbalMessage['body']);
         $message->setPriority((int) $dbalMessage['priority']);
         $message->setRedelivered((bool) $dbalMessage['redelivered']);
+        $message->setPublishedAt((int) $dbalMessage['published_at']);
 
         if ($dbalMessage['headers']) {
             $message->setHeaders(JSON::decode($dbalMessage['headers']));
@@ -213,6 +213,7 @@ class DbalConsumer implements PsrConsumer
             ->andWhere('priority IS NOT NULL')
             ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
             ->addOrderBy('priority', 'desc')
+            ->addOrderBy('published_at', 'asc')
             ->setMaxResults(1)
         ;
 

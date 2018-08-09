@@ -63,7 +63,7 @@ Here's the result:
 
 ## Consume command verbosity 
 
-By default the commands `enqueu:conume` or `enqueue:transport:consume` does not output anything. 
+By default the commands `enqueue:consume` or `enqueue:transport:consume` does not output anything. 
 You can add `-vvv` to see more information.
  
 ![Consume command verbosity](../images/consume_command_verbosity.png)

@@ -10,6 +10,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    private $debug;
+
     /**
      * @var TransportFactoryInterface[]
      */
@@ -17,10 +19,12 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @param TransportFactoryInterface[] $factories
+     * @param bool                        $debug
      */
-    public function __construct(array $factories)
+    public function __construct(array $factories, $debug)
     {
         $this->factories = $factories;
+        $this->debug = $debug;
     }
 
     /**
@@ -42,7 +46,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->arrayNode('client')->children()
-                ->booleanNode('traceable_producer')->defaultFalse()->end()
+                ->booleanNode('traceable_producer')->defaultValue($this->debug)->end()
                 ->scalarNode('prefix')->defaultValue('enqueue')->end()
                 ->scalarNode('app_name')->defaultValue('app')->end()
                 ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()

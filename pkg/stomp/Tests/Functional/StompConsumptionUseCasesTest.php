@@ -9,7 +9,7 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Stomp\StompContext;
-use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Enqueue\Test\RabbitManagementExtensionTrait;
 use Enqueue\Test\RabbitmqStompExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
@@ -21,7 +21,7 @@ use Interop\Queue\PsrProcessor;
 class StompConsumptionUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     use RabbitmqStompExtension;
-    use RabbitmqManagmentExtensionTrait;
+    use RabbitManagementExtensionTrait;
 
     /**
      * @var StompContext

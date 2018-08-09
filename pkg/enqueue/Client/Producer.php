@@ -151,7 +151,7 @@ class Producer implements ProducerInterface
             $contentType = $contentType ?: 'text/plain';
             $body = (string) $body;
         } elseif (is_array($body)) {
-            if ($contentType && $contentType !== 'application/json') {
+            if ($contentType && 'application/json' !== $contentType) {
                 throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
             }
 
@@ -168,7 +168,7 @@ class Producer implements ProducerInterface
             $contentType = 'application/json';
             $body = JSON::encode($body);
         } elseif ($body instanceof \JsonSerializable) {
-            if ($contentType && $contentType !== 'application/json') {
+            if ($contentType && 'application/json' !== $contentType) {
                 throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
             }
 

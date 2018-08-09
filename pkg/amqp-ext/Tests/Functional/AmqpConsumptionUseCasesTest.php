@@ -10,7 +10,7 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Test\RabbitmqAmqpExtension;
-use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Enqueue\Test\RabbitManagementExtensionTrait;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 class AmqpConsumptionUseCasesTest extends TestCase
 {
     use RabbitmqAmqpExtension;
-    use RabbitmqManagmentExtensionTrait;
+    use RabbitManagementExtensionTrait;
 
     /**
      * @var AmqpContext

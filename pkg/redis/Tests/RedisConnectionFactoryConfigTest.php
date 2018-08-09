@@ -40,7 +40,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
     public function testThrowIfVendorIsInvalid()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unsupported redis vendor given. It must be either "predis", "phpredis". Got "invalidVendor"');
+        $this->expectExceptionMessage('Unsupported redis vendor given. It must be either "predis", "phpredis", "custom". Got "invalidVendor"');
 
         new RedisConnectionFactory(['vendor' => 'invalidVendor']);
     }
@@ -72,6 +72,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => false,
                 'lazy' => true,
                 'database' => 0,
+                'redis' => null,
             ],
         ];
 
@@ -87,6 +88,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => false,
                 'lazy' => true,
                 'database' => 0,
+                'redis' => null,
             ],
         ];
 
@@ -102,6 +104,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'persisted' => false,
                 'lazy' => true,
                 'database' => 0,
+                'redis' => null,
             ],
         ];
 
@@ -118,6 +121,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'foo' => 'bar',
                 'database' => 5,
+                'redis' => null,
             ],
         ];
 
@@ -134,6 +138,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'foo' => 'bar',
                 'database' => 0,
+                'redis' => null,
             ],
         ];
     }

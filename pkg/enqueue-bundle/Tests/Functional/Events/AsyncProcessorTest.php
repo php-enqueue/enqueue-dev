@@ -23,7 +23,7 @@ class AsyncProcessorTest extends WebTestCase
         parent::setUp();
 
         /** @var AsyncListener $asyncListener */
-        $asyncListener = $this->container->get('enqueue.events.async_listener');
+        $asyncListener = static::$container->get('enqueue.events.async_listener');
 
         $asyncListener->resetSyncMode();
     }
@@ -31,7 +31,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testCouldBeGetFromContainerAsService()
     {
         /** @var AsyncProcessor $processor */
-        $processor = $this->container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('enqueue.events.async_processor');
 
         $this->assertInstanceOf(AsyncProcessor::class, $processor);
     }
@@ -39,7 +39,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldRejectIfMessageDoesNotContainEventNameProperty()
     {
         /** @var AsyncProcessor $processor */
-        $processor = $this->container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('enqueue.events.async_processor');
 
         $message = new NullMessage();
 
@@ -49,7 +49,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldRejectIfMessageDoesNotContainTransformerNameProperty()
     {
         /** @var AsyncProcessor $processor */
-        $processor = $this->container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('enqueue.events.async_processor');
 
         $message = new NullMessage();
         $message->setProperty('event_name', 'anEventName');
@@ -60,7 +60,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldCallRealListener()
     {
         /** @var AsyncProcessor $processor */
-        $processor = $this->container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('enqueue.events.async_processor');
 
         $message = new NullMessage();
         $message->setProperty('event_name', 'test_async');
@@ -73,7 +73,7 @@ class AsyncProcessorTest extends WebTestCase
         $this->assertEquals(PsrProcessor::ACK, $processor->process($message, new NullContext()));
 
         /** @var TestAsyncListener $listener */
-        $listener = $this->container->get('test_async_listener');
+        $listener = static::$container->get('test_async_listener');
 
         $this->assertNotEmpty($listener->calls);
 
@@ -83,7 +83,7 @@ class AsyncProcessorTest extends WebTestCase
         $this->assertEquals('test_async', $listener->calls[0][1]);
 
         $this->assertSame(
-            $this->container->get('enqueue.events.event_dispatcher'),
+            static::$container->get('enqueue.events.event_dispatcher'),
             $listener->calls[0][2]
         );
     }
@@ -91,7 +91,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldCallRealSubscriber()
     {
         /** @var AsyncProcessor $processor */
-        $processor = $this->container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('enqueue.events.async_processor');
 
         $message = new NullMessage();
         $message->setProperty('event_name', 'test_async_subscriber');
@@ -104,7 +104,7 @@ class AsyncProcessorTest extends WebTestCase
         $this->assertEquals(PsrProcessor::ACK, $processor->process($message, new NullContext()));
 
         /** @var TestAsyncSubscriber $subscriber */
-        $subscriber = $this->container->get('test_async_subscriber');
+        $subscriber = static::$container->get('test_async_subscriber');
 
         $this->assertNotEmpty($subscriber->calls);
 
@@ -114,7 +114,7 @@ class AsyncProcessorTest extends WebTestCase
         $this->assertEquals('test_async_subscriber', $subscriber->calls[0][1]);
 
         $this->assertSame(
-            $this->container->get('enqueue.events.event_dispatcher'),
+            static::$container->get('enqueue.events.event_dispatcher'),
             $subscriber->calls[0][2]
         );
     }

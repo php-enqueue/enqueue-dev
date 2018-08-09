@@ -11,7 +11,7 @@ class QueueConsumerTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $queueConsumer = $this->container->get(QueueConsumer::class);
+        $queueConsumer = static::$container->get(QueueConsumer::class);
 
         $this->assertInstanceOf(QueueConsumer::class, $queueConsumer);
     }

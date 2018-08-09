@@ -7,7 +7,6 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "symfony/framework-bundle": "^2.8|^3|^4",
         "enqueue/enqueue": "^0.8@dev",
         "enqueue/null": "^0.8@dev",
         "doctrine/orm": "~2.4"
@@ -17,7 +16,8 @@
         "enqueue/test": "^0.8@dev",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/browser-kit": "^2.8|^3|^4",
-        "symfony/expression-language": "^2.8|^3|^4"
+        "symfony/expression-language": "^2.8|^3|^4",
+        "symfony/framework-bundle": "^2.8|^3|^4"
     },
     "support": {
         "email": "opensource@forma-pro.com",

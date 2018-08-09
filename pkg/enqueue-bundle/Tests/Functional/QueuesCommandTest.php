@@ -14,14 +14,14 @@ class QueuesCommandTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $command = $this->container->get(QueuesCommand::class);
+        $command = static::$container->get(QueuesCommand::class);
 
         $this->assertInstanceOf(QueuesCommand::class, $command);
     }
 
     public function testShouldDisplayRegisteredQueues()
     {
-        $command = $this->container->get(QueuesCommand::class);
+        $command = static::$container->get(QueuesCommand::class);
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -43,7 +43,7 @@ class QueuesCommandTest extends WebTestCase
 
     public function testShouldDisplayRegisteredCommand()
     {
-        $command = $this->container->get(QueuesCommand::class);
+        $command = static::$container->get(QueuesCommand::class);
 
         $tester = new CommandTester($command);
         $tester->execute([]);

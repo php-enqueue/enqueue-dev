@@ -137,6 +137,39 @@ class AmqpTransportFactoryTest extends TestCase
         ], $config);
     }
 
+    public function testThrowIfNotSupportedDriverSet()
+    {
+        $transport = new AmqpTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Invalid configuration for path "foo.driver": Unexpected driver given "invalidDriver"');
+        $processor->process($tb->buildTree(), [[
+            'driver' => 'invalidDriver',
+        ]]);
+    }
+
+    public function testShouldAllowSetDriver()
+    {
+        $transport = new AmqpTransportFactory();
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [[
+            'driver' => 'ext',
+        ]]);
+
+        $this->assertEquals([
+            'driver' => 'ext',
+        ], $config);
+    }
+
     public function testShouldAllowAddConfigurationAsString()
     {
         $transport = new AmqpTransportFactory();

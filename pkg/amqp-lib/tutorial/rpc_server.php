@@ -14,11 +14,11 @@ $config = [
 
 function fib($n)
 {
-    if ($n == 0) {
+    if (0 == $n) {
         return 0;
     }
 
-    if ($n == 1) {
+    if (1 == $n) {
         return 1;
     }
 

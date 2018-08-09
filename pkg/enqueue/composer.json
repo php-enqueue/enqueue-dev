@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "queue-interop/queue-interop": "^0.6@dev",
+        "queue-interop/queue-interop": "^0.6.2@dev",
         "enqueue/null": "^0.8@dev",
         "ramsey/uuid": "^2|^3.5",
         "psr/log": "^1"
@@ -33,6 +33,7 @@
         "enqueue/stomp": "^0.8@dev",
         "enqueue/test": "^0.8@dev",
         "enqueue/simple-client": "^0.8@dev",
+        "enqueue/mongodb": "^0.8@dev",
         "empi89/php-amqp-stubs": "*@dev"
     },
     "suggest": {
@@ -59,6 +60,11 @@
         "exclude-from-classmap": [
             "/Tests/"
         ]
+    },
+    "config": {
+        "platform": {
+            "ext-amqp": "1.9.3"
+        }
     },
     "minimum-stability": "dev",
     "extra": {

@@ -131,7 +131,8 @@ class FsConsumer implements PsrConsumer
                 ftruncate($file, fstat($file)['size'] - strlen($frame));
                 rewind($file);
 
-                $rawMessage = substr(trim($frame), 1);
+                $rawMessage = str_replace('\|\{', '|{', $frame);
+                $rawMessage = substr(trim($rawMessage), 1);
 
                 if ($rawMessage) {
                     try {

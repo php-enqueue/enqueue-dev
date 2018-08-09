@@ -4,6 +4,7 @@ namespace Enqueue\AmqpExt;
 
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Enqueue\AmqpTools\SubscriptionConsumer;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -16,9 +17,10 @@ use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Interop\Queue\PsrTopic;
 
-class AmqpContext implements InteropAmqpContext, DelayStrategyAware
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscriptionConsumerAwareContext
 {
     use DelayStrategyAwareTrait;
 
@@ -165,12 +167,12 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $exchange = new \AMQPExchange($this->getExtChannel());
             $exchange->setName($bind->getSource()->getTopicName());
             $exchange->bind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getSource()->getQueueName());
             $queue->bind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getTarget()->getQueueName());
@@ -192,12 +194,12 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $exchange = new \AMQPExchange($this->getExtChannel());
             $exchange->setName($bind->getSource()->getTopicName());
             $exchange->unbind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // unbind queue from exchange
+        // unbind queue from exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getSource()->getQueueName());
             $queue->unbind($bind->getTarget()->getTopicName(), $bind->getRoutingKey(), $bind->getArguments());
-            // unbind exchange from queue
+        // unbind exchange from queue
         } else {
             $queue = new \AMQPQueue($this->getExtChannel());
             $queue->setName($bind->getTarget()->getQueueName());
@@ -263,6 +265,14 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     /**
      * {@inheritdoc}
      */
+    public function createSubscriptionConsumer()
+    {
+        return new SubscriptionConsumer($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function close()
     {
         $extConnection = $this->getExtChannel()->getConnection();
@@ -300,6 +310,8 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
@@ -315,10 +327,12 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         $consumerTag = $extQueue->getConsumerTag();
         $consumer->setConsumerTag($consumerTag);
-        $this->subscribers[$consumerTag] = [$consumer, $callback];
+        $this->subscribers[$consumerTag] = [$consumer, $callback, $extQueue];
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function unsubscribe(InteropAmqpConsumer $consumer)
@@ -327,18 +341,18 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             return;
         }
 
-        // seg fault
-//        $consumerTag = $consumer->getConsumerTag();
-//        $consumer->setConsumerTag(null);
-//
-//        $extQueue = new \AMQPQueue($this->getExtChannel());
-//        $extQueue->setName($consumer->getQueue()->getQueueName());
-//
-//        $extQueue->cancel($consumerTag);
-//        unset($this->subscribers[$consumerTag]);
+        $consumerTag = $consumer->getConsumerTag();
+        $consumer->setConsumerTag(null);
+
+        list($consumer, $callback, $extQueue) = $this->subscribers[$consumerTag];
+
+        $extQueue->cancel($consumerTag);
+        unset($this->subscribers[$consumerTag]);
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function consume($timeout = 0)
