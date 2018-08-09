@@ -5,6 +5,7 @@ namespace Enqueue\AmqpExt\Tests;
 use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpProducer;
+use Enqueue\AmqpExt\AmqpSubscriptionConsumer;
 use Enqueue\AmqpExt\Buffer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
@@ -14,6 +15,7 @@ use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
@@ -246,6 +248,20 @@ class AmqpContextTest extends TestCase
         $context = new AmqpContext($extChannelMock, 'basic_get');
 
         $context->close();
+    }
+
+    public function testShouldImplementPsrSubscriptionConsumerAwareInterface()
+    {
+        $rc = new \ReflectionClass(AmqpContext::class);
+
+        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumerAwareContext::class));
+    }
+
+    public function testShouldReturnExpectedSubscriptionConsumerInstance()
+    {
+        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+
+        $this->assertInstanceOf(AmqpSubscriptionConsumer::class, $context->createSubscriptionConsumer());
     }
 
     /**

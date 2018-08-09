@@ -5,9 +5,11 @@ namespace Enqueue\AmqpBunny\Tests;
 use Bunny\Channel;
 use Bunny\Protocol\MethodQueueDeclareOkFrame;
 use Enqueue\AmqpBunny\AmqpContext;
+use Enqueue\AmqpBunny\AmqpSubscriptionConsumer;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
@@ -233,6 +235,20 @@ class AmqpContextTest extends TestCase
 
         $context = new AmqpContext($channel);
         $context->setQos(123, 456, true);
+    }
+
+    public function testShouldImplementPsrSubscriptionConsumerAwareInterface()
+    {
+        $rc = new \ReflectionClass(AmqpContext::class);
+
+        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumerAwareContext::class));
+    }
+
+    public function testShouldReturnExpectedSubscriptionConsumerInstance()
+    {
+        $context = new AmqpContext($this->createChannelMock());
+
+        $this->assertInstanceOf(AmqpSubscriptionConsumer::class, $context->createSubscriptionConsumer());
     }
 
     /**
