@@ -59,7 +59,7 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('body', $message->getBody());
         $this->assertEquals(['pkey' => 'pval'], $message->getProperties());
         $this->assertEquals(['hkey' => 'hval'], $message->getHeaders());
-        $this->assertSame(0, $message->getPriority());
+        $this->assertNull($message->getPriority());
         $this->assertFalse($message->isRedelivered());
     }
 

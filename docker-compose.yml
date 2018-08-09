@@ -77,11 +77,10 @@ services:
       - "6379:6379"
 
   mysql:
-    image: mariadb:10
-    volumes:
-      - mysql-data:/var/lib/mysql
+    image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mqdev
 
   generate-changelog:
     image: enqueue/generate-changelog:latest
@@ -120,6 +119,3 @@ services:
       HOSTNAME_EXTERNAL: 'localstack'
       SERVICES: 'sqs'
 
-volumes:
-  mysql-data:
-    driver: local
