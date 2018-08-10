@@ -20,9 +20,9 @@
     "symfony/dependency-injection": "^4",
     "symfony/config": "^4",
     "queue-interop/queue-spec": "^0.5.5@dev",
-    "enqueue/test": "^0.8.25@dev",
-    "enqueue/enqueue": "^0.8@dev",
-    "enqueue/null": "^0.8@dev"
+    "enqueue/test": "0.9.x-dev",
+    "enqueue/enqueue": "0.9.x-dev",
+    "enqueue/null": "0.9.x-dev"
   },
   "support": {
     "email": "opensource@forma-pro.com",
@@ -32,9 +32,7 @@
     "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
   },
   "autoload": {
-    "psr-4": {
-      "Enqueue\\Mongodb\\": ""
-    },
+    "psr-4": { "Enqueue\\Mongodb\\": "" },
     "exclude-from-classmap": [
       "/Tests/"
     ]

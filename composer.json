@@ -4,49 +4,84 @@
   "minimum-stability": "beta",
   "homepage": "https://enqueue.forma-pro.com/",
   "require": {
-    "php": ">=5.6",
-    "enqueue/enqueue": "0.9.x-dev",
-    "enqueue/stomp": "0.9.x-dev",
-    "enqueue/amqp-ext": "0.9.x-dev",
-    "enqueue/amqp-lib": "0.9.x-dev",
-    "enqueue/amqp-bunny": "0.9.x-dev",
-    "enqueue/amqp-tools": "0.9.x-dev",
-    "php-amqplib/php-amqplib": "^2.7@dev",
-    "enqueue/redis": "0.9.x-dev",
-    "enqueue/fs": "0.9.x-dev",
-    "enqueue/null": "0.9.x-dev",
-    "enqueue/dbal": "0.9.x-dev",
-    "enqueue/mongodb": "0.9.x-dev",
-    "enqueue/sqs": "0.9.x-dev",
-    "enqueue/pheanstalk": "0.9.x-dev",
-    "enqueue/gearman": "0.9.x-dev",
-    "enqueue/rdkafka": "0.9.x-dev",
-    "kwn/php-rdkafka-stubs": "^1.0.2",
-    "enqueue/gps": "0.9.x-dev",
-    "enqueue/enqueue-bundle": "0.9.x-dev",
-    "enqueue/job-queue": "0.9.x-dev",
-    "enqueue/simple-client": "0.9.x-dev",
-    "enqueue/test": "0.9.x-dev",
-    "enqueue/async-event-dispatcher": "0.9.x-dev",
-    "queue-interop/queue-interop": "^0.6@dev|0.7.x-dev|^1.0.0-alpha1",
-    "queue-interop/amqp-interop": "^0.7@dev",
-    "queue-interop/queue-spec": "^0.5.4@dev",
+    "php": "^7.1.3",
 
-    "phpunit/phpunit": "^5",
-    "doctrine/doctrine-bundle": "~1.2",
-    "predis/predis": "^1.1",
-    "symfony/monolog-bundle": "^2.8|^3|^4",
-    "symfony/browser-kit": "^2.8|^3|^4",
-    "symfony/expression-language": "^2.8|^3|^4",
-    "symfony/event-dispatcher": "^2.8|^3|^4",
-    "symfony/console": "^2.8|^3|^4",
-    "friendsofphp/php-cs-fixer": "^2",
+    "ext-amqp": "^1.9.3",
+    "ext-gearman": "^1.1 || ^2.0",
+    "ext-mongodb": "^1.3",
+    "ext-rdkafka": "^3.0.3",
+
+    "queue-interop/amqp-interop": "^0.7.4",
+    "queue-interop/queue-interop": "^0.6.2",
+    "bunny/bunny": "^0.2.4|^0.3|^0.4",
+    "php-amqplib/php-amqplib": "^2.7",
+    "doctrine/dbal": "~2.5",
+    "ramsey/uuid": "^2|^3.5",
+    "psr/log": "^1",
+    "symfony/event-dispatcher": "^3.4|^4",
+    "makasim/temp-file": "^0.2",
+    "google/cloud-pubsub": "^0.6.1|^1.0",
+    "doctrine/orm": "~2.4",
+    "mongodb/mongodb": "^1.2",
+    "pda/pheanstalk": "^3",
+    "aws/aws-sdk-php": "~3.26",
+    "stomp-php/stomp-php": "^4",
+    "php-http/guzzle6-adapter": "^1.1",
+    "php-http/client-common": "^1.7@dev",
+    "richardfullmer/rabbitmq-management-api": "^2.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.5",
+    "queue-interop/queue-spec": "^0.5.5@dev",
+    "symfony/browser-kit": "^3.4|^4",
+    "symfony/config": "^3.4|^4",
+    "symfony/process": "^3.4|^4",
+    "symfony/console": "^3.4|^4",
+    "symfony/dependency-injection": "^3.4|^4",
+    "symfony/event-dispatcher": "^3.4|^4",
+    "symfony/expression-language": "^3.4|^4",
+    "symfony/http-kernel": "^3.4|^4",
+    "symfony/filesystem": "^3.4|^4",
+    "symfony/framework-bundle": "^3.4|^4",
     "empi89/php-amqp-stubs": "*@dev",
-    "php-http/client-common": "^1.7@dev"
+    "doctrine/doctrine-bundle": "~1.2",
+    "kwn/php-rdkafka-stubs": "^1.0.2",
+    "predis/predis": "^1.1",
+    "friendsofphp/php-cs-fixer": "^2"
   },
   "autoload": {
+    "psr-4": {
+      "Enqueue\\AmqpBunny\\": "pkg/amqp-bunny/",
+      "Enqueue\\AmqpExt\\": "pkg/amqp-ext/",
+      "Enqueue\\AmqpLib\\": "pkg/amqp-lib/",
+      "Enqueue\\AmqpTools\\": "pkg/amqp-tools/",
+      "Enqueue\\AsyncEventDispatcher\\": "pkg/async-event-dispatcher/",
+      "Enqueue\\Dbal\\": "pkg/dbal/",
+      "Enqueue\\Bundle\\": "pkg/enqueue-bundle/",
+      "Enqueue\\Fs\\": "pkg/fs/",
+      "Enqueue\\Gearman\\": "pkg/gearman/",
+      "Enqueue\\Gps\\": "pkg/gps/",
+      "Enqueue\\JobQueue\\": "pkg/job-queue/",
+      "Enqueue\\Mongodb\\": "pkg/mongodb/",
+      "Enqueue\\Null\\": "pkg/null/",
+      "Enqueue\\Pheanstalk\\": "pkg/pheanstalk/",
+      "Enqueue\\RdKafka\\": "pkg/rdkafka/",
+      "Enqueue\\Redis\\": "pkg/redis/",
+      "Enqueue\\SimpleClient\\": "pkg/simple-client/",
+      "Enqueue\\Sqs\\": "pkg/sqs/",
+      "Enqueue\\Stomp\\": "pkg/stomp/",
+      "Enqueue\\Test\\": "pkg/test/",
+      "Enqueue\\": "pkg/enqueue/"
+    },
+    "exclude-from-classmap": [
+      "/Tests/"
+    ],
     "files": [
-      "pkg/enqueue/functions_include.php",
+      "pkg/enqueue/functions_include.php"
+    ]
+  },
+  "autoload-dev": {
+    "files": [
       "pkg/rdkafka/Tests/bootstrap.php"
     ],
     "psr-0": {
@@ -62,93 +97,9 @@
       "ext-amqp": "1.9.3",
       "ext-gearman": "1.1",
       "ext-rdkafka": "3.3",
-      "ext-mongodb": "1.3"
+      "ext-mongodb": "1.3",
+      "ext-bcmath": "1",
+      "ext-mbstring": "1"
     }
-  },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "pkg/test"
-    },
-    {
-      "type": "path",
-      "url": "pkg/enqueue"
-    },
-    {
-      "type": "path",
-      "url": "pkg/stomp"
-    },
-    {
-      "type": "path",
-      "url": "pkg/amqp-ext"
-    },
-    {
-      "type": "path",
-      "url": "pkg/amqp-lib"
-    },
-    {
-      "type": "path",
-      "url": "pkg/amqp-bunny"
-    },
-    {
-      "type": "path",
-      "url": "pkg/amqp-tools"
-    },
-    {
-      "type": "path",
-      "url": "pkg/redis"
-    },
-    {
-      "type": "path",
-      "url": "pkg/enqueue-bundle"
-    },
-    {
-      "type": "path",
-      "url": "pkg/job-queue"
-    },
-    {
-      "type": "path",
-      "url": "pkg/fs"
-    },
-    {
-      "type": "path",
-      "url": "pkg/null"
-    },
-    {
-      "type": "path",
-      "url": "pkg/dbal"
-    },
-    {
-      "type": "path",
-      "url": "pkg/sqs"
-    },
-    {
-      "type": "path",
-      "url": "pkg/pheanstalk"
-    },
-    {
-      "type": "path",
-      "url": "pkg/gearman"
-    },
-    {
-      "type": "path",
-      "url": "pkg/rdkafka"
-    },
-    {
-      "type": "path",
-      "url": "pkg/gps"
-    },
-    {
-      "type": "path",
-      "url": "pkg/simple-client"
-    },
-    {
-      "type": "path",
-      "url": "pkg/async-event-dispatcher"
-    },
-    {
-      "type": "path",
-      "url": "pkg/mongodb"
-    }
-  ]
+  }
 }
