@@ -552,7 +552,7 @@ class ProducerTest extends TestCase
         $extension = $this->createMock(ExtensionInterface::class);
         $extension
             ->expects($this->at(0))
-            ->method('onPreSend')
+            ->method('onSend')
             ->with($this->identicalTo('topic'), $this->identicalTo($message))
         ;
         $extension
@@ -580,7 +580,7 @@ class ProducerTest extends TestCase
         $extension = $this->createMock(ExtensionInterface::class);
         $extension
             ->expects($this->at(0))
-            ->method('onPreSend')
+            ->method('onSend')
             ->with($this->identicalTo('topic'), $this->identicalTo($message))
         ;
         $extension
