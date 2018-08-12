@@ -34,7 +34,6 @@
         "enqueue/test": "0.9.x-dev",
         "php-amqplib/php-amqplib": "^2.7",
         "doctrine/doctrine-bundle": "~1.2",
-        "symfony/monolog-bundle": "^3.4|^4",
         "symfony/browser-kit": "^3.4|^4",
         "symfony/expression-language": "^3.4|^4"
     },

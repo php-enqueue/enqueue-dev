@@ -49,7 +49,6 @@ install:
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
     - composer install
-    - ./bin/symlink-pkgs-to-vendor.sh
     - if [ "$PREPARE_CONTAINER" = true ]; then docker --version; fi
     - if [ "$PREPARE_CONTAINER" = true ]; then docker-compose --version; fi
     - if [ "$PREPARE_CONTAINER" = true ]; then bin/dev -b; fi

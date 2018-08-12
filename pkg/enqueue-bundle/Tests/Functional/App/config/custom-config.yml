@@ -19,12 +19,6 @@ framework:
     router:          { resource: '%kernel.root_dir%/config/routing.yml' }
     default_locale:  '%locale%'
 
-monolog:
-    handlers:
-        main:
-            type: 'null'
-            level: 'error'
-
 services:
     test.message.processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'
