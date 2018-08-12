@@ -5,6 +5,7 @@ namespace Enqueue\JobQueue\Tests;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobProcessor;
 use Enqueue\JobQueue\JobRunner;
+use Enqueue\JobQueue\OrphanJobException;
 
 class JobRunnerTest extends \PHPUnit\Framework\TestCase
 {
@@ -190,6 +191,39 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
 
         $jobRunner = new JobRunner($jobProcessor);
         $this->expectException(\Exception::class);
+        $jobRunner->runUnique('owner-id', 'job-name', function () {
+            throw new \Exception();
+        });
+    }
+
+    public function testRunUniqueShouldThrowOrphanJobExceptionIfChildCleanupFails()
+    {
+        $root = new Job();
+        $child = new Job();
+
+        $jobProcessor = $this->createJobProcessorMock();
+        $jobProcessor
+            ->expects($this->once())
+            ->method('findOrCreateRootJob')
+            ->will($this->returnValue($root))
+        ;
+        $jobProcessor
+            ->expects($this->once())
+            ->method('findOrCreateChildJob')
+            ->will($this->returnValue($child))
+        ;
+        $jobProcessor
+            ->expects($this->never())
+            ->method('successChildJob')
+        ;
+        $jobProcessor
+            ->expects($this->once())
+            ->method('failChildJob')
+            ->willThrowException(new \Exception())
+        ;
+
+        $jobRunner = new JobRunner($jobProcessor);
+        $this->expectException(OrphanJobException::class);
         $jobRunner->runUnique('owner-id', 'job-name', function () {
             throw new \Exception();
         });
