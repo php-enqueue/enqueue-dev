@@ -190,6 +190,7 @@ class DbalContext implements PsrContext
         $table->addIndex(['queue']);
         $table->addIndex(['priority']);
         $table->addIndex(['delayed_until']);
+        $table->addIndex(['priority', 'published_at']);
 
         $sm->createTable($table);
     }
