@@ -24,80 +24,86 @@ class PhpRedis implements Redis
             'port' => null,
             'pass' => null,
             'user' => null,
-            'timeout' => null,
+            'timeout' => .0,
             'reserved' => null,
             'retry_interval' => null,
             'persisted' => false,
             'database' => 0,
         ], $config);
+
+        var_dump($this->config);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function lpush($key, $value)
+    public function lpush(string $key, string $value): int
     {
-        if (false == $this->redis->lPush($key, $value)) {
-            throw new ServerException($this->redis->getLastError());
-        }
+        return $this->redis->lPush($key, $value);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function brpop($key, $timeout)
+    public function brpop(array $keys, int $timeout): ?RedisResult
     {
-        if ($result = $this->redis->brPop([$key], $timeout)) {
-            return $result[1];
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rpop($key)
-    {
-        return $this->redis->rPop($key);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function connect()
-    {
-        if (false == $this->redis) {
-            $this->redis = new \Redis();
-
-            if ($this->config['persisted']) {
-                $this->redis->pconnect(
-                    $this->config['host'],
-                    $this->config['port'],
-                    $this->config['timeout']
-                );
-            } else {
-                $this->redis->connect(
-                    $this->config['host'],
-                    $this->config['port'],
-                    $this->config['timeout'],
-                    $this->config['reserved'],
-                    $this->config['retry_interval']
-                );
-            }
-
-            if ($this->config['pass']) {
-                $this->redis->auth($this->config['pass']);
-            }
-
-            $this->redis->select($this->config['database']);
+        if ($result = $this->redis->brPop($keys, $timeout)) {
+            return new RedisResult($result[0], $result[1]);
         }
 
-        return $this->redis;
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function disconnect()
+    public function rpop(string $key): ?RedisResult
+    {
+        if ($message = $this->redis->rPop($key)) {
+            return new RedisResult($key, $message);
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function connect(): void
+    {
+        if ($this->redis) {
+            return;
+        }
+
+        $this->redis = new \Redis();
+
+        if ($this->config['persisted']) {
+            $this->redis->pconnect(
+                $this->config['host'],
+                $this->config['port'],
+                $this->config['timeout']
+            );
+        } else {
+            $this->redis->connect(
+                $this->config['host'],
+                $this->config['port'],
+                $this->config['timeout'],
+                $this->config['reserved'],
+                $this->config['retry_interval']
+            );
+        }
+
+        if ($this->config['pass']) {
+            $this->redis->auth($this->config['pass']);
+        }
+
+        $this->redis->select($this->config['database']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disconnect(): void
     {
         if ($this->redis) {
             $this->redis->close();
@@ -107,7 +113,7 @@ class PhpRedis implements Redis
     /**
      * {@inheritdoc}
      */
-    public function del($key)
+    public function del(string $key): void
     {
         $this->redis->del($key);
     }

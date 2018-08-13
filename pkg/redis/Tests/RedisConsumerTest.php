@@ -8,6 +8,7 @@ use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Redis\RedisProducer;
+use Enqueue\Redis\RedisResult;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrConsumer;
 
@@ -81,7 +82,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $redisMock
             ->expects($this->once())
             ->method('brpop')
-            ->with('aQueue', 2)
+            ->with(['aQueue'], 2)
             ->willReturn(null)
         ;
 
@@ -105,8 +106,8 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $redisMock
             ->expects($this->once())
             ->method('brpop')
-            ->with('aQueue', 2)
-            ->willReturn(json_encode(new RedisMessage('aBody')))
+            ->with(['aQueue'], 2)
+            ->willReturn(new RedisResult('aQueue', json_encode(new RedisMessage('aBody'))))
         ;
 
         $contextMock = $this->createContextMock();
@@ -119,6 +120,47 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $consumer = new RedisConsumer($contextMock, $destination);
 
         $message = $consumer->receive(2000);
+
+        $this->assertInstanceOf(RedisMessage::class, $message);
+        $this->assertSame('aBody', $message->getBody());
+    }
+
+    public function testShouldCallRedisBRPopSeveralTimesWithFiveSecondTimeoutIfZeroTimeoutIsPassed()
+    {
+        $destination = new RedisDestination('aQueue');
+
+        $expectedTimeout = 5;
+
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->at(0))
+            ->method('brpop')
+            ->with(['aQueue'], $expectedTimeout)
+            ->willReturn(null)
+        ;
+        $redisMock
+            ->expects($this->at(1))
+            ->method('brpop')
+            ->with(['aQueue'], $expectedTimeout)
+            ->willReturn(null)
+        ;
+        $redisMock
+            ->expects($this->at(2))
+            ->method('brpop')
+            ->with(['aQueue'], $expectedTimeout)
+            ->willReturn(new RedisResult('aQueue', json_encode(new RedisMessage('aBody'))))
+        ;
+
+        $contextMock = $this->createContextMock();
+        $contextMock
+            ->expects($this->atLeastOnce())
+            ->method('getRedis')
+            ->willReturn($redisMock)
+        ;
+
+        $consumer = new RedisConsumer($contextMock, $destination);
+
+        $message = $consumer->receive(0);
 
         $this->assertInstanceOf(RedisMessage::class, $message);
         $this->assertSame('aBody', $message->getBody());
@@ -157,7 +199,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('rpop')
             ->with('aQueue')
-            ->willReturn(json_encode(new RedisMessage('aBody')))
+            ->willReturn(new RedisResult('aQueue', json_encode(new RedisMessage('aBody'))))
         ;
 
         $contextMock = $this->createContextMock();
