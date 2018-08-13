@@ -163,7 +163,7 @@ class DbalConsumer implements PsrConsumer
 
             $this->dbal->commit();
 
-            if (empty($dbalMessage['time_to_live']) || $dbalMessage['time_to_live'] > time()) {
+            if (empty($dbalMessage['time_to_live']) || ($dbalMessage['time_to_live'] / 1000) > microtime(true)) {
                 return $this->convertMessage($dbalMessage);
             }
         } catch (\Exception $e) {
