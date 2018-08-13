@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
-use Enqueue\Bundle\Events\AsyncListener;
+use Enqueue\AsyncEventDispatcher\AsyncListener;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\TraceableProducer;
@@ -23,6 +23,8 @@ class AsyncListenerTest extends WebTestCase
         $asyncListener = static::$container->get('enqueue.events.async_listener');
 
         $asyncListener->resetSyncMode();
+        static::$container->get('test_async_subscriber')->calls = [];
+        static::$container->get('test_async_listener')->calls = [];
     }
 
     public function testShouldNotCallRealListenerIfMarkedAsAsync()
