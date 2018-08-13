@@ -94,6 +94,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setTimestamp(1000);
         $transportMessage->setPriority(2);
         $transportMessage->setDeliveryDelay(12345);
+        $transportMessage->setTimeToLive(67890);
 
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
@@ -118,9 +119,27 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
         $this->assertSame(12345, $clientMessage->getDelay());
-
-        $this->assertNull($clientMessage->getExpire());
+        $this->assertSame(67890, $clientMessage->getExpire());
         $this->assertSame(MessagePriority::NORMAL, $clientMessage->getPriority());
+    }
+
+    public function testShouldRoundTransportMessageTimeToLiveToNearestIntegerWhenConvertingToClientMessage()
+    {
+        $driver = new DbalDriver(
+            $this->createPsrContextMock(),
+            $this->createDummyConfig(),
+            $this->createDummyQueueMetaRegistry()
+        );
+
+        $transportMessage = new DbalMessage();
+
+        $transportMessage->setTimeToLive(1.4);
+        $clientMessage = $driver->createClientMessage($transportMessage);
+        $this->assertSame(1, $clientMessage->getExpire());
+
+        $transportMessage->setTimeToLive(1.5);
+        $clientMessage = $driver->createClientMessage($transportMessage);
+        $this->assertSame(2, $clientMessage->getExpire());
     }
 
     public function testShouldConvertClientMessageToTransportMessage()
@@ -163,6 +182,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([
             'key' => 'val',
         ], $transportMessage->getProperties());
+        $this->assertSame(123, $transportMessage->getTimeToLive());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
     }

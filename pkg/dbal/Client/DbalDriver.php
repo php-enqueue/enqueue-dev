@@ -72,6 +72,7 @@ class DbalDriver implements DriverInterface
         $transportMessage->setMessageId($message->getMessageId());
         $transportMessage->setTimestamp($message->getTimestamp());
         $transportMessage->setDeliveryDelay($message->getDelay());
+        $transportMessage->setTimeToLive($message->getExpire());
         $transportMessage->setReplyTo($message->getReplyTo());
         $transportMessage->setCorrelationId($message->getCorrelationId());
         if (array_key_exists($message->getPriority(), self::$priorityMap)) {
@@ -97,6 +98,8 @@ class DbalDriver implements DriverInterface
         $clientMessage->setContentType($message->getHeader('content_type'));
         $clientMessage->setMessageId($message->getMessageId());
         $clientMessage->setTimestamp($message->getTimestamp());
+        $timeToLive = $message->getTimeToLive();
+        $clientMessage->setExpire((null === $timeToLive) ? null : (int) round($timeToLive));
         $clientMessage->setDelay($message->getDeliveryDelay());
         $clientMessage->setReplyTo($message->getReplyTo());
         $clientMessage->setCorrelationId($message->getCorrelationId());
