@@ -3,7 +3,9 @@
 namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
+use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\Producer;
+use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\Job;
@@ -72,6 +74,8 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
+        $this->setupAutowiringForProcessors($container);
+
         foreach ($config['transport'] as $name => $transportConfig) {
             $this->factories[$name]->createConnectionFactory($container, $transportConfig);
             $this->factories[$name]->createContext($container, $transportConfig);
@@ -109,6 +113,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
             if ($config['client']['traceable_producer']) {
                 $container->register(TraceableProducer::class, TraceableProducer::class)
                     ->setDecoratedService(Producer::class)
+                    ->setPublic(true)
                     ->addArgument(new Reference(sprintf('%s.inner', TraceableProducer::class)))
                 ;
             }
@@ -218,5 +223,20 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
                 break;
             }
         }
+    }
+
+    private function setupAutowiringForProcessors(ContainerBuilder $container)
+    {
+        if (!method_exists($container, 'registerForAutoconfiguration')) {
+            return;
+        }
+
+        $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
+            ->setPublic(true)
+            ->addTag('enqueue.client.processor');
+
+        $container->registerForAutoconfiguration(CommandSubscriberInterface::class)
+            ->setPublic(true)
+            ->addTag('enqueue.client.processor');
     }
 }

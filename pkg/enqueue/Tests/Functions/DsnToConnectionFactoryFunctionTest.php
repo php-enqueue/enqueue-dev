@@ -9,6 +9,7 @@ use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Gps\GpsConnectionFactory;
+use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
@@ -97,5 +98,7 @@ class DsnToConnectionFactoryFunctionTest extends TestCase
         yield ['sqs:', SqsConnectionFactory::class];
 
         yield ['gps:', GpsConnectionFactory::class];
+
+        yield ['mongodb:', MongodbConnectionFactory::class];
     }
 }

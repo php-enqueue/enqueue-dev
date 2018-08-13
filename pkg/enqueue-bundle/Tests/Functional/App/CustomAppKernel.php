@@ -44,7 +44,6 @@ class CustomAppKernel extends Kernel
         $bundles = [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new \Symfony\Bundle\MonologBundle\MonologBundle(),
             new \Enqueue\Bundle\EnqueueBundle(),
         ];
 

@@ -13,6 +13,7 @@ Here's the list of transports supported by Enqueue Client:
 | Redis               | [enqueue/gps](../transport/redis.md)                       | redis:                          |
 | Amazon SQS          | [enqueue/sqs](../transport/sqs.md)                         | sqs:                            |
 | STOMP, RabbitMQ     | [enqueue/stomp](../transport/stomp.md)                     | stomp:                          |
+| Kafka               | [enqueue/stomp](../transport/kafka.md)                     | kafka:                          |
 | Null                | [enqueue/null](../transport/null.md)                       | null:                           |
 
 Here's the list of protocols and Client features supported by them 
@@ -20,16 +21,16 @@ Here's the list of protocols and Client features supported by them
 | Protocol       | Priority | Delay    | Expiration | Setup broker | Message bus |
 |:--------------:|:--------:|:--------:|:----------:|:------------:|:-----------:|
 | AMQP           |   No     |    No    |    Yes     |     Yes      |     Yes     |        
-| RabbitMQ AMQP  |   Yes    |    Yes*  |    Yes     |     Yes      |     Yes     |
+| RabbitMQ AMQP  |   Yes    |    Yes   |    Yes     |     Yes      |     Yes     |
 | STOMP          |   No     |    No    |    Yes     |     No       |     Yes**   |
-| RabbitMQ STOMP |   Yes    |    Yes*  |    Yes     |     Yes***   |     Yes**   |
+| RabbitMQ STOMP |   Yes    |    Yes   |    Yes     |     Yes***   |     Yes**   |
 | Filesystem     |   No     |    No    |    No      |     Yes      |     No      |
 | Redis          |   No     |    No    |    No      |  Not needed  |     No      |
 | Doctrine DBAL  |   Yes    |    Yes   |    No      |     Yes      |     No      |
 | Amazon SQS     |   No     |    Yes   |    No      |     Yes      |   Not impl  |
+| Kafka          |   No     |    No    |    No      |     Yes      |     No      |
 | Google PubSub  | Not impl | Not impl |  Not impl  |     Yes      |   Not impl  |
 
-* \* Possible if a RabbitMQ delay plugin is installed.
 * \*\* Possible if topics (exchanges) are configured on broker side manually.
 * \*\*\* Possible if RabbitMQ Management Plugin is installed.
 

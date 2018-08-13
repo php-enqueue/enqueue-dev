@@ -254,7 +254,7 @@ class BuildClientRoutingPassTest extends TestCase
         $pass = new BuildClientRoutingPass();
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Topic subscriber configuration is invalid. "[12345]"');
+        $this->expectExceptionMessage('Topic subscriber configuration is invalid');
 
         $pass->process($container);
     }

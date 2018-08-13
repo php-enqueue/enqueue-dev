@@ -1,5 +1,119 @@
 # Change Log
 
+## [0.8.35](https://github.com/php-enqueue/enqueue-dev/tree/0.8.35) (2018-08-06)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.34...0.8.35)
+
+- Improve multi queue consumption. [\#488](https://github.com/php-enqueue/enqueue-dev/pull/488) ([makasim](https://github.com/makasim))
+
+## [0.8.34](https://github.com/php-enqueue/enqueue-dev/tree/0.8.34) (2018-08-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.33...0.8.34)
+
+- \[sqs\] Messages should not allow empty bodies [\#435](https://github.com/php-enqueue/enqueue-dev/issues/435)
+- Use the auto-tagging feature for e.g. processors [\#405](https://github.com/php-enqueue/enqueue-dev/issues/405)
+
+- \[simple-client\] `sqs:` DSN not working [\#483](https://github.com/php-enqueue/enqueue-dev/issues/483)
+
+- Adding a signal handler to the consumer [\#485](https://github.com/php-enqueue/enqueue-dev/issues/485)
+- Problem with SQS DSN string with + in secret [\#481](https://github.com/php-enqueue/enqueue-dev/issues/481)
+- Monitoring interface [\#476](https://github.com/php-enqueue/enqueue-dev/issues/476)
+
+- simple client dsn issue [\#486](https://github.com/php-enqueue/enqueue-dev/pull/486) ([makasim](https://github.com/makasim))
+- Update SQS DSN doc sample with mention urlencode [\#484](https://github.com/php-enqueue/enqueue-dev/pull/484) ([dgoujard](https://github.com/dgoujard))
+- Prevent SqsProducer from sending messages with empty bodies [\#478](https://github.com/php-enqueue/enqueue-dev/pull/478) ([elazar](https://github.com/elazar))
+
+## [0.8.33](https://github.com/php-enqueue/enqueue-dev/tree/0.8.33) (2018-07-26)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.32...0.8.33)
+
+- \[consumption\] process niceness extension [\#449](https://github.com/php-enqueue/enqueue-dev/issues/449)
+- \[Symfony\] AsyncListener does not use TraceableProducer [\#392](https://github.com/php-enqueue/enqueue-dev/issues/392)
+
+- Fix call debug method on null [\#480](https://github.com/php-enqueue/enqueue-dev/pull/480) ([makasim](https://github.com/makasim))
+
+- Support MQTT [\#477](https://github.com/php-enqueue/enqueue-dev/issues/477)
+- Bugs in RabbitMqDelayPluginDelayStrategy [\#455](https://github.com/php-enqueue/enqueue-dev/issues/455)
+- \[sqs\] Support using a pre-configured SqsClient [\#443](https://github.com/php-enqueue/enqueue-dev/issues/443)
+- IronMQ \(iron.io\) provider ? [\#415](https://github.com/php-enqueue/enqueue-dev/issues/415)
+
+- Fix AMQPContext::unsubscribe [\#479](https://github.com/php-enqueue/enqueue-dev/pull/479) ([adrienbrault](https://github.com/adrienbrault))
+- Add Localstack Docker container for SQS functional tests [\#473](https://github.com/php-enqueue/enqueue-dev/pull/473) ([elazar](https://github.com/elazar))
+- \[consumption\] add process niceness extension [\#467](https://github.com/php-enqueue/enqueue-dev/pull/467) ([ramunasd](https://github.com/ramunasd))
+
+## [0.8.32](https://github.com/php-enqueue/enqueue-dev/tree/0.8.32) (2018-07-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.31...0.8.32)
+
+- \[Bundle\] auto-tag services [\#409](https://github.com/php-enqueue/enqueue-dev/issues/409)
+- Add autoconfigure for services extending PsrProcess interface [\#452](https://github.com/php-enqueue/enqueue-dev/pull/452) ([mnavarrocarter](https://github.com/mnavarrocarter))
+
+- Add documentation the processor services need to be public [\#406](https://github.com/php-enqueue/enqueue-dev/issues/406)
+
+- Is it possible to read messages in batch? [\#472](https://github.com/php-enqueue/enqueue-dev/issues/472)
+- Batch publishing [\#463](https://github.com/php-enqueue/enqueue-dev/issues/463)
+- populating, missing messages and supervisor [\#460](https://github.com/php-enqueue/enqueue-dev/issues/460)
+- Processor was not found. processorName: "enqueue.client.router\_processor" [\#451](https://github.com/php-enqueue/enqueue-dev/issues/451)
+- \[Bundle\] Enqueue\Symfony\Client\ContainerAwareProcessorRegistry expects processors to be public [\#410](https://github.com/php-enqueue/enqueue-dev/issues/410)
+
+- Update of "back to index" link [\#468](https://github.com/php-enqueue/enqueue-dev/pull/468) ([N-M](https://github.com/N-M))
+- PHP\_URL\_SCHEME doesn't support underscores [\#453](https://github.com/php-enqueue/enqueue-dev/pull/453) ([coudenysj](https://github.com/coudenysj))
+- WIP: Add support for using a pre-configured client with the SQS driver [\#444](https://github.com/php-enqueue/enqueue-dev/pull/444) ([elazar](https://github.com/elazar))
+
+## [0.8.31](https://github.com/php-enqueue/enqueue-dev/tree/0.8.31) (2018-05-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.30...0.8.31)
+
+- Improve exception messages for topic-subscribers [\#441](https://github.com/php-enqueue/enqueue-dev/pull/441) ([thePanz](https://github.com/thePanz))
+
+- Gracefull shutdown? [\#440](https://github.com/php-enqueue/enqueue-dev/issues/440)
+
+- Allow newer version of bunny [\#446](https://github.com/php-enqueue/enqueue-dev/pull/446) ([enumag](https://github.com/enumag))
+- Fix mistype at async\_events docs [\#445](https://github.com/php-enqueue/enqueue-dev/pull/445) ([diimpp](https://github.com/diimpp))
+
+## [0.8.30](https://github.com/php-enqueue/enqueue-dev/tree/0.8.30) (2018-05-08)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.29...0.8.30)
+
+## [0.8.29](https://github.com/php-enqueue/enqueue-dev/tree/0.8.29) (2018-05-08)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.28...0.8.29)
+
+- \[mongodb\] Parse DSN if array [\#438](https://github.com/php-enqueue/enqueue-dev/pull/438) ([makasim](https://github.com/makasim))
+- \[gps\] Add support for google/cloud-pubsub ^1.0 [\#437](https://github.com/php-enqueue/enqueue-dev/pull/437) ([kfb-ts](https://github.com/kfb-ts))
+- fix typo in message\_producer.md [\#436](https://github.com/php-enqueue/enqueue-dev/pull/436) ([halidovz](https://github.com/halidovz))
+
+## [0.8.28](https://github.com/php-enqueue/enqueue-dev/tree/0.8.28) (2018-05-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.27...0.8.28)
+
+- Mongodb transport [\#430](https://github.com/php-enqueue/enqueue-dev/pull/430) ([turboboy88](https://github.com/turboboy88))
+
+- Should `enqueue/enqueue` also be added to "require" in composer.json for DBAL package? [\#433](https://github.com/php-enqueue/enqueue-dev/issues/433)
+
+- RouterProcessor "acknowledges" commands and events without a registered processor [\#423](https://github.com/php-enqueue/enqueue-dev/issues/423)
+- \[Symfony\]\[Documentation\] Migrate from JMSJobQueueBundle [\#421](https://github.com/php-enqueue/enqueue-dev/issues/421)
+
+- remove enqueue core dependency [\#434](https://github.com/php-enqueue/enqueue-dev/pull/434) ([ASKozienko](https://github.com/ASKozienko))
+
+## [0.8.27](https://github.com/php-enqueue/enqueue-dev/tree/0.8.27) (2018-05-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.26...0.8.27)
+
+- Kafka symfony transport [\#432](https://github.com/php-enqueue/enqueue-dev/pull/432) ([dheineman](https://github.com/dheineman))
+- Drop PHP5 support, Drop Symfony 2.X support.  [\#419](https://github.com/php-enqueue/enqueue-dev/pull/419) ([makasim](https://github.com/makasim))
+
+- How can I use the Symfony Bundle with Kafka? [\#428](https://github.com/php-enqueue/enqueue-dev/issues/428)
+
+## [0.8.26](https://github.com/php-enqueue/enqueue-dev/tree/0.8.26) (2018-04-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.25...0.8.26)
+
+- Allow to enable SSL in StompConnectionFactory [\#427](https://github.com/php-enqueue/enqueue-dev/pull/427) ([arjanvdbos](https://github.com/arjanvdbos))
+- Fix namespace in doc [\#426](https://github.com/php-enqueue/enqueue-dev/pull/426) ([Koc](https://github.com/Koc))
+
+## [0.8.25](https://github.com/php-enqueue/enqueue-dev/tree/0.8.25) (2018-04-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.24...0.8.25)
+
+- gearmand queue library can't not use for php7 [\#270](https://github.com/php-enqueue/enqueue-dev/issues/270)
+- \[bundle\] Make TraceableProducer service public [\#422](https://github.com/php-enqueue/enqueue-dev/pull/422) ([sbacelic](https://github.com/sbacelic))
+
+- Why no packagist support [\#424](https://github.com/php-enqueue/enqueue-dev/issues/424)
+- \[DbalDriver\] does not convert Message::$expire to DbalMessage::$timeToLive [\#391](https://github.com/php-enqueue/enqueue-dev/issues/391)
+
+- \[skip ci\] Update doc block. return value should be "self" [\#425](https://github.com/php-enqueue/enqueue-dev/pull/425) ([makasim](https://github.com/makasim))
+- Fix a tiny little typo in documentation [\#416](https://github.com/php-enqueue/enqueue-dev/pull/416) ([bobey](https://github.com/bobey))
+
 ## [0.8.24](https://github.com/php-enqueue/enqueue-dev/tree/0.8.24) (2018-03-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.23...0.8.24)
 

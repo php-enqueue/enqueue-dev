@@ -61,7 +61,7 @@ class DbalMessage implements PsrMessage
         $this->properties = $properties;
         $this->headers = $headers;
         $this->redelivered = false;
-        $this->priority = 0;
+        $this->priority = null;
         $this->deliveryDelay = null;
     }
 

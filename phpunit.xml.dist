@@ -77,6 +77,10 @@
             <directory>pkg/gps/Tests</directory>
         </testsuite>
 
+        <testsuite name="Mongodb transport">
+            <directory>pkg/mongodb/Tests</directory>
+        </testsuite>
+
         <testsuite name="enqueue-bundle">
             <directory>pkg/enqueue-bundle/Tests</directory>
         </testsuite>
@@ -93,6 +97,10 @@
             <directory>pkg/async-event-dispatcher/Tests</directory>
         </testsuite>
     </testsuites>
+
+    <php>
+        <env name="SHELL_VERBOSITY" value="-1"/>
+    </php>
 
     <filter>
         <whitelist>
