@@ -2,11 +2,17 @@
 
 namespace Enqueue\Redis;
 
+use Predis\Client;
 use Predis\ClientInterface;
 use Predis\Response\ServerException as PRedisServerException;
 
 class PRedis implements Redis
 {
+    /**
+     * @var array
+     */
+    private $config;
+
     /**
      * @var ClientInterface
      */
@@ -15,9 +21,19 @@ class PRedis implements Redis
     /**
      * @param ClientInterface $redis
      */
-    public function __construct(ClientInterface $redis)
+    public function __construct(array $config)
     {
-        $this->redis = $redis;
+        $this->config = $this->config = array_replace([
+            'host' => null,
+            'port' => null,
+            'pass' => null,
+            'user' => null,
+            'timeout' => null,
+            'reserved' => null,
+            'retry_interval' => null,
+            'persisted' => false,
+            'database' => 0,
+        ], $config);
     }
 
     /**
@@ -63,6 +79,12 @@ class PRedis implements Redis
      */
     public function connect()
     {
+        $this->redis = new Client($this->config, ['exceptions' => true]);
+
+        if ($this->config['pass']) {
+            $this->redis->auth($this->config['pass']);
+        }
+
         $this->redis->connect();
     }
 

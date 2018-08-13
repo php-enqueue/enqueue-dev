@@ -22,6 +22,8 @@ class PhpRedis implements Redis
         $this->config = array_replace([
             'host' => null,
             'port' => null,
+            'pass' => null,
+            'user' => null,
             'timeout' => null,
             'reserved' => null,
             'retry_interval' => null,
@@ -82,12 +84,8 @@ class PhpRedis implements Redis
                 );
             }
 
-            if (array_key_exists('pass', $this->config)) {
-                $this->config['auth'] = $this->config['pass'];
-            }
-
-            if (array_key_exists('auth', $this->config)) {
-                $this->redis->auth($this->config['auth']);
+            if ($this->config['pass']) {
+                $this->redis->auth($this->config['pass']);
             }
 
             $this->redis->select($this->config['database']);
