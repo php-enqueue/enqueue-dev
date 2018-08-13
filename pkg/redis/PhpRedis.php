@@ -30,8 +30,6 @@ class PhpRedis implements Redis
             'persisted' => false,
             'database' => 0,
         ], $config);
-
-        var_dump($this->config);
     }
 
     /**

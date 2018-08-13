@@ -25,6 +25,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
     public function __construct(RedisContext $context)
     {
         $this->context = $context;
+        $this->subscribers = [];
     }
 
     /**
@@ -58,7 +59,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
             $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout || 5000);
             if ($result) {
                 $message = RedisMessage::jsonUnserialize($result->getMessage());
-                $callback = $this->subscribers[$result->getKey()];
+                list($consumer, $callback) = $this->subscribers[$result->getKey()];
                 if (false === call_user_func($callback, $message, $consumer)) {
                     return;
                 }
@@ -91,7 +92,11 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
 
         $queueName = $consumer->getQueue()->getQueueName();
         if (array_key_exists($queueName, $this->subscribers)) {
-            return;
+            if ($this->subscribers[$queueName][0] === $consumer && $this->subscribers[$queueName][1] === $callback) {
+                return;
+            }
+
+            throw new \InvalidArgumentException(sprintf('There is a consumer subscribed to queue: "%s"', $queueName));
         }
 
         $this->subscribers[$queueName] = [$consumer, $callback];
@@ -109,6 +114,14 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
         }
 
         $queueName = $consumer->getQueue()->getQueueName();
+
+        if (false == array_key_exists($queueName, $this->subscribers)) {
+            return;
+        }
+
+        if ($this->subscribers[$queueName][0] !== $consumer) {
+            return;
+        }
 
         unset($this->subscribers[$queueName]);
     }
