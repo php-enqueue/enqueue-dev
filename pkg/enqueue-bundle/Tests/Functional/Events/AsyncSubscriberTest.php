@@ -82,11 +82,12 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = static::$container->get('event_dispatcher');
 
-        $dispatcher->addListener('foo', function (Event $event, $eventName, EventDispatcherInterface $dispatcher) {
+        $eventName = 'anEvent'.uniqid();
+        $dispatcher->addListener($eventName, function (Event $event, $eventName, EventDispatcherInterface $dispatcher) {
             $dispatcher->dispatch('test_async_subscriber', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
         });
 
-        $dispatcher->dispatch('foo');
+        $dispatcher->dispatch($eventName);
 
         /** @var TraceableProducer $producer */
         $producer = static::$container->get('enqueue.producer');
