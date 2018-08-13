@@ -3,12 +3,9 @@
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
-use Bunny\Client;
-use Bunny\Exception\ClientException;
 use Bunny\Message;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
-use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -22,9 +19,10 @@ use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Interop\Queue\PsrTopic;
 
-class AmqpContext implements InteropAmqpContext, DelayStrategyAware
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscriptionConsumerAwareContext
 {
     use DelayStrategyAwareTrait;
 
@@ -49,11 +47,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     private $buffer;
 
     /**
-     * an item contains an array: [AmqpConsumerInterop $consumer, callable $callback];.
-     *
-     * @var array
+     * @var AmqpSubscriptionConsumer
      */
-    private $subscribers;
+    private $bcSubscriptionConsumer;
 
     /**
      * Callable must return instance of \Bunny\Channel once called.
@@ -79,7 +75,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         $this->buffer = new Buffer();
-        $this->subscribers = [];
+        $this->bcSubscriptionConsumer = $this->createSubscriptionConsumer();
     }
 
     /**
@@ -134,6 +130,16 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return AmqpSubscriptionConsumer
+     */
+    public function createSubscriptionConsumer()
+    {
+        return new AmqpSubscriptionConsumer($this);
     }
 
     /**
@@ -249,7 +255,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getBunnyChannel()->queueBind(
                 $bind->getSource()->getQueueName(),
@@ -258,7 +264,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getBunnyChannel()->queueBind(
                 $bind->getTarget()->getQueueName(),
@@ -288,7 +294,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
-            // bind queue to exchange
+        // bind queue to exchange
         } elseif ($bind->getSource() instanceof InteropAmqpQueue) {
             $this->getBunnyChannel()->queueUnbind(
                 $bind->getSource()->getQueueName(),
@@ -296,7 +302,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getRoutingKey(),
                 $bind->getArguments()
             );
-            // bind exchange to queue
+        // bind exchange to queue
         } else {
             $this->getBunnyChannel()->queueUnbind(
                 $bind->getTarget()->getQueueName(),
@@ -323,87 +329,33 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
     {
-        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
-            return;
-        }
-
-        $bunnyCallback = function (Message $message, Channel $channel, Client $bunny) {
-            $receivedMessage = $this->convertMessage($message);
-            $receivedMessage->setConsumerTag($message->consumerTag);
-
-            /**
-             * @var AmqpConsumer
-             * @var callable     $callback
-             */
-            list($consumer, $callback) = $this->subscribers[$message->consumerTag];
-
-            if (false === call_user_func($callback, $receivedMessage, $consumer)) {
-                $bunny->stop();
-            }
-        };
-
-        $frame = $this->getBunnyChannel()->consume(
-            $bunnyCallback,
-            $consumer->getQueue()->getQueueName(),
-            $consumer->getConsumerTag(),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT)
-        );
-
-        if (empty($frame->consumerTag)) {
-            throw new Exception('Got empty consumer tag');
-        }
-
-        $consumer->setConsumerTag($frame->consumerTag);
-
-        $this->subscribers[$frame->consumerTag] = [$consumer, $callback];
+        $this->bcSubscriptionConsumer->subscribe($consumer, $callback);
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function unsubscribe(InteropAmqpConsumer $consumer)
     {
-        if (false == $consumer->getConsumerTag()) {
-            return;
-        }
-
-        $consumerTag = $consumer->getConsumerTag();
-
-        $this->getBunnyChannel()->cancel($consumerTag);
-        $consumer->setConsumerTag(null);
-        unset($this->subscribers[$consumerTag]);
+        $this->bcSubscriptionConsumer->unsubscribe($consumer);
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function consume($timeout = 0)
     {
-        if (empty($this->subscribers)) {
-            throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
-        }
-
-        $signalHandler = new SignalSocketHelper();
-        $signalHandler->beforeSocket();
-
-        try {
-            $this->getBunnyChannel()->getClient()->run(0 !== $timeout ? $timeout / 1000 : null);
-        } catch (ClientException $e) {
-            if ('stream_select() failed.' == $e->getMessage() && $signalHandler->wasThereSignal()) {
-                return;
-            }
-
-            throw $e;
-        } finally {
-            $signalHandler->afterSocket();
-        }
+        $this->bcSubscriptionConsumer->consume($timeout);
     }
 
     /**

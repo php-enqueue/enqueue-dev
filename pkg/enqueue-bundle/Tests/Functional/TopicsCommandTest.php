@@ -15,14 +15,14 @@ class TopicsCommandTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $command = $this->container->get(TopicsCommand::class);
+        $command = static::$container->get(TopicsCommand::class);
 
         $this->assertInstanceOf(TopicsCommand::class, $command);
     }
 
     public function testShouldDisplayRegisteredTopics()
     {
-        $command = $this->container->get(TopicsCommand::class);
+        $command = static::$container->get(TopicsCommand::class);
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -43,7 +43,7 @@ class TopicsCommandTest extends WebTestCase
 
     public function testShouldDisplayCommands()
     {
-        $command = $this->container->get(TopicsCommand::class);
+        $command = static::$container->get(TopicsCommand::class);
 
         $tester = new CommandTester($command);
         $tester->execute([]);

@@ -14,13 +14,13 @@ class ResultTest extends TestCase
 
         $this->assertSame('theStatus', $result->getStatus());
         $this->assertSame('', $result->getReason());
-        $this->assertSame(null, $result->getReply());
+        $this->assertNull($result->getReply());
 
         $result = new Result('theStatus', 'theReason');
 
         $this->assertSame('theStatus', $result->getStatus());
         $this->assertSame('theReason', $result->getReason());
-        $this->assertSame(null, $result->getReply());
+        $this->assertNull($result->getReply());
     }
 
     public function testCouldConstructedWithAckFactoryMethod()
@@ -30,7 +30,7 @@ class ResultTest extends TestCase
         $this->assertInstanceOf(Result::class, $result);
         $this->assertSame(Result::ACK, $result->getStatus());
         $this->assertSame('theReason', $result->getReason());
-        $this->assertSame(null, $result->getReply());
+        $this->assertNull($result->getReply());
     }
 
     public function testCouldConstructedWithRejectFactoryMethod()
@@ -40,7 +40,7 @@ class ResultTest extends TestCase
         $this->assertInstanceOf(Result::class, $result);
         $this->assertSame(Result::REJECT, $result->getStatus());
         $this->assertSame('theReason', $result->getReason());
-        $this->assertSame(null, $result->getReply());
+        $this->assertNull($result->getReply());
     }
 
     public function testCouldConstructedWithRequeueFactoryMethod()
@@ -50,7 +50,7 @@ class ResultTest extends TestCase
         $this->assertInstanceOf(Result::class, $result);
         $this->assertSame(Result::REQUEUE, $result->getStatus());
         $this->assertSame('theReason', $result->getReason());
-        $this->assertSame(null, $result->getReply());
+        $this->assertNull($result->getReply());
     }
 
     public function testCouldConstructedWithReplyFactoryMethodAndAckStatusByDefault()

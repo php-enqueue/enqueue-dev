@@ -21,6 +21,9 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\Symfony\GpsTransportFactory;
+use Enqueue\Mongodb\Symfony\MongodbTransportFactory;
+use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\RdKafka\Symfony\RdKafkaTransportFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
@@ -54,11 +57,11 @@ class EnqueueBundle extends Bundle
         $extension = $container->getExtension('enqueue');
 
         if (class_exists(StompConnectionFactory::class)) {
-            $extension->addTransportFactory(new StompTransportFactory('stomp'));
-            $extension->addTransportFactory(new RabbitMqStompTransportFactory('rabbitmq_stomp'));
+            $extension->setTransportFactory(new StompTransportFactory('stomp'));
+            $extension->setTransportFactory(new RabbitMqStompTransportFactory('rabbitmq_stomp'));
         } else {
-            $extension->addTransportFactory(new MissingTransportFactory('stomp', ['enqueue/stomp']));
-            $extension->addTransportFactory(new MissingTransportFactory('rabbitmq_stomp', ['enqueue/stomp']));
+            $extension->setTransportFactory(new MissingTransportFactory('stomp', ['enqueue/stomp']));
+            $extension->setTransportFactory(new MissingTransportFactory('rabbitmq_stomp', ['enqueue/stomp']));
         }
 
         if (
@@ -66,42 +69,54 @@ class EnqueueBundle extends Bundle
             class_exists(AmqpExtConnectionFactory::class) ||
             class_exists(AmqpLibConnectionFactory::class)
         ) {
-            $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
+            $extension->setTransportFactory(new AmqpTransportFactory('amqp'));
+            $extension->setTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
         } else {
-            $amppPackages = ['enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
-            $extension->addTransportFactory(new MissingTransportFactory('amqp', $amppPackages));
-            $extension->addTransportFactory(new MissingTransportFactory('rabbitmq_amqp', $amppPackages));
+            $amqpPackages = ['enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
+            $extension->setTransportFactory(new MissingTransportFactory('amqp', $amqpPackages));
+            $extension->setTransportFactory(new MissingTransportFactory('rabbitmq_amqp', $amqpPackages));
         }
 
         if (class_exists(FsConnectionFactory::class)) {
-            $extension->addTransportFactory(new FsTransportFactory('fs'));
+            $extension->setTransportFactory(new FsTransportFactory('fs'));
         } else {
-            $extension->addTransportFactory(new MissingTransportFactory('fs', ['enqueue/fs']));
+            $extension->setTransportFactory(new MissingTransportFactory('fs', ['enqueue/fs']));
         }
 
         if (class_exists(RedisConnectionFactory::class)) {
-            $extension->addTransportFactory(new RedisTransportFactory('redis'));
+            $extension->setTransportFactory(new RedisTransportFactory('redis'));
         } else {
-            $extension->addTransportFactory(new MissingTransportFactory('redis', ['enqueue/redis']));
+            $extension->setTransportFactory(new MissingTransportFactory('redis', ['enqueue/redis']));
         }
 
         if (class_exists(DbalConnectionFactory::class)) {
-            $extension->addTransportFactory(new DbalTransportFactory('dbal'));
+            $extension->setTransportFactory(new DbalTransportFactory('dbal'));
         } else {
-            $extension->addTransportFactory(new MissingTransportFactory('dbal', ['enqueue/dbal']));
+            $extension->setTransportFactory(new MissingTransportFactory('dbal', ['enqueue/dbal']));
         }
 
         if (class_exists(SqsConnectionFactory::class)) {
-            $extension->addTransportFactory(new SqsTransportFactory('sqs'));
+            $extension->setTransportFactory(new SqsTransportFactory('sqs'));
         } else {
-            $extension->addTransportFactory(new MissingTransportFactory('sqs', ['enqueue/sqs']));
+            $extension->setTransportFactory(new MissingTransportFactory('sqs', ['enqueue/sqs']));
         }
 
         if (class_exists(GpsConnectionFactory::class)) {
-            $extension->addTransportFactory(new GpsTransportFactory('gps'));
+            $extension->setTransportFactory(new GpsTransportFactory('gps'));
         } else {
-            $extension->addTransportFactory(new MissingTransportFactory('gps', ['enqueue/gps']));
+            $extension->setTransportFactory(new MissingTransportFactory('gps', ['enqueue/gps']));
+        }
+
+        if (class_exists(RdKafkaConnectionFactory::class)) {
+            $extension->setTransportFactory(new RdKafkaTransportFactory('rdkafka'));
+        } else {
+            $extension->setTransportFactory(new MissingTransportFactory('rdkafka', ['enqueue/rdkafka']));
+        }
+
+        if (class_exists(MongodbTransportFactory::class)) {
+            $extension->setTransportFactory(new MongodbTransportFactory('mongodb'));
+        } else {
+            $extension->setTransportFactory(new MissingTransportFactory('mongodb', ['enqueue/mongodb']));
         }
 
         $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

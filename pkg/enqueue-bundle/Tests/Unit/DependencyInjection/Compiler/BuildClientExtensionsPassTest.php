@@ -24,7 +24,7 @@ class BuildClientExtensionsPassTest extends TestCase
         new BuildClientExtensionsPass();
     }
 
-    public function testShouldReplaceFirstArgumentOfExtensionsServiceConstructorWithTaggsExtensions()
+    public function testShouldReplaceFirstArgumentOfExtensionsServiceConstructorWithTagsExtensions()
     {
         $container = new ContainerBuilder();
 

@@ -26,6 +26,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
      *   'retries' => 3,            - (int, default=int(3)) Configures the maximum number of allowed retries for a client (pass 0 to disable retries).
      *   'version' => '2012-11-05', - (string, required) The version of the webservice to utilize
      *   'lazy' => true,            - Enable lazy connection (boolean)
+     *   'endpoint' => null         - (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
      * ].
      *
      * or
@@ -33,11 +34,16 @@ class SqsConnectionFactory implements PsrConnectionFactory
      * sqs:
      * sqs::?key=aKey&secret=aSecret&token=aToken
      *
-     * @param array|string|null $config
+     * @param array|string|SqsClient|null $config
      */
     public function __construct($config = 'sqs:')
     {
-        if (empty($config) || 'sqs:' === $config) {
+        if ($config instanceof SqsClient) {
+            $this->client = $config;
+            $this->config = ['lazy' => false] + $this->defaultConfig();
+
+            return;
+        } elseif (empty($config) || 'sqs:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
@@ -92,6 +98,10 @@ class SqsConnectionFactory implements PsrConnectionFactory
             'retries' => $this->config['retries'],
             'region' => $this->config['region'],
         ];
+
+        if (isset($this->config['endpoint'])) {
+            $config['endpoint'] = $this->config['endpoint'];
+        }
 
         if ($this->config['key'] && $this->config['secret']) {
             $config['credentials'] = [
@@ -151,6 +161,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
             'retries' => 3,
             'version' => '2012-11-05',
             'lazy' => true,
+            'endpoint' => null,
         ];
     }
 }

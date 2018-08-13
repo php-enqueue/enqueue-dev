@@ -2,7 +2,7 @@
 
 namespace Enqueue\Test;
 
-trait RabbitmqManagmentExtensionTrait
+trait RabbitManagementExtensionTrait
 {
     /**
      * @param string $queueName

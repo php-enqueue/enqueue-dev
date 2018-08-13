@@ -78,6 +78,23 @@ $connectionFactory = new RedisConnectionFactory([
 $psrContext = $connectionFactory->createContext();
 ```
 
+* With custom redis instance:
+
+It gives you more control over vendor specific features.
+
+```php
+<?php
+use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\Redis\PRedis;
+ 
+$config = []; 
+$options = [];
+
+$redis = new PRedis(new \PRedis\Client($config, $options));
+
+$factory = new RedisConnectionFactory(['vendor' => 'custom', 'redis' => $redis]);
+```
+
 ## Send message to topic
 
 ```php

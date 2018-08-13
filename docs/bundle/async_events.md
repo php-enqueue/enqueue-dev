@@ -7,17 +7,16 @@ The consumer, once it receives the message, restores the event and dispatches it
 
 Async listeners benefits:
 
-* The response time lesser. It has to do less work.
-* Better fault tolerance. Bugs in async listener does not affect user. Messages will wait till you fix bugs.
+* Reduces response time. Work is deferred to consumer processes.
+* Better fault tolerance. Bugs in async listener do not affect user. Messages will wait till you fix bugs.
 * Better scaling. Add more consumers to meet the load.
 
-_**Note**: The php serializer transformer (the default one) does not work on Symfony prior 3.0. The event contains eventDispatcher and therefor could not be serialized. You have to register a transformer for every async event. Read the [event transformer](#event-transformer)._
+_**Note**: Prior to Symfony 3.0, events contain `eventDispatcher` and the default php serializer transformer is unable to serialize the object. A transformer should be registered for every async event. Read the [event transformer](#event-transformer)._
 
 ## Configuration
 
-I suppose you already [installed the bundle](quick_tour.md#install). 
-Now, you have to enable `async_events`. 
-If you do not enable it, events will be processed as before: synchronously.
+Symfony events are currently processed synchronously, enabling the async configuration for EnqueueBundle causes tagged listeners to defer action to a consumer asynchronously.
+If you already [installed the bundle](quick_tour.md#install), then enable `async_events`.
 
 ```yaml
 # app/config/config.yml
@@ -25,7 +24,7 @@ If you do not enable it, events will be processed as before: synchronously.
 enqueue:
    async_events:
       enabled: true
-      # if you'd like to send send messages onTerminate use spool_producer (it makes response time even lesser):
+      # if you'd like to send send messages onTerminate use spool_producer (it further reduces response time):
       # spool_producer: true
 ```
 
@@ -77,7 +76,7 @@ services:
 ## Event transformer
 
 The bundle uses [php serializer](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue-bundle/Events/PhpSerializerEventTransformer.php) transformer by default to pass events through MQ.
-You could create a transformer for the given event type. The transformer must implement `Enqueue\AsyncEventDispatcher\EventTransformer` interface.
+You can write a transformer for each event type by implementing the `Enqueue\AsyncEventDispatcher\EventTransformer` interface.
 Consider the next example. It shows how to send an event that contains Doctrine entity as a subject  
  
 ```php
@@ -113,7 +112,7 @@ class FooEventTransformer implements EventTransformer
     public function toMessage($eventName, Event $event = null)
     {
         $entity = $event->getSubject();
-        $entityClass = get_class($event);
+        $entityClass = get_class($entity);
         
         $manager = $this->doctrine->getManagerForClass($entityClass);
         $meta = $manager->getClassMetadata($entityClass);
@@ -155,7 +154,7 @@ and register it:
 # app/config/config.yml
 
 services:
-    acme.foo_event_transofrmer:
+    acme.foo_event_transformer:
         class: 'AcmeBundle\Listener\FooEventTransformer'
         arguments: ['@doctrine']
         tags:

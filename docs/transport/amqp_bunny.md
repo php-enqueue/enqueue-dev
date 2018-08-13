@@ -14,6 +14,7 @@ Build on top of [bunny lib](https://github.com/jakubkulhan/bunny).
 * [Send expiration message](#send-expiration-message)
 * [Send delayed message](#send-delayed-message)
 * [Consume message](#consume-message)
+* [Subscription consumer](#subscription-consumer)
 * [Purge queue messages](#purge-queue-messages)
 
 ## Installation
@@ -136,7 +137,9 @@ $psrContext->createProducer()->send($fooQueue, $message);
 
 ```php
 <?php
-/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+use Interop\Amqp\AmqpQueue;
+
+/** @var \Enqueue\AmqpBunny\AmqpContext $psrContext */
 
 $fooQueue = $psrContext->createQueue('foo');
 $fooQueue->addFlag(AmqpQueue::FLAG_DURABLE);
@@ -156,7 +159,7 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+/** @var \Enqueue\AmqpBunny\AmqpContext $psrContext */
 /** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
 
 $message = $psrContext->createMessage('Hello world!');
@@ -171,14 +174,14 @@ $psrContext->createProducer()
 ## Send delayed message
 
 AMQP specification says nothing about message delaying hence the producer throws `DeliveryDelayNotSupportedException`. 
-Though the producer (and the context) accepts a delivry delay strategy and if it is set it uses it to send delayed message.
+Though the producer (and the context) accepts a delivery delay strategy and if it is set it uses it to send delayed message.
 The `enqueue/amqp-tools` package provides two RabbitMQ delay strategies, to use them you have to install that package
 
 ```php
 <?php
 use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 
-/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+/** @var \Enqueue\AmqpBunny\AmqpContext $psrContext */
 /** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
 
 // make sure you run "composer require enqueue/amqp-tools".
@@ -208,6 +211,39 @@ $message = $consumer->receive();
 
 $consumer->acknowledge($message);
 // $consumer->reject($message);
+```
+
+## Subscription consumer
+
+```php
+<?php
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrConsumer;
+
+/** @var \Enqueue\AmqpBunny\AmqpContext $psrContext */
+/** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
+/** @var \Interop\Amqp\Impl\AmqpQueue $barQueue */
+
+$fooConsumer = $psrContext->createConsumer($fooQueue);
+$barConsumer = $psrContext->createConsumer($barQueue);
+
+$subscriptionConsumer =$psrContext->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+$subscriptionConsumer->subscribe($barConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+
+$subscriptionConsumer->consume(2000); // 2 sec
 ```
 
 ## Purge queue messages:

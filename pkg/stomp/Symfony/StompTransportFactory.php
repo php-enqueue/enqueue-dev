@@ -43,6 +43,7 @@ class StompTransportFactory implements TransportFactoryInterface, DriverFactoryI
                 ->integerNode('connection_timeout')->min(1)->defaultValue(1)->end()
                 ->integerNode('buffer_size')->min(1)->defaultValue(1000)->end()
                 ->booleanNode('lazy')->defaultTrue()->end()
+                ->booleanNode('ssl_on')->defaultFalse()->end()
         ;
     }
 

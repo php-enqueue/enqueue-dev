@@ -7,52 +7,48 @@ language: php
 
 matrix:
   include:
-    - php: 5.6
-      env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
     - php: 7.1
-      env: SYMFONY_VERSION=3.0.* PHPSTAN=true
+      env: SYMFONY_VERSION=3.4.* PHPSTAN=true
     - php: 7.1
-      env: SYMFONY_VERSION=3.0.* PHP_CS_FIXER=true
-    - php: 7.0
-      env: SYMFONY_VERSION=2.8.* UNIT_TESTS=true
-    - php: 5.6
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
-    - php: 7.0
-      env: SYMFONY_VERSION=3.0.* UNIT_TESTS=true
-    - php: 7.1
-      env: SYMFONY_VERSION=v4.0.0-BETA4 UNIT_TESTS=true
+      env: SYMFONY_VERSION=3.4.* PHP_CS_FIXER=true
     - php: 7.1
       env: SYMFONY_VERSION=3.4.* UNIT_TESTS=true
+    - php: 7.1
+      env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
     - php: 7.2
-      services: docker
-      env: SYMFONY_VERSION=2.8.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
     - php: 7.1
       services: docker
-      env: SYMFONY_VERSION=3.0.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=3.4.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
       services: docker
-      env: SYMFONY_VERSION=3.2.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=4.0.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.1
       services: docker
-      env: SYMFONY_VERSION=3.3.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=v4.0.0-BETA4 FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
-      services: docker
-      env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=3.4.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
   allow_failures:
-    - env: SYMFONY_VERSION=3.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
+    - env: SYMFONY_VERSION=3.4.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
 
 cache:
     directories:
         - $HOME/.composer/cache
+        - $HOME/docker
+
+
+before_cache:
+    - >
+        mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+        | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
+
+before_install:
+    - echo "extension = mongodb.so" >> $HOME/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
 install:
     - rm $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini;
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-    - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
-    - composer install
+    - sed -i '' "s/\"symfony\/\(.*\)\": \".*\"/\"symfony\/\1\": \"$SYMFONY_VERSION\"/g" composer.json && cat composer.json
+    - composer dunglas/symfony-lock
     - if [ "$PREPARE_CONTAINER" = true ]; then docker --version; fi
     - if [ "$PREPARE_CONTAINER" = true ]; then docker-compose --version; fi
     - if [ "$PREPARE_CONTAINER" = true ]; then bin/dev -b; fi
@@ -62,8 +58,8 @@ script:
     - if [ "$PHP_CS_FIXER" = true ]; then IFS=$'\n'; COMMIT_SCA_FILES=($(git diff --name-only --diff-filter=ACMRTUXB "${TRAVIS_COMMIT_RANGE}")); unset IFS; fi
     - if [ "$PHP_CS_FIXER" = true ]; then ./bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no --path-mode=intersection -- "${COMMIT_SCA_FILES[@]}"; fi
     - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
-    - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/run-fun-test.sh --exclude-group=rdkafka; fi
-    - if [ "RDKAFKA_TESTS" = true ]; then bin/run-fun-test.sh --group=rdkafka; fi
+    - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/test.sh --exclude-group=rdkafka; fi
+    - if [ "RDKAFKA_TESTS" = true ]; then bin/test.sh --group=rdkafka; fi
     
 notifications:
   webhooks:

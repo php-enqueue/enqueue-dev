@@ -7,7 +7,7 @@ In this chapter we give some advices on how to test message queue related logic.
 
 ## NULL transport
 
-While testing the application you dont usually need to send real message to real broker. 
+While testing the application you don't usually need to send real message to real broker. 
 Or even have a dependency on a MQ broker. 
 Here's the purpose of the NULL transport. 
 It simple do nothing when you ask it to send a message. 
@@ -72,7 +72,7 @@ class FooTest extends WebTestCase
      */
     private function getProducer()
     {
-        return $this->client->getContainer()->get('enqueue.producer');
+        return $this->client->getContainer()->get(TraceableProducer::class);
     }
 }
 ```

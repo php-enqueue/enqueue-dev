@@ -47,7 +47,8 @@ class DbalConnectionFactoryConfigTest extends TestCase
     {
         $factory = new DbalConnectionFactory($config);
 
-        $this->assertAttributeEquals($expectedConfig, 'config', $factory);
+        $actualConfig = $this->readAttribute($factory, 'config');
+        $this->assertSame($expectedConfig, $actualConfig);
     }
 
     public static function provideConfigs()
@@ -55,56 +56,98 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             null,
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             'mysql:',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
+            ],
+        ];
+
+        yield [
+            'pdo_mysql:',
+            [
+                'connection' => [
+                    'url' => 'pdo_mysql://root@localhost',
+                ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             'pgsql:',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'pgsql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             'mysql://user:pass@host:10000/db',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://user:pass@host:10000/db',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
+            ],
+        ];
+
+        yield [
+            'pdo_mysql://user:pass@host:10001/db',
+            [
+                'connection' => [
+                    'url' => 'pdo_mysql://user:pass@host:10001/db',
+                ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             [],
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
-            ['table_name' => 'a_queue_table', 'connection' => ['foo' => 'fooVal', 'bar' => 'barVal']],
-            ['table_name' => 'a_queue_table', 'connection' => ['foo' => 'fooVal', 'bar' => 'barVal']],
+            [
+                'connection' => ['foo' => 'fooVal', 'bar' => 'barVal'],
+                'table_name' => 'a_queue_table',
+            ],
+            [
+                'connection' => ['foo' => 'fooVal', 'bar' => 'barVal'],
+                'table_name' => 'a_queue_table',
+                'polling_interval' => 1000,
+                'lazy' => true,
+            ],
         ];
     }
 }

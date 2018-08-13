@@ -113,7 +113,7 @@ class SendMailProcessor implements PsrProcessor
 
 The consumption component provide some useful extensions, for example there is an extension that makes RPC processing simpler.
 The producer might wait for a reply from a consumer and in order to send it a processor has to return a reply result.
-Dont forget to add `ReplyExtension`.
+Don't forget to add `ReplyExtension`.
  
 ```php
 <?php

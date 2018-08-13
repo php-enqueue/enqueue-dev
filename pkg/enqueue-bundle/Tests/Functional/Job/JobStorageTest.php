@@ -12,7 +12,7 @@ class JobStorageTest extends WebTestCase
 {
     public function testCouldGetJobStorageAsServiceFromContainer()
     {
-        $instance = $this->container->get(JobStorage::class);
+        $instance = static::$container->get(JobStorage::class);
 
         $this->assertInstanceOf(JobStorage::class, $instance);
     }

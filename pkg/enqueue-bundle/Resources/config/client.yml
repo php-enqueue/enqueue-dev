@@ -11,6 +11,10 @@ services:
             - '@enqueue.client.rpc_factory'
             - '@enqueue.client.extensions'
 
+    Enqueue\Client\ProducerInterface:
+        public: true
+        alias: 'Enqueue\Client\Producer'
+
     # Deprecated. To be removed in 0.10.
     enqueue.client.producer:
         public: true

@@ -180,7 +180,7 @@ class GearmanMessage implements PsrMessage, \JsonSerializable
     {
         $value = $this->getHeader('timestamp');
 
-        return $value === null ? null : (int) $value;
+        return null === $value ? null : (int) $value;
     }
 
     /**

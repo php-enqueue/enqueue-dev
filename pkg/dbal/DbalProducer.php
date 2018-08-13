@@ -3,13 +3,15 @@
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
-use Enqueue\Util\JSON;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
+use Ramsey\Uuid\Codec\OrderedTimeCodec;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidFactory;
 
 class DbalProducer implements PsrProducer
 {
@@ -34,11 +36,17 @@ class DbalProducer implements PsrProducer
     private $context;
 
     /**
+     * @var OrderedTimeCodec
+     */
+    private $uuidCodec;
+
+    /**
      * @param DbalContext $context
      */
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
+        $this->uuidCodec = new OrderedTimeCodec((new UuidFactory())->getUuidBuilder());
     }
 
     /**
@@ -74,16 +82,17 @@ class DbalProducer implements PsrProducer
             ));
         }
 
-        $sql = 'SELECT '.$this->context->getDbalConnection()->getDatabasePlatform()->getGuidExpression();
-        $uuid = $this->context->getDbalConnection()->query($sql)->fetchColumn(0);
+        $uuid = Uuid::uuid1();
 
-        if (empty($uuid)) {
-            throw new \LogicException('The generated uuid is empty');
-        }
+        $publishedAt = null !== $message->getPublishedAt() ?
+            $message->getPublishedAt() :
+            (int) (microtime(true) * 10000)
+        ;
 
         $dbalMessage = [
-            'id' => $uuid,
-            'published_at' => (int) microtime(true) * 10000,
+            'id' => $this->uuidCodec->encodeBinary($uuid),
+            'human_id' => $uuid->toString(),
+            'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),

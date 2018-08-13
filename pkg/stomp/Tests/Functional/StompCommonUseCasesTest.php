@@ -4,7 +4,7 @@ namespace Enqueue\Stomp\Tests\Functional;
 
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompMessage;
-use Enqueue\Test\RabbitmqManagmentExtensionTrait;
+use Enqueue\Test\RabbitManagementExtensionTrait;
 use Enqueue\Test\RabbitmqStompExtension;
 
 /**
@@ -13,7 +13,7 @@ use Enqueue\Test\RabbitmqStompExtension;
 class StompCommonUseCasesTest extends \PHPUnit\Framework\TestCase
 {
     use RabbitmqStompExtension;
-    use RabbitmqManagmentExtensionTrait;
+    use RabbitManagementExtensionTrait;
 
     /**
      * @var StompContext
