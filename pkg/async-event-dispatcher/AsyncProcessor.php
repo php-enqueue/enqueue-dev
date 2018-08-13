@@ -16,7 +16,7 @@ class AsyncProcessor implements PsrProcessor
     private $registry;
 
     /**
-     * @var AsyncEventDispatcher|OldAsyncEventDispatcher
+     * @var AsyncEventDispatcher
      */
     private $dispatcher;
 
@@ -28,11 +28,10 @@ class AsyncProcessor implements PsrProcessor
     {
         $this->registry = $registry;
 
-        if (false == ($dispatcher instanceof AsyncEventDispatcher || $dispatcher instanceof OldAsyncEventDispatcher)) {
+        if (false == $dispatcher instanceof AsyncEventDispatcher) {
             throw new \InvalidArgumentException(sprintf(
-                'The dispatcher argument must be either instance of "%s" or "%s" but got "%s"',
+                'The dispatcher argument must be instance of "%s" but got "%s"',
                 AsyncEventDispatcher::class,
-                OldAsyncEventDispatcher::class,
                 get_class($dispatcher)
             ));
         }
