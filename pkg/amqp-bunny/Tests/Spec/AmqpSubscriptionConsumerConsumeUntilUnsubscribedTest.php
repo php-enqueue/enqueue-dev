@@ -23,7 +23,7 @@ class AmqpSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionC
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
 
         $context = $factory->createContext();
-        $context->setQos(0, 5, false);
+        $context->setQos(0, 1, false);
 
         return $context;
     }
