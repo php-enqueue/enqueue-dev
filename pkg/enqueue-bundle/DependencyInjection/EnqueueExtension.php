@@ -150,6 +150,10 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         }
 
         if ($config['async_events']['enabled']) {
+            if (false == class_exists(AsyncEventDispatcherExtension::class)) {
+                throw new \LogicException('The "enqueue/async-event-dispatcher" package has to be installed.');
+            }
+
             $extension = new AsyncEventDispatcherExtension();
             $extension->load([[
                 'context_service' => 'enqueue.transport.default.context',

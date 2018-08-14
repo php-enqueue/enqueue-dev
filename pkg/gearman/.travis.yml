@@ -4,8 +4,6 @@ git:
 language: php
 
 php:
-    - '5.6'
-    - '7.0'
     - '7.1'
     - '7.2'
 
@@ -16,8 +14,7 @@ cache:
 install:
     - sudo apt-get update
     - sudo apt-get install libgearman-dev -y --no-install-recommends --no-install-suggests
-    - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then export GEARMAN_PACKAGE=gearman-1.1.0; fi
-    - if [[ "$TRAVIS_PHP_VERSION" != "5.6" ]]; then export GEARMAN_PACKAGE=gearman-2.0.3; fi
+    - export GEARMAN_PACKAGE=gearman-2.0.3
     - curl -L -O https://github.com/wcgallego/pecl-gearman/archive/$GEARMAN_PACKAGE.tar.gz
     - tar zxvf $GEARMAN_PACKAGE.tar.gz
     - pushd pecl-gearman-$GEARMAN_PACKAGE
