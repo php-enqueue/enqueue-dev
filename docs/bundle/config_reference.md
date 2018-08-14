@@ -21,6 +21,9 @@ enqueue:
             connection_timeout:   1
             buffer_size:          1000
             lazy:                 true
+            
+            # Should be true if you want to use secure connections. False by default
+            ssl_on:               false
         rabbitmq_stomp:
             host:                 localhost
             port:                 61613
@@ -31,6 +34,7 @@ enqueue:
             connection_timeout:   1
             buffer_size:          1000
             lazy:                 true
+            ssl_on:               false
 
             # The option tells whether RabbitMQ broker has management plugin installed or not
             management_plugin_installed: false
@@ -39,7 +43,7 @@ enqueue:
             # The option tells whether RabbitMQ broker has delay plugin installed or not
             delay_plugin_installed: false
         amqp:
-            driver:               ~ # One of "ext"; "lib"; "bunny"
+            driver:               ~
 
             # The connection to AMQP broker set as a string. Other parameters could be used as defaults
             dsn:                  ~
@@ -103,7 +107,7 @@ enqueue:
             # Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.
             ssl_key:              ~
         rabbitmq_amqp:
-            driver:               ~ # One of "ext"; "lib"; "bunny"
+            driver:               ~
 
             # The connection to AMQP broker set as a string. Other parameters could be used as defaults
             dsn:                  ~
@@ -187,18 +191,27 @@ enqueue:
             polling_interval:     100
         redis:
 
+            # The redis connection given as DSN. For example redis://host:port?vendor=predis
+            dsn:                  ~
+
             # can be a host, or the path to a unix domain socket
-            host:                 ~ # Required
+            host:                 ~
             port:                 ~
 
             # The library used internally to interact with Redis server
-            vendor:               ~ # One of "phpredis"; "predis", Required
+            vendor:               ~ # One of "phpredis"; "predis"; "custom"
+
+            # A custom redis service id, used with vendor true only
+            redis:                ~
 
             # bool, Whether it use single persisted connection or open a new one for every context
             persisted:            false
 
             # the connection will be performed as later as possible, if the option set to true
             lazy:                 true
+
+            # Database index to select when connected.
+            database:             0
         dbal:
 
             # The Doctrine DBAL DSN. Other parameters are ignored if set
@@ -217,6 +230,7 @@ enqueue:
             polling_interval:     1000
             lazy:                 true
         sqs:
+            client:               null
             key:                  null
             secret:               null
             token:                null
@@ -226,6 +240,7 @@ enqueue:
 
             # the connection will be performed as later as possible, if the option set to true
             lazy:                 true
+            endpoint:             null
         gps:
 
             # The connection to Google Pub/Sub broker set as a string. Other parameters are ignored if set
@@ -245,8 +260,36 @@ enqueue:
 
             # The connection will be performed as later as possible, if the option set to true
             lazy:                 true
+        rdkafka:
+
+            # The kafka DSN. Other parameters are ignored if set
+            dsn:                  ~
+
+            # The kafka global configuration properties
+            global:               []
+
+            # The kafka topic configuration properties
+            topic:                []
+
+            # Delivery report callback
+            dr_msg_cb:            ~
+
+            # Error callback
+            error_cb:             ~
+
+            # Called after consumer group has been rebalanced
+            rebalance_cb:         ~
+
+            # Which partitioner to use
+            partitioner:          ~ # One of "RD_KAFKA_MSG_PARTITIONER_RANDOM"; "RD_KAFKA_MSG_PARTITIONER_CONSISTENT"
+
+            # Logging level (syslog(3) levels)
+            log_level:            ~
+
+            # Commit asynchronous
+            commit_async:         false
     client:
-        traceable_producer:   false
+        traceable_producer:   true
         prefix:               enqueue
         app_name:             app
         router_topic:         default

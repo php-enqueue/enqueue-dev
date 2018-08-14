@@ -171,4 +171,31 @@ class FsConsumerTest extends TestCase
         $this->expectExceptionMessage('The frame size is "12" and it must divide exactly to 64 but it leaves a reminder "12".');
         $consumer->receiveNoWait();
     }
+
+    /**
+     * @group bug
+     * @group bug390
+     */
+    public function testShouldUnEscapeDelimiterSymbolsInMessageBody()
+    {
+        $context = $this->fsContext;
+        $queue = $context->createQueue('fs_test_queue');
+        $context->purge($queue);
+
+        $message = $this->fsContext->createMessage('                             |{"body":"aMessageData","properties":{"enqueue.topic_name":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"correlation_id":""}}');
+
+        $this->fsContext->createProducer()->send($queue, $message);
+
+        $this->assertSame(0, strlen(file_get_contents(sys_get_temp_dir().'/fs_test_queue')) % 64);
+        $this->assertSame(
+            '                                                       |{"body":"                             \|\{\"body\":\"aMessageData\",\"properties\":{\"enqueue.topic_name\":\"user_updated\"},\"headers\":{\"content_type\":\"text\\\\\/plain\",\"message_id\":\"90979b6c-d9ff-4b39-9938-878b83a95360\",\"timestamp\":1519899428,\"reply_to\":null,\"correlation_id\":\"\"}}","properties":[],"headers":[]}',
+            file_get_contents(sys_get_temp_dir().'/fs_test_queue')
+        );
+
+        $consumer = $context->createConsumer($queue);
+
+        $message = $consumer->receiveNoWait();
+
+        $this->assertSame('                             |{"body":"aMessageData","properties":{"enqueue.topic_name":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"correlation_id":""}}', $message->getBody());
+    }
 }

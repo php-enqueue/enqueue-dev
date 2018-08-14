@@ -6,9 +6,10 @@ use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Interop\Queue\PsrTopic;
 
-class RedisContext implements PsrContext
+class RedisContext implements PsrContext, PsrSubscriptionConsumerAwareContext
 {
     /**
      * @var Redis
@@ -120,6 +121,16 @@ class RedisContext implements PsrContext
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
 
         return new RedisConsumer($this, $destination);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return RedisSubscriptionConsumer
+     */
+    public function createSubscriptionConsumer()
+    {
+        return new RedisSubscriptionConsumer($this);
     }
 
     public function close()

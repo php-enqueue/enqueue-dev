@@ -94,6 +94,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $transportMessage->setTimestamp(1000);
         $transportMessage->setPriority(2);
         $transportMessage->setDeliveryDelay(12345);
+        $transportMessage->setTimeToLive(67890);
 
         $driver = new DbalDriver(
             $this->createPsrContextMock(),
@@ -117,9 +118,8 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('MessageId', $clientMessage->getMessageId());
         $this->assertSame('ContentType', $clientMessage->getContentType());
         $this->assertSame(1000, $clientMessage->getTimestamp());
-        $this->assertSame(12345, $clientMessage->getDelay());
-
-        $this->assertNull($clientMessage->getExpire());
+        $this->assertSame(12, $clientMessage->getDelay());
+        $this->assertSame(67, $clientMessage->getExpire());
         $this->assertSame(MessagePriority::NORMAL, $clientMessage->getPriority());
     }
 
@@ -134,6 +134,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $clientMessage->setPriority(MessagePriority::VERY_HIGH);
         $clientMessage->setMessageId('MessageId');
         $clientMessage->setTimestamp(1000);
+        $clientMessage->setDelay(23);
 
         $context = $this->createPsrContextMock();
         $context
@@ -163,8 +164,10 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([
             'key' => 'val',
         ], $transportMessage->getProperties());
+        $this->assertSame(123000, $transportMessage->getTimeToLive());
         $this->assertSame('MessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame(23000, $transportMessage->getDeliveryDelay());
     }
 
     public function testShouldSendMessageToRouter()

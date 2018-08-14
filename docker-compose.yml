@@ -13,18 +13,20 @@ services:
       - zookeeper
       - google-pubsub
       - rabbitmqssl
+      - mongo
+      - localstack
     volumes:
       - './:/mqdev'
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
       - AMQPS_DSN=amqps://guest:guest@rabbitmqssl:5671
-      - DOCTINE_DSN=mysql://root:rootpass@mysql/mqdev
+      - DOCTRINE_DSN=mysql://root:rootpass@mysql/mqdev
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
       - RABBITMQ_VHOST=mqdev
       - RABBITMQ_AMQP__PORT=5672
-      - ﻿RABBITMQ_STOMP_PORT=61613
+      - RABBITMQ_STOMP_PORT=61613
       - DOCTRINE_DRIVER=pdo_mysql
       - DOCTRINE_HOST=mysql
       - DOCTRINE_PORT=3306
@@ -33,9 +35,11 @@ services:
       - DOCTRINE_PASSWORD=rootpass
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - AWS_SQS_KEY=$ENQUEUE_AWS__SQS__KEY
-      - AWS_SQS_SECRET=$ENQUEUE_AWS__SQS__SECRET
-      - AWS_SQS_REGION=$ENQUEUE_AWS__SQS__REGION
+      - AWS_SQS_KEY=key
+      - AWS_SQS_SECRET=secret
+      - AWS_SQS_REGION=us-east-1
+      - AWS_SQS_ENDPOINT=http://localstack:4576
+      - AWS_SQS_VERSION=latest
       - BEANSTALKD_HOST=beanstalkd
       - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
@@ -44,6 +48,7 @@ services:
       - RDKAFKA_PORT=9092
       - PUBSUB_EMULATOR_HOST=http://google-pubsub:8085
       - GCLOUD_PROJECT=mqdev
+      - MONGO_DSN=mongodb://mongo
 
   rabbitmq:
     image: 'enqueue/rabbitmq:latest'
@@ -72,11 +77,10 @@ services:
       - "6379:6379"
 
   mysql:
-    image: mariadb:10
-    volumes:
-      - mysql-data:/var/lib/mysql
+    image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mqdev
 
   generate-changelog:
     image: enqueue/generate-changelog:latest
@@ -102,6 +106,16 @@ services:
       image: 'google/cloud-sdk:latest'
       entrypoint: 'gcloud beta emulators pubsub start --host-port=0.0.0.0:8085'
 
-volumes:
-  mysql-data:
-    driver: local
+  mongo:
+      image: mongo:3.7
+      ports:
+        - "27017:27017"
+
+  localstack:
+    image: 'localstack/localstack:latest'
+    ports:
+      - '4576:4576'
+    environment:
+      HOSTNAME_EXTERNAL: 'localstack'
+      SERVICES: 'sqs'
+

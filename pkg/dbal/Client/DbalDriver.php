@@ -71,7 +71,12 @@ class DbalDriver implements DriverInterface
         $transportMessage->setProperties($properties);
         $transportMessage->setMessageId($message->getMessageId());
         $transportMessage->setTimestamp($message->getTimestamp());
-        $transportMessage->setDeliveryDelay($message->getDelay());
+
+        $delay = $message->getDelay();
+        $transportMessage->setDeliveryDelay((null === $delay) ? null : ($delay * 1000));
+
+        $timeToLive = $message->getExpire();
+        $transportMessage->setTimeToLive((null === $timeToLive) ? null : ($timeToLive * 1000));
         $transportMessage->setReplyTo($message->getReplyTo());
         $transportMessage->setCorrelationId($message->getCorrelationId());
         if (array_key_exists($message->getPriority(), self::$priorityMap)) {
@@ -97,7 +102,12 @@ class DbalDriver implements DriverInterface
         $clientMessage->setContentType($message->getHeader('content_type'));
         $clientMessage->setMessageId($message->getMessageId());
         $clientMessage->setTimestamp($message->getTimestamp());
-        $clientMessage->setDelay($message->getDeliveryDelay());
+
+        $timeToLive = $message->getTimeToLive();
+        $clientMessage->setExpire((null === $timeToLive) ? null : (int) ($timeToLive / 1000));
+
+        $delay = $message->getDeliveryDelay();
+        $clientMessage->setDelay((null === $delay) ? null : (int) ($delay / 1000));
         $clientMessage->setReplyTo($message->getReplyTo());
         $clientMessage->setCorrelationId($message->getCorrelationId());
 

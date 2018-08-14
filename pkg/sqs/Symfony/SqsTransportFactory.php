@@ -34,16 +34,18 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
     {
         $builder
             ->children()
+                ->scalarNode('client')->defaultNull()->end()
                 ->scalarNode('key')->defaultNull()->end()
                 ->scalarNode('secret')->defaultNull()->end()
                 ->scalarNode('token')->defaultNull()->end()
-                ->scalarNode('region')->isRequired()->end()
+                ->scalarNode('region')->end()
                 ->integerNode('retries')->defaultValue(3)->end()
                 ->scalarNode('version')->cannotBeEmpty()->defaultValue('2012-11-05')->end()
                 ->booleanNode('lazy')
                     ->defaultTrue()
                     ->info('the connection will be performed as later as possible, if the option set to true')
                 ->end()
+                ->scalarNode('endpoint')->defaultNull()->end()
         ;
     }
 
@@ -52,8 +54,10 @@ class SqsTransportFactory implements TransportFactoryInterface, DriverFactoryInt
      */
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
+        $arguments = empty($config['client']) ? $config : new Reference($config['client']);
+
         $factory = new Definition(SqsConnectionFactory::class);
-        $factory->setArguments([$config]);
+        $factory->setArguments([$arguments]);
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
         $container->setDefinition($factoryId, $factory);

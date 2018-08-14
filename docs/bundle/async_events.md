@@ -112,7 +112,7 @@ class FooEventTransformer implements EventTransformer
     public function toMessage($eventName, Event $event = null)
     {
         $entity = $event->getSubject();
-        $entityClass = get_class($event);
+        $entityClass = get_class($entity);
         
         $manager = $this->doctrine->getManagerForClass($entityClass);
         $meta = $manager->getClassMetadata($entityClass);
@@ -154,7 +154,7 @@ and register it:
 # app/config/config.yml
 
 services:
-    acme.foo_event_transofrmer:
+    acme.foo_event_transformer:
         class: 'AcmeBundle\Listener\FooEventTransformer'
         arguments: ['@doctrine']
         tags:

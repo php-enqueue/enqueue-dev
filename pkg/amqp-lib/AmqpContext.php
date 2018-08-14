@@ -4,7 +4,6 @@ namespace Enqueue\AmqpLib;
 
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
-use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
@@ -18,15 +17,14 @@ use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
-use PhpAmqpLib\Exception\AMQPIOWaitException;
-use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
-class AmqpContext implements InteropAmqpContext, DelayStrategyAware
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscriptionConsumerAwareContext
 {
     use DelayStrategyAwareTrait;
 
@@ -51,11 +49,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     private $buffer;
 
     /**
-     * an item contains an array: [AmqpConsumerInterop $consumer, callable $callback];.
-     *
-     * @var array
+     * @var AmqpSubscriptionConsumer
      */
-    private $subscribers;
+    private $bcSubscriptionConsumer;
 
     /**
      * @param AbstractConnection $connection
@@ -72,7 +68,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
         $this->connection = $connection;
         $this->buffer = new Buffer();
-        $this->subscribers = [];
+        $this->bcSubscriptionConsumer = $this->createSubscriptionConsumer();
     }
 
     /**
@@ -127,6 +123,14 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createSubscriptionConsumer()
+    {
+        return new AmqpSubscriptionConsumer($this);
     }
 
     /**
@@ -316,106 +320,33 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
     {
-        if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
-            return;
-        }
-
-        $libCallback = function (LibAMQPMessage $message) {
-            $receivedMessage = $this->convertMessage($message);
-            $receivedMessage->setConsumerTag($message->delivery_info['consumer_tag']);
-
-            /**
-             * @var AmqpConsumer
-             * @var callable     $callback
-             */
-            list($consumer, $callback) = $this->subscribers[$message->delivery_info['consumer_tag']];
-
-            if (false === call_user_func($callback, $receivedMessage, $consumer)) {
-                throw new StopBasicConsumptionException();
-            }
-        };
-
-        $consumerTag = $this->getLibChannel()->basic_consume(
-            $consumer->getQueue()->getQueueName(),
-            $consumer->getConsumerTag(),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
-            (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOWAIT),
-            $libCallback
-        );
-
-        if (empty($consumerTag)) {
-            throw new Exception('Got empty consumer tag');
-        }
-
-        $consumer->setConsumerTag($consumerTag);
-
-        $this->subscribers[$consumerTag] = [$consumer, $callback];
+        $this->bcSubscriptionConsumer->subscribe($consumer, $callback);
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function unsubscribe(InteropAmqpConsumer $consumer)
     {
-        if (false == $consumer->getConsumerTag()) {
-            return;
-        }
-
-        $consumerTag = $consumer->getConsumerTag();
-
-        $this->getLibChannel()->basic_cancel($consumerTag);
-
-        $consumer->setConsumerTag(null);
-        unset($this->subscribers[$consumerTag], $this->getLibChannel()->callbacks[$consumerTag]);
+        $this->bcSubscriptionConsumer->unsubscribe($consumer);
     }
 
     /**
+     * @deprecated since 0.8.34 will be removed in 0.9
+     *
      * {@inheritdoc}
      */
     public function consume($timeout = 0)
     {
-        if (empty($this->subscribers)) {
-            throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
-        }
-
-        $signalHandler = new SignalSocketHelper();
-        $signalHandler->beforeSocket();
-
-        try {
-            while (true) {
-                $start = microtime(true);
-
-                $this->channel->wait(null, false, $timeout / 1000);
-
-                if ($timeout <= 0) {
-                    continue;
-                }
-
-                // compute remaining timeout and continue until time is up
-                $stop = microtime(true);
-                $timeout -= ($stop - $start) * 1000;
-
-                if ($timeout <= 0) {
-                    break;
-                }
-            }
-        } catch (AMQPTimeoutException $e) {
-        } catch (StopBasicConsumptionException $e) {
-        } catch (AMQPIOWaitException $e) {
-            if ($signalHandler->wasThereSignal()) {
-                return;
-            }
-
-            throw $e;
-        } finally {
-            $signalHandler->afterSocket();
-        }
+        $this->bcSubscriptionConsumer->consume($timeout);
     }
 
     /**

@@ -4,7 +4,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
-use Enqueue\Util\JSON;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
@@ -164,7 +163,7 @@ class DbalConsumer implements PsrConsumer
 
             $this->dbal->commit();
 
-            if (empty($dbalMessage['time_to_live']) || $dbalMessage['time_to_live'] > time()) {
+            if (empty($dbalMessage['time_to_live']) || ($dbalMessage['time_to_live'] / 1000) > microtime(true)) {
                 return $this->convertMessage($dbalMessage);
             }
         } catch (\Exception $e) {
@@ -213,8 +212,8 @@ class DbalConsumer implements PsrConsumer
             ->andWhere('queue = :queue')
             ->andWhere('priority IS NOT NULL')
             ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-            ->addOrderBy('priority', 'desc')
             ->addOrderBy('published_at', 'asc')
+            ->addOrderBy('priority', 'desc')
             ->setMaxResults(1)
         ;
 

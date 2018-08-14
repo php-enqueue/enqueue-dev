@@ -10,6 +10,7 @@ use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Gps\GpsConnectionFactory;
+use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
@@ -106,6 +107,10 @@ function dsn_to_connection_factory($dsn)
 
     if (class_exists(GpsConnectionFactory::class)) {
         $map['gps'] = GpsConnectionFactory::class;
+    }
+
+    if (class_exists(MongodbConnectionFactory::class)) {
+        $map['mongodb'] = MongodbConnectionFactory::class;
     }
 
     list($scheme) = explode(':', $dsn, 2);

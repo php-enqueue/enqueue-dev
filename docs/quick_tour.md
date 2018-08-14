@@ -57,7 +57,7 @@ $consumer->acknowledge($message);
 
 ## Consumption 
 
-Consumption is a layer build on top of a transport functionality. 
+Consumption is a layer built on top of a transport functionality. 
 The goal of the component is to simply consume messages. 
 The `QueueConsumer` is main piece of the component it allows binding of message processors (or callbacks) to queues. 
 The `consume` method starts the consumption process which last as long as it is not interrupted.
@@ -74,12 +74,12 @@ use Enqueue\Consumption\QueueConsumer;
 $queueConsumer = new QueueConsumer($psrContext);
 
 $queueConsumer->bind('foo_queue', function(PsrMessage $message) {
-    // process messsage
+    // process message
     
     return PsrProcessor::ACK;
 });
 $queueConsumer->bind('bar_queue', function(PsrMessage $message) {
-    // process messsage
+    // process message
     
     return PsrProcessor::ACK;
 });
@@ -158,7 +158,7 @@ $queueConsumer->consume();
 
 It provides an easy to use high level abstraction.
 The goal of the component is hide as much as possible low level details so you can concentrate on things that really matters. 
-For example, It configure a broker for you by creating queuest, exchanges and bind them.
+For example, It configure a broker for you by creating queues, exchanges and bind them.
 It provides easy to use services for producing and processing messages. 
 It supports unified format for setting message expiration, delay, timestamp, correlation id.
 It supports [message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) so different applications can talk to each other.

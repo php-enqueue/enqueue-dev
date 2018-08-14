@@ -2,6 +2,7 @@
 
 namespace Enqueue\Sqs\Tests;
 
+use Aws\Sqs\SqsClient;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\ClassExtensionTrait;
@@ -46,6 +47,18 @@ class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'version' => '2012-11-05',
             'endpoint' => null,
         ], 'config', $factory);
+    }
+
+    public function testCouldBeConstructedWithClient()
+    {
+        $client = $this->createMock(SqsClient::class);
+
+        $factory = new SqsConnectionFactory($client);
+
+        $context = $factory->createContext();
+
+        $this->assertInstanceOf(SqsContext::class, $context);
+        $this->assertAttributeSame($client, 'client', $context);
     }
 
     public function testShouldCreateLazyContext()

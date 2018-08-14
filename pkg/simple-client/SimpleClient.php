@@ -22,7 +22,11 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\Symfony\FsTransportFactory;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\Symfony\GpsTransportFactory;
+use Enqueue\Mongodb\MongodbConnectionFactory;
+use Enqueue\Mongodb\Symfony\MongodbTransportFactory;
 use Enqueue\Null\Symfony\NullTransportFactory;
+use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\RdKafka\Symfony\RdKafkaTransportFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Rpc\Promise;
@@ -351,6 +355,18 @@ final class SimpleClient
             $extension->addTransportFactory(new MissingTransportFactory('gps', ['enqueue/gps']));
         }
 
+        if (class_exists(RdKafkaConnectionFactory::class)) {
+            $extension->addTransportFactory(new RdKafkaTransportFactory('rdkafka'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('rdkafka', ['enqueue/rdkafka']));
+        }
+
+        if (class_exists(MongodbConnectionFactory::class)) {
+            $extension->addTransportFactory(new MongodbTransportFactory('mongodb'));
+        } else {
+            $extension->addTransportFactory(new MissingTransportFactory('mongodb', ['enqueue/mongodb']));
+        }
+
         return $extension;
     }
 
@@ -361,7 +377,7 @@ final class SimpleClient
      */
     private function buildConfig($config)
     {
-        if (is_string($config) && false !== strpos($config, '://')) {
+        if (is_string($config) && false !== strpos($config, ':')) {
             $extConfig = [
                 'client' => [],
                 'transport' => [

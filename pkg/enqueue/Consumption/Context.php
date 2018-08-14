@@ -136,7 +136,7 @@ class Context
     }
 
     /**
-     * @return \Exception
+     * @return \Throwable
      */
     public function getException()
     {
@@ -144,9 +144,9 @@ class Context
     }
 
     /**
-     * @param \Exception $exception
+     * @param \Throwable $exception
      */
-    public function setException(\Exception $exception)
+    public function setException(\Throwable $exception)
     {
         $this->exception = $exception;
     }

@@ -3,7 +3,6 @@
 namespace Enqueue\Redis;
 
 use Interop\Queue\PsrConnectionFactory;
-use Predis\Client;
 
 class RedisConnectionFactory implements PsrConnectionFactory
 {
@@ -29,6 +28,8 @@ class RedisConnectionFactory implements PsrConnectionFactory
      *  'persisted' => bool, Whether it use single persisted connection or open a new one for every context
      *  'lazy' => the connection will be performed as later as possible, if the option set to true
      *  'database' => Database index to select when connected (default value: 0)
+     *   user - The user name to use.
+     *   pass - Password.
      * ].
      *
      * or
@@ -36,10 +37,21 @@ class RedisConnectionFactory implements PsrConnectionFactory
      * redis:
      * redis:?vendor=predis
      *
-     * @param array|string|null $config
+     * or
+     *
+     * instance of Enqueue\Redis
+     *
+     * @param array|string|Redis|null $config
      */
     public function __construct($config = 'redis:')
     {
+        if ($config instanceof  Redis) {
+            $this->redis = $config;
+            $this->config = $this->defaultConfig();
+
+            return;
+        }
+
         if (empty($config) || 'redis:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
@@ -88,7 +100,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
             }
 
             if ('predis' == $this->config['vendor'] && false == $this->redis) {
-                $this->redis = new PRedis(new Client($this->config, ['exceptions' => true]));
+                $this->redis = new PRedis($this->config);
             }
 
             if ('custom' == $this->config['vendor'] && false == $this->redis) {
@@ -124,6 +136,10 @@ class RedisConnectionFactory implements PsrConnectionFactory
             throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
         }
 
+        if (array_key_exists('port', $config)) {
+            $config['port'] = (int) $config['port'];
+        }
+
         if ($query = parse_url($dsn, PHP_URL_QUERY)) {
             $queryConfig = [];
             parse_str($query, $queryConfig);
@@ -147,7 +163,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         return [
             'host' => 'localhost',
             'port' => 6379,
-            'timeout' => null,
+            'timeout' => .0,
             'reserved' => null,
             'retry_interval' => null,
             'vendor' => 'phpredis',

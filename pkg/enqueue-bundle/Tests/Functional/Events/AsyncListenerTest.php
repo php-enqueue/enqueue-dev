@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
-use Enqueue\Bundle\Events\AsyncListener;
+use Enqueue\AsyncEventDispatcher\AsyncListener;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\TraceableProducer;
@@ -20,20 +20,22 @@ class AsyncListenerTest extends WebTestCase
         parent::setUp();
 
         /** @var AsyncListener $asyncListener */
-        $asyncListener = $this->container->get('enqueue.events.async_listener');
+        $asyncListener = static::$container->get('enqueue.events.async_listener');
 
         $asyncListener->resetSyncMode();
+        static::$container->get('test_async_subscriber')->calls = [];
+        static::$container->get('test_async_listener')->calls = [];
     }
 
     public function testShouldNotCallRealListenerIfMarkedAsAsync()
     {
         /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher = static::$container->get('event_dispatcher');
 
         $dispatcher->dispatch('test_async', new GenericEvent('aSubject'));
 
         /** @var TestAsyncListener $listener */
-        $listener = $this->container->get('test_async_listener');
+        $listener = static::$container->get('test_async_listener');
 
         $this->assertEmpty($listener->calls);
     }
@@ -41,14 +43,14 @@ class AsyncListenerTest extends WebTestCase
     public function testShouldSendMessageToExpectedCommandInsteadOfCallingRealListener()
     {
         /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher = static::$container->get('event_dispatcher');
 
         $event = new GenericEvent('theSubject', ['fooArg' => 'fooVal']);
 
         $dispatcher->dispatch('test_async', $event);
 
         /** @var TraceableProducer $producer */
-        $producer = $this->container->get('enqueue.producer');
+        $producer = static::$container->get('enqueue.producer');
 
         $traces = $producer->getCommandTraces('symfony_events');
 
@@ -61,14 +63,14 @@ class AsyncListenerTest extends WebTestCase
     public function testShouldSendMessageForEveryDispatchCall()
     {
         /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher = static::$container->get('event_dispatcher');
 
         $dispatcher->dispatch('test_async', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
         $dispatcher->dispatch('test_async', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
         $dispatcher->dispatch('test_async', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
 
         /** @var TraceableProducer $producer */
-        $producer = $this->container->get('enqueue.producer');
+        $producer = static::$container->get('enqueue.producer');
 
         $traces = $producer->getCommandTraces('symfony_events');
 
@@ -78,16 +80,17 @@ class AsyncListenerTest extends WebTestCase
     public function testShouldSendMessageIfDispatchedFromInsideListener()
     {
         /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher = static::$container->get('event_dispatcher');
 
-        $dispatcher->addListener('foo', function (Event $event, $eventName, EventDispatcherInterface $dispatcher) {
+        $eventName = 'an_event_'.uniqid();
+        $dispatcher->addListener($eventName, function (Event $event, $eventName, EventDispatcherInterface $dispatcher) {
             $dispatcher->dispatch('test_async', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
         });
 
-        $dispatcher->dispatch('foo');
+        $dispatcher->dispatch($eventName);
 
         /** @var TraceableProducer $producer */
-        $producer = $this->container->get('enqueue.producer');
+        $producer = static::$container->get('enqueue.producer');
 
         $traces = $producer->getCommandTraces('symfony_events');
 

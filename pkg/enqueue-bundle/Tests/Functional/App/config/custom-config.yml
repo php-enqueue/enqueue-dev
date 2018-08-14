@@ -1,7 +1,11 @@
 parameters:
     locale: 'en'
     secret: 'ThisTokenIsNotSoSecretChangeIt'
-
+    env(AWS_SQS_REGION): 'us-east-1'
+    env(AWS_SQS_VERSION): 'latest'
+    env(AWS_SQS_KEY): 'key'
+    env(AWS_SQS_SECRET): 'secret'
+    env(AWS_SQS_ENDPOINT): 'http://localstack:4576'
 
 framework:
     #esi:             ~
@@ -15,12 +19,6 @@ framework:
     router:          { resource: '%kernel.root_dir%/config/routing.yml' }
     default_locale:  '%locale%'
 
-monolog:
-    handlers:
-        main:
-            type: 'null'
-            level: 'error'
-
 services:
     test.message.processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'
@@ -33,3 +31,15 @@ services:
         public: true
         tags:
             - { name: 'enqueue.client.processor' }
+
+    test.sqs_client:
+        public: true
+        class: Aws\Sqs\SqsClient
+        arguments:
+            -
+                endpoint: '%env(AWS_SQS_ENDPOINT)%'
+                region: '%env(AWS_SQS_REGION)%'
+                version: '%env(AWS_SQS_VERSION)%'
+                credentials:
+                    key: '%env(AWS_SQS_KEY)%'
+                    secret: '%env(AWS_SQS_SECRET)%'

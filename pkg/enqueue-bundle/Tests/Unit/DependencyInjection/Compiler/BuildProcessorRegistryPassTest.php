@@ -180,7 +180,7 @@ class BuildProcessorRegistryPassTest extends TestCase
     public function testShouldThrowExceptionWhenTopicSubscriberConfigurationIsInvalid()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Topic subscriber configuration is invalid. "[12345]"');
+        $this->expectExceptionMessage('Topic subscriber configuration is invalid');
 
         $container = $this->createContainerBuilder();
 
