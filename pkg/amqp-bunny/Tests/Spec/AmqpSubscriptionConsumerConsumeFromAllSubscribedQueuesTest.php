@@ -8,6 +8,9 @@ use Interop\Amqp\AmqpQueue;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SubscriptionConsumerConsumeFromAllSubscribedQueuesSpec;
 
+/**
+ * @group functional
+ */
 class AmqpSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends SubscriptionConsumerConsumeFromAllSubscribedQueuesSpec
 {
     /**

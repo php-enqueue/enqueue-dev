@@ -8,6 +8,9 @@ use Interop\Amqp\AmqpQueue;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SubscriptionConsumerStopOnFalseSpec;
 
+/**
+ * @group functional
+ */
 class AmqpSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopOnFalseSpec
 {
     /**

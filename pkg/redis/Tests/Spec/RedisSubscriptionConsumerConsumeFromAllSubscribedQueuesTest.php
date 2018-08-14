@@ -8,6 +8,10 @@ use Enqueue\Test\RedisExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SubscriptionConsumerConsumeFromAllSubscribedQueuesSpec;
 
+/**
+ * @group functional
+ * @group Redis
+ */
 class RedisSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends SubscriptionConsumerConsumeFromAllSubscribedQueuesSpec
 {
     use RedisExtension;

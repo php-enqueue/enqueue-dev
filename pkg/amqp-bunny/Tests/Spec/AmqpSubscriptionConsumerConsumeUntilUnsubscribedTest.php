@@ -8,6 +8,9 @@ use Interop\Amqp\AmqpQueue;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SubscriptionConsumerConsumeUntilUnsubscribedSpec;
 
+/**
+ * @group functional
+ */
 class AmqpSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionConsumerConsumeUntilUnsubscribedSpec
 {
     /**

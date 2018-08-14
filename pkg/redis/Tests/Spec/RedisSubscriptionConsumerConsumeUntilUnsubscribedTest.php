@@ -8,6 +8,10 @@ use Enqueue\Test\RedisExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SubscriptionConsumerConsumeUntilUnsubscribedSpec;
 
+/**
+ * @group functional
+ * @group Redis
+ */
 class RedisSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionConsumerConsumeUntilUnsubscribedSpec
 {
     use RedisExtension;

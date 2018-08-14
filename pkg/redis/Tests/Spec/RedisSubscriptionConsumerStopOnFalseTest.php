@@ -8,6 +8,10 @@ use Enqueue\Test\RedisExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SubscriptionConsumerStopOnFalseSpec;
 
+/**
+ * @group functional
+ * @group Redis
+ */
 class RedisSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopOnFalseSpec
 {
     use RedisExtension;

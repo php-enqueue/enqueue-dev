@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Dbal\Tests;
+namespace Enqueue\Mongodb\Tests;
 
 use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Test\ClassExtensionTrait;
