@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-$ composer require enqueue/async-command:^0.8
+$ composer require enqueue/async-command:0.9.x-dev
 ```
 
 ## Configuration
@@ -39,7 +39,7 @@ optionally you can get a command execution result:
 <?php
 
 use Enqueue\Client\ProducerInterface;
-use Enqueue\AsyncCommand\RunCommandResult;
+use Enqueue\AsyncCommand\CommandResult;
 use Enqueue\AsyncCommand\Commands;
 use Enqueue\AsyncCommand\RunCommand;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -54,7 +54,7 @@ $promise = $producer->sendCommand(Commands::RUN_COMMAND, new RunCommand('debug:c
 // do other stuff.
 
 if ($replyMessage = $promise->receive(5000)) { 
-    $result = RunCommandResult::jsonUnserialize($replyMessage->getBody());
+    $result = CommandResult::jsonUnserialize($replyMessage->getBody());
     
     echo $result->getOutput();
 }
