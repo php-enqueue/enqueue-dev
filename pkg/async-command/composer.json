@@ -8,7 +8,8 @@
     "require": {
         "php": ">=7.1",
         "enqueue/enqueue": "0.9.x-dev",
-        "symfony/console": "^3.4|^4"
+        "symfony/console": "^3.4|^4",
+        "symfony/process": "^3.4|^4"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",

@@ -3,6 +3,6 @@ services:
         class: 'Enqueue\AsyncCommand\RunCommandProcessor'
         public: public
         arguments:
-            - '%kernel.root_dir%/..'
+            - '%kernel.project_dir%'
         tags:
             - { name: 'enqueue.client.processor' }

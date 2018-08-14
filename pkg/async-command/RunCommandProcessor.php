@@ -17,28 +17,32 @@ final class RunCommandProcessor implements PsrProcessor, CommandSubscriberInterf
      */
     private $projectDir;
 
-    public function __construct($projectDir)
+    public function __construct(string $projectDir)
     {
         $this->projectDir = $projectDir;
     }
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(PsrMessage $message, PsrContext $context): Result
     {
         $command = RunCommand::jsonUnserialize($message->getBody());
 
         $phpBin = (new PhpExecutableFinder())->find();
         $consoleBin = file_exists($this->projectDir.'/bin/console') ? './bin/console' : './app/console';
 
-        $process = new Process($phpBin.' '.$consoleBin.' '.$command->getCommandLine(), $this->projectDir);
+        $process = new Process($phpBin.' '.$consoleBin.' '.$this->getCommandLine($command), $this->projectDir);
 
         $process->run();
 
-        $result = new RunCommandResult($process->getExitCode(), $process->getOutput(), $process->getErrorOutput());
+        if ($message->getReplyTo()) {
+            $result = new CommandResult($process->getExitCode(), $process->getOutput(), $process->getErrorOutput());
 
-        return Result::reply($context->createMessage(json_encode($result)));
+            return Result::reply($context->createMessage(json_encode($result)));
+        }
+
+        return Result::ack();
     }
 
-    public static function getSubscribedCommand()
+    public static function getSubscribedCommand(): array
     {
         return [
             'processorName' => Commands::RUN_COMMAND,
@@ -46,5 +50,25 @@ final class RunCommandProcessor implements PsrProcessor, CommandSubscriberInterf
             'queueNameHardcoded' => true,
             'exclusive' => true,
         ];
+    }
+
+    /**
+     * @return string
+     */
+    private function getCommandLine(RunCommand $command): string
+    {
+        $optionsString = '';
+        foreach ($command->getOptions() as $name => $value) {
+            $optionsString .= " $name=$value";
+        }
+        $optionsString = trim($optionsString);
+
+        $argumentsString = '';
+        foreach ($command->getArguments() as $value) {
+            $argumentsString .= " $value";
+        }
+        $argumentsString = trim($argumentsString);
+
+        return trim($command->getCommand().' '.$argumentsString.' '.$optionsString);
     }
 }

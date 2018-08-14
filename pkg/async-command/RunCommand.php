@@ -24,36 +24,13 @@ final class RunCommand implements \JsonSerializable
      * @param string[] $arguments
      * @param string[] $options
      */
-    public function __construct($command, array $arguments = [], array $options = [])
+    public function __construct(string $command, array $arguments = [], array $options = [])
     {
         $this->command = $command;
         $this->arguments = $arguments;
         $this->options = $options;
     }
 
-    /**
-     * @return string
-     */
-    public function getCommandLine()
-    {
-        $optionsString = '';
-        foreach ($this->options as $name => $value) {
-            $optionsString .= " $name=$value";
-        }
-        $optionsString = trim($optionsString);
-
-        $argumentsString = '';
-        foreach ($this->arguments as $value) {
-            $argumentsString .= " $value";
-        }
-        $argumentsString = trim($argumentsString);
-
-        return trim($this->command.' '.$argumentsString.' '.$optionsString);
-    }
-
-    /**
-     * @return string
-     */
     public function getCommand(): string
     {
         return $this->command;
@@ -75,7 +52,7 @@ final class RunCommand implements \JsonSerializable
         return $this->options;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'command' => $this->command,
@@ -84,12 +61,7 @@ final class RunCommand implements \JsonSerializable
         ];
     }
 
-    /**
-     * @param string $json
-     *
-     * @return self
-     */
-    public static function jsonUnserialize($json)
+    public static function jsonUnserialize(string $json): self
     {
         $data = json_decode($json, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
