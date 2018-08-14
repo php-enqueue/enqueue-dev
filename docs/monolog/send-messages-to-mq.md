@@ -47,7 +47,7 @@ require_once __DIR__.'/vendor/autoload.php';
 $context = (new \Enqueue\Fs\FsConnectionFactory('file://'.__DIR__.'/queue'))->createContext();
 
 $consumer = new QueueConsumer($context);
-$consumer->bind('log', function(PsrMessage $message) {
+$consumer->bindCallback('log', function(PsrMessage $message) {
     echo $message->getBody().PHP_EOL;
 
     return PsrProcessor::ACK;

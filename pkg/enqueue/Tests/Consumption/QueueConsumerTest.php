@@ -114,18 +114,18 @@ class QueueConsumerTest extends TestCase
     {
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
-        $consumer->setIdleTimeout(123456);
+        $consumer->setIdleTimeout(123456.1);
 
-        $this->assertSame(123456, $consumer->getIdleTimeout());
+        $this->assertSame(123456.1, $consumer->getIdleTimeout());
     }
 
     public function testCouldSetGetReceiveTimeout()
     {
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
-        $consumer->setReceiveTimeout(123456);
+        $consumer->setReceiveTimeout(123456.1);
 
-        $this->assertSame(123456, $consumer->getReceiveTimeout());
+        $this->assertSame(123456.1, $consumer->getReceiveTimeout());
     }
 
     public function testShouldAllowBindCallbackToQueueName()

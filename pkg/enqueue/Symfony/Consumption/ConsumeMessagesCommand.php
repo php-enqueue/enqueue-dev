@@ -4,7 +4,7 @@ namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -19,14 +19,14 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
     use QueueConsumerOptionsCommandTrait;
 
     /**
-     * @var QueueConsumer
+     * @var QueueConsumerInterface
      */
     protected $consumer;
 
     /**
-     * @param QueueConsumer $consumer
+     * @param QueueConsumerInterface $consumer
      */
-    public function __construct(QueueConsumer $consumer)
+    public function __construct(QueueConsumerInterface $consumer)
     {
         parent::__construct(null);
 

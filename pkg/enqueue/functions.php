@@ -169,13 +169,13 @@ function send_queue(PsrContext $c, $queue, $body)
 
 /**
  * @param PsrContext $c
- * @param string     $queue
+ * @param string     $queueName
  * @param callable   $callback
  */
-function consume(PsrContext $c, $queue, callable $callback)
+function consume(PsrContext $c, string $queueName, callable $callback)
 {
     $queueConsumer = new QueueConsumer($c);
-    $queueConsumer->bind($queue, $callback);
+    $queueConsumer->bindCallback($queueName, $callback);
 
     $queueConsumer->consume();
 }

@@ -73,12 +73,12 @@ use Enqueue\Consumption\QueueConsumer;
 
 $queueConsumer = new QueueConsumer($psrContext);
 
-$queueConsumer->bind('foo_queue', function(PsrMessage $message) {
+$queueConsumer->bindCallback('foo_queue', function(PsrMessage $message) {
     // process message
     
     return PsrProcessor::ACK;
 });
-$queueConsumer->bind('bar_queue', function(PsrMessage $message) {
+$queueConsumer->bindCallback('bar_queue', function(PsrMessage $message) {
     // process message
     
     return PsrProcessor::ACK;
@@ -145,7 +145,7 @@ $queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
     new ReplyExtension()
 ]));
 
-$queueConsumer->bind('foo', function(PsrMessage $message, PsrContext $context) {
+$queueConsumer->bindCallback('foo', function(PsrMessage $message, PsrContext $context) {
     $replyMessage = $context->createMessage('Hello');
     
     return Result::reply($replyMessage);
@@ -255,7 +255,7 @@ use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 
 /** @var QueueConsumer $queueConsumer */
 
-$queueConsumer->bind('a_queue', function(PsrMessage $message) {
+$queueConsumer->bindCallback('a_queue', function(PsrMessage $message) {
     // process message    
 });
 

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Symfony\Consumption;
 
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Tests\Symfony\Consumption\Mock\QueueConsumerOptionsCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -26,28 +26,28 @@ class QueueConsumerOptionsCommandTraitTest extends TestCase
         $consumer
             ->expects($this->once())
             ->method('setIdleTimeout')
-            ->with($this->identicalTo(123))
+            ->with($this->identicalTo(123.1))
         ;
         $consumer
             ->expects($this->once())
             ->method('setReceiveTimeout')
-            ->with($this->identicalTo(456))
+            ->with($this->identicalTo(456.1))
         ;
 
         $trait = new QueueConsumerOptionsCommand($consumer);
 
         $tester = new CommandTester($trait);
         $tester->execute([
-            '--idle-timeout' => '123',
-            '--receive-timeout' => '456',
+            '--idle-timeout' => '123.1',
+            '--receive-timeout' => '456.1',
         ]);
     }
 
     /**
-     * @return QueueConsumer|\PHPUnit_Framework_MockObject_MockObject|QueueConsumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
      */
     private function createQueueConsumer()
     {
-        return $this->createMock(QueueConsumer::class);
+        return $this->createMock(QueueConsumerInterface::class);
     }
 }
