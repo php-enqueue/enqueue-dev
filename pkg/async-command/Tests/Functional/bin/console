@@ -1,0 +1,6 @@
+<?php
+
+fwrite(STDOUT, 'Command Output');
+fwrite(STDERR, 'Command Error Output');
+
+exit(123);
