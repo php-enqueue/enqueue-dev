@@ -47,6 +47,7 @@ install:
     - rm $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini;
     - echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - php ./bin/fix-symfony-version.php "$SYMFONY_VERSION"
+    - composer install
     - if [ "$PREPARE_CONTAINER" = true ]; then docker --version; fi
     - if [ "$PREPARE_CONTAINER" = true ]; then docker-compose --version; fi
     - if [ "$PREPARE_CONTAINER" = true ]; then bin/dev -b; fi
