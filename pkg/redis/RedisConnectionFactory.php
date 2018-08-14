@@ -136,6 +136,10 @@ class RedisConnectionFactory implements PsrConnectionFactory
             throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
         }
 
+        if (array_key_exists('port', $config)) {
+            $config['port'] = (int) $config['port'];
+        }
+
         if ($query = parse_url($dsn, PHP_URL_QUERY)) {
             $queryConfig = [];
             parse_str($query, $queryConfig);
@@ -159,7 +163,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         return [
             'host' => 'localhost',
             'port' => 6379,
-            'timeout' => null,
+            'timeout' => .0,
             'reserved' => null,
             'retry_interval' => null,
             'vendor' => 'phpredis',

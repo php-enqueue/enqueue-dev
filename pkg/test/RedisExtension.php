@@ -18,7 +18,7 @@ trait RedisExtension
 
         $config = [
             'host' => getenv('REDIS_HOST'),
-            'port' => getenv('REDIS_PORT'),
+            'port' => (int) getenv('REDIS_PORT'),
             'vendor' => 'phpredis',
             'lazy' => false,
         ];
