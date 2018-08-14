@@ -53,9 +53,6 @@ class JobRunner
         } catch (\Throwable $e) {
             $this->jobProcessor->failChildJob($childJob);
             throw $e;
-        } catch (\Exception $e) { // needed to support PHP 5.6
-            $this->jobProcessor->failChildJob($childJob);
-            throw $e;
         }
 
         if (!$childJob->getStoppedAt()) {

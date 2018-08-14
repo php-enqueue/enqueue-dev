@@ -7,7 +7,7 @@
     "php": "^7.1.3",
 
     "ext-amqp": "^1.9.3",
-    "ext-gearman": "^1.1 || ^2.0",
+    "ext-gearman": "^2.0",
     "ext-mongodb": "^1.3",
     "ext-rdkafka": "^3.0.3",
 
@@ -56,6 +56,7 @@
       "Enqueue\\AmqpLib\\": "pkg/amqp-lib/",
       "Enqueue\\AmqpTools\\": "pkg/amqp-tools/",
       "Enqueue\\AsyncEventDispatcher\\": "pkg/async-event-dispatcher/",
+      "Enqueue\\AsyncCommand\\": "pkg/async-command/",
       "Enqueue\\Dbal\\": "pkg/dbal/",
       "Enqueue\\Bundle\\": "pkg/enqueue-bundle/",
       "Enqueue\\Fs\\": "pkg/fs/",
@@ -95,7 +96,7 @@
     "bin-dir": "bin",
     "platform": {
       "ext-amqp": "1.9.3",
-      "ext-gearman": "1.1",
+      "ext-gearman": "2.0.3",
       "ext-rdkafka": "3.3",
       "ext-mongodb": "1.3",
       "ext-bcmath": "1",

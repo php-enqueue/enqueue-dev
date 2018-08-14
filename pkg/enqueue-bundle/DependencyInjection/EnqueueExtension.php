@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
+use Enqueue\AsyncCommand\DependencyInjection\AsyncCommandExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\Producer;
@@ -149,10 +150,23 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         }
 
         if ($config['async_events']['enabled']) {
+            if (false == class_exists(AsyncEventDispatcherExtension::class)) {
+                throw new \LogicException('The "enqueue/async-event-dispatcher" package has to be installed.');
+            }
+
             $extension = new AsyncEventDispatcherExtension();
             $extension->load([[
                 'context_service' => 'enqueue.transport.default.context',
             ]], $container);
+        }
+
+        if ($config['async_commands']['enabled']) {
+            if (false == class_exists(AsyncCommandExtension::class)) {
+                throw new \LogicException('The "enqueue/async-command" package has to be installed.');
+            }
+
+            $extension = new AsyncCommandExtension();
+            $extension->load([[]], $container);
         }
 
         if ($config['extensions']['doctrine_ping_connection_extension']) {
