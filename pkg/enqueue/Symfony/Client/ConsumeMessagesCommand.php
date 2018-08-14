@@ -24,6 +24,8 @@ class ConsumeMessagesCommand extends Command
     use SetupBrokerExtensionCommandTrait;
     use QueueConsumerOptionsCommandTrait;
 
+    protected static $defaultName = 'enqueue:consume';
+
     /**
      * @var QueueConsumer
      */
@@ -56,7 +58,7 @@ class ConsumeMessagesCommand extends Command
         QueueMetaRegistry $queueMetaRegistry,
         DriverInterface $driver
     ) {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->consumer = $consumer;
         $this->processor = $processor;
@@ -74,7 +76,6 @@ class ConsumeMessagesCommand extends Command
         $this->configureQueueConsumerOptions();
 
         $this
-            ->setName('enqueue:consume')
             ->setAliases(['enq:c'])
             ->setDescription('A client\'s worker that processes messages. '.
                 'By default it connects to default queue. '.

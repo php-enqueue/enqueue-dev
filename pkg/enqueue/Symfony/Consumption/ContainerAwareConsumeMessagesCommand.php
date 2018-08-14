@@ -22,6 +22,8 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
 
+    protected static $defaultName = 'enqueue:transport:consume';
+
     /**
      * @var QueueConsumer
      */
@@ -34,7 +36,7 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
      */
     public function __construct(QueueConsumer $consumer)
     {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->consumer = $consumer;
     }
@@ -48,7 +50,6 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
         $this->configureQueueConsumerOptions();
 
         $this
-            ->setName('enqueue:transport:consume')
             ->setDescription('A worker that consumes message from a broker. '.
                 'To use this broker you have to explicitly set a queue to consume from '.
                 'and a message processor service')

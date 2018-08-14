@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ProduceMessageCommand extends Command
 {
+    protected static $defaultName = 'enqueue:produce';
+
     /**
      * @var ProducerInterface
      */
@@ -20,7 +22,7 @@ class ProduceMessageCommand extends Command
      */
     public function __construct(ProducerInterface $producer)
     {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->producer = $producer;
     }
@@ -31,7 +33,6 @@ class ProduceMessageCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('enqueue:produce')
             ->setAliases(['enq:p'])
             ->setDescription('A command to send a message to topic')
             ->addArgument('topic', InputArgument::REQUIRED, 'A topic to send message to')
