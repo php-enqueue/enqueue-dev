@@ -3,7 +3,7 @@
 namespace Enqueue\Tests\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Enqueue\Tests\Symfony\Consumption\Mock\QueueSubscriberProcessor;
 use Interop\Queue\PsrContext;
@@ -199,10 +199,10 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
      */
     protected function createQueueConsumerMock()
     {
-        return $this->createMock(QueueConsumer::class);
+        return $this->createMock(QueueConsumerInterface::class);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Symfony\Consumption\Mock;
 
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Symfony\Consumption\QueueConsumerOptionsCommandTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,11 +13,11 @@ class QueueConsumerOptionsCommand extends Command
     use QueueConsumerOptionsCommandTrait;
 
     /**
-     * @var QueueConsumer
+     * @var QueueConsumerInterface
      */
     private $consumer;
 
-    public function __construct(QueueConsumer $consumer)
+    public function __construct(QueueConsumerInterface $consumer)
     {
         parent::__construct('queue-consumer-options');
 

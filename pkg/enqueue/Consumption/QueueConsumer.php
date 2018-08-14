@@ -16,7 +16,7 @@ use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class QueueConsumer
+final class QueueConsumer implements QueueConsumerInterface
 {
     /**
      * @var PsrContext
@@ -71,8 +71,8 @@ class QueueConsumer
     public function __construct(
         PsrContext $psrContext,
         ExtensionInterface $extension = null,
-        $idleTimeout = 0,
-        $receiveTimeout = 10000
+        float $idleTimeout = 0.,
+        float $receiveTimeout = 10000.
     ) {
         $this->psrContext = $psrContext;
         $this->staticExtension = $extension ?: new ChainExtension([]);
@@ -85,62 +85,55 @@ class QueueConsumer
     }
 
     /**
-     * @param int $timeout
+     * {@inheritdoc}
      */
-    public function setIdleTimeout($timeout)
+    public function setIdleTimeout(float $timeout): void
     {
-        $this->idleTimeout = (int) $timeout;
+        $this->idleTimeout = $timeout;
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
-    public function getIdleTimeout()
+    public function getIdleTimeout(): float
     {
         return $this->idleTimeout;
     }
 
     /**
-     * @param int $timeout
+     * {@inheritdoc}
      */
-    public function setReceiveTimeout($timeout)
+    public function setReceiveTimeout(float $timeout): void
     {
-        $this->receiveTimeout = (int) $timeout;
+        $this->receiveTimeout = $timeout;
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
-    public function getReceiveTimeout()
+    public function getReceiveTimeout(): float
     {
         return $this->receiveTimeout;
     }
 
     /**
-     * @return PsrContext
+     * {@inheritdoc}
      */
-    public function getPsrContext()
+    public function getPsrContext(): PsrContext
     {
         return $this->psrContext;
     }
 
     /**
-     * @param PsrQueue|string       $queue
-     * @param PsrProcessor|callable $processor
-     *
-     * @return QueueConsumer
+     * {@inheritdoc}
      */
-    public function bind($queue, $processor)
+    public function bind($queue, PsrProcessor $processor): QueueConsumerInterface
     {
         if (is_string($queue)) {
             $queue = $this->psrContext->createQueue($queue);
         }
-        if (is_callable($processor)) {
-            $processor = new CallbackProcessor($processor);
-        }
 
         InvalidArgumentException::assertInstanceOf($queue, PsrQueue::class);
-        InvalidArgumentException::assertInstanceOf($processor, PsrProcessor::class);
 
         if (empty($queue->getQueueName())) {
             throw new LogicException('The queue name must be not empty.');
@@ -155,14 +148,17 @@ class QueueConsumer
     }
 
     /**
-     * Runtime extension - is an extension or a collection of extensions which could be set on runtime.
-     * Here's a good example: @see LimitsExtensionsCommandTrait.
-     *
-     * @param ExtensionInterface|ChainExtension|null $runtimeExtension
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function consume(ExtensionInterface $runtimeExtension = null)
+    public function bindCallback($queue, callable $processor): QueueConsumerInterface
+    {
+        return $this->bind($queue, new CallbackProcessor($processor));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function consume(ExtensionInterface $runtimeExtension = null): void
     {
         if (empty($this->boundProcessors)) {
             throw new \LogicException('There is nothing to consume. It is required to bind something before calling consume method.');

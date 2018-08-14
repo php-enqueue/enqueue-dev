@@ -101,31 +101,22 @@ class QueueConsumerTest extends TestCase
         $consumer->bind(new \stdClass(), $processorMock);
     }
 
-    public function testThrowIfProcessorNeitherInstanceOfProcessorNorCallable()
-    {
-        $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The argument must be an instance of Interop\Queue\PsrProcessor but got stdClass.');
-        $consumer->bind(new NullQueue(''), new \stdClass());
-    }
-
     public function testCouldSetGetIdleTimeout()
     {
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
-        $consumer->setIdleTimeout(123456);
+        $consumer->setIdleTimeout(123456.1);
 
-        $this->assertSame(123456, $consumer->getIdleTimeout());
+        $this->assertSame(123456.1, $consumer->getIdleTimeout());
     }
 
     public function testCouldSetGetReceiveTimeout()
     {
         $consumer = new QueueConsumer($this->createPsrContextStub(), null, 0);
 
-        $consumer->setReceiveTimeout(123456);
+        $consumer->setReceiveTimeout(123456.1);
 
-        $this->assertSame(123456, $consumer->getReceiveTimeout());
+        $this->assertSame(123456.1, $consumer->getReceiveTimeout());
     }
 
     public function testShouldAllowBindCallbackToQueueName()
@@ -146,7 +137,7 @@ class QueueConsumerTest extends TestCase
 
         $consumer = new QueueConsumer($context, null, 0);
 
-        $consumer->bind($queueName, $callback);
+        $consumer->bindCallback($queueName, $callback);
 
         $boundProcessors = $this->readAttribute($consumer, 'boundProcessors');
 

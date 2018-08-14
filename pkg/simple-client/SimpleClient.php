@@ -15,7 +15,7 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsConnectionFactory;
@@ -194,10 +194,7 @@ final class SimpleClient
         return $this->container->get('enqueue.transport.context');
     }
 
-    /**
-     * @return QueueConsumer
-     */
-    public function getQueueConsumer()
+    public function getQueueConsumer(): QueueConsumerInterface
     {
         return $this->container->get('enqueue.client.queue_consumer');
     }

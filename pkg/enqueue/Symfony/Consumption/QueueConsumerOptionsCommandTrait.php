@@ -2,7 +2,7 @@
 
 namespace Enqueue\Symfony\Consumption;
 
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -20,17 +20,17 @@ trait QueueConsumerOptionsCommandTrait
     }
 
     /**
-     * @param QueueConsumer  $consumer
-     * @param InputInterface $input
+     * @param QueueConsumerInterface $consumer
+     * @param InputInterface         $input
      */
-    protected function setQueueConsumerOptions(QueueConsumer $consumer, InputInterface $input)
+    protected function setQueueConsumerOptions(QueueConsumerInterface $consumer, InputInterface $input)
     {
         if (null !== $idleTimeout = $input->getOption('idle-timeout')) {
-            $consumer->setIdleTimeout((int) $idleTimeout);
+            $consumer->setIdleTimeout((float) $idleTimeout);
         }
 
         if (null !== $receiveTimeout = $input->getOption('receive-timeout')) {
-            $consumer->setReceiveTimeout((int) $receiveTimeout);
+            $consumer->setReceiveTimeout((float) $receiveTimeout);
         }
     }
 }
