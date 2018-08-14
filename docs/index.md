@@ -33,6 +33,7 @@
     - [Message producer](bundle/message_producer.md)
     - [Message processor](bundle/message_processor.md)
     - [Async events](bundle/async_events.md)
+    - [Async commands](bundle/async_commands.md)
     - [Job queue](bundle/job_queue.md)
     - [Consumption extension](bundle/consumption_extension.md)
     - [Production settings](bundle/production_settings.md)
