@@ -11,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TopicsCommand extends Command
 {
+    protected static $defaultName = 'enqueue:topics';
+
     /**
      * @var TopicMetaRegistry
      */
@@ -21,7 +23,7 @@ class TopicsCommand extends Command
      */
     public function __construct(TopicMetaRegistry $topicRegistry)
     {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->topicRegistry = $topicRegistry;
     }
@@ -32,7 +34,6 @@ class TopicsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('enqueue:topics')
             ->setAliases([
                 'enq:m:t',
                 'debug:enqueue:topics',

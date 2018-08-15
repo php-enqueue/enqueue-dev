@@ -1,6 +1,9 @@
 parameters:
 	excludes_analyse:
-		- bin/pre-commit
+		- docs
+		- bin
+		- docker
+		- var
 		- pkg/amqp-lib/tutorial
 		- pkg/enqueue-bundle/Tests/Functional/App/AsyncListener.php
 		- pkg/enqueue/Util/UUID.php
