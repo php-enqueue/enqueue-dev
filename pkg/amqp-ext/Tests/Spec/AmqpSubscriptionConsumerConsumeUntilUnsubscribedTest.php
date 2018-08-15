@@ -13,6 +13,15 @@ use Interop\Queue\Spec\SubscriptionConsumerConsumeUntilUnsubscribedSpec;
  */
 class AmqpSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionConsumerConsumeUntilUnsubscribedSpec
 {
+    protected function tearDown()
+    {
+        if ($this->subscriptionConsumer) {
+            $this->subscriptionConsumer->unsubscribeAll();
+        }
+
+        parent::tearDown();
+    }
+
     /**
      * @return AmqpContext
      *
