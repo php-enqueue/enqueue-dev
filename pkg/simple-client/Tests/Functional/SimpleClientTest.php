@@ -112,7 +112,7 @@ class SimpleClientTest extends TestCase
             return Result::ACK;
         });
 
-        $client->send('foo_topic', 'Hello there!', true);
+        $client->sendEvent('foo_topic', 'Hello there!', true);
 
         $client->consume(new ChainExtension([
             new LimitConsumptionTimeExtension(new \DateTime('+5sec')),
@@ -144,7 +144,7 @@ class SimpleClientTest extends TestCase
             return Result::ACK;
         });
 
-        $client->send('foo_topic', 'Hello there!', true);
+        $client->sendEvent('foo_topic', 'Hello there!', true);
 
         $client->consume(new ChainExtension([
             new LimitConsumptionTimeExtension(new \DateTime('+5sec')),

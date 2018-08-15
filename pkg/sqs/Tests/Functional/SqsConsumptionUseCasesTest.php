@@ -39,8 +39,8 @@ class SqsConsumptionUseCasesTest extends TestCase
         $this->context->declareQueue($replyQueue);
 
         try {
-            $this->context->purge($queue);
-            $this->context->purge($replyQueue);
+            $this->context->purgeQueue($queue);
+            $this->context->purgeQueue($replyQueue);
         } catch (\Exception $e) {
         }
     }

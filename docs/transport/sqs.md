@@ -110,7 +110,7 @@ $consumer->acknowledge($message);
 
 $fooQueue = $psrContext->createQueue('foo');
 
-$psrContext->purge($fooQueue);
+$psrContext->purgeQueue($fooQueue);
 ```
 
 [back to index](../index.md)
