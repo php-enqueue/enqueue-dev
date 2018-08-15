@@ -55,8 +55,7 @@ class RdKafkaConsumer implements PsrConsumer
         $this->topic = $topic;
         $this->subscribed = false;
         $this->commitAsync = false;
-        $this->offset = null;
-
+        
         $this->setSerializer($serializer);
     }
 
@@ -99,12 +98,15 @@ class RdKafkaConsumer implements PsrConsumer
     public function receive($timeout = 0)
     {
         if (false == $this->subscribed) {
-            $this->consumer->assign([new TopicPartition(
-                $this->getQueue()->getQueueName(),
-                $this->getQueue()->getPartition(),
-                $this->offset
-            )]);
-
+            if ($this->offset === null) {
+                $this->consumer->subscribe([$this->getQueue()->getQueueName()]);
+            } else {
+                $this->consumer->assign([new TopicPartition(
+                    $this->getQueue()->getQueueName(),
+                    $this->getQueue()->getPartition(),
+                    $this->offset
+                ), ]);
+            }
             $this->subscribed = true;
         }
 
