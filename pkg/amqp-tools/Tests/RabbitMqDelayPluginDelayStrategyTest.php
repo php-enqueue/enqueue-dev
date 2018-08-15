@@ -73,7 +73,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
         $dest = new AmqpTopic('the-topic');
         $dest->setFlags(12345);
 
-        $strategy = new RabbitMqDelayPluginDelayStrategy();
+        $strategy = $this->buildStrategy();
         $strategy->delayMessage($context, $dest, $message, 10000);
 
         $this->assertSame(12345, $delayedTopic->getFlags());
@@ -82,7 +82,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             'x-delayed-type' => 'direct',
         ], $delayedTopic->getArguments());
 
-        $this->assertSame(['x-delay' => 10000], $delayedMessage->getProperties());
+        $this->assertXDelay($delayedMessage, 10000);
         $this->assertSame('the-routing-key', $delayedMessage->getRoutingKey());
     }
 
@@ -132,7 +132,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
 
         $dest = new AmqpQueue('the-queue');
 
-        $strategy = new RabbitMqDelayPluginDelayStrategy();
+        $strategy = $this->buildStrategy();
         $strategy->delayMessage($context, $dest, $message, 10000);
 
         $this->assertSame(AmqpQueue::FLAG_DURABLE, $delayedTopic->getFlags());
@@ -141,7 +141,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             'x-delayed-type' => 'direct',
         ], $delayedTopic->getArguments());
 
-        $this->assertSame(['x-delay' => 10000], $delayedMessage->getProperties());
+        $this->assertXDelay($delayedMessage, 10000);
         $this->assertSame('the-queue', $delayedMessage->getRoutingKey());
     }
 
@@ -156,12 +156,22 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
             ->willReturn($delayedMessage)
         ;
 
-        $strategy = new RabbitMqDelayPluginDelayStrategy();
+        $strategy = $this->buildStrategy();
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpTopic|Interop\Amqp\AmqpQueue but got');
 
         $strategy->delayMessage($context, $this->createMock(AmqpDestination::class), new AmqpMessage(), 10000);
+    }
+
+    protected function buildStrategy()
+    {
+        return new RabbitMqDelayPluginDelayStrategy();
+    }
+
+    protected function assertXDelay(AmqpMessage $delayedMessage, $xDelay)
+    {
+        $this->assertSame(['x-delay' => $xDelay], $delayedMessage->getProperties());
     }
 
     /**
