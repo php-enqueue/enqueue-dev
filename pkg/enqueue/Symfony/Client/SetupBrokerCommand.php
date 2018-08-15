@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SetupBrokerCommand extends Command
 {
+    protected static $defaultName = 'enqueue:setup-broker';
+
     /**
      * @var DriverInterface
      */
@@ -20,7 +22,7 @@ class SetupBrokerCommand extends Command
      */
     public function __construct(DriverInterface $driver)
     {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->driver = $driver;
     }
@@ -31,7 +33,6 @@ class SetupBrokerCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('enqueue:setup-broker')
             ->setAliases(['enq:sb'])
             ->setDescription('Creates all required queues')
         ;

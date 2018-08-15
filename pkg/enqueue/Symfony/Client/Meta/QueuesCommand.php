@@ -11,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class QueuesCommand extends Command
 {
+    protected static $defaultName = 'enqueue:queues';
+
     /**
      * @var QueueMetaRegistry
      */
@@ -21,7 +23,7 @@ class QueuesCommand extends Command
      */
     public function __construct(QueueMetaRegistry $queueRegistry)
     {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->queueMetaRegistry = $queueRegistry;
     }
@@ -32,7 +34,6 @@ class QueuesCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('enqueue:queues')
             ->setAliases([
                 'enq:m:q',
                 'debug:enqueue:queues',
