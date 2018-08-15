@@ -187,7 +187,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
         $queue = $context->createQueue('aQueueName');
 
-        $context->purge($queue);
+        $context->purgeQueue($queue);
     }
 
     public function testShouldAllowGetQueueUrl()
