@@ -33,4 +33,8 @@ or for a package only:
 When you try to commit changes `php-cs-fixer` is run. It fixes all coding style issues. Don't forget to stage them and commit everything.
 Once everything is done open a pull request on official repository. 
 
+## WTF?!
+
+* If you get `rabbitmqssl: forward host lookup failed: Unknown host, wait for service rabbitmqssl:5671` do `docker-compose down`.
+
 [back to index](index.md)
