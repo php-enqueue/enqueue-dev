@@ -73,6 +73,7 @@
       "Enqueue\\Sqs\\": "pkg/sqs/",
       "Enqueue\\Stomp\\": "pkg/stomp/",
       "Enqueue\\Test\\": "pkg/test/",
+      "Enqueue\\Dsn\\": "pkg/dsn/",
       "Enqueue\\": "pkg/enqueue/"
     },
     "exclude-from-classmap": [

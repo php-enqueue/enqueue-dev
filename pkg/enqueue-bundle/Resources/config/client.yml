@@ -1,4 +1,10 @@
 services:
+    enqueue.client.driver_factory:
+      class: 'Enqueue\Client\DriverFactory'
+      arguments:
+        - '@enqueue.client.config'
+        - '@enqueue.client.meta.queue_meta_registry'
+
     enqueue.client.config:
         class: 'Enqueue\Client\Config'
         public: false
