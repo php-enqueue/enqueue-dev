@@ -24,6 +24,7 @@ use Interop\Amqp\AmqpConnectionFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel;
 use function Enqueue\dsn_to_connection_factory;
 
 class DefaultTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
@@ -145,18 +146,17 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
     }
 
     /**
-     * This is a quick fix to the exception "Incompatible use of dynamic environment variables "ENQUEUE_DSN" found in parameters."
-     * TODO: We'll have to come up with a better solution.
-     *
      * @param ContainerBuilder $container
-     * @param $dsn
+     * @param string           $dsn
      *
      * @return array|false|string
      */
     private function resolveDSN(ContainerBuilder $container, $dsn)
     {
         if (method_exists($container, 'resolveEnvPlaceholders')) {
-            $dsn = $container->resolveEnvPlaceholders($dsn);
+            if (version_compare(Kernel::VERSION, '3.4', '>=')) {
+                return $container->resolveEnvPlaceholders($dsn, true);
+            }
 
             $matches = [];
             if (preg_match('/%env\((.*?)\)/', $dsn, $matches)) {

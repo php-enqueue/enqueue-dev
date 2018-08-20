@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel;
 
 class DefaultTransportFactoryTest extends TestCase
 {
@@ -264,6 +265,66 @@ class DefaultTransportFactoryTest extends TestCase
         $this->assertTrue($container->hasAlias('enqueue.client.driver'));
         $context = $container->getAlias('enqueue.client.driver');
         $this->assertEquals($driverId, (string) $context);
+    }
+
+    public function testShouldCreateConnectionFactoryFromEnvironmentDSN()
+    {
+        if (version_compare(Kernel::VERSION, '3.4', '<')) {
+            $this->markTestSkipped('This functionality only works on Symfony 3.4 or higher');
+        }
+
+        $env = str_replace(['\\', ':'], '', strtoupper(uniqid(__METHOD__)));
+        putenv("$env=null:");
+
+        $container = new ContainerBuilder();
+
+        $transport = new DefaultTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, ['dsn' => "%env($env)%"]);
+
+        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.default.connection_factory'));
+        $this->assertEquals(
+            sprintf('enqueue.transport.%s.connection_factory', 'default_null'),
+            (string) $container->getAlias('enqueue.transport.default.connection_factory')
+        );
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
+        $this->assertEquals(
+            'enqueue.transport.default.connection_factory',
+            (string) $container->getAlias('enqueue.transport.connection_factory')
+        );
+    }
+
+    public function testShouldCreateConnectionFactoryFromEnvironmentWithResolveProviderDSN()
+    {
+        if (version_compare(Kernel::VERSION, '3.4', '<')) {
+            $this->markTestSkipped('This functionality only works on Symfony 3.4 or higher');
+        }
+
+        $env = str_replace(['\\', ':'], '', strtoupper(uniqid(__METHOD__)));
+        putenv("$env=file:");
+
+        $container = new ContainerBuilder();
+
+        $transport = new DefaultTransportFactory();
+
+        $serviceId = $transport->createConnectionFactory($container, ['dsn' => "%env(resolve:$env)%"]);
+
+        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.default.connection_factory'));
+        $this->assertEquals(
+            sprintf('enqueue.transport.%s.connection_factory', 'default_fs'),
+            (string) $container->getAlias('enqueue.transport.default.connection_factory')
+        );
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
+        $this->assertEquals(
+            'enqueue.transport.default.connection_factory',
+            (string) $container->getAlias('enqueue.transport.connection_factory')
+        );
     }
 
     public static function provideDSNs()
