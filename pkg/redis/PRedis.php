@@ -34,6 +34,10 @@ class PRedis implements Redis
             'persisted' => false,
             'database' => 0,
         ], $config);
+
+        // Predis client wants the key to be named "password"
+        $this->config['password'] = $this->config['pass'];
+        unset($this->config['pass']);
     }
 
     /**
@@ -91,9 +95,8 @@ class PRedis implements Redis
 
         $this->redis = new Client($this->config, ['exceptions' => true]);
 
-        if ($this->config['pass']) {
-            $this->redis->auth($this->config['pass']);
-        }
+        // No need to pass "auth" here because Predis already handles
+        // this internally
 
         $this->redis->connect();
     }
