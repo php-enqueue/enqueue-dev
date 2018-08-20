@@ -11,12 +11,12 @@ final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterfac
     {
         $dsn = new Dsn($dsn);
 
-        if ($factoryClass = $this->findFactory($dsn, Resources::getAvailableConnections())) {
+        if ($factoryClass = $this->findFactoryClass($dsn, Resources::getAvailableConnections())) {
             return new $factoryClass((string) $dsn);
         }
 
         $knownConnections = Resources::getKnownConnections();
-        if ($factoryClass = $this->findFactory($dsn, $knownConnections)) {
+        if ($factoryClass = $this->findFactoryClass($dsn, $knownConnections)) {
             throw new \LogicException(sprintf(
                 'To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.',
                 $dsn->getScheme(),
@@ -31,7 +31,7 @@ final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterfac
         ));
     }
 
-    private function findFactory(Dsn $dsn, array $factories): ?string
+    private function findFactoryClass(Dsn $dsn, array $factories): ?string
     {
         $protocol = $dsn->getSchemeProtocol();
         foreach ($factories as $connectionClass => $info) {

@@ -108,20 +108,20 @@ final class Resources
             $map[DbalDriver::class] = [
                 'schemes' => [
                     'db2',
-                    'ibm_db2',
+                    'ibm-db2',
                     'mssql',
-                    'pdo_sqlsrv',
+                    'sqlsrv',
                     'mysql',
                     'mysql2',
-                    'pdo_mysql',
+                    'mysql',
                     'pgsql',
                     'postgres',
-                    'pdo_pgsql',
+                    'pgsql',
                     'sqlite',
                     'sqlite3',
-                    'pdo_sqlite',
+                    'sqlite',
                 ],
-                'requiredSchemeExtensions' => [],
+                'requiredSchemeExtensions' => ['pdo'],
                 'package' => 'enqueue/dbal',
             ];
 
