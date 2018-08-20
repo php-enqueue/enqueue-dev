@@ -8,48 +8,59 @@ use Interop\Queue\PsrConnectionFactory;
 class ConnectionFactoryFactory
 {
     /**
-     * @param string|array $config
+     * @param string
      *
      * @return PsrConnectionFactory
      */
-    public function create($config): PsrConnectionFactory
+    public function create(string $dsn): PsrConnectionFactory
     {
-        if (is_string($config)) {
-            $config = ['dsn' => $config];
-        }
-
-        if (false == is_array($config)) {
-            throw new \InvalidArgumentException(sprintf('Config must be either string or array. Got %s', gettype($config)));
-        }
-
-        if (false == array_key_exists('dsn', $config)) {
-            throw new \InvalidArgumentException('The config must have dsn field set.');
-        }
-
-        $dsn = new Dsn($config['dsn']);
+        $dsn = new Dsn($dsn);
 
         $availableSchemes = Resources::getAvailableSchemes();
 
-        if (array_key_exists($dsn->getScheme(), $availableSchemes)) {
-            $factoryClass = $availableSchemes[$dsn->getScheme()];
+        if (false == array_key_exists($dsn->getScheme(), $availableSchemes)) {
+            $knownSchemes = Resources::getKnownSchemes();
+            if (array_key_exists($dsn->getScheme(), $knownSchemes)) {
+                $knownConnections = Resources::getKnownConnections();
 
-            return new $factoryClass($config);
-        }
-
-        $knownSchemes = Resources::getKnownSchemes();
-        if (array_key_exists($dsn->getScheme(), $knownSchemes)) {
-            $knownConnections = Resources::getKnownConnections();
+                throw new \LogicException(sprintf(
+                    'A transport "%s" is not installed. Run "composer req %s" to add it.',
+                    $knownSchemes[$dsn->getScheme()],
+                    $knownConnections['package']
+                ));
+            }
 
             throw new \LogicException(sprintf(
-                'A transport "%s" is not installed. Run "composer req %s" to add it.',
-                $knownSchemes[$dsn->getScheme()],
-                $knownConnections['package']
+                'A transport is not known. Make sure you registered it with "%s" if it is custom one.',
+                Resources::class
             ));
         }
 
-        throw new \LogicException(sprintf(
-            'A transport is not known. Make sure you registered it with "%s" if it is custom one.',
-            Resources::class
-        ));
+        $dsnSchemeExtensions = $dsn->getSchemeExtensions();
+        if (false == $dsnSchemeExtensions) {
+            $factoryClass = $availableSchemes[$dsn->getScheme()];
+
+            return new $factoryClass((string) $dsn);
+        }
+
+        $protocol = $dsn->getSchemeProtocol();
+        foreach ($availableSchemes as $driverClass => $info) {
+            if (false == in_array($protocol, $info['schemes'], true)) {
+                continue;
+            }
+
+            if (empty($info['supportedSchemeExtensions'])) {
+                continue;
+            }
+
+            $diff = array_diff($dsnSchemeExtensions, $info['supportedSchemeExtensions']);
+            if (empty($diff)) {
+                $factoryClass = $availableSchemes[$dsn->getScheme()];
+
+                return new $factoryClass((string) $dsn);
+            }
+        }
+
+        throw new \LogicException(sprintf('There is no factory that supports scheme "%s"', $dsn->getScheme()));
     }
 }

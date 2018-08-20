@@ -78,9 +78,6 @@
     },
     "exclude-from-classmap": [
       "/Tests/"
-    ],
-    "files": [
-      "pkg/enqueue/functions_include.php"
     ]
   },
   "autoload-dev": {

@@ -53,9 +53,9 @@ $factory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
 $psrContext = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('amqp:');
-$psrContext = \Enqueue\dsn_to_context('amqp+bunny:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('amqp:')->createContext();
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('amqp+bunny:')->createContext();
 ```
 
 ## Declare topic.

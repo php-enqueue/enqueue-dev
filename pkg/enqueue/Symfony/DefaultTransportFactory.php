@@ -42,12 +42,12 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
                     }
 
                     if (empty($v)) {
-                        return 'null:';
+                        return ['dsn' => 'null:'];
                     }
 
                     if (is_string($v)) {
                         return false !== strpos($v, ':') || false !== strpos($v, 'env_') ?
-                            $v :
+                            ['dsn' => $v] :
                             ['alias' => $v]
                         ;
                     }
@@ -66,14 +66,13 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
     public function createConnectionFactory(ContainerBuilder $container, array $config)
     {
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
-
         if (isset($config['alias'])) {
             $aliasId = sprintf('enqueue.transport.%s.connection_factory', $config['alias']);
             $container->setAlias($factoryId, new Alias($aliasId, true));
         } else {
             $container->register($factoryId, PsrConnectionFactory::class)
                 ->setFactory([new Reference('enqueue.connection_factory_factory'), 'create'])
-                ->addArgument($config)
+                ->addArgument($config['dsn'])
             ;
         }
 
@@ -119,7 +118,7 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
             $container->register($driverId, DriverInterface::class)
                 ->setFactory([new Reference('enqueue.client.driver_factory'), 'create'])
                 ->addArgument(new Reference($factoryId))
-                ->addArgument(is_string($config) ? $config : $config['dsn'])
+                ->addArgument($config['dsn'])
                 ->addArgument($config)
             ;
         }

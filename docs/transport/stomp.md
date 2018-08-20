@@ -39,8 +39,8 @@ $factory = new StompConnectionFactory('stomp://example.com:1000?login=theLogin')
 
 $psrContext = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('stomp:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('stomp:')->createContext();
 ```
 
 ## Send message to topic 

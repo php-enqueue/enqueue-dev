@@ -184,18 +184,18 @@ class Dsn
         }
 
         list($scheme, $dsnWithoutScheme) = explode(':', $dsn, 2);
-        if (false == preg_match('/[\w\d+-.]/', $scheme)) {
-            throw new \LogicException('The DSN is invalid. Scheme contains illegal symbols.');
-        }
 
         $scheme = strtolower($scheme);
+        if (false == preg_match('/^[a-z\d+-.]*$/', $scheme)) {
+            throw new \LogicException('The DSN is invalid. Scheme contains illegal symbols.');
+        }
 
         $schemeParts = explode('+', $scheme);
         $this->scheme = $scheme;
         $this->schemeProtocol = $schemeParts[0];
 
         unset($schemeParts[0]);
-        $this->schemeExtensions = $schemeParts;
+        $this->schemeExtensions = array_values($schemeParts);
 
         if ($host = parse_url($dsn, PHP_URL_HOST)) {
             $this->host = $host;

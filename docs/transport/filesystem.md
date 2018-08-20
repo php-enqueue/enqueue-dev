@@ -48,8 +48,8 @@ $connectionFactory = new FsConnectionFactory([
 
 $psrContext = $connectionFactory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('file:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('file:')->createContext();
 ```
 
 ## Send message to topic

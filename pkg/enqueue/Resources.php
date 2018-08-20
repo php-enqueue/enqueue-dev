@@ -81,17 +81,24 @@ final class Resources
         if (null === self::$knownConnections) {
             $map = [];
 
-            $map[FsConnectionFactory::class] = ['schemes' => ['file'], 'package' => 'enqueue/fs'];
+            $map[FsConnectionFactory::class] = [
+                'schemes' => ['file'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/fs',
+            ];
             $map[AmqpExtConnectionFactory::class] = [
-                'schemes' => ['amqp+ext', 'amqp', 'amqps', 'amqps+ext', 'amqp+rabbitmq', 'amqps+rabbitmq', 'amqp+rabbitmq+ext', 'amqps+rabbitmq+ext'],
+                'schemes' => ['amqp', 'amqps'],
+                'supportedSchemeExtensions' => ['ext', 'rabiitmq'],
                 'package' => 'enqueue/amqp-ext',
             ];
             $map[AmqpBunnyConnectionFactory::class] = [
-                'schemes' => ['amqp+bunny', 'amqp', 'rabbitmq', 'amqp+rabbitmq', 'amqp+rabbitmq+bunny'],
+                'schemes' => ['amqp'],
+                'supportedSchemeExtensions' => ['bunny', 'rabiitmq'],
                 'package' => 'enqueue/amqp-bunny',
             ];
             $map[AmqpLibConnectionFactory::class] = [
-                'schemes' => ['amqp+lib', 'amqp', 'amqps', 'amqps+lib', 'amqp+rabbitmq', 'amqps+rabbitmq', 'amqp+rabbitmq+lib', 'amqps+rabbitmq+lib'],
+                'schemes' => ['amqp', 'amqps'],
+                'supportedSchemeExtensions' => ['lib', 'rabiitmq'],
                 'package' => 'enqueue/amqp-lib',
             ];
 
@@ -111,18 +118,52 @@ final class Resources
                     'sqlite3',
                     'pdo_sqlite',
                 ],
+                'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/dbal',
             ];
 
-            $map[NullConnectionFactory::class] = ['schemes' => ['null'], 'package' => 'enqueue/null'];
-            $map[GearmanConnectionFactory::class] = ['schemes' => ['gearman'], 'package' => 'enqueue/gearman'];
-            $map[PheanstalkConnectionFactory::class] = ['schemes' => ['beanstalk'], 'package' => 'enqueue/pheanstalk'];
-            $map[RdKafkaConnectionFactory::class] = ['schemes' => ['kafka', 'rdkafka'], 'package' => 'enqueue/rdkafka'];
-            $map[RedisConnectionFactory::class] = ['schemes' => ['redis'], 'package' => 'enqueue/redis'];
-            $map[StompConnectionFactory::class] = ['schemes' => ['stomp', 'stomp+rabbitmq'], 'package' => 'enqueue/stomp'];
-            $map[SqsConnectionFactory::class] = ['schemes' => ['sqs'], 'package' => 'enqueue/sqs'];
-            $map[GpsConnectionFactory::class] = ['schemes' => ['gps'], 'package' => 'enqueue/gps'];
-            $map[MongodbConnectionFactory::class] = ['schemes' => ['mongodb'], 'package' => 'enqueue/mongodb'];
+            $map[NullConnectionFactory::class] = [
+                'schemes' => ['null'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/null',
+            ];
+            $map[GearmanConnectionFactory::class] = [
+                'schemes' => ['gearman'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/gearman',
+            ];
+            $map[PheanstalkConnectionFactory::class] = [
+                'schemes' => ['beanstalk'],
+                'supportedSchemeExtensions' => ['pheanstalk'],
+                'package' => 'enqueue/pheanstalk',
+            ];
+            $map[RdKafkaConnectionFactory::class] = [
+                'schemes' => ['kafka', 'rdkafka'],
+                'supportedSchemeExtensions' => ['rdkafka'],
+                'package' => 'enqueue/rdkafka',
+            ];
+            $map[RedisConnectionFactory::class] = [
+                'schemes' => ['redis'],
+                'supportedSchemeExtensions' => ['predis', 'phpredis'],
+                'package' => 'enqueue/redis',
+            ];
+            $map[StompConnectionFactory::class] = [
+                'schemes' => ['stomp'],
+                'supportedSchemeExtensions' => ['rabbitmq'],
+                'package' => 'enqueue/stomp', ];
+            $map[SqsConnectionFactory::class] = [
+                'schemes' => ['sqs'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/sqs', ];
+            $map[GpsConnectionFactory::class] = [
+                'schemes' => ['gps'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/gps', ];
+            $map[MongodbConnectionFactory::class] = [
+                'schemes' => ['mongodb'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/mongodb',
+            ];
 
             self::$knownConnections = $map;
         }
@@ -130,9 +171,9 @@ final class Resources
         return self::$knownConnections;
     }
 
-    public static function addConnection(string $connectionFactoryClass, array $schemes, string $package): void
+    public static function addConnection(string $connectionFactoryClass, array $schemes, array $extensions, string $package): void
     {
-        if (class_exists($connectionFactoryClass)) {
+        if (false == class_exists($connectionFactoryClass)) {
             throw new \InvalidArgumentException(sprintf('The connection factory class "%s" does not exist.', $connectionFactoryClass));
         }
 
@@ -141,13 +182,17 @@ final class Resources
         }
 
         if (empty($schemes)) {
-            throw new \InvalidArgumentException('Schemes could not be empty');
+            throw new \InvalidArgumentException('Schemes could not be empty.');
         }
         if (empty($package)) {
-            throw new \InvalidArgumentException('Package name could not be empty');
+            throw new \InvalidArgumentException('Package name could not be empty.');
         }
 
         self::getKnownConnections();
-        self::$knownConnections[$connectionFactoryClass] = ['schemes' => $schemes, 'package' => $package];
+        self::$knownConnections[$connectionFactoryClass] = [
+            'schemes' => $schemes,
+            'supportedSchemeExtensions' => $extensions,
+            'package' => $package,
+        ];
     }
 }
