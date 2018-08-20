@@ -24,7 +24,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotSupported()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN schema "http" is not supported. There are supported schemes: "db2", "ibm_db2", "mssql", "pdo_sqlsrv", "mysql", "mysql2", "pdo_mysql", "pgsql", "postgres", "postgresql", "pdo_pgsql", "sqlite", "sqlite3", "pdo_sqlite"');
+        $this->expectExceptionMessage('The given DSN schema "http" is not supported. There are supported schemes: "db2", "ibm-db2", "mssql", "sqlsrv+pdo", "mysql", "mysql2", "mysql+pdo", "pgsql", "postgres", "pgsql+pdo", "sqlite", "sqlite3", "sqlite+pdo".');
 
         new DbalConnectionFactory('http://example.com');
     }
@@ -32,7 +32,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Schema is empty');
+        $this->expectExceptionMessage('The DSN is invalid. It does not have scheme separator ":".');
 
         new DbalConnectionFactory('invalidDSN');
     }
@@ -78,7 +78,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'pdo_mysql:',
+            'mysql+pdo:',
             [
                 'connection' => [
                     'url' => 'pdo_mysql://root@localhost',
@@ -114,7 +114,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'pdo_mysql://user:pass@host:10001/db',
+            'mysql+pdo://user:pass@host:10001/db',
             [
                 'connection' => [
                     'url' => 'pdo_mysql://user:pass@host:10001/db',

@@ -88,37 +88,36 @@ final class Resources
             ];
             $map[AmqpExtConnectionFactory::class] = [
                 'schemes' => ['amqp', 'amqps'],
-                'supportedSchemeExtensions' => ['ext', 'rabiitmq'],
+                'supportedSchemeExtensions' => ['ext', 'rabbitmq'],
                 'package' => 'enqueue/amqp-ext',
             ];
             $map[AmqpBunnyConnectionFactory::class] = [
                 'schemes' => ['amqp'],
-                'supportedSchemeExtensions' => ['bunny', 'rabiitmq'],
+                'supportedSchemeExtensions' => ['bunny', 'rabbitmq'],
                 'package' => 'enqueue/amqp-bunny',
             ];
             $map[AmqpLibConnectionFactory::class] = [
                 'schemes' => ['amqp', 'amqps'],
-                'supportedSchemeExtensions' => ['lib', 'rabiitmq'],
+                'supportedSchemeExtensions' => ['lib', 'rabbitmq'],
                 'package' => 'enqueue/amqp-lib',
             ];
 
             $map[DbalConnectionFactory::class] = [
                 'schemes' => [
                     'db2',
-                    'ibm_db2',
+                    'ibm-db2',
                     'mssql',
-                    'pdo_sqlsrv',
+                    'sqlsrv',
                     'mysql',
                     'mysql2',
-                    'pdo_mysql',
+                    'mysql',
                     'pgsql',
                     'postgres',
-                    'pdo_pgsql',
                     'sqlite',
                     'sqlite3',
-                    'pdo_sqlite',
+                    'sqlite',
                 ],
-                'supportedSchemeExtensions' => [],
+                'supportedSchemeExtensions' => ['pdo'],
                 'package' => 'enqueue/dbal',
             ];
 
@@ -173,12 +172,10 @@ final class Resources
 
     public static function addConnection(string $connectionFactoryClass, array $schemes, array $extensions, string $package): void
     {
-        if (false == class_exists($connectionFactoryClass)) {
-            throw new \InvalidArgumentException(sprintf('The connection factory class "%s" does not exist.', $connectionFactoryClass));
-        }
-
-        if (false == (new \ReflectionClass($connectionFactoryClass))->implementsInterface(PsrConnectionFactory::class)) {
-            throw new \InvalidArgumentException(sprintf('The connection factory class "%s" must implement "%s" interface.', $connectionFactoryClass, PsrConnectionFactory::class));
+        if (class_exists($connectionFactoryClass)) {
+            if (false == (new \ReflectionClass($connectionFactoryClass))->implementsInterface(PsrConnectionFactory::class)) {
+                throw new \InvalidArgumentException(sprintf('The connection factory class "%s" must implement "%s" interface.', $connectionFactoryClass, PsrConnectionFactory::class));
+            }
         }
 
         if (empty($schemes)) {

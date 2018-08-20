@@ -59,14 +59,6 @@ class ResourcesTest extends TestCase
         $this->assertSame('enqueue/redis', $connectionInfo['package']);
     }
 
-    public function testThrowsIfConnectionClassNotExistsOnAddConnection()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The connection factory class "classNotExist" does not exist.');
-
-        Resources::addConnection('classNotExist', [], [], 'foo');
-    }
-
     public function testThrowsIfConnectionClassNotImplementConnectionFactoryInterfaceOnAddConnection()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -95,6 +87,20 @@ class ResourcesTest extends TestCase
         Resources::addConnection($connectionClass, ['foo'], [], '');
     }
 
+    public function testShouldAllowRegisterConnectionThatIsNotInstalled()
+    {
+        Resources::addConnection('theConnectionClass', ['foo'], [], 'foo');
+
+        $knownConnections = Resources::getKnownConnections();
+        $this->assertInternalType('array', $knownConnections);
+        $this->assertArrayHasKey('theConnectionClass', $knownConnections);
+
+        $availableConnections = Resources::getAvailableConnections();
+
+        $this->assertInternalType('array', $availableConnections);
+        $this->assertArrayNotHasKey('theConnectionClass', $availableConnections);
+    }
+
     public function testShouldAllowGetPreviouslyRegisteredConnection()
     {
         $connectionClass = $this->getMockClass(PsrConnectionFactory::class);
@@ -106,7 +112,7 @@ class ResourcesTest extends TestCase
             'foo/bar'
         );
 
-        $availableConnections = Resources::getKnownConnections();
+        $availableConnections = Resources::getAvailableConnections();
 
         $this->assertInternalType('array', $availableConnections);
         $this->assertArrayHasKey($connectionClass, $availableConnections);
