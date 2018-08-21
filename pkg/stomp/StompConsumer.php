@@ -105,6 +105,8 @@ class StompConsumer implements PsrConsumer
                 return $this->convertMessage($message);
             }
         }
+
+        return null;
     }
 
     public function receiveNoWait(): ?PsrMessage
@@ -114,6 +116,8 @@ class StompConsumer implements PsrConsumer
         if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 0)) {
             return $this->convertMessage($message);
         }
+
+        return null;
     }
 
     /**
@@ -195,7 +199,7 @@ class StompConsumer implements PsrConsumer
             $headers['content-length']
         );
 
-        $message = new StompMessage($frame->getBody(), $properties, $headers);
+        $message = new StompMessage((string) $frame->getBody(), $properties, $headers);
         $message->setRedelivered($redelivered);
         $message->setFrame($frame);
 

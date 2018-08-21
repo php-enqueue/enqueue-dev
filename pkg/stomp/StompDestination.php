@@ -59,8 +59,8 @@ class StompDestination implements PsrTopic, PsrQueue
 
     public function getQueueName(): string
     {
-        if (empty($this->getType()) || empty($this->getStompName())) {
-            throw new \LogicException('Destination type or name is not set');
+        if (empty($this->getStompName())) {
+            throw new \LogicException('Destination name is not set');
         }
 
         $name = '/'.$this->getType().'/'.$this->getStompName();
