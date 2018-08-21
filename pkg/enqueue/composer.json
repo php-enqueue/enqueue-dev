@@ -56,7 +56,6 @@
     },
     "autoload": {
         "psr-4": { "Enqueue\\": "" },
-        "files": ["functions_include.php"],
         "exclude-from-classmap": [
             "/Tests/"
         ]

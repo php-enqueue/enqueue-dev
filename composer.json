@@ -33,7 +33,7 @@
   "require-dev": {
     "phpunit/phpunit": "^5.5",
     "phpstan/phpstan": "^0.10",
-    "queue-interop/queue-spec": "^0.5.5@dev",
+    "queue-interop/queue-spec": "^0.5.9@dev",
     "symfony/browser-kit": "4.0.*",
     "symfony/config": "4.0.*",
     "symfony/process": "4.0.*",
@@ -73,13 +73,11 @@
       "Enqueue\\Sqs\\": "pkg/sqs/",
       "Enqueue\\Stomp\\": "pkg/stomp/",
       "Enqueue\\Test\\": "pkg/test/",
+      "Enqueue\\Dsn\\": "pkg/dsn/",
       "Enqueue\\": "pkg/enqueue/"
     },
     "exclude-from-classmap": [
       "/Tests/"
-    ],
-    "files": [
-      "pkg/enqueue/functions_include.php"
     ]
   },
   "autoload-dev": {

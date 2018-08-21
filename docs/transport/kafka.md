@@ -45,8 +45,8 @@ $connectionFactory = new RdKafkaConnectionFactory([
 
 $psrContext = $connectionFactory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('kafka:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('kafka:')->createContext();
 ```
 
 ## Send message to topic 

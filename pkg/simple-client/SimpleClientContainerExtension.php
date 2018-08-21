@@ -7,10 +7,12 @@ use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DelegateProcessor;
+use Enqueue\Client\DriverFactory;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\Producer;
 use Enqueue\Client\RouterProcessor;
+use Enqueue\ConnectionFactoryFactory;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
@@ -91,18 +93,27 @@ class SimpleClientContainerExtension extends Extension
                 $transportConfig,
         ]);
 
+        $container->register('enqueue.connection_factory_factory', ConnectionFactoryFactory::class);
+
+        $container->register('enqueue.client.driver_factory', DriverFactory::class)
+            ->addArgument(new Reference('enqueue.client.config'))
+            ->addArgument(new Reference('enqueue.client.meta.queue_meta_registry'))
+        ;
+
         $container->register('enqueue.client.rpc_factory', RpcFactory::class)
             ->setPublic(true)
             ->setArguments([
                 new Reference('enqueue.transport.context'),
-            ]);
+            ])
+        ;
 
         $container->register('enqueue.client.producer', Producer::class)
             ->setPublic(true)
             ->setArguments([
                 new Reference('enqueue.client.driver'),
                 new Reference('enqueue.client.rpc_factory'),
-        ]);
+            ])
+        ;
 
         $container->setAlias('enqueue.client.producer_v2', new Alias('enqueue.client.producer', true));
 
