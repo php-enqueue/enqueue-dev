@@ -3,6 +3,7 @@
 namespace Enqueue\Redis;
 
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class RedisConnectionFactory implements PsrConnectionFactory
 {
@@ -74,11 +75,9 @@ class RedisConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         if ($this->config['lazy']) {
             return new RedisContext(function () {
@@ -89,10 +88,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         return new RedisContext($this->createRedis());
     }
 
-    /**
-     * @return Redis
-     */
-    private function createRedis()
+    private function createRedis(): Redis
     {
         if (false == $this->redis) {
             if ('phpredis' == $this->config['vendor'] && false == $this->redis) {
@@ -121,12 +117,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         return $this->redis;
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         if (false === strpos($dsn, 'redis:')) {
             throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "redis:".', $dsn));
@@ -155,10 +146,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         return $config;
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'host' => 'localhost',
