@@ -65,6 +65,7 @@ remote test git@github.com:php-enqueue/test.git
 remote async-event-dispatcher git@github.com:php-enqueue/async-event-dispatcher.git
 remote async-command git@github.com:php-enqueue/async-command.git
 remote mongodb git@github.com:php-enqueue/mongodb.git
+remote dsn git@github.com:php-enqueue/dsn.git
 
 split 'pkg/enqueue' enqueue
 split 'pkg/simple-client' simple-client
@@ -88,3 +89,4 @@ split 'pkg/test' test
 split 'pkg/async-event-dispatcher' async-event-dispatcher
 split 'pkg/async-command' async-command
 split 'pkg/mongodb' mongodb
+split 'pkg/dsn' dsn
