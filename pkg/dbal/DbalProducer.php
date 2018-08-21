@@ -69,15 +69,6 @@ class DbalProducer implements PsrProducer
         }
 
         $body = $message->getBody();
-        if (is_scalar($body) || null === $body) {
-            $body = (string) $body;
-        } else {
-            throw new InvalidMessageException(sprintf(
-                'The message body must be a scalar or null. Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
-            ));
-        }
-
         $uuid = Uuid::uuid1();
 
         $publishedAt = null !== $message->getPublishedAt() ?

@@ -12,6 +12,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class DbalContextTest extends \PHPUnit_Framework_TestCase
 {
@@ -139,8 +140,7 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
     {
         $context = new DbalContext($connection = $this->createConnectionMock());
 
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Dbal transport does not support temporary queues');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
 
         $context->createTemporaryQueue();
     }

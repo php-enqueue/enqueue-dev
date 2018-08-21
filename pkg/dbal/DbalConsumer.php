@@ -142,6 +142,8 @@ class DbalConsumer implements PsrConsumer
             if (empty($dbalMessage['time_to_live']) || ($dbalMessage['time_to_live'] / 1000) > microtime(true)) {
                 return $this->convertMessage($dbalMessage);
             }
+
+            return null;
         } catch (\Exception $e) {
             $this->dbal->rollBack();
 
@@ -186,7 +188,7 @@ class DbalConsumer implements PsrConsumer
 
         $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
 
-        return $this->dbal->executeQuery(
+        $result = $this->dbal->executeQuery(
             $sql,
             [
                 'queue' => $this->queue->getQueueName(),
@@ -197,6 +199,8 @@ class DbalConsumer implements PsrConsumer
                 'delayedUntil' => Type::INTEGER,
             ]
         )->fetch();
+
+        return $result ?: null;
     }
 
     private function fetchMessage(int $now): ?array
@@ -214,7 +218,7 @@ class DbalConsumer implements PsrConsumer
 
         $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
 
-        return $this->dbal->executeQuery(
+        $result = $this->dbal->executeQuery(
             $sql,
             [
                 'queue' => $this->queue->getQueueName(),
@@ -225,5 +229,7 @@ class DbalConsumer implements PsrConsumer
                 'delayedUntil' => Type::INTEGER,
             ]
         )->fetch();
+
+        return $result ?: null;
     }
 }
