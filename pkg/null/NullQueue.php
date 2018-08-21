@@ -11,18 +11,12 @@ class NullQueue implements PsrQueue
      */
     private $name;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->name;
     }

@@ -2,17 +2,21 @@
 
 namespace Enqueue\Null;
 
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\PsrTopic;
 
 class NullContext implements PsrContext
 {
     /**
-     * {@inheritdoc}
-     *
      * @return NullMessage
      */
-    public function createMessage($body = null, array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         $message = new NullMessage();
         $message->setBody($body);
@@ -23,55 +27,58 @@ class NullContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return NullQueue
      */
-    public function createQueue($name)
+    public function createQueue(string $name): PsrQueue
     {
         return new NullQueue($name);
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullQueue
      */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
         return $this->createQueue(uniqid('', true));
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return NullTopic
      */
-    public function createTopic($name)
+    public function createTopic(string $name): PsrTopic
     {
         return new NullTopic($name);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return NullConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         return new NullConsumer($destination);
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         return new NullProducer();
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullSubscriptionConsumer
      */
-    public function close()
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    {
+        return new NullSubscriptionConsumer();
+    }
+
+    public function purgeQueue(PsrQueue $queue): void
+    {
+    }
+
+    public function close(): void
     {
     }
 }
