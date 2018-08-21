@@ -24,35 +24,24 @@ class SqsDestination implements PsrTopic, PsrQueue
      *   * Valid values: alphanumeric characters, hyphens (-), and underscores (_).
      *   * A FIFO queue name must end with the .fifo suffix.
      *   * Queue names are case-sensitive.
-     *
-     * @param string $name
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
         $this->attributes = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return array
-     */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -60,58 +49,68 @@ class SqsDestination implements PsrTopic, PsrQueue
     /**
      *  The number of seconds for which the delivery of all messages in the queue is delayed.
      *  Valid values: An integer from 0 to 900 seconds (15 minutes). The default is 0 (zero).
-     *
-     * @param int $seconds
      */
-    public function setDelaySeconds($seconds)
+    public function setDelaySeconds(int $seconds = null): void
     {
-        $this->attributes['DelaySeconds'] = (int) $seconds;
+        if (null == $seconds) {
+            unset($this->attributes['DelaySeconds']);
+        } else {
+            $this->attributes['DelaySeconds'] = $seconds;
+        }
     }
 
     /**
      * The limit of how many bytes a message can contain before Amazon SQS rejects it.
      * Valid values: An integer from 1,024 bytes (1 KiB) to 262,144 bytes (256 KiB).
      * The default is 262,144 (256 KiB).
-     *
-     * @param int $bytes
      */
-    public function setMaximumMessageSize($bytes)
+    public function setMaximumMessageSize(int $bytes = null): void
     {
-        $this->attributes['MaximumMessageSize'] = (int) $bytes;
+        if (null == $bytes) {
+            unset($this->attributes['MaximumMessageSize']);
+        } else {
+            $this->attributes['MaximumMessageSize'] = $bytes;
+        }
     }
 
     /**
      * The number of seconds for which Amazon SQS retains a message.
      * Valid values: An integer from 60 seconds (1 minute) to 1,209,600 seconds (14 days).
      * The default is 345,600 (4 days).
-     *
-     * @param int $seconds
      */
-    public function setMessageRetentionPeriod($seconds)
+    public function setMessageRetentionPeriod(int $seconds = null): void
     {
-        $this->attributes['MessageRetentionPeriod'] = (int) $seconds;
+        if (null == $seconds) {
+            unset($this->attributes['MessageRetentionPeriod']);
+        } else {
+            $this->attributes['MessageRetentionPeriod'] = $seconds;
+        }
     }
 
     /**
      * The queue's policy. A valid AWS policy. For more information about policy structure,
      * see http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html.
-     *
-     * @param string $policy
      */
-    public function setPolicy($policy)
+    public function setPolicy(string $policy = null): void
     {
-        $this->attributes['Policy'] = $policy;
+        if (null == $policy) {
+            unset($this->attributes['Policy']);
+        } else {
+            $this->attributes['Policy'] = $policy;
+        }
     }
 
     /**
      * The number of seconds for which a ReceiveMessage action waits for a message to arrive.
      * Valid values: An integer from 0 to 20 (seconds). The default is 0 (zero).
-     *
-     * @param int $seconds
      */
-    public function setReceiveMessageWaitTimeSeconds($seconds)
+    public function setReceiveMessageWaitTimeSeconds(int $seconds = null): void
     {
-        $this->attributes['ReceiveMessageWaitTimeSeconds'] = (int) $seconds;
+        if (null == $seconds) {
+            unset($this->attributes['ReceiveMessageWaitTimeSeconds']);
+        } else {
+            $this->attributes['ReceiveMessageWaitTimeSeconds'] = $seconds;
+        }
     }
 
     /**
@@ -120,11 +119,8 @@ class SqsDestination implements PsrTopic, PsrQueue
      * see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html.
      * The dead letter queue of a FIFO queue must also be a FIFO queue.
      * Similarly, the dead letter queue of a standard queue must also be a standard queue.
-     *
-     * @param int    $maxReceiveCount
-     * @param string $deadLetterTargetArn
      */
-    public function setRedrivePolicy($maxReceiveCount, $deadLetterTargetArn)
+    public function setRedrivePolicy(int $maxReceiveCount, string $deadLetterTargetArn): void
     {
         $this->attributes['RedrivePolicy'] = json_encode([
             'maxReceiveCount' => (string) $maxReceiveCount,
@@ -136,12 +132,14 @@ class SqsDestination implements PsrTopic, PsrQueue
      * The visibility timeout for the queue. Valid values: An integer from 0 to 43,200 (12 hours).
      * The default is 30. For more information about the visibility timeout,
      * see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html.
-     *
-     * @param int $seconds
      */
-    public function setVisibilityTimeout($seconds)
+    public function setVisibilityTimeout(int $seconds = null): void
     {
-        $this->attributes['VisibilityTimeout'] = (int) $seconds;
+        if (null == $seconds) {
+            unset($this->attributes['VisibilityTimeout']);
+        } else {
+            $this->attributes['VisibilityTimeout'] = $seconds;
+        }
     }
 
     /**
@@ -150,10 +148,8 @@ class SqsDestination implements PsrTopic, PsrQueue
      * Designates a queue as FIFO. You can provide this attribute only during queue creation.
      * You can't change it for an existing queue. When you set this attribute, you must provide a MessageGroupId explicitly.
      * For more information, see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-understanding-logic.
-     *
-     * @param bool $enable
      */
-    public function setFifoQueue($enable)
+    public function setFifoQueue(bool $enable): void
     {
         if ($enable) {
             $this->attributes['FifoQueue'] = 'true';
@@ -180,10 +176,8 @@ class SqsDestination implements PsrTopic, PsrQueue
      *   * If you send one message with ContentBasedDeduplication enabled and then another message with a MessageDeduplicationId
      *     that is the same as the one generated for the first MessageDeduplicationId, the two messages are treated as
      *     duplicates and only one copy of the message is delivered.
-     *
-     * @param bool $enable
      */
-    public function setContentBasedDeduplication($enable)
+    public function setContentBasedDeduplication(bool $enable): void
     {
         if ($enable) {
             $this->attributes['ContentBasedDeduplication'] = 'true';
