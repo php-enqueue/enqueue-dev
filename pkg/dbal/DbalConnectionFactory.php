@@ -5,6 +5,7 @@ namespace Enqueue\Dbal;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class DbalConnectionFactory implements PsrConnectionFactory
 {
@@ -54,11 +55,9 @@ class DbalConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         if ($this->config['lazy']) {
             return new DbalContext(function () {
@@ -69,20 +68,14 @@ class DbalConnectionFactory implements PsrConnectionFactory
         return new DbalContext($this->establishConnection(), $this->config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
         if ($this->connection) {
             $this->connection->close();
         }
     }
 
-    /**
-     * @return Connection
-     */
-    private function establishConnection()
+    private function establishConnection(): Connection
     {
         if (false == $this->connection) {
             $this->connection = DriverManager::getConnection($this->config['connection']);

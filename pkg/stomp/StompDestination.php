@@ -47,26 +47,17 @@ class StompDestination implements PsrTopic, PsrQueue
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getStompName()
+    public function getStompName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setStompName($name)
+    public function setStompName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         if (empty($this->getType()) || empty($this->getStompName())) {
             throw new \LogicException('Destination type or name is not set');
@@ -81,26 +72,17 @@ class StompDestination implements PsrTopic, PsrQueue
         return $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
         return $this->getQueueName();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param mixed $type
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $types = [
             self::TYPE_TOPIC,
@@ -118,99 +100,62 @@ class StompDestination implements PsrTopic, PsrQueue
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getRoutingKey()
+    public function getRoutingKey(): ?string
     {
         return $this->routingKey;
     }
 
-    /**
-     * @param string $routingKey
-     */
-    public function setRoutingKey($routingKey)
+    public function setRoutingKey(string $routingKey = null): void
     {
         $this->routingKey = $routingKey;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDurable()
+    public function isDurable(): bool
     {
         return $this->getHeader(self::HEADER_DURABLE, false);
     }
 
-    /**
-     * @param bool $durable
-     */
-    public function setDurable($durable)
+    public function setDurable(bool $durable): void
     {
-        $this->setHeader(self::HEADER_DURABLE, (bool) $durable);
+        $this->setHeader(self::HEADER_DURABLE, $durable);
     }
 
-    /**
-     * @return bool
-     */
-    public function isAutoDelete()
+    public function isAutoDelete(): bool
     {
         return $this->getHeader(self::HEADER_AUTO_DELETE, false);
     }
 
-    /**
-     * @param bool $autoDelete
-     */
-    public function setAutoDelete($autoDelete)
+    public function setAutoDelete(bool $autoDelete): void
     {
-        $this->setHeader(self::HEADER_AUTO_DELETE, (bool) $autoDelete);
+        $this->setHeader(self::HEADER_AUTO_DELETE, $autoDelete);
     }
 
-    /**
-     * @return bool
-     */
-    public function isExclusive()
+    public function isExclusive(): bool
     {
         return $this->getHeader(self::HEADER_EXCLUSIVE, false);
     }
 
-    /**
-     * @param bool $exclusive
-     */
-    public function setExclusive($exclusive)
+    public function setExclusive(bool $exclusive): void
     {
-        $this->setHeader(self::HEADER_EXCLUSIVE, (bool) $exclusive);
+        $this->setHeader(self::HEADER_EXCLUSIVE, $exclusive);
     }
 
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
         return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
-    /**
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
         $this->headers[$name] = $value;
     }

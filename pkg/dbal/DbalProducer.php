@@ -50,14 +50,10 @@ class DbalProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param DbalDestination $destination
      * @param DbalMessage     $message
-     *
-     * @throws Exception
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
@@ -149,54 +145,38 @@ class DbalProducer implements PsrProducer
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         $this->deliveryDelay = $deliveryDelay;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         $this->priority = $priority;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         $this->timeToLive = $timeToLive;
+
+        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }

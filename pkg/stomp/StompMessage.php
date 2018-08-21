@@ -32,12 +32,7 @@ class StompMessage implements PsrMessage
      */
     private $frame;
 
-    /**
-     * @param string $body
-     * @param array  $properties
-     * @param array  $headers
-     */
-    public function __construct($body = '', array $properties = [], array $headers = [])
+    public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -45,200 +40,124 @@ class StompMessage implements PsrMessage
         $this->redelivered = false;
     }
 
-    /**
-     * @param string $body
-     */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * @param array $properties
-     */
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
         $this->properties = $properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
         $this->properties[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
         return array_key_exists($name, $this->properties) ? $this->properties[$name] : $default;
     }
 
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
         $this->headers[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
         return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
-    /**
-     * note: rabbitmq STOMP protocol extension.
-     *
-     * @return bool
-     */
-    public function isPersistent()
+    public function isPersistent(): bool
     {
         return $this->getHeader('persistent', false);
     }
 
-    /**
-     * note: rabbitmq STOMP protocol extension.
-     *
-     * @param bool $persistent
-     */
-    public function setPersistent($persistent)
+    public function setPersistent(bool $persistent): void
     {
-        $this->setHeader('persistent', (bool) $persistent);
+        $this->setHeader('persistent', $persistent);
     }
 
-    /**
-     * @return bool
-     */
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
         return $this->redelivered;
     }
 
-    /**
-     * @param bool $redelivered
-     */
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
         $this->redelivered = $redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
         $this->setHeader('correlation_id', (string) $correlationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
         return $this->getHeader('correlation_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
         $this->setHeader('message_id', (string) $messageId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
         return $this->getHeader('message_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         $value = $this->getHeader('timestamp');
 
         return null === $value ? null : (int) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
 
-    /**
-     * @return Frame
-     */
-    public function getFrame()
+    public function getFrame(): ?Frame
     {
         return $this->frame;
     }
 
-    /**
-     * @param Frame $frame
-     */
-    public function setFrame(Frame $frame)
+    public function setFrame(Frame $frame = null): void
     {
         $this->frame = $frame;
     }
 
-    /**
-     * @param string|null $replyTo
-     */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
         $this->setHeader('reply-to', $replyTo);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
         return $this->getHeader('reply-to');
     }
