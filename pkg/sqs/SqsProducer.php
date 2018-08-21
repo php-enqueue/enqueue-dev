@@ -37,13 +37,8 @@ class SqsProducer implements PsrProducer
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
         $body = $message->getBody();
-        if (is_scalar($body) && strlen($body) > 0) {
-            $body = (string) $body;
-        } else {
-            throw new InvalidMessageException(sprintf(
-                'The message body must be a non-empty string. Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
-            ));
+        if (empty($body)) {
+            throw new InvalidMessageException('The message body must be a non-empty string.');
         }
 
         $arguments = [

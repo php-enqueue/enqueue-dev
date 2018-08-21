@@ -31,11 +31,11 @@ class SqsProducerTest extends \PHPUnit_Framework_TestCase
     public function testShouldThrowIfBodyOfInvalidType()
     {
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message body must be a non-empty string. Got: stdClass');
+        $this->expectExceptionMessage('The message body must be a non-empty string.');
 
         $producer = new SqsProducer($this->createSqsContextMock());
 
-        $message = new SqsMessage(new \stdClass());
+        $message = new SqsMessage('');
 
         $producer->send(new SqsDestination(''), $message);
     }

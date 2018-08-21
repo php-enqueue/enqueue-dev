@@ -13,6 +13,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class SqsContextTest extends \PHPUnit\Framework\TestCase
 {
@@ -92,8 +93,8 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
     {
         $context = new SqsContext($this->createSqsClientMock());
 
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('SQS transport does not support temporary queues');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
+
         $context->createTemporaryQueue();
     }
 
