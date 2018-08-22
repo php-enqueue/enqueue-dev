@@ -5,6 +5,7 @@ namespace Enqueue\Mongodb;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class MongodbConsumer implements PsrConsumer
 {
@@ -21,54 +22,44 @@ class MongodbConsumer implements PsrConsumer
     /**
      * @var int microseconds
      */
-    private $pollingInterval = 1000000;
+    private $pollingInterval;
 
-    /**
-     * @param MongodbContext     $context
-     * @param MongodbDestination $queue
-     */
     public function __construct(MongodbContext $context, MongodbDestination $queue)
     {
         $this->context = $context;
         $this->queue = $queue;
+
+        $this->pollingInterval = 1000;
     }
 
     /**
      * Set polling interval in milliseconds.
-     *
-     * @param int $msec
      */
-    public function setPollingInterval($msec)
+    public function setPollingInterval(int $msec): void
     {
-        $this->pollingInterval = $msec * 1000;
+        $this->pollingInterval = $msec;
     }
 
     /**
      * Get polling interval in milliseconds.
-     *
-     * @return int
      */
-    public function getPollingInterval()
+    public function getPollingInterval(): int
     {
-        return (int) $this->pollingInterval / 1000;
+        return $this->pollingInterval;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return MongodbDestination
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return MongodbMessage|null
+     * @return MongodbMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         $timeout /= 1000;
         $startAt = microtime(true);
@@ -81,43 +72,37 @@ class MongodbConsumer implements PsrConsumer
             }
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
 
-            usleep($this->pollingInterval);
+            usleep($this->pollingInterval * 1000);
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
         }
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return MongodbMessage|null
+     * @return MongodbMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
         return $this->receiveMessage();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MongodbMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
         // does nothing
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MongodbMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
 
@@ -128,10 +113,7 @@ class MongodbConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @return MongodbMessage|null
-     */
-    protected function receiveMessage()
+    protected function receiveMessage(): ?MongodbMessage
     {
         $now = time();
         $collection = $this->context->getCollection();
@@ -155,14 +137,11 @@ class MongodbConsumer implements PsrConsumer
         if (empty($message['time_to_live']) || $message['time_to_live'] > time()) {
             return $this->convertMessage($message);
         }
+
+        return null;
     }
 
-    /**
-     * @param array $dbalMessage
-     *
-     * @return MongodbMessage
-     */
-    protected function convertMessage(array $mongodbMessage)
+    protected function convertMessage(array $mongodbMessage): MongodbMessage
     {
         $properties = JSON::decode($mongodbMessage['properties']);
         $headers = JSON::decode($mongodbMessage['headers']);

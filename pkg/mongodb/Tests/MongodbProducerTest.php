@@ -3,12 +3,10 @@
 namespace Enqueue\Mongodb\Tests;
 
 use Enqueue\Mongodb\MongodbContext;
-use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Mongodb\MongodbProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrProducer;
 
@@ -27,18 +25,6 @@ class MongodbProducerTest extends \PHPUnit_Framework_TestCase
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new MongodbProducer($this->createContextMock());
-    }
-
-    public function testShouldThrowIfBodyOfInvalidType()
-    {
-        $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message body must be a scalar or null. Got: stdClass');
-
-        $producer = new MongodbProducer($this->createContextMock());
-
-        $message = new MongodbMessage(new \stdClass());
-
-        $producer->send(new MongodbDestination(''), $message);
     }
 
     public function testShouldThrowIfDestinationOfInvalidType()

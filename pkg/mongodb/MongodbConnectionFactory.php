@@ -3,6 +3,7 @@
 namespace Enqueue\Mongodb;
 
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 use MongoDB\Client;
 
 class MongodbConnectionFactory implements PsrConnectionFactory
@@ -48,14 +49,17 @@ class MongodbConnectionFactory implements PsrConnectionFactory
         $this->config = $config;
     }
 
-    public function createContext()
+    /**
+     * @return MongodbContext
+     */
+    public function createContext(): PsrContext
     {
         $client = new Client($this->config['dsn']);
 
         return new MongodbContext($client, $this->config);
     }
 
-    public static function parseDsn($dsn)
+    public static function parseDsn(string $dsn): array
     {
         $parsedUrl = parse_url($dsn);
         if (false === $parsedUrl) {
