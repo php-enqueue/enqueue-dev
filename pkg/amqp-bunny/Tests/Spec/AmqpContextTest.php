@@ -12,6 +12,6 @@ class AmqpContextTest extends PsrContextSpec
     {
         $channel = $this->createMock(Channel::class);
 
-        return new AmqpContext($channel);
+        return new AmqpContext($channel, []);
     }
 }

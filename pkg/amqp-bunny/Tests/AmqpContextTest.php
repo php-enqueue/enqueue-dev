@@ -9,7 +9,6 @@ use Enqueue\AmqpBunny\AmqpSubscriptionConsumer;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
@@ -41,7 +40,7 @@ class AmqpContextTest extends TestCase
         $topic->addFlag(AmqpTopic::FLAG_INTERNAL);
         $topic->addFlag(AmqpTopic::FLAG_AUTODELETE);
 
-        $session = new AmqpContext($channel);
+        $session = new AmqpContext($channel, []);
         $session->declareTopic($topic);
     }
 
@@ -64,7 +63,7 @@ class AmqpContextTest extends TestCase
         $topic->addFlag(AmqpTopic::FLAG_IFUNUSED);
         $topic->addFlag(AmqpTopic::FLAG_NOWAIT);
 
-        $session = new AmqpContext($channel);
+        $session = new AmqpContext($channel, []);
         $session->deleteTopic($topic);
     }
 
@@ -99,7 +98,7 @@ class AmqpContextTest extends TestCase
         $queue->addFlag(AmqpQueue::FLAG_EXCLUSIVE);
         $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
 
-        $session = new AmqpContext($channel);
+        $session = new AmqpContext($channel, []);
 
         $this->assertSame(123, $session->declareQueue($queue));
     }
@@ -124,7 +123,7 @@ class AmqpContextTest extends TestCase
         $queue->addFlag(AmqpQueue::FLAG_IFEMPTY);
         $queue->addFlag(AmqpQueue::FLAG_NOWAIT);
 
-        $session = new AmqpContext($channel);
+        $session = new AmqpContext($channel, []);
         $session->deleteQueue($queue);
     }
 
@@ -140,7 +139,7 @@ class AmqpContextTest extends TestCase
             ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), $this->isTrue())
         ;
 
-        $context = new AmqpContext($channel);
+        $context = new AmqpContext($channel, []);
         $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
     }
 
@@ -156,7 +155,7 @@ class AmqpContextTest extends TestCase
             ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), $this->isTrue())
         ;
 
-        $context = new AmqpContext($channel);
+        $context = new AmqpContext($channel, []);
         $context->bind(new AmqpBind($target, $source, 'routing-key', 12345));
         $context->bind(new AmqpBind($source, $target, 'routing-key', 12345));
     }
@@ -173,7 +172,7 @@ class AmqpContextTest extends TestCase
             ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), $this->isTrue())
         ;
 
-        $context = new AmqpContext($channel);
+        $context = new AmqpContext($channel, []);
         $context->unbind(new AmqpBind($target, $source, 'routing-key', 12345));
     }
 
@@ -189,7 +188,7 @@ class AmqpContextTest extends TestCase
             ->with($this->identicalTo('target'), $this->identicalTo('source'), $this->identicalTo('routing-key'), ['key' => 'value'])
         ;
 
-        $context = new AmqpContext($channel);
+        $context = new AmqpContext($channel, []);
         $context->unbind(new AmqpBind($target, $source, 'routing-key', 12345, ['key' => 'value']));
         $context->unbind(new AmqpBind($source, $target, 'routing-key', 12345, ['key' => 'value']));
     }
@@ -202,7 +201,7 @@ class AmqpContextTest extends TestCase
             ->method('close')
         ;
 
-        $context = new AmqpContext($channel);
+        $context = new AmqpContext($channel, []);
         $context->createProducer();
 
         $context->close();
@@ -220,7 +219,7 @@ class AmqpContextTest extends TestCase
             ->with($this->identicalTo('queue'), $this->isTrue())
         ;
 
-        $context = new AmqpContext($channel);
+        $context = new AmqpContext($channel, []);
         $context->purgeQueue($queue);
     }
 
@@ -233,20 +232,13 @@ class AmqpContextTest extends TestCase
             ->with($this->identicalTo(123), $this->identicalTo(456), $this->isTrue())
         ;
 
-        $context = new AmqpContext($channel);
+        $context = new AmqpContext($channel, []);
         $context->setQos(123, 456, true);
-    }
-
-    public function testShouldImplementPsrSubscriptionConsumerAwareInterface()
-    {
-        $rc = new \ReflectionClass(AmqpContext::class);
-
-        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumerAwareContext::class));
     }
 
     public function testShouldReturnExpectedSubscriptionConsumerInstance()
     {
-        $context = new AmqpContext($this->createChannelMock());
+        $context = new AmqpContext($this->createChannelMock(), []);
 
         $this->assertInstanceOf(AmqpSubscriptionConsumer::class, $context->createSubscriptionConsumer());
     }

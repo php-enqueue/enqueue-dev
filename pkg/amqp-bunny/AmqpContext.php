@@ -7,8 +7,8 @@ use Bunny\Message;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
-use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
+use Interop\Amqp\AmqpDestination;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
@@ -18,11 +18,15 @@ use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrSubscriptionConsumerAwareContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
 use Interop\Queue\PsrTopic;
 
-class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscriptionConsumerAwareContext
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 {
     use DelayStrategyAwareTrait;
 
@@ -42,11 +46,6 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     private $config;
 
     /**
-     * @var Buffer
-     */
-    private $buffer;
-
-    /**
      * @var AmqpSubscriptionConsumer
      */
     private $bcSubscriptionConsumer;
@@ -57,10 +56,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
      * @param Channel|callable $bunnyChannel
      * @param array            $config
      */
-    public function __construct($bunnyChannel, $config = [])
+    public function __construct($bunnyChannel, array $config)
     {
         $this->config = array_replace([
-            'receive_method' => 'basic_get',
             'qos_prefetch_size' => 0,
             'qos_prefetch_count' => 1,
             'qos_global' => false,
@@ -73,49 +71,38 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         } else {
             throw new \InvalidArgumentException('The bunnyChannel argument must be either \Bunny\Channel or callable that return it.');
         }
-
-        $this->buffer = new Buffer();
-        $this->bcSubscriptionConsumer = $this->createSubscriptionConsumer();
     }
 
     /**
-     * @param string|null $body
-     * @param array       $properties
-     * @param array       $headers
-     *
      * @return InteropAmqpMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         return new AmqpMessage($body, $properties, $headers);
     }
 
     /**
-     * @param string $name
-     *
      * @return InteropAmqpQueue
      */
-    public function createQueue($name)
+    public function createQueue(string $name): PsrQueue
     {
         return new AmqpQueue($name);
     }
 
     /**
-     * @param string $name
-     *
      * @return InteropAmqpTopic
      */
-    public function createTopic($name)
+    public function createTopic(string $name): PsrTopic
     {
         return new AmqpTopic($name);
     }
 
     /**
-     * @param PsrDestination $destination
+     * @param AmqpDestination $destination
      *
      * @return AmqpConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         $destination instanceof PsrTopic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
@@ -126,18 +113,16 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this, $queue, $this->buffer, $this->config['receive_method']);
+            return new AmqpConsumer($this, $queue);
         }
 
-        return new AmqpConsumer($this, $destination, $this->buffer, $this->config['receive_method']);
+        return new AmqpConsumer($this, $destination);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AmqpSubscriptionConsumer
      */
-    public function createSubscriptionConsumer()
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
     {
         return new AmqpSubscriptionConsumer($this);
     }
@@ -145,7 +130,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     /**
      * @return AmqpProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         $producer = new AmqpProducer($this->getBunnyChannel(), $this);
         $producer->setDelayStrategy($this->delayStrategy);
@@ -156,7 +141,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     /**
      * @return InteropAmqpQueue
      */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
         $frame = $this->getBunnyChannel()->queueDeclare('', false, false, true, false);
 
@@ -166,10 +151,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         return $queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function declareTopic(InteropAmqpTopic $topic)
+    public function declareTopic(InteropAmqpTopic $topic): void
     {
         $this->getBunnyChannel()->exchangeDeclare(
             $topic->getTopicName(),
@@ -183,10 +165,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteTopic(InteropAmqpTopic $topic)
+    public function deleteTopic(InteropAmqpTopic $topic): void
     {
         $this->getBunnyChannel()->exchangeDelete(
             $topic->getTopicName(),
@@ -195,10 +174,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function declareQueue(InteropAmqpQueue $queue)
+    public function declareQueue(InteropAmqpQueue $queue): int
     {
         $frame = $this->getBunnyChannel()->queueDeclare(
             $queue->getQueueName(),
@@ -213,10 +189,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         return $frame->messageCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteQueue(InteropAmqpQueue $queue)
+    public function deleteQueue(InteropAmqpQueue $queue): void
     {
         $this->getBunnyChannel()->queueDelete(
             $queue->getQueueName(),
@@ -227,9 +200,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     }
 
     /**
-     * {@inheritdoc}
+     * @param InteropAmqpQueue $queue
      */
-    public function purgeQueue(InteropAmqpQueue $queue)
+    public function purgeQueue(PsrQueue $queue): void
     {
         $this->getBunnyChannel()->queuePurge(
             $queue->getQueueName(),
@@ -237,10 +210,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function bind(InteropAmqpBind $bind)
+    public function bind(InteropAmqpBind $bind): void
     {
         if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
             throw new Exception('Is not possible to bind queue to queue. It is possible to bind topic to queue or topic to topic');
@@ -276,10 +246,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unbind(InteropAmqpBind $bind)
+    public function unbind(InteropAmqpBind $bind): void
     {
         if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
             throw new Exception('Is not possible to bind queue to queue. It is possible to bind topic to queue or topic to topic');
@@ -313,55 +280,19 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         }
     }
 
-    public function close()
+    public function close(): void
     {
         if ($this->bunnyChannel) {
             $this->bunnyChannel->close();
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setQos($prefetchSize, $prefetchCount, $global)
+    public function setQos(int $prefetchSize, int $prefetchCount, bool $global): void
     {
         $this->getBunnyChannel()->qos($prefetchSize, $prefetchCount, $global);
     }
 
-    /**
-     * @deprecated since 0.8.34 will be removed in 0.9
-     *
-     * {@inheritdoc}
-     */
-    public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
-    {
-        $this->bcSubscriptionConsumer->subscribe($consumer, $callback);
-    }
-
-    /**
-     * @deprecated since 0.8.34 will be removed in 0.9
-     *
-     * {@inheritdoc}
-     */
-    public function unsubscribe(InteropAmqpConsumer $consumer)
-    {
-        $this->bcSubscriptionConsumer->unsubscribe($consumer);
-    }
-
-    /**
-     * @deprecated since 0.8.34 will be removed in 0.9
-     *
-     * {@inheritdoc}
-     */
-    public function consume($timeout = 0)
-    {
-        $this->bcSubscriptionConsumer->consume($timeout);
-    }
-
-    /**
-     * @return Channel
-     */
-    public function getBunnyChannel()
+    public function getBunnyChannel(): Channel
     {
         if (false == $this->bunnyChannel) {
             $bunnyChannel = call_user_func($this->bunnyChannelFactory);
@@ -380,12 +311,8 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
 
     /**
      * @internal It must be used here and in the consumer only
-     *
-     * @param Message $bunnyMessage
-     *
-     * @return InteropAmqpMessage
      */
-    public function convertMessage(Message $bunnyMessage)
+    public function convertMessage(Message $bunnyMessage): InteropAmqpMessage
     {
         $headers = $bunnyMessage->headers;
 
