@@ -4,14 +4,14 @@ namespace Enqueue\AmqpLib;
 
 use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
+use Interop\Amqp\AmqpSubscriptionConsumer as InteropAmqpSubscriptionConsumer;
 use Interop\Queue\Exception;
 use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrSubscriptionConsumer;
 use PhpAmqpLib\Exception\AMQPIOWaitException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 
-class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
+class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
 {
     /**
      * @var AmqpContext
@@ -30,10 +30,7 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function consume($timeout = 0)
+    public function consume(int $timeout = 0): void
     {
         if (empty($this->subscribers)) {
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
@@ -75,10 +72,8 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
 
     /**
      * @param AmqpConsumer $consumer
-     *
-     * {@inheritdoc}
      */
-    public function subscribe(PsrConsumer $consumer, callable $callback)
+    public function subscribe(PsrConsumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
@@ -124,10 +119,8 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
 
     /**
      * @param AmqpConsumer $consumer
-     *
-     * {@inheritdoc}
      */
-    public function unsubscribe(PsrConsumer $consumer)
+    public function unsubscribe(PsrConsumer $consumer): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
@@ -145,10 +138,7 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
         unset($this->subscribers[$consumerTag], $this->context->getLibChannel()->callbacks[$consumerTag]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unsubscribeAll()
+    public function unsubscribeAll(): void
     {
         foreach ($this->subscribers as list($consumer)) {
             $this->unsubscribe($consumer);

@@ -20,6 +20,6 @@ class AmqpContextTest extends PsrContextSpec
             ->willReturn($channel)
         ;
 
-        return new AmqpContext($con);
+        return new AmqpContext($con, []);
     }
 }
