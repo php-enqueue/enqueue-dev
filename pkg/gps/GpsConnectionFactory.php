@@ -4,6 +4,7 @@ namespace Enqueue\Gps;
 
 use Google\Cloud\PubSub\PubSubClient;
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class GpsConnectionFactory implements PsrConnectionFactory
 {
@@ -46,11 +47,9 @@ class GpsConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return GpsContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         if ($this->config['lazy']) {
             return new GpsContext(function () {
@@ -61,12 +60,7 @@ class GpsConnectionFactory implements PsrConnectionFactory
         return new GpsContext($this->establishConnection());
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         if (false === strpos($dsn, 'gps:')) {
             throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "gps:".', $dsn));
@@ -81,18 +75,12 @@ class GpsConnectionFactory implements PsrConnectionFactory
         return $config;
     }
 
-    /**
-     * @return PubSubClient
-     */
-    private function establishConnection()
+    private function establishConnection(): PubSubClient
     {
         return new PubSubClient($this->config);
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'lazy' => true,
