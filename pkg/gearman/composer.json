@@ -15,7 +15,7 @@
         "enqueue/test": "0.9.x-dev",
         "enqueue/enqueue": "0.9.x-dev",
         "enqueue/null": "0.9.x-dev",
-        "queue-interop/queue-spec": "^0.5.3@dev",
+        "queue-interop/queue-spec": "0.6.x-dev",
         "symfony/dependency-injection": "^3.4|^4",
         "symfony/config": "^3.4|^4"
     },
