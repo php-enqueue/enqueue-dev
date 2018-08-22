@@ -3,9 +3,15 @@
 namespace Enqueue\Fs;
 
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\PsrTopic;
+use Interop\Queue\SubscriptionConsumerNotSupportedException;
 use Makasim\File\TempFile;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -27,7 +33,7 @@ class FsContext implements PsrContext
     private $chmod;
 
     /**
-     * @var null
+     * @var int
      */
     private $pollingInterval;
 
@@ -36,13 +42,7 @@ class FsContext implements PsrContext
      */
     private $lock;
 
-    /**
-     * @param string $storeDir
-     * @param int    $preFetchCount
-     * @param int    $chmod
-     * @param null   $pollingInterval
-     */
-    public function __construct($storeDir, $preFetchCount, $chmod, $pollingInterval = null)
+    public function __construct(string $storeDir, int $preFetchCount, int $chmod, int $pollingInterval)
     {
         $fs = new Filesystem();
         $fs->mkdir($storeDir);
@@ -56,41 +56,32 @@ class FsContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         return new FsMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsDestination
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): PsrTopic
     {
         return $this->createQueue($topicName);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         return new FsDestination(new \SplFileInfo($this->getStoreDir().'/'.$queueName));
     }
 
-    /**
-     * @param PsrDestination|FsDestination $destination
-     */
-    public function declareDestination(PsrDestination $destination)
+    public function declareDestination(FsDestination $destination): void
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
+        //InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
         set_error_handler(function ($severity, $message, $file, $line) {
             throw new \ErrorException($message, 0, $severity, $file, $line);
@@ -106,7 +97,7 @@ class FsContext implements PsrContext
         }
     }
 
-    public function workWithFile(FsDestination $destination, $mode, callable $callback)
+    public function workWithFile(FsDestination $destination, string $mode, callable $callback)
     {
         $this->declareDestination($destination);
 
@@ -130,33 +121,29 @@ class FsContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsDestination
      */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
-        return new FsDestination(new TempFile($this->getStoreDir().'/'.uniqid('tmp-q-', true)));
+        return new FsDestination(
+            new TempFile($this->getStoreDir().'/'.uniqid('tmp-q-', true))
+        );
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         return new FsProducer($this);
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param FsDestination|PsrDestination $destination
+     * @param FsDestination $destination
      *
      * @return FsConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
@@ -169,15 +156,20 @@ class FsContext implements PsrContext
         return $consumer;
     }
 
-    public function close()
+    public function close(): void
     {
         $this->lock->releaseAll();
     }
 
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
     /**
-     * @param PsrQueue|FsDestination $queue
+     * @param FsDestination $queue
      */
-    public function purge(PsrQueue $queue)
+    public function purgeQueue(PsrQueue $queue): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, FsDestination::class);
 
@@ -186,26 +178,17 @@ class FsContext implements PsrContext
         });
     }
 
-    /**
-     * @return int
-     */
-    public function getPreFetchCount()
+    public function getPreFetchCount(): int
     {
         return $this->preFetchCount;
     }
 
-    /**
-     * @param int $preFetchCount
-     */
-    public function setPreFetchCount($preFetchCount)
+    public function setPreFetchCount(int $preFetchCount): void
     {
         $this->preFetchCount = $preFetchCount;
     }
 
-    /**
-     * @return string
-     */
-    private function getStoreDir()
+    private function getStoreDir(): string
     {
         if (false == is_dir($this->storeDir)) {
             throw new \LogicException(sprintf('The directory %s does not exist', $this->storeDir));
