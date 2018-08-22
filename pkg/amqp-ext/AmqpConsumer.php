@@ -4,10 +4,10 @@ namespace Enqueue\AmqpExt;
 
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
-use Interop\Amqp\AmqpQueue;
-use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class AmqpConsumer implements InteropAmqpConsumer
 {
@@ -17,24 +17,14 @@ class AmqpConsumer implements InteropAmqpConsumer
     private $context;
 
     /**
-     * @var AmqpQueue
+     * @var InteropAmqpQueue
      */
     private $queue;
-
-    /**
-     * @var Buffer
-     */
-    private $buffer;
 
     /**
      * @var \AMQPQueue
      */
     private $extQueue;
-
-    /**
-     * @var string
-     */
-    private $receiveMethod;
 
     /**
      * @var int
@@ -46,142 +36,55 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     private $consumerTag;
 
-    /**
-     * @param AmqpContext $context
-     * @param AmqpQueue   $queue
-     * @param Buffer      $buffer
-     * @param string      $receiveMethod
-     */
-    public function __construct(AmqpContext $context, AmqpQueue $queue, Buffer $buffer, $receiveMethod)
+    public function __construct(AmqpContext $context, InteropAmqpQueue $queue)
     {
         $this->queue = $queue;
         $this->context = $context;
-        $this->buffer = $buffer;
-        $this->receiveMethod = $receiveMethod;
         $this->flags = self::FLAG_NOPARAM;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConsumerTag($consumerTag)
+    public function setConsumerTag(string $consumerTag = null): void
     {
         $this->consumerTag = $consumerTag;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConsumerTag()
+    public function getConsumerTag(): ?string
     {
         return $this->consumerTag;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearFlags()
+    public function clearFlags(): void
     {
         $this->flags = self::FLAG_NOPARAM;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addFlag($flag)
+    public function addFlag(int $flag): void
     {
         $this->flags |= $flag;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFlags()
+    public function getFlags(): int
     {
         return $this->flags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setFlags($flags)
+    public function setFlags(int $flags): void
     {
         $this->flags = $flags;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return AmqpQueue
+     * @return InteropAmqpQueue
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return InteropAmqpMessage|null
+     * @return InteropAmqpMessage
      */
-    public function receive($timeout = 0)
-    {
-        if ('basic_get' == $this->receiveMethod) {
-            return $this->receiveBasicGet($timeout);
-        }
-
-        if ('basic_consume' == $this->receiveMethod) {
-            return $this->receiveBasicConsume($timeout);
-        }
-
-        throw new \LogicException('The "receiveMethod" is not supported');
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return AmqpMessage|null
-     */
-    public function receiveNoWait()
-    {
-        if ($extMessage = $this->getExtQueue()->get(Flags::convertConsumerFlags($this->flags))) {
-            return $this->context->convertMessage($extMessage);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param AmqpMessage $message
-     */
-    public function acknowledge(PsrMessage $message)
-    {
-        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
-
-        $this->getExtQueue()->ack($message->getDeliveryTag());
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param AmqpMessage $message
-     */
-    public function reject(PsrMessage $message, $requeue = false)
-    {
-        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
-
-        $this->getExtQueue()->reject(
-            $message->getDeliveryTag(),
-            $requeue ? AMQP_REQUEUE : AMQP_NOPARAM
-        );
-    }
-
-    /**
-     * @param int $timeout
-     *
-     * @return InteropAmqpMessage|null
-     */
-    private function receiveBasicGet($timeout)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         $end = microtime(true) + ($timeout / 1000);
 
@@ -192,57 +95,46 @@ class AmqpConsumer implements InteropAmqpConsumer
 
             usleep(100000); //100ms
         }
+
+        return null;
     }
 
     /**
-     * @param int $timeout
-     *
-     * @return InteropAmqpMessage|null
+     * @return InteropAmqpMessage
      */
-    private function receiveBasicConsume($timeout)
+    public function receiveNoWait(): ?PsrMessage
     {
-        if (false == $this->consumerTag) {
-            $this->context->subscribe($this, function (InteropAmqpMessage $message) {
-                $this->buffer->push($message->getConsumerTag(), $message);
-
-                return false;
-            });
+        if ($extMessage = $this->getExtQueue()->get(Flags::convertConsumerFlags($this->flags))) {
+            return $this->context->convertMessage($extMessage);
         }
 
-        if ($message = $this->buffer->pop($this->consumerTag)) {
-            return $message;
-        }
-
-        while (true) {
-            $start = microtime(true);
-
-            $this->context->consume($timeout);
-
-            if ($message = $this->buffer->pop($this->consumerTag)) {
-                return $message;
-            }
-
-            // is here when consumed message is not for this consumer
-
-            // as timeout is infinite have to continue consumption, but it can overflow message buffer
-            if ($timeout <= 0) {
-                continue;
-            }
-
-            // compute remaining timeout and continue until time is up
-            $stop = microtime(true);
-            $timeout -= ($stop - $start) * 1000;
-
-            if ($timeout <= 0) {
-                break;
-            }
-        }
+        return null;
     }
 
     /**
-     * @return \AMQPQueue
+     * @param InteropAmqpMessage $message
      */
-    private function getExtQueue()
+    public function acknowledge(PsrMessage $message): void
+    {
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
+
+        $this->getExtQueue()->ack($message->getDeliveryTag());
+    }
+
+    /**
+     * @param InteropAmqpMessage $message
+     */
+    public function reject(PsrMessage $message, bool $requeue = false): void
+    {
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
+
+        $this->getExtQueue()->reject(
+            $message->getDeliveryTag(),
+            $requeue ? AMQP_REQUEUE : AMQP_NOPARAM
+        );
+    }
+
+    private function getExtQueue(): \AMQPQueue
     {
         if (false == $this->extQueue) {
             $extQueue = new \AMQPQueue($this->context->getExtChannel());

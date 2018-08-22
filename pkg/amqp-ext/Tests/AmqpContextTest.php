@@ -6,7 +6,6 @@ use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\AmqpExt\AmqpSubscriptionConsumer;
-use Enqueue\AmqpExt\Buffer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
@@ -15,7 +14,6 @@ use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
-use Interop\Queue\PsrSubscriptionConsumerAwareContext;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
@@ -29,23 +27,14 @@ class AmqpContextTest extends TestCase
 
     public function testCouldBeConstructedWithExtChannelAsFirstArgument()
     {
-        new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        new AmqpContext($this->createExtChannelMock());
     }
 
     public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
     {
         new AmqpContext(function () {
             return $this->createExtChannelMock();
-        }, 'basic_get');
-    }
-
-    public function testShouldCreateNewBufferOnConstruct()
-    {
-        $context = new AmqpContext(function () {
-            return $this->createExtChannelMock();
-        }, 'basic_get');
-
-        $this->assertAttributeInstanceOf(Buffer::class, 'buffer', $context);
+        });
     }
 
     public function testThrowIfNeitherCallbackNorExtChannelAsFirstArgument()
@@ -53,12 +42,12 @@ class AmqpContextTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The extChannel argument must be either AMQPChannel or callable that return AMQPChannel.');
 
-        new AmqpContext(new \stdClass(), 'basic_get');
+        new AmqpContext(new \stdClass());
     }
 
     public function testShouldReturnAmqpMessageOnCreateMessageCallWithoutArguments()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $message = $context->createMessage();
 
@@ -70,7 +59,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldReturnAmqpMessageOnCreateMessageCal()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $message = $context->createMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
 
@@ -82,7 +71,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldCreateTopicWithGivenName()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $topic = $context->createTopic('theName');
 
@@ -94,7 +83,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldCreateQueueWithGivenName()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $queue = $context->createQueue('theName');
 
@@ -107,7 +96,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldReturnAmqpProducer()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $producer = $context->createProducer();
 
@@ -116,9 +105,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldReturnAmqpConsumerForGivenQueue()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
-
-        $buffer = $this->readAttribute($context, 'buffer');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $queue = new AmqpQueue('aName');
 
@@ -127,13 +114,11 @@ class AmqpContextTest extends TestCase
         $this->assertInstanceOf(AmqpConsumer::class, $consumer);
         $this->assertAttributeSame($context, 'context', $consumer);
         $this->assertAttributeSame($queue, 'queue', $consumer);
-        $this->assertAttributeSame($queue, 'queue', $consumer);
-        $this->assertAttributeSame($buffer, 'buffer', $consumer);
     }
 
     public function testShouldThrowIfNotAmqpQueueGivenOnCreateConsumerCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpQueue but got Enqueue\Null\NullQueue.');
@@ -142,7 +127,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldThrowIfNotAmqpTopicGivenOnCreateConsumerCall()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpTopic but got Enqueue\Null\NullTopic.');
@@ -177,7 +162,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($extConnectionMock)
         ;
 
-        $context = new AmqpContext($extChannelMock, 'basic_get');
+        $context = new AmqpContext($extChannelMock);
 
         $context->close();
     }
@@ -211,7 +196,7 @@ class AmqpContextTest extends TestCase
             ->willReturn($extConnectionMock)
         ;
 
-        $context = new AmqpContext($extChannelMock, 'basic_get');
+        $context = new AmqpContext($extChannelMock);
 
         $context->close();
     }
@@ -245,21 +230,14 @@ class AmqpContextTest extends TestCase
             ->willReturn($extConnectionMock)
         ;
 
-        $context = new AmqpContext($extChannelMock, 'basic_get');
+        $context = new AmqpContext($extChannelMock);
 
         $context->close();
     }
 
-    public function testShouldImplementPsrSubscriptionConsumerAwareInterface()
-    {
-        $rc = new \ReflectionClass(AmqpContext::class);
-
-        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumerAwareContext::class));
-    }
-
     public function testShouldReturnExpectedSubscriptionConsumerInstance()
     {
-        $context = new AmqpContext($this->createExtChannelMock(), 'basic_get');
+        $context = new AmqpContext($this->createExtChannelMock());
 
         $this->assertInstanceOf(AmqpSubscriptionConsumer::class, $context->createSubscriptionConsumer());
     }

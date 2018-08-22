@@ -2,10 +2,10 @@
 
 namespace Enqueue\AmqpExt;
 
+use Interop\Amqp\AmqpSubscriptionConsumer as InteropAmqpSubscriptionConsumer;
 use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrSubscriptionConsumer;
 
-class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
+class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
 {
     /**
      * @var AmqpContext
@@ -21,15 +21,17 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
 
     public function __construct(AmqpContext $context)
     {
+        if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || '1.9.1-dev' == phpversion('amqp'))) {
+            // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
+            throw new \LogicException('The AMQP extension "basic_consume" method does not work properly prior 1.9.1 version.');
+        }
+
         $this->context = $context;
 
         $this->subscribers = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function consume($timeout = 0)
+    public function consume(int $timeout = 0): void
     {
         if (empty($this->subscribers)) {
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
@@ -69,7 +71,7 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
             }, AMQP_JUST_CONSUME);
         } catch (\AMQPQueueException $e) {
             if ('Consumer timeout exceed' == $e->getMessage()) {
-                return null;
+                return;
             }
 
             throw $e;
@@ -80,10 +82,8 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
 
     /**
      * @param AmqpConsumer $consumer
-     *
-     * {@inheritdoc}
      */
-    public function subscribe(PsrConsumer $consumer, callable $callback)
+    public function subscribe(PsrConsumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
@@ -105,10 +105,8 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
 
     /**
      * @param AmqpConsumer $consumer
-     *
-     * {@inheritdoc}
      */
-    public function unsubscribe(PsrConsumer $consumer)
+    public function unsubscribe(PsrConsumer $consumer): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
@@ -127,10 +125,7 @@ class AmqpSubscriptionConsumer implements PsrSubscriptionConsumer
         unset($this->subscribers[$consumerTag]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unsubscribeAll()
+    public function unsubscribeAll(): void
     {
         foreach ($this->subscribers as list($consumer)) {
             $this->unsubscribe($consumer);

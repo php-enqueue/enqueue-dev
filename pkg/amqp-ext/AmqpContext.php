@@ -5,8 +5,8 @@ namespace Enqueue\AmqpExt;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpBind as InteropAmqpBind;
-use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpContext as InteropAmqpContext;
+use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
@@ -15,11 +15,15 @@ use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception;
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrSubscriptionConsumerAwareContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
 use Interop\Queue\PsrTopic;
 
-class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscriptionConsumerAwareContext
+class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 {
     use DelayStrategyAwareTrait;
 
@@ -34,30 +38,12 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     private $extChannelFactory;
 
     /**
-     * @var Buffer
-     */
-    private $buffer;
-
-    /**
-     * @var string
-     */
-    private $receiveMethod;
-
-    /**
-     * @var AmqpSubscriptionConsumer
-     */
-    private $bcSubscriptionConsumer;
-
-    /**
      * Callable must return instance of \AMQPChannel once called.
      *
      * @param \AMQPChannel|callable $extChannel
-     * @param string                $receiveMethod
      */
-    public function __construct($extChannel, $receiveMethod)
+    public function __construct($extChannel)
     {
-        $this->receiveMethod = $receiveMethod;
-
         if ($extChannel instanceof \AMQPChannel) {
             $this->extChannel = $extChannel;
         } elseif (is_callable($extChannel)) {
@@ -65,40 +51,31 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         } else {
             throw new \InvalidArgumentException('The extChannel argument must be either AMQPChannel or callable that return AMQPChannel.');
         }
-
-        $this->buffer = new Buffer();
-        $this->bcSubscriptionConsumer = $this->createSubscriptionConsumer();
     }
 
     /**
-     * {@inheritdoc}
+     * @return InteropAmqpMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         return new AmqpMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
+     * @return InteropAmqpTopic
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): PsrTopic
     {
         return new AmqpTopic($topicName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteTopic(InteropAmqpTopic $topic)
+    public function deleteTopic(InteropAmqpTopic $topic): void
     {
         $extExchange = new \AMQPExchange($this->getExtChannel());
         $extExchange->delete($topic->getTopicName(), Flags::convertTopicFlags($topic->getFlags()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function declareTopic(InteropAmqpTopic $topic)
+    public function declareTopic(InteropAmqpTopic $topic): void
     {
         $extExchange = new \AMQPExchange($this->getExtChannel());
         $extExchange->setName($topic->getTopicName());
@@ -110,27 +87,21 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     }
 
     /**
-     * {@inheritdoc}
+     * @return InteropAmqpQueue
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         return new AmqpQueue($queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteQueue(InteropAmqpQueue $queue)
+    public function deleteQueue(InteropAmqpQueue $queue): void
     {
         $extQueue = new \AMQPQueue($this->getExtChannel());
         $extQueue->setName($queue->getQueueName());
         $extQueue->delete(Flags::convertQueueFlags($queue->getFlags()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function declareQueue(InteropAmqpQueue $queue)
+    public function declareQueue(InteropAmqpQueue $queue): int
     {
         $extQueue = new \AMQPQueue($this->getExtChannel());
         $extQueue->setName($queue->getQueueName());
@@ -141,19 +112,18 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     }
 
     /**
-     * {@inheritdoc}
+     * @param InteropAmqpQueue $queue
      */
-    public function purgeQueue(InteropAmqpQueue $queue)
+    public function purgeQueue(PsrQueue $queue): void
     {
+        InvalidDestinationException::assertDestinationInstanceOf($queue, InteropAmqpQueue::class);
+
         $amqpQueue = new \AMQPQueue($this->getExtChannel());
         $amqpQueue->setName($queue->getQueueName());
         $amqpQueue->purge();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function bind(InteropAmqpBind $bind)
+    public function bind(InteropAmqpBind $bind): void
     {
         if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
             throw new Exception('Is not possible to bind queue to queue. It is possible to bind topic to queue or topic to topic');
@@ -177,10 +147,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unbind(InteropAmqpBind $bind)
+    public function unbind(InteropAmqpBind $bind): void
     {
         if ($bind->getSource() instanceof InteropAmqpQueue && $bind->getTarget() instanceof InteropAmqpQueue) {
             throw new Exception('Is not possible to unbind queue to queue. It is possible to unbind topic from queue or topic from topic');
@@ -205,11 +172,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return InteropAmqpQueue
      */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
         $extQueue = new \AMQPQueue($this->getExtChannel());
         $extQueue->setFlags(AMQP_EXCLUSIVE);
@@ -223,11 +188,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AmqpProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         $producer = new AmqpProducer($this->getExtChannel(), $this);
         $producer->setDelayStrategy($this->delayStrategy);
@@ -236,13 +199,11 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param PsrDestination|AmqpQueue $destination
+     * @param InteropAmqpQueue $destination
      *
      * @return AmqpConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         $destination instanceof PsrTopic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
@@ -253,24 +214,18 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
             $queue = $this->createTemporaryQueue();
             $this->bind(new AmqpBind($destination, $queue, $queue->getQueueName()));
 
-            return new AmqpConsumer($this, $queue, $this->buffer, $this->receiveMethod);
+            return new AmqpConsumer($this, $queue);
         }
 
-        return new AmqpConsumer($this, $destination, $this->buffer, $this->receiveMethod);
+        return new AmqpConsumer($this, $destination);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createSubscriptionConsumer()
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
     {
         return new AmqpSubscriptionConsumer($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
         $extConnection = $this->getExtChannel()->getConnection();
         if ($extConnection->isConnected()) {
@@ -278,18 +233,12 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setQos($prefetchSize, $prefetchCount, $global)
+    public function setQos(int $prefetchSize, int $prefetchCount, bool $global): void
     {
         $this->getExtChannel()->qos($prefetchSize, $prefetchCount);
     }
 
-    /**
-     * @return \AMQPChannel
-     */
-    public function getExtChannel()
+    public function getExtChannel(): \AMQPChannel
     {
         if (false == $this->extChannel) {
             $extChannel = call_user_func($this->extChannelFactory);
@@ -307,43 +256,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware, PsrSubscrip
     }
 
     /**
-     * @deprecated since 0.8.34 will be removed in 0.9
-     *
-     * {@inheritdoc}
-     */
-    public function subscribe(InteropAmqpConsumer $consumer, callable $callback)
-    {
-        $this->bcSubscriptionConsumer->subscribe($consumer, $callback);
-    }
-
-    /**
-     * @deprecated since 0.8.34 will be removed in 0.9
-     *
-     * {@inheritdoc}
-     */
-    public function unsubscribe(InteropAmqpConsumer $consumer)
-    {
-        $this->bcSubscriptionConsumer->unsubscribe($consumer);
-    }
-
-    /**
-     * @deprecated since 0.8.34 will be removed in 0.9
-     *
-     * {@inheritdoc}
-     */
-    public function consume($timeout = 0)
-    {
-        $this->bcSubscriptionConsumer->consume($timeout);
-    }
-
-    /**
      * @internal It must be used here and in the consumer only
-     *
-     * @param \AMQPEnvelope $extEnvelope
-     *
-     * @return AmqpMessage
      */
-    public function convertMessage(\AMQPEnvelope $extEnvelope)
+    public function convertMessage(\AMQPEnvelope $extEnvelope): InteropAmqpMessage
     {
         $message = new AmqpMessage(
             $extEnvelope->getBody(),

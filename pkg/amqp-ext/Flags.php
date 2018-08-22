@@ -10,12 +10,7 @@ use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
 
 class Flags
 {
-    /**
-     * @param int $interop
-     *
-     * @return int
-     */
-    public static function convertMessageFlags($interop)
+    public static function convertMessageFlags(int $interop): int
     {
         $flags = AMQP_NOPARAM;
 
@@ -30,12 +25,7 @@ class Flags
         return $flags;
     }
 
-    /**
-     * @param int $interop
-     *
-     * @return int
-     */
-    public static function convertTopicFlags($interop)
+    public static function convertTopicFlags(int $interop): int
     {
         $flags = AMQP_NOPARAM;
 
@@ -48,12 +38,7 @@ class Flags
         return $flags;
     }
 
-    /**
-     * @param int $interop
-     *
-     * @return int
-     */
-    public static function convertQueueFlags($interop)
+    public static function convertQueueFlags(int $interop): int
     {
         $flags = AMQP_NOPARAM;
 
@@ -66,12 +51,7 @@ class Flags
         return $flags;
     }
 
-    /**
-     * @param int $interop
-     *
-     * @return int
-     */
-    public static function convertDestinationFlags($interop)
+    public static function convertDestinationFlags(int $interop): int
     {
         $flags = AMQP_NOPARAM;
 
@@ -94,12 +74,7 @@ class Flags
         return $flags;
     }
 
-    /**
-     * @param int $interop
-     *
-     * @return int
-     */
-    public static function convertConsumerFlags($interop)
+    public static function convertConsumerFlags(int $interop): int
     {
         $flags = AMQP_NOPARAM;
 
