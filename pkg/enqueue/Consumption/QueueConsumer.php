@@ -346,19 +346,18 @@ class QueueConsumer
 
     /**
      * @param bool $enableSubscriptionConsumer
+     * @throws \Enqueue\Consumption\Exception\InvalidArgumentException
      */
     public function enableSubscriptionConsumer($enableSubscriptionConsumer)
     {
-        if (!is_bool($enableSubscriptionConsumer) {
+        if (!is_bool($enableSubscriptionConsumer)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'The argument must be a boolean but got %s.',
-                    is_object($argument) ? get_class($argument) : gettype($argument)
+                    is_object($enableSubscriptionConsumer) ? get_class($enableSubscriptionConsumer) : gettype($enableSubscriptionConsumer)
                 )
             );
         }
-            
-        $this->enableSubscriptionConsumer = $enableSubscriptionConsumer;
     }
 
     /**
