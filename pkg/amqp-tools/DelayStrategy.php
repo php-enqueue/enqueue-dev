@@ -9,10 +9,7 @@ use Interop\Amqp\AmqpMessage;
 interface DelayStrategy
 {
     /**
-     * @param AmqpContext     $context
-     * @param AmqpDestination $dest
-     * @param AmqpMessage     $message
-     * @param int             $delayMsec
+     * Delay is in milliseconds.
      */
-    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, $delayMsec);
+    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, int $delay): void;
 }
