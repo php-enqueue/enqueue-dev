@@ -369,7 +369,7 @@ class AmqpTransportFactoryTest extends TestCase
     {
         $factory = AmqpTransportFactory::createConnectionFactoryFactory(['host' => 'aHost']);
 
-        $this->assertInstanceOf(\Enqueue\AmqpExt\AmqpConnectionFactory::class, $factory);
+        $this->assertInstanceOf(\Enqueue\AmqpBunny\AmqpConnectionFactory::class, $factory);
     }
 
     public function testThrowIfInvalidDriverGiven()
@@ -380,11 +380,11 @@ class AmqpTransportFactoryTest extends TestCase
         AmqpTransportFactory::createConnectionFactoryFactory(['driver' => 'invalidDriver']);
     }
 
-    public function testShouldCreateAmqpExtFromDsn()
+    public function testShouldCreateAmqpBunnyFromDsn()
     {
         $factory = AmqpTransportFactory::createConnectionFactoryFactory(['dsn' => 'amqp:']);
 
-        $this->assertInstanceOf(\Enqueue\AmqpExt\AmqpConnectionFactory::class, $factory);
+        $this->assertInstanceOf(\Enqueue\AmqpBunny\AmqpConnectionFactory::class, $factory);
     }
 
     public function testShouldCreateAmqpBunnyFromDsnWithDriver()
