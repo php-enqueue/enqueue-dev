@@ -21,11 +21,6 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
 
     public function __construct(AmqpContext $context)
     {
-        if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || '1.9.1-dev' == phpversion('amqp'))) {
-            // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
-            throw new \LogicException('The AMQP extension "basic_consume" method does not work properly prior 1.9.1 version.');
-        }
-
         $this->context = $context;
 
         $this->subscribers = [];
@@ -35,6 +30,11 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
     {
         if (empty($this->subscribers)) {
             throw new \LogicException('There is no subscribers. Consider calling basicConsumeSubscribe before consuming');
+        }
+
+        if (false == (version_compare(phpversion('amqp'), '1.9.1', '>=') || '1.9.1-dev' == phpversion('amqp'))) {
+            // @see https://github.com/php-enqueue/enqueue-dev/issues/110 and https://github.com/pdezwart/php-amqp/issues/281
+            throw new \LogicException('The AMQP extension "basic_consume" method does not work properly prior 1.9.1 version.');
         }
 
         /** @var \AMQPQueue $extQueue */
