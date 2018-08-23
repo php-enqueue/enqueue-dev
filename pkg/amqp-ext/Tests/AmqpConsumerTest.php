@@ -4,7 +4,6 @@ namespace Enqueue\AmqpExt\Tests;
 
 use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
-use Enqueue\AmqpExt\Buffer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Queue\PsrConsumer;
@@ -19,14 +18,9 @@ class AmqpConsumerTest extends TestCase
         $this->assertClassImplements(PsrConsumer::class, AmqpConsumer::class);
     }
 
-    public function testCouldBeConstructedWithContextAndQueueAndBufferAsArguments()
+    public function testCouldBeConstructedWithContextAndQueueAsArguments()
     {
-        new AmqpConsumer(
-            $this->createContext(),
-            new AmqpQueue('aName'),
-            new Buffer(),
-            'basic_get'
-        );
+        new AmqpConsumer($this->createContext(), new AmqpQueue('aName'));
     }
 
     /**

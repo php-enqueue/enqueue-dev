@@ -7,6 +7,7 @@ use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,8 +32,8 @@ class GearmanContextTest extends TestCase
     {
         $context = new GearmanContext(['host' => 'aHost', 'port' => 'aPort']);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Not implemented');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
+
         $context->createTemporaryQueue();
     }
 

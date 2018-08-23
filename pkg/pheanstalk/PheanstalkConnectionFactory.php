@@ -3,6 +3,7 @@
 namespace Enqueue\Pheanstalk;
 
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 use Pheanstalk\Pheanstalk;
 
 class PheanstalkConnectionFactory implements PsrConnectionFactory
@@ -49,19 +50,14 @@ class PheanstalkConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return PheanstalkContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         return new PheanstalkContext($this->establishConnection());
     }
 
-    /**
-     * @return Pheanstalk
-     */
-    private function establishConnection()
+    private function establishConnection(): Pheanstalk
     {
         if (false == $this->connection) {
             $this->connection = new Pheanstalk(
@@ -75,12 +71,7 @@ class PheanstalkConnectionFactory implements PsrConnectionFactory
         return $this->connection;
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         $dsnConfig = parse_url($dsn);
         if (false === $dsnConfig) {
@@ -112,10 +103,7 @@ class PheanstalkConnectionFactory implements PsrConnectionFactory
         ]);
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'host' => 'localhost',

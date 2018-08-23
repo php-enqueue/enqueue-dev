@@ -19,18 +19,16 @@ class GpsProducer implements PsrProducer
      */
     private $context;
 
-    /**
-     * @param GpsContext $context
-     */
     public function __construct(GpsContext $context)
     {
         $this->context = $context;
     }
 
     /**
-     * {@inheritdoc}
+     * @param GpsTopic   $destination
+     * @param GpsMessage $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GpsTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, GpsMessage::class);
@@ -42,60 +40,45 @@ class GpsProducer implements PsrProducer
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
         throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw TimeToLiveNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
+        return null;
     }
 }

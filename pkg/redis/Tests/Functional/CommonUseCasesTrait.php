@@ -109,15 +109,15 @@ trait CommonUseCasesTrait
         $queue = $this->getContext()->createQueue('enqueue.test_queue');
 
         $producer = $this->getContext()->createProducer();
-        $producer->send($queue, $this->getContext()->createMessage(1));
-        $producer->send($queue, $this->getContext()->createMessage(2));
-        $producer->send($queue, $this->getContext()->createMessage(3));
+        $producer->send($queue, $this->getContext()->createMessage('1'));
+        $producer->send($queue, $this->getContext()->createMessage('2'));
+        $producer->send($queue, $this->getContext()->createMessage('3'));
 
         $consumer = $this->getContext()->createConsumer($queue);
 
-        $this->assertSame(1, $consumer->receiveNoWait()->getBody());
-        $this->assertSame(2, $consumer->receiveNoWait()->getBody());
-        $this->assertSame(3, $consumer->receiveNoWait()->getBody());
+        $this->assertSame('1', $consumer->receiveNoWait()->getBody());
+        $this->assertSame('2', $consumer->receiveNoWait()->getBody());
+        $this->assertSame('3', $consumer->receiveNoWait()->getBody());
     }
 
     /**

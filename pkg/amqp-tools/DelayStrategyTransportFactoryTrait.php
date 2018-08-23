@@ -7,10 +7,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 trait DelayStrategyTransportFactoryTrait
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function registerDelayStrategy(ContainerBuilder $container, array $config, $factoryId, $factoryName)
+    public function registerDelayStrategy(ContainerBuilder $container, array $config, string $factoryId, string $factoryName): void
     {
         if ($config['delay_strategy']) {
             $factory = $container->getDefinition($factoryId);

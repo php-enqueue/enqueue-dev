@@ -24,12 +24,12 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCouldBeConstructedWithExpectedArguments()
     {
-        new FsContext(sys_get_temp_dir(), 1, 0666);
+        new FsContext(sys_get_temp_dir(), 1, 0666, 100);
     }
 
     public function testShouldAllowCreateEmptyMessage()
     {
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $message = $context->createMessage();
 
@@ -42,7 +42,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldAllowCreateCustomMessage()
     {
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $message = $context->createMessage('theBody', ['aProp' => 'aPropVal'], ['aHeader' => 'aHeaderVal']);
 
@@ -57,7 +57,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $queue = $context->createQueue($tmpFile->getFilename());
 
@@ -72,7 +72,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $topic = $context->createTopic($tmpFile->getFilename());
 
@@ -87,7 +87,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $queue = $context->createTemporaryQueue();
 
@@ -100,7 +100,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $producer = $context->createProducer();
 
@@ -111,7 +111,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Null\NullQueue.');
@@ -124,7 +124,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $queue = $context->createQueue($tmpFile->getFilename());
 
@@ -135,7 +135,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 123, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 123, 0666, 100);
 
         $queue = $context->createQueue($tmpFile->getFilename());
 
@@ -151,7 +151,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 123, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 123, 0666, 100);
 
         $this->assertSame(123, $context->getPreFetchCount());
     }
@@ -160,7 +160,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $context->setPreFetchCount(456);
 
@@ -173,11 +173,11 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
 
         file_put_contents($tmpFile, 'foo');
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $queue = $context->createQueue($tmpFile->getFilename());
 
-        $context->purge($queue);
+        $context->purgeQueue($queue);
 
         $this->assertEmpty(file_get_contents($tmpFile));
     }
@@ -186,7 +186,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/'.uniqid());
 
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $queue = $context->createQueue($tmpFile->getFilename());
 

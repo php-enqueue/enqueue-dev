@@ -297,10 +297,17 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     public function testShouldSetupBroker()
     {
         $context = $this->createPsrContextMock();
-
         $context
             ->expects($this->once())
             ->method('createCollection')
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getConfig')
+            ->willReturn([
+                'dbname' => 'aDb',
+                'collection_name' => 'aCol',
+            ])
         ;
 
         $driver = new MongodbDriver(

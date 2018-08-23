@@ -86,15 +86,15 @@ final class Resources
                 'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/fs',
             ];
-            $map[AmqpExtConnectionFactory::class] = [
-                'schemes' => ['amqp', 'amqps'],
-                'supportedSchemeExtensions' => ['ext', 'rabbitmq'],
-                'package' => 'enqueue/amqp-ext',
-            ];
             $map[AmqpBunnyConnectionFactory::class] = [
                 'schemes' => ['amqp'],
                 'supportedSchemeExtensions' => ['bunny', 'rabbitmq'],
                 'package' => 'enqueue/amqp-bunny',
+            ];
+            $map[AmqpExtConnectionFactory::class] = [
+                'schemes' => ['amqp', 'amqps'],
+                'supportedSchemeExtensions' => ['ext', 'rabbitmq'],
+                'package' => 'enqueue/amqp-ext',
             ];
             $map[AmqpLibConnectionFactory::class] = [
                 'schemes' => ['amqp', 'amqps'],

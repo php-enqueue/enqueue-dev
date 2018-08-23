@@ -18,10 +18,6 @@ class RdKafkaProducer implements PsrProducer
      */
     private $producer;
 
-    /**
-     * @param Producer   $producer
-     * @param Serializer $serializer
-     */
     public function __construct(Producer $producer, Serializer $serializer)
     {
         $this->producer = $producer;
@@ -30,12 +26,10 @@ class RdKafkaProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RdKafkaTopic   $destination
      * @param RdKafkaMessage $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
@@ -49,61 +43,49 @@ class RdKafkaProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaProducer
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaProducer
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return null;
     }

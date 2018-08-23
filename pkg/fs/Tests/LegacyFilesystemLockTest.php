@@ -20,7 +20,7 @@ class LegacyFilesystemLockTest extends TestCase
 
     public function testShouldReleaseAllLocksOnClose()
     {
-        $context = new FsContext(sys_get_temp_dir(), 1, 0666);
+        $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
         $fooQueue = $context->createQueue('foo');
         $barQueue = $context->createTopic('bar');
 

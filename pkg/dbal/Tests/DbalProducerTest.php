@@ -3,12 +3,10 @@
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalContext;
-use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrProducer;
 
@@ -24,18 +22,6 @@ class DbalProducerTest extends \PHPUnit_Framework_TestCase
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new DbalProducer($this->createContextMock());
-    }
-
-    public function testShouldThrowIfBodyOfInvalidType()
-    {
-        $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message body must be a scalar or null. Got: stdClass');
-
-        $producer = new DbalProducer($this->createContextMock());
-
-        $message = new DbalMessage(new \stdClass());
-
-        $producer->send(new DbalDestination(''), $message);
     }
 
     public function testShouldThrowIfDestinationOfInvalidType()

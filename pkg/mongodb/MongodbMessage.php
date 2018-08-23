@@ -55,12 +55,7 @@ class MongodbMessage implements PsrMessage
      */
     private $publishedAt;
 
-    /**
-     * @param string $body
-     * @param array  $properties
-     * @param array  $headers
-     */
-    public function __construct($body = '', array $properties = [], array $headers = [])
+    public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -68,248 +63,163 @@ class MongodbMessage implements PsrMessage
         $this->redelivered = false;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId(string $id = null): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string $id
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $body
-     */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
         $this->properties = $properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
         $this->properties[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
         return array_key_exists($name, $this->properties) ? $this->properties[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
         $this->headers[$name] = $value;
     }
 
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
         return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
         return $this->redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
         $this->redelivered = $redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
         return $this->getHeader('reply_to');
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
-    /**
-     * @param int $priority
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): void
     {
         $this->priority = $priority;
     }
 
-    /**
-     * @return int
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
     /**
-     * Set delay in milliseconds.
-     *
-     * @param int $deliveryDelay
+     * In milliseconds.
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): void
     {
         $this->deliveryDelay = $deliveryDelay;
     }
 
-    /**
-     * @return int|float|null
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }
 
     /**
-     * Set time to live in milliseconds.
-     *
-     * @param int|float|null $timeToLive
+     * In milliseconds.
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): void
     {
         $this->timeToLive = $timeToLive;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
         $this->setHeader('correlation_id', $correlationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
         return $this->getHeader('correlation_id', null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
         $this->setHeader('message_id', $messageId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
         return $this->getHeader('message_id', null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         $value = $this->getHeader('timestamp');
 
         return null === $value ? null : (int) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
 
-    /**
-     * @return int
-     */
-    public function getPublishedAt()
+    public function getPublishedAt(): ?int
     {
         return $this->publishedAt;
     }
 
     /**
-     * @param int $publishedAt
+     * In milliseconds.
      */
-    public function setPublishedAt($publishedAt)
+    public function setPublishedAt(int $publishedAt = null): void
     {
         $this->publishedAt = $publishedAt;
     }

@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Type;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class DbalConsumer implements PsrConsumer
 {
@@ -26,57 +27,44 @@ class DbalConsumer implements PsrConsumer
     private $queue;
 
     /**
-     * @var int microseconds
+     * @var int
      */
-    private $pollingInterval = 1000000;
+    private $pollingInterval;
 
-    /**
-     * @param DbalContext     $context
-     * @param DbalDestination $queue
-     */
     public function __construct(DbalContext $context, DbalDestination $queue)
     {
         $this->context = $context;
         $this->queue = $queue;
         $this->dbal = $this->context->getDbalConnection();
+
+        $this->pollingInterval = 1000;
     }
 
     /**
-     * Set polling interval in milliseconds.
-     *
-     * @param int $msec
+     * Polling interval is in milliseconds.
      */
-    public function setPollingInterval($msec)
+    public function setPollingInterval(int $interval): void
     {
-        $this->pollingInterval = $msec * 1000;
+        $this->pollingInterval = $interval;
     }
 
     /**
      * Get polling interval in milliseconds.
-     *
-     * @return int
      */
-    public function getPollingInterval()
+    public function getPollingInterval(): int
     {
-        return (int) $this->pollingInterval / 1000;
+        return $this->pollingInterval;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalDestination
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->queue;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return DbalMessage|null
-     */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         $timeout /= 1000;
         $startAt = microtime(true);
@@ -89,43 +77,34 @@ class DbalConsumer implements PsrConsumer
             }
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
 
-            usleep($this->pollingInterval);
+            usleep($this->pollingInterval * 1000);
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return DbalMessage|null
-     */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
         return $this->receiveMessage();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param DbalMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
         // does nothing
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param DbalMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
@@ -136,10 +115,7 @@ class DbalConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @return DbalMessage|null
-     */
-    protected function receiveMessage()
+    protected function receiveMessage(): ?DbalMessage
     {
         $this->dbal->beginTransaction();
         try {
@@ -149,7 +125,7 @@ class DbalConsumer implements PsrConsumer
             if (false == $dbalMessage) {
                 $this->dbal->commit();
 
-                return;
+                return null;
             }
 
             // remove message
@@ -166,6 +142,8 @@ class DbalConsumer implements PsrConsumer
             if (empty($dbalMessage['time_to_live']) || ($dbalMessage['time_to_live'] / 1000) > microtime(true)) {
                 return $this->convertMessage($dbalMessage);
             }
+
+            return null;
         } catch (\Exception $e) {
             $this->dbal->rollBack();
 
@@ -173,13 +151,9 @@ class DbalConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @param array $dbalMessage
-     *
-     * @return DbalMessage
-     */
-    protected function convertMessage(array $dbalMessage)
+    protected function convertMessage(array $dbalMessage): DbalMessage
     {
+        /** @var DbalMessage $message */
         $message = $this->context->createMessage();
 
         $message->setBody($dbalMessage['body']);
@@ -198,12 +172,7 @@ class DbalConsumer implements PsrConsumer
         return $message;
     }
 
-    /**
-     * @param int $now
-     *
-     * @return array|null
-     */
-    private function fetchPrioritizedMessage($now)
+    private function fetchPrioritizedMessage(int $now): ?array
     {
         $query = $this->dbal->createQueryBuilder();
         $query
@@ -219,7 +188,7 @@ class DbalConsumer implements PsrConsumer
 
         $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
 
-        return $this->dbal->executeQuery(
+        $result = $this->dbal->executeQuery(
             $sql,
             [
                 'queue' => $this->queue->getQueueName(),
@@ -230,14 +199,11 @@ class DbalConsumer implements PsrConsumer
                 'delayedUntil' => Type::INTEGER,
             ]
         )->fetch();
+
+        return $result ?: null;
     }
 
-    /**
-     * @param int $now
-     *
-     * @return array|null
-     */
-    private function fetchMessage($now)
+    private function fetchMessage(int $now): ?array
     {
         $query = $this->dbal->createQueryBuilder();
         $query
@@ -252,7 +218,7 @@ class DbalConsumer implements PsrConsumer
 
         $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
 
-        return $this->dbal->executeQuery(
+        $result = $this->dbal->executeQuery(
             $sql,
             [
                 'queue' => $this->queue->getQueueName(),
@@ -263,5 +229,7 @@ class DbalConsumer implements PsrConsumer
                 'delayedUntil' => Type::INTEGER,
             ]
         )->fetch();
+
+        return $result ?: null;
     }
 }

@@ -12,35 +12,22 @@ class MongodbDestination implements PsrTopic, PsrQueue
      */
     private $destinationName;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->destinationName = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->destinationName;
     }
 
-    /**
-     * Alias for getQueueName()
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getTopicName(): string
     {
-        return $this->getQueueName();
+        return $this->destinationName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getName(): string
     {
         return $this->destinationName;
     }

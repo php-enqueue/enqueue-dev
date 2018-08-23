@@ -117,7 +117,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
     {
         $context = new StompContext($this->createStompClientMock());
 
-        $this->assertInstanceOf(StompConsumer::class, $context->createConsumer(new StompDestination()));
+        $this->assertInstanceOf(StompConsumer::class, $context->createConsumer($this->createDummyDestination()));
     }
 
     public function testShouldCreateMessageProducerInstance()
@@ -138,7 +138,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $context = new StompContext($client);
 
         $context->createProducer();
-        $context->createConsumer(new StompDestination());
+        $context->createConsumer($this->createDummyDestination());
 
         $context->close();
     }
@@ -219,5 +219,14 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
     private function createStompClientMock()
     {
         return $this->createMock(BufferedStompClient::class);
+    }
+
+    private function createDummyDestination(): StompDestination
+    {
+        $destination = new StompDestination();
+        $destination->setStompName('aName');
+        $destination->setType(StompDestination::TYPE_QUEUE);
+
+        return $destination;
     }
 }

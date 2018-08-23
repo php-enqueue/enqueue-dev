@@ -4,17 +4,7 @@ namespace Enqueue\RdKafka;
 
 interface Serializer
 {
-    /**
-     * @param RdKafkaMessage $message
-     *
-     * @return string
-     */
-    public function toString(RdKafkaMessage $message);
+    public function toString(RdKafkaMessage $message): string;
 
-    /**
-     * @param string $string
-     *
-     * @return RdKafkaMessage
-     */
-    public function toMessage($string);
+    public function toMessage(string $string): RdKafkaMessage;
 }

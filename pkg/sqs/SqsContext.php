@@ -4,8 +4,16 @@ namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\PsrTopic;
+use Interop\Queue\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class SqsContext implements PsrContext
 {
@@ -45,78 +53,76 @@ class SqsContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         return new SqsMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsDestination
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): PsrTopic
     {
         return new SqsDestination($topicName);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         return new SqsDestination($queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
-        throw new \BadMethodCallException('SQS transport does not support temporary queues');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         return new SqsProducer($this);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param SqsDestination $destination
      *
      * @return SqsConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, SqsDestination::class);
 
         return new SqsConsumer($this, $destination);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
     }
 
     /**
-     * @return SqsClient
+     * @param SqsDestination $queue
      */
-    public function getClient()
+    public function purgeQueue(PsrQueue $queue): void
+    {
+        InvalidDestinationException::assertDestinationInstanceOf($queue, SqsDestination::class);
+
+        $this->getClient()->purgeQueue([
+            'QueueUrl' => $this->getQueueUrl($queue),
+        ]);
+    }
+
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function getClient(): SqsClient
     {
         if (false == $this->client) {
             $client = call_user_func($this->clientFactory);
@@ -134,12 +140,7 @@ class SqsContext implements PsrContext
         return $this->client;
     }
 
-    /**
-     * @param SqsDestination $destination
-     *
-     * @return string
-     */
-    public function getQueueUrl(SqsDestination $destination)
+    public function getQueueUrl(SqsDestination $destination): string
     {
         if (isset($this->queueUrls[$destination->getQueueName()])) {
             return $this->queueUrls[$destination->getQueueName()];
@@ -156,10 +157,7 @@ class SqsContext implements PsrContext
         return $this->queueUrls[$destination->getQueueName()] = $result->get('QueueUrl');
     }
 
-    /**
-     * @param SqsDestination $dest
-     */
-    public function declareQueue(SqsDestination $dest)
+    public function declareQueue(SqsDestination $dest): void
     {
         $result = $this->getClient()->createQueue([
             'Attributes' => $dest->getAttributes(),
@@ -173,25 +171,12 @@ class SqsContext implements PsrContext
         $this->queueUrls[$dest->getQueueName()] = $result->get('QueueUrl');
     }
 
-    /**
-     * @param SqsDestination $dest
-     */
-    public function deleteQueue(SqsDestination $dest)
+    public function deleteQueue(SqsDestination $dest): void
     {
         $this->getClient()->deleteQueue([
             'QueueUrl' => $this->getQueueUrl($dest),
         ]);
 
         unset($this->queueUrls[$dest->getQueueName()]);
-    }
-
-    /**
-     * @param SqsDestination $destination
-     */
-    public function purgeQueue(SqsDestination $destination)
-    {
-        $this->getClient()->purgeQueue([
-            'QueueUrl' => $this->getQueueUrl($destination),
-        ]);
     }
 }

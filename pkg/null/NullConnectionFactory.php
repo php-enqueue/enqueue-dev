@@ -3,13 +3,14 @@
 namespace Enqueue\Null;
 
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class NullConnectionFactory implements PsrConnectionFactory
 {
     /**
-     * {@inheritdoc}
+     * @return NullContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         return new NullContext();
     }

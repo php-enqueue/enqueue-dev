@@ -3,22 +3,20 @@
 namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Interop\Queue\Spec\Amqp\BasicConsumeShouldRemoveConsumerTagOnUnsubscribeSpec;
+use Interop\Amqp\AmqpContext;
+use Interop\Queue\Spec\Amqp\SubscriptionConsumerRemoveConsumerTagOnUnsubscribeSpec;
 
 /**
  * @group functional
  */
-class AmqpBasicConsumeShouldRemoveConsumerTagOnUnsubscribeTest extends BasicConsumeShouldRemoveConsumerTagOnUnsubscribeSpec
+class AmqpSubscriptionConsumerRemoveConsumerTagOnUnsubscribeTest extends SubscriptionConsumerRemoveConsumerTagOnUnsubscribeSpec
 {
     public function test()
     {
         $this->markTestIncomplete('Seg fault.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
+    protected function createContext(): AmqpContext
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
 
