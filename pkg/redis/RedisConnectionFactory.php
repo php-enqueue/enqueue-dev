@@ -118,7 +118,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
     {
         $unsupportedError = 'The given DSN "%s" is not supported. Must start with "redis:".';
 
-        if ((false === strpos($dsn, 'redis:')) and (false === strpos($dsn, 'tls:'))) {
+        if ((false === strpos($dsn, 'redis:')) and (false === strpos($dsn, 'rediss:'))) {
             throw new \LogicException(sprintf($unsupportedError, $dsn));
         }
 
