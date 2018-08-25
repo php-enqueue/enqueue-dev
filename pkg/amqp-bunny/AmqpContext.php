@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
@@ -44,11 +46,6 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      * @var string
      */
     private $config;
-
-    /**
-     * @var AmqpSubscriptionConsumer
-     */
-    private $bcSubscriptionConsumer;
 
     /**
      * Callable must return instance of \Bunny\Channel once called.
@@ -330,7 +327,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         $message = new AmqpMessage($bunnyMessage->content, $properties, $headers);
-        $message->setDeliveryTag($bunnyMessage->deliveryTag);
+        $message->setDeliveryTag((string) $bunnyMessage->deliveryTag);
         $message->setRedelivered($bunnyMessage->redelivered);
         $message->setRoutingKey($bunnyMessage->routingKey);
 

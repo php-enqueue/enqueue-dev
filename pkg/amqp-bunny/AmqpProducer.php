@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
@@ -136,7 +138,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
         $amqpProperties = $message->getHeaders();
 
         if (array_key_exists('timestamp', $amqpProperties) && null !== $amqpProperties['timestamp']) {
-            $amqpProperties['timestamp'] = \DateTime::createFromFormat('U', $amqpProperties['timestamp']);
+            $amqpProperties['timestamp'] = \DateTime::createFromFormat('U', (string) $amqpProperties['timestamp']);
         }
 
         if ($appProperties = $message->getProperties()) {
