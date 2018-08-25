@@ -5,6 +5,7 @@ namespace Enqueue\Fs;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class FsConsumer implements PsrConsumer
 {
@@ -29,16 +30,13 @@ class FsConsumer implements PsrConsumer
     private $preFetchedMessages;
 
     /**
-     * @var int microseconds
+     * In milliseconds.
+     *
+     * @var int
      */
-    private $pollingInterval = 100000;
+    private $pollingInterval = 100;
 
-    /**
-     * @param FsContext     $context
-     * @param FsDestination $destination
-     * @param int           $preFetchCount
-     */
-    public function __construct(FsContext $context, FsDestination $destination, $preFetchCount)
+    public function __construct(FsContext $context, FsDestination $destination, int $preFetchCount)
     {
         $this->context = $context;
         $this->destination = $destination;
@@ -49,40 +47,32 @@ class FsConsumer implements PsrConsumer
 
     /**
      * Set polling interval in milliseconds.
-     *
-     * @param int $msec
      */
-    public function setPollingInterval($msec)
+    public function setPollingInterval(int $msec): void
     {
-        $this->pollingInterval = $msec * 1000;
+        $this->pollingInterval = $msec;
     }
 
     /**
      * Get polling interval in milliseconds.
-     *
-     * @return int
      */
-    public function getPollingInterval()
+    public function getPollingInterval(): int
     {
-        return (int) $this->pollingInterval / 1000;
+        return $this->pollingInterval;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsDestination
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->destination;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return FsMessage|null
+     * @return FsMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         $timeout /= 1000;
         $startAt = microtime(true);
@@ -95,21 +85,21 @@ class FsConsumer implements PsrConsumer
             }
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
 
             usleep($this->pollingInterval);
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @return FsMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
         if ($this->preFetchedMessages) {
             return array_shift($this->preFetchedMessages);
@@ -140,7 +130,7 @@ class FsConsumer implements PsrConsumer
                         $expireAt = $fetchedMessage->getHeader('x-expire-at');
                         if ($expireAt && $expireAt - microtime(true) < 0) {
                             // message has expired, just drop it.
-                            return;
+                            return null;
                         }
 
                         $this->preFetchedMessages[] = $fetchedMessage;
@@ -148,7 +138,7 @@ class FsConsumer implements PsrConsumer
                         throw new \LogicException(sprintf("Cannot decode json message '%s'", $rawMessage), null, $e);
                     }
                 } else {
-                    return;
+                    return null;
                 }
 
                 --$count;
@@ -158,20 +148,16 @@ class FsConsumer implements PsrConsumer
         if ($this->preFetchedMessages) {
             return array_shift($this->preFetchedMessages);
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
         // do nothing. fs transport always works in auto ack mode
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, FsMessage::class);
 
@@ -182,29 +168,20 @@ class FsConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getPreFetchCount()
+    public function getPreFetchCount(): int
     {
         return $this->preFetchCount;
     }
 
-    /**
-     * @param int $preFetchCount
-     */
-    public function setPreFetchCount($preFetchCount)
+    public function setPreFetchCount(int $preFetchCount): void
     {
         $this->preFetchCount = $preFetchCount;
     }
 
     /**
      * @param resource $file
-     * @param int      $frameNumber
-     *
-     * @return string
      */
-    private function readFrame($file, $frameNumber)
+    private function readFrame($file, int $frameNumber): string
     {
         $frameSize = 64;
         $offset = $frameNumber * $frameSize;

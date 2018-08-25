@@ -14,7 +14,7 @@ class RabbitMqDlxDelayStrategy implements DelayStrategy
     /**
      * {@inheritdoc}
      */
-    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, $delayMsec)
+    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, int $delay): void
     {
         $properties = $message->getProperties();
 
@@ -28,17 +28,17 @@ class RabbitMqDlxDelayStrategy implements DelayStrategy
 
         if ($dest instanceof AmqpTopic) {
             $routingKey = $message->getRoutingKey() ? '.'.$message->getRoutingKey() : '';
-            $name = sprintf('enqueue.%s%s.%s.x.delay', $dest->getTopicName(), $routingKey, $delayMsec);
+            $name = sprintf('enqueue.%s%s.%s.x.delay', $dest->getTopicName(), $routingKey, $delay);
 
             $delayQueue = $context->createQueue($name);
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
-            $delayQueue->setArgument('x-message-ttl', $delayMsec);
+            $delayQueue->setArgument('x-message-ttl', $delay);
             $delayQueue->setArgument('x-dead-letter-exchange', $dest->getTopicName());
             $delayQueue->setArgument('x-dead-letter-routing-key', (string) $delayMessage->getRoutingKey());
         } elseif ($dest instanceof AmqpQueue) {
-            $delayQueue = $context->createQueue('enqueue.'.$dest->getQueueName().'.'.$delayMsec.'.delayed');
+            $delayQueue = $context->createQueue('enqueue.'.$dest->getQueueName().'.'.$delay.'.delayed');
             $delayQueue->addFlag(AmqpTopic::FLAG_DURABLE);
-            $delayQueue->setArgument('x-message-ttl', $delayMsec);
+            $delayQueue->setArgument('x-message-ttl', $delay);
             $delayQueue->setArgument('x-dead-letter-exchange', '');
             $delayQueue->setArgument('x-dead-letter-routing-key', $dest->getQueueName());
         } else {

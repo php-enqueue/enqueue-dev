@@ -85,7 +85,7 @@ class ConnectionFactoryFactoryTest extends TestCase
     {
         yield ['null:', NullConnectionFactory::class];
 
-        yield ['amqp:', AmqpExtConnectionFactory::class];
+        yield ['amqp:', AmqpBunnyConnectionFactory::class];
 
         yield ['amqp+ext:', AmqpExtConnectionFactory::class];
 

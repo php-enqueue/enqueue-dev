@@ -17,12 +17,12 @@ class MongodbProducer implements PsrProducer
     private $priority;
 
     /**
-     * @var int|float|null
+     * @var int|null
      */
     private $deliveryDelay;
 
     /**
-     * @var int|float|null
+     * @var int|null
      */
     private $timeToLive;
 
@@ -31,23 +31,16 @@ class MongodbProducer implements PsrProducer
      */
     private $context;
 
-    /**
-     * @param MongodbContext $context
-     */
     public function __construct(MongodbContext $context)
     {
         $this->context = $context;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MongodbDestination $destination
      * @param MongodbMessage     $message
-     *
-     * @throws Exception
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, MongodbDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
@@ -63,14 +56,6 @@ class MongodbProducer implements PsrProducer
         }
 
         $body = $message->getBody();
-        if (is_scalar($body) || null === $body) {
-            $body = (string) $body;
-        } else {
-            throw new InvalidMessageException(sprintf(
-                'The message body must be a scalar or null. Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
-            ));
-        }
 
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
@@ -128,53 +113,46 @@ class MongodbProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         $this->deliveryDelay = $deliveryDelay;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         $this->priority = $priority;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         $this->timeToLive = $timeToLive;
+
+        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }

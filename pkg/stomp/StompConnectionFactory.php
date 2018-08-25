@@ -3,6 +3,7 @@
 namespace Enqueue\Stomp;
 
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 use Stomp\Network\Connection;
 
 class StompConnectionFactory implements PsrConnectionFactory
@@ -53,11 +54,9 @@ class StompConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         if ($this->config['lazy']) {
             return new StompContext(function () {
@@ -68,10 +67,7 @@ class StompConnectionFactory implements PsrConnectionFactory
         return new StompContext($this->establishConnection());
     }
 
-    /**
-     * @return BufferedStompClient
-     */
-    private function establishConnection()
+    private function establishConnection(): BufferedStompClient
     {
         if (false == $this->stomp) {
             $config = $this->config;
@@ -91,12 +87,7 @@ class StompConnectionFactory implements PsrConnectionFactory
         return $this->stomp;
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         if (false === strpos($dsn, 'stomp:')) {
             throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "stomp:".', $dsn));
@@ -121,10 +112,7 @@ class StompConnectionFactory implements PsrConnectionFactory
         return $config;
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'host' => 'localhost',

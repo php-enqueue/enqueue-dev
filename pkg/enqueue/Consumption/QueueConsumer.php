@@ -12,7 +12,7 @@ use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrSubscriptionConsumerAwareContext;
+use Interop\Queue\SubscriptionConsumerNotSupportedException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -188,9 +188,10 @@ final class QueueConsumer implements QueueConsumerInterface
 
         $this->logger->info('Start consuming');
 
-        $subscriptionConsumer = $this->fallbackSubscriptionConsumer;
-        if ($context instanceof PsrSubscriptionConsumerAwareContext) {
-            $subscriptionConsumer = $context->createSubscriptionConsumer();
+        try {
+            $subscriptionConsumer = $this->psrContext->createSubscriptionConsumer();
+        } catch (SubscriptionConsumerNotSupportedException $e) {
+            $subscriptionConsumer = $this->fallbackSubscriptionConsumer;
         }
 
         $callback = function (PsrMessage $message, PsrConsumer $consumer) use (&$context) {

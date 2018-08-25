@@ -28,10 +28,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
         $this->subscribers = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function consume($timeout = 0)
+    public function consume(int $timeout = 0): void
     {
         if (empty($this->subscribers)) {
             throw new \LogicException('No subscribers');
@@ -80,11 +77,9 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisConsumer $consumer
      */
-    public function subscribe(PsrConsumer $consumer, callable $callback)
+    public function subscribe(PsrConsumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof RedisConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));
@@ -103,11 +98,9 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisConsumer $consumer
      */
-    public function unsubscribe(PsrConsumer $consumer)
+    public function unsubscribe(PsrConsumer $consumer): void
     {
         if (false == $consumer instanceof RedisConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));
@@ -126,10 +119,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
         unset($this->subscribers[$queueName]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unsubscribeAll()
+    public function unsubscribeAll(): void
     {
         $this->subscribers = [];
     }

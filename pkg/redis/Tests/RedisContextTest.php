@@ -14,7 +14,7 @@ use Enqueue\Redis\RedisSubscriptionConsumer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
-use Interop\Queue\PsrSubscriptionConsumerAwareContext;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class RedisContextTest extends \PHPUnit\Framework\TestCase
 {
@@ -94,8 +94,8 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     {
         $context = new RedisContext($this->createRedisMock());
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Not implemented');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
+
         $context->createTemporaryQueue();
     }
 
@@ -201,13 +201,6 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
         $topic = $context->createTopic('aTopicName');
 
         $context->deleteQueue($topic);
-    }
-
-    public function testShouldImplementPsrSubscriptionConsumerAwareInterface()
-    {
-        $rc = new \ReflectionClass(RedisContext::class);
-
-        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumerAwareContext::class));
     }
 
     public function testShouldReturnExpectedSubscriptionConsumerInstance()

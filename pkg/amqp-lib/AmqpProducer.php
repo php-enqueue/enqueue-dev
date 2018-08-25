@@ -15,6 +15,7 @@ use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
@@ -49,10 +50,6 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
      */
     private $context;
 
-    /**
-     * @param AMQPChannel $channel
-     * @param AmqpContext $context
-     */
     public function __construct(AMQPChannel $channel, AmqpContext $context)
     {
         $this->channel = $channel;
@@ -60,12 +57,10 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param InteropAmqpTopic|InteropAmqpQueue $destination
      * @param InteropAmqpMessage                $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
         $destination instanceof PsrTopic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
@@ -82,9 +77,9 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         if (null === $this->delayStrategy) {
             throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
@@ -95,51 +90,42 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         $this->priority = $priority;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         $this->timeToLive = $timeToLive;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }
 
-    private function doSend(InteropAmqpDestination $destination, InteropAmqpMessage $message)
+    private function doSend(InteropAmqpDestination $destination, InteropAmqpMessage $message): void
     {
         if (null !== $this->priority && null === $message->getPriority()) {
             $message->setPriority($this->priority);

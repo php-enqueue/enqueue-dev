@@ -75,18 +75,18 @@ function runPhpLint()
 {
     global $phpBin, $projectRootDir;
 
-    $filesWithErrors = array();
+    $output = [];
     foreach (getFilesToFix() as $file) {
-        $output = '';
+        $commandOutput = null;
         $returnCode = null;
-        exec(sprintf('%s -l %s 2>/dev/null', $phpBin, $projectRootDir.'/'.$file), $output, $returnCode);
+        exec(sprintf('%s -l %s', $phpBin, $projectRootDir.'/'.$file), $commandOutput, $returnCode);
 
         if ($returnCode) {
-            $filesWithErrors[] = $file;
+            $output[] = $commandOutput;
         }
     }
 
-    return $filesWithErrors;
+    return $output;
 }
 
 function runPhpCsFixer()
@@ -145,9 +145,10 @@ echo sprintf('Found %s staged files', count(getFilesToFix())).PHP_EOL;
 $phpSyntaxErrors = runPhpLint();
 if ($phpSyntaxErrors) {
     echo "Php syntax errors were found in next files:" . PHP_EOL;
-
-    foreach ($phpSyntaxErrors as $error) {
-        echo $error . PHP_EOL;
+    foreach ($phpSyntaxErrors as $phpSyntaxErrors) {
+        echo array_walk_recursive($phpSyntaxErrors, function($item) {
+            echo $item.PHP_EOL;
+        }) . PHP_EOL;
     }
 
     exit(1);

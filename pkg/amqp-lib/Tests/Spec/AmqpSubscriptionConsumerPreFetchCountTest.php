@@ -3,17 +3,15 @@
 namespace Enqueue\AmqpLib\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
-use Interop\Queue\Spec\Amqp\BasicConsumeBreakOnFalseSpec;
+use Interop\Amqp\AmqpContext;
+use Interop\Queue\Spec\Amqp\SubscriptionConsumerPreFetchCountSpec;
 
 /**
  * @group functional
  */
-class AmqpBasicConsumeBreakOnFalseTest extends BasicConsumeBreakOnFalseSpec
+class AmqpSubscriptionConsumerPreFetchCountTest extends SubscriptionConsumerPreFetchCountSpec
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
+    protected function createContext(): AmqpContext
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
 

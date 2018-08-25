@@ -7,7 +7,6 @@ use Bunny\Client;
 use Bunny\Message;
 use Enqueue\AmqpBunny\AmqpConsumer;
 use Enqueue\AmqpBunny\AmqpContext;
-use Enqueue\AmqpBunny\Buffer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\WriteAttributeTrait;
@@ -27,28 +26,23 @@ class AmqpConsumerTest extends TestCase
         $this->assertClassImplements(PsrConsumer::class, AmqpConsumer::class);
     }
 
-    public function testCouldBeConstructedWithContextAndQueueAndBufferAsArguments()
+    public function testCouldBeConstructedWithContextAndQueueAsArguments()
     {
-        new AmqpConsumer(
-            $this->createContextMock(),
-            new AmqpQueue('aName'),
-            new Buffer(),
-            'basic_get'
-        );
+        new AmqpConsumer($this->createContextMock(), new AmqpQueue('aName'));
     }
 
     public function testShouldReturnQueue()
     {
         $queue = new AmqpQueue('aName');
 
-        $consumer = new AmqpConsumer($this->createContextMock(), $queue, new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($this->createContextMock(), $queue);
 
         $this->assertSame($queue, $consumer->getQueue());
     }
 
     public function testOnAcknowledgeShouldThrowExceptionIfNotAmqpMessage()
     {
-        $consumer = new AmqpConsumer($this->createContextMock(), new AmqpQueue('aName'), new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($this->createContextMock(), new AmqpQueue('aName'));
 
         $this->expectException(InvalidMessageException::class);
         $this->expectExceptionMessage('The message must be an instance of Interop\Amqp\AmqpMessage but');
@@ -58,7 +52,7 @@ class AmqpConsumerTest extends TestCase
 
     public function testOnRejectShouldThrowExceptionIfNotAmqpMessage()
     {
-        $consumer = new AmqpConsumer($this->createContextMock(), new AmqpQueue('aName'), new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($this->createContextMock(), new AmqpQueue('aName'));
 
         $this->expectException(InvalidMessageException::class);
         $this->expectExceptionMessage('The message must be an instance of Interop\Amqp\AmqpMessage but');
@@ -84,7 +78,7 @@ class AmqpConsumerTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'), new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
         $message->setDeliveryTag('theDeliveryTag');
@@ -110,7 +104,7 @@ class AmqpConsumerTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'), new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
         $message->setDeliveryTag('theDeliveryTag');
@@ -136,7 +130,7 @@ class AmqpConsumerTest extends TestCase
             ->willReturn($channel)
         ;
 
-        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'), new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
         $message->setDeliveryTag('theDeliveryTag');
@@ -170,7 +164,7 @@ class AmqpConsumerTest extends TestCase
             ->willReturn($message)
         ;
 
-        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'), new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $receivedMessage = $consumer->receiveNoWait();
 
@@ -203,7 +197,7 @@ class AmqpConsumerTest extends TestCase
             ->willReturn($message)
         ;
 
-        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'), new Buffer(), 'basic_get');
+        $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $receivedMessage = $consumer->receive();
 

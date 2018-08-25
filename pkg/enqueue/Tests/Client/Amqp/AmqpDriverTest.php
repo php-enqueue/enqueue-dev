@@ -127,23 +127,6 @@ class AmqpDriverTest extends TestCase
         $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
     }
 
-    public function testShouldThrowExceptionIfExpirationIsNotNumeric()
-    {
-        $transportMessage = new AmqpMessage();
-        $transportMessage->setHeader('expiration', 'is-not-numeric');
-
-        $driver = new AmqpDriver(
-            $this->createAmqpContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('expiration header is not numeric. "is-not-numeric"');
-
-        $driver->createClientMessage($transportMessage);
-    }
-
     public function testShouldConvertClientMessageToTransportMessage()
     {
         $clientMessage = new Message();

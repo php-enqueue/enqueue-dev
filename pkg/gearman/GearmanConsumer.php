@@ -4,6 +4,7 @@ namespace Enqueue\Gearman;
 
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class GearmanConsumer implements PsrConsumer
 {
@@ -22,12 +23,6 @@ class GearmanConsumer implements PsrConsumer
      */
     private $context;
 
-    /**
-     * @param GearmanContext     $context
-     * @param GearmanDestination $destination
-     *
-     * @internal param \GearmanWorker $worker
-     */
     public function __construct(GearmanContext $context, GearmanDestination $destination)
     {
         $this->context = $context;
@@ -37,21 +32,17 @@ class GearmanConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return GearmanDestination
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->destination;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return GearmanMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         set_error_handler(function ($severity, $message, $file, $line) {
             throw new \ErrorException($message, 0, $severity, $file, $line);
@@ -75,34 +66,31 @@ class GearmanConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
+     * @return GearmanMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
         return $this->receive(100);
     }
 
     /**
-     * {@inheritdoc}
+     * @param GearmanMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
     }
 
     /**
-     * {@inheritdoc}
+     * @param GearmanMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         if ($requeue) {
             $this->context->createProducer()->send($this->destination, $message);
         }
     }
 
-    /**
-     * @return \GearmanWorker
-     */
-    public function getWorker()
+    public function getWorker(): \GearmanWorker
     {
         return $this->worker;
     }

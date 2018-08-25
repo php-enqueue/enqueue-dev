@@ -7,6 +7,7 @@ use Enqueue\Pheanstalk\PheanstalkContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 use Pheanstalk\Connection;
 use Pheanstalk\Pheanstalk;
 use PHPUnit\Framework\TestCase;
@@ -29,8 +30,8 @@ class PheanstalkContextTest extends TestCase
     {
         $context = new PheanstalkContext($this->createPheanstalkMock());
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Not implemented');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
+
         $context->createTemporaryQueue();
     }
 

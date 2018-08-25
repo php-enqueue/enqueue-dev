@@ -9,6 +9,7 @@ use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class AmqpConsumer implements InteropAmqpConsumer
 {
@@ -28,16 +29,6 @@ class AmqpConsumer implements InteropAmqpConsumer
     private $queue;
 
     /**
-     * @var Buffer
-     */
-    private $buffer;
-
-    /**
-     * @var string
-     */
-    private $receiveMethod;
-
-    /**
      * @var int
      */
     private $flags;
@@ -47,133 +38,56 @@ class AmqpConsumer implements InteropAmqpConsumer
      */
     private $consumerTag;
 
-    /**
-     * @param AmqpContext      $context
-     * @param InteropAmqpQueue $queue
-     * @param Buffer           $buffer
-     * @param string           $receiveMethod
-     */
-    public function __construct(AmqpContext $context, InteropAmqpQueue $queue, Buffer $buffer, $receiveMethod)
+    public function __construct(AmqpContext $context, InteropAmqpQueue $queue)
     {
         $this->context = $context;
         $this->channel = $context->getBunnyChannel();
         $this->queue = $queue;
-        $this->buffer = $buffer;
-        $this->receiveMethod = $receiveMethod;
         $this->flags = self::FLAG_NOPARAM;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConsumerTag($consumerTag)
+    public function setConsumerTag(string $consumerTag = null): void
     {
         $this->consumerTag = $consumerTag;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConsumerTag()
+    public function getConsumerTag(): ?string
     {
         return $this->consumerTag;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearFlags()
+    public function clearFlags(): void
     {
         $this->flags = self::FLAG_NOPARAM;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addFlag($flag)
+    public function addFlag(int $flag): void
     {
         $this->flags |= $flag;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFlags()
+    public function getFlags(): int
     {
         return $this->flags;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setFlags($flags)
+    public function setFlags(int $flags): void
     {
         $this->flags = $flags;
     }
 
     /**
-     * {@inheritdoc}
+     * @return InteropAmqpQueue
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
+     * @return InteropAmqpMessage
      */
-    public function receive($timeout = 0)
-    {
-        if ('basic_get' == $this->receiveMethod) {
-            return $this->receiveBasicGet($timeout);
-        }
-
-        if ('basic_consume' == $this->receiveMethod) {
-            return $this->receiveBasicConsume($timeout);
-        }
-
-        throw new \LogicException('The "receiveMethod" is not supported');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function receiveNoWait()
-    {
-        if ($message = $this->channel->get($this->queue->getQueueName(), (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK))) {
-            return $this->context->convertMessage($message);
-        }
-    }
-
-    /**
-     * @param InteropAmqpMessage $message
-     */
-    public function acknowledge(PsrMessage $message)
-    {
-        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
-
-        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
-        $this->channel->ack($bunnyMessage);
-    }
-
-    /**
-     * @param InteropAmqpMessage $message
-     * @param bool               $requeue
-     */
-    public function reject(PsrMessage $message, $requeue = false)
-    {
-        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
-
-        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
-        $this->channel->reject($bunnyMessage, $requeue);
-    }
-
-    /**
-     * @param int $timeout
-     *
-     * @return InteropAmqpMessage|null
-     */
-    private function receiveBasicGet($timeout)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         $end = microtime(true) + ($timeout / 1000);
 
@@ -184,50 +98,41 @@ class AmqpConsumer implements InteropAmqpConsumer
 
             usleep(100000); //100ms
         }
+
+        return null;
     }
 
     /**
-     * @param int $timeout
-     *
-     * @return InteropAmqpMessage|null
+     * @return InteropAmqpMessage
      */
-    private function receiveBasicConsume($timeout)
+    public function receiveNoWait(): ?PsrMessage
     {
-        if (false == $this->consumerTag) {
-            $this->context->subscribe($this, function (InteropAmqpMessage $message) {
-                $this->buffer->push($message->getConsumerTag(), $message);
-
-                return false;
-            });
+        if ($message = $this->channel->get($this->queue->getQueueName(), (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK))) {
+            return $this->context->convertMessage($message);
         }
 
-        if ($message = $this->buffer->pop($this->consumerTag)) {
-            return $message;
-        }
+        return null;
+    }
 
-        while (true) {
-            $start = microtime(true);
+    /**
+     * @param InteropAmqpMessage $message
+     */
+    public function acknowledge(PsrMessage $message): void
+    {
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-            $this->context->consume($timeout);
+        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
+        $this->channel->ack($bunnyMessage);
+    }
 
-            if ($message = $this->buffer->pop($this->consumerTag)) {
-                return $message;
-            }
+    /**
+     * @param InteropAmqpMessage $message
+     */
+    public function reject(PsrMessage $message, bool $requeue = false): void
+    {
+        InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-            // is here when consumed message is not for this consumer
-
-            // as timeout is infinite have to continue consumption, but it can overflow message buffer
-            if ($timeout <= 0) {
-                continue;
-            }
-
-            // compute remaining timeout and continue until time is up
-            $stop = microtime(true);
-            $timeout -= ($stop - $start) * 1000;
-
-            if ($timeout <= 0) {
-                break;
-            }
-        }
+        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
+        $this->channel->reject($bunnyMessage, $requeue);
     }
 }
