@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gps;
 
 use Interop\Queue\PsrTopic;
