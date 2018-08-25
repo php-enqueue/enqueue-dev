@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Mongodb;
 
 use Interop\Queue\InvalidDestinationException;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Pheanstalk;
 
 use Interop\Queue\PsrQueue;
