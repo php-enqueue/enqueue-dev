@@ -379,10 +379,7 @@ class UseCasesTest extends WebTestCase
         $driver->setupBroker();
 
         try {
-            if (method_exists($context, 'purgeQueue')) {
-                $queue = $this->getTestQueue();
-                $context->purgeQueue($queue);
-            }
+            $context->purgeQueue($this->getTestQueue());
         } catch (\Exception $e) {
         }
     }
