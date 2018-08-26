@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal;
 
 use Doctrine\Common\Persistence\ManagerRegistry;

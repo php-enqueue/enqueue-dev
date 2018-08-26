@@ -132,6 +132,7 @@ class RdKafkaConsumerTest extends TestCase
     public function testShouldAssignWhenOffsetIsSet()
     {
         $destination = new RdKafkaTopic('dest');
+        $destination->setPartition(1);
 
         $kafkaMessage = new Message();
         $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;

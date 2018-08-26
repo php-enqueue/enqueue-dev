@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Sqs;
 
 use Interop\Queue\PsrQueue;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
 use Interop\Queue\PsrConsumer;
@@ -53,7 +55,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
              * @var PsrConsumer $consumer
              * @var callable    $processor
              */
-            $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout || 5000);
+            $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout ?: 5000);
             if ($result) {
                 $message = RedisMessage::jsonUnserialize($result->getMessage());
                 list($consumer, $callback) = $this->subscribers[$result->getKey()];

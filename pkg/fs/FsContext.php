@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Fs;
 
 use Interop\Queue\InvalidDestinationException;
@@ -88,9 +90,9 @@ class FsContext implements PsrContext
         });
 
         try {
-            if (false == file_exists($destination->getFileInfo())) {
-                touch($destination->getFileInfo());
-                chmod($destination->getFileInfo(), $this->chmod);
+            if (false == file_exists((string) $destination->getFileInfo())) {
+                touch((string) $destination->getFileInfo());
+                chmod((string) $destination->getFileInfo(), $this->chmod);
             }
         } finally {
             restore_error_handler();
@@ -106,7 +108,7 @@ class FsContext implements PsrContext
         });
 
         try {
-            $file = fopen($destination->getFileInfo(), $mode);
+            $file = fopen((string) $destination->getFileInfo(), $mode);
             $this->lock->lock($destination);
 
             return call_user_func($callback, $destination, $file);

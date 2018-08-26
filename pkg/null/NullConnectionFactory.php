@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Null;
 
 use Interop\Queue\PsrConnectionFactory;
