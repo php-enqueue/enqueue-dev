@@ -90,9 +90,9 @@ class FsContext implements PsrContext
         });
 
         try {
-            if (false == file_exists($destination->getFileInfo())) {
-                touch($destination->getFileInfo());
-                chmod($destination->getFileInfo(), $this->chmod);
+            if (false == file_exists((string) $destination->getFileInfo())) {
+                touch((string) $destination->getFileInfo());
+                chmod((string) $destination->getFileInfo(), $this->chmod);
             }
         } finally {
             restore_error_handler();
