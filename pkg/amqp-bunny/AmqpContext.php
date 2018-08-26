@@ -327,7 +327,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         }
 
         $message = new AmqpMessage($bunnyMessage->content, $properties, $headers);
-        $message->setDeliveryTag((string) $bunnyMessage->deliveryTag);
+        $message->setDeliveryTag((int) $bunnyMessage->deliveryTag);
         $message->setRedelivered($bunnyMessage->redelivered);
         $message->setRoutingKey($bunnyMessage->routingKey);
 

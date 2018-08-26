@@ -67,7 +67,7 @@ class AmqpConsumerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_ack')
-            ->with('delivery-tag')
+            ->with(167)
         ;
 
         $context = $this->createContextMock();
@@ -80,7 +80,7 @@ class AmqpConsumerTest extends TestCase
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
-        $message->setDeliveryTag('delivery-tag');
+        $message->setDeliveryTag(167);
 
         $consumer->acknowledge($message);
     }
@@ -91,7 +91,7 @@ class AmqpConsumerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_reject')
-            ->with('delivery-tag', $this->isTrue())
+            ->with(125, $this->isTrue())
         ;
 
         $context = $this->createContextMock();
@@ -104,7 +104,7 @@ class AmqpConsumerTest extends TestCase
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
-        $message->setDeliveryTag('delivery-tag');
+        $message->setDeliveryTag(125);
 
         $consumer->reject($message, true);
     }

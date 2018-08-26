@@ -68,7 +68,7 @@ class AmqpConsumerTest extends TestCase
             ->method('ack')
             ->with($this->isInstanceOf(Message::class))
             ->willReturnCallback(function (Message $message) {
-                $this->assertSame('theDeliveryTag', $message->deliveryTag);
+                $this->assertSame(145, $message->deliveryTag);
             });
 
         $context = $this->createContextMock();
@@ -81,7 +81,7 @@ class AmqpConsumerTest extends TestCase
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
-        $message->setDeliveryTag('theDeliveryTag');
+        $message->setDeliveryTag(145);
 
         $consumer->acknowledge($message);
     }
@@ -94,7 +94,7 @@ class AmqpConsumerTest extends TestCase
             ->method('reject')
             ->with($this->isInstanceOf(Message::class), false)
             ->willReturnCallback(function (Message $message) {
-                $this->assertSame('theDeliveryTag', $message->deliveryTag);
+                $this->assertSame(167, $message->deliveryTag);
             });
 
         $context = $this->createContextMock();
@@ -107,7 +107,7 @@ class AmqpConsumerTest extends TestCase
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
-        $message->setDeliveryTag('theDeliveryTag');
+        $message->setDeliveryTag(167);
 
         $consumer->reject($message, false);
     }
@@ -120,7 +120,7 @@ class AmqpConsumerTest extends TestCase
             ->method('reject')
             ->with($this->isInstanceOf(Message::class), true)
             ->willReturnCallback(function (Message $message) {
-                $this->assertSame('theDeliveryTag', $message->deliveryTag);
+                $this->assertSame(178, $message->deliveryTag);
             });
 
         $context = $this->createContextMock();
@@ -133,7 +133,7 @@ class AmqpConsumerTest extends TestCase
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
         $message = new AmqpMessage();
-        $message->setDeliveryTag('theDeliveryTag');
+        $message->setDeliveryTag(178);
 
         $consumer->reject($message, true);
     }

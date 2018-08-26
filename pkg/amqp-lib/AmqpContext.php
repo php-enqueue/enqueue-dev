@@ -309,7 +309,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         unset($headers['application_headers']);
 
         $message = new AmqpMessage($amqpMessage->getBody(), $properties, $headers);
-        $message->setDeliveryTag($amqpMessage->delivery_info['delivery_tag']);
+        $message->setDeliveryTag((int) $amqpMessage->delivery_info['delivery_tag']);
         $message->setRedelivered($amqpMessage->delivery_info['redelivered']);
         $message->setRoutingKey($amqpMessage->delivery_info['routing_key']);
 
