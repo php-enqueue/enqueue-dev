@@ -41,7 +41,7 @@ class FsProducer implements PsrProducer
 
         $this->context->workWithFile($destination, 'a+', function (FsDestination $destination, $file) use ($message) {
             $fileInfo = $destination->getFileInfo();
-            if ($fileInfo instanceof TempFile && false == file_exists($fileInfo)) {
+            if ($fileInfo instanceof TempFile && false == file_exists((string) $fileInfo)) {
                 return;
             }
 

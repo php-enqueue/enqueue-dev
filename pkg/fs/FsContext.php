@@ -108,7 +108,7 @@ class FsContext implements PsrContext
         });
 
         try {
-            $file = fopen($destination->getFileInfo(), $mode);
+            $file = fopen((string) $destination->getFileInfo(), $mode);
             $this->lock->lock($destination);
 
             return call_user_func($callback, $destination, $file);
