@@ -23,6 +23,7 @@ return PhpCsFixer\Config::create()
     ))
     ->setFinder(
         PhpCsFixer\Finder::create()
+            ->name('/\.php$/')
             ->in(__DIR__)
     )
 ;
