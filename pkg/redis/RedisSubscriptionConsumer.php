@@ -36,8 +36,8 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
             throw new \LogicException('No subscribers');
         }
 
-        $timeout /= 1000;
-        $endAt = microtime(true) + $timeout;
+        $timeout = (int) ceil($timeout / 1000);
+        $endAt = time() + $timeout;
 
         $queueNames = [];
         foreach (array_keys($this->subscribers) as $queueName) {
@@ -55,7 +55,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
              * @var PsrConsumer $consumer
              * @var callable    $processor
              */
-            $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout ?: 5000);
+            $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout ?: 5);
             if ($result) {
                 $message = RedisMessage::jsonUnserialize($result->getMessage());
                 list($consumer, $callback) = $this->subscribers[$result->getKey()];
