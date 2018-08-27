@@ -5,6 +5,7 @@ namespace Enqueue\Sqs;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PriorityNotSupportedException;
+use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
@@ -18,14 +19,14 @@ class SqsProducer implements PsrProducer
     private $deliveryDelay;
 
     /**
-     * @var SqsContext
+     * @var PsrContext
      */
     private $context;
 
     /**
-     * @param SqsContext $context
+     * @param PsrContext $context
      */
-    public function __construct(SqsContext $context)
+    public function __construct(PsrContext $context)
     {
         $this->context = $context;
     }
