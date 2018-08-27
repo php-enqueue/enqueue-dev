@@ -12,7 +12,7 @@ trait EmptyExtensionTrait
     {
     }
 
-    public function onPreDriverSend(PreDriverSend $context): void
+    public function onDriverPreSend(DriverPreSend $context): void
     {
     }
 

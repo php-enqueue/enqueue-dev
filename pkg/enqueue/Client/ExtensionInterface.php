@@ -8,7 +8,7 @@ interface ExtensionInterface
 
     public function onPreSendCommand(PreSend $context): void;
 
-    public function onPreDriverSend(PreDriverSend $context): void;
+    public function onDriverPreSend(DriverPreSend $context): void;
 
     public function onPostSend(PostSend $context): void;
 

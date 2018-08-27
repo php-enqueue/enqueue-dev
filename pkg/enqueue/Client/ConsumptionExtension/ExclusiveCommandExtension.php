@@ -64,7 +64,7 @@ class ExclusiveCommandExtension implements ConsumptionExtensionInterface, Client
     public function onPreSendCommand(PreSend $context): void
     {
         $message = $context->getMessage();
-        $command = $context->getCommandOrTopic();
+        $command = $context->getCommand();
 
         if (array_key_exists($command, $this->processorNameToQueueNameMap)) {
             $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $command);

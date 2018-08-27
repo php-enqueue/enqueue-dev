@@ -31,10 +31,10 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    public function onPreDriverSend(PreDriverSend $context): void
+    public function onDriverPreSend(DriverPreSend $context): void
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPreDriverSend($context);
+            $extension->onDriverPreSend($context);
         }
     }
 

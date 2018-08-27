@@ -51,7 +51,7 @@ class Producer implements ProducerInterface
         $preSend = new PreSend($topic, $message, $this, $this->driver);
         $this->extension->onPreSendEvent($preSend);
 
-        $topic = $preSend->getCommandOrTopic();
+        $topic = $preSend->getTopic();
         $message = $preSend->getMessage();
 
         $message->setProperty(Config::PARAMETER_TOPIC_NAME, $topic);
@@ -68,7 +68,7 @@ class Producer implements ProducerInterface
         $preSend = new PreSend($command, $message, $this, $this->driver);
         $this->extension->onPreSendEvent($preSend);
 
-        $command = $preSend->getCommandOrTopic();
+        $command = $preSend->getCommand();
         $message = $preSend->getMessage();
 
         $deleteReplyQueue = false;
@@ -137,7 +137,7 @@ class Producer implements ProducerInterface
                 throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_NAME));
             }
 
-            $this->extension->onPreDriverSend(new PreDriverSend($message, $this, $this->driver));
+            $this->extension->onPreDriverSend(new DriverPreSend($message, $this, $this->driver));
             $this->driver->sendToRouter($message);
         } elseif (Message::SCOPE_APP == $message->getScope()) {
             if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
@@ -147,7 +147,7 @@ class Producer implements ProducerInterface
                 $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->driver->getConfig()->getRouterQueueName());
             }
 
-            $this->extension->onPreDriverSend(new PreDriverSend($message, $this, $this->driver));
+            $this->extension->onPreDriverSend(new DriverPreSend($message, $this, $this->driver));
             $this->driver->sendToRouter($message);
         } else {
             throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));

@@ -28,14 +28,24 @@ class PreSend
         $this->originalMessage = clone $message;
     }
 
-    public function getCommandOrTopic(): string
+    public function getCommand(): string
     {
         return $this->commandOrTopic;
     }
 
-    public function changeCommandOrTopic(string $commandOrTopic): void
+    public function getTopic(): string
     {
-        $this->commandOrTopic = $commandOrTopic;
+        return $this->commandOrTopic;
+    }
+
+    public function changeCommand(string $newCommand): void
+    {
+        $this->commandOrTopic = $newCommand;
+    }
+
+    public function changeTopic(string $newTopic): void
+    {
+        $this->commandOrTopic = $newTopic;
     }
 
     public function changeBody($body, string $contentType = null): void
