@@ -21,6 +21,7 @@ return PhpCsFixer\Config::create()
         'psr4' => true,
         'strict_param' => true,
     ))
+    ->setCacheFile(getenv('TRAVIS') ? getenv('HOME') . '/.php-cs-fixer' : __DIR__.'/var/.php_cs.cache')
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->name('/\.php$/')

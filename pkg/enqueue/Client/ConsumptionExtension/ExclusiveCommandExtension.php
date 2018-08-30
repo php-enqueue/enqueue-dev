@@ -3,15 +3,16 @@
 namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;
+use Enqueue\Client\EmptyExtensionTrait as ClientEmptyExtensionTrait;
 use Enqueue\Client\ExtensionInterface as ClientExtensionInterface;
-use Enqueue\Client\Message;
+use Enqueue\Client\PreSend;
 use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
+use Enqueue\Consumption\EmptyExtensionTrait as ConsumptionEmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
 
-class ExclusiveCommandExtension implements ConsumptionExtensionInterface, ClientExtensionInterface
+final class ExclusiveCommandExtension implements ConsumptionExtensionInterface, ClientExtensionInterface
 {
-    use EmptyExtensionTrait;
+    use ConsumptionEmptyExtensionTrait, ClientEmptyExtensionTrait;
 
     /**
      * @var string[]
@@ -60,26 +61,14 @@ class ExclusiveCommandExtension implements ConsumptionExtensionInterface, Client
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPreSend($topic, Message $message)
+    public function onPreSendCommand(PreSend $context): void
     {
-        if (Config::COMMAND_TOPIC != $topic) {
-            return;
-        }
+        $message = $context->getMessage();
+        $command = $context->getCommand();
 
-        $commandName = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
-        if (array_key_exists($commandName, $this->processorNameToQueueNameMap)) {
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $commandName);
-            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->processorNameToQueueNameMap[$commandName]);
+        if (array_key_exists($command, $this->processorNameToQueueNameMap)) {
+            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $command);
+            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->processorNameToQueueNameMap[$command]);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSend($topic, Message $message)
-    {
     }
 }

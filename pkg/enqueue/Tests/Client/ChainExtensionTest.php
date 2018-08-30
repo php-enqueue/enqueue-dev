@@ -3,8 +3,13 @@
 namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\ChainExtension;
+use Enqueue\Client\DriverInterface;
+use Enqueue\Client\DriverPreSend;
 use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Message;
+use Enqueue\Client\PostSend;
+use Enqueue\Client\PreSend;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -17,53 +22,128 @@ class ChainExtensionTest extends TestCase
         $this->assertClassImplements(ExtensionInterface::class, ChainExtension::class);
     }
 
+    public function testShouldBeFinal()
+    {
+        $this->assertClassFinal(ChainExtension::class);
+    }
+
     public function testCouldBeConstructedWithExtensionsArray()
     {
         new ChainExtension([$this->createExtension(), $this->createExtension()]);
     }
 
-    public function testShouldProxyOnPreSendToAllInternalExtensions()
+    public function testThrowIfArrayContainsNotExtension()
     {
-        $message = new Message();
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 1 passed to');
 
-        $fooExtension = $this->createExtension();
-        $fooExtension
-            ->expects($this->once())
-            ->method('onPreSend')
-            ->with('topic', $this->identicalTo($message))
-        ;
-        $barExtension = $this->createExtension();
-        $barExtension
-            ->expects($this->once())
-            ->method('onPreSend')
-            ->with('topic', $this->identicalTo($message))
-        ;
-
-        $extensions = new ChainExtension([$fooExtension, $barExtension]);
-
-        $extensions->onPreSend('topic', $message);
+        new ChainExtension([$this->createExtension(), new \stdClass()]);
     }
 
-    public function testShouldProxyOnPostSendToAllInternalExtensions()
+    public function testShouldProxyOnPreSendEventToAllInternalExtensions()
     {
-        $message = new Message();
+        $preSend = new PreSend(
+            'aCommandOrTopic',
+            new Message(),
+            $this->createMock(ProducerInterface::class),
+            $this->createMock(DriverInterface::class)
+        );
+
+        $fooExtension = $this->createExtension();
+        $fooExtension
+            ->expects($this->once())
+            ->method('onPreSendEvent')
+            ->with($this->identicalTo($preSend))
+        ;
+        $barExtension = $this->createExtension();
+        $barExtension
+            ->expects($this->once())
+            ->method('onPreSendEvent')
+            ->with($this->identicalTo($preSend))
+        ;
+
+        $extensions = new ChainExtension([$fooExtension, $barExtension]);
+
+        $extensions->onPreSendEvent($preSend);
+    }
+
+    public function testShouldProxyOnPreSendCommandToAllInternalExtensions()
+    {
+        $preSend = new PreSend(
+            'aCommandOrTopic',
+            new Message(),
+            $this->createMock(ProducerInterface::class),
+            $this->createMock(DriverInterface::class)
+        );
+
+        $fooExtension = $this->createExtension();
+        $fooExtension
+            ->expects($this->once())
+            ->method('onPreSendCommand')
+            ->with($this->identicalTo($preSend))
+        ;
+        $barExtension = $this->createExtension();
+        $barExtension
+            ->expects($this->once())
+            ->method('onPreSendCommand')
+            ->with($this->identicalTo($preSend))
+        ;
+
+        $extensions = new ChainExtension([$fooExtension, $barExtension]);
+
+        $extensions->onPreSendCommand($preSend);
+    }
+
+    public function testShouldProxyOnDriverPreSendToAllInternalExtensions()
+    {
+        $driverPreSend = new DriverPreSend(
+            new Message(),
+            $this->createMock(ProducerInterface::class),
+            $this->createMock(DriverInterface::class)
+        );
+
+        $fooExtension = $this->createExtension();
+        $fooExtension
+            ->expects($this->once())
+            ->method('onDriverPreSend')
+            ->with($this->identicalTo($driverPreSend))
+        ;
+        $barExtension = $this->createExtension();
+        $barExtension
+            ->expects($this->once())
+            ->method('onDriverPreSend')
+            ->with($this->identicalTo($driverPreSend))
+        ;
+
+        $extensions = new ChainExtension([$fooExtension, $barExtension]);
+
+        $extensions->onDriverPreSend($driverPreSend);
+    }
+
+    public function testShouldProxyOnPostSentToAllInternalExtensions()
+    {
+        $postSend = new PostSend(
+            new Message(),
+            $this->createMock(ProducerInterface::class),
+            $this->createMock(DriverInterface::class)
+        );
 
         $fooExtension = $this->createExtension();
         $fooExtension
             ->expects($this->once())
             ->method('onPostSend')
-            ->with('topic', $this->identicalTo($message))
+            ->with($this->identicalTo($postSend))
         ;
         $barExtension = $this->createExtension();
         $barExtension
             ->expects($this->once())
             ->method('onPostSend')
-            ->with('topic', $this->identicalTo($message))
+            ->with($this->identicalTo($postSend))
         ;
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
-        $extensions->onPostSend('topic', $message);
+        $extensions->onPostSend($postSend);
     }
 
     /**

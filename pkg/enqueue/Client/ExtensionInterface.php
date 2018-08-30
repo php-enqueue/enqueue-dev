@@ -4,19 +4,21 @@ namespace Enqueue\Client;
 
 interface ExtensionInterface
 {
-    /**
-     * @param string  $topic
-     * @param Message $message
-     *
-     * @return
-     */
-    public function onPreSend($topic, Message $message);
+    public function onPreSendEvent(PreSend $context): void;
 
-    /**
-     * @param string  $topic
-     * @param Message $message
-     *
-     * @return
-     */
-    public function onPostSend($topic, Message $message);
+    public function onPreSendCommand(PreSend $context): void;
+
+    public function onDriverPreSend(DriverPreSend $context): void;
+
+    public function onPostSend(PostSend $context): void;
+
+//    /**
+//     * @deprecated
+//     */
+//    public function onPreSend($topic, Message $message);
+//
+//    /**
+//     * @deprecated
+//     */
+//    public function onPostSend($topic, Message $message);
 }
