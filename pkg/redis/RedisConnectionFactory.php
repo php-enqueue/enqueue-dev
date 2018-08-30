@@ -50,13 +50,18 @@ class RedisConnectionFactory implements PsrConnectionFactory
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
+        if (isset($this->config['vendor'])) {
+            $vendor = $this->config['vendor'];
+        } else {
+            $vendor = "";
+        }
 
         $supportedVendors = ['predis', 'phpredis', 'custom'];
-        if (false == in_array($this->config['vendor'], $supportedVendors, true)) {
+        if (false == in_array($vendor, $supportedVendors, true)) {
             throw new \LogicException(sprintf(
                 'Unsupported redis vendor given. It must be either "%s". Got "%s"',
                 implode('", "', $supportedVendors),
-                $this->config['vendor']
+                $vendor
             ));
         }
     }
@@ -133,8 +138,15 @@ class RedisConnectionFactory implements PsrConnectionFactory
             $config = array_replace($queryConfig, $config);
         }
 
+        if (isset($config['vendor'])) {
+            $vendor = $config['vendor'];
+        } else {
+            $vendor = "";
+        }
+
+
         //predis additionaly supports tls as scheme, but it must remain in the $config array
-        if ($config['vendor']!='predis') {
+        if ($vendor!='predis') {
             if ($config['scheme']!='redis') throw new \LogicException(sprintf($unsupportedError, $dsn));
             unset($config['scheme']);
         }
