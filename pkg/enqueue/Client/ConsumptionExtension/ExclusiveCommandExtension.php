@@ -10,7 +10,7 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait as ConsumptionEmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
 
-class ExclusiveCommandExtension implements ConsumptionExtensionInterface, ClientExtensionInterface
+final class ExclusiveCommandExtension implements ConsumptionExtensionInterface, ClientExtensionInterface
 {
     use ConsumptionEmptyExtensionTrait, ClientEmptyExtensionTrait;
 

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Client;
 
-class PostSend
+final class PostSend
 {
     private $message;
 

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Client;
 
-class DriverPreSend
+final class DriverPreSend
 {
     private $message;
 

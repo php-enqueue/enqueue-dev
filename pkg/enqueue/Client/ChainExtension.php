@@ -2,7 +2,7 @@
 
 namespace Enqueue\Client;
 
-class ChainExtension implements ExtensionInterface
+final class ChainExtension implements ExtensionInterface
 {
     /**
      * @var ExtensionInterface[]
@@ -14,7 +14,9 @@ class ChainExtension implements ExtensionInterface
      */
     public function __construct(array $extensions)
     {
-        $this->extensions = $extensions;
+        array_walk($extensions, function (ExtensionInterface $extension) {
+            $this->extensions[] = $extension;
+        });
     }
 
     public function onPreSendEvent(PreSend $event): void

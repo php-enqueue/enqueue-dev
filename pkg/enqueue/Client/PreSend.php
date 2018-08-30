@@ -2,7 +2,7 @@
 
 namespace Enqueue\Client;
 
-class PreSend
+final class PreSend
 {
     private $message;
 

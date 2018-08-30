@@ -8,6 +8,7 @@ use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\PreSend;
 use Enqueue\Client\ProducerInterface;
+use Enqueue\Tests\Mocks\JsonSerializableObject;
 use PHPUnit\Framework\TestCase;
 
 class PrepareBodyExtensionTest extends TestCase
@@ -130,13 +131,5 @@ class PrepareBodyExtensionTest extends TestCase
             $this->createMock(ProducerInterface::class),
             $this->createMock(DriverInterface::class)
         );
-    }
-}
-
-class JsonSerializableObject implements \JsonSerializable
-{
-    public function jsonSerialize()
-    {
-        return ['foo' => 'fooVal'];
     }
 }
