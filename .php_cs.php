@@ -22,7 +22,7 @@ return PhpCsFixer\Config::create()
         'strict_param' => true,
         'native_function_invocation' => false,
     ))
-    ->setCacheFile(getenv('TRAVIS') ? getenv('HOME') . '/.php-cs-fixer' : __DIR__.'/var/.php_cs.cache')
+    ->setCacheFile(getenv('TRAVIS') ? getenv('HOME') . '/php-cs-fixer/.php-cs-fixer' : __DIR__.'/var/.php_cs.cache')
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->name('/\.php$/')

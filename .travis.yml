@@ -38,7 +38,7 @@ matrix:
 cache:
     directories:
         - $HOME/.composer/cache
-        - $HOME/.php-cs-fixer
+        - $HOME/php-cs-fixer
 
 before_install:
     - echo "extension = mongodb.so" >> $HOME/.phpenv/versions/$(phpenv version-name)/etc/php.ini
