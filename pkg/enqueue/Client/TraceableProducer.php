@@ -2,39 +2,33 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Rpc\Promise;
+
 class TraceableProducer implements ProducerInterface
 {
     /**
      * @var array
      */
     protected $traces = [];
+
     /**
      * @var ProducerInterface
      */
     private $producer;
 
-    /**
-     * @param ProducerInterface $producer
-     */
     public function __construct(ProducerInterface $producer)
     {
         $this->producer = $producer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendEvent($topic, $message)
+    public function sendEvent(string $topic, $message): void
     {
         $this->producer->sendEvent($topic, $message);
 
         $this->collectTrace($topic, null, $message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendCommand($command, $message, $needReply = false)
+    public function sendCommand(string $command, $message, bool $needReply = false): ?Promise
     {
         $result = $this->producer->sendCommand($command, $message, $needReply);
 
@@ -43,20 +37,7 @@ class TraceableProducer implements ProducerInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function send($topic, $message)
-    {
-        $this->sendEvent($topic, $message);
-    }
-
-    /**
-     * @param string $topic
-     *
-     * @return array
-     */
-    public function getTopicTraces($topic)
+    public function getTopicTraces(string $topic): array
     {
         $topicTraces = [];
         foreach ($this->traces as $trace) {
@@ -68,12 +49,7 @@ class TraceableProducer implements ProducerInterface
         return $topicTraces;
     }
 
-    /**
-     * @param string $command
-     *
-     * @return array
-     */
-    public function getCommandTraces($command)
+    public function getCommandTraces(string $command): array
     {
         $commandTraces = [];
         foreach ($this->traces as $trace) {
@@ -85,25 +61,17 @@ class TraceableProducer implements ProducerInterface
         return $commandTraces;
     }
 
-    /**
-     * @return array
-     */
-    public function getTraces()
+    public function getTraces(): array
     {
         return $this->traces;
     }
 
-    public function clearTraces()
+    public function clearTraces(): void
     {
         $this->traces = [];
     }
 
-    /**
-     * @param string|null $topic
-     * @param string|null $command
-     * @param mixed       $message
-     */
-    private function collectTrace($topic, $command, $message)
+    private function collectTrace(string $topic = null, string $command = null, $message): void
     {
         $trace = [
             'topic' => $topic,
