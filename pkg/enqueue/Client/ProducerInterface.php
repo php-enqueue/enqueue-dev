@@ -7,17 +7,17 @@ use Enqueue\Rpc\Promise;
 interface ProducerInterface
 {
     /**
-     * @param string               $topic
+     * The message could be pretty much everything as long as you have a client extension that transforms a body to string on onPreSendEvent.
+     *
      * @param string|array|Message $message
      */
-    public function sendEvent($topic, $message);
+    public function sendEvent(string $topic, $message): void;
 
     /**
-     * @param string               $command
-     * @param string|array|Message $message
-     * @param bool                 $needReply
+     * The message could be pretty much everything as long as you have a client extension that transforms a body to string on onPreSendCommand.
+     * The promise is returned if needReply argument is true.
      *
-     * @return Promise|null the promise is returned if needReply argument is true
+     * @param string|array|Message $message
      */
-    public function sendCommand($command, $message, $needReply = false);
+    public function sendCommand(string $command, $message, bool $needReply = false): ?Promise;
 }

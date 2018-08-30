@@ -12,7 +12,6 @@ use Interop\Queue\PsrContext;
 use Interop\Queue\PsrProcessor;
 use Interop\Queue\PsrQueue;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;

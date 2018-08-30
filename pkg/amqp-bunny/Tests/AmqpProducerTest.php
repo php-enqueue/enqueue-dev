@@ -3,7 +3,6 @@
 namespace Enqueue\AmqpBunny\Tests;
 
 use Bunny\Channel;
-use Bunny\Message;
 use Enqueue\AmqpBunny\AmqpContext;
 use Enqueue\AmqpBunny\AmqpProducer;
 use Enqueue\AmqpTools\DelayStrategy;

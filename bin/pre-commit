@@ -103,32 +103,17 @@ function runPhpCsFixer()
     }
 
     $filesWithErrors = array();
-    foreach (getFilesToFix() as $file) {
-        $output = '';
-        $returnCode = null;
+    $output = '';
+    $returnCode = null;
 
-        exec(sprintf(
-            '%s %s fix %s --dry-run --config=.php_cs.php',
-            $phpBin,
-            $phpCsFixerBin,
-            $projectRootDir.'/'.$file
-        ), $output, $returnCode);
+    exec(sprintf(
+        '%s %s fix --config=.php_cs.php --no-interaction -v --path-mode=intersection  -- %s',
+        $phpBin,
+        $phpCsFixerBin,
+        implode(' ', getFilesToFix())
+    ), $output, $returnCode);
 
-        if ($returnCode) {
-            $output = '';
-
-            exec(sprintf(
-                '%s %s fix %s',
-                $phpBin,
-                $phpCsFixerBin,
-                $projectRootDir.'/'.$file
-            ), $output);
-
-            $filesWithErrors[] = $file;
-        }
-    }
-
-    return $filesWithErrors;
+    return $returnCode ? $output : false;
 }
 
 function runPhpstan()
@@ -162,11 +147,12 @@ $phpCSFixerErrors = runPhpCsFixer();
 if ($phpCSFixerErrors) {
     echo "Incorrect coding standards were detected and fixed." . PHP_EOL;
     echo "Please stash changes and run commit again." . PHP_EOL;
-    echo "List of changed files:" . PHP_EOL;
+    echo "Output:" . PHP_EOL . PHP_EOL;
 
-    foreach ($phpCSFixerErrors as $error) {
-        echo $error . PHP_EOL;
-    }
+    echo array_walk_recursive($phpStanErrors, function($item) {
+        echo $item.PHP_EOL;
+    }) . PHP_EOL;
+    echo PHP_EOL;
 
     exit(1);
 }

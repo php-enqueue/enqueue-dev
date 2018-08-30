@@ -3,6 +3,7 @@
 namespace Enqueue\Client;
 
 use Enqueue\Client\Extension\PrepareBodyExtension;
+use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Util\UUID;
 
@@ -37,7 +38,7 @@ final class Producer implements ProducerInterface
         ;
     }
 
-    public function sendEvent($topic, $message)
+    public function sendEvent(string $topic, $message): void
     {
         if (false == $message instanceof Message) {
             $message = new Message($message);
@@ -54,7 +55,7 @@ final class Producer implements ProducerInterface
         $this->doSend($message);
     }
 
-    public function sendCommand($command, $message, $needReply = false)
+    public function sendCommand(string $command, $message, bool $needReply = false): ?Promise
     {
         if (false == $message instanceof Message) {
             $message = new Message($message);
@@ -92,17 +93,11 @@ final class Producer implements ProducerInterface
 
             return $promise;
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function send($topic, $message)
-    {
-        $this->sendEvent($topic, $message);
-    }
-
-    private function doSend(Message $message)
+    private function doSend(Message $message): void
     {
         if (false === is_string($message->getBody())) {
             throw new \LogicException(sprintf(
