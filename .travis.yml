@@ -38,6 +38,7 @@ matrix:
 cache:
     directories:
         - $HOME/.composer/cache
+        - $HOME/.php-cs-fixer
 
 before_install:
     - echo "extension = mongodb.so" >> $HOME/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -53,7 +54,7 @@ install:
 
 script:
     - IFS=$'\n'; COMMIT_SCA_FILES=($(git diff --name-only --diff-filter=ACMRTUXB "${TRAVIS_COMMIT_RANGE}")); unset IFS
-    - if [ "$PHP_CS_FIXER" = true ]; then ./bin/php-cs-fixer --no-interaction --dry-run --diff -v --path-mode=intersection -- "${COMMIT_SCA_FILES[@]} fix; fi
+    - if [ "$PHP_CS_FIXER" = true ]; then ./bin/php-cs-fixer --no-interaction --dry-run --diff -v --path-mode=intersection fix -- "${COMMIT_SCA_FILES[@]}" ; fi
     - if [ "$PHPSTAN" = true ]; then docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon -- "${COMMIT_SCA_FILES[@]}" ; fi
     - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/test.sh --exclude-group=rdkafka; fi
