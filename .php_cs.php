@@ -20,6 +20,7 @@ return PhpCsFixer\Config::create()
         'phpdoc_order' => true,
         'psr4' => true,
         'strict_param' => true,
+        'native_function_invocation' => false,
     ))
     ->setCacheFile(getenv('TRAVIS') ? getenv('HOME') . '/.php-cs-fixer' : __DIR__.'/var/.php_cs.cache')
     ->setFinder(

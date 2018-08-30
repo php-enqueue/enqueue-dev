@@ -15,7 +15,7 @@ interface ProducerInterface
 
     /**
      * The message could be pretty much everything as long as you have a client extension that transforms a body to string on onPreSendCommand.
-     * The promise is returned if needReply argument is true
+     * The promise is returned if needReply argument is true.
      *
      * @param string|array|Message $message
      */
