@@ -68,6 +68,10 @@ function getFilesToFix()
         return (bool) preg_match('/\.(php|twig|translations\/*.yml)$/', $file);
     });
 
+    $stagedFiles = array_filter($stagedFiles, function ($file) {
+        return (bool) preg_match('/^pkg\//', $file);
+    });
+
     return $stagedFiles;
 }
 
@@ -104,7 +108,7 @@ function runPhpCsFixer()
         $returnCode = null;
 
         exec(sprintf(
-            '%s %s fix %s --dry-run',
+            '%s %s fix %s --dry-run --config=.php_cs.php',
             $phpBin,
             $phpCsFixerBin,
             $projectRootDir.'/'.$file
