@@ -36,6 +36,8 @@ class SpoolProducer implements ProducerInterface
         }
 
         $this->commands->enqueue([$command, $message]);
+
+        return null;
     }
 
     public function sendEvent(string $topic, $message): void
