@@ -50,11 +50,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
-        if (isset($this->config['vendor'])) {
-            $vendor = $this->config['vendor'];
-        } else {
-            $vendor = "";
-        }
+        $vendor = $this->config['vendor'];
 
         $supportedVendors = ['predis', 'phpredis', 'custom'];
         if (false == in_array($vendor, $supportedVendors, true)) {
