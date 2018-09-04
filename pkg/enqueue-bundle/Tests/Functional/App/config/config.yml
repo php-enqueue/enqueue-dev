@@ -26,9 +26,7 @@ doctrine:
         charset:  UTF8
 
 enqueue:
-    transport:
-        default: 'null'
-        'null': ~
+    transport: 'null:'
     client:
         traceable_producer: true
     job: true

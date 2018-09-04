@@ -44,17 +44,45 @@ class MessageQueueCollectorTest extends TestCase
 
     public function testShouldReturnSentMessageArrayTakenFromTraceableProducer()
     {
-        $producerMock = $this->createTraceableProducerMock();
-        $producerMock
-            ->expects($this->once())
-            ->method('getTraces')
-            ->willReturn([['foo'], ['bar']]);
+        $producer = new TraceableProducer($this->createProducerMock());
+        $producer->sendEvent('fooTopic', 'fooMessage');
+        $producer->sendCommand('barCommand', 'barMessage');
 
-        $collector = new MessageQueueCollector($producerMock);
+        $collector = new MessageQueueCollector($producer);
 
         $collector->collect(new Request(), new Response());
 
-        $this->assertSame([['foo'], ['bar']], $collector->getSentMessages());
+        $this->assertEquals(
+            [
+                [
+                    'topic' => 'fooTopic',
+                    'command' => null,
+                    'body' => 'fooMessage',
+                    'headers' => [],
+                    'properties' => [],
+                    'priority' => null,
+                    'expire' => null,
+                    'delay' => null,
+                    'timestamp' => null,
+                    'contentType' => null,
+                    'messageId' => null,
+                ],
+                [
+                    'topic' => '__command__',
+                    'command' => 'barCommand',
+                    'body' => 'barMessage',
+                    'headers' => [],
+                    'properties' => [],
+                    'priority' => null,
+                    'expire' => null,
+                    'delay' => null,
+                    'timestamp' => null,
+                    'contentType' => null,
+                    'messageId' => null,
+                ],
+            ],
+            $collector->getSentMessages()
+        );
     }
 
     public function testShouldPrettyPrintKnownPriority()

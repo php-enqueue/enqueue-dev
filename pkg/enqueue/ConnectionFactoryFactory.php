@@ -7,12 +7,24 @@ use Interop\Queue\PsrConnectionFactory;
 
 final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterface
 {
-    public function create(string $dsn): PsrConnectionFactory
+    public function create($config): PsrConnectionFactory
     {
-        $dsn = new Dsn($dsn);
+        if (is_string($config)) {
+            $config = ['dsn' => $config];
+        }
+
+        if (false == is_array($config)) {
+            throw new \InvalidArgumentException('The config must be either array or DSN string.');
+        }
+
+        if (false == array_key_exists('dsn', $config)) {
+            throw new \InvalidArgumentException('The config must have dsn key set.');
+        }
+
+        $dsn = new Dsn($config['dsn']);
 
         if ($factoryClass = $this->findFactoryClass($dsn, Resources::getAvailableConnections())) {
-            return new $factoryClass((string) $dsn);
+            return new $factoryClass($config);
         }
 
         $knownConnections = Resources::getKnownConnections();

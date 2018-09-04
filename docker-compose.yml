@@ -20,7 +20,10 @@ services:
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
       - AMQPS_DSN=amqps://guest:guest@rabbitmqssl:5671
+      - STOMP_DSN=stomp://guest:guest@rabbitmq:61613/mqdev
       - DOCTRINE_DSN=mysql://root:rootpass@mysql/mqdev
+      - PREDIS_DSN=redis://redis:6379?vendor=predis
+      - PHPREDIS_DSN=redis://redis:6379?vendor=phpredis
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest

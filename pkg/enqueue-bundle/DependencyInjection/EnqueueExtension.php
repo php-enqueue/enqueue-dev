@@ -5,70 +5,27 @@ namespace Enqueue\Bundle\DependencyInjection;
 use Enqueue\AsyncCommand\DependencyInjection\AsyncCommandExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\Client\CommandSubscriberInterface;
+use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Producer;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\Job;
-use Enqueue\Null\Symfony\NullTransportFactory;
-use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Symfony\DriverFactoryInterface;
-use Enqueue\Symfony\TransportFactoryInterface;
+use Enqueue\Symfony\DependencyInjection\TransportFactory;
+use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class EnqueueExtension extends Extension implements PrependExtensionInterface
+final class EnqueueExtension extends Extension implements PrependExtensionInterface
 {
-    /**
-     * @var TransportFactoryInterface[]
-     */
-    private $factories;
-
-    public function __construct()
-    {
-        $this->factories = [];
-
-        $this->addTransportFactory(new DefaultTransportFactory());
-        $this->addTransportFactory(new NullTransportFactory());
-    }
-
-    /**
-     * @param TransportFactoryInterface $transportFactory
-     */
-    public function addTransportFactory(TransportFactoryInterface $transportFactory)
-    {
-        $name = $transportFactory->getName();
-
-        if (array_key_exists($name, $this->factories)) {
-            throw new \LogicException(sprintf('Transport factory with such name already added. Name %s', $name));
-        }
-
-        $this->setTransportFactory($transportFactory);
-    }
-
-    /**
-     * @param TransportFactoryInterface $transportFactory
-     */
-    public function setTransportFactory(TransportFactoryInterface $transportFactory)
-    {
-        $name = $transportFactory->getName();
-
-        if (empty($name)) {
-            throw new \LogicException('Transport factory name cannot be empty');
-        }
-
-        $this->factories[$name] = $transportFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
 
@@ -77,25 +34,16 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
 
         $this->setupAutowiringForProcessors($container);
 
-        foreach ($config['transport'] as $name => $transportConfig) {
-            $this->factories[$name]->createConnectionFactory($container, $transportConfig);
-            $this->factories[$name]->createContext($container, $transportConfig);
-        }
+        $transportFactory = (new TransportFactory('default'));
+        $transportFactory->createConnectionFactory($container, $config['transport']);
+        $transportFactory->createContext($container, $config['transport']);
 
         if (isset($config['client'])) {
             $loader->load('client.yml');
             $loader->load('extensions/flush_spool_producer_extension.yml');
             $loader->load('extensions/exclusive_command_extension.yml');
 
-            foreach ($config['transport'] as $name => $transportConfig) {
-                if ($this->factories[$name] instanceof DriverFactoryInterface) {
-                    $this->factories[$name]->createDriver($container, $transportConfig);
-                }
-            }
-
-            if (isset($config['transport']['default']['alias']) && !isset($config['transport'][$config['transport']['default']['alias']])) {
-                throw new \LogicException(sprintf('Transport is not enabled: %s', $config['transport']['default']['alias']));
-            }
+            $transportFactory->createDriver($container, $config['transport']);
 
             $configDef = $container->getDefinition('enqueue.client.config');
             $configDef->setArguments([
@@ -105,6 +53,7 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
                 $config['client']['router_queue'],
                 $config['client']['default_processor_queue'],
                 $config['client']['router_processor'],
+                // todo
                 isset($config['transport']['default']['alias']) ? $config['transport'][$config['transport']['default']['alias']] : [],
             ]);
 
@@ -186,21 +135,16 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return Configuration
-     */
-    public function getConfiguration(array $config, ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container): Configuration
     {
         $rc = new \ReflectionClass(Configuration::class);
 
         $container->addResource(new FileResource($rc->getFileName()));
 
-        return new Configuration($this->factories, $container->getParameter('kernel.debug'));
+        return new Configuration($container->getParameter('kernel.debug'));
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $this->registerJobQueueDoctrineEntityMapping($container);
     }
@@ -241,10 +185,6 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
 
     private function setupAutowiringForProcessors(ContainerBuilder $container)
     {
-        if (!method_exists($container, 'registerForAutoconfiguration')) {
-            return;
-        }
-
         $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
             ->setPublic(true)
             ->addTag('enqueue.client.processor');
@@ -252,5 +192,55 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
         $container->registerForAutoconfiguration(CommandSubscriberInterface::class)
             ->setPublic(true)
             ->addTag('enqueue.client.processor');
+    }
+
+    private function createConnectionFactory(ContainerBuilder $container, array $config): string
+    {
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+
+        $container->register($factoryId, PsrConnectionFactory::class)
+            ->setFactory([new Reference('enqueue.connection_factory_factory'), 'create'])
+            ->addArgument($config['dsn'])
+        ;
+
+        $container->setAlias('enqueue.transport.connection_factory', new Alias($factoryId, true));
+
+        return $factoryId;
+    }
+
+    private function createContext(ContainerBuilder $container, array $config): string
+    {
+        $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+
+        $container->register($contextId, PsrContext::class)
+            ->setFactory([new Reference($factoryId), 'createContext'])
+        ;
+
+        $container->setAlias('enqueue.transport.context', new Alias($contextId, true));
+
+        return $contextId;
+    }
+
+    private function createDriver(ContainerBuilder $container, array $config): string
+    {
+        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+        $driverId = sprintf('enqueue.client.%s.driver', $this->getName());
+
+        $container->register($driverId, DriverInterface::class)
+            ->setFactory([new Reference('enqueue.client.driver_factory'), 'create'])
+            ->addArgument(new Reference($factoryId))
+            ->addArgument($config['dsn'])
+            ->addArgument($config)
+        ;
+
+        $container->setAlias('enqueue.client.driver', new Alias($driverId, true));
+
+        return $driverId;
+    }
+
+    private function getName(): string
+    {
+        return 'default';
     }
 }

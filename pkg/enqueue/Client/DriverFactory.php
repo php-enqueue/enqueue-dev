@@ -2,11 +2,11 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Client\Amqp\RabbitMqDriver;
+use Enqueue\Client\Driver\RabbitMqDriver;
+use Enqueue\Client\Driver\RabbitMqStompDriver;
+use Enqueue\Client\Driver\StompManagementClient;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dsn\Dsn;
-use Enqueue\Stomp\Client\ManagementClient;
-use Enqueue\Stomp\Client\RabbitMqStompDriver;
 use Enqueue\Stomp\StompConnectionFactory;
 use Interop\Amqp\AmqpConnectionFactory;
 use Interop\Queue\PsrConnectionFactory;
@@ -58,7 +58,7 @@ final class DriverFactory implements DriverFactoryInterface
                 if (isset($config['rabbitmq_management_dsn'])) {
                     $managementDsn = new Dsn($config['rabbitmq_management_dsn']);
 
-                    $managementClient = ManagementClient::create(
+                    $managementClient = StompManagementClient::create(
                         ltrim($managementDsn->getPath(), '/'),
                         $managementDsn->getHost(),
                         $managementDsn->getPort(),
@@ -66,7 +66,7 @@ final class DriverFactory implements DriverFactoryInterface
                         $managementDsn->getPassword()
                     );
                 } else {
-                    $managementClient = ManagementClient::create(
+                    $managementClient = StompManagementClient::create(
                         ltrim($dsn->getPath(), '/'),
                         $dsn->getHost(),
                         isset($config['management_plugin_port']) ? $config['management_plugin_port'] : 15672,
@@ -86,7 +86,7 @@ final class DriverFactory implements DriverFactoryInterface
             throw new \LogicException(sprintf(
                 'To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.',
                 $dsn->getScheme(),
-                $knownDrivers[$driverClass]['package']
+                implode(' ', $knownDrivers[$driverClass]['packages'])
             ));
         }
 

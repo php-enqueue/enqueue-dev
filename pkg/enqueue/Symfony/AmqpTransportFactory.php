@@ -5,7 +5,7 @@ namespace Enqueue\Symfony;
 use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
 use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
 use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
-use Enqueue\Client\Amqp\AmqpDriver;
+use Enqueue\Client\Driver\AmqpDriver;
 use Enqueue\ConnectionFactoryFactory;
 use Interop\Amqp\AmqpConnectionFactory;
 use Interop\Amqp\AmqpContext;

@@ -2,18 +2,18 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Client\Amqp\AmqpDriver;
-use Enqueue\Client\Amqp\RabbitMqDriver;
-use Enqueue\Dbal\Client\DbalDriver;
-use Enqueue\Fs\Client\FsDriver;
-use Enqueue\Gps\Client\GpsDriver;
-use Enqueue\Mongodb\Client\MongodbDriver;
-use Enqueue\Null\Client\NullDriver;
-use Enqueue\RdKafka\Client\RdKafkaDriver;
-use Enqueue\Redis\Client\RedisDriver;
-use Enqueue\Sqs\Client\SqsDriver;
-use Enqueue\Stomp\Client\RabbitMqStompDriver;
-use Enqueue\Stomp\Client\StompDriver;
+use Enqueue\Client\Driver\AmqpDriver;
+use Enqueue\Client\Driver\DbalDriver;
+use Enqueue\Client\Driver\FsDriver;
+use Enqueue\Client\Driver\GpsDriver;
+use Enqueue\Client\Driver\MongodbDriver;
+use Enqueue\Client\Driver\NullDriver;
+use Enqueue\Client\Driver\RabbitMqDriver;
+use Enqueue\Client\Driver\RabbitMqStompDriver;
+use Enqueue\Client\Driver\RdKafkaDriver;
+use Enqueue\Client\Driver\RedisDriver;
+use Enqueue\Client\Driver\SqsDriver;
+use Enqueue\Client\Driver\StompDriver;
 
 final class Resources
 {
@@ -51,59 +51,59 @@ final class Resources
             $map = [];
 
             $map[AmqpDriver::class] = [
-                'schemes' => ['amqp'],
+                'schemes' => ['amqp', 'amqps'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/enqueue',
+                'packages' => ['enqueue/enqueue', 'enqueue/amqp-bunny'],
             ];
             $map[RabbitMqDriver::class] = [
-                'schemes' => ['amqp'],
+                'schemes' => ['amqp', 'amqps'],
                 'requiredSchemeExtensions' => ['rabbitmq'],
-                'package' => 'enqueue/enqueue',
+                'packages' => ['enqueue/enqueue', 'enqueue/amqp-bunny'],
             ];
             $map[FsDriver::class] = [
                 'schemes' => ['file'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/fs',
+                'packages' => ['enqueue/enqueue', 'enqueue/fs'],
             ];
             $map[NullDriver::class] = [
                 'schemes' => ['null'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/null',
+                'packages' => ['enqueue/enqueue', 'enqueue/null'],
             ];
             $map[GpsDriver::class] = [
                 'schemes' => ['gps'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/gps',
+                'packages' => ['enqueue/enqueue', 'enqueue/gps'],
             ];
             $map[RedisDriver::class] = [
                 'schemes' => ['redis'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/redis',
+                'packages' => ['enqueue/enqueue', 'enqueue/redis'],
             ];
             $map[SqsDriver::class] = [
                 'schemes' => ['sqs'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/sqs',
+                'packages' => ['enqueue/enqueue', 'enqueue/sqs'],
             ];
             $map[StompDriver::class] = [
                 'schemes' => ['stomp'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/stomp',
+                'packages' => ['enqueue/enqueue', 'enqueue/stomp'],
             ];
             $map[RabbitMqStompDriver::class] = [
                 'schemes' => ['stomp'],
                 'requiredSchemeExtensions' => ['rabbitmq'],
-                'package' => 'enqueue/stomp',
+                'packages' => ['enqueue/enqueue', 'enqueue/stomp'],
             ];
             $map[RdKafkaDriver::class] = [
                 'schemes' => ['kafka', 'rdkafka'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/rdkafka',
+                'packages' => ['enqueue/enqueue', 'enqueue/rdkafka'],
             ];
             $map[MongodbDriver::class] = [
                 'schemes' => ['mongodb'],
                 'requiredSchemeExtensions' => [],
-                'package' => 'enqueue/mongodb',
+                'packages' => ['enqueue/enqueue', 'enqueue/mongodb'],
             ];
             $map[DbalDriver::class] = [
                 'schemes' => [
@@ -121,8 +121,8 @@ final class Resources
                     'sqlite3',
                     'sqlite',
                 ],
-                'requiredSchemeExtensions' => ['pdo'],
-                'package' => 'enqueue/dbal',
+                'requiredSchemeExtensions' => [],
+                'package' => ['enqueue/enqueue', 'enqueue/dbal'],
             ];
 
             self::$knownDrivers = $map;
@@ -131,7 +131,7 @@ final class Resources
         return self::$knownDrivers;
     }
 
-    public static function addDriver(string $driverClass, array $schemes, array $requiredExtensions, string $package): void
+    public static function addDriver(string $driverClass, array $schemes, array $requiredExtensions, array $packages): void
     {
         if (class_exists($driverClass)) {
             if (false == (new \ReflectionClass($driverClass))->implementsInterface(DriverInterface::class)) {
@@ -142,15 +142,15 @@ final class Resources
         if (empty($schemes)) {
             throw new \InvalidArgumentException('Schemes could not be empty.');
         }
-        if (empty($package)) {
-            throw new \InvalidArgumentException('Package name could not be empty.');
+        if (empty($packages)) {
+            throw new \InvalidArgumentException('Packages could not be empty.');
         }
 
         self::getKnownDrivers();
         self::$knownDrivers[$driverClass] = [
             'schemes' => $schemes,
             'requiredSchemeExtensions' => $requiredExtensions,
-            'package' => $package,
+            'packages' => $packages,
         ];
     }
 }
