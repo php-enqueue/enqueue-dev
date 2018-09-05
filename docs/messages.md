@@ -8,5 +8,8 @@ If you want to contribute, you should instead open a pull request on the main re
 
 https://github.com/php-enqueue/enqueue-dev
 
-Thank you for your contribution!
+Read the contribution guide
 
+https://github.com/php-enqueue/enqueue-dev/blob/master/docs/contribution.md 
+
+Thank you for your contribution!
