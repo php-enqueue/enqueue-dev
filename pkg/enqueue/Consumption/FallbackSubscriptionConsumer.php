@@ -16,7 +16,7 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
     private $subscribers;
 
     /**
-     * @var int|float the time in milliseconds the consumer waits if no message has been received
+     * @var int
      */
     private $idleTime = 0;
 
@@ -25,10 +25,7 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
         $this->subscribers = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function consume($timeout = 0)
+    public function consume(int $timeout = 0): void
     {
         if (empty($this->subscribers)) {
             throw new \LogicException('No subscribers');
@@ -65,10 +62,7 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function subscribe(PsrConsumer $consumer, callable $callback)
+    public function subscribe(PsrConsumer $consumer, callable $callback): void
     {
         $queueName = $consumer->getQueue()->getQueueName();
         if (array_key_exists($queueName, $this->subscribers)) {
@@ -82,10 +76,7 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
         $this->subscribers[$queueName] = [$consumer, $callback];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unsubscribe(PsrConsumer $consumer)
+    public function unsubscribe(PsrConsumer $consumer): void
     {
         if (false == array_key_exists($consumer->getQueue()->getQueueName(), $this->subscribers)) {
             return;
@@ -98,26 +89,20 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
         unset($this->subscribers[$consumer->getQueue()->getQueueName()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unsubscribeAll()
+    public function unsubscribeAll(): void
     {
         $this->subscribers = [];
     }
 
-    /**
-     * @return float|int
-     */
-    public function getIdleTime()
+    public function getIdleTime(): int
     {
         return $this->idleTime;
     }
 
     /**
-     * @param float|int $idleTime
+     * The time in milliseconds the consumer waits if no message has been received.
      */
-    public function setIdleTime($idleTime)
+    public function setIdleTime(int $idleTime): void
     {
         $this->idleTime = $idleTime;
     }

@@ -14,6 +14,7 @@ Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 * [Send expiration message](#send-expiration-message)
 * [Send delayed message](#send-delayed-message)
 * [Consume message](#consume-message)
+* [Subscription consumer](#subscription-consumer)
 * [Purge queue messages](#purge-queue-messages)
 
 ## Installation
@@ -62,9 +63,9 @@ $factory = new AmqpConnectionFactory([
 
 $psrContext = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('amqp:');
-$psrContext = \Enqueue\dsn_to_context('amqp+ext:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('amqp:')->createContext();
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('amqp+ext:')->createContext();
 ```
 
 ## Declare topic.
@@ -218,6 +219,39 @@ $message = $consumer->receive();
 
 $consumer->acknowledge($message);
 // $consumer->reject($message);
+```
+
+## Subscription consumer
+
+```php
+<?php
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrConsumer;
+
+/** @var \Enqueue\AmqpExt\AmqpContext $psrContext */
+/** @var \Interop\Amqp\Impl\AmqpQueue $fooQueue */
+/** @var \Interop\Amqp\Impl\AmqpQueue $barQueue */
+
+$fooConsumer = $psrContext->createConsumer($fooQueue);
+$barConsumer = $psrContext->createConsumer($barQueue);
+
+$subscriptionConsumer =$psrContext->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+$subscriptionConsumer->subscribe($barConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+
+$subscriptionConsumer->consume(2000); // 2 sec
 ```
 
 ## Purge queue messages:

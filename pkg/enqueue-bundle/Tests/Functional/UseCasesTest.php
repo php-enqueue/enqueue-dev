@@ -93,14 +93,11 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
-        // Symfony 2.x does not such env syntax
-        if (version_compare(Kernel::VERSION, '3.2', '>=')) {
-            yield 'default_dsn_as_env' => [[
-                'transport' => [
-                    'default' => '%env(AMQP_DSN)%',
-                ],
-            ]];
-        }
+        yield 'default_dsn_as_env' => [[
+            'transport' => [
+                'default' => '%env(AMQP_DSN)%',
+            ],
+        ]];
 
         yield 'default_dbal_as_dsn' => [[
             'transport' => [
@@ -382,10 +379,7 @@ class UseCasesTest extends WebTestCase
         $driver->setupBroker();
 
         try {
-            if (method_exists($context, 'purgeQueue')) {
-                $queue = $this->getTestQueue();
-                $context->purgeQueue($queue);
-            }
+            $context->purgeQueue($this->getTestQueue());
         } catch (\Exception $e) {
         }
     }

@@ -6,13 +6,13 @@ use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
 use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
 use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Client\Amqp\AmqpDriver;
+use Enqueue\ConnectionFactoryFactory;
 use Interop\Amqp\AmqpConnectionFactory;
 use Interop\Amqp\AmqpContext;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use function Enqueue\dsn_to_connection_factory;
 
 class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
 {
@@ -221,7 +221,7 @@ class AmqpTransportFactory implements TransportFactoryInterface, DriverFactoryIn
         }
 
         $dsn = array_key_exists('dsn', $config) ? $config['dsn'] : 'amqp:';
-        $factory = dsn_to_connection_factory($dsn);
+        $factory = (new ConnectionFactoryFactory())->create($dsn);
 
         if (false == $factory instanceof  AmqpConnectionFactory) {
             throw new \LogicException(sprintf('Factory must be instance of "%s" but got "%s"', AmqpConnectionFactory::class, get_class($factory)));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Null;
 
 use Interop\Queue\PsrMessage;
@@ -26,7 +28,7 @@ class NullMessage implements PsrMessage
      */
     private $redelivered;
 
-    public function __construct($body = '', array $properties = [], array $headers = [])
+    public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -35,106 +37,67 @@ class NullMessage implements PsrMessage
         $this->redelivered = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
         $this->properties = $properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
         $this->properties[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
         return array_key_exists($name, $this->properties) ? $this->properties[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
         $this->headers[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
         return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
         return $this->redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
         $this->redelivered = $redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
         $headers = $this->getHeaders();
         $headers['correlation_id'] = (string) $correlationId;
@@ -142,18 +105,12 @@ class NullMessage implements PsrMessage
         $this->setHeaders($headers);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
         return $this->getHeader('correlation_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
         $headers = $this->getHeaders();
         $headers['message_id'] = (string) $messageId;
@@ -161,28 +118,19 @@ class NullMessage implements PsrMessage
         $this->setHeaders($headers);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
         return $this->getHeader('message_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         $value = $this->getHeader('timestamp');
 
         return null === $value ? null : (int) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
         $headers = $this->getHeaders();
         $headers['timestamp'] = (int) $timestamp;
@@ -190,18 +138,12 @@ class NullMessage implements PsrMessage
         $this->setHeaders($headers);
     }
 
-    /**
-     * @param string|null $replyTo
-     */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
         return $this->getHeader('reply_to');
     }

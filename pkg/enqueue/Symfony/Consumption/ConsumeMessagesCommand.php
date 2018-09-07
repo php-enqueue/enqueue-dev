@@ -4,7 +4,7 @@ namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -18,17 +18,19 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
 
+    protected static $defaultName = 'enqueue:transport:consume';
+
     /**
-     * @var QueueConsumer
+     * @var QueueConsumerInterface
      */
     protected $consumer;
 
     /**
-     * @param QueueConsumer $consumer
+     * @param QueueConsumerInterface $consumer
      */
-    public function __construct(QueueConsumer $consumer)
+    public function __construct(QueueConsumerInterface $consumer)
     {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->consumer = $consumer;
     }
@@ -42,7 +44,6 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
         $this->configureQueueConsumerOptions();
 
         $this
-            ->setName('enqueue:transport:consume')
             ->setDescription('A worker that consumes message from a broker. '.
                 'To use this broker you have to configure queue consumer before adding to the command')
         ;

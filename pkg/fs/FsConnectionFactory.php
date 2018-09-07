@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Fs;
 
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class FsConnectionFactory implements PsrConnectionFactory
 {
@@ -44,11 +47,9 @@ class FsConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         return new FsContext(
             $this->config['path'],
@@ -58,12 +59,7 @@ class FsConnectionFactory implements PsrConnectionFactory
         );
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         if ($dsn && '/' === $dsn[0]) {
             return ['path' => $dsn];
@@ -100,7 +96,7 @@ class FsConnectionFactory implements PsrConnectionFactory
         return $config;
     }
 
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'path' => null,

@@ -96,6 +96,14 @@
         <testsuite name="async-event-dispatcher">
             <directory>pkg/async-event-dispatcher/Tests</directory>
         </testsuite>
+
+        <testsuite name="async-command">
+            <directory>pkg/async-command/Tests</directory>
+        </testsuite>
+
+        <testsuite name="dsn">
+            <directory>pkg/dsn/Tests</directory>
+        </testsuite>
     </testsuites>
 
     <php>

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Client;
 
-class ChainExtension implements ExtensionInterface
+final class ChainExtension implements ExtensionInterface
 {
     /**
      * @var ExtensionInterface[]
@@ -14,26 +14,36 @@ class ChainExtension implements ExtensionInterface
      */
     public function __construct(array $extensions)
     {
-        $this->extensions = $extensions;
+        array_walk($extensions, function (ExtensionInterface $extension) {
+            $this->extensions[] = $extension;
+        });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPreSend($topic, Message $message)
+    public function onPreSendEvent(PreSend $event): void
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPreSend($topic, $message);
+            $extension->onPreSendEvent($event);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSend($topic, Message $message)
+    public function onPreSendCommand(PreSend $event): void
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPostSend($topic, $message);
+            $extension->onPreSendCommand($event);
+        }
+    }
+
+    public function onDriverPreSend(DriverPreSend $context): void
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->onDriverPreSend($context);
+        }
+    }
+
+    public function onPostSend(PostSend $event): void
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->onPostSend($event);
         }
     }
 }

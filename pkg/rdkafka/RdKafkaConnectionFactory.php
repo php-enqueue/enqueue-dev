@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\RdKafka;
 
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class RdKafkaConnectionFactory implements PsrConnectionFactory
 {
@@ -48,21 +51,14 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RdKafkaContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         return new RdKafkaContext($this->config);
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         $dsnConfig = parse_url($dsn);
         if (false === $dsnConfig) {
@@ -98,10 +94,7 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
         return array_replace_recursive($this->defaultConfig(), $config);
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'global' => [

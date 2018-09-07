@@ -4,7 +4,7 @@ namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Consumption\QueueSubscriberInterface;
 use Interop\Queue\PsrProcessor;
 use Symfony\Component\Console\Command\Command;
@@ -22,19 +22,21 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
 
+    protected static $defaultName = 'enqueue:transport:consume';
+
     /**
-     * @var QueueConsumer
+     * @var QueueConsumerInterface
      */
     protected $consumer;
 
     /**
      * ConsumeMessagesCommand constructor.
      *
-     * @param QueueConsumer $consumer
+     * @param QueueConsumerInterface $consumer
      */
-    public function __construct(QueueConsumer $consumer)
+    public function __construct(QueueConsumerInterface $consumer)
     {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->consumer = $consumer;
     }
@@ -48,7 +50,6 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
         $this->configureQueueConsumerOptions();
 
         $this
-            ->setName('enqueue:transport:consume')
             ->setDescription('A worker that consumes message from a broker. '.
                 'To use this broker you have to explicitly set a queue to consume from '.
                 'and a message processor service')

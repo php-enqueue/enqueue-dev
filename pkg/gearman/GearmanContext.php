@@ -1,10 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gearman;
 
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\PsrTopic;
+use Interop\Queue\PurgeQueueNotSupportedException;
+use Interop\Queue\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class GearmanContext implements PsrContext
 {
@@ -23,68 +34,54 @@ class GearmanContext implements PsrContext
      */
     private $config;
 
-    /**
-     * @param array $config
-     */
     public function __construct(array $config)
     {
         $this->config = $config;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return GearmanMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         return new GearmanMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return GearmanDestination
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): PsrTopic
     {
         return new GearmanDestination($topicName);
     }
 
     /**
-     * {@inheritdoc}
+     * @return GearmanDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         return new GearmanDestination($queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
-        throw new \LogicException('Not implemented');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return GearmanProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         return new GearmanProducer($this->getClient());
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param GearmanDestination $destination
      *
      * @return GearmanConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GearmanDestination::class);
 
@@ -93,7 +90,7 @@ class GearmanContext implements PsrContext
         return $consumer;
     }
 
-    public function close()
+    public function close(): void
     {
         $this->getClient()->clearCallbacks();
 
@@ -102,10 +99,17 @@ class GearmanContext implements PsrContext
         }
     }
 
-    /**
-     * @return \GearmanClient
-     */
-    public function getClient()
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function purgeQueue(PsrQueue $queue): void
+    {
+        throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function getClient(): \GearmanClient
     {
         if (false == $this->client) {
             $this->client = new \GearmanClient();
@@ -115,10 +119,7 @@ class GearmanContext implements PsrContext
         return $this->client;
     }
 
-    /**
-     * @return \GearmanWorker
-     */
-    public function createWorker()
+    public function createWorker(): \GearmanWorker
     {
         $worker = new \GearmanWorker();
         $worker->addServer($this->config['host'], $this->config['port']);

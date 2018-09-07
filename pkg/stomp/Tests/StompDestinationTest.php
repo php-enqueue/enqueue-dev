@@ -45,21 +45,11 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
     public function testShouldThrowLogicExceptionIfNameIsNotSet()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Destination type or name is not set');
+        $this->expectExceptionMessage('Destination name is not set');
 
         $destination = new StompDestination();
         $destination->setType(StompDestination::TYPE_QUEUE);
-
-        $destination->getQueueName();
-    }
-
-    public function testShouldThrowLogicExceptionIfTypeIsNotSet()
-    {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Destination type or name is not set');
-
-        $destination = new StompDestination();
-        $destination->setStompName('name');
+        $destination->setStompName('');
 
         $destination->getQueueName();
     }

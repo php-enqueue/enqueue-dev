@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gps;
 
 use Interop\Queue\PsrTopic;
@@ -11,18 +13,12 @@ class GpsTopic implements PsrTopic
      */
     private $name;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
         return $this->name;
     }

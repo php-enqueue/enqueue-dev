@@ -15,7 +15,7 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\Symfony\DbalTransportFactory;
 use Enqueue\Fs\FsConnectionFactory;
@@ -149,22 +149,6 @@ final class SimpleClient
     }
 
     /**
-     * @deprecated since 0.8.18 and will be removed in 0.9. Use sendEvent method instead
-     *
-     * @param string       $topic
-     * @param string|array $message
-     * @param bool         $setupBroker
-     */
-    public function send($topic, $message, $setupBroker = false)
-    {
-        if ($setupBroker) {
-            $this->setupBroker();
-        }
-
-        $this->sendEvent($topic, $message);
-    }
-
-    /**
      * @param ExtensionInterface|null $runtimeExtension
      */
     public function consume(ExtensionInterface $runtimeExtension = null)
@@ -194,10 +178,7 @@ final class SimpleClient
         return $this->container->get('enqueue.transport.context');
     }
 
-    /**
-     * @return QueueConsumer
-     */
-    public function getQueueConsumer()
+    public function getQueueConsumer(): QueueConsumerInterface
     {
         return $this->container->get('enqueue.client.queue_consumer');
     }

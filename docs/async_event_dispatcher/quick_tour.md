@@ -39,7 +39,7 @@ $eventQueue = $context->createQueue('symfony_events');
 
 $registry = new SimpleRegistry(
     ['the_event' => 'default'], 
-    ['default' => new PhpSerializerEventTransformer($context, true)]
+    ['default' => new PhpSerializerEventTransformer($context)]
 );
 
 $asyncListener = new AsyncListener($context, $registry, $eventQueue);

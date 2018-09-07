@@ -3,7 +3,7 @@
 namespace Enqueue\Tests\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
@@ -77,10 +77,10 @@ class ConsumeMessagesCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
      */
     private function createQueueConsumerMock()
     {
-        return $this->createMock(QueueConsumer::class);
+        return $this->createMock(QueueConsumerInterface::class);
     }
 }

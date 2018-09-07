@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Fs;
 
 use Interop\Queue\PsrQueue;
@@ -12,43 +14,28 @@ class FsDestination implements PsrQueue, PsrTopic
      */
     private $file;
 
-    /**
-     * @param \SplFileInfo $file
-     */
     public function __construct(\SplFileInfo $file)
     {
         $this->file = $file;
     }
 
-    /**
-     * @return \SplFileInfo
-     */
-    public function getFileInfo()
+    public function getFileInfo(): \SplFileInfo
     {
         return $this->file;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->file->getFilename();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
-        return $this->getName();
+        return $this->file->getFilename();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
-        return $this->getName();
+        return $this->file->getFilename();
     }
 }

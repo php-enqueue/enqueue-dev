@@ -45,20 +45,21 @@
                 <td>{{ loop.index }}</td>
                 <td>{{ sentMessage.topic|default(null) }}</td>
                 <td>{{ sentMessage.command|default(null) }}</td>
-                <td style="width: 70%">
-                    <span class="metadata">
-                        <span>
-                            {{ collector.ensureString(sentMessage.body)[0:40] }}{% if collector.ensureString(sentMessage.body)[0:40] != collector.ensureString(sentMessage.body) %}...{% endif %}
-                        </span>
-
-                        {% if collector.ensureString(sentMessage.body)|length > 40 %}
-                            <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#message-body-{{ loop.index }}" data-toggle-alt-content="Hide body">Show body</a>
-
-                            <div id="message-body-{{ loop.index }}" class="context sf-toggle-content sf-toggle-hidden">
-                            {{ profiler_dump(sentMessage.body) }}
-                        </div>
-                        {% endif %}
+                <td style="width: 70%" class="metadata">
+                    <span>
+                        {% set body = collector.ensureString(sentMessage.body) %}
+                        {{ body|length > 40 ? body|slice(0, 40) ~ '...' : body  }}
                     </span>
+                    {% if body|length > 40 %}
+                        <a class="btn btn-link text-small sf-toggle"
+                           data-toggle-selector="#message-body-{{ loop.index }}"
+                           data-toggle-alt-content="Hide body"
+                        >Show body</a>
+                        <div id="message-body-{{ loop.index }}"
+                             class="context sf-toggle-content sf-toggle-hidden">
+                            <pre>{{ body }}</pre>
+                        </div>
+                    {% endif %}
                 <td>
                     <span title="{{ sentMessage.priority }}">{{ collector.prettyPrintPriority(sentMessage.priority) }}</span>
                 </td>

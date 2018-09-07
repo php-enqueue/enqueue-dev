@@ -24,7 +24,6 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\HttpKernel\Kernel;
 
 class EnqueueExtensionTest extends TestCase
 {
@@ -286,10 +285,6 @@ class EnqueueExtensionTest extends TestCase
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
 
         $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
-        if (30300 > Kernel::VERSION_ID) {
-            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
-            $innerServiceName = strtolower($innerServiceName);
-        }
 
         self::assertEquals(
             $innerServiceName,
@@ -345,10 +340,6 @@ class EnqueueExtensionTest extends TestCase
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
 
         $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
-        if (30300 > Kernel::VERSION_ID) {
-            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
-            $innerServiceName = strtolower($innerServiceName);
-        }
 
         self::assertEquals(
             $innerServiceName,
@@ -637,10 +628,6 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadProcessAutoconfigureChildDefinition()
     {
-        if (30300 >= Kernel::VERSION_ID) {
-            $this->markTestSkipped('The autoconfigure feature is available since Symfony 3.3 version');
-        }
-
         $container = $this->getContainerBuilder(true);
         $extension = new EnqueueExtension();
 

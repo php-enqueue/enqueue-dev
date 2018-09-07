@@ -406,7 +406,11 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     public function testShouldSendMessageToDelayExchangeIfDelaySet()
     {
         $queue = new StompDestination();
+        $queue->setStompName('queueName');
+
         $delayTopic = new StompDestination();
+        $delayTopic->setStompName('delayTopic');
+
         $transportMessage = new StompMessage();
 
         $producer = $this->createPsrProducerMock();

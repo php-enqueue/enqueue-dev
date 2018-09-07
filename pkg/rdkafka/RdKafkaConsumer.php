@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\RdKafka;
 
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicPartition;
 
@@ -42,12 +45,6 @@ class RdKafkaConsumer implements PsrConsumer
      */
     private $offset;
 
-    /**
-     * @param KafkaConsumer  $consumer
-     * @param RdKafkaContext $context
-     * @param RdKafkaTopic   $topic
-     * @param Serializer     $serializer
-     */
     public function __construct(KafkaConsumer $consumer, RdKafkaContext $context, RdKafkaTopic $topic, Serializer $serializer)
     {
         $this->consumer = $consumer;
@@ -55,28 +52,21 @@ class RdKafkaConsumer implements PsrConsumer
         $this->topic = $topic;
         $this->subscribed = false;
         $this->commitAsync = false;
-        $this->offset = null;
 
         $this->setSerializer($serializer);
     }
 
-    /**
-     * @return bool
-     */
-    public function isCommitAsync()
+    public function isCommitAsync(): bool
     {
         return $this->commitAsync;
     }
 
-    /**
-     * @param bool $async
-     */
-    public function setCommitAsync($async)
+    public function setCommitAsync(bool $async): void
     {
-        $this->commitAsync = (bool) $async;
+        $this->commitAsync = $async;
     }
 
-    public function setOffset($offset)
+    public function setOffset(int $offset = null): void
     {
         if ($this->subscribed) {
             throw new \LogicException('The consumer has already subscribed.');
@@ -85,25 +75,26 @@ class RdKafkaConsumer implements PsrConsumer
         $this->offset = $offset;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->topic;
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
-        if (false == $this->subscribed) {
-            $this->consumer->assign([new TopicPartition(
-                $this->getQueue()->getQueueName(),
-                $this->getQueue()->getPartition(),
-                $this->offset
-            )]);
+        if (false === $this->subscribed) {
+            if (null === $this->offset) {
+                $this->consumer->subscribe([$this->getQueue()->getQueueName()]);
+            } else {
+                $this->consumer->assign([new TopicPartition(
+                    $this->getQueue()->getQueueName(),
+                    $this->getQueue()->getPartition(),
+                    $this->offset
+                )]);
+            }
 
             $this->subscribed = true;
         }
@@ -123,19 +114,17 @@ class RdKafkaConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
         throw new \LogicException('Not implemented');
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RdKafkaMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
@@ -151,11 +140,9 @@ class RdKafkaConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RdKafkaMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         $this->acknowledge($message);
 
@@ -164,12 +151,7 @@ class RdKafkaConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @param int $timeout
-     *
-     * @return RdKafkaMessage|null
-     */
-    private function doReceive($timeout)
+    private function doReceive(int $timeout): ?RdKafkaMessage
     {
         $kafkaMessage = $this->consumer->consume($timeout);
 
@@ -188,5 +170,7 @@ class RdKafkaConsumer implements PsrConsumer
                 throw new \LogicException($kafkaMessage->errstr(), $kafkaMessage->err);
                 break;
         }
+
+        return null;
     }
 }

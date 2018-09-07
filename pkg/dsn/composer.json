@@ -1,0 +1,33 @@
+{
+    "name": "enqueue/dsn",
+    "type": "library",
+    "description": "Parse DSN",
+    "keywords": ["dsn", "parse"],
+    "homepage": "https://enqueue.forma-pro.com/",
+    "license": "MIT",
+    "require": {
+        "php": "^7.1.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.4.0"
+    },
+    "support": {
+        "email": "opensource@forma-pro.com",
+        "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
+        "forum": "https://gitter.im/php-enqueue/Lobby",
+        "source": "https://github.com/php-enqueue/enqueue-dev",
+        "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
+    },
+    "autoload": {
+        "psr-4": { "Enqueue\\Dsn\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.9.x-dev"
+        }
+    }
+}

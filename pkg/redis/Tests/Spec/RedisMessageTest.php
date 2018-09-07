@@ -5,6 +5,9 @@ namespace Enqueue\Redis\Tests\Spec;
 use Enqueue\Redis\RedisMessage;
 use Interop\Queue\Spec\PsrMessageSpec;
 
+/**
+ * @group Redis
+ */
 class RedisMessageTest extends PsrMessageSpec
 {
     /**

@@ -3,6 +3,7 @@
 namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Bundle\Tests\Functional\App\AppKernel;
+use Enqueue\Client\TraceableProducer;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,6 +31,10 @@ abstract class WebTestCase extends BaseWebTestCase
         if (false == static::$container) {
             static::$container = static::$kernel->getContainer();
         }
+
+        /** @var TraceableProducer $producer */
+        $producer = static::$container->get(TraceableProducer::class);
+        $producer->clearTraces();
     }
 
     /**

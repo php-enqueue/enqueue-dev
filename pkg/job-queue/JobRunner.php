@@ -51,10 +51,16 @@ class JobRunner
         try {
             $result = call_user_func($runCallback, $jobRunner, $childJob);
         } catch (\Throwable $e) {
-            $this->jobProcessor->failChildJob($childJob);
-            throw $e;
-        } catch (\Exception $e) { // needed to support PHP 5.6
-            $this->jobProcessor->failChildJob($childJob);
+            try {
+                $this->jobProcessor->failChildJob($childJob);
+            } catch (\Throwable $t) {
+                throw new OrphanJobException(sprintf(
+                    'Job cleanup failed. ID: "%s" Name: "%s"',
+                    $childJob->getId(),
+                    $childJob->getName()
+                ), 0, $e);
+            }
+
             throw $e;
         }
 

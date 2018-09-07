@@ -15,12 +15,6 @@ framework:
     router:          { resource: '%kernel.root_dir%/config/routing.yml' }
     default_locale:  '%locale%'
 
-monolog:
-    handlers:
-        main:
-            type: 'null'
-            level: 'error'
-
 doctrine:
     dbal:
         driver:   "%db.driver%"
@@ -39,7 +33,7 @@ enqueue:
         traceable_producer: true
     job: true
     async_events: true
-
+    async_commands: true
 
 services:
     test_async_listener:

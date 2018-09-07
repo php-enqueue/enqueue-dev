@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\RdKafka;
 
 use Interop\Queue\PsrQueue;
@@ -28,74 +30,47 @@ class RdKafkaTopic implements PsrTopic, PsrQueue
      */
     private $key;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return TopicConf|null
-     */
-    public function getConf()
+    public function getConf(): ?TopicConf
     {
         return $this->conf;
     }
 
-    /**
-     * @param TopicConf|null $conf
-     */
-    public function setConf(TopicConf $conf = null)
+    public function setConf(TopicConf $conf = null): void
     {
         $this->conf = $conf;
     }
 
-    /**
-     * @return int
-     */
-    public function getPartition()
+    public function getPartition(): ?int
     {
         return $this->partition;
     }
 
-    /**
-     * @param int $partition
-     */
-    public function setPartition($partition)
+    public function setPartition(int $partition = null): void
     {
         $this->partition = $partition;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @param string|null $key
-     */
-    public function setKey($key)
+    public function setKey(string $key = null): void
     {
         $this->key = $key;
     }

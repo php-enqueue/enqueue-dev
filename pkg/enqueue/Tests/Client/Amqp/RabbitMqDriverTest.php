@@ -157,40 +157,6 @@ class RabbitMqDriverTest extends TestCase
         $driver->createClientMessage($transportMessage);
     }
 
-    public function testShouldThrowExceptionIfExpirationIsNotNumeric()
-    {
-        $transportMessage = new AmqpMessage();
-        $transportMessage->setHeader('expiration', 'is-not-numeric');
-
-        $driver = new RabbitMqDriver(
-            $this->createAmqpContextMock(),
-            Config::create(),
-            $this->createDummyQueueMetaRegistry()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('expiration header is not numeric. "is-not-numeric"');
-
-        $driver->createClientMessage($transportMessage);
-    }
-
-    public function testShouldThrowExceptionIfCantConvertTransportPriorityToClientPriority()
-    {
-        $transportMessage = new AmqpMessage();
-        $transportMessage->setHeader('priority', 'unknown');
-
-        $driver = new RabbitMqDriver(
-            $this->createAmqpContextMock(),
-            Config::create(),
-            $this->createDummyQueueMetaRegistry()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Cant convert transport priority to client: "unknown"');
-
-        $driver->createClientMessage($transportMessage);
-    }
-
     public function testShouldThrowExceptionIfCantConvertClientPriorityToTransportPriority()
     {
         $clientMessage = new Message();

@@ -14,6 +14,7 @@ Make sure you installed either of them
 * [Consume message](#consume-message)
 * [Delete queue (purge messages)](#delete-queue-purge-messages)
 * [Delete topic (purge messages)](#delete-topic-purge-messages)
+* [Connect Heroku Redis](#connect-heroku-redis)
 
 ## Installation
 
@@ -59,8 +60,14 @@ $factory = new RedisConnectionFactory('redis://example.com:1000?vendor=phpredis'
 
 $psrContext = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('redis:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('redis:')->createContext();
+
+// pass redis instance directly
+$redis = new \Enqueue\Redis\PhpRedis([ /** redis connection options */ ]);
+$redis->connect();
+
+$factory = new RedisConnectionFactory($redis);
 ```
 
 * With predis library:
@@ -153,6 +160,19 @@ $psrContext->deleteQueue($fooQueue);
 $fooTopic = $psrContext->createTopic('aTopic');
 
 $psrContext->deleteTopic($fooTopic);
+```
+
+## Connect Heroku Redis
+
+[Heroku Redis](https://devcenter.heroku.com/articles/heroku-redis) describes how to setup Redis instance on Heroku.
+To use it with Enqueue Redis you have to pass REDIS_URL to RedisConnectionFactory constructor.  
+
+```php
+<?php
+
+// REDIS_URL: redis://h:asdfqwer1234asdf@ec2-111-1-1-1.compute-1.amazonaws.com:111
+
+$connection = new \Enqueue\Redis\RedisConnectionFactory(getenv('REDIS_URL'));
 ```
 
 [back to index](../index.md)

@@ -139,7 +139,7 @@ class FsCommonUseCasesTest extends \PHPUnit\Framework\TestCase
         $producer->send($queue, $message);
         $producer->send($queue, $message);
 
-        $this->fsContext->purge($queue);
+        $this->fsContext->purgeQueue($queue);
 
         $this->assertNull($consumer->receive(1));
     }

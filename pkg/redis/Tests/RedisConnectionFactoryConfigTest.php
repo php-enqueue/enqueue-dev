@@ -2,6 +2,7 @@
 
 namespace Enqueue\Redis\Tests;
 
+use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
@@ -43,6 +44,17 @@ class RedisConnectionFactoryConfigTest extends TestCase
         $this->expectExceptionMessage('Unsupported redis vendor given. It must be either "predis", "phpredis", "custom". Got "invalidVendor"');
 
         new RedisConnectionFactory(['vendor' => 'invalidVendor']);
+    }
+
+    public function testCouldBeCreatedWithRedisInstance()
+    {
+        $redisMock = $this->createMock(Redis::class);
+
+        $factory = new RedisConnectionFactory($redisMock);
+        $this->assertAttributeSame($redisMock, 'redis', $factory);
+
+        $context = $factory->createContext();
+        $this->assertSame($redisMock, $context->getRedis());
     }
 
     /**
@@ -179,6 +191,25 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'foo' => 'bar',
                 'database' => 0,
                 'redis' => null,
+            ],
+        ];
+
+        // heroku redis
+        yield [
+            'redis://h:asdfqwer1234asdf@ec2-111-1-1-1.compute-1.amazonaws.com:111',
+            [
+                'host' => 'ec2-111-1-1-1.compute-1.amazonaws.com',
+                'port' => 111,
+                'timeout' => null,
+                'reserved' => null,
+                'retry_interval' => null,
+                'vendor' => 'phpredis',
+                'persisted' => false,
+                'lazy' => false,
+                'database' => 0,
+                'redis' => null,
+                'user' => 'h',
+                'pass' => 'asdfqwer1234asdf',
             ],
         ];
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
 use Interop\Queue\InvalidDestinationException;
@@ -24,12 +26,10 @@ class RedisProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisDestination $destination
      * @param RedisMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
@@ -38,61 +38,52 @@ class RedisProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
+     * @return RedisProducer
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return RedisProducer
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return RedisProducer
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return null;
     }

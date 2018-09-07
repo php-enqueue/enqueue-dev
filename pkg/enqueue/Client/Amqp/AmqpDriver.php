@@ -145,7 +145,7 @@ class AmqpDriver implements DriverInterface
         $transportMessage->setDeliveryMode(AmqpMessage::DELIVERY_MODE_PERSISTENT);
 
         if ($message->getExpire()) {
-            $transportMessage->setExpiration((string) ($message->getExpire() * 1000));
+            $transportMessage->setExpiration($message->getExpire() * 1000);
         }
 
         return $transportMessage;
@@ -166,11 +166,7 @@ class AmqpDriver implements DriverInterface
         $clientMessage->setContentType($message->getContentType());
 
         if ($expiration = $message->getExpiration()) {
-            if (false == is_numeric($expiration)) {
-                throw new \LogicException(sprintf('expiration header is not numeric. "%s"', $expiration));
-            }
-
-            $clientMessage->setExpire((int) ((int) $expiration) / 1000);
+            $clientMessage->setExpire((int) ($expiration / 1000));
         }
 
         $clientMessage->setMessageId($message->getMessageId());

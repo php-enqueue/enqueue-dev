@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
 interface Redis
@@ -10,29 +12,29 @@ interface Redis
      *
      * @return int length of the list
      */
-    public function lpush($key, $value);
+    public function lpush(string $key, string $value): int;
 
     /**
-     * @param string $key
-     * @param int    $timeout in seconds
+     * @param string[] $keys
+     * @param int      $timeout in seconds
      *
-     * @return string|null
+     * @return RedisResult|null
      */
-    public function brpop($key, $timeout);
+    public function brpop(array $keys, int $timeout): ?RedisResult;
 
     /**
      * @param string $key
      *
-     * @return string|null
+     * @return RedisResult|null
      */
-    public function rpop($key);
+    public function rpop(string $key): ?RedisResult;
 
-    public function connect();
+    public function connect(): void;
 
-    public function disconnect();
+    public function disconnect(): void;
 
     /**
      * @param string $key
      */
-    public function del($key);
+    public function del(string $key): void;
 }

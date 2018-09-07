@@ -3,6 +3,9 @@ parameters:
   enqueue.queue_consumer.default_receive_timeout: 10000
 
 services:
+    enqueue.connection_factory_factory:
+      class: 'Enqueue\ConnectionFactoryFactory'
+
     enqueue.consumption.extensions:
         class: 'Enqueue\Consumption\ChainExtension'
         public: false

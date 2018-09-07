@@ -1,12 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
 use Interop\Queue\PsrTopic;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class RedisContext implements PsrContext
 {
@@ -41,39 +48,33 @@ class RedisContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         return new RedisMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisDestination
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): PsrTopic
     {
         return new RedisDestination($topicName);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         return new RedisDestination($queueName);
     }
 
     /**
-     * @param RedisDestination|PsrQueue $queue
+     * @param RedisDestination $queue
      */
-    public function deleteQueue(PsrQueue $queue)
+    public function deleteQueue(PsrQueue $queue): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, RedisDestination::class);
 
@@ -81,56 +82,62 @@ class RedisContext implements PsrContext
     }
 
     /**
-     * @param RedisDestination|PsrTopic $topic
+     * @param RedisDestination $topic
      */
-    public function deleteTopic(PsrTopic $topic)
+    public function deleteTopic(PsrTopic $topic): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($topic, RedisDestination::class);
 
         $this->getRedis()->del($topic->getName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
-        throw new \LogicException('Not implemented');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         return new RedisProducer($this->getRedis());
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisDestination $destination
      *
      * @return RedisConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
 
         return new RedisConsumer($this, $destination);
     }
 
-    public function close()
+    /**
+     * @return RedisSubscriptionConsumer
+     */
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    {
+        return new RedisSubscriptionConsumer($this);
+    }
+
+    /**
+     * @param RedisDestination $queue
+     */
+    public function purgeQueue(PsrQueue $queue): void
+    {
+        $this->getRedis()->del($queue->getName());
+    }
+
+    public function close(): void
     {
         $this->getRedis()->disconnect();
     }
 
-    /**
-     * @return Redis
-     */
-    public function getRedis()
+    public function getRedis(): Redis
     {
         if (false == $this->redis) {
             $redis = call_user_func($this->redisFactory);

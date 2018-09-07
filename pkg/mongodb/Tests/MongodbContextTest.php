@@ -11,6 +11,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 use MongoDB\Client;
 
 /**
@@ -145,12 +146,11 @@ class MongodbContextTest extends \PHPUnit_Framework_TestCase
         ], $context->getConfig());
     }
 
-    public function testShouldThrowBadMethodCallExceptionOncreateTemporaryQueueCall()
+    public function testShouldThrowNotSupportedOnCreateTemporaryQueueCall()
     {
         $context = new MongodbContext($this->createClientMock());
 
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Mongodb transport does not support temporary queues');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
 
         $context->createTemporaryQueue();
     }

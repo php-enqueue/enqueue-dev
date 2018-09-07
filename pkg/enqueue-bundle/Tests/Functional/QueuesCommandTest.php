@@ -5,7 +5,6 @@ namespace Enqueue\Bundle\Tests\Functional;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Symfony\Client\Meta\QueuesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @group functional
@@ -30,15 +29,7 @@ class QueuesCommandTest extends WebTestCase
 
         $this->assertContains(' default ', $display);
         $this->assertContains('enqueue.app.default', $display);
-
-        $displayId = RouterProcessor::class;
-        if (30300 > Kernel::VERSION_ID) {
-            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
-            // To be removed when dropping support for Symfony < 3.3.
-            $displayId = strtolower($displayId);
-        }
-
-        $this->assertContains($displayId, $display);
+        $this->assertContains(RouterProcessor::class, $display);
     }
 
     public function testShouldDisplayRegisteredCommand()

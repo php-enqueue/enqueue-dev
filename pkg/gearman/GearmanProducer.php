@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gearman;
 
 use Interop\Queue\InvalidDestinationException;
@@ -15,21 +17,16 @@ class GearmanProducer implements PsrProducer
      */
     private $client;
 
-    /**
-     * @param \GearmanClient $client
-     */
     public function __construct(\GearmanClient $client)
     {
         $this->client = $client;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param GearmanDestination $destination
      * @param GearmanMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GearmanDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, GearmanMessage::class);
@@ -42,62 +39,44 @@ class GearmanProducer implements PsrProducer
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return null;
     }

@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class RedisConsumer implements PsrConsumer
 {
@@ -18,10 +21,6 @@ class RedisConsumer implements PsrConsumer
      */
     private $context;
 
-    /**
-     * @param RedisContext     $context
-     * @param RedisDestination $queue
-     */
     public function __construct(RedisContext $context, RedisDestination $queue)
     {
         $this->context = $context;
@@ -29,64 +28,58 @@ class RedisConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisDestination
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return RedisMessage|null
+     * @return RedisMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         $timeout = (int) ($timeout / 1000);
         if (empty($timeout)) {
-            //            Caused by
-            //            Predis\Response\ServerException: ERR timeout is not an integer or out of range
-            //            /mqdev/vendor/predis/predis/src/Client.php:370
-
-            return $this->receiveNoWait();
+            while (true) {
+                if ($message = $this->receive(5000)) {
+                    return $message;
+                }
+            }
         }
 
-        if ($message = $this->getRedis()->brpop($this->queue->getName(), $timeout)) {
-            return RedisMessage::jsonUnserialize($message);
+        if ($result = $this->getRedis()->brpop([$this->queue->getName()], $timeout)) {
+            return RedisMessage::jsonUnserialize($result->getMessage());
         }
+
+        return null;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return RedisMessage|null
+     * @return RedisMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
-        if ($message = $this->getRedis()->rpop($this->queue->getName())) {
-            return RedisMessage::jsonUnserialize($message);
+        if ($result = $this->getRedis()->rpop($this->queue->getName())) {
+            return RedisMessage::jsonUnserialize($result->getMessage());
         }
+
+        return null;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
         // do nothing. redis transport always works in auto ack mode
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
@@ -97,10 +90,7 @@ class RedisConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @return Redis
-     */
-    private function getRedis()
+    private function getRedis(): Redis
     {
         return $this->context->getRedis();
     }

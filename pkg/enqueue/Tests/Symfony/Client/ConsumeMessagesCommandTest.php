@@ -7,7 +7,7 @@ use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Null\NullQueue;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
 use Interop\Queue\PsrContext;
@@ -266,11 +266,11 @@ class ConsumeMessagesCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
      */
     private function createQueueConsumerMock()
     {
-        return $this->createMock(QueueConsumer::class);
+        return $this->createMock(QueueConsumerInterface::class);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Null;
 
 use Interop\Queue\PsrDestination;
@@ -14,63 +16,51 @@ class NullProducer implements PsrProducer
 
     private $deliveryDelay;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(PsrDestination $destination, PsrMessage $message): void
     {
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullProducer
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
     {
         $this->deliveryDelay = $deliveryDelay;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullProducer
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): PsrProducer
     {
         $this->priority = $priority;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullProducer
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): PsrProducer
     {
         $this->timeToLive = $timeToLive;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }

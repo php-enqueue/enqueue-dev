@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gps;
 
 use Google\Cloud\Core\Exception\ServiceException;
@@ -7,6 +9,7 @@ use Google\Cloud\PubSub\Message;
 use Google\Cloud\PubSub\Subscription;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class GpsConsumer implements PsrConsumer
 {
@@ -25,10 +28,6 @@ class GpsConsumer implements PsrConsumer
      */
     private $subscription;
 
-    /**
-     * @param GpsContext $context
-     * @param GpsQueue   $queue
-     */
     public function __construct(GpsContext $context, GpsQueue $queue)
     {
         $this->context = $context;
@@ -36,17 +35,17 @@ class GpsConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
+     * @return GpsQueue
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
+     * @return GpsMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         if (0 === $timeout) {
             while (true) {
@@ -60,9 +59,9 @@ class GpsConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
+     * @return GpsMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
         $messages = $this->getSubscription()->pull([
             'maxMessages' => 1,
@@ -72,12 +71,14 @@ class GpsConsumer implements PsrConsumer
         if ($messages) {
             return $this->convertMessage(current($messages));
         }
+
+        return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @param GpsMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
         if (false == $message->getNativeMessage()) {
             throw new \LogicException('Native google pub/sub message required but it is empty');
@@ -87,9 +88,9 @@ class GpsConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
+     * @param GpsMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         if (false == $message->getNativeMessage()) {
             throw new \LogicException('Native google pub/sub message required but it is empty');
@@ -98,10 +99,7 @@ class GpsConsumer implements PsrConsumer
         $this->getSubscription()->acknowledge($message->getNativeMessage());
     }
 
-    /**
-     * @return Subscription
-     */
-    private function getSubscription()
+    private function getSubscription(): Subscription
     {
         if (null === $this->subscription) {
             $this->subscription = $this->context->getClient()->subscription($this->queue->getQueueName());
@@ -110,12 +108,7 @@ class GpsConsumer implements PsrConsumer
         return $this->subscription;
     }
 
-    /**
-     * @param Message $message
-     *
-     * @return GpsMessage
-     */
-    private function convertMessage(Message $message)
+    private function convertMessage(Message $message): GpsMessage
     {
         $gpsMessage = GpsMessage::jsonUnserialize($message->data());
         $gpsMessage->setNativeMessage($message);
@@ -123,12 +116,7 @@ class GpsConsumer implements PsrConsumer
         return $gpsMessage;
     }
 
-    /**
-     * @param int $timeout
-     *
-     * @return GpsMessage|null
-     */
-    private function receiveMessage($timeout)
+    private function receiveMessage(int $timeout): ?GpsMessage
     {
         $timeout /= 1000;
 
@@ -143,5 +131,7 @@ class GpsConsumer implements PsrConsumer
             }
         } catch (ServiceException $e) {
         } // timeout
+
+        return null;
     }
 }

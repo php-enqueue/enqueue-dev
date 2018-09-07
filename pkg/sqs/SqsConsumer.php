@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Sqs;
 
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class SqsConsumer implements PsrConsumer
 {
@@ -33,10 +36,6 @@ class SqsConsumer implements PsrConsumer
      */
     private $messages;
 
-    /**
-     * @param SqsContext     $context
-     * @param SqsDestination $queue
-     */
     public function __construct(SqsContext $context, SqsDestination $queue)
     {
         $this->context = $context;
@@ -45,10 +44,7 @@ class SqsConsumer implements PsrConsumer
         $this->maxNumberOfMessages = 1;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getVisibilityTimeout()
+    public function getVisibilityTimeout(): ?int
     {
         return $this->visibilityTimeout;
     }
@@ -56,18 +52,13 @@ class SqsConsumer implements PsrConsumer
     /**
      * The duration (in seconds) that the received messages are hidden from subsequent retrieve
      * requests after being retrieved by a ReceiveMessage request.
-     *
-     * @param int|null $visibilityTimeout
      */
-    public function setVisibilityTimeout($visibilityTimeout)
+    public function setVisibilityTimeout(int $visibilityTimeout = null): void
     {
-        $this->visibilityTimeout = null === $visibilityTimeout ? null : (int) $visibilityTimeout;
+        $this->visibilityTimeout = $visibilityTimeout;
     }
 
-    /**
-     * @return int
-     */
-    public function getMaxNumberOfMessages()
+    public function getMaxNumberOfMessages(): int
     {
         return $this->maxNumberOfMessages;
     }
@@ -75,28 +66,24 @@ class SqsConsumer implements PsrConsumer
     /**
      * The maximum number of messages to return. Amazon SQS never returns more messages than this value
      * (however, fewer messages might be returned). Valid values are 1 to 10. Default is 1.
-     *
-     * @param int $maxNumberOfMessages
      */
-    public function setMaxNumberOfMessages($maxNumberOfMessages)
+    public function setMaxNumberOfMessages(int $maxNumberOfMessages): void
     {
-        $this->maxNumberOfMessages = (int) $maxNumberOfMessages;
+        $this->maxNumberOfMessages = $maxNumberOfMessages;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsDestination
      */
-    public function getQueue()
+    public function getQueue(): PsrQueue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
+     * @return SqsMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?PsrMessage
     {
         $maxLongPollingTime = 20; // 20 is max allowed long polling value
 
@@ -118,19 +105,17 @@ class SqsConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
+     * @return SqsMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?PsrMessage
     {
         return $this->receiveMessage(0);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param SqsMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(PsrMessage $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
@@ -141,11 +126,9 @@ class SqsConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param SqsMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(PsrMessage $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
@@ -159,12 +142,7 @@ class SqsConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @param int $timeoutSeconds
-     *
-     * @return SqsMessage|null
-     */
-    protected function receiveMessage($timeoutSeconds)
+    protected function receiveMessage(int $timeoutSeconds): ?SqsMessage
     {
         if ($message = array_pop($this->messages)) {
             return $this->convertMessage($message);
@@ -191,14 +169,11 @@ class SqsConsumer implements PsrConsumer
         if ($message = array_pop($this->messages)) {
             return $this->convertMessage($message);
         }
+
+        return null;
     }
 
-    /**
-     * @param array $sqsMessage
-     *
-     * @return SqsMessage
-     */
-    protected function convertMessage(array $sqsMessage)
+    protected function convertMessage(array $sqsMessage): SqsMessage
     {
         $message = $this->context->createMessage();
 

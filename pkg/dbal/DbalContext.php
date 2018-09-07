@@ -1,13 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\PsrTopic;
+use Interop\Queue\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class DbalContext implements PsrContext
 {
@@ -54,10 +64,8 @@ class DbalContext implements PsrContext
 
     /**
      * {@inheritdoc}
-     *
-     * @return DbalMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         $message = new DbalMessage();
         $message->setBody($body);
@@ -68,49 +76,38 @@ class DbalContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalDestination
      */
-    public function createQueue($name)
+    public function createQueue(string $name): PsrQueue
     {
         return new DbalDestination($name);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalDestination
      */
-    public function createTopic($name)
+    public function createTopic(string $name): PsrTopic
     {
         return new DbalDestination($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
-        throw new \BadMethodCallException('Dbal transport does not support temporary queues');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         return new DbalProducer($this);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
 
@@ -123,30 +120,38 @@ class DbalContext implements PsrContext
         return $consumer;
     }
 
-    public function close()
+    public function close(): void
     {
     }
 
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
     /**
-     * @return string
+     * @param DbalDestination $queue
      */
-    public function getTableName()
+    public function purgeQueue(PsrQueue $queue): void
+    {
+        $this->getDbalConnection()->delete(
+            $this->getTableName(),
+            ['queue' => $queue->getQueueName()],
+            ['queue' => Type::STRING]
+        );
+    }
+
+    public function getTableName(): string
     {
         return $this->config['table_name'];
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @return Connection
-     */
-    public function getDbalConnection()
+    public function getDbalConnection(): Connection
     {
         if (false == $this->connection) {
             $connection = call_user_func($this->connectionFactory);
@@ -163,7 +168,7 @@ class DbalContext implements PsrContext
         return $this->connection;
     }
 
-    public function createDataBaseTable()
+    public function createDataBaseTable(): void
     {
         $sm = $this->getDbalConnection()->getSchemaManager();
 
@@ -182,27 +187,16 @@ class DbalContext implements PsrContext
         $table->addColumn('redelivered', Type::BOOLEAN, ['notnull' => false]);
         $table->addColumn('queue', Type::STRING);
         $table->addColumn('priority', Type::SMALLINT, ['notnull' => false]);
-        $table->addColumn('delayed_until', Type::INTEGER, ['notnull' => false]);
-        $table->addColumn('time_to_live', Type::INTEGER, ['notnull' => false]);
+        $table->addColumn('delayed_until', Type::BIGINT, ['notnull' => false]);
+        $table->addColumn('time_to_live', Type::BIGINT, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['published_at']);
         $table->addIndex(['queue']);
         $table->addIndex(['priority']);
         $table->addIndex(['delayed_until']);
+        $table->addIndex(['priority', 'published_at']);
 
         $sm->createTable($table);
-    }
-
-    /**
-     * @param DbalDestination $queue
-     */
-    public function purgeQueue(DbalDestination $queue)
-    {
-        $this->getDbalConnection()->delete(
-            $this->getTableName(),
-            ['queue' => $queue->getQueueName()],
-            ['queue' => Type::STRING]
-        );
     }
 }

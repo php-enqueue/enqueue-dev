@@ -4,8 +4,11 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension;
+use Enqueue\Client\DriverInterface;
 use Enqueue\Client\ExtensionInterface as ClientExtensionInterface;
 use Enqueue\Client\Message;
+use Enqueue\Client\PreSend;
+use Enqueue\Client\ProducerInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
 use Enqueue\Null\NullContext;
@@ -22,6 +25,11 @@ class ExclusiveCommandExtensionTest extends TestCase
     public function testShouldImplementConsumptionExtensionInterface()
     {
         $this->assertClassImplements(ConsumptionExtensionInterface::class, ExclusiveCommandExtension::class);
+    }
+
+    public function testShouldBeFinal()
+    {
+        $this->assertClassFinal(ExclusiveCommandExtension::class);
     }
 
     public function testShouldImplementClientExtensionInterface()
@@ -145,7 +153,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         ], $message->getProperties());
     }
 
-    public function testShouldDoNothingOnPreSendIfTopicNotCommandOne()
+    public function testShouldDoNothingOnPreSendEvent()
     {
         $message = new Message();
 
@@ -153,7 +161,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             'aFooQueueName' => 'aFooProcessorName',
         ]);
 
-        $extension->onPreSend('aTopic', $message);
+        $extension->onPreSendEvent($this->createDummyPreSend('aTopic', $message));
 
         $this->assertEquals([], $message->getProperties());
     }
@@ -167,7 +175,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             'aFooQueueName' => 'aFooProcessorName',
         ]);
 
-        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
+        $extension->onPreSendCommand($this->createDummyPreSend('theBarProcessorName', $message));
 
         $this->assertEquals([
             'enqueue.command_name' => 'theBarProcessorName',
@@ -183,12 +191,22 @@ class ExclusiveCommandExtensionTest extends TestCase
             'aFooQueueName' => 'aFooProcessorName',
         ]);
 
-        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
+        $extension->onPreSendCommand($this->createDummyPreSend('aFooProcessorName', $message));
 
         $this->assertEquals([
             'enqueue.command_name' => 'aFooProcessorName',
             'enqueue.processor_name' => 'aFooProcessorName',
             'enqueue.processor_queue_name' => 'aFooQueueName',
         ], $message->getProperties());
+    }
+
+    private function createDummyPreSend(string $commandOrTopic, Message $message): PreSend
+    {
+        return new PreSend(
+            $commandOrTopic,
+            $message,
+            $this->createMock(ProducerInterface::class),
+            $this->createMock(DriverInterface::class)
+        );
     }
 }

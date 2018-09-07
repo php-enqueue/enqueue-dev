@@ -23,4 +23,14 @@ trait ClassExtensionTrait
             sprintf('Failed assert that class %s implements %s interface.', $actual, $expected)
         );
     }
+
+    public function assertClassFinal($actual)
+    {
+        $rc = new \ReflectionClass($actual);
+
+        $this->assertTrue(
+            $rc->isFinal(),
+            sprintf('Failed assert that class %s is final.', $actual)
+        );
+    }
 }

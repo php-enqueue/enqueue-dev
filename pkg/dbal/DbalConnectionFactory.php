@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class DbalConnectionFactory implements PsrConnectionFactory
 {
@@ -54,11 +57,9 @@ class DbalConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         if ($this->config['lazy']) {
             return new DbalContext(function () {
@@ -69,20 +70,14 @@ class DbalConnectionFactory implements PsrConnectionFactory
         return new DbalContext($this->establishConnection(), $this->config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
         if ($this->connection) {
             $this->connection->close();
         }
     }
 
-    /**
-     * @return Connection
-     */
-    private function establishConnection()
+    private function establishConnection(): Connection
     {
         if (false == $this->connection) {
             $this->connection = DriverManager::getConnection($this->config['connection']);
@@ -92,51 +87,55 @@ class DbalConnectionFactory implements PsrConnectionFactory
         return $this->connection;
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
+        if (false === strpos($dsn, ':')) {
+            throw new \LogicException(sprintf('The DSN is invalid. It does not have scheme separator ":".'));
+        }
+
         if (false === parse_url($dsn)) {
             throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
         }
 
-        if (!preg_match('/^([0-9a-z_]+):(.+)?$/', $dsn, $matches)) {
-            throw new \LogicException('Schema is empty');
+        list($scheme) = explode(':', $dsn, 2);
+
+        $scheme = strtolower($scheme);
+        if (false == preg_match('/^[a-z\d+-.]*$/', $scheme)) {
+            throw new \LogicException('The DSN is invalid. Scheme contains illegal symbols.');
         }
-        $schema = $matches[1];
 
         $supported = [
-            'db2' => true,
-            'ibm_db2' => true,
-            'mssql' => true,
-            'pdo_sqlsrv' => true,
-            'mysql' => true,
-            'mysql2' => true,
-            'pdo_mysql' => true,
-            'pgsql' => true,
-            'postgres' => true,
-            'postgresql' => true,
-            'pdo_pgsql' => true,
-            'sqlite' => true,
-            'sqlite3' => true,
-            'pdo_sqlite' => true,
+            'db2' => 'db2',
+            'ibm-db2' => 'ibm-db2',
+            'mssql' => 'mssql',
+            'sqlsrv+pdo' => 'pdo_sqlsrv',
+            'mysql' => 'mysql',
+            'mysql2' => 'mysql2',
+            'mysql+pdo' => 'pdo_mysql',
+            'pgsql' => 'pgsql',
+            'postgres' => 'postgres',
+            'pgsql+pdo' => 'pdo_pgsql',
+            'sqlite' => 'sqlite',
+            'sqlite3' => 'sqlite3',
+            'sqlite+pdo' => 'pdo_sqlite',
         ];
 
-        if (false == isset($supported[$schema])) {
+        if (false == isset($supported[$scheme])) {
             throw new \LogicException(sprintf(
                 'The given DSN schema "%s" is not supported. There are supported schemes: "%s".',
-                $schema,
+                $scheme,
                 implode('", "', array_keys($supported))
             ));
         }
 
+        $doctrineScheme = $supported[$scheme];
+
         return [
             'lazy' => true,
             'connection' => [
-                'url' => $schema.':' === $dsn ? $schema.'://root@localhost' : $dsn,
+                'url' => $scheme.':' === $dsn ?
+                    $doctrineScheme.'://root@localhost' :
+                    str_replace($scheme, $doctrineScheme, $dsn),
             ],
         ];
     }

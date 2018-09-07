@@ -8,7 +8,7 @@ use Enqueue\Client\Meta\QueueMeta;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Symfony\Consumption\LimitsExtensionsCommandTrait;
 use Enqueue\Symfony\Consumption\QueueConsumerOptionsCommandTrait;
 use Symfony\Component\Console\Command\Command;
@@ -24,8 +24,10 @@ class ConsumeMessagesCommand extends Command
     use SetupBrokerExtensionCommandTrait;
     use QueueConsumerOptionsCommandTrait;
 
+    protected static $defaultName = 'enqueue:consume';
+
     /**
-     * @var QueueConsumer
+     * @var QueueConsumerInterface
      */
     private $consumer;
 
@@ -45,18 +47,18 @@ class ConsumeMessagesCommand extends Command
     private $driver;
 
     /**
-     * @param QueueConsumer     $consumer
-     * @param DelegateProcessor $processor
-     * @param QueueMetaRegistry $queueMetaRegistry
-     * @param DriverInterface   $driver
+     * @param QueueConsumerInterface $consumer
+     * @param DelegateProcessor      $processor
+     * @param QueueMetaRegistry      $queueMetaRegistry
+     * @param DriverInterface        $driver
      */
     public function __construct(
-        QueueConsumer $consumer,
+        QueueConsumerInterface $consumer,
         DelegateProcessor $processor,
         QueueMetaRegistry $queueMetaRegistry,
         DriverInterface $driver
     ) {
-        parent::__construct(null);
+        parent::__construct(static::$defaultName);
 
         $this->consumer = $consumer;
         $this->processor = $processor;
@@ -74,7 +76,6 @@ class ConsumeMessagesCommand extends Command
         $this->configureQueueConsumerOptions();
 
         $this
-            ->setName('enqueue:consume')
             ->setAliases(['enq:c'])
             ->setDescription('A client\'s worker that processes messages. '.
                 'By default it connects to default queue. '.

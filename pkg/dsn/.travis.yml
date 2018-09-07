@@ -1,0 +1,21 @@
+sudo: false
+
+git:
+    depth: 10
+
+language: php
+
+php:
+    - '7.1'
+    - '7.2'
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+install:
+    - composer self-update
+    - composer install --prefer-source
+
+script:
+    - vendor/bin/phpunit

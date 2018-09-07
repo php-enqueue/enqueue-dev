@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpLib;
 
 use Enqueue\AmqpTools\ConnectionConfig;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
 use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
+use Interop\Queue\PsrContext;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
 use PhpAmqpLib\Connection\AMQPLazySocketConnection;
@@ -28,10 +31,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     private $connection;
 
     /**
-     * @see \Enqueue\AmqpTools\ConnectionConfig for possible config formats and values
-     *
-     * In addition this factory accepts next options:
-     *   receive_method - Could be either basic_get or basic_consume
+     * @see \Enqueue\AmqpTools\ConnectionConfig for possible config formats and values.
      *
      * @param array|string|null $config
      */
@@ -46,24 +46,14 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             ->addDefaultOption('login_response', null)
             ->addDefaultOption('locale', 'en_US')
             ->addDefaultOption('keepalive', false)
-            ->addDefaultOption('receive_method', 'basic_get')
             ->parse()
         ;
-
-        $supportedMethods = ['basic_get', 'basic_consume'];
-        if (false == in_array($this->config->getOption('receive_method'), $supportedMethods, true)) {
-            throw new \LogicException(sprintf(
-                'Invalid "receive_method" option value "%s". It could be only "%s"',
-                $this->config->getOption('receive_method'),
-                implode('", "', $supportedMethods)
-            ));
-        }
     }
 
     /**
      * @return AmqpContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         $context = new AmqpContext($this->establishConnection(), $this->config->getConfig());
         $context->setDelayStrategy($this->delayStrategy);
@@ -71,18 +61,12 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
         return $context;
     }
 
-    /**
-     * @return ConnectionConfig
-     */
-    public function getConfig()
+    public function getConfig(): ConnectionConfig
     {
         return $this->config;
     }
 
-    /**
-     * @return AbstractConnection
-     */
-    private function establishConnection()
+    private function establishConnection(): AbstractConnection
     {
         if (false == $this->connection) {
             if ($this->config->getOption('stream')) {

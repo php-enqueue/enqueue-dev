@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Stomp;
 
 class StompHeadersEncoder
@@ -12,13 +14,7 @@ class StompHeadersEncoder
     const TYPE_BOOL = 'b';
     const TYPE_NULL = 'n';
 
-    /**
-     * @param array $headers
-     * @param array $properties
-     *
-     * @return array
-     */
-    public static function encode(array $headers = [], array $properties = [])
+    public static function encode(array $headers = [], array $properties = []): array
     {
         $encodedHeaders = self::doEncode($headers);
 
@@ -30,11 +26,9 @@ class StompHeadersEncoder
     }
 
     /**
-     * @param array $headers
-     *
-     * @return array [[headers], [properties]]
+     * Returns array [[headers], [properties]].
      */
-    public static function decode(array $headers = [])
+    public static function decode(array $headers = []): array
     {
         $encodedHeaders = [];
         $encodedProperties = [];
@@ -55,12 +49,7 @@ class StompHeadersEncoder
         return [$decodedHeaders, $decodedProperties];
     }
 
-    /**
-     * @param array $headers
-     *
-     * @return array
-     */
-    private static function doEncode($headers = [])
+    private static function doEncode(array $headers = []): array
     {
         $encoded = [];
 
@@ -99,12 +88,7 @@ class StompHeadersEncoder
         return $encoded;
     }
 
-    /**
-     * @param array $headers
-     *
-     * @return array
-     */
-    private static function doDecode(array $headers = [])
+    private static function doDecode(array $headers = []): array
     {
         $decoded = [];
 

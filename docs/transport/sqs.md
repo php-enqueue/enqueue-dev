@@ -38,8 +38,8 @@ $psrContext = $factory->createContext();
 $client = new Aws\Sqs\SqsClient([ /* ... */ ]);
 $factory = new SqsConnectionFactory($client);
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('sqs:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('sqs:')->createContext();
 ```
 
 ## Declare queue.
@@ -110,7 +110,7 @@ $consumer->acknowledge($message);
 
 $fooQueue = $psrContext->createQueue('foo');
 
-$psrContext->purge($fooQueue);
+$psrContext->purgeQueue($fooQueue);
 ```
 
 [back to index](../index.md)

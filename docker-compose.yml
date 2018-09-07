@@ -51,7 +51,7 @@ services:
       - MONGO_DSN=mongodb://mongo
 
   rabbitmq:
-    image: 'enqueue/rabbitmq:latest'
+    image: 'enqueue/rabbitmq:3.7'
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest

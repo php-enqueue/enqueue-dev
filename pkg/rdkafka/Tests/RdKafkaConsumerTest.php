@@ -50,7 +50,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->once())
@@ -79,7 +79,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->any())
@@ -109,7 +109,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->any())
@@ -129,6 +129,39 @@ class RdKafkaConsumerTest extends TestCase
         $consumer->receive(1000);
     }
 
+    public function testShouldAssignWhenOffsetIsSet()
+    {
+        $destination = new RdKafkaTopic('dest');
+        $destination->setPartition(1);
+
+        $kafkaMessage = new Message();
+        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+
+        $kafkaConsumer = $this->createKafkaConsumerMock();
+        $kafkaConsumer
+            ->expects($this->once())
+            ->method('assign')
+        ;
+        $kafkaConsumer
+            ->expects($this->any())
+            ->method('consume')
+            ->willReturn($kafkaMessage)
+        ;
+
+        $consumer = new RdKafkaConsumer(
+            $kafkaConsumer,
+            $this->createContextMock(),
+            $destination,
+            $this->createSerializerMock()
+        );
+
+        $consumer->setOffset(123);
+
+        $consumer->receive(1000);
+        $consumer->receive(1000);
+        $consumer->receive(1000);
+    }
+
     public function testThrowOnOffsetChangeAfterSubscribing()
     {
         $destination = new RdKafkaTopic('dest');
@@ -139,7 +172,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->any())
@@ -174,7 +207,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->once())

@@ -1,0 +1,8 @@
+services:
+    enqueue.async_command.run_command_processor:
+        class: 'Enqueue\AsyncCommand\RunCommandProcessor'
+        public: public
+        arguments:
+            - '%kernel.project_dir%'
+        tags:
+            - { name: 'enqueue.client.processor' }

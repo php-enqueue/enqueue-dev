@@ -1,10 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\RdKafka;
 
 use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\PsrTopic;
+use Interop\Queue\PurgeQueueNotSupportedException;
+use Interop\Queue\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\TemporaryQueueNotSupportedException;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer;
@@ -46,57 +57,48 @@ class RdKafkaContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
     {
         return new RdKafkaMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RdKafkaTopic
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): PsrTopic
     {
         return new RdKafkaTopic($topicName);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RdKafkaTopic
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         return new RdKafkaTopic($queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): PsrQueue
     {
-        throw new \LogicException('Not implemented');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RdKafkaProducer
      */
-    public function createProducer()
+    public function createProducer(): PsrProducer
     {
         return new RdKafkaProducer($this->getProducer(), $this->getSerializer());
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RdKafkaTopic $destination
+     *
+     * @return RdKafkaConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(PsrDestination $destination): PsrConsumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
 
@@ -116,10 +118,7 @@ class RdKafkaContext implements PsrContext
         return $consumer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
         $kafkaConsumers = $this->kafkaConsumers;
         $this->kafkaConsumers = [];
@@ -129,10 +128,17 @@ class RdKafkaContext implements PsrContext
         }
     }
 
-    /**
-     * @return Producer
-     */
-    private function getProducer()
+    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function purgeQueue(PsrQueue $queue): void
+    {
+        throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    private function getProducer(): Producer
     {
         if (null === $this->producer) {
             $this->producer = new Producer($this->getConf());
@@ -145,10 +151,7 @@ class RdKafkaContext implements PsrContext
         return $this->producer;
     }
 
-    /**
-     * @return Conf
-     */
-    private function getConf()
+    private function getConf(): Conf
     {
         if (null === $this->conf) {
             $topicConf = new TopicConf();

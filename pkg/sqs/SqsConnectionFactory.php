@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
 use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\PsrContext;
 
 class SqsConnectionFactory implements PsrConnectionFactory
 {
@@ -62,11 +65,9 @@ class SqsConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsContext
      */
-    public function createContext()
+    public function createContext(): PsrContext
     {
         if ($this->config['lazy']) {
             return new SqsContext(function () {
@@ -77,17 +78,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
         return new SqsContext($this->establishConnection());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
-    {
-    }
-
-    /**
-     * @return SqsClient
-     */
-    private function establishConnection()
+    private function establishConnection(): SqsClient
     {
         if ($this->client) {
             return $this->client;
@@ -119,12 +110,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
         return $this->client;
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         if (false === strpos($dsn, 'sqs:')) {
             throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "sqs:".', $dsn));
@@ -148,10 +134,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
         return $config;
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'key' => null,

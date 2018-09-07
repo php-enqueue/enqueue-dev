@@ -34,7 +34,7 @@ class NullContextTest extends TestCase
 
         $this->assertInstanceOf(NullMessage::class, $message);
 
-        $this->assertNull($message->getBody());
+        $this->assertSame('', $message->getBody());
         $this->assertSame([], $message->getHeaders());
         $this->assertSame([], $message->getProperties());
     }

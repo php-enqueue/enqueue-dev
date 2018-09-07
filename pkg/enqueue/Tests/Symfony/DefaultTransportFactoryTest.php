@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class DefaultTransportFactoryTest extends TestCase
 {
@@ -181,27 +182,27 @@ class DefaultTransportFactoryTest extends TestCase
         $this->assertEquals($driverId, (string) $context);
     }
 
-    /**
-     * @dataProvider provideDSNs
-     *
-     * @param mixed $dsn
-     * @param mixed $expectedName
-     */
-    public function testShouldCreateConnectionFactoryFromDSN($dsn, $expectedName)
+    public function testShouldCreateConnectionFactoryFromDSN()
     {
         $container = new ContainerBuilder();
 
         $transport = new DefaultTransportFactory();
 
-        $serviceId = $transport->createConnectionFactory($container, ['dsn' => $dsn]);
+        $serviceId = $transport->createConnectionFactory($container, ['dsn' => 'foo://bar/baz']);
 
         $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
 
-        $this->assertTrue($container->hasAlias('enqueue.transport.default.connection_factory'));
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
+
+        $this->assertNotEmpty($container->getDefinition('enqueue.transport.default.connection_factory')->getFactory());
         $this->assertEquals(
-            sprintf('enqueue.transport.%s.connection_factory', $expectedName),
-            (string) $container->getAlias('enqueue.transport.default.connection_factory')
-        );
+            [new Reference('enqueue.connection_factory_factory'), 'create'],
+            $container->getDefinition('enqueue.transport.default.connection_factory')->getFactory())
+        ;
+        $this->assertSame(
+            ['foo://bar/baz'],
+            $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
+        ;
 
         $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
         $this->assertEquals(
@@ -210,88 +211,63 @@ class DefaultTransportFactoryTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider provideDSNs
-     *
-     * @param mixed $dsn
-     * @param mixed $expectedName
-     */
-    public function testShouldCreateContextFromDsn($dsn, $expectedName)
+    public function testShouldCreateContextFromDsn()
     {
         $container = new ContainerBuilder();
 
         $transport = new DefaultTransportFactory();
 
-        $serviceId = $transport->createContext($container, ['dsn' => $dsn]);
+        $serviceId = $transport->createContext($container, ['dsn' => 'foo://bar/baz']);
 
         $this->assertEquals('enqueue.transport.default.context', $serviceId);
 
-        $this->assertTrue($container->hasAlias($serviceId));
-        $context = $container->getAlias($serviceId);
+        $this->assertNotEmpty($container->getDefinition('enqueue.transport.default.context')->getFactory());
         $this->assertEquals(
-            sprintf('enqueue.transport.%s.context', $expectedName),
-            (string) $context
-        );
+            [new Reference('enqueue.transport.default.connection_factory'), 'createContext'],
+            $container->getDefinition('enqueue.transport.default.context')->getFactory())
+        ;
+        $this->assertSame(
+            [],
+            $container->getDefinition('enqueue.transport.default.context')->getArguments())
+        ;
 
         $this->assertTrue($container->hasAlias('enqueue.transport.context'));
-        $context = $container->getAlias('enqueue.transport.context');
-        $this->assertEquals($serviceId, (string) $context);
+        $this->assertEquals(
+            'enqueue.transport.default.context',
+            (string) $container->getAlias('enqueue.transport.context')
+        );
     }
 
-    /**
-     * @dataProvider provideDSNs
-     *
-     * @param mixed $dsn
-     * @param mixed $expectedName
-     */
-    public function testShouldCreateDriverFromDsn($dsn, $expectedName)
+    public function testShouldCreateDriverFromDsn()
     {
         $container = new ContainerBuilder();
 
         $transport = new DefaultTransportFactory();
 
-        $driverId = $transport->createDriver($container, ['dsn' => $dsn]);
+        $serviceId = $transport->createDriver($container, ['dsn' => 'foo://bar/baz', 'foo' => 'fooVal']);
 
-        $this->assertEquals('enqueue.client.default.driver', $driverId);
+        $this->assertEquals('enqueue.client.default.driver', $serviceId);
 
-        $this->assertTrue($container->hasAlias($driverId));
-        $context = $container->getAlias($driverId);
+        $this->assertTrue($container->hasDefinition('enqueue.client.default.driver'));
+
+        $this->assertNotEmpty($container->getDefinition('enqueue.client.default.driver')->getFactory());
         $this->assertEquals(
-            sprintf('enqueue.client.%s.driver', $expectedName),
-            (string) $context
-        );
+            [new Reference('enqueue.client.driver_factory'), 'create'],
+            $container->getDefinition('enqueue.client.default.driver')->getFactory())
+        ;
+        $this->assertEquals(
+            [
+                new Reference('enqueue.transport.default.connection_factory'),
+                'foo://bar/baz',
+                ['dsn' => 'foo://bar/baz', 'foo' => 'fooVal'],
+            ],
+            $container->getDefinition('enqueue.client.default.driver')->getArguments())
+        ;
 
         $this->assertTrue($container->hasAlias('enqueue.client.driver'));
-        $context = $container->getAlias('enqueue.client.driver');
-        $this->assertEquals($driverId, (string) $context);
-    }
-
-    public static function provideDSNs()
-    {
-        yield ['amqp+ext:', 'default_amqp'];
-
-        yield ['amqp+lib:', 'default_amqp'];
-
-        yield ['amqp+bunny:', 'default_amqp'];
-
-        yield ['null:', 'default_null'];
-
-        yield ['file:', 'default_fs'];
-
-        yield ['mysql:', 'default_dbal'];
-
-        yield ['pgsql:', 'default_dbal'];
-
-        yield ['gps:', 'default_gps'];
-
-        yield ['sqs:', 'default_sqs'];
-
-        yield ['redis:', 'default_redis'];
-
-        yield ['stomp:', 'default_stomp'];
-
-        yield ['kafka:', 'default_kafka'];
-
-        yield ['mongodb:', 'default_mongodb'];
+        $this->assertEquals(
+            'enqueue.client.default.driver',
+            (string) $container->getAlias('enqueue.client.driver')
+        );
     }
 }

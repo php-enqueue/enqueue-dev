@@ -2,6 +2,8 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Rpc\Promise;
+
 class SpoolProducer implements ProducerInterface
 {
     /**
@@ -19,9 +21,6 @@ class SpoolProducer implements ProducerInterface
      */
     private $commands;
 
-    /**
-     * @param ProducerInterface $realProducer
-     */
     public function __construct(ProducerInterface $realProducer)
     {
         $this->realProducer = $realProducer;
@@ -30,38 +29,26 @@ class SpoolProducer implements ProducerInterface
         $this->commands = new \SplQueue();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendCommand($command, $message, $needReply = false)
+    public function sendCommand(string $command, $message, bool $needReply = false): ?Promise
     {
         if ($needReply) {
             return $this->realProducer->sendCommand($command, $message, $needReply);
         }
 
         $this->commands->enqueue([$command, $message]);
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendEvent($topic, $message)
+    public function sendEvent(string $topic, $message): void
     {
         $this->events->enqueue([$topic, $message]);
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function send($topic, $message)
-    {
-        $this->sendEvent($topic, $message);
-    }
-
-    /**
      * When it is called it sends all previously queued messages.
      */
-    public function flush()
+    public function flush(): void
     {
         while (false == $this->events->isEmpty()) {
             list($topic, $message) = $this->events->dequeue();
