@@ -30,7 +30,7 @@
         "exclude-from-classmap": [
             "/Tests/"
         ]
-    }
+    },
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
