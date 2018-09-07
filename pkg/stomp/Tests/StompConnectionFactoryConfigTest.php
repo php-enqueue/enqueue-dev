@@ -21,7 +21,7 @@ class StompConnectionFactoryConfigTest extends TestCase
         new StompConnectionFactory(new \stdClass());
     }
 
-    public function testThrowIfSchemeIsNotAmqp()
+    public function testThrowIfSchemeIsNotStomp()
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "stomp:".');
@@ -32,9 +32,9 @@ class StompConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN "stomp://:@/"');
+        $this->expectExceptionMessage('The DSN is invalid.');
 
-        new StompConnectionFactory('stomp://:@/');
+        new StompConnectionFactory('foo');
     }
 
     /**
@@ -114,6 +114,24 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'foo' => 'bar',
                 'ssl_on' => false,
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'stomp://localhost:1234/theVhost?foo=bar&lazy=0&sync=true', 'baz' => 'bazVal', 'foo' => 'fooVal'],
+            [
+                'host' => 'localhost',
+                'port' => 1234,
+                'login' => 'guest',
+                'password' => 'guest',
+                'vhost' => 'theVhost',
+                'buffer_size' => 1000,
+                'connection_timeout' => 1,
+                'sync' => true,
+                'lazy' => false,
+                'foo' => 'bar',
+                'ssl_on' => false,
+                'baz' => 'bazVal',
             ],
         ];
 
