@@ -89,9 +89,6 @@ class Dsn
         return $this->schemeProtocol;
     }
 
-    /**
-     * @return string[]
-     */
     public function getSchemeExtensions(): array
     {
         return $this->schemeExtensions;
@@ -134,33 +131,70 @@ class Dsn
         return $this->port;
     }
 
-    /**
-     * @return null|string
-     */
     public function getPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * @return null|string
-     */
     public function getQueryString(): ?string
     {
         return $this->queryString;
     }
 
-    /**
-     * @return array
-     */
     public function getQuery(): array
     {
         return $this->query;
     }
 
-    public function getQueryParameter(string $name, $default = null)
+    public function getQueryParameter(string $name, string $default = null): ?string
     {
         return array_key_exists($name, $this->query) ? $this->query[$name] : $default;
+    }
+
+    public function getInt(string $name, int $default = null): ?int
+    {
+        $value = $this->getQueryParameter($name);
+        if (null === $value) {
+            return $default;
+        }
+
+        if (false == preg_match('/^[\+\-]?[0-9]*$/', $value)) {
+            throw InvalidQueryParameterTypeException::create($name, 'integer');
+        }
+
+        return (int) $value;
+    }
+
+    public function getFloat(string $name, float $default = null): ?float
+    {
+        $value = $this->getQueryParameter($name);
+        if (null === $value) {
+            return $default;
+        }
+
+        if (false == is_numeric($value)) {
+            throw InvalidQueryParameterTypeException::create($name, 'float');
+        }
+
+        return (float) $value;
+    }
+
+    public function getBool(string $name, bool $default = null): ?bool
+    {
+        $value = $this->getQueryParameter($name);
+        if (null === $value) {
+            return $default;
+        }
+
+        if (in_array($value, ['', '0', 'false'], true)) {
+            return false;
+        }
+
+        if (in_array($value, ['1', 'true'], true)) {
+            return true;
+        }
+
+        throw InvalidQueryParameterTypeException::create($name, 'bool');
     }
 
     public function toArray()
@@ -216,15 +250,71 @@ class Dsn
         }
 
         if ($path = parse_url($dsn, PHP_URL_PATH)) {
-            $this->path = $path;
+            $this->path = rawurldecode($path);
         }
 
         if ($queryString = parse_url($dsn, PHP_URL_QUERY)) {
             $this->queryString = $queryString;
 
-            $query = [];
-            parse_str($queryString, $query);
-            $this->query = $query;
+            $this->query = $this->httpParseQuery($queryString, '&', PHP_QUERY_RFC3986);
         }
+    }
+
+    /**
+     * based on http://php.net/manual/en/function.parse-str.php#119484 with some slight modifications.
+     */
+    private function httpParseQuery(string $queryString, string $argSeparator = '&', int $decType = PHP_QUERY_RFC1738): array
+    {
+        $result = [];
+        $parts = explode($argSeparator, $queryString);
+
+        foreach ($parts as $part) {
+            list($paramName, $paramValue) = explode('=', $part, 2);
+
+            switch ($decType) {
+                case PHP_QUERY_RFC3986:
+                    $paramName = rawurldecode($paramName);
+                    $paramValue = rawurldecode($paramValue);
+                    break;
+                case PHP_QUERY_RFC1738:
+                default:
+                    $paramName = urldecode($paramName);
+                    $paramValue = urldecode($paramValue);
+                    break;
+            }
+
+            if (preg_match_all('/\[([^\]]*)\]/m', $paramName, $matches)) {
+                $paramName = substr($paramName, 0, strpos($paramName, '['));
+                $keys = array_merge([$paramName], $matches[1]);
+            } else {
+                $keys = [$paramName];
+            }
+
+            $target = &$result;
+
+            foreach ($keys as $index) {
+                if ('' === $index) {
+                    if (is_array($target)) {
+                        $intKeys = array_filter(array_keys($target), 'is_int');
+                        $index = count($intKeys) ? max($intKeys) + 1 : 0;
+                    } else {
+                        $target = [$target];
+                        $index = 1;
+                    }
+                } elseif (isset($target[$index]) && !is_array($target[$index])) {
+                    $target[$index] = [$target[$index]];
+                }
+
+                $target = &$target[$index];
+            }
+
+            if (is_array($target)) {
+                $target[] = $paramValue;
+            } else {
+                $target = $paramValue;
+            }
+        }
+
+        return $result;
     }
 }
