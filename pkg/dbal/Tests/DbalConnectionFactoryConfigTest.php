@@ -159,7 +159,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
                 'table_name' => 'enqueue',
                 'polling_interval' => 1000,
                 'lazy' => true,
-                'foo' => 'fooVal'
+                'foo' => 'fooVal',
             ],
         ];
     }

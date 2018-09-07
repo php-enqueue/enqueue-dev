@@ -55,6 +55,10 @@ final class DriverFactory implements DriverFactoryInterface
                     ));
                 }
 
+                if (false == isset($config['management_plugin_installed'])) {
+                    throw new \LogicException(sprintf('Scheme %s requires the management plugin is to be installed', $dsn->getScheme()));
+                }
+
                 if (isset($config['rabbitmq_management_dsn'])) {
                     $managementDsn = new Dsn($config['rabbitmq_management_dsn']);
 

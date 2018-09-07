@@ -53,8 +53,8 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                 $config['client']['router_queue'],
                 $config['client']['default_processor_queue'],
                 $config['client']['router_processor'],
-                // todo
-                isset($config['transport']['default']['alias']) ? $config['transport'][$config['transport']['default']['alias']] : [],
+                // @todo should be driver options.
+                $config['transport'],
             ]);
 
             $container->setParameter('enqueue.client.router_queue_name', $config['client']['router_queue']);

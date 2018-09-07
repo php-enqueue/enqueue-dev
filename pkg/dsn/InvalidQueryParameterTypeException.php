@@ -1,4 +1,5 @@
 <?php
+
 namespace Enqueue\Dsn;
 
 final class InvalidQueryParameterTypeException extends \LogicException

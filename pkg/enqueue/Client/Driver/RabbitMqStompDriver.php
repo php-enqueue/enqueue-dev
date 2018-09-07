@@ -40,12 +40,6 @@ class RabbitMqStompDriver extends StompDriver
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param StompContext          $context
-     * @param Config                $config
-     * @param QueueMetaRegistry     $queueMetaRegistry
-     * @param StompManagementClient $management
-     */
     public function __construct(StompContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry, StompManagementClient $management)
     {
         parent::__construct($context, $config, $queueMetaRegistry);
