@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Redis;
 
+use Enqueue\Dsn\Dsn;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
 
@@ -20,25 +21,28 @@ class RedisConnectionFactory implements PsrConnectionFactory
     private $redis;
 
     /**
+     * @see https://github.com/nrk/predis/wiki/Connection-Parameters
+     *
      * $config = [
-     *  'host' => can be a host, or the path to a unix domain socket
-     *  'port' => optional
-     *  'timeout' => value in seconds (optional, default is 0.0 meaning unlimited)
-     *  'reserved' => should be null if $retry_interval is specified
-     *  'retry_interval' => retry interval in milliseconds.
-     *  'vendor' => 'The library used internally to interact with Redis server
-     *  'redis' => 'Used only if vendor is custom, should contain an instance of \Enqueue\Redis\Redis interface.
-     *  'persisted' => bool, Whether it use single persisted connection or open a new one for every context
-     *  'lazy' => the connection will be performed as later as possible, if the option set to true
-     *  'database' => Database index to select when connected (default value: 0)
-     *   user - The user name to use.
-     *   pass - Password.
+     *  'dsn' => A redis DSN string.
+     *  'scheme' => Specifies the protocol used to communicate with an instance of Redis.
+     *  'host' => IP or hostname of the target server.
+     *  'port' => TCP/IP port of the target server.
+     *  'path' => Path of the UNIX domain socket file used when connecting to Redis using UNIX domain sockets.
+     *  'database' => Accepts a numeric value that is used by Predis to automatically select a logical database with the SELECT command.
+     *  'password' => Accepts a value used to authenticate with a Redis server protected by password with the AUTH command.
+     *  'async' => Specifies if connections to the server is estabilished in a non-blocking way (that is, the client is not blocked while the underlying resource performs the actual connection).
+     *  'persistent' => Specifies if the underlying connection resource should be left open when a script ends its lifecycle.
+     *  'timeout' => Timeout (expressed in seconds) used to connect to a Redis server after which an exception is thrown.
+     *  'read_write_timeout' => Timeout (expressed in seconds) used when performing read or write operations on the underlying network resource after which an exception is thrown.
+     *  'predis_options' => An array of predis specific options.
+     *  'ssl' => could be any of http://fi2.php.net/manual/en/context.ssl.php#refsect1-context.ssl-options
      * ].
      *
      * or
      *
-     * redis:
-     * redis:?vendor=predis
+     * redis://h:asdfqwer1234asdf@ec2-111-1-1-1.compute-1.amazonaws.com:111
+     * tls://127.0.0.1?ssl[cafile]=private.pem&ssl[verify_peer]=1
      *
      * or
      *
@@ -48,32 +52,28 @@ class RedisConnectionFactory implements PsrConnectionFactory
      */
     public function __construct($config = 'redis:')
     {
-        if ($config instanceof  Redis) {
+        if ($config instanceof Redis) {
             $this->redis = $config;
             $this->config = $this->defaultConfig();
 
             return;
         }
 
-        if (empty($config) || 'redis:' === $config) {
+        if (empty($config)) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
+            if (array_key_exists('dsn', $config)) {
+                $config = array_replace($config, $this->parseDsn($config['dsn']));
+
+                unset($config['dsn']);
+            }
         } else {
-            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', Redis::class));
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
-
-        $supportedVendors = ['predis', 'phpredis', 'custom'];
-        if (false == in_array($this->config['vendor'], $supportedVendors, true)) {
-            throw new \LogicException(sprintf(
-                'Unsupported redis vendor given. It must be either "%s". Got "%s"',
-                implode('", "', $supportedVendors),
-                $this->config['vendor']
-            ));
-        }
     }
 
     /**
@@ -93,24 +93,12 @@ class RedisConnectionFactory implements PsrConnectionFactory
     private function createRedis(): Redis
     {
         if (false == $this->redis) {
-            if ('phpredis' == $this->config['vendor'] && false == $this->redis) {
-                $this->redis = new PhpRedis($this->config);
-            }
-
-            if ('predis' == $this->config['vendor'] && false == $this->redis) {
+            if (in_array('predis', $this->config['scheme_extensions'], true)) {
                 $this->redis = new PRedis($this->config);
-            }
-
-            if ('custom' == $this->config['vendor'] && false == $this->redis) {
-                if (empty($this->config['redis'])) {
-                    throw new \LogicException('The redis option should be set if vendor is custom.');
-                }
-
-                if (false == $this->config['redis'] instanceof Redis) {
-                    throw new \LogicException(sprintf('The redis option should be instance of "%s".', Redis::class));
-                }
-
-                $this->redis = $this->config['redis'];
+            } elseif (in_array('phpredis', $this->config['scheme_extensions'], true)) {
+                $this->redis = new PhpRedis($this->config);
+            } else {
+                $this->redis = new PRedis($this->config);
             }
 
             $this->redis->connect();
@@ -121,47 +109,52 @@ class RedisConnectionFactory implements PsrConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        if ((false === strpos($dsn, 'redis:')) and (false === strpos($dsn, 'rediss:'))) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "redis:" or "rediss:".', $dsn));
+        $dsn = new Dsn($dsn);
+
+        $supportedSchemes = ['redis', 'rediss', 'tcp', 'tls', 'unix'];
+        if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
+            throw new \LogicException(sprintf(
+                'The given scheme protocol "%s" is not supported. It must be one of "%s"',
+                $dsn->getSchemeProtocol(),
+                implode('", "', $supportedSchemes)
+            ));
         }
 
-        if (false === $config = parse_url($dsn)) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        $database = null;
+        if ('unix' !== $dsn->getSchemeProtocol() && $dsn->getPath()) {
+            $database = ltrim($dsn->getPath());
         }
 
-        if (array_key_exists('port', $config)) {
-            $config['port'] = (int) $config['port'];
-        }
-
-        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
-            $queryConfig = [];
-            parse_str($query, $queryConfig);
-
-            $config = array_replace($queryConfig, $config);
-        }
-
-        unset($config['query']);
-
-        $config['lazy'] = empty($config['lazy']) ? false : true;
-        $config['persisted'] = empty($config['persisted']) ? false : true;
-
-        return $config;
+        return array_filter(array_replace($dsn->getQuery(), [
+            'scheme' => $dsn->getSchemeProtocol(),
+            'scheme_extensions' => $dsn->getSchemeExtensions(),
+            'host' => $dsn->getHost(),
+            'port' => $dsn->getPort(),
+            'path' => $dsn->getPath(),
+            'database' => $database,
+            'password' => $dsn->getPassword(),
+            'async' => $dsn->getBool('async'),
+            'persistent' => $dsn->getBool('persistent'),
+            'timeout' => $dsn->getFloat('timeout'),
+            'read_write_timeout' => $dsn->getFloat('read_write_timeout'),
+        ]), function ($value) { return null !== $value; });
     }
 
     private function defaultConfig(): array
     {
         return [
-            'host' => 'localhost',
             'scheme' => 'redis',
+            'scheme_extensions' => [],
+            'host' => '127.0.0.1',
             'port' => 6379,
-            'timeout' => null,
-            'reserved' => null,
-            'retry_interval' => null,
-            'vendor' => 'phpredis',
-            'redis' => null,
-            'persisted' => false,
-            'lazy' => true,
-            'database' => 0,
+            'path' => null,
+            'database' => null,
+            'password' => null,
+            'async' => false,
+            'persistent' => false,
+            'timeout' => 5.0,
+            'read_write_timeout' => null,
+            'predis_options' => null,
         ];
     }
 }

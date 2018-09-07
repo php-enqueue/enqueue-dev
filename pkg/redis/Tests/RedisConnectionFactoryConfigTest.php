@@ -225,5 +225,26 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'pass' => 'asdfqwer1234asdf',
             ],
         ];
+
+        // from predis doc
+
+        yield [
+            'tls://127.0.0.1?ssl[cafile]=private.pem&ssl[verify_peer]=1',
+            [
+                'host' => 'ec2-111-1-1-1.compute-1.amazonaws.com',
+                'scheme' => 'redis',
+                'port' => 111,
+                'timeout' => null,
+                'reserved' => null,
+                'retry_interval' => null,
+                'vendor' => 'phpredis',
+                'persisted' => false,
+                'lazy' => false,
+                'database' => 0,
+                'redis' => null,
+                'user' => 'h',
+                'pass' => 'asdfqwer1234asdf',
+            ],
+        ];
     }
 }

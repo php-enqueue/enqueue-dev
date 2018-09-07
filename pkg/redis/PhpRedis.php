@@ -15,97 +15,90 @@ class PhpRedis implements Redis
     private $config;
 
     /**
-     * @param array $config
+     * @see https://github.com/phpredis/phpredis#parameters
      */
     public function __construct(array $config)
     {
-        $this->config = array_replace([
-            'scheme' => null,
-            'host' => null,
-            'port' => null,
-            'pass' => null,
-            'user' => null,
-            'timeout' => .0,
-            'reserved' => null,
-            'retry_interval' => null,
-            'persisted' => false,
-            'database' => 0,
-        ], $config);
+        $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function lpush(string $key, string $value): int
     {
-        return $this->redis->lPush($key, $value);
+        try {
+            return $this->redis->lPush($key, $value);
+        } catch (\RedisException $e) {
+            throw new ServerException('lpush command has failed', null, $e);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function brpop(array $keys, int $timeout): ?RedisResult
     {
-        if ($result = $this->redis->brPop($keys, $timeout)) {
-            return new RedisResult($result[0], $result[1]);
-        }
+        try {
+            if ($result = $this->redis->brPop($keys, $timeout)) {
+                return new RedisResult($result[0], $result[1]);
+            }
 
-        return null;
+            return null;
+        } catch (\RedisException $e) {
+            throw new ServerException('brpop command has failed', null, $e);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rpop(string $key): ?RedisResult
     {
-        if ($message = $this->redis->rPop($key)) {
-            return new RedisResult($key, $message);
-        }
+        try {
+            if ($message = $this->redis->rPop($key)) {
+                return new RedisResult($key, $message);
+            }
 
-        return null;
+            return null;
+        } catch (\RedisException $e) {
+            throw new ServerException('rpop command has failed', null, $e);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function connect(): void
     {
         if ($this->redis) {
             return;
         }
 
-        if ('rediss' == $this->config['scheme']) {
-            throw new \LogicException('The phpredis extension does not support secured connections. Try to use predis library as vendor.');
+        $supportedSchemes = ['redis', 'tcp', 'unix'];
+        if (false == in_array($this->config['scheme'], $supportedSchemes, true)) {
+            throw new \LogicException(sprintf(
+                'The given scheme protocol "%s" is not supported by php extension. It must be one of "%s"',
+                $this->config['scheme'],
+                implode('", "', $supportedSchemes)
+            ));
         }
 
         $this->redis = new \Redis();
 
-        if ($this->config['persisted']) {
-            $this->redis->pconnect(
-                $this->config['host'],
-                $this->config['port'],
-                $this->config['timeout']
-            );
-        } else {
-            $this->redis->connect(
-                $this->config['host'],
-                $this->config['port'],
-                $this->config['timeout'],
-                $this->config['reserved'],
-                $this->config['retry_interval']
-            );
+        $connectionMethod = $this->config['persisted'] ? 'pconnect' : 'connect';
+
+        $result = call_user_func(
+            [$this->redis, $connectionMethod],
+            'unix' === $this->config['scheme'] ? $this->config['path'] : $this->config['host'],
+            $this->config['port'],
+            $this->config['timeout'],
+            $this->config['persisted'] ? ($this->config['phpredis_persistent_id'] ?? null) : null,
+            $this->config['phpredis_retry_interval'] ?? null,
+            $this->config['read_write_timeout']
+        );
+
+        if (false == $result) {
+            throw new ServerException('Failed to connect.');
         }
 
-        if ($this->config['pass']) {
-            $this->redis->auth($this->config['pass']);
+        if ($this->config['password']) {
+            $this->redis->auth($this->config['password']);
         }
 
-        $this->redis->select($this->config['database']);
+        if (null !== $this->config['database']) {
+            $this->redis->select($this->config['database']);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function disconnect(): void
     {
         if ($this->redis) {
@@ -113,9 +106,6 @@ class PhpRedis implements Redis
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function del(string $key): void
     {
         $this->redis->del($key);
