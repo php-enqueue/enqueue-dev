@@ -3,6 +3,7 @@
 namespace Enqueue\Dsn\Tests;
 
 use Enqueue\Dsn\Dsn;
+use Enqueue\Dsn\InvalidQueryParameterTypeException;
 use PHPUnit\Framework\TestCase;
 
 class DsnTest extends TestCase
@@ -73,12 +74,108 @@ class DsnTest extends TestCase
         $this->assertSame('/thePath', $dsn->getPath());
     }
 
+    public function testShouldUrlDecodedPath()
+    {
+        $dsn = new Dsn('amqp+ext://theUser:thePass@theHost:1267/%2f');
+
+        $this->assertSame('//', $dsn->getPath());
+    }
+
     public function testShouldParseQuery()
     {
         $dsn = new Dsn('amqp+ext://theUser:thePass@theHost:1267/thePath?foo=fooVal&bar=bar%2fVal');
 
         $this->assertSame('foo=fooVal&bar=bar%2fVal', $dsn->getQueryString());
         $this->assertSame(['foo' => 'fooVal', 'bar' => 'bar/Val'], $dsn->getQuery());
+    }
+
+    public function testShouldParseQueryShouldPreservePlusSymbol()
+    {
+        $dsn = new Dsn('amqp+ext://theUser:thePass@theHost:1267/thePath?foo=fooVal&bar=bar+Val');
+
+        $this->assertSame('foo=fooVal&bar=bar+Val', $dsn->getQueryString());
+        $this->assertSame(['foo' => 'fooVal', 'bar' => 'bar+Val'], $dsn->getQuery());
+    }
+
+    /**
+     * @dataProvider provideIntQueryParameters
+     */
+    public function testShouldParseQueryParameterAsInt(string $parameter, int $expected)
+    {
+        $dsn = new Dsn('foo:?aName='.$parameter);
+
+        $this->assertSame($expected, $dsn->getInt('aName'));
+    }
+
+    public function testShouldReturnDefaultIntIfNotSet()
+    {
+        $dsn = new Dsn('foo:');
+
+        $this->assertNull($dsn->getInt('aName'));
+        $this->assertSame(123, $dsn->getInt('aName', 123));
+    }
+
+    public function testThrowIfQueryParameterNotInt()
+    {
+        $dsn = new Dsn('foo:?aName=notInt');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
+        $dsn->getInt('aName');
+    }
+
+    /**
+     * @dataProvider provideFloatQueryParameters
+     */
+    public function testShouldParseQueryParameterAsFloat(string $parameter, float $expected)
+    {
+        $dsn = new Dsn('foo:?aName='.$parameter);
+
+        $this->assertSame($expected, $dsn->getFloat('aName'));
+    }
+
+    public function testShouldReturnDefaultFloatIfNotSet()
+    {
+        $dsn = new Dsn('foo:');
+
+        $this->assertNull($dsn->getFloat('aName'));
+        $this->assertSame(123., $dsn->getFloat('aName', 123.));
+    }
+
+    public function testThrowIfQueryParameterNotFloat()
+    {
+        $dsn = new Dsn('foo:?aName=notFloat');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "float"');
+        $dsn->getFloat('aName');
+    }
+
+    /**
+     * @dataProvider provideBooleanQueryParameters
+     */
+    public function testShouldParseQueryParameterAsBoolean(string $parameter, bool $expected)
+    {
+        $dsn = new Dsn('foo:?aName='.$parameter);
+
+        $this->assertSame($expected, $dsn->getBool('aName'));
+    }
+
+    public function testShouldReturnDefaultBoolIfNotSet()
+    {
+        $dsn = new Dsn('foo:');
+
+        $this->assertNull($dsn->getBool('aName'));
+        $this->assertTrue($dsn->getBool('aName', true));
+    }
+
+    public function testThrowIfQueryParameterNotBool()
+    {
+        $dsn = new Dsn('foo:?aName=notBool');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "bool"');
+        $dsn->getBool('aName');
     }
 
     public static function provideSchemes()
@@ -98,5 +195,38 @@ class DsnTest extends TestCase
         yield ['amqp+ext://guest:guest@localhost:5672/%2f', 'amqp+ext', 'amqp', ['ext']];
 
         yield ['amqp+ext+rabbitmq:', 'amqp+ext+rabbitmq', 'amqp', ['ext', 'rabbitmq']];
+    }
+
+    public static function provideIntQueryParameters()
+    {
+        yield ['123', 123];
+
+        yield ['+123', 123];
+
+        yield ['-123', -123];
+    }
+
+    public static function provideFloatQueryParameters()
+    {
+        yield ['123', 123.];
+
+        yield ['+123', 123.];
+
+        yield ['-123', -123.];
+
+        yield ['0', 0.];
+    }
+
+    public static function provideBooleanQueryParameters()
+    {
+        yield ['', false];
+
+        yield ['1', true];
+
+        yield ['0', false];
+
+        yield ['true', true];
+
+        yield ['false', false];
     }
 }
