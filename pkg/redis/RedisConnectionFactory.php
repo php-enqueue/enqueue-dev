@@ -152,6 +152,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
     {
         return [
             'host' => 'localhost',
+            'scheme' => 'redis',
             'port' => 6379,
             'timeout' => .0,
             'reserved' => null,

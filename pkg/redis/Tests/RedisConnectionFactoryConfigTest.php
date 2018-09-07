@@ -25,7 +25,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotAmqp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "redis:".');
+        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "redis:" or "rediss:".');
 
         new RedisConnectionFactory('http://example.com');
     }
@@ -57,6 +57,15 @@ class RedisConnectionFactoryConfigTest extends TestCase
         $this->assertSame($redisMock, $context->getRedis());
     }
 
+    public function testThrowIfRedissConnectionUsedWithPhpRedisExtension()
+    {
+        $factory = new RedisConnectionFactory('rediss:?vendor=phpredis');
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The phpredis extension does not support secured connections. Try to use predis library as vendor.');
+        $factory->createContext();
+    }
+
     /**
      * @dataProvider provideConfigs
      *
@@ -76,6 +85,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             null,
             [
                 'host' => 'localhost',
+                'scheme' => 'redis',
                 'port' => 6379,
                 'timeout' => null,
                 'reserved' => null,
@@ -92,6 +102,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             'redis:',
             [
                 'host' => 'localhost',
+                'scheme' => 'redis',
                 'port' => 6379,
                 'timeout' => null,
                 'reserved' => null,
@@ -108,6 +119,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             [],
             [
                 'host' => 'localhost',
+                'scheme' => 'redis',
                 'port' => 6379,
                 'timeout' => null,
                 'reserved' => null,
@@ -124,6 +136,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             'redis://localhost:1234?foo=bar&lazy=0&persisted=true&database=5',
             [
                 'host' => 'localhost',
+                'scheme' => 'redis',
                 'port' => 1234,
                 'timeout' => null,
                 'reserved' => null,
@@ -142,6 +155,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             'redis://localhost:1234?foo=bar&lazy=0&vendor=predis',
             [
                 'host' => 'localhost',
+                'scheme' => 'redis',
                 'port' => 1234,
                 'timeout' => null,
                 'reserved' => null,
@@ -151,7 +165,6 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'foo' => 'bar',
                 'database' => 0,
-                'scheme' => 'redis',
                 'redis' => null,
             ],
         ];
@@ -161,6 +174,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             'rediss://localhost:1234?foo=bar&lazy=0&vendor=predis',
             [
                 'host' => 'localhost',
+                'scheme' => 'rediss',
                 'port' => 1234,
                 'timeout' => null,
                 'reserved' => null,
@@ -170,17 +184,15 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'foo' => 'bar',
                 'database' => 0,
-                'scheme' => 'rediss',
                 'redis' => null,
             ],
         ];
-
-
 
         yield [
             ['host' => 'localhost', 'port' => 1234, 'foo' => 'bar'],
             [
                 'host' => 'localhost',
+                'scheme' => 'redis',
                 'port' => 1234,
                 'timeout' => null,
                 'reserved' => null,
@@ -199,6 +211,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             'redis://h:asdfqwer1234asdf@ec2-111-1-1-1.compute-1.amazonaws.com:111',
             [
                 'host' => 'ec2-111-1-1-1.compute-1.amazonaws.com',
+                'scheme' => 'redis',
                 'port' => 111,
                 'timeout' => null,
                 'reserved' => null,
