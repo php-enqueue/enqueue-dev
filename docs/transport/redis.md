@@ -67,6 +67,9 @@ $psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('redis:')->creat
 $redis = new \Enqueue\Redis\PhpRedis([ /** redis connection options */ ]);
 $redis->connect();
 
+// Secure\TLS connection. Works only with predis library. Note second "S" in scheme.
+$factory = new RedisConnectionFactory('rediss://user:pass@host/0?vendor=predis'); 
+
 $factory = new RedisConnectionFactory($redis);
 ```
 
