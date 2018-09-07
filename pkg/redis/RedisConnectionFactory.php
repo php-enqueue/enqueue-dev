@@ -121,8 +121,8 @@ class RedisConnectionFactory implements PsrConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        if (false === strpos($dsn, 'redis:')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "redis:".', $dsn));
+        if ((false === strpos($dsn, 'redis:')) and (false === strpos($dsn, 'rediss:'))) {
+            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "redis:" or "rediss:".', $dsn));
         }
 
         if (false === $config = parse_url($dsn)) {
@@ -140,7 +140,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
             $config = array_replace($queryConfig, $config);
         }
 
-        unset($config['query'], $config['scheme']);
+        unset($config['query']);
 
         $config['lazy'] = empty($config['lazy']) ? false : true;
         $config['persisted'] = empty($config['persisted']) ? false : true;
@@ -152,6 +152,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
     {
         return [
             'host' => 'localhost',
+            'scheme' => 'redis',
             'port' => 6379,
             'timeout' => .0,
             'reserved' => null,
