@@ -2,46 +2,42 @@
 
 namespace Enqueue\Test;
 
+use Enqueue\Redis\PhpRedis;
+use Enqueue\Redis\PRedis;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
 
 trait RedisExtension
 {
-    /**
-     * @return RedisContext
-     */
-    private function buildPhpRedisContext()
+    private function buildPhpRedisContext(): RedisContext
     {
-        if (false == getenv('REDIS_HOST')) {
+        if (false == getenv('PHPREDIS_DSN')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
-        $config = [
-            'host' => getenv('REDIS_HOST'),
-            'port' => (int) getenv('REDIS_PORT'),
-            'vendor' => 'phpredis',
-            'lazy' => false,
-        ];
+        $config = getenv('PHPREDIS_DSN');
 
-        return (new RedisConnectionFactory($config))->createContext();
+        $context = (new RedisConnectionFactory($config))->createContext();
+
+        //guard
+        $this->assertInstanceOf(PhpRedis::class, $context->getRedis());
+
+        return $context;
     }
 
-    /**
-     * @return RedisContext
-     */
-    private function buildPRedisContext()
+    private function buildPRedisContext(): RedisContext
     {
-        if (false == getenv('REDIS_HOST')) {
+        if (false == getenv('PREDIS_DSN')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
-        $config = [
-            'host' => getenv('REDIS_HOST'),
-            'port' => getenv('REDIS_PORT'),
-            'vendor' => 'predis',
-            'lazy' => false,
-        ];
+        $config = getenv('PREDIS_DSN');
 
-        return (new RedisConnectionFactory($config))->createContext();
+        $context = (new RedisConnectionFactory($config))->createContext();
+
+        //guard
+        $this->assertInstanceOf(PRedis::class, $context->getRedis());
+
+        return $context;
     }
 }

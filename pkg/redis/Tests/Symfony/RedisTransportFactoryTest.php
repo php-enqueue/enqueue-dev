@@ -48,7 +48,7 @@ class RedisTransportFactoryTest extends TestCase
             'host' => 'localhost',
             'port' => 123,
             'vendor' => 'phpredis',
-            'persisted' => true,
+            'persistent' => true,
             'lazy' => false,
         ]]);
 
@@ -56,7 +56,7 @@ class RedisTransportFactoryTest extends TestCase
             'host' => 'localhost',
             'port' => 123,
             'vendor' => 'phpredis',
-            'persisted' => true,
+            'persistent' => true,
             'lazy' => false,
             'database' => 0,
         ], $config);
@@ -71,14 +71,14 @@ class RedisTransportFactoryTest extends TestCase
         $transport->addConfiguration($rootNode);
         $processor = new Processor();
         $config = $processor->process($tb->buildTree(), [[
-            'dsn' => 'redis://localhost:8080?vendor=predis&persisted=false&lazy=true&database=5',
+            'dsn' => 'redis://localhost:8080?vendor=predis&persistent=false&lazy=true&database=5',
         ]]);
 
         $this->assertEquals([
-            'persisted' => false,
+            'persistent' => false,
             'lazy' => true,
             'database' => 0,
-            'dsn' => 'redis://localhost:8080?vendor=predis&persisted=false&lazy=true&database=5',
+            'dsn' => 'redis://localhost:8080?vendor=predis&persistent=false&lazy=true&database=5',
         ], $config);
     }
 

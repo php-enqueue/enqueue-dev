@@ -33,6 +33,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
      *  'password' => Accepts a value used to authenticate with a Redis server protected by password with the AUTH command.
      *  'async' => Specifies if connections to the server is estabilished in a non-blocking way (that is, the client is not blocked while the underlying resource performs the actual connection).
      *  'persistent' => Specifies if the underlying connection resource should be left open when a script ends its lifecycle.
+     *  'lazy' => The connection will be performed as later as possible, if the option set to true
      *  'timeout' => Timeout (expressed in seconds) used to connect to a Redis server after which an exception is thrown.
      *  'read_write_timeout' => Timeout (expressed in seconds) used when performing read or write operations on the underlying network resource after which an exception is thrown.
      *  'predis_options' => An array of predis specific options.
@@ -65,7 +66,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
             if (array_key_exists('dsn', $config)) {
-                $config = array_replace($config, $this->parseDsn($config['dsn']));
+                $config = array_replace_recursive($config, $this->parseDsn($config['dsn']));
 
                 unset($config['dsn']);
             }
@@ -120,9 +121,11 @@ class RedisConnectionFactory implements PsrConnectionFactory
             ));
         }
 
-        $database = null;
-        if ('unix' !== $dsn->getSchemeProtocol() && $dsn->getPath()) {
-            $database = ltrim($dsn->getPath());
+        $database = $dsn->getInt('database');
+
+        // try use path as database name if not set.
+        if (null === $database && 'unix' !== $dsn->getSchemeProtocol() && null !== $dsn->getPath()) {
+            $database = (int) ltrim($dsn->getPath(), '/');
         }
 
         return array_filter(array_replace($dsn->getQuery(), [
@@ -152,9 +155,11 @@ class RedisConnectionFactory implements PsrConnectionFactory
             'password' => null,
             'async' => false,
             'persistent' => false,
+            'lazy' => true,
             'timeout' => 5.0,
             'read_write_timeout' => null,
             'predis_options' => null,
+            'ssl' => null,
         ];
     }
 }
