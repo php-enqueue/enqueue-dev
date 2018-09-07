@@ -20,6 +20,7 @@ class PhpRedis implements Redis
     public function __construct(array $config)
     {
         $this->config = array_replace([
+            'scheme' => null,
             'host' => null,
             'port' => null,
             'pass' => null,
@@ -71,6 +72,10 @@ class PhpRedis implements Redis
     {
         if ($this->redis) {
             return;
+        }
+
+        if ('rediss' == $this->config['scheme']) {
+            throw new \LogicException('The phpredis extension does not support secured connections. Try to use predis library as vendor.');
         }
 
         $this->redis = new \Redis();

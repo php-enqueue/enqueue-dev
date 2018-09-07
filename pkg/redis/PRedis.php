@@ -26,6 +26,7 @@ class PRedis implements Redis
     public function __construct(array $config)
     {
         $this->config = $this->config = array_replace([
+            'scheme' => null,
             'host' => null,
             'port' => null,
             'pass' => null,
