@@ -137,6 +137,46 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
+        //check normal redis connection for predis library
+        yield [
+            'redis://localhost:1234?foo=bar&lazy=0&vendor=predis',
+            [
+                'host' => 'localhost',
+                'port' => 1234,
+                'timeout' => null,
+                'reserved' => null,
+                'retry_interval' => null,
+                'vendor' => 'predis',
+                'persisted' => false,
+                'lazy' => false,
+                'foo' => 'bar',
+                'database' => 0,
+                'scheme' => 'redis',
+                'redis' => null,
+            ],
+        ];
+
+        //check tls connection for predis library
+        yield [
+            'rediss://localhost:1234?foo=bar&lazy=0&vendor=predis',
+            [
+                'host' => 'localhost',
+                'port' => 1234,
+                'timeout' => null,
+                'reserved' => null,
+                'retry_interval' => null,
+                'vendor' => 'predis',
+                'persisted' => false,
+                'lazy' => false,
+                'foo' => 'bar',
+                'database' => 0,
+                'scheme' => 'rediss',
+                'redis' => null,
+            ],
+        ];
+
+
+
         yield [
             ['host' => 'localhost', 'port' => 1234, 'foo' => 'bar'],
             [

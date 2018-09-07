@@ -65,13 +65,14 @@ class RedisConnectionFactory implements PsrConnectionFactory
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
+        $vendor = $this->config['vendor'];
 
         $supportedVendors = ['predis', 'phpredis', 'custom'];
-        if (false == in_array($this->config['vendor'], $supportedVendors, true)) {
+        if (false == in_array($vendor, $supportedVendors, true)) {
             throw new \LogicException(sprintf(
                 'Unsupported redis vendor given. It must be either "%s". Got "%s"',
                 implode('", "', $supportedVendors),
-                $this->config['vendor']
+                $vendor
             ));
         }
     }
@@ -121,8 +122,10 @@ class RedisConnectionFactory implements PsrConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        if (false === strpos($dsn, 'redis:')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "redis:".', $dsn));
+        $unsupportedError = 'The given DSN "%s" is not supported. Must start with "redis:".';
+
+        if ((false === strpos($dsn, 'redis:')) and (false === strpos($dsn, 'rediss:'))) {
+            throw new \LogicException(sprintf($unsupportedError, $dsn));
         }
 
         if (false === $config = parse_url($dsn)) {
@@ -140,7 +143,19 @@ class RedisConnectionFactory implements PsrConnectionFactory
             $config = array_replace($queryConfig, $config);
         }
 
-        unset($config['query'], $config['scheme']);
+        if (isset($config['vendor'])) {
+            $vendor = $config['vendor'];
+        } else {
+            $vendor = "";
+        }
+
+
+        //predis additionaly supports tls as scheme, but it must remain in the $config array
+        if ($vendor!='predis') {
+            if ($config['scheme']!='redis') throw new \LogicException(sprintf($unsupportedError, $dsn));
+            unset($config['scheme']);
+        }
+        unset($config['query']);
 
         $config['lazy'] = empty($config['lazy']) ? false : true;
         $config['persisted'] = empty($config['persisted']) ? false : true;
