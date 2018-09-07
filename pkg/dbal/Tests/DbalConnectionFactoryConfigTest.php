@@ -149,5 +149,18 @@ class DbalConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
             ],
         ];
+
+        yield [
+            ['dsn' => 'mysql+pdo://user:pass@host:10001/db', 'foo' => 'fooVal'],
+            [
+                'connection' => [
+                    'url' => 'pdo_mysql://user:pass@host:10001/db',
+                ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
+                'foo' => 'fooVal'
+            ],
+        ];
     }
 }
