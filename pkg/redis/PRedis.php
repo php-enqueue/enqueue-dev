@@ -13,7 +13,12 @@ class PRedis implements Redis
     /**
      * @var array
      */
-    private $config;
+    private $parameters;
+
+    /**
+     * @var array
+     */
+    private $options;
 
     /**
      * @var ClientInterface
@@ -21,31 +26,29 @@ class PRedis implements Redis
     private $redis;
 
     /**
-     * @param ClientInterface $redis
+     * @see https://github.com/nrk/predis/wiki/Client-Options
      */
     public function __construct(array $config)
     {
-        $this->config = $this->config = array_replace([
-            'scheme' => null,
-            'host' => null,
-            'port' => null,
-            'pass' => null,
-            'user' => null,
-            'timeout' => null,
-            'reserved' => null,
-            'retry_interval' => null,
-            'persisted' => false,
-            'database' => 0,
-        ], $config);
+        $this->options = $config['predis_options'];
 
-        // Predis client wants the key to be named "password"
-        $this->config['password'] = $this->config['pass'];
-        unset($this->config['pass']);
+        $this->parameters = [
+            'scheme' => $config['scheme'],
+            'host' => $config['host'],
+            'port' => $config['port'],
+            'password' => $config['password'],
+            'path' => $config['path'],
+            'async' => $config['async'],
+            'persistent' => $config['persistent'],
+            'timeout' => $config['timeout'],
+            'read_write_timeout' => $config['read_write_timeout'],
+        ];
+
+        if ($config['ssl']) {
+            $this->parameters['ssl'] = $config['ssl'];
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function lpush(string $key, string $value): int
     {
         try {
@@ -55,9 +58,6 @@ class PRedis implements Redis
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function brpop(array $keys, int $timeout): ?RedisResult
     {
         try {
@@ -71,9 +71,6 @@ class PRedis implements Redis
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rpop(string $key): ?RedisResult
     {
         try {
@@ -87,34 +84,24 @@ class PRedis implements Redis
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function connect(): void
     {
         if ($this->redis) {
             return;
         }
 
-        $this->redis = new Client($this->config, ['exceptions' => true]);
+        $this->redis = new Client($this->parameters, $this->options);
 
-        // No need to pass "auth" here because Predis already handles
-        // this internally
+        // No need to pass "auth" here because Predis already handles this internally
 
         $this->redis->connect();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function disconnect(): void
     {
         $this->redis->disconnect();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function del(string $key): void
     {
         $this->redis->del([$key]);
