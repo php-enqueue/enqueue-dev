@@ -107,13 +107,22 @@ function runPhpCsFixer()
     $returnCode = null;
 
     exec(sprintf(
-        '%s %s fix --config=.php_cs.php --no-interaction -v --path-mode=intersection  -- %s',
+        '%s %s fix --config=.php_cs.php --dry-run --no-interaction --path-mode=intersection  -- %s',
         $phpBin,
         $phpCsFixerBin,
         implode(' ', getFilesToFix())
     ), $output, $returnCode);
 
-    return $returnCode ? $output : false;
+    if ($returnCode) {
+        exec(sprintf(
+            '%s %s fix --config=.php_cs.php --no-interaction -v --path-mode=intersection  -- %s',
+            $phpBin,
+            $phpCsFixerBin,
+            implode(' ', getFilesToFix())
+        ), $output);
+    }
+
+    return $returnCode;
 }
 
 function runPhpstan()
@@ -143,16 +152,10 @@ if ($phpSyntaxErrors) {
     exit(1);
 }
 
-$phpCSFixerErrors = runPhpCsFixer();
-if ($phpCSFixerErrors) {
+$phpCSFixed = runPhpCsFixer();
+if ($phpCSFixed) {
     echo "Incorrect coding standards were detected and fixed." . PHP_EOL;
     echo "Please stash changes and run commit again." . PHP_EOL;
-    echo "Output:" . PHP_EOL . PHP_EOL;
-
-    echo array_walk_recursive($phpStanErrors, function($item) {
-        echo $item.PHP_EOL;
-    }) . PHP_EOL;
-    echo PHP_EOL;
 
     exit(1);
 }
