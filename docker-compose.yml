@@ -26,8 +26,8 @@ services:
       - RABBITMQ_MANAGMENT_DSN=http://guest:guest@rabbitmq:15672/mqdev
       - DOCTRINE_DSN=mysql://root:rootpass@mysql/mqdev
       - MYSQL_DSN=mysql://root:rootpass@mysql/mqdev
-      - PREDIS_DSN=redis://redis:6379?vendor=predis
-      - PHPREDIS_DSN=redis://redis:6379?vendor=phpredis
+      - PREDIS_DSN=redis+predis://redis
+      - PHPREDIS_DSN=redis+phpredis://redis
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
