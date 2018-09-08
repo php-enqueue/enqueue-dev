@@ -2,7 +2,6 @@
 
 namespace Enqueue\Redis\Tests;
 
-use Enqueue\Redis\PRedis;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Test\ClassExtensionTrait;
