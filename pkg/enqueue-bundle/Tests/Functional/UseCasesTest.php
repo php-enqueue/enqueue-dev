@@ -52,9 +52,9 @@ class UseCasesTest extends WebTestCase
         $certDir = $baseDir.'/var/rabbitmq_certificates';
         $this->assertDirectoryExists($certDir);
 
-//        yield 'amqp_dsn' => [[
-//            'transport' => getenv('AMQP_DSN'),
-//        ]];
+        yield 'amqp_dsn' => [[
+            'transport' => getenv('AMQP_DSN'),
+        ]];
 
         yield 'amqps_dsn' => [[
             'transport' => [
@@ -65,65 +65,65 @@ class UseCasesTest extends WebTestCase
                 'ssl_key' => $certDir.'/key.pem',
             ],
         ]];
-//
-//        yield 'dsn_as_env' => [[
-//            'transport' => '%env(AMQP_DSN)%',
-//        ]];
-//
-//        yield 'dbal_dsn' => [[
-//            'transport' => getenv('DOCTRINE_DSN'),
-//        ]];
-//
-//        yield 'rabbitmq_stomp' => [[
-//            'transport' => [
-//                'dsn' => getenv('STOMP_DSN'),
-//                'lazy' => false,
-//                'management_plugin_installed' => true,
-//            ],
-//        ]];
-//
-//        yield 'predis_dsn' => [[
-//            'transport' => [
-//                'dsn' => getenv('PREDIS_DSN'),
-//                'lazy' => false,
-//            ],
-//        ]];
-//
-//        yield 'phpredis_dsn' => [[
-//            'transport' => [
-//                'dsn' => getenv('PHPREDIS_DSN'),
-//                'lazy' => false,
-//            ],
-//        ]];
-//
-//        yield 'fs_dsn' => [[
-//            'transport' => 'file://'.sys_get_temp_dir(),
-//        ]];
-//
-//        yield 'sqs' => [[
-//            'transport' => [
-//                'dsn' => 'sqs:',
-//                'key' => getenv('AWS_SQS_KEY'),
-//                'secret' => getenv('AWS_SQS_SECRET'),
-//                'region' => getenv('AWS_SQS_REGION'),
-//                'endpoint' => getenv('AWS_SQS_ENDPOINT'),
-//            ],
-//        ]];
-//
-//        yield 'sqs_client' => [[
-//            'transport' => [
-//                'dsn' => 'sqs:',
-//                'client' => 'test.sqs_client',
-//            ],
-//        ]];
-//
-//        yield 'mongodb_dsn' => [[
-//            'transport' => getenv('MONGO_DSN'),
-//        ]];
-//
-//        yield 'gps' => [[
-//            'transport' => 'gps:',
-//        ]];
+
+        yield 'dsn_as_env' => [[
+            'transport' => '%env(AMQP_DSN)%',
+        ]];
+
+        yield 'dbal_dsn' => [[
+            'transport' => getenv('DOCTRINE_DSN'),
+        ]];
+
+        yield 'rabbitmq_stomp' => [[
+            'transport' => [
+                'dsn' => getenv('STOMP_DSN'),
+                'lazy' => false,
+                'management_plugin_installed' => true,
+            ],
+        ]];
+
+        yield 'predis_dsn' => [[
+            'transport' => [
+                'dsn' => getenv('PREDIS_DSN'),
+                'lazy' => false,
+            ],
+        ]];
+
+        yield 'phpredis_dsn' => [[
+            'transport' => [
+                'dsn' => getenv('PHPREDIS_DSN'),
+                'lazy' => false,
+            ],
+        ]];
+
+        yield 'fs_dsn' => [[
+            'transport' => 'file://'.sys_get_temp_dir(),
+        ]];
+
+        yield 'sqs' => [[
+            'transport' => [
+                'dsn' => 'sqs:',
+                'key' => getenv('AWS_SQS_KEY'),
+                'secret' => getenv('AWS_SQS_SECRET'),
+                'region' => getenv('AWS_SQS_REGION'),
+                'endpoint' => getenv('AWS_SQS_ENDPOINT'),
+            ],
+        ]];
+
+        yield 'sqs_client' => [[
+            'transport' => [
+                'dsn' => 'sqs:',
+                'client' => 'test.sqs_client',
+            ],
+        ]];
+
+        yield 'mongodb_dsn' => [[
+            'transport' => getenv('MONGO_DSN'),
+        ]];
+
+        yield 'gps' => [[
+            'transport' => 'gps:',
+        ]];
     }
 
     /**

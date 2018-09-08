@@ -121,7 +121,7 @@ final class Resources
                     'sqlite3',
                     'sqlite',
                 ],
-                'requiredSchemeExtensions' => ['pdo'],
+                'requiredSchemeExtensions' => [],
                 'package' => ['enqueue/enqueue', 'enqueue/dbal'],
             ];
 

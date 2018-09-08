@@ -24,7 +24,7 @@ final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterfac
         $dsn = new Dsn($config['dsn']);
 
         if ($factoryClass = $this->findFactoryClass($dsn, Resources::getAvailableConnections())) {
-            return new $factoryClass($config);
+            return new $factoryClass(1 === count($config) ? $config['dsn'] : $config);
         }
 
         $knownConnections = Resources::getKnownConnections();

@@ -109,12 +109,12 @@ final class DriverFactory implements DriverFactoryInterface
                 continue;
             }
 
-            if (false == $dsn->getSchemeExtensions()) {
+            if (empty($info['requiredSchemeExtensions'])) {
                 return $driverClass;
             }
 
-            if (empty($info['requiredSchemeExtensions'])) {
-                continue;
+            if (false == $dsn->getSchemeExtensions()) {
+                return null;
             }
 
             $diff = array_diff($dsn->getSchemeExtensions(), $info['requiredSchemeExtensions']);
