@@ -29,20 +29,4 @@ class RedisConnectionFactoryTest extends TestCase
         $this->assertAttributeEquals(null, 'redis', $context);
         $this->assertInternalType('callable', $this->readAttribute($context, 'redisFactory'));
     }
-
-    public function testShouldUsePredisInstanceByDefault()
-    {
-        $factory = new RedisConnectionFactory('redis:?lazy=1');
-
-        $context = $factory->createContext();
-        $this->assertInstanceOf(PRedis::class, $context->getRedis());
-    }
-
-    public function testShouldUsePredisInstanceSetExplicitly()
-    {
-        $factory = new RedisConnectionFactory('redis+predis:?lazy=1');
-
-        $context = $factory->createContext();
-        $this->assertInstanceOf(PRedis::class, $context->getRedis());
-    }
 }
