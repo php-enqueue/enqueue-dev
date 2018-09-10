@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
+use Enqueue\Dsn\Dsn;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
 
@@ -46,19 +47,20 @@ class SqsConnectionFactory implements PsrConnectionFactory
             $this->config = ['lazy' => false] + $this->defaultConfig();
 
             return;
-        } elseif (empty($config) || 'sqs:' === $config) {
+        }
+
+        if (empty($config)) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
-            $dsn = array_key_exists('dsn', $config) ? $config['dsn'] : null;
-            unset($config['dsn']);
+            if (array_key_exists('dsn', $config)) {
+                $config = array_replace_recursive($config, $this->parseDsn($config['dsn']));
 
-            if ($dsn) {
-                $config = array_replace($config, $this->parseDsn($dsn));
+                unset($config['dsn']);
             }
         } else {
-            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', SqsClient::class));
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
@@ -112,26 +114,25 @@ class SqsConnectionFactory implements PsrConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        if (false === strpos($dsn, 'sqs:')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "sqs:".', $dsn));
+        $dsn = new Dsn($dsn);
+
+        if ('sqs' !== $dsn->getSchemeProtocol()) {
+            throw new \LogicException(sprintf(
+                'The given scheme protocol "%s" is not supported. It must be "sqs"',
+                $dsn->getSchemeProtocol()
+            ));
         }
 
-        if (false === $config = parse_url($dsn)) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
-        }
-
-        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
-            $queryConfig = [];
-            parse_str($query, $queryConfig);
-
-            $config = array_replace($queryConfig, $config);
-        }
-
-        unset($config['query'], $config['scheme']);
-
-        $config['lazy'] = empty($config['lazy']) ? false : true;
-
-        return $config;
+        return array_filter(array_replace($dsn->getQuery(), [
+            'key' => $dsn->getQueryParameter('key'),
+            'secret' => $dsn->getQueryParameter('secret'),
+            'token' => $dsn->getQueryParameter('token'),
+            'region' => $dsn->getQueryParameter('region'),
+            'retries' => $dsn->getInt('retries'),
+            'version' => $dsn->getQueryParameter('version'),
+            'lazy' => $dsn->getBool('lazy'),
+            'endpoint' => $dsn->getQueryParameter('endpoint'),
+        ]), function ($value) { return null !== $value; });
     }
 
     private function defaultConfig(): array
