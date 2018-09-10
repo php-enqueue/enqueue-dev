@@ -146,19 +146,15 @@ class DriverFactoryTest extends TestCase
 
         yield ['redis:', RedisConnectionFactory::class, RedisContext::class, [], RedisDriver::class];
 
+        yield ['redis+predis:', RedisConnectionFactory::class, RedisContext::class, [], RedisDriver::class];
+
         yield ['sqs:', SqsConnectionFactory::class, SqsContext::class, [], SqsDriver::class];
 
         yield ['stomp:', StompConnectionFactory::class, StompContext::class, [], StompDriver::class];
 
         yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [], RabbitMqStompDriver::class];
 
-        yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [
-            'rabbitmq_management_dsn' => 'http://guest:guest@localhost:15672/mqdev',
-        ], RabbitMqStompDriver::class];
-
-        yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [
-            'management_plugin_port' => 1234,
-        ], RabbitMqStompDriver::class];
+        yield ['stomp+foo+bar:', StompConnectionFactory::class, StompContext::class, [], StompDriver::class];
     }
 
     private function createConnectionFactoryMock(): PsrConnectionFactory

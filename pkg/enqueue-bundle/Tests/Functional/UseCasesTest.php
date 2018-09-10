@@ -12,6 +12,7 @@ use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PurgeQueueNotSupportedException;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
@@ -76,7 +77,7 @@ class UseCasesTest extends WebTestCase
 
         yield 'rabbitmq_stomp' => [[
             'transport' => [
-                'dsn' => getenv('STOMP_DSN'),
+                'dsn' => getenv('RABITMQ_STOMP_DSN'),
                 'lazy' => false,
                 'management_plugin_installed' => true,
             ],
@@ -113,7 +114,8 @@ class UseCasesTest extends WebTestCase
         yield 'sqs_client' => [[
             'transport' => [
                 'dsn' => 'sqs:',
-                'client' => 'test.sqs_client',
+                'service' => 'test.sqs_client',
+                'factory_service' => 'test.sqs_custom_connection_factory_factory',
             ],
         ]];
 
@@ -121,9 +123,9 @@ class UseCasesTest extends WebTestCase
             'transport' => getenv('MONGO_DSN'),
         ]];
 
-        yield 'gps' => [[
-            'transport' => 'gps:',
-        ]];
+//        yield 'gps' => [[
+//            'transport' => getenv('GPS_DSN'),
+//        ]];
     }
 
     /**
@@ -139,117 +141,117 @@ class UseCasesTest extends WebTestCase
 
         $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
 
-        $message = $consumer->receive(100);
+        $message = $consumer->receive(1000);
         $this->assertInstanceOf(PsrMessage::class, $message);
         $consumer->acknowledge($message);
 
         $this->assertSame($expectedBody, $message->getBody());
     }
 
-//    /**
-//     * @dataProvider provideEnqueueConfigs
-//     */
-//    public function testProducerSendsCommandMessage(array $enqueueConfig)
-//    {
-//        $this->customSetUp($enqueueConfig);
-//
-//        $expectedBody = __METHOD__.time();
-//
-//        $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
-//
-//        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
-//
-//        $message = $consumer->receive(100);
-//        $this->assertInstanceOf(PsrMessage::class, $message);
-//        $consumer->acknowledge($message);
-//
-//        $this->assertInstanceOf(PsrMessage::class, $message);
-//        $this->assertSame($expectedBody, $message->getBody());
-//    }
-//
-//    /**
-//     * @dataProvider provideEnqueueConfigs
-//     */
-//    public function testClientConsumeCommandMessagesFromExplicitlySetQueue(array $enqueueConfig)
-//    {
-//        $this->customSetUp($enqueueConfig);
-//
-//        $command = static::$container->get(ConsumeMessagesCommand::class);
-//        $processor = static::$container->get('test.message.command_processor');
-//
-//        $expectedBody = __METHOD__.time();
-//
-//        $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
-//
-//        $tester = new CommandTester($command);
-//        $tester->execute([
-//            '--message-limit' => 2,
-//            '--time-limit' => 'now +10 seconds',
-//            'client-queue-names' => ['test'],
-//        ]);
-//
-//        $this->assertInstanceOf(PsrMessage::class, $processor->message);
-//        $this->assertEquals($expectedBody, $processor->message->getBody());
-//    }
-//
-//    /**
-//     * @dataProvider provideEnqueueConfigs
-//     */
-//    public function testClientConsumeMessagesFromExplicitlySetQueue(array $enqueueConfig)
-//    {
-//        $this->customSetUp($enqueueConfig);
-//
-//        $expectedBody = __METHOD__.time();
-//
-//        $command = static::$container->get(ConsumeMessagesCommand::class);
-//        $processor = static::$container->get('test.message.processor');
-//
-//        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
-//
-//        $tester = new CommandTester($command);
-//        $tester->execute([
-//            '--message-limit' => 2,
-//            '--time-limit' => 'now +10 seconds',
-//            'client-queue-names' => ['test'],
-//        ]);
-//
-//        $this->assertInstanceOf(PsrMessage::class, $processor->message);
-//        $this->assertEquals($expectedBody, $processor->message->getBody());
-//    }
-//
-//    /**
-//     * @dataProvider provideEnqueueConfigs
-//     */
-//    public function testTransportConsumeMessagesCommandShouldConsumeMessage(array $enqueueConfig)
-//    {
-//        $this->customSetUp($enqueueConfig);
-//
-//        if ($this->getTestQueue() instanceof StompDestination) {
-//            $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
-//                'It happens because of the destination options are different from the one used while creating the dest. Nothing to do about it'
-//            );
-//        }
-//
-//        $expectedBody = __METHOD__.time();
-//
-//        $command = static::$container->get(ContainerAwareConsumeMessagesCommand::class);
-//        $command->setContainer(static::$container);
-//        $processor = static::$container->get('test.message.processor');
-//
-//        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
-//
-//        $tester = new CommandTester($command);
-//        $tester->execute([
-//            '--message-limit' => 1,
-//            '--time-limit' => '+10sec',
-//            '--receive-timeout' => 1000,
-//            '--queue' => [$this->getTestQueue()->getQueueName()],
-//            'processor-service' => 'test.message.processor',
-//        ]);
-//
-//        $this->assertInstanceOf(PsrMessage::class, $processor->message);
-//        $this->assertEquals($expectedBody, $processor->message->getBody());
-//    }
+    /**
+     * @dataProvider provideEnqueueConfigs
+     */
+    public function testProducerSendsCommandMessage(array $enqueueConfig)
+    {
+        $this->customSetUp($enqueueConfig);
+
+        $expectedBody = __METHOD__.time();
+
+        $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
+
+        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
+
+        $message = $consumer->receive(100);
+        $this->assertInstanceOf(PsrMessage::class, $message);
+        $consumer->acknowledge($message);
+
+        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertSame($expectedBody, $message->getBody());
+    }
+
+    /**
+     * @dataProvider provideEnqueueConfigs
+     */
+    public function testClientConsumeCommandMessagesFromExplicitlySetQueue(array $enqueueConfig)
+    {
+        $this->customSetUp($enqueueConfig);
+
+        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $processor = static::$container->get('test.message.command_processor');
+
+        $expectedBody = __METHOD__.time();
+
+        $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--message-limit' => 2,
+            '--time-limit' => 'now +10 seconds',
+            'client-queue-names' => ['test'],
+        ]);
+
+        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertEquals($expectedBody, $processor->message->getBody());
+    }
+
+    /**
+     * @dataProvider provideEnqueueConfigs
+     */
+    public function testClientConsumeMessagesFromExplicitlySetQueue(array $enqueueConfig)
+    {
+        $this->customSetUp($enqueueConfig);
+
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $processor = static::$container->get('test.message.processor');
+
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--message-limit' => 2,
+            '--time-limit' => 'now +10 seconds',
+            'client-queue-names' => ['test'],
+        ]);
+
+        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertEquals($expectedBody, $processor->message->getBody());
+    }
+
+    /**
+     * @dataProvider provideEnqueueConfigs
+     */
+    public function testTransportConsumeMessagesCommandShouldConsumeMessage(array $enqueueConfig)
+    {
+        $this->customSetUp($enqueueConfig);
+
+        if ($this->getTestQueue() instanceof StompDestination) {
+            $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
+                'It happens because of the destination options are different from the one used while creating the dest. Nothing to do about it'
+            );
+        }
+
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get(ContainerAwareConsumeMessagesCommand::class);
+        $command->setContainer(static::$container);
+        $processor = static::$container->get('test.message.processor');
+
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--message-limit' => 1,
+            '--time-limit' => '+10sec',
+            '--receive-timeout' => 1000,
+            '--queue' => [$this->getTestQueue()->getQueueName()],
+            'processor-service' => 'test.message.processor',
+        ]);
+
+        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertEquals($expectedBody, $processor->message->getBody());
+    }
 
     /**
      * @return string
@@ -278,7 +280,7 @@ class UseCasesTest extends WebTestCase
 
         try {
             $context->purgeQueue($this->getTestQueue());
-        } catch (\Exception $e) {
+        } catch (PurgeQueueNotSupportedException $e) {
         }
     }
 

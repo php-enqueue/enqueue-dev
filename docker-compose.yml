@@ -28,6 +28,7 @@ services:
       - MYSQL_DSN=mysql://root:rootpass@mysql/mqdev
       - PREDIS_DSN=redis+predis://redis
       - PHPREDIS_DSN=redis+phpredis://redis
+      - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http%%3A%%2F%%2Fgoogle-pubsub%%3A8085 # encoded http://google-pubsub:8085
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
@@ -53,8 +54,6 @@ services:
       - GEARMAN_DSN=gearman://gearmand:4730
       - RDKAFKA_HOST=kafka
       - RDKAFKA_PORT=9092
-      - PUBSUB_EMULATOR_HOST=http://google-pubsub:8085
-      - GCLOUD_PROJECT=mqdev
       - MONGO_DSN=mongodb://mongo
 
   rabbitmq:

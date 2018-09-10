@@ -55,29 +55,13 @@ final class DriverFactory implements DriverFactoryInterface
                     ));
                 }
 
-                if (false == isset($config['management_plugin_installed'])) {
-                    throw new \LogicException(sprintf('Scheme %s requires the management plugin is to be installed', $dsn->getScheme()));
-                }
-
-                if (isset($config['rabbitmq_management_dsn'])) {
-                    $managementDsn = new Dsn($config['rabbitmq_management_dsn']);
-
-                    $managementClient = StompManagementClient::create(
-                        ltrim($managementDsn->getPath(), '/'),
-                        $managementDsn->getHost(),
-                        $managementDsn->getPort(),
-                        $managementDsn->getUser(),
-                        $managementDsn->getPassword()
-                    );
-                } else {
-                    $managementClient = StompManagementClient::create(
-                        ltrim($dsn->getPath(), '/'),
-                        $dsn->getHost(),
-                        isset($config['management_plugin_port']) ? $config['management_plugin_port'] : 15672,
-                        $dsn->getUser(),
-                        $dsn->getPassword()
-                    );
-                }
+                $managementClient = StompManagementClient::create(
+                    ltrim($dsn->getPath(), '/'),
+                    $dsn->getHost(),
+                    isset($config['management_plugin_port']) ? $config['management_plugin_port'] : 15672,
+                    $dsn->getUser(),
+                    $dsn->getPassword()
+                );
 
                 return new RabbitMqStompDriver($factory->createContext(), $this->config, $this->queueMetaRegistry, $managementClient);
             }
@@ -104,23 +88,34 @@ final class DriverFactory implements DriverFactoryInterface
     private function findDriverClass(Dsn $dsn, array $factories): ?string
     {
         $protocol = $dsn->getSchemeProtocol();
+
+        if ($dsn->getSchemeExtensions()) {
+            foreach ($factories as $driverClass => $info) {
+                if (empty($info['requiredSchemeExtensions'])) {
+                    continue;
+                }
+
+                if (false == in_array($protocol, $info['schemes'], true)) {
+                    continue;
+                }
+
+                $diff = array_diff($dsn->getSchemeExtensions(), $info['requiredSchemeExtensions']);
+                if (empty($diff)) {
+                    return $driverClass;
+                }
+            }
+        }
+
         foreach ($factories as $driverClass => $info) {
+            if (false == empty($info['requiredSchemeExtensions'])) {
+                continue;
+            }
+
             if (false == in_array($protocol, $info['schemes'], true)) {
                 continue;
             }
 
-            if (empty($info['requiredSchemeExtensions'])) {
-                return $driverClass;
-            }
-
-            if (false == $dsn->getSchemeExtensions()) {
-                return null;
-            }
-
-            $diff = array_diff($dsn->getSchemeExtensions(), $info['requiredSchemeExtensions']);
-            if (empty($diff)) {
-                return $driverClass;
-            }
+            return $driverClass;
         }
 
         return null;
