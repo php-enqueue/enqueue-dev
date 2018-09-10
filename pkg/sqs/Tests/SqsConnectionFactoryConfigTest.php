@@ -16,7 +16,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The config must be either an array of options, a DSN string or null');
+        $this->expectExceptionMessage('The config must be either an array of options, a DSN string, null or instance of Aws\Sqs\SqsClient');
 
         new SqsConnectionFactory(new \stdClass());
     }
@@ -24,7 +24,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotAmqp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "sqs:".');
+        $this->expectExceptionMessage('The given scheme protocol "http" is not supported. It must be "sqs"');
 
         new SqsConnectionFactory('http://example.com');
     }
@@ -32,9 +32,9 @@ class SqsConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN "sqs://:@/"');
+        $this->expectExceptionMessage('The DSN is invalid.');
 
-        new SqsConnectionFactory('sqs://:@/');
+        new SqsConnectionFactory('foo');
     }
 
     /**
