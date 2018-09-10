@@ -119,6 +119,60 @@ class TransportFactoryTest extends TestCase
         $processor->process($tb->buildTree(), [['dsn' => '']]);
     }
 
+    public function testThrowIfFactoryClassAndFactoryServiceSetAtTheSameTime()
+    {
+        $transport = new TransportFactory('default');
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Both options factory_class and factory_service are set. Please choose one.');
+        $processor->process($tb->buildTree(), [[
+            'dsn' => 'foo:',
+            'factory_class' => 'aFactoryClass',
+            'factory_service' => 'aFactoryService',
+        ]]);
+    }
+
+    public function testShouldAllowSetFactoryClass()
+    {
+        $transport = new TransportFactory('default');
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+
+        $config = $processor->process($tb->buildTree(), [[
+            'dsn' => 'foo:',
+            'factory_class' => 'theFactoryClass',
+        ]]);
+
+        $this->assertArrayHasKey('factory_class', $config);
+        $this->assertSame('theFactoryClass', $config['factory_class']);
+    }
+
+    public function testShouldAllowSetFactoryService()
+    {
+        $transport = new TransportFactory('default');
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('foo');
+
+        $transport->addConfiguration($rootNode);
+        $processor = new Processor();
+
+        $config = $processor->process($tb->buildTree(), [[
+            'dsn' => 'foo:',
+            'factory_service' => 'theFactoryService',
+        ]]);
+
+        $this->assertArrayHasKey('factory_service', $config);
+        $this->assertSame('theFactoryService', $config['factory_service']);
+    }
+
     public function testThrowIfExtraOptionGiven()
     {
         $transport = new TransportFactory('default');
@@ -154,6 +208,70 @@ class TransportFactoryTest extends TestCase
         ;
         $this->assertSame(
             [['dsn' => 'foo://bar/baz']],
+            $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
+        ;
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
+        $this->assertEquals(
+            'enqueue.transport.default.connection_factory',
+            (string) $container->getAlias('enqueue.transport.connection_factory')
+        );
+    }
+
+    public function testShouldCreateConnectionFactoryUsingCustomFactortyClass()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new TransportFactory('default');
+
+        $serviceId = $transport->createConnectionFactory($container, ['dsn' => 'foo:', 'factory_class' => 'theFactoryClass']);
+
+        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory_factory'));
+        $this->assertSame(
+            'theFactoryClass',
+            $container->getDefinition('enqueue.transport.default.connection_factory_factory')->getClass()
+        );
+
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
+
+        $this->assertNotEmpty($container->getDefinition('enqueue.transport.default.connection_factory')->getFactory());
+        $this->assertEquals(
+            [new Reference('enqueue.transport.default.connection_factory_factory'), 'create'],
+            $container->getDefinition('enqueue.transport.default.connection_factory')->getFactory())
+        ;
+        $this->assertSame(
+            [['dsn' => 'foo:']],
+            $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
+        ;
+
+        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
+        $this->assertEquals(
+            'enqueue.transport.default.connection_factory',
+            (string) $container->getAlias('enqueue.transport.connection_factory')
+        );
+    }
+
+    public function testShouldCreateConnectionFactoryUsingCustomFactortyService()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new TransportFactory('default');
+
+        $serviceId = $transport->createConnectionFactory($container, ['dsn' => 'foo:', 'factory_service' => 'theFactoryService']);
+
+        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
+
+        $this->assertNotEmpty($container->getDefinition('enqueue.transport.default.connection_factory')->getFactory());
+        $this->assertEquals(
+            [new Reference('theFactoryService'), 'create'],
+            $container->getDefinition('enqueue.transport.default.connection_factory')->getFactory())
+        ;
+        $this->assertSame(
+            [['dsn' => 'foo:']],
             $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
         ;
 

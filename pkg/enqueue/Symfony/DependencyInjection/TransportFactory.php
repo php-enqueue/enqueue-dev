@@ -39,6 +39,10 @@ final class TransportFactory
                     }
 
                     if (is_array($v)) {
+                        if (isset($v['factory_class']) && isset($v['factory_service'])) {
+                            throw new \LogicException('Both options factory_class and factory_service are set. Please choose one.');
+                        }
+
                         return $v;
                     }
 
@@ -52,16 +56,31 @@ final class TransportFactory
         ->ignoreExtraKeys(false)
         ->children()
             ->scalarNode('dsn')->cannotBeEmpty()->isRequired()->end()
+            ->scalarNode('factory_service')->end()
+            ->scalarNode('factory_class')->end()
         ->end()
         ;
     }
 
     public function createConnectionFactory(ContainerBuilder $container, array $config): string
     {
+        $factoryFactoryId = 'enqueue.connection_factory_factory';
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
+        if (array_key_exists('factory_class', $config)) {
+            $factoryFactoryId = sprintf('enqueue.transport.%s.connection_factory_factory', $this->getName());
+
+            $container->register($factoryFactoryId, $config['factory_class']);
+        }
+
+        $factoryFactoryService = new Reference(
+            array_key_exists('factory_service', $config) ? $config['factory_service'] : $factoryFactoryId
+        );
+
+        unset($config['factory_service'], $config['factory_class']);
+
         $container->register($factoryId, PsrConnectionFactory::class)
-            ->setFactory([new Reference('enqueue.connection_factory_factory'), 'create'])
+            ->setFactory([$factoryFactoryService, 'create'])
             ->addArgument($config)
         ;
 
