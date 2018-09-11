@@ -7,9 +7,8 @@ use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
 use Enqueue\SimpleClient\SimpleClient;
-use Enqueue\Test\RabbitManagementExtensionTrait;
-use Enqueue\Test\RabbitmqAmqpExtension;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PurgeQueueNotSupportedException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,82 +16,43 @@ use PHPUnit\Framework\TestCase;
  */
 class SimpleClientTest extends TestCase
 {
-    use RabbitmqAmqpExtension;
-    use RabbitManagementExtensionTrait;
-
-    public function setUp()
-    {
-        if (false == getenv('RABBITMQ_HOST')) {
-            throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
-        }
-
-        $this->removeQueue('enqueue.app.default');
-    }
-
     public function transportConfigDataProvider()
     {
-        yield 'amqp' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
-                    'driver' => 'ext',
-                    'host' => getenv('RABBITMQ_HOST'),
-                    'port' => getenv('RABBITMQ_AMQP__PORT'),
-                    'user' => getenv('RABBITMQ_USER'),
-                    'pass' => getenv('RABBITMQ_PASSWORD'),
-                    'vhost' => getenv('RABBITMQ_VHOST'),
-                ],
-            ],
-        ]];
-
-        yield 'config_as_dsn_string' => [getenv('AMQP_DSN')];
-
         yield 'amqp_dsn' => [[
+            'transport' => getenv('AMQP_DSN'),
+        ]];
+
+        yield 'dbal_dsn' => [[
+            'transport' => getenv('DOCTRINE_DSN'),
+        ]];
+
+        yield 'rabbitmq_stomp' => [[
             'transport' => [
-                'default' => 'amqp',
-                'amqp' => getenv('AMQP_DSN'),
+                'dsn' => getenv('RABITMQ_STOMP_DSN'),
+                'lazy' => false,
+                'management_plugin_installed' => true,
             ],
         ]];
 
-        yield 'default_amqp_as_dsn' => [[
+        yield 'predis_dsn' => [[
             'transport' => [
-                'default' => getenv('AMQP_DSN'),
+                'dsn' => getenv('PREDIS_DSN'),
+                'lazy' => false,
             ],
         ]];
 
-        yield [[
-            'transport' => [
-                'default' => 'rabbitmq_amqp',
-                'rabbitmq_amqp' => [
-                    'driver' => 'ext',
-                    'host' => getenv('RABBITMQ_HOST'),
-                    'port' => getenv('RABBITMQ_AMQP__PORT'),
-                    'user' => getenv('RABBITMQ_USER'),
-                    'pass' => getenv('RABBITMQ_PASSWORD'),
-                    'vhost' => getenv('RABBITMQ_VHOST'),
-                ],
-            ],
+        yield 'fs_dsn' => [[
+            'transport' => 'file://'.sys_get_temp_dir(),
         ]];
 
-        yield [[
+        yield 'sqs' => [[
             'transport' => [
-                'default' => 'rabbitmq_amqp',
-                'rabbitmq_amqp' => [
-                    'driver' => 'ext',
-                    'host' => getenv('RABBITMQ_HOST'),
-                    'port' => getenv('RABBITMQ_AMQP__PORT'),
-                    'user' => getenv('RABBITMQ_USER'),
-                    'pass' => getenv('RABBITMQ_PASSWORD'),
-                    'vhost' => getenv('RABBITMQ_VHOST'),
-                ],
+                'dsn' => getenv('SQS_DSN'),
             ],
         ]];
 
         yield 'mongodb_dsn' => [[
-            'transport' => [
-                'default' => 'mongodb',
-                'mongodb' => getenv('MONGO_DSN'),
-            ],
+            'transport' => getenv('MONGO_DSN'),
         ]];
     }
 
@@ -101,11 +61,20 @@ class SimpleClientTest extends TestCase
      *
      * @param mixed $config
      */
-    public function testProduceAndConsumeOneMessage($config)
+    public function testProduceAndConsumeOneMessage(array $config)
     {
         $actualMessage = null;
 
+        $config['client'] = [
+            'prefix' => str_replace('.', '', uniqid('enqueue', true)),
+            'app_name' => 'simple_client',
+            'router_topic' => 'test',
+            'router_queue' => 'test',
+            'default_processor_queue' => 'test',
+        ];
+
         $client = new SimpleClient($config);
+
         $client->bind('foo_topic', 'foo_processor', function (PsrMessage $message) use (&$actualMessage) {
             $actualMessage = $message;
 
@@ -113,11 +82,12 @@ class SimpleClientTest extends TestCase
         });
 
         $client->setupBroker();
+        $this->purgeQueue($client);
 
         $client->sendEvent('foo_topic', 'Hello there!');
 
         $client->consume(new ChainExtension([
-            new LimitConsumptionTimeExtension(new \DateTime('+5sec')),
+            new LimitConsumptionTimeExtension(new \DateTime('+30sec')),
             new LimitConsumedMessagesExtension(2),
         ]));
 
@@ -134,7 +104,16 @@ class SimpleClientTest extends TestCase
     {
         $received = 0;
 
+        $config['client'] = [
+            'prefix' => str_replace('.', '', uniqid('enqueue', true)),
+            'app_name' => 'simple_client',
+            'router_topic' => 'test',
+            'router_queue' => 'test',
+            'default_processor_queue' => 'test',
+        ];
+
         $client = new SimpleClient($config);
+
         $client->bind('foo_topic', 'foo_processor1', function () use (&$received) {
             ++$received;
 
@@ -147,14 +126,27 @@ class SimpleClientTest extends TestCase
         });
 
         $client->setupBroker();
+        $this->purgeQueue($client);
 
         $client->sendEvent('foo_topic', 'Hello there!');
 
         $client->consume(new ChainExtension([
-            new LimitConsumptionTimeExtension(new \DateTime('+5sec')),
+            new LimitConsumptionTimeExtension(new \DateTime('+2sec')),
             new LimitConsumedMessagesExtension(3),
         ]));
 
         $this->assertSame(2, $received);
+    }
+
+    protected function purgeQueue(SimpleClient $client): void
+    {
+        $driver = $client->getDriver();
+
+        $queue = $driver->createQueue($driver->getConfig()->getDefaultProcessorQueueName());
+
+        try {
+            $client->getContext()->purgeQueue($queue);
+        } catch (PurgeQueueNotSupportedException $e) {
+        }
     }
 }

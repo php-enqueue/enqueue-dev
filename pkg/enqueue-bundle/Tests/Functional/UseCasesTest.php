@@ -15,7 +15,6 @@ use Interop\Queue\PsrQueue;
 use Interop\Queue\PurgeQueueNotSupportedException;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @group functional
@@ -103,11 +102,7 @@ class UseCasesTest extends WebTestCase
 
         yield 'sqs' => [[
             'transport' => [
-                'dsn' => 'sqs:',
-                'key' => getenv('AWS_SQS_KEY'),
-                'secret' => getenv('AWS_SQS_SECRET'),
-                'region' => getenv('AWS_SQS_REGION'),
-                'endpoint' => getenv('AWS_SQS_ENDPOINT'),
+                'dsn' => getenv('SQS_DSN'),
             ],
         ]];
 

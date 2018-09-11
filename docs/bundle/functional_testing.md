@@ -18,9 +18,7 @@ Here's how you can configure it.
 # app/config/config_test.yml
 
 enqueue:
-    transport:
-        default: 'null'
-        'null': ~
+    transport: 'null:'
     client: ~
 ```
 

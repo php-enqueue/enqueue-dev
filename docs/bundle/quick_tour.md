@@ -48,8 +48,7 @@ First, you have to configure a transport layer and set one to be default.
 # app/config/config.yml
 
 enqueue:
-    transport:
-        default: "amqp:"
+    transport: "amqp:"
     client: ~
 ```
 
