@@ -2,8 +2,8 @@
 
 namespace Enqueue\Gps\Tests\Spec;
 
-use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\GpsContext;
+use Enqueue\Test\GpsExtension;
 use Interop\Queue\PsrContext;
 use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 
@@ -12,11 +12,13 @@ use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
  */
 class GpsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
 {
+    use GpsExtension;
+
     private $topic;
 
     protected function createContext()
     {
-        return (new GpsConnectionFactory())->createContext();
+        return $this->buildGpsContext();
     }
 
     /**

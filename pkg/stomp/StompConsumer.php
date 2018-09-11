@@ -98,7 +98,7 @@ class StompConsumer implements PsrConsumer
 
         if (0 === $timeout) {
             while (true) {
-                if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 0.1)) {
+                if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 100)) {
                     return $this->convertMessage($message);
                 }
             }

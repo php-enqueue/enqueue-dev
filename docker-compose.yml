@@ -19,22 +19,17 @@ services:
       - './:/mqdev'
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
+      - RABBITMQ_AMQP_DSN=amqp+rabbitmq://guest:guest@rabbitmq:5672/mqdev
       - AMQPS_DSN=amqps://guest:guest@rabbitmqssl:5671
+      - STOMP_DSN=stomp://guest:guest@rabbitmq:61613/mqdev
+      - RABITMQ_STOMP_DSN=stomp+rabbitmq://guest:guest@rabbitmq:61613/mqdev
+      - RABBITMQ_MANAGMENT_DSN=http://guest:guest@rabbitmq:15672/mqdev
       - DOCTRINE_DSN=mysql://root:rootpass@mysql/mqdev
+      - MYSQL_DSN=mysql://root:rootpass@mysql/mqdev
       - PREDIS_DSN=redis+predis://redis
       - PHPREDIS_DSN=redis+phpredis://redis
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_USER=guest
-      - RABBITMQ_PASSWORD=guest
-      - RABBITMQ_VHOST=mqdev
-      - RABBITMQ_AMQP__PORT=5672
-      - RABBITMQ_STOMP_PORT=61613
-      - DOCTRINE_DRIVER=pdo_mysql
-      - DOCTRINE_HOST=mysql
-      - DOCTRINE_PORT=3306
-      - DOCTRINE_DB_NAME=mqdev
-      - DOCTRINE_USER=root
-      - DOCTRINE_PASSWORD=rootpass
+      - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
+      - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4576&version=latest
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - AWS_SQS_KEY=key
@@ -42,15 +37,11 @@ services:
       - AWS_SQS_REGION=us-east-1
       - AWS_SQS_ENDPOINT=http://localstack:4576
       - AWS_SQS_VERSION=latest
-      - BEANSTALKD_HOST=beanstalkd
-      - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
       - GEARMAN_DSN=gearman://gearmand:4730
+      - MONGO_DSN=mongodb://mongo
       - RDKAFKA_HOST=kafka
       - RDKAFKA_PORT=9092
-      - PUBSUB_EMULATOR_HOST=http://google-pubsub:8085
-      - GCLOUD_PROJECT=mqdev
-      - MONGO_DSN=mongodb://mongo
 
   rabbitmq:
     image: 'enqueue/rabbitmq:3.7'

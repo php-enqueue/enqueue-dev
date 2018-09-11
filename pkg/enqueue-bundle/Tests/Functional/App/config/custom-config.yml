@@ -1,11 +1,6 @@
 parameters:
     locale: 'en'
     secret: 'ThisTokenIsNotSoSecretChangeIt'
-    env(AWS_SQS_REGION): 'us-east-1'
-    env(AWS_SQS_VERSION): 'latest'
-    env(AWS_SQS_KEY): 'key'
-    env(AWS_SQS_SECRET): 'secret'
-    env(AWS_SQS_ENDPOINT): 'http://localstack:4576'
 
 framework:
     #esi:             ~
@@ -34,7 +29,7 @@ services:
 
     test.sqs_client:
         public: true
-        class: Aws\Sqs\SqsClient
+        class: 'Aws\Sqs\SqsClient'
         arguments:
             -
                 endpoint: '%env(AWS_SQS_ENDPOINT)%'
@@ -43,3 +38,7 @@ services:
                 credentials:
                     key: '%env(AWS_SQS_KEY)%'
                     secret: '%env(AWS_SQS_SECRET)%'
+
+    test.sqs_custom_connection_factory_factory:
+        class: 'Enqueue\Bundle\Tests\Functional\App\SqsCustomConnectionFactoryFactory'
+        arguments: ['@service_container']

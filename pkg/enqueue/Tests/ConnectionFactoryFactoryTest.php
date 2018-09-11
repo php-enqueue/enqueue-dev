@@ -42,6 +42,38 @@ class ConnectionFactoryFactoryTest extends TestCase
         new ConnectionFactoryFactory();
     }
 
+    public function testShouldAcceptStringDSN()
+    {
+        $factory = new ConnectionFactoryFactory();
+
+        $factory->create('null:');
+    }
+
+    public function testShouldAcceptArrayWithDsnKey()
+    {
+        $factory = new ConnectionFactoryFactory();
+
+        $factory->create(['dsn' => 'null:']);
+    }
+
+    public function testThrowIfInvalidConfigGiven()
+    {
+        $factory = new ConnectionFactoryFactory();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The config must be either array or DSN string.');
+        $factory->create(new \stdClass());
+    }
+
+    public function testThrowIfArrayConfigMissDsnKeyInvalidConfigGiven()
+    {
+        $factory = new ConnectionFactoryFactory();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The config must be either array or DSN string.');
+        $factory->create(new \stdClass());
+    }
+
     public function testThrowIfPackageThatSupportSchemeNotInstalled()
     {
         $scheme = 'scheme5b7aa7d7cd213';

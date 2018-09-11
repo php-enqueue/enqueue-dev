@@ -13,11 +13,8 @@
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
         "enqueue/test": "0.9.x-dev",
-        "enqueue/enqueue": "0.9.x-dev",
         "enqueue/null": "0.9.x-dev",
-        "queue-interop/queue-spec": "0.6.x-dev",
-        "symfony/dependency-injection": "^3.4|^4",
-        "symfony/config": "^3.4|^4"
+        "queue-interop/queue-spec": "0.6.x-dev"
     },
     "support": {
         "email": "opensource@forma-pro.com",
@@ -31,9 +28,6 @@
         "exclude-from-classmap": [
             "/Tests/"
         ]
-    },
-    "suggest": {
-        "enqueue/enqueue": "If you'd like to use advanced features like Client abstract layer or Symfony integration features"
     },
     "minimum-stability": "dev",
     "extra": {

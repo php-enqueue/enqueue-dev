@@ -2,43 +2,20 @@
 
 namespace Enqueue\SimpleClient;
 
-use Enqueue\AmqpBunny\AmqpConnectionFactory as AmqpBunnyConnectionFactory;
-use Enqueue\AmqpExt\AmqpConnectionFactory as AmqpExtConnectionFactory;
-use Enqueue\AmqpLib\AmqpConnectionFactory as AmqpLibConnectionFactory;
 use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
+use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumerInterface;
-use Enqueue\Dbal\DbalConnectionFactory;
-use Enqueue\Dbal\Symfony\DbalTransportFactory;
-use Enqueue\Fs\FsConnectionFactory;
-use Enqueue\Fs\Symfony\FsTransportFactory;
-use Enqueue\Gps\GpsConnectionFactory;
-use Enqueue\Gps\Symfony\GpsTransportFactory;
-use Enqueue\Mongodb\MongodbConnectionFactory;
-use Enqueue\Mongodb\Symfony\MongodbTransportFactory;
-use Enqueue\Null\Symfony\NullTransportFactory;
-use Enqueue\RdKafka\RdKafkaConnectionFactory;
-use Enqueue\RdKafka\Symfony\RdKafkaTransportFactory;
-use Enqueue\Redis\RedisConnectionFactory;
-use Enqueue\Redis\Symfony\RedisTransportFactory;
 use Enqueue\Rpc\Promise;
-use Enqueue\Sqs\SqsConnectionFactory;
-use Enqueue\Sqs\Symfony\SqsTransportFactory;
-use Enqueue\Stomp\StompConnectionFactory;
-use Enqueue\Stomp\Symfony\RabbitMqStompTransportFactory;
-use Enqueue\Stomp\Symfony\StompTransportFactory;
-use Enqueue\Symfony\AmqpTransportFactory;
-use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Symfony\MissingTransportFactory;
-use Enqueue\Symfony\RabbitMqAmqpTransportFactory;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrProcessor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -59,28 +36,34 @@ final class SimpleClient
     /**
      * The config could be a transport DSN (string) or an array, here's an example of a few DSNs:.
      *
-     * amqp:
-     * amqp://guest:guest@localhost:5672/%2f?lazy=1&persisted=1
-     * file://foo/bar/
-     * null:
+     * $config = amqp:
+     * $config = amqp://guest:guest@localhost:5672/%2f?lazy=1&persisted=1
+     * $config = file://foo/bar/
+     * $config = null:
      *
-     * or an array, the most simple:
-     *
-     *$config = [
-     *   'transport' => [
-     *     'default' => 'amqp',
-     *     'amqp'          => [], // amqp options here
-     *   ],
-     * ]
-     *
-     * or a with all details:
+     * or an array:
      *
      * $config = [
      *   'transport' => [
-     *     'default' => 'amqp',
-     *     'amqp'          => [],
-     *     ....
-     *   ],
+     *      'dsn' => 'amqps://guest:guest@localhost:5672/%2f',
+     *      'ssl_cacert' => '/a/dir/cacert.pem',
+     *      'ssl_cert' => '/a/dir/cert.pem',
+     *      'ssl_key' => '/a/dir/key.pem',
+     * ]
+     *
+     * with custom connection factory class
+     *
+     * $config = [
+     *   'transport' => [
+     *      'dsn' => 'amqps://guest:guest@localhost:5672/%2f',
+     *      'connection_factory_class' => 'aCustomConnectionFactory',
+     *      // other options available options are factory_class and factory_service
+     * ]
+     *
+     * The client config
+     *
+     * $config = [
+     *   'transport' => 'null:',
      *   'client' => [
      *     'prefix'                   => 'enqueue',
      *     'app_name'                 => 'app',
@@ -105,11 +88,9 @@ final class SimpleClient
     }
 
     /**
-     * @param string                $topic
-     * @param string                $processorName
      * @param callable|PsrProcessor $processor
      */
-    public function bind($topic, $processorName, $processor)
+    public function bind(string $topic, string $processorName, $processor): void
     {
         if (is_callable($processor)) {
             $processor = new CallbackProcessor($processor);
@@ -121,48 +102,41 @@ final class SimpleClient
 
         $queueName = $this->getConfig()->getDefaultProcessorQueueName();
 
+        $this->getRouterProcessor()->add($topic, $queueName, $processorName);
         $this->getTopicMetaRegistry()->addProcessor($topic, $processorName);
         $this->getQueueMetaRegistry()->addProcessor($queueName, $processorName);
         $this->getProcessorRegistry()->add($processorName, $processor);
-        $this->getRouterProcessor()->add($topic, $queueName, $processorName);
     }
 
     /**
-     * @param string $command
-     * @param mixed  $message
-     * @param bool   $needReply
-     *
-     * @return Promise|null
+     * @param string|array|\JsonSerializable|Message $message
      */
-    public function sendCommand($command, $message, $needReply = false)
+    public function sendCommand(string $command, $message, bool $needReply = false): ?Promise
     {
         return $this->getProducer()->sendCommand($command, $message, $needReply);
     }
 
     /**
-     * @param string       $topic
-     * @param string|array $message
+     * @param string|array|Message $message
      */
-    public function sendEvent($topic, $message)
+    public function sendEvent(string $topic, $message): void
     {
         $this->getProducer()->sendEvent($topic, $message);
     }
 
-    /**
-     * @param ExtensionInterface|null $runtimeExtension
-     */
-    public function consume(ExtensionInterface $runtimeExtension = null)
+    public function consume(ExtensionInterface $runtimeExtension = null): void
     {
         $this->setupBroker();
         $processor = $this->getDelegateProcessor();
         $queueConsumer = $this->getQueueConsumer();
 
         $defaultQueueName = $this->getConfig()->getDefaultProcessorQueueName();
-        $defaultTransportQueueName = $this->getConfig()->createTransportQueueName($defaultQueueName);
-
+        $defaultTransportQueueName = $this->getDriver()->createQueue($defaultQueueName);
         $queueConsumer->bind($defaultTransportQueueName, $processor);
-        if ($this->getConfig()->getRouterQueueName() != $defaultQueueName) {
-            $routerTransportQueueName = $this->getConfig()->createTransportQueueName($this->getConfig()->getRouterQueueName());
+
+        $routerQueueName = $this->getConfig()->getRouterQueueName();
+        if ($routerQueueName != $defaultQueueName) {
+            $routerTransportQueueName = $this->getDriver()->createQueue($routerQueueName);
 
             $queueConsumer->bind($routerTransportQueueName, $processor);
         }
@@ -170,10 +144,7 @@ final class SimpleClient
         $queueConsumer->consume($runtimeExtension);
     }
 
-    /**
-     * @return PsrContext
-     */
-    public function getContext()
+    public function getContext(): PsrContext
     {
         return $this->container->get('enqueue.transport.context');
     }
@@ -183,51 +154,34 @@ final class SimpleClient
         return $this->container->get('enqueue.client.queue_consumer');
     }
 
-    /**
-     * @return Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->container->get('enqueue.client.config');
     }
 
-    /**
-     * @return DriverInterface
-     */
-    public function getDriver()
+    public function getDriver(): DriverInterface
     {
-        return $this->container->get('enqueue.client.driver');
+        return $this->container->get('enqueue.client.default.driver');
     }
 
-    /**
-     * @return TopicMetaRegistry
-     */
-    public function getTopicMetaRegistry()
+    public function getTopicMetaRegistry(): TopicMetaRegistry
     {
         return $this->container->get('enqueue.client.meta.topic_meta_registry');
     }
 
-    /**
-     * @return QueueMetaRegistry
-     */
-    public function getQueueMetaRegistry()
+    public function getQueueMetaRegistry(): QueueMetaRegistry
     {
         return $this->container->get('enqueue.client.meta.queue_meta_registry');
     }
 
-    /**
-     * @param bool $setupBroker
-     *
-     * @return ProducerInterface
-     */
-    public function getProducer($setupBroker = false)
+    public function getProducer(bool $setupBroker = false): ProducerInterface
     {
         $setupBroker && $this->setupBroker();
 
         return $this->container->get('enqueue.client.producer');
     }
 
-    public function setupBroker()
+    public function setupBroker(): void
     {
         $this->getDriver()->setupBroker();
     }
@@ -235,171 +189,29 @@ final class SimpleClient
     /**
      * @return ArrayProcessorRegistry
      */
-    public function getProcessorRegistry()
+    public function getProcessorRegistry(): ProcessorRegistryInterface
     {
         return $this->container->get('enqueue.client.processor_registry');
     }
 
-    /**
-     * @return DelegateProcessor
-     */
-    public function getDelegateProcessor()
+    public function getDelegateProcessor(): DelegateProcessor
     {
         return $this->container->get('enqueue.client.delegate_processor');
     }
 
-    /**
-     * @return RouterProcessor
-     */
-    public function getRouterProcessor()
+    public function getRouterProcessor(): RouterProcessor
     {
         return $this->container->get('enqueue.client.router_processor');
     }
 
-    /**
-     * @param array|string     $config
-     * @param ContainerBuilder $container
-     *
-     * @return ContainerInterface
-     */
-    private function buildContainer($config, ContainerBuilder $container)
+    private function buildContainer($config, ContainerBuilder $container): ContainerInterface
     {
-        $config = $this->buildConfig($config);
-        $extension = $this->buildContainerExtension();
-
+        $extension = new SimpleClientContainerExtension();
         $container->registerExtension($extension);
         $container->loadFromExtension($extension->getAlias(), $config);
 
         $container->compile();
 
         return $container;
-    }
-
-    /**
-     * @return SimpleClientContainerExtension
-     */
-    private function buildContainerExtension()
-    {
-        $extension = new SimpleClientContainerExtension();
-
-        $extension->addTransportFactory(new DefaultTransportFactory('default'));
-        $extension->addTransportFactory(new NullTransportFactory('null'));
-
-        if (class_exists(StompConnectionFactory::class)) {
-            $extension->addTransportFactory(new StompTransportFactory('stomp'));
-            $extension->addTransportFactory(new RabbitMqStompTransportFactory('rabbitmq_stomp'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('stomp', ['enqueue/stomp']));
-            $extension->addTransportFactory(new MissingTransportFactory('rabbitmq_stomp', ['enqueue/stomp']));
-        }
-
-        if (
-            class_exists(AmqpBunnyConnectionFactory::class) ||
-            class_exists(AmqpExtConnectionFactory::class) ||
-            class_exists(AmqpLibConnectionFactory::class)
-        ) {
-            $extension->addTransportFactory(new AmqpTransportFactory('amqp'));
-            $extension->addTransportFactory(new RabbitMqAmqpTransportFactory('rabbitmq_amqp'));
-        } else {
-            $amppPackages = ['enqueue/amqp-ext', 'enqueue/amqp-bunny', 'enqueue/amqp-lib'];
-            $extension->addTransportFactory(new MissingTransportFactory('amqp', $amppPackages));
-            $extension->addTransportFactory(new MissingTransportFactory('rabbitmq_amqp', $amppPackages));
-        }
-
-        if (class_exists(FsConnectionFactory::class)) {
-            $extension->addTransportFactory(new FsTransportFactory('fs'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('fs', ['enqueue/fs']));
-        }
-
-        if (class_exists(RedisConnectionFactory::class)) {
-            $extension->addTransportFactory(new RedisTransportFactory('redis'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('redis', ['enqueue/redis']));
-        }
-
-        if (class_exists(DbalConnectionFactory::class)) {
-            $extension->addTransportFactory(new DbalTransportFactory('dbal'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('dbal', ['enqueue/dbal']));
-        }
-
-        if (class_exists(SqsConnectionFactory::class)) {
-            $extension->addTransportFactory(new SqsTransportFactory('sqs'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('sqs', ['enqueue/sqs']));
-        }
-
-        if (class_exists(GpsConnectionFactory::class)) {
-            $extension->addTransportFactory(new GpsTransportFactory('gps'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('gps', ['enqueue/gps']));
-        }
-
-        if (class_exists(RdKafkaConnectionFactory::class)) {
-            $extension->addTransportFactory(new RdKafkaTransportFactory('rdkafka'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('rdkafka', ['enqueue/rdkafka']));
-        }
-
-        if (class_exists(MongodbConnectionFactory::class)) {
-            $extension->addTransportFactory(new MongodbTransportFactory('mongodb'));
-        } else {
-            $extension->addTransportFactory(new MissingTransportFactory('mongodb', ['enqueue/mongodb']));
-        }
-
-        return $extension;
-    }
-
-    /**
-     * @param array|string $config
-     *
-     * @return array
-     */
-    private function buildConfig($config)
-    {
-        if (is_string($config) && false !== strpos($config, ':')) {
-            $extConfig = [
-                'client' => [],
-                'transport' => [
-                    'default' => $config,
-                ],
-            ];
-        } elseif (is_string($config)) {
-            $extConfig = [
-                'client' => [],
-                'transport' => [
-                    'default' => $config,
-                    $config => [],
-                ],
-            ];
-        } elseif (is_array($config)) {
-            $extConfig = array_replace_recursive([
-                'client' => [],
-                'transport' => [],
-            ], $config);
-        } else {
-            throw new \LogicException('Expects config is string or array');
-        }
-
-        if (empty($extConfig['transport']['default'])) {
-            $defaultTransport = null;
-            foreach ($extConfig['transport'] as $transport => $config) {
-                if ('default' === $transport) {
-                    continue;
-                }
-
-                $defaultTransport = $transport;
-                break;
-            }
-
-            if (false == $defaultTransport) {
-                throw new \LogicException('There is no transport configured');
-            }
-
-            $extConfig['transport']['default'] = $defaultTransport;
-        }
-
-        return $extConfig;
     }
 }

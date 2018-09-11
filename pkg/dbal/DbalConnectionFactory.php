@@ -44,6 +44,11 @@ class DbalConnectionFactory implements PsrConnectionFactory
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
+            if (array_key_exists('dsn', $config)) {
+                $config = array_replace_recursive($config, $this->parseDsn($config['dsn']));
+
+                unset($config['dsn']);
+            }
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }

@@ -17,18 +17,12 @@ framework:
 
 doctrine:
     dbal:
-        driver:   "%db.driver%"
-        host:     "%db.host%"
-        port:     "%db.port%"
-        dbname:   "%db.name%"
-        user:     "%db.user%"
-        password: "%db.password%"
+        url:   "%env(DOCTRINE_DSN)%"
+        driver: pdo_mysql
         charset:  UTF8
 
 enqueue:
-    transport:
-        default: 'null'
-        'null': ~
+    transport: 'null:'
     client:
         traceable_producer: true
     job: true

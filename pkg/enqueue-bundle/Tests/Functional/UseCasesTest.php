@@ -12,9 +12,9 @@ use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PurgeQueueNotSupportedException;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @group functional
@@ -52,178 +52,75 @@ class UseCasesTest extends WebTestCase
         $certDir = $baseDir.'/var/rabbitmq_certificates';
         $this->assertDirectoryExists($certDir);
 
-        yield 'amqp' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
-                    'driver' => 'ext',
-                    'host' => getenv('RABBITMQ_HOST'),
-                    'port' => getenv('RABBITMQ_AMQP__PORT'),
-                    'user' => getenv('RABBITMQ_USER'),
-                    'pass' => getenv('RABBITMQ_PASSWORD'),
-                    'vhost' => getenv('RABBITMQ_VHOST'),
-                    'lazy' => false,
-                ],
-            ],
-        ]];
-
         yield 'amqp_dsn' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => getenv('AMQP_DSN'),
-            ],
+            'transport' => getenv('AMQP_DSN'),
         ]];
 
         yield 'amqps_dsn' => [[
             'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
-                    'dsn' => getenv('AMQPS_DSN'),
-                    'ssl_verify' => false,
-                    'ssl_cacert' => $certDir.'/cacert.pem',
-                    'ssl_cert' => $certDir.'/cert.pem',
-                    'ssl_key' => $certDir.'/key.pem',
-                ],
+                'dsn' => getenv('AMQPS_DSN'),
+                'ssl_verify' => false,
+                'ssl_cacert' => $certDir.'/cacert.pem',
+                'ssl_cert' => $certDir.'/cert.pem',
+                'ssl_key' => $certDir.'/key.pem',
             ],
         ]];
 
-        yield 'default_amqp_as_dsn' => [[
-            'transport' => [
-                'default' => getenv('AMQP_DSN'),
-            ],
+        yield 'dsn_as_env' => [[
+            'transport' => '%env(AMQP_DSN)%',
         ]];
 
-        yield 'default_dsn_as_env' => [[
-            'transport' => [
-                'default' => '%env(AMQP_DSN)%',
-            ],
-        ]];
-
-        yield 'default_dbal_as_dsn' => [[
-            'transport' => [
-                'default' => getenv('DOCTRINE_DSN'),
-            ],
+        yield 'dbal_dsn' => [[
+            'transport' => getenv('DOCTRINE_DSN'),
         ]];
 
         yield 'rabbitmq_stomp' => [[
             'transport' => [
-                'default' => 'rabbitmq_stomp',
-                'rabbitmq_stomp' => [
-                    'host' => getenv('RABBITMQ_HOST'),
-                    'port' => getenv('﻿RABBITMQ_STOMP_PORT'),
-                    'login' => getenv('RABBITMQ_USER'),
-                    'password' => getenv('RABBITMQ_PASSWORD'),
-                    'vhost' => getenv('RABBITMQ_VHOST'),
-                    'lazy' => false,
-                    'management_plugin_installed' => true,
-                ],
+                'dsn' => getenv('RABITMQ_STOMP_DSN'),
+                'lazy' => false,
+                'management_plugin_installed' => true,
             ],
         ]];
 
-        yield 'predis' => [[
+        yield 'predis_dsn' => [[
             'transport' => [
-                'default' => 'redis',
-                'redis' => [
-                    'host' => getenv('REDIS_HOST'),
-                    'port' => (int) getenv('REDIS_PORT'),
-                    'vendor' => 'predis',
-                    'lazy' => false,
-                ],
+                'dsn' => getenv('PREDIS_DSN'),
+                'lazy' => false,
             ],
         ]];
 
-        yield 'phpredis' => [[
+        yield 'phpredis_dsn' => [[
             'transport' => [
-                'default' => 'redis',
-                'redis' => [
-                    'host' => getenv('REDIS_HOST'),
-                    'port' => (int) getenv('REDIS_PORT'),
-                    'vendor' => 'phpredis',
-                    'lazy' => false,
-                ],
-            ],
-        ]];
-
-        yield 'fs' => [[
-            'transport' => [
-                'default' => 'fs',
-                'fs' => [
-                    'path' => sys_get_temp_dir(),
-                ],
+                'dsn' => getenv('PHPREDIS_DSN'),
+                'lazy' => false,
             ],
         ]];
 
         yield 'fs_dsn' => [[
+            'transport' => 'file://'.sys_get_temp_dir(),
+        ]];
+
+        yield 'sqs' => [[
             'transport' => [
-                'default' => 'fs',
-                'fs' => 'file://'.sys_get_temp_dir(),
+                'dsn' => getenv('SQS_DSN'),
             ],
         ]];
 
-        yield 'default_fs_as_dsn' => [[
+        yield 'sqs_client' => [[
             'transport' => [
-                'default' => 'file://'.sys_get_temp_dir(),
+                'dsn' => 'sqs:',
+                'service' => 'test.sqs_client',
+                'factory_service' => 'test.sqs_custom_connection_factory_factory',
             ],
         ]];
-
-        yield 'dbal' => [[
-            'transport' => [
-                'default' => 'dbal',
-                'dbal' => [
-                    'connection' => [
-                        'dbname' => getenv('DOCTRINE_DB_NAME'),
-                        'user' => getenv('DOCTRINE_USER'),
-                        'password' => getenv('DOCTRINE_PASSWORD'),
-                        'host' => getenv('DOCTRINE_HOST'),
-                        'port' => getenv('DOCTRINE_PORT'),
-                        'driver' => getenv('DOCTRINE_DRIVER'),
-                    ],
-                ],
-            ],
-        ]];
-
-        yield 'dbal_dsn' => [[
-            'transport' => [
-                'default' => 'dbal',
-                'dbal' => getenv('DOCTRINE_DSN'),
-            ],
-        ]];
-
-        // travis build does not have secret env vars if contribution is from outside.
-        if (getenv('AWS_SQS_KEY')) {
-            yield 'sqs' => [[
-                'transport' => [
-                    'default' => 'sqs',
-                    'sqs' => [
-                        'key' => getenv('AWS_SQS_KEY'),
-                        'secret' => getenv('AWS_SQS_SECRET'),
-                        'region' => getenv('AWS_SQS_REGION'),
-                        'endpoint' => getenv('AWS_SQS_ENDPOINT'),
-                    ],
-                ],
-            ]];
-
-            yield 'sqs_client' => [[
-                'transport' => [
-                    'default' => 'sqs',
-                    'sqs' => [
-                        'client' => 'test.sqs_client',
-                    ],
-                ],
-            ]];
-        }
 
         yield 'mongodb_dsn' => [[
-            'transport' => [
-                'default' => 'mongodb',
-                'mongodb' => getenv('MONGO_DSN'),
-            ],
+            'transport' => getenv('MONGO_DSN'),
         ]];
 
 //        yield 'gps' => [[
 //            'transport' => [
-//                'default' => 'gps',
-//                'gps' => [],
+//                'dsn' => getenv('GPS_DSN'),
 //            ],
 //        ]];
     }
@@ -286,7 +183,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
-            '--time-limit' => 'now +10 seconds',
+            '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
 
@@ -311,7 +208,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
-            '--time-limit' => 'now +10 seconds',
+            '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
 
@@ -343,7 +240,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 1,
-            '--time-limit' => '+10sec',
+            '--time-limit' => '+2sec',
             '--receive-timeout' => 1000,
             '--queue' => [$this->getTestQueue()->getQueueName()],
             'processor-service' => 'test.message.processor',
@@ -380,7 +277,7 @@ class UseCasesTest extends WebTestCase
 
         try {
             $context->purgeQueue($this->getTestQueue());
-        } catch (\Exception $e) {
+        } catch (PurgeQueueNotSupportedException $e) {
         }
     }
 

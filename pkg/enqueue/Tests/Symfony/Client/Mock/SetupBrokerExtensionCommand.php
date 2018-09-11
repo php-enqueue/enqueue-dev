@@ -3,8 +3,8 @@
 namespace Enqueue\Tests\Symfony\Client\Mock;
 
 use Enqueue\Client\Config;
+use Enqueue\Client\Driver\NullDriver;
 use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Null\Client\NullDriver;
 use Enqueue\Null\NullContext;
 use Enqueue\Symfony\Client\SetupBrokerExtensionCommandTrait;
 use Symfony\Component\Console\Command\Command;

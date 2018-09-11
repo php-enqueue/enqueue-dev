@@ -2,10 +2,10 @@
 
 namespace Enqueue\Tests\Client;
 
-use Enqueue\Client\Amqp\RabbitMqDriver;
+use Enqueue\Client\Driver\RabbitMqDriver;
+use Enqueue\Client\Driver\RedisDriver;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Resources;
-use Enqueue\Redis\Client\RedisDriver;
 use PHPUnit\Framework\TestCase;
 
 class ResourcesTest extends TestCase
@@ -38,8 +38,8 @@ class ResourcesTest extends TestCase
         $this->assertArrayHasKey('requiredSchemeExtensions', $driverInfo);
         $this->assertSame([], $driverInfo['requiredSchemeExtensions']);
 
-        $this->assertArrayHasKey('package', $driverInfo);
-        $this->assertSame('enqueue/redis', $driverInfo['package']);
+        $this->assertArrayHasKey('packages', $driverInfo);
+        $this->assertSame(['enqueue/enqueue', 'enqueue/redis'], $driverInfo['packages']);
     }
 
     public function testShouldGetAvailableDriverWithRequiredExtensionInExpectedFormat()
@@ -51,13 +51,13 @@ class ResourcesTest extends TestCase
 
         $driverInfo = $availableDrivers[RabbitMqDriver::class];
         $this->assertArrayHasKey('schemes', $driverInfo);
-        $this->assertSame(['amqp'], $driverInfo['schemes']);
+        $this->assertSame(['amqp', 'amqps'], $driverInfo['schemes']);
 
         $this->assertArrayHasKey('requiredSchemeExtensions', $driverInfo);
         $this->assertSame(['rabbitmq'], $driverInfo['requiredSchemeExtensions']);
 
-        $this->assertArrayHasKey('package', $driverInfo);
-        $this->assertSame('enqueue/enqueue', $driverInfo['package']);
+        $this->assertArrayHasKey('packages', $driverInfo);
+        $this->assertSame(['enqueue/enqueue', 'enqueue/amqp-bunny'], $driverInfo['packages']);
     }
 
     public function testShouldGetKnownDriversInExpectedFormat()
@@ -80,7 +80,7 @@ class ResourcesTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The driver class "stdClass" must implement "Enqueue\Client\DriverInterface" interface.');
 
-        Resources::addDriver(\stdClass::class, [], [], 'foo');
+        Resources::addDriver(\stdClass::class, [], [], ['foo']);
     }
 
     public function testThrowsIfNoSchemesProvidedOnAddDriver()
@@ -90,7 +90,7 @@ class ResourcesTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Schemes could not be empty.');
 
-        Resources::addDriver($driverClass, [], [], 'foo');
+        Resources::addDriver($driverClass, [], [], ['foo']);
     }
 
     public function testThrowsIfNoPackageProvidedOnAddDriver()
@@ -98,14 +98,14 @@ class ResourcesTest extends TestCase
         $driverClass = $this->getMockClass(DriverInterface::class);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Package name could not be empty.');
+        $this->expectExceptionMessage('Packages could not be empty.');
 
-        Resources::addDriver($driverClass, ['foo'], [], '');
+        Resources::addDriver($driverClass, ['foo'], [], []);
     }
 
     public function testShouldAllowRegisterDriverThatIsNotInstalled()
     {
-        Resources::addDriver('theDriverClass', ['foo'], ['barExtension'], 'foo');
+        Resources::addDriver('theDriverClass', ['foo'], ['barExtension'], ['foo']);
 
         $knownDrivers = Resources::getKnownDrivers();
         $this->assertInternalType('array', $knownDrivers);
@@ -125,7 +125,7 @@ class ResourcesTest extends TestCase
             $driverClass,
             ['fooscheme', 'barscheme'],
             ['fooextension', 'barextension'],
-            'foo/bar'
+            ['foo/bar']
         );
 
         $availableDrivers = Resources::getAvailableDrivers();
@@ -140,7 +140,7 @@ class ResourcesTest extends TestCase
         $this->assertArrayHasKey('requiredSchemeExtensions', $driverInfo);
         $this->assertSame(['fooextension', 'barextension'], $driverInfo['requiredSchemeExtensions']);
 
-        $this->assertArrayHasKey('package', $driverInfo);
-        $this->assertSame('foo/bar', $driverInfo['package']);
+        $this->assertArrayHasKey('packages', $driverInfo);
+        $this->assertSame(['foo/bar'], $driverInfo['packages']);
     }
 }

@@ -18,17 +18,8 @@ if ($autoload) {
 use Enqueue\Stomp\StompConnectionFactory;
 use Stomp\Exception\ErrorFrameException;
 
-$config = [
-    'host' => getenv('RABBITMQ_HOST'),
-    'port' => getenv('﻿RABBITMQ_STOMP_PORT'),
-    'login' => getenv('RABBITMQ_USER'),
-    'password' => getenv('RABBITMQ_PASSWORD'),
-    'vhost' => getenv('RABBITMQ_VHOST'),
-    'sync' => true,
-];
-
 try {
-    $factory = new StompConnectionFactory($config);
+    $factory = new StompConnectionFactory(getenv('RABITMQ_STOMP_DSN'));
     $context = $factory->createContext();
 
     $destination = $context->createQueue('destination');

@@ -2,40 +2,39 @@
 
 namespace Enqueue\Tests\Client;
 
-use Enqueue\Client\Amqp\AmqpDriver;
-use Enqueue\Client\Amqp\RabbitMqDriver;
 use Enqueue\Client\Config;
+use Enqueue\Client\Driver\AmqpDriver;
+use Enqueue\Client\Driver\DbalDriver;
+use Enqueue\Client\Driver\FsDriver;
+use Enqueue\Client\Driver\GpsDriver;
+use Enqueue\Client\Driver\MongodbDriver;
+use Enqueue\Client\Driver\NullDriver;
+use Enqueue\Client\Driver\RabbitMqDriver;
+use Enqueue\Client\Driver\RabbitMqStompDriver;
+use Enqueue\Client\Driver\RdKafkaDriver;
+use Enqueue\Client\Driver\RedisDriver;
+use Enqueue\Client\Driver\SqsDriver;
+use Enqueue\Client\Driver\StompDriver;
 use Enqueue\Client\DriverFactory;
 use Enqueue\Client\DriverFactoryInterface;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Resources;
-use Enqueue\Dbal\Client\DbalDriver;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
-use Enqueue\Fs\Client\FsDriver;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
-use Enqueue\Gearman\GearmanConnectionFactory;
-use Enqueue\Gps\Client\GpsDriver;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\GpsContext;
-use Enqueue\Mongodb\Client\MongodbDriver;
 use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Mongodb\MongodbContext;
-use Enqueue\Null\Client\NullDriver;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\NullContext;
-use Enqueue\RdKafka\Client\RdKafkaDriver;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\RdKafka\RdKafkaContext;
-use Enqueue\Redis\Client\RedisDriver;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
-use Enqueue\Sqs\Client\SqsDriver;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
-use Enqueue\Stomp\Client\RabbitMqStompDriver;
-use Enqueue\Stomp\Client\StompDriver;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Interop\Amqp\AmqpConnectionFactory;
@@ -69,10 +68,10 @@ class DriverFactoryTest extends TestCase
         $scheme = 'scheme5b7aa7d7cd213';
         $class = 'ConnectionClass5b7aa7d7cd213';
 
-        Resources::addDriver($class, [$scheme], [], 'thePackage');
+        Resources::addDriver($class, [$scheme], [], ['thePackage', 'theOtherPackage']);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('To use given scheme "scheme5b7aa7d7cd213" a package has to be installed. Run "composer req thePackage" to add it.');
+        $this->expectExceptionMessage('To use given scheme "scheme5b7aa7d7cd213" a package has to be installed. Run "composer req thePackage theOtherPackage" to add it.');
         $factory = new DriverFactory($this->createConfigMock(), $this->createQueueMetaRegistryMock());
 
         $factory->create($this->createConnectionFactoryMock(), $scheme.'://foo', []);
@@ -147,19 +146,15 @@ class DriverFactoryTest extends TestCase
 
         yield ['redis:', RedisConnectionFactory::class, RedisContext::class, [], RedisDriver::class];
 
+        yield ['redis+predis:', RedisConnectionFactory::class, RedisContext::class, [], RedisDriver::class];
+
         yield ['sqs:', SqsConnectionFactory::class, SqsContext::class, [], SqsDriver::class];
 
         yield ['stomp:', StompConnectionFactory::class, StompContext::class, [], StompDriver::class];
 
         yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [], RabbitMqStompDriver::class];
 
-        yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [
-            'rabbitmq_management_dsn' => 'http://guest:guest@localhost:15672/mqdev',
-        ], RabbitMqStompDriver::class];
-
-        yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [
-            'management_plugin_port' => 1234,
-        ], RabbitMqStompDriver::class];
+        yield ['stomp+foo+bar:', StompConnectionFactory::class, StompContext::class, [], StompDriver::class];
     }
 
     private function createConnectionFactoryMock(): PsrConnectionFactory

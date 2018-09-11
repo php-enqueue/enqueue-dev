@@ -4,45 +4,31 @@ namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\RouterProcessor;
-use Enqueue\Symfony\TransportFactoryInterface;
+use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     private $debug;
 
-    /**
-     * @var TransportFactoryInterface[]
-     */
-    private $factories;
-
-    /**
-     * @param TransportFactoryInterface[] $factories
-     * @param bool                        $debug
-     */
-    public function __construct(array $factories, $debug)
+    public function __construct(bool $debug)
     {
-        $this->factories = $factories;
         $this->debug = $debug;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $tb = new TreeBuilder();
         $rootNode = $tb->root('enqueue');
+        $rootNode
+            ->beforeNormalization()
+            ->ifEmpty()->then(function () {
+                return ['transport' => ['dsn' => 'null:']];
+            });
 
-        $transportChildren = $rootNode->children()
-            ->arrayNode('transport')->isRequired()->children();
-
-        foreach ($this->factories as $factory) {
-            $factory->addConfiguration(
-                $transportChildren->arrayNode($factory->getName())
-            );
-        }
+        $transportNode = $rootNode->children()->arrayNode('transport');
+        (new TransportFactory('default'))->addConfiguration($transportNode);
 
         $rootNode->children()
             ->arrayNode('client')->children()

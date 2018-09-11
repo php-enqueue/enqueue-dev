@@ -4,12 +4,12 @@ namespace Enqueue\Client;
 
 use Enqueue\Rpc\Promise;
 
-class TraceableProducer implements ProducerInterface
+final class TraceableProducer implements ProducerInterface
 {
     /**
      * @var array
      */
-    protected $traces = [];
+    private $traces = [];
 
     /**
      * @var ProducerInterface

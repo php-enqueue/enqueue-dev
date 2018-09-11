@@ -16,70 +16,39 @@ use Enqueue\ConnectionFactoryFactory;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
-use Enqueue\Symfony\TransportFactoryInterface;
+use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\NodeInterface;
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
 
 class SimpleClientContainerExtension extends Extension
 {
-    /**
-     * @var TransportFactoryInterface[]
-     */
-    private $factories;
-
-    public function __construct()
-    {
-        $this->factories = [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'enqueue';
     }
 
-    /**
-     * @param TransportFactoryInterface $transportFactory
-     */
-    public function addTransportFactory(TransportFactoryInterface $transportFactory)
-    {
-        $name = $transportFactory->getName();
-
-        if (empty($name)) {
-            throw new \LogicException('Transport factory name cannot be empty');
-        }
-        if (array_key_exists($name, $this->factories)) {
-            throw new \LogicException(sprintf('Transport factory with such name already added. Name %s', $name));
-        }
-
-        $this->factories[$name] = $transportFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configProcessor = new Processor();
         $config = $configProcessor->process($this->createConfiguration(), $configs);
 
-        foreach ($config['transport'] as $name => $transportConfig) {
-            $this->factories[$name]->createConnectionFactory($container, $transportConfig);
-            $this->factories[$name]->createContext($container, $transportConfig);
-            $this->factories[$name]->createDriver($container, $transportConfig);
-        }
+        $container->register('enqueue.connection_factory_factory', ConnectionFactoryFactory::class);
 
-        $transportConfig = isset($config['transport']['default']['alias']) ?
-            $config['transport'][$config['transport']['default']['alias']] :
-            []
+        $container->register('enqueue.client.driver_factory', DriverFactory::class)
+            ->addArgument(new Reference('enqueue.client.config'))
+            ->addArgument(new Reference('enqueue.client.meta.queue_meta_registry'))
         ;
+
+        $transportFactory = (new TransportFactory('default'));
+        $transportFactory->createConnectionFactory($container, $config['transport']);
+        $transportFactory->createContext($container, $config['transport']);
+
+        $driverId = $transportFactory->createDriver($container, $config['transport']);
+        $container->getDefinition($driverId)->setPublic(true);
 
         $container->register('enqueue.client.config', Config::class)
             ->setPublic(true)
@@ -90,32 +59,24 @@ class SimpleClientContainerExtension extends Extension
                 $config['client']['router_queue'],
                 $config['client']['default_processor_queue'],
                 'enqueue.client.router_processor',
-                $transportConfig,
-        ]);
-
-        $container->register('enqueue.connection_factory_factory', ConnectionFactoryFactory::class);
-
-        $container->register('enqueue.client.driver_factory', DriverFactory::class)
-            ->addArgument(new Reference('enqueue.client.config'))
-            ->addArgument(new Reference('enqueue.client.meta.queue_meta_registry'))
+                $config['transport'],
+            ])
         ;
 
         $container->register('enqueue.client.rpc_factory', RpcFactory::class)
             ->setPublic(true)
             ->setArguments([
-                new Reference('enqueue.transport.context'),
+                new Reference('enqueue.transport.default.context'),
             ])
         ;
 
         $container->register('enqueue.client.producer', Producer::class)
             ->setPublic(true)
             ->setArguments([
-                new Reference('enqueue.client.driver'),
+                new Reference('enqueue.client.default.driver'),
                 new Reference('enqueue.client.rpc_factory'),
             ])
         ;
-
-        $container->setAlias('enqueue.client.producer_v2', new Alias('enqueue.client.producer', true));
 
         $container->register('enqueue.client.meta.topic_meta_registry', TopicMetaRegistry::class)
             ->setPublic(true)
@@ -136,14 +97,14 @@ class SimpleClientContainerExtension extends Extension
         $container->register('enqueue.client.queue_consumer', QueueConsumer::class)
             ->setPublic(true)
             ->setArguments([
-                new Reference('enqueue.transport.context'),
+                new Reference('enqueue.transport.default.context'),
                 new Reference('enqueue.consumption.extensions'),
             ]);
 
         // router
         $container->register('enqueue.client.router_processor', RouterProcessor::class)
             ->setPublic(true)
-            ->setArguments([new Reference('enqueue.client.driver'), []]);
+            ->setArguments([new Reference('enqueue.client.default.driver'), []]);
         $container->getDefinition('enqueue.client.processor_registry')
             ->addMethodCall('add', ['enqueue.client.router_processor', new Reference('enqueue.client.router_processor')]);
         $container->getDefinition('enqueue.client.meta.queue_meta_registry')
@@ -155,7 +116,7 @@ class SimpleClientContainerExtension extends Extension
             $container->register('enqueue.client.delay_redelivered_message_extension', DelayRedeliveredMessageExtension::class)
                 ->setPublic(true)
                 ->setArguments([
-                    new Reference('enqueue.client.driver'),
+                    new Reference('enqueue.client.default.driver'),
                     $config['client']['redelivered_delay_time'],
             ]);
 
@@ -164,7 +125,7 @@ class SimpleClientContainerExtension extends Extension
 
         $container->register('enqueue.client.extension.set_router_properties', SetRouterPropertiesExtension::class)
             ->setPublic(true)
-            ->setArguments([new Reference('enqueue.client.driver')]);
+            ->setArguments([new Reference('enqueue.client.default.driver')]);
 
         $extensions[] = new Reference('enqueue.client.extension.set_router_properties');
 
@@ -173,32 +134,32 @@ class SimpleClientContainerExtension extends Extension
             ->setArguments([$extensions]);
     }
 
-    /**
-     * @return NodeInterface
-     */
-    private function createConfiguration()
+    private function createConfiguration(): NodeInterface
     {
         $tb = new TreeBuilder();
         $rootNode = $tb->root('enqueue');
 
-        $transportChildren = $rootNode->children()
-            ->arrayNode('transport')->isRequired()->children();
+        $rootNode
+            ->beforeNormalization()
+            ->ifEmpty()->then(function () {
+                return ['transport' => ['dsn' => 'null:']];
+            });
 
-        foreach ($this->factories as $factory) {
-            $factory->addConfiguration(
-                $transportChildren->arrayNode($factory->getName())
-            );
-        }
+        $transportNode = $rootNode->children()->arrayNode('transport');
+        (new TransportFactory('default'))->addConfiguration($transportNode);
 
         $rootNode->children()
-            ->arrayNode('client')->children()
-                ->scalarNode('prefix')->defaultValue('enqueue')->end()
-                ->scalarNode('app_name')->defaultValue('app')->end()
-                ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
-                ->scalarNode('router_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
-                ->scalarNode('default_processor_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
-                ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
-            ->end()->end()
+            ->arrayNode('client')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('prefix')->defaultValue('enqueue')->end()
+                    ->scalarNode('app_name')->defaultValue('app')->end()
+                    ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                    ->scalarNode('router_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                    ->scalarNode('default_processor_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                    ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
+                ->end()
+            ->end()
             ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                 ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
             ->end()->end()

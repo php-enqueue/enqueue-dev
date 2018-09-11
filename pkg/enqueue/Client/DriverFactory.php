@@ -2,11 +2,11 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Client\Amqp\RabbitMqDriver;
+use Enqueue\Client\Driver\RabbitMqDriver;
+use Enqueue\Client\Driver\RabbitMqStompDriver;
+use Enqueue\Client\Driver\StompManagementClient;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dsn\Dsn;
-use Enqueue\Stomp\Client\ManagementClient;
-use Enqueue\Stomp\Client\RabbitMqStompDriver;
 use Enqueue\Stomp\StompConnectionFactory;
 use Interop\Amqp\AmqpConnectionFactory;
 use Interop\Queue\PsrConnectionFactory;
@@ -55,25 +55,13 @@ final class DriverFactory implements DriverFactoryInterface
                     ));
                 }
 
-                if (isset($config['rabbitmq_management_dsn'])) {
-                    $managementDsn = new Dsn($config['rabbitmq_management_dsn']);
-
-                    $managementClient = ManagementClient::create(
-                        ltrim($managementDsn->getPath(), '/'),
-                        $managementDsn->getHost(),
-                        $managementDsn->getPort(),
-                        $managementDsn->getUser(),
-                        $managementDsn->getPassword()
-                    );
-                } else {
-                    $managementClient = ManagementClient::create(
-                        ltrim($dsn->getPath(), '/'),
-                        $dsn->getHost(),
-                        isset($config['management_plugin_port']) ? $config['management_plugin_port'] : 15672,
-                        $dsn->getUser(),
-                        $dsn->getPassword()
-                    );
-                }
+                $managementClient = StompManagementClient::create(
+                    ltrim($dsn->getPath(), '/'),
+                    $dsn->getHost(),
+                    isset($config['management_plugin_port']) ? $config['management_plugin_port'] : 15672,
+                    $dsn->getUser(),
+                    $dsn->getPassword()
+                );
 
                 return new RabbitMqStompDriver($factory->createContext(), $this->config, $this->queueMetaRegistry, $managementClient);
             }
@@ -86,7 +74,7 @@ final class DriverFactory implements DriverFactoryInterface
             throw new \LogicException(sprintf(
                 'To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.',
                 $dsn->getScheme(),
-                $knownDrivers[$driverClass]['package']
+                implode(' ', $knownDrivers[$driverClass]['packages'])
             ));
         }
 
@@ -100,23 +88,34 @@ final class DriverFactory implements DriverFactoryInterface
     private function findDriverClass(Dsn $dsn, array $factories): ?string
     {
         $protocol = $dsn->getSchemeProtocol();
+
+        if ($dsn->getSchemeExtensions()) {
+            foreach ($factories as $driverClass => $info) {
+                if (empty($info['requiredSchemeExtensions'])) {
+                    continue;
+                }
+
+                if (false == in_array($protocol, $info['schemes'], true)) {
+                    continue;
+                }
+
+                $diff = array_diff($dsn->getSchemeExtensions(), $info['requiredSchemeExtensions']);
+                if (empty($diff)) {
+                    return $driverClass;
+                }
+            }
+        }
+
         foreach ($factories as $driverClass => $info) {
+            if (false == empty($info['requiredSchemeExtensions'])) {
+                continue;
+            }
+
             if (false == in_array($protocol, $info['schemes'], true)) {
                 continue;
             }
 
-            if (false == $dsn->getSchemeExtensions()) {
-                return $driverClass;
-            }
-
-            if (empty($info['requiredSchemeExtensions'])) {
-                continue;
-            }
-
-            $diff = array_diff($dsn->getSchemeExtensions(), $info['requiredSchemeExtensions']);
-            if (empty($diff)) {
-                return $driverClass;
-            }
+            return $driverClass;
         }
 
         return null;
