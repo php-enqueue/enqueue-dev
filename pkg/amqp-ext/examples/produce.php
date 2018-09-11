@@ -20,15 +20,7 @@ use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 
-$config = [
-    'host' => getenv('RABBITMQ_HOST'),
-    'port' => getenv('RABBITMQ_AMQP__PORT'),
-    'user' => getenv('RABBITMQ_USER'),
-    'pass' => getenv('RABBITMQ_PASSWORD'),
-    'vhost' => getenv('RABBITMQ_VHOST'),
-];
-
-$factory = new AmqpConnectionFactory($config);
+$factory = new AmqpConnectionFactory(getenv('RABBITMQ_AMQP_DSN'));
 $context = $factory->createContext();
 
 $topic = $context->createTopic('test.amqp.ext');

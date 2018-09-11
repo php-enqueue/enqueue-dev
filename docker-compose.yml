@@ -19,7 +19,7 @@ services:
       - './:/mqdev'
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
-      - RABITMQ_AMQP_DSN=amqp+rabbitmq://guest:guest@rabbitmq:5672/mqdev
+      - RABBITMQ_AMQP_DSN=amqp+rabbitmq://guest:guest@rabbitmq:5672/mqdev
       - AMQPS_DSN=amqps://guest:guest@rabbitmqssl:5671
       - STOMP_DSN=stomp://guest:guest@rabbitmq:61613/mqdev
       - RABITMQ_STOMP_DSN=stomp+rabbitmq://guest:guest@rabbitmq:61613/mqdev
@@ -30,12 +30,6 @@ services:
       - PHPREDIS_DSN=redis+phpredis://redis
       - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
       - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4576&version=latest
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_USER=guest
-      - RABBITMQ_PASSWORD=guest
-      - RABBITMQ_VHOST=mqdev
-      - RABBITMQ_AMQP__PORT=5672
-      - RABBITMQ_STOMP_PORT=61613
       - DOCTRINE_DRIVER=pdo_mysql
       - DOCTRINE_HOST=mysql
       - DOCTRINE_PORT=3306

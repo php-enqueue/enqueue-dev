@@ -7,10 +7,7 @@ use Enqueue\Sqs\SqsContext;
 
 trait SqsExtension
 {
-    /**
-     * @return SqsContext
-     */
-    private function buildSqsContext()
+    private function buildSqsContext(): SqsContext
     {
         if (false == getenv('AWS_SQS_ENDPOINT') && false == getenv('AWS_SQS_KEY')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
