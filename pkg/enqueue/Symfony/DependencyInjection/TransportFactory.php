@@ -43,6 +43,10 @@ final class TransportFactory
                             throw new \LogicException('Both options factory_class and factory_service are set. Please choose one.');
                         }
 
+                        if (isset($v['connection_factory_class']) && (isset($v['factory_class']) || isset($v['factory_service']))) {
+                            throw new \LogicException('The option connection_factory_class must not be used with factory_class or factory_service at the same time. Please choose one.');
+                        }
+
                         return $v;
                     }
 
@@ -56,6 +60,7 @@ final class TransportFactory
         ->ignoreExtraKeys(false)
         ->children()
             ->scalarNode('dsn')->cannotBeEmpty()->isRequired()->end()
+            ->scalarNode('connection_factory_class')->end()
             ->scalarNode('factory_service')->end()
             ->scalarNode('factory_class')->end()
         ->end()
@@ -79,10 +84,19 @@ final class TransportFactory
 
         unset($config['factory_service'], $config['factory_class']);
 
-        $container->register($factoryId, PsrConnectionFactory::class)
-            ->setFactory([$factoryFactoryService, 'create'])
-            ->addArgument($config)
-        ;
+        if (array_key_exists('connection_factory_class', $config)) {
+            $connectionFactoryClass = $config['connection_factory_class'];
+            unset($config['connection_factory_class']);
+
+            $container->register($factoryId, $connectionFactoryClass)
+                ->addArgument($config)
+            ;
+        } else {
+            $container->register($factoryId, PsrConnectionFactory::class)
+                ->setFactory([$factoryFactoryService, 'create'])
+                ->addArgument($config)
+            ;
+        }
 
         $container->setAlias('enqueue.transport.connection_factory', new Alias($factoryId, true));
 
