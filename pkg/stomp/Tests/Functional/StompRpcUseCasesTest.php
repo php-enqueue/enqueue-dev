@@ -47,11 +47,11 @@ class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
         $message = $this->stompContext->createMessage();
         $message->setReplyTo($replyQueue->getQueueName());
 
-        $promise = $rpcClient->callAsync($queue, $message, 10);
+        $promise = $rpcClient->callAsync($queue, $message, 200);
         $this->assertInstanceOf(Promise::class, $promise);
 
         $consumer = $this->stompContext->createConsumer($queue);
-        $message = $consumer->receive(1);
+        $message = $consumer->receive(100);
         $this->assertInstanceOf(StompMessage::class, $message);
         $this->assertNotNull($message->getReplyTo());
         $this->assertNotNull($message->getCorrelationId());
@@ -77,11 +77,11 @@ class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
 
         $message = $this->stompContext->createMessage();
 
-        $promise = $rpcClient->callAsync($queue, $message, 10);
+        $promise = $rpcClient->callAsync($queue, $message, 200);
         $this->assertInstanceOf(Promise::class, $promise);
 
         $consumer = $this->stompContext->createConsumer($queue);
-        $receivedMessage = $consumer->receive(1);
+        $receivedMessage = $consumer->receive(100);
 
         $this->assertInstanceOf(StompMessage::class, $receivedMessage);
         $this->assertNotNull($receivedMessage->getReplyTo());

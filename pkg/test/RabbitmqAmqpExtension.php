@@ -12,7 +12,7 @@ trait RabbitmqAmqpExtension
      */
     private function buildAmqpContext()
     {
-        if (false == $dsn = getenv('RABBITMQ_AMQP_DSN')) {
+        if (false == $dsn = getenv('AMQP_DSN')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
