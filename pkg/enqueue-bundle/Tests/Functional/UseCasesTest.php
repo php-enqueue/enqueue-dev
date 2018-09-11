@@ -124,7 +124,10 @@ class UseCasesTest extends WebTestCase
         ]];
 
 //        yield 'gps' => [[
-//            'transport' => getenv('GPS_DSN'),
+//            'transport' => [
+//                'dsn' => getenv('GPS_DSN'),
+//                'emulatorHost' => 'http://google-pubsub:8085'
+//            ],
 //        ]];
     }
 
@@ -141,7 +144,7 @@ class UseCasesTest extends WebTestCase
 
         $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
 
-        $message = $consumer->receive(1000);
+        $message = $consumer->receive(100);
         $this->assertInstanceOf(PsrMessage::class, $message);
         $consumer->acknowledge($message);
 
@@ -186,7 +189,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
-            '--time-limit' => 'now +10 seconds',
+            '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
 
@@ -211,7 +214,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
-            '--time-limit' => 'now +10 seconds',
+            '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
 
@@ -243,7 +246,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 1,
-            '--time-limit' => '+10sec',
+            '--time-limit' => '+2sec',
             '--receive-timeout' => 1000,
             '--queue' => [$this->getTestQueue()->getQueueName()],
             'processor-service' => 'test.message.processor',
