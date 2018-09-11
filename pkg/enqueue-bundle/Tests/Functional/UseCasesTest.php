@@ -121,7 +121,6 @@ class UseCasesTest extends WebTestCase
 //        yield 'gps' => [[
 //            'transport' => [
 //                'dsn' => getenv('GPS_DSN'),
-//                'emulatorHost' => 'http://google-pubsub:8085'
 //            ],
 //        ]];
     }

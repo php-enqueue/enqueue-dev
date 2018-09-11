@@ -28,7 +28,7 @@ services:
       - MYSQL_DSN=mysql://root:rootpass@mysql/mqdev
       - PREDIS_DSN=redis+predis://redis
       - PHPREDIS_DSN=redis+phpredis://redis
-      - GPS_DSN=gps:?projectId=mqdev
+      - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
       - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4576&version=latest
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
