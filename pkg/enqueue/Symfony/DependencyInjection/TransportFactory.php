@@ -3,6 +3,8 @@
 namespace Enqueue\Symfony\DependencyInjection;
 
 use Enqueue\Client\DriverInterface;
+use Enqueue\ConnectionFactoryFactoryInterface;
+use Enqueue\Resources;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -31,7 +33,11 @@ final class TransportFactory
 
     public function addConfiguration(ArrayNodeDefinition $builder): void
     {
+        $knownSchemes = array_keys(Resources::getKnownSchemes());
+        $availableSchemes = array_keys(Resources::getAvailableSchemes());
+
         $builder
+            ->info('The transport option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at connection factory constructor docblock.')
             ->beforeNormalization()
                 ->always(function ($v) {
                     if (empty($v)) {
@@ -59,10 +65,24 @@ final class TransportFactory
         ->end()
         ->ignoreExtraKeys(false)
         ->children()
-            ->scalarNode('dsn')->cannotBeEmpty()->isRequired()->end()
-            ->scalarNode('connection_factory_class')->end()
-            ->scalarNode('factory_service')->end()
-            ->scalarNode('factory_class')->end()
+            ->scalarNode('dsn')
+                ->cannotBeEmpty()
+                ->isRequired()
+                ->info(sprintf(
+                    'The MQ broker DSN. These schemes are supported: "%s", to use these "%s" you have to install a package.',
+                    implode('", "', $knownSchemes),
+                    implode('", "', $availableSchemes)
+                ))
+            ->end()
+            ->scalarNode('connection_factory_class')
+                ->info(sprintf('The connection factory class should implement "%s" interface', PsrConnectionFactory::class))
+            ->end()
+            ->scalarNode('factory_service')
+                ->info(sprintf('The factory class should implement "%s" interface', ConnectionFactoryFactoryInterface::class))
+            ->end()
+            ->scalarNode('factory_class')
+                ->info(sprintf('The factory service should be a class that implements "%s" interface', ConnectionFactoryFactoryInterface::class))
+            ->end()
         ->end()
         ;
     }
