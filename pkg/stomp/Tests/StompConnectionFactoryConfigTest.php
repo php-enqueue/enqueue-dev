@@ -136,6 +136,22 @@ class StompConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
+            ['dsn' => 'stomp:///%2f'],
+            [
+                'host' => 'localhost',
+                'port' => 61613,
+                'login' => 'guest',
+                'password' => 'guest',
+                'vhost' => '/',
+                'buffer_size' => 1000,
+                'connection_timeout' => 1,
+                'sync' => false,
+                'lazy' => true,
+                'ssl_on' => false,
+            ],
+        ];
+
+        yield [
             ['host' => 'localhost', 'port' => 1234, 'foo' => 'bar'],
             [
                 'host' => 'localhost',
