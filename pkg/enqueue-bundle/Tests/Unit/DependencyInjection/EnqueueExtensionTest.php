@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildTransportFactoriesPass;
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
 use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
@@ -84,15 +85,20 @@ class EnqueueExtensionTest extends TestCase
     public function testShouldEnabledNullTransportAndSetItAsDefault()
     {
         $container = $this->getContainerBuilder(true);
+        $pass = new BuildTransportFactoriesPass();
 
         $extension = new EnqueueExtension();
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'null',
                 'null' => true,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasAlias('enqueue.transport.default.context'));
         self::assertEquals('enqueue.transport.null.context', (string) $container->getAlias('enqueue.transport.default.context'));
@@ -107,13 +113,17 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'null',
                 'null' => true,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertEquals(
             'enqueue.transport.default.context',
@@ -131,13 +141,17 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'foo',
                 'foo' => ['foo_param' => 'aParam'],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition('foo.connection_factory'));
         self::assertTrue($container->hasDefinition('foo.context'));
@@ -154,13 +168,17 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'foo',
                 'foo' => ['foo_param' => 'aParam'],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertEquals(
             'enqueue.transport.default.context',
@@ -178,7 +196,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'client' => null,
             'transport' => [
@@ -188,6 +206,10 @@ class EnqueueExtensionTest extends TestCase
                 ],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition('foo.driver'));
         self::assertTrue($container->hasDefinition('enqueue.client.config'));
@@ -201,7 +223,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new TransportFactoryWithoutDriverFactory());
-
+        
         $extension->load([[
             'client' => null,
             'transport' => [
@@ -209,6 +231,10 @@ class EnqueueExtensionTest extends TestCase
                 'without_driver' => [],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition('without_driver.context'));
         self::assertTrue($container->hasDefinition('without_driver.connection_factory'));
@@ -221,7 +247,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'client' => null,
             'transport' => [
@@ -231,6 +257,10 @@ class EnqueueExtensionTest extends TestCase
                 ],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $producer = $container->getDefinition(Producer::class);
         self::assertEquals(Producer::class, $producer->getClass());
@@ -242,7 +272,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'client' => [
                 'traceable_producer' => false,
@@ -254,6 +284,10 @@ class EnqueueExtensionTest extends TestCase
                 ],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $producer = $container->getDefinition(Producer::class);
         self::assertEquals(Producer::class, $producer->getClass());
@@ -265,7 +299,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'foo',
@@ -275,6 +309,10 @@ class EnqueueExtensionTest extends TestCase
             ],
             'client' => null,
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $producer = $container->getDefinition(TraceableProducer::class);
         self::assertEquals(TraceableProducer::class, $producer->getClass());
@@ -303,7 +341,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'foo',
@@ -312,6 +350,10 @@ class EnqueueExtensionTest extends TestCase
                 ],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $this->assertFalse($container->hasDefinition(TraceableProducer::class));
     }
@@ -322,7 +364,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'client' => [
                 'traceable_producer' => true,
@@ -334,6 +376,10 @@ class EnqueueExtensionTest extends TestCase
                 ],
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $producer = $container->getDefinition(TraceableProducer::class);
         self::assertEquals(TraceableProducer::class, $producer->getClass());
@@ -362,7 +408,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'foo',
@@ -374,6 +420,10 @@ class EnqueueExtensionTest extends TestCase
                 'redelivered_delay_time' => 12345,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $extension = $container->getDefinition('enqueue.client.delay_redelivered_message_extension');
 
@@ -386,7 +436,7 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->addTransportFactory(new FooTransportFactory());
-
+        
         $extension->load([[
             'transport' => [
                 'default' => 'foo',
@@ -398,6 +448,10 @@ class EnqueueExtensionTest extends TestCase
                 'redelivered_delay_time' => 0,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $this->assertFalse($container->hasDefinition('enqueue.client.delay_redelivered_message_extension'));
     }
@@ -407,11 +461,15 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-
+        
         $extension->load([[
             'transport' => [],
             'job' => true,
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition(JobRunner::class));
     }
@@ -421,11 +479,15 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-
+        
         $extension->load([[
             'transport' => [],
             'job' => false,
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertFalse($container->hasDefinition(JobRunner::class));
     }
@@ -451,6 +513,10 @@ class EnqueueExtensionTest extends TestCase
                 'doctrine_ping_connection_extension' => true,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition('enqueue.consumption.doctrine_ping_connection_extension'));
     }
@@ -467,6 +533,10 @@ class EnqueueExtensionTest extends TestCase
                 'doctrine_ping_connection_extension' => false,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertFalse($container->hasDefinition('enqueue.consumption.doctrine_ping_connection_extension'));
     }
@@ -483,6 +553,10 @@ class EnqueueExtensionTest extends TestCase
                 'doctrine_clear_identity_map_extension' => true,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition('enqueue.consumption.doctrine_clear_identity_map_extension'));
     }
@@ -499,6 +573,10 @@ class EnqueueExtensionTest extends TestCase
                 'doctrine_clear_identity_map_extension' => false,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertFalse($container->hasDefinition('enqueue.consumption.doctrine_clear_identity_map_extension'));
     }
@@ -515,6 +593,10 @@ class EnqueueExtensionTest extends TestCase
                 'signal_extension' => true,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition('enqueue.consumption.signal_extension'));
     }
@@ -531,6 +613,10 @@ class EnqueueExtensionTest extends TestCase
                 'signal_extension' => false,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertFalse($container->hasDefinition('enqueue.consumption.signal_extension'));
     }
@@ -547,6 +633,10 @@ class EnqueueExtensionTest extends TestCase
                 'reply_extension' => true,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertTrue($container->hasDefinition('enqueue.consumption.reply_extension'));
     }
@@ -563,6 +653,10 @@ class EnqueueExtensionTest extends TestCase
                 'reply_extension' => false,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         self::assertFalse($container->hasDefinition('enqueue.consumption.reply_extension'));
     }
@@ -609,6 +703,10 @@ class EnqueueExtensionTest extends TestCase
                 'receive_timeout' => 456,
             ],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $def = $container->getDefinition(QueueConsumer::class);
         $this->assertSame(123, $def->getArgument(2));
@@ -648,6 +746,10 @@ class EnqueueExtensionTest extends TestCase
             'client' => [],
             'transport' => [],
         ]], $container);
+        $container->registerExtension($extension);
+        
+        $pass = new BuildTransportFactoriesPass();
+        $pass->process($container);
 
         $autoconfigured = $container->getAutoconfiguredInstanceof();
 

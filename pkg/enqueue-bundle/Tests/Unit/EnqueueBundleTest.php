@@ -4,6 +4,7 @@ namespace Enqueue\Bundle\Tests\Unit;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildTransportFactoriesPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildExclusiveCommandsExtensionPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
@@ -47,40 +48,45 @@ class EnqueueBundleTest extends TestCase
         $container
             ->expects($this->at(0))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildConsumptionExtensionsPass::class))
+            ->with($this->isInstanceOf(BuildTransportFactoriesPass::class))
         ;
         $container
             ->expects($this->at(1))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildClientRoutingPass::class))
+            ->with($this->isInstanceOf(BuildConsumptionExtensionsPass::class))
         ;
         $container
             ->expects($this->at(2))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildProcessorRegistryPass::class))
+            ->with($this->isInstanceOf(BuildClientRoutingPass::class))
         ;
         $container
             ->expects($this->at(3))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildTopicMetaSubscribersPass::class))
+            ->with($this->isInstanceOf(BuildProcessorRegistryPass::class))
         ;
         $container
             ->expects($this->at(4))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildQueueMetaRegistryPass::class))
+            ->with($this->isInstanceOf(BuildTopicMetaSubscribersPass::class))
         ;
         $container
             ->expects($this->at(5))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildClientExtensionsPass::class))
+            ->with($this->isInstanceOf(BuildQueueMetaRegistryPass::class))
         ;
         $container
             ->expects($this->at(6))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildExclusiveCommandsExtensionPass::class))
+            ->with($this->isInstanceOf(BuildClientExtensionsPass::class))
         ;
         $container
             ->expects($this->at(7))
+            ->method('addCompilerPass')
+            ->with($this->isInstanceOf(BuildExclusiveCommandsExtensionPass::class))
+        ;
+        $container
+            ->expects($this->at(8))
             ->method('getExtension')
             ->willReturn($extensionMock)
         ;
