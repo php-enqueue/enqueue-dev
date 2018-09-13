@@ -21,7 +21,7 @@ while getopts "bustefcdp" OPTION; do
       ./bin/php-cs-fixer fix
       ;;
     c)
-      docker-compose run -e CHANGELOG_GITHUB_TOKEN=${CHANGELOG_GITHUB_TOKEN:-""} --workdir="/mqdev" --rm generate-changelog github_changelog_generator --release-branch="$CURRENT_BRANCH" --future-release "$2" --simple-list
+      docker-compose run -e CHANGELOG_GITHUB_TOKEN=${CHANGELOG_GITHUB_TOKEN:-""} --workdir="/mqdev" --rm generate-changelog github_changelog_generator --release-branch="$3" --future-release "$2" --simple-list
       ;;
 
     d) docker-compose run --workdir="/mqdev" --rm dev php pkg/enqueue-bundle/Tests/Functional/app/console.php config:dump-reference enqueue -vvv
