@@ -8,11 +8,11 @@ then
     exit 1
 fi
 
-./bin/dev -c $1 && git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin master
+CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+./bin/dev -c $1 "$CURRENT_BRANCH" && git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin "$CURRENT_BRANCH"
 
 ./bin/subtree-split
-
-CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 for REMOTE in origin stomp amqp-ext amqp-lib amqp-bunny amqp-tools pheanstalk gearman sqs gps fs redis dbal null rdkafka enqueue simple-client enqueue-bundle job-queue test async-event-dispatcher mongodb
 do
@@ -28,8 +28,8 @@ do
 
     (
         cd $TMP_DIR;
-        git clone $REMOTE_URL . --depth=200
-        git checkout $CURRENT_BRANCH;
+        git clone $REMOTE_URL .
+        git checkout "$CURRENT_BRANCH";
         # gsort comes with coreutils packages. brew install coreutils
         LAST_RELEASE=$(git tag -l [0-9].* | gsort -V | tail -n1 )
         if [[ -z "$LAST_RELEASE" ]]; then
