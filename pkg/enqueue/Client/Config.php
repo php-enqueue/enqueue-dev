@@ -46,16 +46,7 @@ class Config
      */
     private $transportConfig;
 
-    /**
-     * @param string $prefix
-     * @param string $appName
-     * @param string $routerTopicName
-     * @param string $routerQueueName
-     * @param string $defaultProcessorQueueName
-     * @param string $routerProcessorName
-     * @param array  $transportConfig
-     */
-    public function __construct($prefix, $appName, $routerTopicName, $routerQueueName, $defaultProcessorQueueName, $routerProcessorName, array $transportConfig = [])
+    public function __construct(string $prefix, string $appName, string $routerTopicName, string $routerQueueName, string $defaultProcessorQueueName, string $routerProcessorName, array $transportConfig = [])
     {
         $this->prefix = $prefix;
         $this->appName = $appName;
@@ -66,89 +57,60 @@ class Config
         $this->transportConfig = $transportConfig;
     }
 
-    /**
-     * @return string
-     */
-    public function getRouterTopicName()
+    public function getPrefix(): string
+    {
+        return $this->prefix;
+    }
+
+    public function getAppName(): string
+    {
+        return $this->appName;
+    }
+
+    public function getRouterTopicName(): string
     {
         return $this->routerTopicName;
     }
 
-    /**
-     * @return string
-     */
-    public function getRouterQueueName()
+    public function getRouterQueueName(): string
     {
         return $this->routerQueueName;
     }
 
-    /**
-     * @return string
-     */
-    public function getDefaultProcessorQueueName()
+    public function getDefaultProcessorQueueName(): string
     {
         return $this->defaultProcessorQueueName;
     }
 
-    /**
-     * @return string
-     */
-    public function getRouterProcessorName()
+    public function getRouterProcessorName(): string
     {
         return $this->routerProcessorName;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    public function createTransportRouterTopicName($name)
+    public function createTransportRouterTopicName(string $name): string
     {
         return strtolower(implode('.', array_filter([trim($this->prefix), trim($name)])));
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    public function createTransportQueueName($name)
+    public function createTransportQueueName(string $name): string
     {
         return strtolower(implode('.', array_filter([trim($this->prefix), trim($this->appName), trim($name)])));
     }
 
-    /**
-     * @param string     $name
-     * @param mixed|null $default
-     *
-     * @return array
-     */
-    public function getTransportOption($name, $default = null)
+    public function getTransportOption(string $name, $default = null)
     {
         return array_key_exists($name, $this->transportConfig) ? $this->transportConfig[$name] : $default;
     }
 
-    /**
-     * @param string|null $prefix
-     * @param string|null $appName
-     * @param string|null $routerTopicName
-     * @param string|null $routerQueueName
-     * @param string|null $defaultProcessorQueueName
-     * @param string|null $routerProcessorName
-     * @param array       $transportConfig
-     *
-     * @return static
-     */
     public static function create(
-        $prefix = null,
-        $appName = null,
-        $routerTopicName = null,
-        $routerQueueName = null,
-        $defaultProcessorQueueName = null,
-        $routerProcessorName = null,
+        string $prefix = null,
+        string $appName = null,
+        string $routerTopicName = null,
+        string $routerQueueName = null,
+        string $defaultProcessorQueueName = null,
+        string $routerProcessorName = null,
         array $transportConfig = []
-    ) {
+    ): self {
         return new static(
             $prefix ?: '',
             $appName ?: '',

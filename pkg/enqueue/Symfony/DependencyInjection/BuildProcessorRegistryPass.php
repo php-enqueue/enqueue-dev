@@ -31,13 +31,13 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
 
         $routeCollectionId = sprintf('enqueue.client.%s.route_collection', $this->name);
         if (false == $container->hasDefinition($routeCollectionId)) {
-            throw new \LogicException(sprintf('The required route collection "%s" is not registered. Make sure the client with name "%s" was loaded.', $routeCollectionId, $this->name));
+            return;
         }
 
         $routeCollection = RouteCollection::fromArray($container->getDefinition($routeCollectionId)->getArgument(0));
 
         $map = [];
-        foreach ($routeCollection->allRoutes() as $route) {
+        foreach ($routeCollection->all() as $route) {
             if (false == $processorServiceId = $route->getOption('processor_service_id')) {
                 throw new \LogicException('The route option "processor_service_id" is required');
             }

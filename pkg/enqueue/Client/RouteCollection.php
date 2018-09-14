@@ -37,7 +37,7 @@ class RouteCollection
     /**
      * @return Route[]
      */
-    public function allRoutes(): array
+    public function all(): array
     {
         return $this->routes;
     }
@@ -45,7 +45,7 @@ class RouteCollection
     /**
      * @return Route[]
      */
-    public function commandRoute(string $command): ?Route
+    public function command(string $command): ?Route
     {
         if (null === $this->commandRoutes) {
             $commandRoutes = [];
@@ -64,7 +64,7 @@ class RouteCollection
     /**
      * @return Route[]
      */
-    public function topicRoutes(string $topic): array
+    public function topic(string $topic): array
     {
         if (null === $this->topicRoutes) {
             $topicRoutes = [];
@@ -78,6 +78,18 @@ class RouteCollection
         }
 
         return array_key_exists($topic, $this->topicRoutes) ? $this->topicRoutes[$topic] : [];
+    }
+
+    public function topicAndProcessor(string $topic, string $processor): ?Route
+    {
+        $routes = $this->topic($topic);
+        foreach ($routes as $route) {
+            if ($route->getProcessor() === $processor) {
+                return $route;
+            }
+        }
+
+        return null;
     }
 
     public function toArray(): array

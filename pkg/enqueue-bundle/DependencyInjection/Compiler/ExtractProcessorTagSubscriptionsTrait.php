@@ -3,7 +3,6 @@
 namespace Enqueue\Bundle\DependencyInjection\Compiler;
 
 use Enqueue\Client\CommandSubscriberInterface;
-use Enqueue\Client\Config;
 use Enqueue\Client\TopicSubscriberInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
@@ -31,47 +30,45 @@ trait ExtractProcessorTagSubscriptionsTrait
             }
         };
 
-        $processorClass = $container->getDefinition($processorServiceId)->getClass();
-        if (false == class_exists($processorClass)) {
-            throw new \LogicException(sprintf('The class "%s" could not be found.', $processorClass));
+        $processorDefinition = $container->getDefinition($processorServiceId);
+        $processorClass = $processorDefinition->getClass();
+        if (false == $processorDefinition->getFactory() && false == class_exists($processorClass)) {
+            throw new \LogicException(sprintf('The processor class "%s" could not be found.', $processorClass));
         }
 
         $defaultQueueName = $resolve($container->getParameter('enqueue.client.default_queue_name'));
-        $subscriptionPrototype = [
-            'topicName' => null,
-            'queueName' => null,
-            'queueNameHardcoded' => false,
-            'processorName' => null,
-            'exclusive' => false,
-        ];
 
         $data = [];
-        if (is_subclass_of($processorClass, CommandSubscriberInterface::class)) {
+        if ($processorClass && is_subclass_of($processorClass, CommandSubscriberInterface::class)) {
             /** @var CommandSubscriberInterface $processorClass */
             $params = $processorClass::getSubscribedCommand();
             if (is_string($params)) {
                 if (empty($params)) {
-                    throw new \LogicException('The processor name (it is also the command name) must not be empty.');
+                    throw new \LogicException('The command name must not be empty.');
                 }
 
                 $data[] = [
-                    'topicName' => Config::COMMAND_TOPIC,
+                    'commandName' => $params,
                     'queueName' => $defaultQueueName,
                     'queueNameHardcoded' => false,
-                    'processorName' => $params,
+                    'processorName' => $processorServiceId,
+                    'exclusive' => false,
                 ];
             } elseif (is_array($params)) {
-                $params = array_replace($subscriptionPrototype, $params);
-                if (false == $processorName = $resolve($params['processorName'])) {
-                    throw new \LogicException('The processor name (it is also the command name) must not be empty.');
+                if (empty($params['commandName'])) {
+                    throw new \LogicException('The commandName must be set.');
+                }
+
+                if (false == $commandName = $resolve($params['commandName'])) {
+                    throw new \LogicException('The commandName must not be empty.');
                 }
 
                 $data[] = [
-                    'topicName' => Config::COMMAND_TOPIC,
-                    'queueName' => $resolve($params['queueName']) ?: $defaultQueueName,
-                    'queueNameHardcoded' => $resolve($params['queueNameHardcoded']),
-                    'processorName' => $processorName,
-                    'exclusive' => array_key_exists('exclusive', $params) ? $params['exclusive'] : false,
+                    'commandName' => $commandName,
+                    'queueName' => $resolve($params['queueName'] ?? $defaultQueueName),
+                    'queueNameHardcoded' => $params['queueNameHardcoded'] ?? false,
+                    'processorName' => $params['processorName'] ?? $commandName,
+                    'exclusive' => $params['exclusive'] ?? false,
                 ];
             } else {
                 throw new \LogicException(sprintf(
@@ -81,7 +78,7 @@ trait ExtractProcessorTagSubscriptionsTrait
             }
         }
 
-        if (is_subclass_of($processorClass, TopicSubscriberInterface::class)) {
+        if ($processorClass && is_subclass_of($processorClass, TopicSubscriberInterface::class)) {
             /** @var TopicSubscriberInterface $processorClass */
             $topics = $processorClass::getSubscribedTopics();
             if (!is_array($topics)) {
@@ -99,15 +96,15 @@ trait ExtractProcessorTagSubscriptionsTrait
                         'queueName' => $defaultQueueName,
                         'queueNameHardcoded' => false,
                         'processorName' => $processorServiceId,
+                        'exclusive' => false,
                     ];
                 } elseif (is_array($params)) {
-                    $params = array_replace($subscriptionPrototype, $params);
-
                     $data[] = [
                         'topicName' => $topicName,
-                        'queueName' => $resolve($params['queueName']) ?: $defaultQueueName,
-                        'queueNameHardcoded' => $resolve($params['queueNameHardcoded']),
+                        'queueName' => $resolve($params['queueName'] ?? $defaultQueueName),
+                        'queueNameHardcoded' => $params['queueNameHardcoded'] ?? false,
                         'processorName' => $resolve($params['processorName']) ?: $processorServiceId,
+                        'exclusive' => false,
                     ];
                 } else {
                     throw new \LogicException(sprintf(
@@ -120,24 +117,37 @@ trait ExtractProcessorTagSubscriptionsTrait
         }
 
         if (false == (
+            $processorClass ||
             is_subclass_of($processorClass, CommandSubscriberInterface::class) ||
             is_subclass_of($processorClass, TopicSubscriberInterface::class)
         )) {
             foreach ($tagAttributes as $tagAttribute) {
-                $tagAttribute = array_replace($subscriptionPrototype, $tagAttribute);
-
-                if (false == $tagAttribute['topicName']) {
-                    throw new \LogicException(sprintf('Topic name is not set on message processor tag but it is required. Service %s', $processorServiceId));
+                if (empty($tagAttribute['commandName']) && empty($tagAttribute['topicName'])) {
+                    throw new \LogicException('Either commandName or topicName attribute must be set');
                 }
 
-                $data[] = [
-                    'topicName' => $resolve($tagAttribute['topicName']),
-                    'queueName' => $resolve($tagAttribute['queueName']) ?: $defaultQueueName,
-                    'queueNameHardcoded' => $resolve($tagAttribute['queueNameHardcoded']),
-                    'processorName' => $resolve($tagAttribute['processorName']) ?: $processorServiceId,
-                    'exclusive' => Config::COMMAND_TOPIC == $resolve($tagAttribute['topicName']) &&
-                        array_key_exists('exclusive', $tagAttribute) ? $tagAttribute['exclusive'] : false,
-                ];
+                $topicName = $tagAttribute['topicName'] ?? null;
+                $commandName = $tagAttribute['commandName'] ?? null;
+
+                if ($topicName) {
+                    $data[] = [
+                        'topicName' => $resolve($tagAttribute['topicName']),
+                        'queueName' => $resolve($tagAttribute['queueName'] ?? $defaultQueueName),
+                        'queueNameHardcoded' => $tagAttribute['queueNameHardcoded'],
+                        'processorName' => $resolve($tagAttribute['processorName'] ?? $processorServiceId),
+                        'exclusive' => false,
+                    ];
+                }
+
+                if ($commandName) {
+                    $data[] = [
+                        'commandName' => $resolve($tagAttribute['commandName']),
+                        'queueName' => $resolve($tagAttribute['queueName'] ?? $defaultQueueName),
+                        'queueNameHardcoded' => $tagAttribute['queueNameHardcoded'],
+                        'processorName' => $resolve($tagAttribute['processorName'] ?? $processorServiceId),
+                        'exclusive' => $tagAttribute['exclusive'] ?? false,
+                    ];
+                }
             }
         }
 
