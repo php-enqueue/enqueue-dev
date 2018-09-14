@@ -10,6 +10,7 @@ use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -59,11 +60,9 @@ class RabbitMqStompDriver extends StompDriver
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $transportMessage = parent::createTransportMessage($message);
 
@@ -92,10 +91,8 @@ class RabbitMqStompDriver extends StompDriver
 
     /**
      * @param StompMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = parent::createClientMessage($message);
 
@@ -134,10 +131,7 @@ class RabbitMqStompDriver extends StompDriver
         return $clientMessage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -158,9 +152,9 @@ class RabbitMqStompDriver extends StompDriver
     }
 
     /**
-     * {@inheritdoc}
+     * @return StompDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $queue = parent::createQueue($queueName);
         $queue->setHeader('x-max-priority', 4);
@@ -168,10 +162,7 @@ class RabbitMqStompDriver extends StompDriver
         return $queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
@@ -244,12 +235,7 @@ class RabbitMqStompDriver extends StompDriver
         }
     }
 
-    /**
-     * @param StompDestination $queue
-     *
-     * @return StompDestination
-     */
-    private function createDelayedTopic(StompDestination $queue)
+    private function createDelayedTopic(StompDestination $queue): StompDestination
     {
         // in order to use delay feature make sure the rabbitmq_delayed_message_exchange plugin is installed.
         $destination = $this->context->createTopic($queue->getStompName().'.delayed');

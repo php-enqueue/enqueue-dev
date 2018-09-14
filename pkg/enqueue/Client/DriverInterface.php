@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Client;
 
 use Interop\Queue\PsrMessage;
@@ -8,46 +10,21 @@ use Psr\Log\LoggerInterface;
 
 interface DriverInterface
 {
-    /**
-     * @param Message $message
-     *
-     * @return PsrMessage
-     */
-    public function createTransportMessage(Message $message);
+    public function createTransportMessage(Message $message): PsrMessage;
+
+    public function createClientMessage(PsrMessage $message): Message;
+
+    public function sendToRouter(Message $message): void;
+
+    public function sendToProcessor(Message $message): void;
+
+    public function createQueue(string $queueName): PsrQueue;
 
     /**
-     * @param PsrMessage $message
-     *
-     * @return Message
+     * Prepare broker for work.
+     * Creates all required queues, exchanges, topics, bindings etc.
      */
-    public function createClientMessage(PsrMessage $message);
+    public function setupBroker(LoggerInterface $logger = null): void;
 
-    /**
-     * @param Message $message
-     */
-    public function sendToRouter(Message $message);
-
-    /**
-     * @param Message $message
-     */
-    public function sendToProcessor(Message $message);
-
-    /**
-     * @param string $queueName
-     *
-     * @return PsrQueue
-     */
-    public function createQueue($queueName);
-
-    /**
-     * Creates all required queues, exchanges, topics, bindings on broker side.
-     *
-     * @param LoggerInterface $logger
-     */
-    public function setupBroker(LoggerInterface $logger = null);
-
-    /**
-     * @return Config
-     */
-    public function getConfig();
+    public function getConfig(): Config;
 }

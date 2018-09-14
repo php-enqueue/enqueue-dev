@@ -7,7 +7,10 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\RdKafka\RdKafkaContext;
+use Enqueue\RdKafka\RdKafkaMessage;
+use Enqueue\RdKafka\RdKafkaTopic;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -28,11 +31,6 @@ class RdKafkaDriver implements DriverInterface
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param RdKafkaContext    $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(RdKafkaContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -41,9 +39,9 @@ class RdKafkaDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $headers = $message->getHeaders();
         $headers['content_type'] = $message->getContentType();
@@ -60,10 +58,7 @@ class RdKafkaDriver implements DriverInterface
         return $transportMessage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
         $clientMessage->setBody($message->getBody());
@@ -80,10 +75,7 @@ class RdKafkaDriver implements DriverInterface
         return $clientMessage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -95,10 +87,7 @@ class RdKafkaDriver implements DriverInterface
         $this->context->createProducer()->send($topic, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -115,19 +104,16 @@ class RdKafkaDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaTopic
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
         return $this->context->createQueue($transportName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $logger->debug('[RdKafkaDriver] setup broker');
@@ -148,15 +134,12 @@ class RdKafkaDriver implements DriverInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    private function createRouterTopic()
+    private function createRouterTopic(): RdKafkaTopic
     {
         $topic = $this->context->createTopic(
             $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())
