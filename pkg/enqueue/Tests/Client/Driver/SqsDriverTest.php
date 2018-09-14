@@ -177,7 +177,7 @@ class SqsDriverTest extends TestCase
     {
         $topic = new SqsDestination('aDestinationName');
         $transportMessage = new SqsMessage();
-        $config = $this->createConfigMock();
+        $config = $this->createDummyConfig();
 
         $producer = $this->createPsrProducerMock();
         $producer
@@ -348,7 +348,7 @@ class SqsDriverTest extends TestCase
             ->willReturn(new QueueMeta('theClientName', 'theTransportName'))
         ;
 
-        $driver = new SqsDriver($context, $this->createConfigMock(), $metaRegistry);
+        $driver = new SqsDriver($context, $this->createDummyConfig(), $metaRegistry);
 
         $driver->setupBroker();
     }
@@ -377,20 +377,14 @@ class SqsDriverTest extends TestCase
         return $this->createMock(QueueMetaRegistry::class);
     }
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Config
-     */
-    private function createConfigMock()
+    private function createDummyConfig(): Config
     {
-        return $this->createMock(Config::class);
-    }
-
-    /**
-     * @return Config
-     */
-    private function createDummyConfig()
-    {
-        return Config::create('aPrefix');
+        return Config::create(
+            'aPrefix',
+            '',
+            'aRouterTopic',
+            'aRouterQueue',
+            'aDefaultQueue');
     }
 
     /**

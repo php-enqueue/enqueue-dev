@@ -16,61 +16,28 @@ class StompManagementClient
      */
     private $vhost;
 
-    /**
-     * @param Client|null $client
-     * @param string      $vhost
-     */
-    public function __construct(Client $client, $vhost = '/')
+    public function __construct(Client $client, string $vhost = '/')
     {
         $this->client = $client;
         $this->vhost = $vhost;
     }
 
-    /**
-     * @param string $vhost
-     * @param string $host
-     * @param int    $port
-     * @param string $login
-     * @param string $password
-     *
-     * @return self
-     */
-    public static function create($vhost = '/', $host = 'localhost', $port = 15672, $login = 'guest', $password = 'guest')
+    public static function create(string $vhost = '/', string $host = 'localhost', int $port = 15672, string $login = 'guest', string $password = 'guest'): self
     {
         return new static(new Client(null, 'http://'.$host.':'.$port, $login, $password), $vhost);
     }
 
-    /**
-     * @param string $name
-     * @param array  $options
-     *
-     * @return array
-     */
-    public function declareQueue($name, $options)
+    public function declareQueue(string $name, array $options)
     {
         return $this->client->queues()->create($this->vhost, $name, $options);
     }
 
-    /**
-     * @param string $name
-     * @param array  $options
-     *
-     * @return array
-     */
-    public function declareExchange($name, $options)
+    public function declareExchange(string $name, array $options)
     {
         return $this->client->exchanges()->create($this->vhost, $name, $options);
     }
 
-    /**
-     * @param string $exchange
-     * @param string $queue
-     * @param string $routingKey
-     * @param array  $arguments
-     *
-     * @return array
-     */
-    public function bind($exchange, $queue, $routingKey, $arguments = null)
+    public function bind(string $exchange, string $queue, string $routingKey = null, $arguments = null)
     {
         return $this->client->bindings()->create($this->vhost, $exchange, $queue, $routingKey, $arguments);
     }

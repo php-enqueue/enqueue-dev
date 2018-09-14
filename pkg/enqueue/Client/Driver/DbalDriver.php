@@ -8,8 +8,10 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dbal\DbalContext;
+use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -41,11 +43,6 @@ class DbalDriver implements DriverInterface
         MessagePriority::VERY_HIGH => 4,
     ];
 
-    /**
-     * @param DbalContext       $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(DbalContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -54,11 +51,9 @@ class DbalDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $properties = $message->getProperties();
 
@@ -88,10 +83,8 @@ class DbalDriver implements DriverInterface
 
     /**
      * @param DbalMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
 
@@ -120,10 +113,7 @@ class DbalDriver implements DriverInterface
         return $clientMessage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -135,10 +125,7 @@ class DbalDriver implements DriverInterface
         $this->context->createProducer()->send($queue, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -155,19 +142,16 @@ class DbalDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return DbalDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
         return $this->context->createQueue($transportName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
@@ -178,18 +162,12 @@ class DbalDriver implements DriverInterface
         $this->context->createDataBaseTable();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPriorityMap()
+    public static function getPriorityMap(): array
     {
         return self::$priorityMap;
     }

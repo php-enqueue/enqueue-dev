@@ -11,6 +11,7 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -31,11 +32,6 @@ class FsDriver implements DriverInterface
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param FsContext         $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(FsContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -43,10 +39,7 @@ class FsDriver implements DriverInterface
         $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -58,10 +51,7 @@ class FsDriver implements DriverInterface
         $this->context->createProducer()->send($topic, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -77,10 +67,7 @@ class FsDriver implements DriverInterface
         $this->context->createProducer()->send($destination, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
@@ -107,11 +94,9 @@ class FsDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
@@ -119,11 +104,9 @@ class FsDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $properties = $message->getProperties();
 
@@ -144,10 +127,8 @@ class FsDriver implements DriverInterface
 
     /**
      * @param FsMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
 
@@ -165,18 +146,12 @@ class FsDriver implements DriverInterface
         return $clientMessage;
     }
 
-    /**
-     * @return Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @return FsDestination
-     */
-    private function createRouterTopic()
+    private function createRouterTopic(): FsDestination
     {
         return $this->context->createTopic(
             $this->config->createTransportQueueName($this->config->getRouterTopicName())

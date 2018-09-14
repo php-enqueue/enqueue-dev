@@ -17,6 +17,7 @@ class StompManagementClientTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('create')
             ->with('vhost', 'name', ['options'])
+            ->willReturn([])
         ;
 
         $client = $this->createClientMock();
@@ -37,6 +38,7 @@ class StompManagementClientTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('create')
             ->with('vhost', 'name', ['options'])
+            ->willReturn([])
         ;
 
         $client = $this->createClientMock();
@@ -57,6 +59,7 @@ class StompManagementClientTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('create')
             ->with('vhost', 'exchange', 'queue', 'routing-key', ['arguments'])
+            ->willReturn([])
         ;
 
         $client = $this->createClientMock();

@@ -8,7 +8,9 @@ use Enqueue\Client\Message;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
+use Enqueue\Null\NullQueue;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -29,11 +31,6 @@ class NullDriver implements DriverInterface
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param NullContext       $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(NullContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -42,11 +39,9 @@ class NullDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return NullMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $headers = $message->getHeaders();
         $headers['content_type'] = $message->getContentType();
@@ -67,11 +62,9 @@ class NullDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param NullMessage $message
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
         $clientMessage->setBody($message->getBody());
@@ -102,27 +95,21 @@ class NullDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullQueue
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
         return $this->context->createQueue($transportName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         $transportMessage = $this->createTransportMessage($message);
         $topic = $this->context->createTopic(
@@ -134,10 +121,7 @@ class NullDriver implements DriverInterface
         $this->context->createProducer()->send($topic, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         $transportMessage = $this->createTransportMessage($message);
         $queue = $this->context->createQueue(
@@ -149,10 +133,7 @@ class NullDriver implements DriverInterface
         $this->context->createProducer()->send($queue, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger ?: new NullLogger();
         $logger->debug('[NullDriver] setup broker');

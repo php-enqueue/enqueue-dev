@@ -11,6 +11,7 @@ use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 
 class RabbitMqDriver extends AmqpDriver
 {
@@ -34,11 +35,6 @@ class RabbitMqDriver extends AmqpDriver
      */
     private $priorityMap;
 
-    /**
-     * @param AmqpContext       $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(AmqpContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         parent::__construct($context, $config, $queueMetaRegistry);
@@ -56,10 +52,7 @@ class RabbitMqDriver extends AmqpDriver
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -81,11 +74,9 @@ class RabbitMqDriver extends AmqpDriver
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AmqpQueue
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $queue = parent::createQueue($queueName);
         $queue->setArguments(['x-max-priority' => 4]);
@@ -94,11 +85,9 @@ class RabbitMqDriver extends AmqpDriver
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AmqpMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $transportMessage = parent::createTransportMessage($message);
 
@@ -126,10 +115,8 @@ class RabbitMqDriver extends AmqpDriver
 
     /**
      * @param AmqpMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = parent::createClientMessage($message);
 
