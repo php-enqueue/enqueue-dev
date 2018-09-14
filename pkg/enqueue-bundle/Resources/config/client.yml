@@ -219,3 +219,9 @@ services:
     enqueue.flush_spool_producer_listener:
         public: true
         alias: 'Enqueue\Symfony\Client\FlushSpoolProducerListener'
+
+    enqueue.client.default.exclusive_command_extension:
+        class: 'Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension'
+        arguments: '@enqueue.client.default.driver'
+        tags:
+            - { name: 'enqueue.client.extension' }

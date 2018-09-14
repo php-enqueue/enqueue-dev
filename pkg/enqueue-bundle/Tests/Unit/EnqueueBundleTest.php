@@ -3,9 +3,7 @@
 namespace Enqueue\Bundle\Tests\Unit;
 
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
-use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
-use Enqueue\Bundle\DependencyInjection\Compiler\BuildExclusiveCommandsExtensionPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildQueueMetaRegistryPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildTopicMetaSubscribersPass;
@@ -38,11 +36,6 @@ class EnqueueBundleTest extends TestCase
             ->with($this->isInstanceOf(BuildConsumptionExtensionsPass::class))
         ;
         $container
-            ->expects($this->at(1))
-            ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildClientRoutingPass::class))
-        ;
-        $container
             ->expects($this->at(2))
             ->method('addCompilerPass')
             ->with($this->isInstanceOf(BuildProcessorRegistryPass::class))
@@ -61,11 +54,6 @@ class EnqueueBundleTest extends TestCase
             ->expects($this->at(5))
             ->method('addCompilerPass')
             ->with($this->isInstanceOf(BuildClientExtensionsPass::class))
-        ;
-        $container
-            ->expects($this->at(6))
-            ->method('addCompilerPass')
-            ->with($this->isInstanceOf(BuildExclusiveCommandsExtensionPass::class))
         ;
 
         $bundle = new EnqueueBundle();
