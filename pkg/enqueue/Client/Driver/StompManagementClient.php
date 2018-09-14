@@ -27,12 +27,12 @@ class StompManagementClient
         return new static(new Client(null, 'http://'.$host.':'.$port, $login, $password), $vhost);
     }
 
-    public function declareQueue(string $name, array $options): array
+    public function declareQueue(string $name, array $options)
     {
         return $this->client->queues()->create($this->vhost, $name, $options);
     }
 
-    public function declareExchange(string $name, array $options): array
+    public function declareExchange(string $name, array $options)
     {
         return $this->client->exchanges()->create($this->vhost, $name, $options);
     }
