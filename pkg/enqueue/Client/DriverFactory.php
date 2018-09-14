@@ -57,10 +57,10 @@ final class DriverFactory implements DriverFactoryInterface
 
                 $managementClient = StompManagementClient::create(
                     ltrim($dsn->getPath(), '/'),
-                    $dsn->getHost(),
-                    isset($config['management_plugin_port']) ? $config['management_plugin_port'] : 15672,
-                    $dsn->getUser(),
-                    $dsn->getPassword()
+                    $dsn->getHost() ?: 'localhost',
+                    $config['management_plugin_port'] ?? 15672,
+                    (string) $dsn->getUser(),
+                    (string) $dsn->getPassword()
                 );
 
                 return new RabbitMqStompDriver($factory->createContext(), $this->config, $this->queueMetaRegistry, $managementClient);
