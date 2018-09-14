@@ -11,6 +11,7 @@ use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 
 class RedisDriver implements DriverInterface
@@ -30,11 +31,6 @@ class RedisDriver implements DriverInterface
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param RedisContext      $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(RedisContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -42,10 +38,7 @@ class RedisDriver implements DriverInterface
         $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -57,10 +50,7 @@ class RedisDriver implements DriverInterface
         $this->context->createProducer()->send($queue, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -76,19 +66,14 @@ class RedisDriver implements DriverInterface
         $this->context->createProducer()->send($destination, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
@@ -96,11 +81,9 @@ class RedisDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RedisMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $properties = $message->getProperties();
 
@@ -121,10 +104,8 @@ class RedisDriver implements DriverInterface
 
     /**
      * @param RedisMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
 
@@ -142,10 +123,7 @@ class RedisDriver implements DriverInterface
         return $clientMessage;
     }
 
-    /**
-     * @return Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }

@@ -11,6 +11,7 @@ use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -31,11 +32,6 @@ class SqsDriver implements DriverInterface
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param SqsContext        $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(SqsContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -43,10 +39,7 @@ class SqsDriver implements DriverInterface
         $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -58,10 +51,7 @@ class SqsDriver implements DriverInterface
         $this->context->createProducer()->send($queue, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -78,11 +68,9 @@ class SqsDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
         $transportName = str_replace('.', '_dot_', $transportName);
@@ -90,10 +78,7 @@ class SqsDriver implements DriverInterface
         return $this->context->createQueue($transportName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
@@ -115,11 +100,9 @@ class SqsDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $properties = $message->getProperties();
 
@@ -140,10 +123,8 @@ class SqsDriver implements DriverInterface
 
     /**
      * @param SqsMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
 
@@ -161,10 +142,7 @@ class SqsDriver implements DriverInterface
         return $clientMessage;
     }
 
-    /**
-     * @return Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }

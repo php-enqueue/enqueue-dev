@@ -10,6 +10,7 @@ use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -30,11 +31,6 @@ class StompDriver implements DriverInterface
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param StompContext      $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(StompContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -42,10 +38,7 @@ class StompDriver implements DriverInterface
         $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -57,10 +50,7 @@ class StompDriver implements DriverInterface
         $this->context->createProducer()->send($topic, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -76,10 +66,7 @@ class StompDriver implements DriverInterface
         $this->context->createProducer()->send($destination, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $logger->debug('[StompDriver] Stomp protocol does not support broker configuration');
@@ -87,10 +74,8 @@ class StompDriver implements DriverInterface
 
     /**
      * @return StompMessage
-     *
-     * {@inheritdoc}
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $headers = $message->getHeaders();
         $headers['content-type'] = $message->getContentType();
@@ -122,10 +107,8 @@ class StompDriver implements DriverInterface
 
     /**
      * @param StompMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
 
@@ -153,9 +136,9 @@ class StompDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return StompDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
@@ -167,18 +150,12 @@ class StompDriver implements DriverInterface
         return $queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @return StompDestination
-     */
-    private function createRouterTopic()
+    private function createRouterTopic(): StompDestination
     {
         $topic = $this->context->createTopic(
             $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())

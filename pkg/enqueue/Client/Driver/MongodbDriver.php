@@ -8,8 +8,10 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Mongodb\MongodbContext;
+use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Mongodb\MongodbMessage;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -41,11 +43,6 @@ class MongodbDriver implements DriverInterface
         MessagePriority::VERY_HIGH => 4,
     ];
 
-    /**
-     * @param MongodbContext    $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(MongodbContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -54,11 +51,9 @@ class MongodbDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return MongodbMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $properties = $message->getProperties();
 
@@ -83,10 +78,8 @@ class MongodbDriver implements DriverInterface
 
     /**
      * @param MongodbMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
 
@@ -110,10 +103,7 @@ class MongodbDriver implements DriverInterface
         return $clientMessage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -125,10 +115,7 @@ class MongodbDriver implements DriverInterface
         $this->context->createProducer()->send($queue, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -145,19 +132,16 @@ class MongodbDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return MongodbDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
         return $this->context->createQueue($transportName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
@@ -168,18 +152,12 @@ class MongodbDriver implements DriverInterface
         $this->context->createCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPriorityMap()
+    public static function getPriorityMap(): array
     {
         return self::$priorityMap;
     }

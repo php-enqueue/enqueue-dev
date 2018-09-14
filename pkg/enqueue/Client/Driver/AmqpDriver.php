@@ -12,6 +12,7 @@ use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -32,11 +33,6 @@ class AmqpDriver implements DriverInterface
      */
     private $queueMetaRegistry;
 
-    /**
-     * @param AmqpContext       $context
-     * @param Config            $config
-     * @param QueueMetaRegistry $queueMetaRegistry
-     */
     public function __construct(AmqpContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
     {
         $this->context = $context;
@@ -44,10 +40,7 @@ class AmqpDriver implements DriverInterface
         $this->queueMetaRegistry = $queueMetaRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToRouter(Message $message)
+    public function sendToRouter(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             throw new \LogicException('Topic name parameter is required but is not set');
@@ -59,10 +52,7 @@ class AmqpDriver implements DriverInterface
         $this->context->createProducer()->send($topic, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToProcessor(Message $message)
+    public function sendToProcessor(Message $message): void
     {
         if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             throw new \LogicException('Processor name parameter is required but is not set');
@@ -78,10 +68,7 @@ class AmqpDriver implements DriverInterface
         $this->context->createProducer()->send($destination, $transportMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupBroker(LoggerInterface $logger = null)
+    public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {
@@ -109,11 +96,9 @@ class AmqpDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AmqpQueue
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): PsrQueue
     {
         $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
 
@@ -124,11 +109,9 @@ class AmqpDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AmqpMessage
      */
-    public function createTransportMessage(Message $message)
+    public function createTransportMessage(Message $message): PsrMessage
     {
         $headers = $message->getHeaders();
         $properties = $message->getProperties();
@@ -153,10 +136,8 @@ class AmqpDriver implements DriverInterface
 
     /**
      * @param AmqpMessage $message
-     *
-     * {@inheritdoc}
      */
-    public function createClientMessage(PsrMessage $message)
+    public function createClientMessage(PsrMessage $message): Message
     {
         $clientMessage = new Message();
 
@@ -177,18 +158,12 @@ class AmqpDriver implements DriverInterface
         return $clientMessage;
     }
 
-    /**
-     * @return Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @return AmqpTopic
-     */
-    private function createRouterTopic()
+    private function createRouterTopic(): AmqpTopic
     {
         $topic = $this->context->createTopic(
             $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())
