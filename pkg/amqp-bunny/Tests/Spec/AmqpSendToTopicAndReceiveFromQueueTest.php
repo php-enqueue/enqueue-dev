@@ -12,14 +12,14 @@ use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 /**
  * @group functional
  */
-class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendToTopicAndReceiveFromQueueSpec
+class AmqpSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFromQueueSpec
 {
     /**
      * {@inheritdoc}
      */
     protected function createContext()
     {
-        $factory = new AmqpConnectionFactory(getenv('AMQP_DSN').'?receive_method=basic_consume');
+        $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
 
         return $factory->createContext();
     }
@@ -31,8 +31,6 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
      */
     protected function createQueue(PsrContext $context, $queueName)
     {
-        $queueName .= '_basic_consume';
-
         $queue = $context->createQueue($queueName);
         $context->declareQueue($queue);
         $context->purgeQueue($queue);
@@ -49,8 +47,6 @@ class AmqpSendToTopicAndReceiveFromQueueWithBasicConsumeMethodTest extends SendT
      */
     protected function createTopic(PsrContext $context, $topicName)
     {
-        $topicName .= '_basic_consume';
-
         $topic = $context->createTopic($topicName);
         $topic->setType(AmqpTopic::TYPE_FANOUT);
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);

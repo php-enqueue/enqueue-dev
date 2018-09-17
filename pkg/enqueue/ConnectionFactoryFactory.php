@@ -46,23 +46,30 @@ final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterfac
     private function findFactoryClass(Dsn $dsn, array $factories): ?string
     {
         $protocol = $dsn->getSchemeProtocol();
-        foreach ($factories as $connectionClass => $info) {
+
+        if ($dsn->getSchemeExtensions()) {
+            foreach ($factories as $connectionClass => $info) {
+                if (empty($info['supportedSchemeExtensions'])) {
+                    continue;
+                }
+
+                if (false == in_array($protocol, $info['schemes'], true)) {
+                    continue;
+                }
+
+                $diff = array_diff($info['supportedSchemeExtensions'], $dsn->getSchemeExtensions());
+                if (empty($diff)) {
+                    return $connectionClass;
+                }
+            }
+        }
+
+        foreach ($factories as $driverClass => $info) {
             if (false == in_array($protocol, $info['schemes'], true)) {
                 continue;
             }
 
-            if (false == $dsn->getSchemeExtensions()) {
-                return $connectionClass;
-            }
-
-            if (empty($info['supportedSchemeExtensions'])) {
-                continue;
-            }
-
-            $diff = array_diff($dsn->getSchemeExtensions(), $info['supportedSchemeExtensions']);
-            if (empty($diff)) {
-                return $connectionClass;
-            }
+            return $driverClass;
         }
 
         return null;

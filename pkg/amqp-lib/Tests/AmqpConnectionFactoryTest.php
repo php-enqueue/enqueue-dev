@@ -3,6 +3,7 @@
 namespace Enqueue\AmqpLib\Tests;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrConnectionFactory;
 use PHPUnit\Framework\TestCase;
@@ -16,14 +17,10 @@ class AmqpConnectionFactoryTest extends TestCase
         $this->assertClassImplements(PsrConnectionFactory::class, AmqpConnectionFactory::class);
     }
 
-    public function testShouldSupportAmqpLibScheme()
+    public function testShouldSetRabbitMqDlxDelayStrategyIfRabbitMqSchemeExtensionPresent()
     {
-        // no exception here
-        new AmqpConnectionFactory('amqp+lib:');
-        new AmqpConnectionFactory('amqps+lib:');
+        $factory = new AmqpConnectionFactory('amqp+rabbitmq:');
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN scheme "amqp+foo" is not supported. Could be one of "amqp", "amqps", "amqp+lib');
-        new AmqpConnectionFactory('amqp+foo:');
+        $this->assertAttributeInstanceOf(RabbitMqDlxDelayStrategy::class, 'delayStrategy', $factory);
     }
 }

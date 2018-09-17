@@ -88,17 +88,17 @@ final class Resources
             ];
             $map[AmqpBunnyConnectionFactory::class] = [
                 'schemes' => ['amqp'],
-                'supportedSchemeExtensions' => ['bunny', 'rabbitmq'],
+                'supportedSchemeExtensions' => ['bunny'],
                 'package' => 'enqueue/amqp-bunny',
             ];
             $map[AmqpExtConnectionFactory::class] = [
                 'schemes' => ['amqp', 'amqps'],
-                'supportedSchemeExtensions' => ['ext', 'rabbitmq'],
+                'supportedSchemeExtensions' => ['ext'],
                 'package' => 'enqueue/amqp-ext',
             ];
             $map[AmqpLibConnectionFactory::class] = [
                 'schemes' => ['amqp', 'amqps'],
-                'supportedSchemeExtensions' => ['lib', 'rabbitmq'],
+                'supportedSchemeExtensions' => ['lib'],
                 'package' => 'enqueue/amqp-lib',
             ];
 

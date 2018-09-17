@@ -9,7 +9,6 @@ $config = [
     'port' => 5672,
     'user' => 'guest',
     'pass' => 'guest',
-    'receive_method' => 'basic_consume',
 ];
 
 function fib($n)
