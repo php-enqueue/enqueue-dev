@@ -107,9 +107,10 @@ class ConnectionConfig
     /**
      * @param string[] $extensions
      */
-    public function addSupportedScheme(string $schema, array $extensions = []): self
+    public function addSupportedScheme(string $schema): self
     {
-        $this->supportedSchemes[$schema] = $extensions;
+        $this->supportedSchemes[] = $schema;
+        $this->supportedSchemes = array_unique($this->supportedSchemes);
 
         return $this;
     }
@@ -380,7 +381,7 @@ class ConnectionConfig
     {
         $dsn = new Dsn($dsn);
 
-        $supportedSchemes = array_keys($this->supportedSchemes);
+        $supportedSchemes = $this->supportedSchemes;
         if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
             throw new \LogicException(sprintf(
                 'The given scheme protocol "%s" is not supported. It must be one of "%s".',
