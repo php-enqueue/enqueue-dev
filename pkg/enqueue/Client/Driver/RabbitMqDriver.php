@@ -5,7 +5,7 @@ namespace  Enqueue\Client\Driver;
 use Interop\Amqp\AmqpQueue;
 use Interop\Queue\PsrQueue;
 
-final class RabbitMqDriver extends AmqpDriver
+class RabbitMqDriver extends AmqpDriver
 {
     /**
      * @return AmqpQueue

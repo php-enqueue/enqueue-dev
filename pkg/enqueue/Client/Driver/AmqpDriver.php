@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace  Enqueue\Client\Driver;
 
 use Enqueue\AmqpExt\AmqpProducer;
-use Enqueue\Client\Config;
 use Enqueue\Client\Message;
-use Enqueue\Client\RouteCollection;
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
@@ -20,30 +18,14 @@ use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+/**
+ * @method AmqpContext getContext
+ */
 class AmqpDriver extends GenericDriver
 {
-    /**
-     * @var AmqpContext
-     */
-    private $context;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
-
-    public function __construct(AmqpContext $context, Config $config, RouteCollection $routeCollection)
+    public function __construct(AmqpContext $context, ...$args)
     {
-        $this->context = $context;
-        $this->config = $config;
-        $this->routeCollection = $routeCollection;
-
-        parent::__construct($context, $config, $routeCollection);
+        parent::__construct($context, ...$args);
     }
 
     /**
@@ -86,18 +68,18 @@ class AmqpDriver extends GenericDriver
         // setup router
         $routerTopic = $this->createRouterTopic();
         $log('Declare router exchange: %s', $routerTopic->getTopicName());
-        $this->context->declareTopic($routerTopic);
+        $this->getContext()->declareTopic($routerTopic);
 
-        $routerQueue = $this->createQueue($this->config->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
         $log('Declare router queue: %s', $routerQueue->getQueueName());
-        $this->context->declareQueue($routerQueue);
+        $this->getContext()->declareQueue($routerQueue);
 
         $log('Bind router queue to exchange: %s -> %s', $routerQueue->getQueueName(), $routerTopic->getTopicName());
-        $this->context->bind(new AmqpBind($routerTopic, $routerQueue, $routerQueue->getQueueName()));
+        $this->getContext()->bind(new AmqpBind($routerTopic, $routerQueue, $routerQueue->getQueueName()));
 
         // setup queues
         $declaredQueues = [];
-        foreach ($this->routeCollection->all() as $route) {
+        foreach ($this->getRouteCollection()->all() as $route) {
             /** @var AmqpQueue $queue */
             $queue = $this->createRouteQueue($route);
             if (array_key_exists($queue->getQueueName(), $declaredQueues)) {
@@ -105,7 +87,7 @@ class AmqpDriver extends GenericDriver
             }
 
             $log('Declare processor queue: %s', $queue->getQueueName());
-            $this->context->declareQueue($queue);
+            $this->getContext()->declareQueue($queue);
 
             $declaredQueues[$queue->getQueueName()] = true;
         }
