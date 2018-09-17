@@ -20,6 +20,11 @@ class SignalSocketHelperTest extends TestCase
     {
         parent::setUp();
 
+        // PHP 7.1 and pcntl ext installed higher
+        if (false == function_exists('pcntl_signal_get_handler')) {
+            $this->markTestSkipped('PHP 7.1+ needed');
+        }
+
         $this->backupSigTermHandler = pcntl_signal_get_handler(SIGTERM);
         $this->backupSigIntHandler = pcntl_signal_get_handler(SIGINT);
 

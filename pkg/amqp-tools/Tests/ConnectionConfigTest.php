@@ -24,7 +24,7 @@ class ConnectionConfigTest extends TestCase
     public function testThrowIfSchemeIsNotSupported()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN scheme "http" is not supported. Could be one of "amqp", "amqps" only.');
+        $this->expectExceptionMessage('The given scheme protocol "http" is not supported. It must be one of "amqp", "amqps".');
 
         (new ConnectionConfig('http://example.com'))->parse();
     }
@@ -32,7 +32,7 @@ class ConnectionConfigTest extends TestCase
     public function testThrowIfSchemeIsNotSupportedIncludingAdditionalSupportedSchemes()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN scheme "http" is not supported. Could be one of "amqp", "amqps", "amqp+foo" only.');
+        $this->expectExceptionMessage('The given scheme protocol "http" is not supported. It must be one of "amqp", "amqps", "amqp+foo".');
 
         (new ConnectionConfig('http://example.com'))
             ->addSupportedScheme('amqp+foo')
@@ -43,9 +43,9 @@ class ConnectionConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN "amqp://:@/"');
+        $this->expectExceptionMessage('The DSN is invalid.');
 
-        (new ConnectionConfig('amqp://:@/'))->parse();
+        (new ConnectionConfig('foo'))->parse();
     }
 
     public function testShouldParseEmptyDsnWithDriverSet()
@@ -108,6 +108,16 @@ class ConnectionConfigTest extends TestCase
             'ssl_key' => '',
             'ssl_passphrase' => '',
         ], $config->getConfig());
+    }
+
+    public function testShouldGetSchemeExtensions()
+    {
+        $config = (new ConnectionConfig('amqp+foo+bar:'))
+            ->addSupportedScheme('amqp')
+            ->parse()
+        ;
+
+        $this->assertSame(['foo', 'bar'], $config->getSchemeExtensions());
     }
 
     /**
@@ -206,6 +216,32 @@ class ConnectionConfigTest extends TestCase
 
         yield [
             'amqps:',
+            [
+                'host' => 'localhost',
+                'port' => 5672,
+                'vhost' => '/',
+                'user' => 'guest',
+                'pass' => 'guest',
+                'read_timeout' => 3.,
+                'write_timeout' => 3.,
+                'connection_timeout' => 3.,
+                'persisted' => false,
+                'lazy' => true,
+                'qos_prefetch_size' => 0,
+                'qos_prefetch_count' => 1,
+                'qos_global' => false,
+                'heartbeat' => 0.0,
+                'ssl_on' => true,
+                'ssl_verify' => true,
+                'ssl_cacert' => '',
+                'ssl_cert' => '',
+                'ssl_key' => '',
+                'ssl_passphrase' => '',
+            ],
+        ];
+
+        yield [
+            'amqp+tls:',
             [
                 'host' => 'localhost',
                 'port' => 5672,

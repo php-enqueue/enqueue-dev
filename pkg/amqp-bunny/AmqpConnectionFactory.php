@@ -7,6 +7,7 @@ namespace Enqueue\AmqpBunny;
 use Enqueue\AmqpTools\ConnectionConfig;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
 use Interop\Queue\PsrContext;
 
@@ -33,10 +34,13 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     {
         $this->config = (new ConnectionConfig($config))
             ->addSupportedScheme('amqp+bunny')
-            ->addDefaultOption('receive_method', 'basic_get')
             ->addDefaultOption('tcp_nodelay', null)
             ->parse()
         ;
+
+        if (in_array('rabbitmq', $this->config->getSchemeExtensions(), true)) {
+            $this->setDelayStrategy(new RabbitMqDlxDelayStrategy());
+        }
     }
 
     /**
