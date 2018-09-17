@@ -119,23 +119,34 @@ class ConnectionFactoryFactoryTest extends TestCase
 
         yield ['amqp:', AmqpBunnyConnectionFactory::class];
 
-        yield ['amqp+ext:', AmqpExtConnectionFactory::class];
-
-//        yield ['amqp+rabbitmq:', AmqpExtConnectionFactory::class];
-
-//        yield ['amqp+rabbitmq+ext:', AmqpExtConnectionFactory::class];
-
-        yield ['amqps:', AmqpExtConnectionFactory::class];
-
-        yield ['amqps+ext:', AmqpExtConnectionFactory::class];
-
-//        yield ['amqps+rabbitmq:', AmqpExtConnectionFactory::class];
-
-//        yield ['amqps+ext+rabbitmq:', AmqpExtConnectionFactory::class];
-
         yield ['amqp+bunny:', AmqpBunnyConnectionFactory::class];
 
         yield ['amqp+lib:', AmqpLibConnectionFactory::class];
+
+        yield ['amqp+ext:', AmqpExtConnectionFactory::class];
+
+        yield ['amqp+rabbitmq:', AmqpBunnyConnectionFactory::class];
+
+        yield ['amqp+rabbitmq+bunny:', AmqpBunnyConnectionFactory::class];
+
+        yield ['amqp+foo+bar+lib:', AmqpLibConnectionFactory::class];
+
+        yield ['amqp+rabbitmq+ext:', AmqpExtConnectionFactory::class];
+
+        yield ['amqp+rabbitmq+lib:', AmqpLibConnectionFactory::class];
+
+        // bunny does not support amqps, so it is skipped
+        yield ['amqps:', AmqpExtConnectionFactory::class];
+
+        // bunny does not support amqps, so it is skipped
+        yield ['amqps+ext:', AmqpExtConnectionFactory::class];
+
+        // bunny does not support amqps, so it is skipped
+        yield ['amqps+rabbitmq:', AmqpExtConnectionFactory::class];
+
+        yield ['amqps+ext+rabbitmq:', AmqpExtConnectionFactory::class];
+
+        yield ['amqps+lib+rabbitmq:', AmqpLibConnectionFactory::class];
 
         yield ['mssql:', DbalConnectionFactory::class];
 
@@ -157,6 +168,12 @@ class ConnectionFactoryFactoryTest extends TestCase
         yield ['kafka:', RdKafkaConnectionFactory::class];
 
         yield ['redis:', RedisConnectionFactory::class];
+
+        yield ['redis+predis:', RedisConnectionFactory::class];
+
+        yield ['redis+foo+bar+phpredis:', RedisConnectionFactory::class];
+
+        yield ['redis+phpredis:', RedisConnectionFactory::class];
 
         yield ['sqs:', SqsConnectionFactory::class];
 

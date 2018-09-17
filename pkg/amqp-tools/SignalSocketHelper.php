@@ -23,7 +23,7 @@ class SignalSocketHelper
 
     public function beforeSocket(): void
     {
-        // PHP 7.1 and higher
+        // PHP 7.1 and pcntl ext installed higher
         if (false == function_exists('pcntl_signal_get_handler')) {
             return;
         }
