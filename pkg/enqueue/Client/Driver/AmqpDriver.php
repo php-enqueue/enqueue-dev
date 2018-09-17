@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace  Enqueue\Client\Driver;
 
 use Enqueue\Client\Config;
-use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
-use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Client\MessagePriority;
+use Enqueue\Client\RouteCollection;
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
@@ -13,10 +15,11 @@ use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class AmqpDriver implements DriverInterface
+class AmqpDriver extends GenericDriver
 {
     /**
      * @var AmqpContext
@@ -29,43 +32,59 @@ class AmqpDriver implements DriverInterface
     private $config;
 
     /**
-     * @var QueueMetaRegistry
+     * @var array
      */
-    private $queueMetaRegistry;
+    private $priorityMap;
 
-    public function __construct(AmqpContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
+    /**
+     * @var RouteCollection
+     */
+    private $routeCollection;
+
+    public function __construct(AmqpContext $context, Config $config, RouteCollection $routeCollection)
     {
         $this->context = $context;
         $this->config = $config;
-        $this->queueMetaRegistry = $queueMetaRegistry;
+        $this->routeCollection = $routeCollection;
+
+        $this->priorityMap = [
+            MessagePriority::VERY_LOW => 0,
+            MessagePriority::LOW => 1,
+            MessagePriority::NORMAL => 2,
+            MessagePriority::HIGH => 3,
+            MessagePriority::VERY_HIGH => 4,
+        ];
+
+        parent::__construct($context, $config, $routeCollection);
     }
 
-    public function sendToRouter(Message $message): void
+    /**
+     * @return AmqpMessage
+     */
+    public function createTransportMessage(Message $clientMessage): PsrMessage
     {
-        if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
-            throw new \LogicException('Topic name parameter is required but is not set');
+        /** @var AmqpMessage $transportMessage */
+        $transportMessage = parent::createTransportMessage($clientMessage);
+        $transportMessage->setDeliveryMode(AmqpMessage::DELIVERY_MODE_PERSISTENT);
+        $transportMessage->setContentType($clientMessage->getContentType());
+
+        if ($clientMessage->getExpire()) {
+            $transportMessage->setExpiration($clientMessage->getExpire() * 1000);
         }
 
-        $topic = $this->createRouterTopic();
-        $transportMessage = $this->createTransportMessage($message);
+        if ($priority = $clientMessage->getPriority()) {
+            if (false == array_key_exists($priority, $this->getPriorityMap())) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Cant convert client priority "%s" to transport one. Could be one of "%s"',
+                    $priority,
+                    implode('", "', array_keys($this->getPriorityMap()))
+                ));
+            }
 
-        $this->context->createProducer()->send($topic, $transportMessage);
-    }
-
-    public function sendToProcessor(Message $message): void
-    {
-        if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-            throw new \LogicException('Processor name parameter is required but is not set');
+            $transportMessage->setPriority($this->priorityMap[$priority]);
         }
 
-        if (false == $queueName = $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-            throw new \LogicException('Queue name parameter is required but is not set');
-        }
-
-        $transportMessage = $this->createTransportMessage($message);
-        $destination = $this->createQueue($queueName);
-
-        $this->context->createProducer()->send($destination, $transportMessage);
+        return $transportMessage;
     }
 
     public function setupBroker(LoggerInterface $logger = null): void
@@ -77,100 +96,73 @@ class AmqpDriver implements DriverInterface
 
         // setup router
         $routerTopic = $this->createRouterTopic();
-        $routerQueue = $this->createQueue($this->config->getRouterQueueName());
-
         $log('Declare router exchange: %s', $routerTopic->getTopicName());
         $this->context->declareTopic($routerTopic);
+
+        $routerQueue = $this->createQueue($this->config->getRouterQueueName());
         $log('Declare router queue: %s', $routerQueue->getQueueName());
         $this->context->declareQueue($routerQueue);
+
         $log('Bind router queue to exchange: %s -> %s', $routerQueue->getQueueName(), $routerTopic->getTopicName());
         $this->context->bind(new AmqpBind($routerTopic, $routerQueue, $routerQueue->getQueueName()));
 
         // setup queues
-        foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
-            $queue = $this->createQueue($meta->getClientName());
+        $declaredQueues = [];
+        foreach ($this->routeCollection->all() as $route) {
+            /** @var AmqpQueue $queue */
+            $queue = $this->createRouteQueue($route);
+            if (array_key_exists($queue->getQueueName(), $declaredQueues)) {
+                continue;
+            }
 
             $log('Declare processor queue: %s', $queue->getQueueName());
             $this->context->declareQueue($queue);
+
+            $declaredQueues[$queue->getQueueName()] = true;
         }
     }
 
     /**
      * @return AmqpQueue
      */
-    public function createQueue(string $queueName): PsrQueue
+    public function createQueue(string $clientQueuName): PsrQueue
     {
-        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
-
-        $queue = $this->context->createQueue($transportName);
+        /** @var AmqpQueue $queue */
+        $queue = parent::createQueue($clientQueuName);
         $queue->addFlag(AmqpQueue::FLAG_DURABLE);
 
         return $queue;
     }
 
     /**
-     * @return AmqpMessage
+     * @param AmqpTopic   $topic
+     * @param AmqpMessage $transportMessage
      */
-    public function createTransportMessage(Message $message): PsrMessage
+    protected function doSendToRouter(PsrTopic $topic, PsrMessage $transportMessage): void
     {
-        $headers = $message->getHeaders();
-        $properties = $message->getProperties();
+        // We should not handle priority, expiration, and delay at this stage.
+        // The router will take care of it while re-sending the message to the final destinations.
+        $transportMessage->setPriority(null);
+        $transportMessage->setExpiration(null);
 
-        $transportMessage = $this->context->createMessage();
-        $transportMessage->setBody($message->getBody());
-        $transportMessage->setHeaders($headers);
-        $transportMessage->setProperties($properties);
-        $transportMessage->setMessageId($message->getMessageId());
-        $transportMessage->setTimestamp($message->getTimestamp());
-        $transportMessage->setReplyTo($message->getReplyTo());
-        $transportMessage->setCorrelationId($message->getCorrelationId());
-        $transportMessage->setContentType($message->getContentType());
-        $transportMessage->setDeliveryMode(AmqpMessage::DELIVERY_MODE_PERSISTENT);
-
-        if ($message->getExpire()) {
-            $transportMessage->setExpiration($message->getExpire() * 1000);
-        }
-
-        return $transportMessage;
+        $this->context->createProducer()->send($topic, $transportMessage);
     }
 
     /**
-     * @param AmqpMessage $message
+     * @return AmqpTopic
      */
-    public function createClientMessage(PsrMessage $message): Message
+    protected function createRouterTopic(): PsrTopic
     {
-        $clientMessage = new Message();
-
-        $clientMessage->setBody($message->getBody());
-        $clientMessage->setHeaders($message->getHeaders());
-        $clientMessage->setProperties($message->getProperties());
-        $clientMessage->setContentType($message->getContentType());
-
-        if ($expiration = $message->getExpiration()) {
-            $clientMessage->setExpire((int) ($expiration / 1000));
-        }
-
-        $clientMessage->setMessageId($message->getMessageId());
-        $clientMessage->setTimestamp($message->getTimestamp());
-        $clientMessage->setReplyTo($message->getReplyTo());
-        $clientMessage->setCorrelationId($message->getCorrelationId());
-
-        return $clientMessage;
-    }
-
-    public function getConfig(): Config
-    {
-        return $this->config;
-    }
-
-    private function createRouterTopic(): AmqpTopic
-    {
-        $topic = $this->context->createTopic(
-            $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())
-        );
+        /** @var AmqpTopic $topic */
+        $topic = parent::createRouterTopic();
         $topic->setType(AmqpTopic::TYPE_FANOUT);
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);
 
         return $topic;
+    }
+
+    protected function getPriorityMap(): array
+    {
+        return $this->priorityMap;
     }
 }
