@@ -288,6 +288,144 @@ trait GenericDriverTestsTrait
         $driver->sendToRouter($message);
     }
 
+    public function testShouldNotInitDeliveryDelayOnSendMessageToRouter()
+    {
+        $topic = $this->createTopic('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
+        ;
+        $producer
+            ->expects($this->never())
+            ->method('setDeliveryDelay')
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createTopic')
+            ->willReturn($topic)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([])
+        );
+
+        $message = new Message();
+        $message->setDelay(456);
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+
+        $driver->sendToRouter($message);
+    }
+
+    public function testShouldNotInitTimeToLiveOnSendMessageToRouter()
+    {
+        $topic = $this->createTopic('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
+        ;
+        $producer
+            ->expects($this->never())
+            ->method('setTimeToLive')
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createTopic')
+            ->willReturn($topic)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([])
+        );
+
+        $message = new Message();
+        $message->setExpire(456);
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+
+        $driver->sendToRouter($message);
+    }
+
+    public function testShouldNotInitPriorityOnSendMessageToRouter()
+    {
+        $topic = $this->createTopic('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
+        ;
+        $producer
+            ->expects($this->never())
+            ->method('setPriority')
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createTopic')
+            ->willReturn($topic)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([])
+        );
+
+        $message = new Message();
+        $message->setPriority(MessagePriority::HIGH);
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+
+        $driver->sendToRouter($message);
+    }
+
     public function testThrowIfTopicIsNotSetOnSendToRouter()
     {
         $driver = $this->createDriver(
@@ -401,6 +539,156 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+
+        $driver->sendToProcessor($message);
+    }
+
+    public function testShouldInitDeliveryDelayIfDelayPropertyOnSendToProcessor()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('setDeliveryDelay')
+            ->with(456000)
+        ;
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('default')
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([
+                new Route('topic', Route::TOPIC, 'processor'),
+            ])
+        );
+
+        $message = new Message();
+        $message->setDelay(456);
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+
+        $driver->sendToProcessor($message);
+    }
+
+    public function testShouldSetInitTimeToLiveIfExpirePropertyOnSendToProcessor()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('setTimeToLive')
+            ->with(678000)
+        ;
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('default')
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([
+                new Route('topic', Route::TOPIC, 'processor'),
+            ])
+        );
+
+        $message = new Message();
+        $message->setExpire(678);
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+
+        $driver->sendToProcessor($message);
+    }
+
+    public function testShouldSetInitPriorityIfPriorityPropertyOnSendToProcessor()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('setPriority')
+            ->with(3)
+        ;
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('default')
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([
+                new Route('topic', Route::TOPIC, 'processor'),
+            ])
+        );
+
+        $message = new Message();
+        $message->setPriority(MessagePriority::HIGH);
         $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
 

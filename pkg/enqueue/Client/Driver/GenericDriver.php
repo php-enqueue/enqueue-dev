@@ -12,6 +12,7 @@ use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
@@ -54,8 +55,9 @@ class GenericDriver implements DriverInterface
 
         $topic = $this->createRouterTopic();
         $transportMessage = $this->createTransportMessage($message);
+        $producer = $this->getContext()->createProducer();
 
-        $this->doSendToRouter($topic, $transportMessage);
+        $this->doSendToRouter($producer, $topic, $transportMessage);
     }
 
     public function sendToProcessor(Message $message): void
@@ -91,7 +93,23 @@ class GenericDriver implements DriverInterface
         $transportMessage = $this->createTransportMessage($message);
         $queue = $this->createRouteQueue($route);
 
-        $this->doSendToProcessor($queue, $transportMessage);
+        $producer = $this->context->createProducer();
+
+        if ($delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
+            $producer->setDeliveryDelay($delay * 1000);
+        }
+
+        if ($expire = $transportMessage->getProperty('X-Enqueue-Expire')) {
+            $producer->setTimeToLive($expire * 1000);
+        }
+
+        if ($priority = $transportMessage->getProperty('X-Enqueue-Priority')) {
+            $priorityMap = $this->getPriorityMap();
+
+            $producer->setPriority($priorityMap[$priority]);
+        }
+
+        $this->doSendToProcessor($producer, $queue, $transportMessage);
     }
 
     public function setupBroker(LoggerInterface $logger = null): void
@@ -186,14 +204,14 @@ class GenericDriver implements DriverInterface
         return $this->routeCollection;
     }
 
-    protected function doSendToRouter(PsrTopic $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(PsrProducer $producer, PsrTopic $topic, PsrMessage $transportMessage): void
     {
-        $this->context->createProducer()->send($topic, $transportMessage);
+        $producer->send($topic, $transportMessage);
     }
 
-    protected function doSendToProcessor(PsrQueue $queue, PsrMessage $transportMessage): void
+    protected function doSendToProcessor(PsrProducer $producer, PsrQueue $queue, PsrMessage $transportMessage): void
     {
-        $this->context->createProducer()->send($queue, $transportMessage);
+        $producer->send($queue, $transportMessage);
     }
 
     protected function createRouterTopic(): PsrTopic
@@ -226,5 +244,21 @@ class GenericDriver implements DriverInterface
         $clientAppName = $prefix ? $this->config->getAppName() : '';
 
         return strtolower(implode($this->config->getSeparator(), array_filter([$clientPrefix, $clientAppName, $name])));
+    }
+
+    /**
+     * [client message priority => transport message priority].
+     *
+     * @return int[]
+     */
+    protected function getPriorityMap(): array
+    {
+        return [
+            MessagePriority::VERY_LOW => 0,
+            MessagePriority::LOW => 1,
+            MessagePriority::NORMAL => 2,
+            MessagePriority::HIGH => 3,
+            MessagePriority::VERY_HIGH => 4,
+        ];
     }
 }
