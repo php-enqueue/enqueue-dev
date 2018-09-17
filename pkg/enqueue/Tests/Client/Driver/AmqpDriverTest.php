@@ -30,7 +30,12 @@ class AmqpDriverTest extends TestCase
 
     public function testShouldImplementsDriverInterface()
     {
-        $this->assertClassImplements(DriverInterface::class, GenericDriver::class);
+        $this->assertClassImplements(DriverInterface::class, AmqpDriver::class);
+    }
+
+    public function testShouldBeSubClassOfGenericDriver()
+    {
+        $this->assertClassExtends(GenericDriver::class, AmqpDriver::class);
     }
 
     public function testThrowIfPriorityIsNotSupportedOnCreateTransportMessage()

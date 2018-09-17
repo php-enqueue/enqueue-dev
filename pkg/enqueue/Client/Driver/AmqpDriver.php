@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace  Enqueue\Client\Driver;
 
+use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\Client\Config;
 use Enqueue\Client\Message;
-use Enqueue\Client\MessagePriority;
 use Enqueue\Client\RouteCollection;
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpMessage;
@@ -14,6 +14,7 @@ use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
@@ -32,11 +33,6 @@ class AmqpDriver extends GenericDriver
     private $config;
 
     /**
-     * @var array
-     */
-    private $priorityMap;
-
-    /**
      * @var RouteCollection
      */
     private $routeCollection;
@@ -46,14 +42,6 @@ class AmqpDriver extends GenericDriver
         $this->context = $context;
         $this->config = $config;
         $this->routeCollection = $routeCollection;
-
-        $this->priorityMap = [
-            MessagePriority::VERY_LOW => 0,
-            MessagePriority::LOW => 1,
-            MessagePriority::NORMAL => 2,
-            MessagePriority::HIGH => 3,
-            MessagePriority::VERY_HIGH => 4,
-        ];
 
         parent::__construct($context, $config, $routeCollection);
     }
@@ -72,16 +60,17 @@ class AmqpDriver extends GenericDriver
             $transportMessage->setExpiration($clientMessage->getExpire() * 1000);
         }
 
+        $priorityMap = $this->getPriorityMap();
         if ($priority = $clientMessage->getPriority()) {
-            if (false == array_key_exists($priority, $this->getPriorityMap())) {
+            if (false == array_key_exists($priority, $priorityMap)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Cant convert client priority "%s" to transport one. Could be one of "%s"',
                     $priority,
-                    implode('", "', array_keys($this->getPriorityMap()))
+                    implode('", "', array_keys($priorityMap))
                 ));
             }
 
-            $transportMessage->setPriority($this->priorityMap[$priority]);
+            $transportMessage->setPriority($priorityMap[$priority]);
         }
 
         return $transportMessage;
@@ -135,17 +124,18 @@ class AmqpDriver extends GenericDriver
     }
 
     /**
-     * @param AmqpTopic   $topic
-     * @param AmqpMessage $transportMessage
+     * @param AmqpProducer $producer
+     * @param AmqpTopic    $topic
+     * @param AmqpMessage  $transportMessage
      */
-    protected function doSendToRouter(PsrTopic $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(PsrProducer $producer, PsrTopic $topic, PsrMessage $transportMessage): void
     {
         // We should not handle priority, expiration, and delay at this stage.
         // The router will take care of it while re-sending the message to the final destinations.
         $transportMessage->setPriority(null);
         $transportMessage->setExpiration(null);
 
-        $this->context->createProducer()->send($topic, $transportMessage);
+        $producer->send($topic, $transportMessage);
     }
 
     /**
@@ -159,10 +149,5 @@ class AmqpDriver extends GenericDriver
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);
 
         return $topic;
-    }
-
-    protected function getPriorityMap(): array
-    {
-        return $this->priorityMap;
     }
 }
