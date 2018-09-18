@@ -5,9 +5,9 @@ namespace Enqueue\Client;
 use Enqueue\Client\Driver\AmqpDriver;
 use Enqueue\Client\Driver\DbalDriver;
 use Enqueue\Client\Driver\FsDriver;
+use Enqueue\Client\Driver\GenericDriver;
 use Enqueue\Client\Driver\GpsDriver;
 use Enqueue\Client\Driver\MongodbDriver;
-use Enqueue\Client\Driver\NullDriver;
 use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
 use Enqueue\Client\Driver\RdKafkaDriver;
@@ -65,7 +65,7 @@ final class Resources
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/fs'],
             ];
-            $map[NullDriver::class] = [
+            $map[GenericDriver::class] = [
                 'schemes' => ['null'],
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/null'],

@@ -6,9 +6,9 @@ use Enqueue\Client\Config;
 use Enqueue\Client\Driver\AmqpDriver;
 use Enqueue\Client\Driver\DbalDriver;
 use Enqueue\Client\Driver\FsDriver;
+use Enqueue\Client\Driver\GenericDriver;
 use Enqueue\Client\Driver\GpsDriver;
 use Enqueue\Client\Driver\MongodbDriver;
-use Enqueue\Client\Driver\NullDriver;
 use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
 use Enqueue\Client\Driver\RdKafkaDriver;
@@ -125,7 +125,7 @@ class DriverFactoryTest extends TestCase
 
     public static function provideDSN()
     {
-        yield ['null:', NullConnectionFactory::class, NullContext::class, [], NullDriver::class];
+        yield ['null:', NullConnectionFactory::class, NullContext::class, [], GenericDriver::class];
 
         yield ['amqp:', AmqpConnectionFactory::class, AmqpContext::class, [], AmqpDriver::class];
 
