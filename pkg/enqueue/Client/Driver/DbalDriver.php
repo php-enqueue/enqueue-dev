@@ -11,6 +11,11 @@ use Psr\Log\NullLogger;
  */
 class DbalDriver extends GenericDriver
 {
+    public function __construct(DbalContext $context, ...$args)
+    {
+        parent::__construct($context, ...$args);
+    }
+
     public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();

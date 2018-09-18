@@ -15,6 +15,11 @@ use Psr\Log\NullLogger;
  */
 class GpsDriver extends GenericDriver
 {
+    public function __construct(GpsContext $context, ...$args)
+    {
+        parent::__construct($context, ...$args);
+    }
+
     public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
