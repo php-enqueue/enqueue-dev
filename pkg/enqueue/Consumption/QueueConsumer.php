@@ -358,6 +358,8 @@ class QueueConsumer
                 )
             );
         }
+
+        $this->enableSubscriptionConsumer = $enableSubscriptionConsumer;
     }
 
     /**
