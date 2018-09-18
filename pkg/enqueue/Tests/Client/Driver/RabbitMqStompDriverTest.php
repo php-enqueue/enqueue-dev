@@ -3,57 +3,53 @@
 namespace Enqueue\Tests\Client\Driver;
 
 use Enqueue\Client\Config;
+use Enqueue\Client\Driver\GenericDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
+use Enqueue\Client\Driver\StompDriver;
 use Enqueue\Client\Driver\StompManagementClient;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
-use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Client\Route;
+use Enqueue\Client\RouteCollection;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
+use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
+class RabbitMqStompDriverTest extends TestCase
 {
     use ClassExtensionTrait;
+    use GenericDriverTestsTrait;
 
     public function testShouldImplementsDriverInterface()
     {
         $this->assertClassImplements(DriverInterface::class, RabbitMqStompDriver::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
+    public function testShouldBeSubClassOfGenericDriver()
     {
-        new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
+        $this->assertClassExtends(GenericDriver::class, RabbitMqStompDriver::class);
     }
 
-    public function testShouldReturnConfigObject()
+    public function testShouldBeSubClassOfStompDriver()
     {
-        $config = $this->createDummyConfig();
-
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $config,
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $this->assertSame($config, $driver->getConfig());
+        $this->assertClassExtends(StompDriver::class, RabbitMqStompDriver::class);
     }
 
-    public function testShouldCreateAndReturnQueueInstance()
+    public function testShouldCreateAndReturnStompQueueInstance()
     {
         $expectedQueue = new StompDestination();
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
@@ -61,10 +57,10 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
             ->willReturn($expectedQueue)
         ;
 
-        $driver = new RabbitMqStompDriver(
+        $driver = $this->createDriver(
             $context,
             $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
+            new RouteCollection([]),
             $this->createManagementClientMock()
         );
 
@@ -84,140 +80,24 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedHeaders, $queue->getHeaders());
     }
 
-    public function testShouldCreateAndReturnQueueInstanceWithHardcodedTransportName()
-    {
-        $expectedQueue = new StompDestination();
-
-        $context = $this->createPsrContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createQueue')
-            ->with('aBarQueue')
-            ->willReturn($expectedQueue)
-        ;
-
-        $driver = new RabbitMqStompDriver(
-            $context,
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $queue = $driver->createQueue('aBarQueue');
-
-        $this->assertSame($expectedQueue, $queue);
-    }
-
-    public function testShouldConvertTransportMessageToClientMessage()
-    {
-        $transportMessage = new StompMessage();
-        $transportMessage->setBody('body');
-        $transportMessage->setHeaders(['hkey' => 'hval']);
-        $transportMessage->setProperties(['key' => 'val']);
-        $transportMessage->setHeader('content-type', 'ContentType');
-        $transportMessage->setHeader('expiration', '12345000');
-        $transportMessage->setHeader('priority', 3);
-        $transportMessage->setHeader('x-delay', '5678000');
-        $transportMessage->setMessageId('MessageId');
-        $transportMessage->setTimestamp(1000);
-        $transportMessage->setReplyTo('theReplyTo');
-        $transportMessage->setCorrelationId('theCorrelationId');
-
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $clientMessage = $driver->createClientMessage($transportMessage);
-
-        $this->assertInstanceOf(Message::class, $clientMessage);
-        $this->assertSame('body', $clientMessage->getBody());
-        $this->assertSame(['hkey' => 'hval'], $clientMessage->getHeaders());
-        $this->assertSame(['key' => 'val'], $clientMessage->getProperties());
-        $this->assertSame('MessageId', $clientMessage->getMessageId());
-        $this->assertSame(12345, $clientMessage->getExpire());
-        $this->assertSame(5678, $clientMessage->getDelay());
-        $this->assertSame('ContentType', $clientMessage->getContentType());
-        $this->assertSame(1000, $clientMessage->getTimestamp());
-        $this->assertSame(MessagePriority::HIGH, $clientMessage->getPriority());
-        $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
-        $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
-    }
-
-    public function testShouldThrowExceptionIfXDelayIsNotNumeric()
-    {
-        $transportMessage = new StompMessage();
-        $transportMessage->setHeader('x-delay', 'is-not-numeric');
-
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('x-delay header is not numeric. "is-not-numeric"');
-
-        $driver->createClientMessage($transportMessage);
-    }
-
-    public function testShouldThrowExceptionIfExpirationIsNotNumeric()
-    {
-        $transportMessage = new StompMessage();
-        $transportMessage->setHeader('expiration', 'is-not-numeric');
-
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('expiration header is not numeric. "is-not-numeric"');
-
-        $driver->createClientMessage($transportMessage);
-    }
-
-    public function testShouldThrowExceptionIfCantConvertTransportPriorityToClientPriority()
-    {
-        $transportMessage = new StompMessage();
-        $transportMessage->setHeader('priority', 'unknown');
-
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Cant convert transport priority to client: "unknown"');
-
-        $driver->createClientMessage($transportMessage);
-    }
-
-    public function testShouldThrowExceptionIfCantConvertClientPriorityToTransportPriority()
+    public function testThrowIfClientPriorityInvalidOnCreateTransportMessage()
     {
         $clientMessage = new Message();
         $clientMessage->setPriority('unknown');
 
         $transportMessage = new StompMessage();
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createMessage')
             ->willReturn($transportMessage)
         ;
 
-        $driver = new RabbitMqStompDriver(
+        $driver = $this->createDriver(
             $context,
             $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
+            new RouteCollection([]),
             $this->createManagementClientMock()
         );
 
@@ -227,74 +107,32 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $driver->createTransportMessage($clientMessage);
     }
 
-    public function testShouldConvertClientMessageToTransportMessage()
-    {
-        $clientMessage = new Message();
-        $clientMessage->setBody('body');
-        $clientMessage->setHeaders(['hkey' => 'hval']);
-        $clientMessage->setProperties(['key' => 'val']);
-        $clientMessage->setContentType('ContentType');
-        $clientMessage->setExpire(123);
-        $clientMessage->setPriority(MessagePriority::VERY_HIGH);
-        $clientMessage->setDelay(432);
-        $clientMessage->setMessageId('MessageId');
-        $clientMessage->setTimestamp(1000);
-        $clientMessage->setReplyTo('theReplyTo');
-        $clientMessage->setCorrelationId('theCorrelationId');
-
-        $context = $this->createPsrContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createMessage')
-            ->willReturn(new StompMessage())
-        ;
-
-        $driver = new RabbitMqStompDriver(
-            $context,
-            new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $transportMessage = $driver->createTransportMessage($clientMessage);
-
-        $this->assertInstanceOf(StompMessage::class, $transportMessage);
-        $this->assertSame('body', $transportMessage->getBody());
-        $this->assertSame([
-            'hkey' => 'hval',
-            'content-type' => 'ContentType',
-            'persistent' => true,
-            'message_id' => 'MessageId',
-            'timestamp' => 1000,
-            'reply-to' => 'theReplyTo',
-            'correlation_id' => 'theCorrelationId',
-            'expiration' => '123000',
-            'priority' => 4,
-            'x-delay' => '432000',
-        ], $transportMessage->getHeaders());
-        $this->assertSame(['key' => 'val'], $transportMessage->getProperties());
-        $this->assertSame('MessageId', $transportMessage->getMessageId());
-        $this->assertSame(1000, $transportMessage->getTimestamp());
-        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
-        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
-    }
-
-    public function testShouldThrowExceptionIfDelayIsSetButDelayPluginInstalledOptionIsFalse()
+    public function testThrowIfDelayIsSetButDelayPluginInstalledOptionIsFalse()
     {
         $clientMessage = new Message();
         $clientMessage->setDelay(123);
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createMessage')
             ->willReturn(new StompMessage())
         ;
 
-        $driver = new RabbitMqStompDriver(
+        $config = Config::create(
+            'aPrefix',
+            '',
+            null,
+            null,
+            null,
+            null,
+            ['delay_plugin_installed' => false]
+        );
+
+        $driver = $this->createDriver(
             $context,
-            new Config('', '', '', '', '', '', ['delay_plugin_installed' => false]),
-            $this->createDummyQueueMetaRegistry(),
+            $config,
+            new RouteCollection([]),
             $this->createManagementClientMock()
         );
 
@@ -304,106 +142,46 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $driver->createTransportMessage($clientMessage);
     }
 
-    public function testShouldSendMessageToRouter()
+    public function testShouldSetXDelayHeaderIfDelayPluginInstalledOptionIsTrue()
     {
-        $topic = new StompDestination();
-        $transportMessage = new StompMessage();
+        $clientMessage = new Message();
+        $clientMessage->setDelay(123);
 
-        $producer = $this->createPsrProducerMock();
-        $producer
-            ->expects($this->once())
-            ->method('send')
-            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
-        ;
-        $context = $this->createPsrContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createTopic')
-            ->willReturn($topic)
-        ;
-        $context
-            ->expects($this->once())
-            ->method('createProducer')
-            ->willReturn($producer)
-        ;
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createMessage')
-            ->willReturn($transportMessage)
+            ->willReturn(new StompMessage())
         ;
 
-        $driver = new RabbitMqStompDriver(
+        $config = Config::create(
+            'aPrefix',
+            '',
+            null,
+            null,
+            null,
+            null,
+            ['delay_plugin_installed' => true]
+        );
+
+        $driver = $this->createDriver(
             $context,
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
+            $config,
+            new RouteCollection([]),
             $this->createManagementClientMock()
         );
 
-        $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $transportMessage = $driver->createTransportMessage($clientMessage);
 
-        $driver->sendToRouter($message);
+        $this->assertSame('123000', $transportMessage->getHeader('x-delay'));
     }
 
-    public function testShouldThrowExceptionIfTopicParameterIsNotSet()
+    public function testShouldInitDeliveryDelayIfDelayPropertyOnSendToProcessor()
     {
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Topic name parameter is required but is not set');
-
-        $driver->sendToRouter(new Message());
+        $this->shouldSendMessageToDelayExchangeIfDelaySet();
     }
 
-    public function testShouldSendMessageToProcessor()
-    {
-        $queue = new StompDestination();
-        $transportMessage = new StompMessage();
-
-        $producer = $this->createPsrProducerMock();
-        $producer
-            ->expects($this->once())
-            ->method('send')
-            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
-        ;
-        $context = $this->createPsrContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createQueue')
-            ->with('aprefix.afooqueue')
-            ->willReturn($queue)
-        ;
-        $context
-            ->expects($this->once())
-            ->method('createProducer')
-            ->willReturn($producer)
-        ;
-        $context
-            ->expects($this->once())
-            ->method('createMessage')
-            ->willReturn($transportMessage)
-        ;
-
-        $driver = new RabbitMqStompDriver(
-            $context,
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $message = new Message();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
-
-        $driver->sendToProcessor($message);
-    }
-
-    public function testShouldSendMessageToDelayExchangeIfDelaySet()
+    public function shouldSendMessageToDelayExchangeIfDelaySet()
     {
         $queue = new StompDestination();
         $queue->setStompName('queueName');
@@ -413,13 +191,24 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
         $transportMessage = new StompMessage();
 
-        $producer = $this->createPsrProducerMock();
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->at(0))
+            ->method('setDeliveryDelay')
+            ->with(10000)
+        ;
+        $producer
+            ->expects($this->at(1))
+            ->method('setDeliveryDelay')
+            ->with(null)
+        ;
         $producer
             ->expects($this->once())
             ->method('send')
             ->with($this->identicalTo($delayTopic), $this->identicalTo($transportMessage))
         ;
-        $context = $this->createPsrContextMock();
+
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createQueue')
@@ -441,60 +230,49 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
             ->willReturn($transportMessage)
         ;
 
-        $driver = new RabbitMqStompDriver(
+        $config = Config::create(
+            'aPrefix',
+            '',
+            null,
+            null,
+            null,
+            null,
+            ['delay_plugin_installed' => true]
+        );
+
+        $driver = $this->createDriver(
             $context,
-            new Config('', '', '', '', '', '', ['delay_plugin_installed' => true]),
-            $this->createDummyQueueMetaRegistry(),
+            $config,
+            new RouteCollection([
+                new Route('topic', Route::TOPIC, 'processor'),
+            ]),
             $this->createManagementClientMock()
         );
 
         $message = new Message();
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aFooQueue');
         $message->setDelay(10);
-
-        $driver->sendToProcessor($message);
-    }
-
-    public function testShouldThrowExceptionIfProcessorNameParameterIsNotSet()
-    {
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Processor name parameter is required but is not set');
-
-        $driver->sendToProcessor(new Message());
-    }
-
-    public function testShouldThrowExceptionIfProcessorQueueNameParameterIsNotSet()
-    {
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            $this->createDummyConfig(),
-            $this->createDummyQueueMetaRegistry(),
-            $this->createManagementClientMock()
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Queue name parameter is required but is not set');
-
-        $message = new Message();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
 
         $driver->sendToProcessor($message);
     }
 
     public function testShouldNotSetupBrokerIfManagementPluginInstalledOptionIsNotEnabled()
     {
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            new Config('', '', '', '', '', '', ['management_plugin_installed' => false]),
-            $this->createDummyQueueMetaRegistry(),
+        $config = Config::create(
+            'aPrefix',
+            '',
+            null,
+            null,
+            null,
+            null,
+            ['management_plugin_installed' => false]
+        );
+
+        $driver = $this->createDriver(
+            $this->createContextMock(),
+            $config,
+            new RouteCollection([]),
             $this->createManagementClientMock()
         );
 
@@ -510,13 +288,15 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldSetupBroker()
     {
-        $metaRegistry = $this->createDummyQueueMetaRegistry();
+        $routeCollection = new RouteCollection([
+            new Route('topic', Route::TOPIC, 'processor'),
+        ]);
 
         $managementClient = $this->createManagementClientMock();
         $managementClient
             ->expects($this->at(0))
             ->method('declareExchange')
-            ->with('prefix.routertopic', [
+            ->with('aprefix.router', [
                 'type' => 'fanout',
                 'durable' => true,
                 'auto_delete' => false,
@@ -525,7 +305,7 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $managementClient
             ->expects($this->at(1))
             ->method('declareQueue')
-            ->with('prefix.app.routerqueue', [
+            ->with('aprefix.default', [
                 'durable' => true,
                 'auto_delete' => false,
                 'arguments' => [
@@ -536,12 +316,12 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $managementClient
             ->expects($this->at(2))
             ->method('bind')
-            ->with('prefix.routertopic', 'prefix.app.routerqueue', 'prefix.app.routerqueue')
+            ->with('aprefix.router', 'aprefix.default', 'aprefix.default')
         ;
         $managementClient
             ->expects($this->at(3))
             ->method('declareQueue')
-            ->with('prefix.app.default', [
+            ->with('default', [
                 'durable' => true,
                 'auto_delete' => false,
                 'arguments' => [
@@ -550,10 +330,33 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
             ])
         ;
 
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            new Config('prefix', 'app', 'routerTopic', 'routerQueue', 'processorQueue', '', ['management_plugin_installed' => true]),
-            $metaRegistry,
+        $contextMock = $this->createContextMock();
+        $contextMock
+            ->expects($this->any())
+            ->method('createQueue')
+            ->willReturnCallback(function (string $name) {
+                $destination = new StompDestination();
+                $destination->setType(StompDestination::TYPE_QUEUE);
+                $destination->setStompName($name);
+
+                return $destination;
+            })
+        ;
+
+        $config = Config::create(
+            'aPrefix',
+            '',
+            null,
+            null,
+            null,
+            null,
+            ['delay_plugin_installed' => false, 'management_plugin_installed' => true]
+        );
+
+        $driver = $this->createDriver(
+            $contextMock,
+            $config,
+            $routeCollection,
             $managementClient
         );
 
@@ -561,22 +364,22 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
         $logger
             ->expects($this->at(0))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare router exchange: prefix.routertopic')
+            ->with('[RabbitMqStompDriver] Declare router exchange: aprefix.router')
         ;
         $logger
             ->expects($this->at(1))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare router queue: prefix.app.routerqueue')
+            ->with('[RabbitMqStompDriver] Declare router queue: aprefix.default')
         ;
         $logger
             ->expects($this->at(2))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind router queue to exchange: prefix.app.routerqueue -> prefix.routertopic')
+            ->with('[RabbitMqStompDriver] Bind router queue to exchange: aprefix.default -> aprefix.router')
         ;
         $logger
             ->expects($this->at(3))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare processor queue: prefix.app.default')
+            ->with('[RabbitMqStompDriver] Declare processor queue: default')
         ;
 
         $driver->setupBroker($logger);
@@ -584,13 +387,15 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testSetupBrokerShouldCreateDelayExchangeIfEnabled()
     {
-        $metaRegistry = $this->createDummyQueueMetaRegistry();
+        $routeCollection = new RouteCollection([
+            new Route('topic', Route::TOPIC, 'processor'),
+        ]);
 
         $managementClient = $this->createManagementClientMock();
         $managementClient
-            ->expects($this->at(6))
+            ->expects($this->at(4))
             ->method('declareExchange')
-            ->with('prefix.app.default.delayed', [
+            ->with('default.delayed', [
                 'type' => 'x-delayed-message',
                 'durable' => true,
                 'auto_delete' => false,
@@ -600,47 +405,155 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
             ])
         ;
         $managementClient
-            ->expects($this->at(7))
+            ->expects($this->at(5))
             ->method('bind')
-            ->with('prefix.app.default.delayed', 'prefix.app.default', 'prefix.app.default')
+            ->with('default.delayed', 'default', 'default')
         ;
 
-        $driver = new RabbitMqStompDriver(
-            $this->createPsrContextMock(),
-            new Config('prefix', 'app', 'routerTopic', 'routerQueue', 'processorQueue', '', ['management_plugin_installed' => true, 'delay_plugin_installed' => true]),
-            $metaRegistry,
+        $config = Config::create(
+            'aPrefix',
+            '',
+            null,
+            null,
+            null,
+            null,
+            ['delay_plugin_installed' => true, 'management_plugin_installed' => true]
+        );
+
+        $contextMock = $this->createContextMock();
+        $contextMock
+            ->expects($this->any())
+            ->method('createQueue')
+            ->willReturnCallback(function (string $name) {
+                $destination = new StompDestination();
+                $destination->setType(StompDestination::TYPE_QUEUE);
+                $destination->setStompName($name);
+
+                return $destination;
+            })
+        ;
+        $contextMock
+            ->expects($this->any())
+            ->method('createTopic')
+            ->willReturnCallback(function (string $name) {
+                $destination = new StompDestination();
+                $destination->setType(StompDestination::TYPE_TOPIC);
+                $destination->setStompName($name);
+
+                return $destination;
+            })
+        ;
+
+        $driver = $this->createDriver(
+            $contextMock,
+            $config,
+            $routeCollection,
             $managementClient
         );
 
         $logger = $this->createLoggerMock();
         $logger
-            ->expects($this->at(6))
+            ->expects($this->at(4))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare delay exchange: prefix.app.default.delayed')
+            ->with('[RabbitMqStompDriver] Declare delay exchange: default.delayed')
         ;
         $logger
-            ->expects($this->at(7))
+            ->expects($this->at(5))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: prefix.app.default -> prefix.app.default.delayed')
+            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: default -> default.delayed')
         ;
 
         $driver->setupBroker($logger);
     }
 
+    protected function createDriver(...$args): DriverInterface
+    {
+        return new RabbitMqStompDriver(
+            $args[0],
+            $args[1],
+            $args[2],
+            isset($args[3]) ? $args[3] : $this->createManagementClientMock()
+        );
+    }
+
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|StompContext
+     * @return StompContext
      */
-    private function createPsrContextMock()
+    protected function createContextMock(): PsrContext
     {
         return $this->createMock(StompContext::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|StompProducer
+     * @return StompProducer
      */
-    private function createPsrProducerMock()
+    protected function createProducerMock(): PsrProducer
     {
         return $this->createMock(StompProducer::class);
+    }
+
+    /**
+     * @return StompDestination
+     */
+    protected function createQueue(string $name): PsrQueue
+    {
+        return new StompDestination();
+    }
+
+    /**
+     * @return StompDestination
+     */
+    protected function createTopic(string $name): PsrTopic
+    {
+        return new StompDestination();
+    }
+
+    /**
+     * @return StompMessage
+     */
+    protected function createMessage(): PsrMessage
+    {
+        return new StompMessage();
+    }
+
+    protected function assertTransportMessage(PsrMessage $transportMessage): void
+    {
+        $this->assertSame('body', $transportMessage->getBody());
+        $this->assertEquals([
+            'hkey' => 'hval',
+            'message_id' => 'theMessageId',
+            'timestamp' => 1000,
+            'reply-to' => 'theReplyTo',
+            'persistent' => true,
+            'correlation_id' => 'theCorrelationId',
+            'expiration' => '123000',
+            'priority' => 3,
+            'x-delay' => '345000',
+        ], $transportMessage->getHeaders());
+        $this->assertEquals([
+            'pkey' => 'pval',
+            'X-Enqueue-Content-Type' => 'ContentType',
+            'X-Enqueue-Priority' => MessagePriority::HIGH,
+            'X-Enqueue-Expire' => 123,
+            'X-Enqueue-Delay' => 345,
+        ], $transportMessage->getProperties());
+        $this->assertSame('theMessageId', $transportMessage->getMessageId());
+        $this->assertSame(1000, $transportMessage->getTimestamp());
+        $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
+        $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
+    }
+
+    protected function createDummyConfig(): Config
+    {
+        return Config::create(
+            'aPrefix',
+            '',
+            null,
+            null,
+            null,
+            null,
+            ['delay_plugin_installed' => true, 'management_plugin_installed' => true]
+        );
     }
 
     /**
@@ -657,26 +570,5 @@ class RabbitMqStompDriverTest extends \PHPUnit\Framework\TestCase
     private function createLoggerMock()
     {
         return $this->createMock(LoggerInterface::class);
-    }
-
-    /**
-     * @return QueueMetaRegistry
-     */
-    private function createDummyQueueMetaRegistry()
-    {
-        $registry = new QueueMetaRegistry($this->createDummyConfig(), []);
-        $registry->add('default');
-        $registry->add('aFooQueue');
-        $registry->add('aBarQueue', 'aBarQueue');
-
-        return $registry;
-    }
-
-    /**
-     * @return Config
-     */
-    private function createDummyConfig()
-    {
-        return Config::create('aPrefix');
     }
 }

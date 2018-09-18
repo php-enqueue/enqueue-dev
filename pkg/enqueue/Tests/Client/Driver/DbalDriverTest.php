@@ -79,7 +79,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
      */
     protected function createQueue(string $name): PsrQueue
     {
-        return new DbalDestination(new \SplFileInfo($name));
+        return new DbalDestination($name);
     }
 
     /**
@@ -87,7 +87,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
      */
     protected function createTopic(string $name): PsrTopic
     {
-        return new DbalDestination(new \SplFileInfo($name));
+        return new DbalDestination($name);
     }
 
     /**

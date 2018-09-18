@@ -83,7 +83,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
      */
     protected function createQueue(string $name): PsrQueue
     {
-        return new MongodbDestination(new \SplFileInfo($name));
+        return new MongodbDestination($name);
     }
 
     /**
@@ -91,7 +91,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
      */
     protected function createTopic(string $name): PsrTopic
     {
-        return new MongodbDestination(new \SplFileInfo($name));
+        return new MongodbDestination($name);
     }
 
     /**

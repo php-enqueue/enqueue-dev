@@ -4,59 +4,30 @@ namespace Enqueue\Client\Driver;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\Message;
-use Enqueue\Client\MessagePriority;
-use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Client\RouteCollection;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
+use Enqueue\Stomp\StompProducer;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class RabbitMqStompDriver extends StompDriver
 {
     /**
-     * @var StompContext
-     */
-    private $context;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var array
-     */
-    private $priorityMap;
-
-    /**
      * @var StompManagementClient
      */
     private $management;
 
-    /**
-     * @var QueueMetaRegistry
-     */
-    private $queueMetaRegistry;
-
-    public function __construct(StompContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry, StompManagementClient $management)
+    public function __construct(StompContext $context, Config $config, RouteCollection $routeCollection, StompManagementClient $management)
     {
-        parent::__construct($context, $config, $queueMetaRegistry);
+        parent::__construct($context, $config, $routeCollection);
 
-        $this->context = $context;
-        $this->config = $config;
-        $this->queueMetaRegistry = $queueMetaRegistry;
         $this->management = $management;
-
-        $this->priorityMap = [
-            MessagePriority::VERY_LOW => 0,
-            MessagePriority::LOW => 1,
-            MessagePriority::NORMAL => 2,
-            MessagePriority::HIGH => 3,
-            MessagePriority::VERY_HIGH => 4,
-        ];
     }
 
     /**
@@ -71,15 +42,17 @@ class RabbitMqStompDriver extends StompDriver
         }
 
         if ($priority = $message->getPriority()) {
-            if (false == array_key_exists($priority, $this->priorityMap)) {
+            $priorityMap = $this->getPriorityMap();
+
+            if (false == array_key_exists($priority, $priorityMap)) {
                 throw new \LogicException(sprintf('Cant convert client priority to transport: "%s"', $priority));
             }
 
-            $transportMessage->setHeader('priority', $this->priorityMap[$priority]);
+            $transportMessage->setHeader('priority', $priorityMap[$priority]);
         }
 
         if ($message->getDelay()) {
-            if (false == $this->config->getTransportOption('delay_plugin_installed', false)) {
+            if (false == $this->getConfig()->getTransportOption('delay_plugin_installed', false)) {
                 throw new \LogicException('The message delaying is not supported. In order to use delay feature install RabbitMQ delay plugin.');
             }
 
@@ -87,68 +60,6 @@ class RabbitMqStompDriver extends StompDriver
         }
 
         return $transportMessage;
-    }
-
-    /**
-     * @param StompMessage $message
-     */
-    public function createClientMessage(PsrMessage $message): Message
-    {
-        $clientMessage = parent::createClientMessage($message);
-
-        $headers = $clientMessage->getHeaders();
-        unset(
-            $headers['x-delay'],
-            $headers['expiration'],
-            $headers['priority']
-        );
-        $clientMessage->setHeaders($headers);
-
-        if ($delay = $message->getHeader('x-delay')) {
-            if (false == is_numeric($delay)) {
-                throw new \LogicException(sprintf('x-delay header is not numeric. "%s"', $delay));
-            }
-
-            $clientMessage->setDelay((int) ((int) $delay) / 1000);
-        }
-
-        if ($expiration = $message->getHeader('expiration')) {
-            if (false == is_numeric($expiration)) {
-                throw new \LogicException(sprintf('expiration header is not numeric. "%s"', $expiration));
-            }
-
-            $clientMessage->setExpire((int) ((int) $expiration) / 1000);
-        }
-
-        if ($priority = $message->getHeader('priority')) {
-            if (false === $clientPriority = array_search($priority, $this->priorityMap, true)) {
-                throw new \LogicException(sprintf('Cant convert transport priority to client: "%s"', $priority));
-            }
-
-            $clientMessage->setPriority($clientPriority);
-        }
-
-        return $clientMessage;
-    }
-
-    public function sendToProcessor(Message $message): void
-    {
-        if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-            throw new \LogicException('Processor name parameter is required but is not set');
-        }
-
-        if (false == $queueName = $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-            throw new \LogicException('Queue name parameter is required but is not set');
-        }
-
-        $transportMessage = $this->createTransportMessage($message);
-        $destination = $this->createQueue($queueName);
-
-        if ($message->getDelay()) {
-            $destination = $this->createDelayedTopic($destination);
-        }
-
-        $this->context->createProducer()->send($destination, $transportMessage);
     }
 
     /**
@@ -169,14 +80,14 @@ class RabbitMqStompDriver extends StompDriver
             $logger->debug(sprintf('[RabbitMqStompDriver] '.$text, ...$args));
         };
 
-        if (false == $this->config->getTransportOption('management_plugin_installed', false)) {
+        if (false == $this->getConfig()->getTransportOption('management_plugin_installed', false)) {
             $log('Could not setup broker. The option `management_plugin_installed` is not enabled. Please enable that option and install rabbit management plugin');
 
             return;
         }
 
         // setup router
-        $routerExchange = $this->config->createTransportRouterTopicName($this->config->getRouterTopicName());
+        $routerExchange = $this->getConfig()->createTransportRouterTopicName($this->getConfig()->getRouterTopicName());
         $log('Declare router exchange: %s', $routerExchange);
         $this->management->declareExchange($routerExchange, [
             'type' => 'fanout',
@@ -184,7 +95,7 @@ class RabbitMqStompDriver extends StompDriver
             'auto_delete' => false,
         ]);
 
-        $routerQueue = $this->config->createTransportQueueName($this->config->getRouterQueueName());
+        $routerQueue = $this->getConfig()->createTransportQueueName($this->getConfig()->getRouterQueueName());
         $log('Declare router queue: %s', $routerQueue);
         $this->management->declareQueue($routerQueue, [
             'auto_delete' => false,
@@ -198,11 +109,11 @@ class RabbitMqStompDriver extends StompDriver
         $this->management->bind($routerExchange, $routerQueue, $routerQueue);
 
         // setup queues
-        foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
-            $queue = $this->config->createTransportQueueName($meta->getClientName());
+        foreach ($this->getRouteCollection()->all() as $route) {
+            $queue = $this->createRouteQueue($route);
 
-            $log('Declare processor queue: %s', $queue);
-            $this->management->declareQueue($queue, [
+            $log('Declare processor queue: %s', $queue->getStompName());
+            $this->management->declareQueue($queue->getStompName(), [
                 'auto_delete' => false,
                 'durable' => true,
                 'arguments' => [
@@ -212,10 +123,10 @@ class RabbitMqStompDriver extends StompDriver
         }
 
         // setup delay exchanges
-        if ($this->config->getTransportOption('delay_plugin_installed', false)) {
-            foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
-                $queue = $this->config->createTransportQueueName($meta->getClientName());
-                $delayExchange = $queue.'.delayed';
+        if ($this->getConfig()->getTransportOption('delay_plugin_installed', false)) {
+            foreach ($this->getRouteCollection()->all() as $route) {
+                $queue = $this->createRouteQueue($route);
+                $delayExchange = $queue->getStompName().'.delayed';
 
                 $log('Declare delay exchange: %s', $delayExchange);
                 $this->management->declareExchange($delayExchange, [
@@ -227,18 +138,49 @@ class RabbitMqStompDriver extends StompDriver
                     ],
                 ]);
 
-                $log('Bind processor queue to delay exchange: %s -> %s', $queue, $delayExchange);
-                $this->management->bind($delayExchange, $queue, $queue);
+                $log('Bind processor queue to delay exchange: %s -> %s', $queue->getStompName(), $delayExchange);
+                $this->management->bind($delayExchange, $queue->getStompName(), $queue->getStompName());
             }
         } else {
             $log('Delay exchange and bindings are not setup. if you\'d like to use delays please install delay rabbitmq plugin and set delay_plugin_installed option to true');
         }
     }
 
+    /**
+     * @param StompProducer    $producer
+     * @param StompDestination $topic
+     * @param StompMessage     $transportMessage
+     */
+    protected function doSendToRouter(PsrProducer $producer, PsrTopic $topic, PsrMessage $transportMessage): void
+    {
+        // We should not handle priority, expiration, and delay at this stage.
+        // The router will take care of it while re-sending the message to the final destinations.
+        $transportMessage->setHeader('expiration', null);
+        $transportMessage->setHeader('priority', null);
+        $transportMessage->setHeader('x-delay', null);
+
+        $producer->send($topic, $transportMessage);
+    }
+
+    /**
+     * @param StompProducer    $producer
+     * @param StompDestination $destination
+     * @param StompMessage     $transportMessage
+     */
+    protected function doSendToProcessor(PsrProducer $producer, PsrQueue $destination, PsrMessage $transportMessage): void
+    {
+        if ($delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
+            $producer->setDeliveryDelay(null);
+            $destination = $this->createDelayedTopic($destination);
+        }
+
+        $producer->send($destination, $transportMessage);
+    }
+
     private function createDelayedTopic(StompDestination $queue): StompDestination
     {
         // in order to use delay feature make sure the rabbitmq_delayed_message_exchange plugin is installed.
-        $destination = $this->context->createTopic($queue->getStompName().'.delayed');
+        $destination = $this->getContext()->createTopic($queue->getStompName().'.delayed');
         $destination->setType(StompDestination::TYPE_EXCHANGE);
         $destination->setDurable(true);
         $destination->setAutoDelete(false);
