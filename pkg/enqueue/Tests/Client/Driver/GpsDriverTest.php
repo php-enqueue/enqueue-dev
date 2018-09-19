@@ -40,8 +40,8 @@ class GpsDriverTest extends TestCase
         $routerTopic = new GpsTopic('');
         $routerQueue = new GpsQueue('');
 
-        $processorTopic = new GpsTopic('default');
-        $processorQueue = new GpsQueue('default');
+        $processorTopic = new GpsTopic($this->getDefaultQueueTransportName());
+        $processorQueue = new GpsQueue($this->getDefaultQueueTransportName());
 
         $context = $this->createContextMock();
         // setup router
@@ -63,14 +63,14 @@ class GpsDriverTest extends TestCase
         $context
             ->expects($this->at(3))
             ->method('createQueue')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($processorQueue)
         ;
         // setup processor queue
         $context
             ->expects($this->at(4))
             ->method('createTopic')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($processorTopic)
         ;
         $context

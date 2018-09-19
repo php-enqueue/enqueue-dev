@@ -220,7 +220,7 @@ class AmqpDriverTest extends TestCase
         $context
             ->expects($this->at(5))
             ->method('createQueue')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($processorWithDefaultQueue)
         ;
         $context
@@ -232,7 +232,7 @@ class AmqpDriverTest extends TestCase
         $context
             ->expects($this->at(7))
             ->method('createQueue')
-            ->with('custom')
+            ->with($this->getCustomQueueTransportName())
             ->willReturn($processorWithCustomQueue)
         ;
         $context

@@ -77,7 +77,7 @@ final class Route
 
     public function isPrefixQueue(): bool
     {
-        return (bool) $this->getOption('prefix_queue', false);
+        return (bool) $this->getOption('prefix_queue', true);
     }
 
     public function getOptions(): array

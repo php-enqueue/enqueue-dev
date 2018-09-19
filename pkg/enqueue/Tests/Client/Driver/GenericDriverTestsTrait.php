@@ -49,6 +49,7 @@ trait GenericDriverTestsTrait
     {
         $routeCollection = new RouteCollection([]);
 
+        /** @var DriverInterface $driver */
         $driver = $this->createDriver($this->createContextMock(), $this->createDummyConfig(), $routeCollection);
 
         $this->assertSame($routeCollection, $driver->getRouteCollection());
@@ -62,7 +63,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('aprefix.anappname.afooqueue')
+            ->with($this->getPrefixAppFooQueueTransportName())
             ->willReturn($expectedQueue)
         ;
 
@@ -91,7 +92,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('aprefix.afooqueue')
+            ->with($this->getPrefixFooQueueTransportName())
             ->willReturn($expectedQueue)
         ;
 
@@ -120,7 +121,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('anappname.afooqueue')
+            ->with($this->getAppFooQueueTransportName())
             ->willReturn($expectedQueue)
         ;
 
@@ -178,7 +179,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('aprefix.afooqueue')
+            ->with($this->getPrefixFooQueueTransportName())
             ->willReturn($expectedQueue)
         ;
 
@@ -472,7 +473,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($queue)
         ;
         $context
@@ -516,7 +517,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('custom')
+            ->with($this->getCustomQueueTransportName())
             ->willReturn($queue)
         ;
         $context
@@ -565,7 +566,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($queue)
         ;
         $context
@@ -615,7 +616,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($queue)
         ;
         $context
@@ -665,7 +666,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($queue)
         ;
         $context
@@ -737,7 +738,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with($this->getDefaultQueueTransportName())
             ->willReturn($queue)
         ;
         $context
@@ -781,7 +782,7 @@ trait GenericDriverTestsTrait
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->with('custom')
+            ->with($this->getCustomQueueTransportName())
             ->willReturn($queue)
         ;
         $context
@@ -966,5 +967,30 @@ trait GenericDriverTestsTrait
     protected function createDummyConfig(): Config
     {
         return Config::create('aPrefix');
+    }
+
+    protected function getDefaultQueueTransportName(): string
+    {
+        return 'aprefix.default';
+    }
+
+    protected function getCustomQueueTransportName(): string
+    {
+        return 'aprefix.custom';
+    }
+
+    protected function getPrefixAppFooQueueTransportName(): string
+    {
+        return 'aprefix.anappname.afooqueue';
+    }
+
+    protected function getPrefixFooQueueTransportName(): string
+    {
+        return 'aprefix.afooqueue';
+    }
+
+    protected function getAppFooQueueTransportName(): string
+    {
+        return 'anappname.afooqueue';
     }
 }

@@ -5,7 +5,6 @@ namespace Enqueue\Client;
 use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
 use Enqueue\Client\Driver\StompManagementClient;
-use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Dsn\Dsn;
 use Enqueue\Stomp\StompConnectionFactory;
 use Interop\Amqp\AmqpConnectionFactory;
@@ -19,21 +18,23 @@ final class DriverFactory implements DriverFactoryInterface
     private $config;
 
     /**
-     * @var QueueMetaRegistry
+     * @var RouteCollection
      */
-    private $queueMetaRegistry;
+    private $routeCollection;
 
-    public function __construct(Config $config, QueueMetaRegistry $queueMetaRegistry)
+    public function __construct(Config $config, RouteCollection $routeCollection)
     {
         $this->config = $config;
-        $this->queueMetaRegistry = $queueMetaRegistry;
+        $this->routeCollection = $routeCollection;
     }
 
     public function create(PsrConnectionFactory $factory, string $dsn, array $config): DriverInterface
     {
         $dsn = new Dsn($dsn);
 
-        if ($driverClass = $this->findDriverClass($dsn, Resources::getAvailableDrivers())) {
+        if ($driverInfo = $this->findDriverInfo($dsn, Resources::getAvailableDrivers())) {
+            $driverClass = $driverInfo['factoryClass'];
+
             if (RabbitMqDriver::class === $driverClass) {
                 if (false == $factory instanceof AmqpConnectionFactory) {
                     throw new \LogicException(sprintf(
@@ -43,7 +44,7 @@ final class DriverFactory implements DriverFactoryInterface
                     ));
                 }
 
-                return new RabbitMqDriver($factory->createContext(), $this->config, $this->queueMetaRegistry);
+                return new RabbitMqDriver($factory->createContext(), $this->config, $this->routeCollection);
             }
 
             if (RabbitMqStompDriver::class === $driverClass) {
@@ -63,18 +64,18 @@ final class DriverFactory implements DriverFactoryInterface
                     (string) $dsn->getPassword()
                 );
 
-                return new RabbitMqStompDriver($factory->createContext(), $this->config, $this->queueMetaRegistry, $managementClient);
+                return new RabbitMqStompDriver($factory->createContext(), $this->config, $this->routeCollection, $managementClient);
             }
 
-            return new $driverClass($factory->createContext(), $this->config, $this->queueMetaRegistry);
+            return new $driverClass($factory->createContext(), $this->config, $this->routeCollection);
         }
 
         $knownDrivers = Resources::getKnownDrivers();
-        if ($driverClass = $this->findDriverClass($dsn, $knownDrivers)) {
+        if ($driverInfo = $this->findDriverInfo($dsn, $knownDrivers)) {
             throw new \LogicException(sprintf(
                 'To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.',
                 $dsn->getScheme(),
-                implode(' ', $knownDrivers[$driverClass]['packages'])
+                implode(' ', $driverInfo['packages'])
             ));
         }
 
@@ -85,12 +86,12 @@ final class DriverFactory implements DriverFactoryInterface
         ));
     }
 
-    private function findDriverClass(Dsn $dsn, array $factories): ?string
+    private function findDriverInfo(Dsn $dsn, array $factories): ?array
     {
         $protocol = $dsn->getSchemeProtocol();
 
         if ($dsn->getSchemeExtensions()) {
-            foreach ($factories as $driverClass => $info) {
+            foreach ($factories as $info) {
                 if (empty($info['requiredSchemeExtensions'])) {
                     continue;
                 }
@@ -101,7 +102,7 @@ final class DriverFactory implements DriverFactoryInterface
 
                 $diff = array_diff($dsn->getSchemeExtensions(), $info['requiredSchemeExtensions']);
                 if (empty($diff)) {
-                    return $driverClass;
+                    return $info;
                 }
             }
         }
@@ -115,7 +116,7 @@ final class DriverFactory implements DriverFactoryInterface
                 continue;
             }
 
-            return $driverClass;
+            return $info;
         }
 
         return null;

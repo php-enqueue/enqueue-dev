@@ -2,80 +2,20 @@
 
 namespace Enqueue\Client\Driver;
 
-use Enqueue\Client\Config;
-use Enqueue\Client\DriverInterface;
-use Enqueue\Client\Message;
-use Enqueue\Client\MessagePriority;
-use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
-use Enqueue\Sqs\SqsMessage;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class SqsDriver implements DriverInterface
+/**
+ * @method SqsContext getContext
+ * @method SqsDestination createQueue(string $clientQueueName): PsrQueue
+ */
+class SqsDriver extends GenericDriver
 {
-    /**
-     * @var SqsContext
-     */
-    private $context;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var QueueMetaRegistry
-     */
-    private $queueMetaRegistry;
-
-    public function __construct(SqsContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
+    public function __construct(SqsContext $context, ...$args)
     {
-        $this->context = $context;
-        $this->config = $config;
-        $this->queueMetaRegistry = $queueMetaRegistry;
-    }
-
-    public function sendToRouter(Message $message): void
-    {
-        if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
-            throw new \LogicException('Topic name parameter is required but is not set');
-        }
-
-        $queue = $this->createQueue($this->config->getRouterQueueName());
-        $transportMessage = $this->createTransportMessage($message);
-
-        $this->context->createProducer()->send($queue, $transportMessage);
-    }
-
-    public function sendToProcessor(Message $message): void
-    {
-        if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-            throw new \LogicException('Processor name parameter is required but is not set');
-        }
-
-        if (false == $queueName = $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-            throw new \LogicException('Queue name parameter is required but is not set');
-        }
-
-        $transportMessage = $this->createTransportMessage($message);
-        $destination = $this->createQueue($queueName);
-
-        $this->context->createProducer()->send($destination, $transportMessage);
-    }
-
-    /**
-     * @return SqsDestination
-     */
-    public function createQueue(string $queueName): PsrQueue
-    {
-        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
-        $transportName = str_replace('.', '_dot_', $transportName);
-
-        return $this->context->createQueue($transportName);
+        parent::__construct($context, ...$args);
     }
 
     public function setupBroker(LoggerInterface $logger = null): void
@@ -86,64 +26,37 @@ class SqsDriver implements DriverInterface
         };
 
         // setup router
-        $routerQueue = $this->createQueue($this->config->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
         $log('Declare router queue: %s', $routerQueue->getQueueName());
-        $this->context->declareQueue($routerQueue);
+        $this->getContext()->declareQueue($routerQueue);
 
         // setup queues
-        foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
-            $queue = $this->createQueue($meta->getClientName());
+        $declaredQueues = [];
+        foreach ($this->getRouteCollection()->all() as $route) {
+            /** @var SqsDestination $queue */
+            $queue = $this->createRouteQueue($route);
+            if (array_key_exists($queue->getQueueName(), $declaredQueues)) {
+                continue;
+            }
 
             $log('Declare processor queue: %s', $queue->getQueueName());
-            $this->context->declareQueue($queue);
+            $this->getContext()->declareQueue($queue);
+
+            $declaredQueues[$queue->getQueueName()] = true;
         }
     }
 
-    /**
-     * @return SqsMessage
-     */
-    public function createTransportMessage(Message $message): PsrMessage
+    protected function createTransportRouterTopicName(string $name, bool $prefix): string
     {
-        $properties = $message->getProperties();
+        $name = parent::createTransportRouterTopicName($name, $prefix);
 
-        $headers = $message->getHeaders();
-        $headers['content_type'] = $message->getContentType();
-
-        $transportMessage = $this->context->createMessage();
-        $transportMessage->setBody($message->getBody());
-        $transportMessage->setHeaders($headers);
-        $transportMessage->setProperties($properties);
-        $transportMessage->setMessageId($message->getMessageId());
-        $transportMessage->setTimestamp($message->getTimestamp());
-        $transportMessage->setReplyTo($message->getReplyTo());
-        $transportMessage->setCorrelationId($message->getCorrelationId());
-
-        return $transportMessage;
+        return str_replace('.', '_dot_', $name);
     }
 
-    /**
-     * @param SqsMessage $message
-     */
-    public function createClientMessage(PsrMessage $message): Message
+    protected function createTransportQueueName(string $name, bool $prefix): string
     {
-        $clientMessage = new Message();
+        $name = parent::createTransportQueueName($name, $prefix);
 
-        $clientMessage->setBody($message->getBody());
-        $clientMessage->setHeaders($message->getHeaders());
-        $clientMessage->setProperties($message->getProperties());
-
-        $clientMessage->setContentType($message->getHeader('content_type'));
-        $clientMessage->setMessageId($message->getMessageId());
-        $clientMessage->setTimestamp($message->getTimestamp());
-        $clientMessage->setPriority(MessagePriority::NORMAL);
-        $clientMessage->setReplyTo($message->getReplyTo());
-        $clientMessage->setCorrelationId($message->getCorrelationId());
-
-        return $clientMessage;
-    }
-
-    public function getConfig(): Config
-    {
-        return $this->config;
+        return str_replace('.', '_dot_', $name);
     }
 }

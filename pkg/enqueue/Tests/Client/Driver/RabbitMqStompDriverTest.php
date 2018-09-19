@@ -321,7 +321,7 @@ class RabbitMqStompDriverTest extends TestCase
         $managementClient
             ->expects($this->at(3))
             ->method('declareQueue')
-            ->with('default', [
+            ->with('aprefix.default', [
                 'durable' => true,
                 'auto_delete' => false,
                 'arguments' => [
@@ -379,7 +379,7 @@ class RabbitMqStompDriverTest extends TestCase
         $logger
             ->expects($this->at(3))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare processor queue: default')
+            ->with('[RabbitMqStompDriver] Declare processor queue: aprefix.default')
         ;
 
         $driver->setupBroker($logger);
@@ -395,7 +395,7 @@ class RabbitMqStompDriverTest extends TestCase
         $managementClient
             ->expects($this->at(4))
             ->method('declareExchange')
-            ->with('default.delayed', [
+            ->with('aprefix.default.delayed', [
                 'type' => 'x-delayed-message',
                 'durable' => true,
                 'auto_delete' => false,
@@ -407,7 +407,7 @@ class RabbitMqStompDriverTest extends TestCase
         $managementClient
             ->expects($this->at(5))
             ->method('bind')
-            ->with('default.delayed', 'default', 'default')
+            ->with('aprefix.default.delayed', 'aprefix.default', 'aprefix.default')
         ;
 
         $config = Config::create(
@@ -455,12 +455,12 @@ class RabbitMqStompDriverTest extends TestCase
         $logger
             ->expects($this->at(4))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare delay exchange: default.delayed')
+            ->with('[RabbitMqStompDriver] Declare delay exchange: aprefix.default.delayed')
         ;
         $logger
             ->expects($this->at(5))
             ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: default -> default.delayed')
+            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: aprefix.default -> aprefix.default.delayed')
         ;
 
         $driver->setupBroker($logger);

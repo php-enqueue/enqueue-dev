@@ -2,8 +2,8 @@
 
 namespace Enqueue\Tests\Client;
 
+use Enqueue\Client\Driver\AmqpDriver;
 use Enqueue\Client\Driver\RabbitMqDriver;
-use Enqueue\Client\Driver\RedisDriver;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Resources;
 use PHPUnit\Framework\TestCase;
@@ -29,17 +29,21 @@ class ResourcesTest extends TestCase
         $availableDrivers = Resources::getAvailableDrivers();
 
         $this->assertInternalType('array', $availableDrivers);
-        $this->assertArrayHasKey(RedisDriver::class, $availableDrivers);
+        $this->assertGreaterThan(0, count($availableDrivers));
 
-        $driverInfo = $availableDrivers[RedisDriver::class];
+        $driverInfo = $availableDrivers[0];
+
+        $this->assertArrayHasKey('factoryClass', $driverInfo);
+        $this->assertSame(AmqpDriver::class, $driverInfo['factoryClass']);
+
         $this->assertArrayHasKey('schemes', $driverInfo);
-        $this->assertSame(['redis'], $driverInfo['schemes']);
+        $this->assertSame(['amqp', 'amqps'], $driverInfo['schemes']);
 
         $this->assertArrayHasKey('requiredSchemeExtensions', $driverInfo);
         $this->assertSame([], $driverInfo['requiredSchemeExtensions']);
 
         $this->assertArrayHasKey('packages', $driverInfo);
-        $this->assertSame(['enqueue/enqueue', 'enqueue/redis'], $driverInfo['packages']);
+        $this->assertSame(['enqueue/enqueue', 'enqueue/amqp-bunny'], $driverInfo['packages']);
     }
 
     public function testShouldGetAvailableDriverWithRequiredExtensionInExpectedFormat()
@@ -47,9 +51,13 @@ class ResourcesTest extends TestCase
         $availableDrivers = Resources::getAvailableDrivers();
 
         $this->assertInternalType('array', $availableDrivers);
-        $this->assertArrayHasKey(RabbitMqDriver::class, $availableDrivers);
+        $this->assertGreaterThan(0, count($availableDrivers));
 
-        $driverInfo = $availableDrivers[RabbitMqDriver::class];
+        $driverInfo = $availableDrivers[1];
+
+        $this->assertArrayHasKey('factoryClass', $driverInfo);
+        $this->assertSame(RabbitMqDriver::class, $driverInfo['factoryClass']);
+
         $this->assertArrayHasKey('schemes', $driverInfo);
         $this->assertSame(['amqp', 'amqps'], $driverInfo['schemes']);
 
@@ -62,17 +70,24 @@ class ResourcesTest extends TestCase
 
     public function testShouldGetKnownDriversInExpectedFormat()
     {
-        $knownDrivers = Resources::getKnownDrivers();
+        $knownDrivers = Resources::getAvailableDrivers();
 
         $this->assertInternalType('array', $knownDrivers);
-        $this->assertArrayHasKey(RedisDriver::class, $knownDrivers);
+        $this->assertGreaterThan(0, count($knownDrivers));
 
-        $driverInfo = $knownDrivers[RedisDriver::class];
+        $driverInfo = $knownDrivers[0];
+
+        $this->assertArrayHasKey('factoryClass', $driverInfo);
+        $this->assertSame(AmqpDriver::class, $driverInfo['factoryClass']);
+
         $this->assertArrayHasKey('schemes', $driverInfo);
-        $this->assertSame(['redis'], $driverInfo['schemes']);
+        $this->assertSame(['amqp', 'amqps'], $driverInfo['schemes']);
 
         $this->assertArrayHasKey('requiredSchemeExtensions', $driverInfo);
         $this->assertSame([], $driverInfo['requiredSchemeExtensions']);
+
+        $this->assertArrayHasKey('packages', $driverInfo);
+        $this->assertSame(['enqueue/enqueue', 'enqueue/amqp-bunny'], $driverInfo['packages']);
     }
 
     public function testThrowsIfDriverClassNotImplementDriverFactoryInterfaceOnAddDriver()
@@ -107,14 +122,11 @@ class ResourcesTest extends TestCase
     {
         Resources::addDriver('theDriverClass', ['foo'], ['barExtension'], ['foo']);
 
-        $knownDrivers = Resources::getKnownDrivers();
-        $this->assertInternalType('array', $knownDrivers);
-        $this->assertArrayHasKey('theDriverClass', $knownDrivers);
+        $availableDrivers = Resources::getKnownDrivers();
 
-        $availableDrivers = Resources::getAvailableDrivers();
+        $driverInfo = end($availableDrivers);
 
-        $this->assertInternalType('array', $availableDrivers);
-        $this->assertArrayNotHasKey('theDriverClass', $availableDrivers);
+        $this->assertSame('theDriverClass', $driverInfo['factoryClass']);
     }
 
     public function testShouldAllowGetPreviouslyRegisteredDriver()
@@ -130,10 +142,11 @@ class ResourcesTest extends TestCase
 
         $availableDrivers = Resources::getAvailableDrivers();
 
-        $this->assertInternalType('array', $availableDrivers);
-        $this->assertArrayHasKey($driverClass, $availableDrivers);
+        $driverInfo = end($availableDrivers);
 
-        $driverInfo = $availableDrivers[$driverClass];
+        $this->assertArrayHasKey('factoryClass', $driverInfo);
+        $this->assertSame($driverClass, $driverInfo['factoryClass']);
+
         $this->assertArrayHasKey('schemes', $driverInfo);
         $this->assertSame(['fooscheme', 'barscheme'], $driverInfo['schemes']);
 
