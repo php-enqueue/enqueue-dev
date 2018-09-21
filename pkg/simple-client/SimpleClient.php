@@ -7,8 +7,6 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
-use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\Route;
@@ -146,21 +144,28 @@ final class SimpleClient
     public function consume(ExtensionInterface $runtimeExtension = null): void
     {
         $this->setupBroker();
+
         $processor = $this->getDelegateProcessor();
-        $queueConsumer = $this->getQueueConsumer();
+        $consumer = $this->getQueueConsumer();
 
-        $defaultQueueName = $this->getConfig()->getDefaultProcessorQueueName();
-        $defaultTransportQueueName = $this->getDriver()->createQueue($defaultQueueName);
-        $queueConsumer->bind($defaultTransportQueueName, $processor);
+        $boundQueues = [];
 
-        $routerQueueName = $this->getConfig()->getRouterQueueName();
-        if ($routerQueueName != $defaultQueueName) {
-            $routerTransportQueueName = $this->getDriver()->createQueue($routerQueueName);
+        $routerQueue = $this->getDriver()->createQueue($this->getConfig()->getRouterQueueName());
+        $consumer->bind($routerQueue, $processor);
+        $boundQueues[$routerQueue->getQueueName()] = true;
 
-            $queueConsumer->bind($routerTransportQueueName, $processor);
+        foreach ($this->getRouteCollection()->all() as $route) {
+            $queue = $this->getDriver()->createRouteQueue($route);
+            if (array_key_exists($queue->getQueueName(), $boundQueues)) {
+                continue;
+            }
+
+            $consumer->bind($queue, $processor);
+
+            $boundQueues[$queue->getQueueName()] = true;
         }
 
-        $queueConsumer->consume($runtimeExtension);
+        $consumer->consume($runtimeExtension);
     }
 
     public function getContext(): PsrContext
@@ -181,16 +186,6 @@ final class SimpleClient
     public function getDriver(): DriverInterface
     {
         return $this->container->get('enqueue.client.default.driver');
-    }
-
-    public function getTopicMetaRegistry(): TopicMetaRegistry
-    {
-        return $this->container->get('enqueue.client.meta.topic_meta_registry');
-    }
-
-    public function getQueueMetaRegistry(): QueueMetaRegistry
-    {
-        return $this->container->get('enqueue.client.meta.queue_meta_registry');
     }
 
     public function getProducer(bool $setupBroker = false): ProducerInterface
@@ -223,7 +218,7 @@ final class SimpleClient
         return $this->container->get('enqueue.client.router_processor');
     }
 
-    private function getRouteCollection(): RouteCollection
+    public function getRouteCollection(): RouteCollection
     {
         return $this->container->get('enqueue.client.route_collection');
     }

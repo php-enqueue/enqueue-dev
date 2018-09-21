@@ -37,7 +37,6 @@ class FsDriverTest extends TestCase
 
     public function testShouldSetupBroker()
     {
-        $routerTopic = new FsDestination(TempFile::generate());
         $routerQueue = new FsDestination(TempFile::generate());
 
         $processorQueue = new FsDestination(TempFile::generate());
@@ -46,32 +45,22 @@ class FsDriverTest extends TestCase
         // setup router
         $context
             ->expects($this->at(0))
-            ->method('createTopic')
-            ->willReturn($routerTopic)
-        ;
-        $context
-            ->expects($this->at(1))
             ->method('createQueue')
             ->willReturn($routerQueue)
         ;
         $context
-            ->expects($this->at(2))
-            ->method('declareDestination')
-            ->with($this->identicalTo($routerTopic))
-        ;
-        $context
-            ->expects($this->at(3))
+            ->expects($this->at(1))
             ->method('declareDestination')
             ->with($this->identicalTo($routerQueue))
         ;
         // setup processor queue
         $context
-            ->expects($this->at(4))
+            ->expects($this->at(2))
             ->method('createQueue')
             ->willReturn($processorQueue)
         ;
         $context
-            ->expects($this->at(5))
+            ->expects($this->at(3))
             ->method('declareDestination')
             ->with($this->identicalTo($processorQueue))
         ;

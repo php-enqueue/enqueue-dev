@@ -8,8 +8,6 @@ use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverFactory;
-use Enqueue\Client\Meta\QueueMetaRegistry;
-use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\Producer;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Client\RouterProcessor;
@@ -84,14 +82,6 @@ class SimpleClientContainerExtension extends Extension
             ])
         ;
 
-        $container->register('enqueue.client.meta.topic_meta_registry', TopicMetaRegistry::class)
-            ->setPublic(true)
-            ->setArguments([[]]);
-
-        $container->register('enqueue.client.meta.queue_meta_registry', QueueMetaRegistry::class)
-            ->setPublic(true)
-            ->setArguments([new Reference('enqueue.client.config'), []]);
-
         $container->register('enqueue.client.processor_registry', ArrayProcessorRegistry::class)
             ->setPublic(true)
         ;
@@ -113,8 +103,6 @@ class SimpleClientContainerExtension extends Extension
             ->setArguments([new Reference('enqueue.client.default.driver'), []]);
         $container->getDefinition('enqueue.client.processor_registry')
             ->addMethodCall('add', ['enqueue.client.router_processor', new Reference('enqueue.client.router_processor')]);
-        $container->getDefinition('enqueue.client.meta.queue_meta_registry')
-            ->addMethodCall('addProcessor', [$config['client']['router_queue'], 'enqueue.client.router_processor']);
 
         // extensions
         $extensions = [];

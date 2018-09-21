@@ -145,4 +145,9 @@ class SqsDriverTest extends TestCase
     {
         return 'aprefix_dot_custom';
     }
+
+    protected function getRouterTransportName(): string
+    {
+        return 'aprefix_dot_default';
+    }
 }

@@ -126,7 +126,11 @@ class StompDriverTest extends TestCase
      */
     protected function createQueue(string $name): PsrQueue
     {
-        return new StompDestination();
+        $destination = new StompDestination();
+        $destination->setType(StompDestination::TYPE_QUEUE);
+        $destination->setStompName($name);
+
+        return $destination;
     }
 
     /**
@@ -134,7 +138,11 @@ class StompDriverTest extends TestCase
      */
     protected function createTopic(string $name): PsrTopic
     {
-        return new StompDestination();
+        $destination = new StompDestination();
+        $destination->setType(StompDestination::TYPE_TOPIC);
+        $destination->setStompName($name);
+
+        return $destination;
     }
 
     /**
@@ -172,5 +180,10 @@ class StompDriverTest extends TestCase
     protected function createLoggerMock(): LoggerInterface
     {
         return $this->createMock(LoggerInterface::class);
+    }
+
+    protected function getRouterTransportName(): string
+    {
+        return '/topic/aprefix.router';
     }
 }

@@ -3,6 +3,8 @@
 namespace Enqueue\Client\Driver;
 
 use Enqueue\Dbal\DbalContext;
+use Enqueue\Dbal\DbalDestination;
+use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -25,5 +27,13 @@ class DbalDriver extends GenericDriver
 
         $log('Creating database table: "%s"', $this->getContext()->getTableName());
         $this->getContext()->createDataBaseTable();
+    }
+
+    /**
+     * @return DbalDestination
+     */
+    protected function createRouterTopic(): PsrTopic
+    {
+        return $this->createQueue($this->getConfig()->getRouterQueueName());
     }
 }

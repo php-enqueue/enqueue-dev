@@ -258,14 +258,12 @@ trait GenericDriverTestsTrait
         $producer
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
+            ->willReturnCallback(function (PsrTopic $topic, PsrMessage $message) use ($transportMessage) {
+                $this->assertSame($this->getRouterTransportName(), $topic->getTopicName());
+                $this->assertSame($transportMessage, $message);
+            })
         ;
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createTopic')
-            ->willReturn($topic)
-        ;
+        $context = $this->createContextStub();
         $context
             ->expects($this->once())
             ->method('createProducer')
@@ -291,26 +289,19 @@ trait GenericDriverTestsTrait
 
     public function testShouldNotInitDeliveryDelayOnSendMessageToRouter()
     {
-        $topic = $this->createTopic('');
         $transportMessage = $this->createMessage();
 
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
         ;
         $producer
             ->expects($this->never())
             ->method('setDeliveryDelay')
         ;
 
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createTopic')
-            ->willReturn($topic)
-        ;
+        $context = $this->createContextStub();
         $context
             ->expects($this->once())
             ->method('createProducer')
@@ -337,26 +328,19 @@ trait GenericDriverTestsTrait
 
     public function testShouldNotInitTimeToLiveOnSendMessageToRouter()
     {
-        $topic = $this->createTopic('');
         $transportMessage = $this->createMessage();
 
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
         ;
         $producer
             ->expects($this->never())
             ->method('setTimeToLive')
         ;
 
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createTopic')
-            ->willReturn($topic)
-        ;
+        $context = $this->createContextStub();
         $context
             ->expects($this->once())
             ->method('createProducer')
@@ -383,26 +367,19 @@ trait GenericDriverTestsTrait
 
     public function testShouldNotInitPriorityOnSendMessageToRouter()
     {
-        $topic = $this->createTopic('');
         $transportMessage = $this->createMessage();
 
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($topic), $this->identicalTo($transportMessage))
         ;
         $producer
             ->expects($this->never())
             ->method('setPriority')
         ;
 
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createTopic')
-            ->willReturn($topic)
-        ;
+        $context = $this->createContextStub();
         $context
             ->expects($this->once())
             ->method('createProducer')
@@ -1104,6 +1081,32 @@ trait GenericDriverTestsTrait
 
     abstract protected function createMessage(): PsrMessage;
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createContextStub(): PsrContext
+    {
+        $context = $this->createContextMock();
+
+        $context
+            ->expects($this->any())
+            ->method('createQueue')
+            ->willReturnCallback(function (string $name) {
+                return $this->createQueue($name);
+            })
+        ;
+
+        $context
+            ->expects($this->any())
+            ->method('createTopic')
+            ->willReturnCallback(function (string $name) {
+                return $this->createTopic($name);
+            })
+        ;
+
+        return $context;
+    }
+
     protected function assertTransportMessage(PsrMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
@@ -1163,6 +1166,11 @@ trait GenericDriverTestsTrait
     protected function getCustomQueueTransportName(): string
     {
         return 'aprefix.custom';
+    }
+
+    protected function getRouterTransportName(): string
+    {
+        return 'aprefix.default';
     }
 
     protected function getPrefixAppFooQueueTransportName(): string

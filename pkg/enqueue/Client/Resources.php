@@ -11,6 +11,7 @@ use Enqueue\Client\Driver\MongodbDriver;
 use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
 use Enqueue\Client\Driver\RdKafkaDriver;
+use Enqueue\Client\Driver\RedisDriver;
 use Enqueue\Client\Driver\SqsDriver;
 use Enqueue\Client\Driver\StompDriver;
 
@@ -81,7 +82,7 @@ final class Resources
             ];
             $map[] = [
                 'schemes' => ['redis'],
-                'factoryClass' => GenericDriver::class,
+                'factoryClass' => RedisDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/redis'],
             ];

@@ -134,4 +134,9 @@ class GpsDriverTest extends TestCase
     {
         return new GpsMessage();
     }
+
+    protected function getRouterTransportName(): string
+    {
+        return 'aprefix.router';
+    }
 }

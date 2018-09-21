@@ -3,6 +3,8 @@
 namespace Enqueue\Client\Driver;
 
 use Enqueue\Mongodb\MongodbContext;
+use Enqueue\Mongodb\MongodbDestination;
+use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -26,5 +28,13 @@ class MongodbDriver extends GenericDriver
         $contextConfig = $this->getContext()->getConfig();
         $log('Creating database and collection: "%s" "%s"', $contextConfig['dbname'], $contextConfig['collection_name']);
         $this->getContext()->createCollection();
+    }
+
+    /**
+     * @return MongodbDestination
+     */
+    protected function createRouterTopic(): PsrTopic
+    {
+        return $this->createQueue($this->getConfig()->getRouterQueueName());
     }
 }

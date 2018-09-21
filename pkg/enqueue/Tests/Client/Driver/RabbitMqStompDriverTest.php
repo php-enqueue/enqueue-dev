@@ -497,7 +497,11 @@ class RabbitMqStompDriverTest extends TestCase
      */
     protected function createQueue(string $name): PsrQueue
     {
-        return new StompDestination();
+        $destination = new StompDestination();
+        $destination->setType(StompDestination::TYPE_QUEUE);
+        $destination->setStompName($name);
+
+        return $destination;
     }
 
     /**
@@ -505,7 +509,11 @@ class RabbitMqStompDriverTest extends TestCase
      */
     protected function createTopic(string $name): PsrTopic
     {
-        return new StompDestination();
+        $destination = new StompDestination();
+        $destination->setType(StompDestination::TYPE_TOPIC);
+        $destination->setStompName($name);
+
+        return $destination;
     }
 
     /**
@@ -554,6 +562,11 @@ class RabbitMqStompDriverTest extends TestCase
             null,
             ['delay_plugin_installed' => true, 'management_plugin_installed' => true]
         );
+    }
+
+    protected function getRouterTransportName(): string
+    {
+        return '/topic/aprefix.router';
     }
 
     /**

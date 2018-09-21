@@ -106,6 +106,11 @@ class RabbitMqDriverTest extends TestCase
         return new AmqpMessage();
     }
 
+    protected function getRouterTransportName(): string
+    {
+        return 'aprefix.router';
+    }
+
     protected function assertTransportMessage(PsrMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
