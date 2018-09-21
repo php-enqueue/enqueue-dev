@@ -10,9 +10,9 @@ class RabbitMqDriver extends AmqpDriver
     /**
      * @return AmqpQueue
      */
-    public function createQueue(string $queueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): PsrQueue
     {
-        $queue = parent::createQueue($queueName);
+        $queue = parent::doCreateQueue($transportQueueName);
         $queue->setArguments(['x-max-priority' => 4]);
 
         return $queue;

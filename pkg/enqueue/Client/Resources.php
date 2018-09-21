@@ -135,6 +135,18 @@ final class Resources
                 'requiredSchemeExtensions' => [],
                 'package' => ['enqueue/enqueue', 'enqueue/dbal'],
             ];
+            $map[] = [
+                'schemes' => ['gearman'],
+                'factoryClass' => GenericDriver::class,
+                'requiredSchemeExtensions' => [],
+                'package' => ['enqueue/enqueue', 'enqueue/gearman'],
+            ];
+            $map[] = [
+                'schemes' => ['beanstalk'],
+                'factoryClass' => GenericDriver::class,
+                'requiredSchemeExtensions' => [],
+                'package' => ['enqueue/enqueue', 'enqueue/pheanstalk'],
+            ];
 
             self::$knownDrivers = $map;
         }

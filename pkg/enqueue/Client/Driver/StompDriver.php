@@ -43,10 +43,10 @@ class StompDriver extends GenericDriver
     /**
      * @return StompDestination
      */
-    public function createQueue(string $queueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): PsrQueue
     {
         /** @var StompDestination $queue */
-        $queue = parent::createQueue($queueName);
+        $queue = parent::doCreateQueue($transportQueueName);
         $queue->setDurable(true);
         $queue->setAutoDelete(false);
         $queue->setExclusive(false);

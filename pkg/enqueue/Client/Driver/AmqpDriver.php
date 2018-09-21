@@ -96,10 +96,10 @@ class AmqpDriver extends GenericDriver
     /**
      * @return AmqpQueue
      */
-    public function createQueue(string $clientQueuName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): PsrQueue
     {
         /** @var AmqpQueue $queue */
-        $queue = parent::createQueue($clientQueuName);
+        $queue = parent::doCreateQueue($transportQueueName);
         $queue->addFlag(AmqpQueue::FLAG_DURABLE);
 
         return $queue;

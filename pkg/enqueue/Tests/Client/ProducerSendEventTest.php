@@ -213,30 +213,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock());
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The enqueue.processor_name property must not be set for messages that are sent to message bus.');
-        $producer->sendEvent('topic', $message);
-    }
-
-    public function testThrowIfSendEventToMessageBusWithProcessorQueueNamePropertySet()
-    {
-        $message = new Message();
-        $message->setBody('');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aProcessorQueue');
-
-        $driver = $this->createDriverStub();
-        $driver
-            ->expects($this->never())
-            ->method('sendToRouter')
-        ;
-        $driver
-            ->expects($this->never())
-            ->method('sendToProcessor')
-        ;
-
-        $producer = new Producer($driver, $this->createRpcFactoryMock());
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The enqueue.processor_queue_name property must not be set for messages that are sent to message bus.');
+        $this->expectExceptionMessage('The enqueue.processor_name property must not be set.');
         $producer->sendEvent('topic', $message);
     }
 
@@ -256,8 +233,9 @@ class ProducerSendEventTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) {
                 self::assertSame('aBody', $message->getBody());
-                self::assertSame('a_router_processor_name', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-                self::assertSame('a_router_queue', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME));
+
+                // null means a driver sends a message to router processor.
+                self::assertNull($message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
             })
         ;
 
@@ -265,30 +243,23 @@ class ProducerSendEventTest extends TestCase
         $producer->sendEvent('topic', $message);
     }
 
-    public function testShouldSendEventWithCustomProcessorAndQueueNamePropertiesSetToApplicationRouter()
+    public function testThrowWhenProcessorNamePropertySetToApplicationRouter()
     {
         $message = new Message();
         $message->setBody('aBody');
         $message->setScope(Message::SCOPE_APP);
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aCustomProcessor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aCustomProcessorQueue');
 
         $driver = $this->createDriverStub();
         $driver
             ->expects($this->never())
-            ->method('sendToRouter')
-        ;
-        $driver
-            ->expects($this->once())
             ->method('sendToProcessor')
-            ->willReturnCallback(function (Message $message) {
-                self::assertSame('aBody', $message->getBody());
-                self::assertSame('aCustomProcessor', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-                self::assertSame('aCustomProcessorQueue', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME));
-            })
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The enqueue.processor_name property must not be set.');
         $producer->sendEvent('topic', $message);
     }
 

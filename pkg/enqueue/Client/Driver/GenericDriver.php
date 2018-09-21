@@ -62,48 +62,48 @@ class GenericDriver implements DriverInterface
 
     public function sendToProcessor(Message $message): void
     {
-        $processor = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME);
-        if (false == $processor) {
-            throw new \LogicException('Processor name parameter is required but is not set');
-        }
-
         $topic = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
         $command = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
 
-        /** @var Route $route */
-        $route = null;
-        if ($topic) {
+        /** @var PsrQueue $queue */
+        $queue = null;
+        if ($topic && $processor = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             $route = $this->routeCollection->topicAndProcessor($topic, $processor);
             if (false == $route) {
                 throw new \LogicException(sprintf('There is no route for topic "%s" and processor "%s"', $topic, $processor));
             }
+
+            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->config->getRouterProcessorName());
+            $queue = $this->createRouteQueue($route);
+        } elseif ($topic && false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
+            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->config->getRouterProcessorName());
+
+            $queue = $this->createQueue($this->config->getRouterQueueName());
         } elseif ($command) {
             $route = $this->routeCollection->command($command);
             if (false == $route) {
-                throw new \LogicException(sprintf('There is no route for command "%s" and processor "%s"', $command, $processor));
+                throw new \LogicException(sprintf('There is no route for command "%s".', $command));
             }
 
-            if ($processor !== $route->getProcessor()) {
-                throw new \LogicException(sprintf('The command "%s" route was found but processors do not match. Given "%s", route "%s"', $command, $processor, $route->getProcessor()));
-            }
+            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route->getProcessor());
+            $queue = $this->createRouteQueue($route);
         } else {
             throw new \LogicException('Either topic or command parameter must be set.');
         }
 
         $transportMessage = $this->createTransportMessage($message);
-        $queue = $this->createRouteQueue($route);
 
         $producer = $this->context->createProducer();
 
-        if ($delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
+        if (null !== $delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
             $producer->setDeliveryDelay($delay * 1000);
         }
 
-        if ($expire = $transportMessage->getProperty('X-Enqueue-Expire')) {
+        if (null !== $expire = $transportMessage->getProperty('X-Enqueue-Expire')) {
             $producer->setTimeToLive($expire * 1000);
         }
 
-        if ($priority = $transportMessage->getProperty('X-Enqueue-Priority')) {
+        if (null !== $priority = $transportMessage->getProperty('X-Enqueue-Priority')) {
             $priorityMap = $this->getPriorityMap();
 
             $producer->setPriority($priorityMap[$priority]);
@@ -120,7 +120,7 @@ class GenericDriver implements DriverInterface
     {
         $transportName = $this->createTransportQueueName($clientQueueName, true);
 
-        return $this->context->createQueue($transportName);
+        return $this->doCreateQueue($transportName);
     }
 
     public function createTransportMessage(Message $clientMessage): PsrMessage
@@ -163,10 +163,8 @@ class GenericDriver implements DriverInterface
         $clientMessage->setBody($transportMessage->getBody());
         $clientMessage->setHeaders($transportMessage->getHeaders());
         $clientMessage->setProperties($transportMessage->getProperties());
-
         $clientMessage->setMessageId($transportMessage->getMessageId());
         $clientMessage->setTimestamp($transportMessage->getTimestamp());
-        $clientMessage->setPriority(MessagePriority::NORMAL);
         $clientMessage->setReplyTo($transportMessage->getReplyTo());
         $clientMessage->setCorrelationId($transportMessage->getCorrelationId());
 
@@ -216,7 +214,7 @@ class GenericDriver implements DriverInterface
 
     protected function createRouterTopic(): PsrTopic
     {
-        return $this->context->createTopic(
+        return $this->doCreateTopic(
             $this->createTransportRouterTopicName($this->config->getRouterTopicName(), true)
         );
     }
@@ -228,7 +226,7 @@ class GenericDriver implements DriverInterface
             $route->isPrefixQueue()
         );
 
-        return $this->context->createQueue($transportName);
+        return $this->doCreateQueue($transportName);
     }
 
     protected function createTransportRouterTopicName(string $name, bool $prefix): string
@@ -244,6 +242,16 @@ class GenericDriver implements DriverInterface
         $clientAppName = $prefix ? $this->config->getAppName() : '';
 
         return strtolower(implode($this->config->getSeparator(), array_filter([$clientPrefix, $clientAppName, $name])));
+    }
+
+    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    {
+        return $this->context->createQueue($transportQueueName);
+    }
+
+    protected function doCreateTopic(string $transportTopicName): PsrTopic
+    {
+        return $this->context->createTopic($transportTopicName);
     }
 
     /**

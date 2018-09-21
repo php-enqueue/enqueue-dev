@@ -723,6 +723,51 @@ trait GenericDriverTestsTrait
         $driver->sendToProcessor($message);
     }
 
+    public function testShouldSetRouterProcessorIfProcessorPropertyEmptyOnSendToProcessor()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with($this->getDefaultQueueTransportName())
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([
+                new Route('topic', Route::TOPIC, 'expectedProcessor'),
+            ])
+        );
+
+        $message = new Message();
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+
+        $driver->sendToProcessor($message);
+
+        $this->assertSame('router', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
+    }
+
     public function testShouldSendCommandMessageToProcessorToDefaultQueue()
     {
         $queue = $this->createQueue('');
@@ -834,52 +879,69 @@ trait GenericDriverTestsTrait
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('There is no route for command "command" and processor "processor"');
+        $this->expectExceptionMessage('There is no route for command "command".');
         $driver->sendToProcessor($message);
     }
 
-    public function testThrowIfRouteProcessorDoesNotMatchMessageOneOnSendToProcessor()
+    public function testShouldOverwriteProcessorPropertySetByOneFromCommandRouteOnSendToProcessor()
     {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
+        ;
         $context = $this->createContextMock();
         $context
-            ->expects($this->never())
-            ->method('createProducer')
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with($this->getCustomQueueTransportName())
+            ->willReturn($queue)
         ;
         $context
-            ->expects($this->never())
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
             ->method('createMessage')
+            ->willReturn($transportMessage)
         ;
 
         $driver = $this->createDriver(
             $context,
             $this->createDummyConfig(),
             new RouteCollection([
-                new Route('command', Route::COMMAND, 'anotherProcessor', ['queue' => 'custom']),
+                new Route('command', Route::COMMAND, 'expectedProcessor', ['queue' => 'custom']),
             ])
         );
 
         $message = new Message();
         $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processorShouldBeOverwritten');
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The command "command" route was found but processors do not match. Given "processor", route "anotherProcessor"');
         $driver->sendToProcessor($message);
+
+        $this->assertSame('expectedProcessor', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
     }
 
-    public function testThrowIfProcessorIsNotSetOnSendToProcessor()
-    {
-        $driver = $this->createDriver(
-            $this->createContextMock(),
-            $this->createDummyConfig(),
-            new RouteCollection([])
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Processor name parameter is required but is not set');
-
-        $driver->sendToProcessor(new Message());
-    }
+//    public function testThrowIfProcessorIsNotSetOnSendToProcessor()
+//    {
+//        $driver = $this->createDriver(
+//            $this->createContextMock(),
+//            $this->createDummyConfig(),
+//            new RouteCollection([])
+//        );
+//
+//        $this->expectException(\LogicException::class);
+//        $this->expectExceptionMessage('Processor name parameter is required but is not set');
+//
+//        $driver->sendToProcessor(new Message());
+//    }
 
     public function testThrowIfNeitherTopicNorCommandAreSentOnSendToProcessor()
     {

@@ -47,10 +47,8 @@ final class Producer implements ProducerInterface
         $preSend = new PreSend($topic, $message, $this, $this->driver);
         $this->extension->onPreSendEvent($preSend);
 
-        $topic = $preSend->getTopic();
         $message = $preSend->getMessage();
-
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, $topic);
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, $preSend->getTopic());
 
         $this->doSend($message);
     }
@@ -81,7 +79,6 @@ final class Producer implements ProducerInterface
             }
         }
 
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
         $message->setProperty(Config::PARAMETER_COMMAND_NAME, $command);
         $message->setScope(Message::SCOPE_APP);
 
@@ -106,6 +103,10 @@ final class Producer implements ProducerInterface
             ));
         }
 
+        if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
+            throw new \LogicException(sprintf('The %s property must not be set.', Config::PARAMETER_PROCESSOR_NAME));
+        }
+
         if (!$message->getMessageId()) {
             $message->setMessageId(UUID::generate());
         }
@@ -118,25 +119,11 @@ final class Producer implements ProducerInterface
             $message->setPriority(MessagePriority::NORMAL);
         }
 
-        if (Message::SCOPE_MESSAGE_BUS == $message->getScope()) {
-            if ($message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-                throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_QUEUE_NAME));
-            }
-            if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-                throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_NAME));
-            }
+        $this->extension->onDriverPreSend(new DriverPreSend($message, $this, $this->driver));
 
-            $this->extension->onDriverPreSend(new DriverPreSend($message, $this, $this->driver));
+        if (Message::SCOPE_MESSAGE_BUS == $message->getScope()) {
             $this->driver->sendToRouter($message);
         } elseif (Message::SCOPE_APP == $message->getScope()) {
-            if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-                $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->driver->getConfig()->getRouterProcessorName());
-            }
-            if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-                $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->driver->getConfig()->getRouterQueueName());
-            }
-
-            $this->extension->onDriverPreSend(new DriverPreSend($message, $this, $this->driver));
             $this->driver->sendToProcessor($message);
         } else {
             throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));

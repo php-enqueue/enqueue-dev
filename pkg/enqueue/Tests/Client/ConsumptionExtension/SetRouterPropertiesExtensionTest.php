@@ -56,7 +56,6 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $this->assertEquals([
             'enqueue.processor_name' => 'router-processor-name',
-            'enqueue.processor_queue_name' => 'router-queue',
         ], $message->getProperties());
     }
 

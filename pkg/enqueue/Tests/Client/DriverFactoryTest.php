@@ -22,12 +22,16 @@ use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
+use Enqueue\Gearman\GearmanConnectionFactory;
+use Enqueue\Gearman\GearmanContext;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\GpsContext;
 use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\NullContext;
+use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
+use Enqueue\Pheanstalk\PheanstalkContext;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\Redis\RedisConnectionFactory;
@@ -154,6 +158,10 @@ class DriverFactoryTest extends TestCase
         yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [], RabbitMqStompDriver::class];
 
         yield ['stomp+foo+bar:', StompConnectionFactory::class, StompContext::class, [], StompDriver::class];
+
+        yield ['gearman:', GearmanConnectionFactory::class, GearmanContext::class, [], GenericDriver::class];
+
+        yield ['beanstalk:', PheanstalkConnectionFactory::class, PheanstalkContext::class, [], GenericDriver::class];
     }
 
     private function createConnectionFactoryMock(): PsrConnectionFactory

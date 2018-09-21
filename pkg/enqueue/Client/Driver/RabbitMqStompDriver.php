@@ -62,17 +62,6 @@ class RabbitMqStompDriver extends StompDriver
         return $transportMessage;
     }
 
-    /**
-     * @return StompDestination
-     */
-    public function createQueue(string $queueName): PsrQueue
-    {
-        $queue = parent::createQueue($queueName);
-        $queue->setHeader('x-max-priority', 4);
-
-        return $queue;
-    }
-
     public function setupBroker(LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
@@ -144,6 +133,17 @@ class RabbitMqStompDriver extends StompDriver
         } else {
             $log('Delay exchange and bindings are not setup. if you\'d like to use delays please install delay rabbitmq plugin and set delay_plugin_installed option to true');
         }
+    }
+
+    /**
+     * @return StompDestination
+     */
+    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    {
+        $queue = parent::doCreateQueue($transportQueueName);
+        $queue->setHeader('x-max-priority', 4);
+
+        return $queue;
     }
 
     /**
