@@ -13,9 +13,6 @@ class Config
      */
     const PARAMETER_PROCESSOR_QUEUE_NAME = 'enqueue.processor_queue_name';
 
-    /**
-     * @deprecated
-     */
     const DEFAULT_PROCESSOR_QUEUE_NAME = 'default';
 
     /**

@@ -929,19 +929,143 @@ trait GenericDriverTestsTrait
         $this->assertSame('expectedProcessor', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
     }
 
-//    public function testThrowIfProcessorIsNotSetOnSendToProcessor()
-//    {
-//        $driver = $this->createDriver(
-//            $this->createContextMock(),
-//            $this->createDummyConfig(),
-//            new RouteCollection([])
-//        );
-//
-//        $this->expectException(\LogicException::class);
-//        $this->expectExceptionMessage('Processor name parameter is required but is not set');
-//
-//        $driver->sendToProcessor(new Message());
-//    }
+    public function testShouldNotInitDeliveryDelayOnSendMessageToProcessorIfPropertyNull()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->never())
+            ->method('setDeliveryDelay')
+        ;
+        $producer
+            ->expects($this->once())
+            ->method('send')
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([
+                new Route('command', Route::COMMAND, 'expectedProcessor', ['queue' => 'custom']),
+            ])
+        );
+
+        $message = new Message();
+        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
+        $message->setDelay(null);
+
+        $driver->sendToProcessor($message);
+    }
+
+    public function testShouldNotInitPriorityOnSendMessageToProcessorIfPropertyNull()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->never())
+            ->method('setPriority')
+        ;
+        $producer
+            ->expects($this->once())
+            ->method('send')
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([
+                new Route('command', Route::COMMAND, 'expectedProcessor', ['queue' => 'custom']),
+            ])
+        );
+
+        $message = new Message();
+        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
+        $message->setPriority(null);
+
+        $driver->sendToProcessor($message);
+    }
+
+    public function testShouldNotInitTimeToLiveOnSendMessageToProcessorIfPropertyNull()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->never())
+            ->method('setTimeToLive')
+        ;
+        $producer
+            ->expects($this->once())
+            ->method('send')
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            $this->createDummyConfig(),
+            new RouteCollection([
+                new Route('command', Route::COMMAND, 'expectedProcessor', ['queue' => 'custom']),
+            ])
+        );
+
+        $message = new Message();
+        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
+        $message->setExpire(null);
+
+        $driver->sendToProcessor($message);
+    }
 
     public function testThrowIfNeitherTopicNorCommandAreSentOnSendToProcessor()
     {

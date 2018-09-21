@@ -21,6 +21,8 @@ interface DriverInterface
 
     public function createQueue(string $queueName): PsrQueue;
 
+    public function createRouteQueue(Route $route): PsrQueue;
+
     /**
      * Prepare broker for work.
      * Creates all required queues, exchanges, topics, bindings etc.

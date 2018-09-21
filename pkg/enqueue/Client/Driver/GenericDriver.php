@@ -123,6 +123,16 @@ class GenericDriver implements DriverInterface
         return $this->doCreateQueue($transportName);
     }
 
+    public function createRouteQueue(Route $route): PsrQueue
+    {
+        $transportName = $this->createTransportQueueName(
+            $route->getQueue() ?: $this->config->getDefaultProcessorQueueName(),
+            $route->isPrefixQueue()
+        );
+
+        return $this->doCreateQueue($transportName);
+    }
+
     public function createTransportMessage(Message $clientMessage): PsrMessage
     {
         $headers = $clientMessage->getHeaders();
@@ -217,16 +227,6 @@ class GenericDriver implements DriverInterface
         return $this->doCreateTopic(
             $this->createTransportRouterTopicName($this->config->getRouterTopicName(), true)
         );
-    }
-
-    protected function createRouteQueue(Route $route): PsrQueue
-    {
-        $transportName = $this->createTransportQueueName(
-            $route->getQueue() ?: $this->config->getDefaultProcessorQueueName(),
-            $route->isPrefixQueue()
-        );
-
-        return $this->doCreateQueue($transportName);
     }
 
     protected function createTransportRouterTopicName(string $name, bool $prefix): string
