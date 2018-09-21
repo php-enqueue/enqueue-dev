@@ -59,7 +59,7 @@ class ProducerSendEventTest extends TestCase
         self::assertEquals($expectedProperties, $message->getProperties());
     }
 
-    public function testShouldSendEventWithNormalPriorityByDefault()
+    public function testShouldSendEventWithoutPriorityByDefault()
     {
         $message = new Message();
 
@@ -73,7 +73,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock());
         $producer->sendEvent('topic', $message);
 
-        self::assertSame(MessagePriority::NORMAL, $message->getPriority());
+        self::assertNull($message->getPriority());
     }
 
     public function testShouldSendEventWithCustomPriority()

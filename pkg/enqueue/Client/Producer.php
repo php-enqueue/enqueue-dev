@@ -115,10 +115,6 @@ final class Producer implements ProducerInterface
             $message->setTimestamp(time());
         }
 
-        if (!$message->getPriority()) {
-            $message->setPriority(MessagePriority::NORMAL);
-        }
-
         $this->extension->onDriverPreSend(new DriverPreSend($message, $this, $this->driver));
 
         if (Message::SCOPE_MESSAGE_BUS == $message->getScope()) {

@@ -152,7 +152,7 @@ class ProducerSendCommandTest extends TestCase
         self::assertSame(Message::SCOPE_APP, $message->getScope());
     }
 
-    public function testShouldSendCommandWithNormalPriorityByDefault()
+    public function testShouldSendCommandWithoutPriorityByDefault()
     {
         $message = new Message();
 
@@ -166,7 +166,7 @@ class ProducerSendCommandTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock());
         $producer->sendCommand('command', $message);
 
-        self::assertSame(MessagePriority::NORMAL, $message->getPriority());
+        self::assertNull($message->getPriority());
     }
 
     public function testShouldSendCommandWithCustomPriority()

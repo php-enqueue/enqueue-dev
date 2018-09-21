@@ -73,7 +73,7 @@ class GenericDriver implements DriverInterface
                 throw new \LogicException(sprintf('There is no route for topic "%s" and processor "%s"', $topic, $processor));
             }
 
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->config->getRouterProcessorName());
+            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route->getProcessor());
             $queue = $this->createRouteQueue($route);
         } elseif ($topic && false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->config->getRouterProcessorName());
