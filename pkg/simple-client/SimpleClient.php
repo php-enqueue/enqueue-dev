@@ -11,6 +11,8 @@ use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Client\ProducerInterface;
+use Enqueue\Client\Route;
+use Enqueue\Client\RouteCollection;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ExtensionInterface;
@@ -90,7 +92,7 @@ final class SimpleClient
     /**
      * @param callable|PsrProcessor $processor
      */
-    public function bind(string $topic, string $processorName, $processor): void
+    public function bindTopic(string $topic, $processor, string $processorName = null): void
     {
         if (is_callable($processor)) {
             $processor = new CallbackProcessor($processor);
@@ -100,11 +102,28 @@ final class SimpleClient
             throw new \LogicException('The processor must be either callable or instance of PsrProcessor');
         }
 
-        $queueName = $this->getConfig()->getDefaultProcessorQueueName();
+        $processorName = $processorName ?: uniqid(get_class($processor));
 
-        $this->getRouterProcessor()->add($topic, $queueName, $processorName);
-        $this->getTopicMetaRegistry()->addProcessor($topic, $processorName);
-        $this->getQueueMetaRegistry()->addProcessor($queueName, $processorName);
+        $this->getRouteCollection()->add(new Route($topic, Route::TOPIC, $processorName));
+        $this->getProcessorRegistry()->add($processorName, $processor);
+    }
+
+    /**
+     * @param callable|PsrProcessor $processor
+     */
+    public function bindCommand(string $command, $processor, string $processorName = null): void
+    {
+        if (is_callable($processor)) {
+            $processor = new CallbackProcessor($processor);
+        }
+
+        if (false == $processor instanceof PsrProcessor) {
+            throw new \LogicException('The processor must be either callable or instance of PsrProcessor');
+        }
+
+        $processorName = $processorName ?: uniqid(get_class($processor));
+
+        $this->getRouteCollection()->add(new Route($command, Route::COMMAND, $processorName));
         $this->getProcessorRegistry()->add($processorName, $processor);
     }
 
@@ -202,6 +221,11 @@ final class SimpleClient
     public function getRouterProcessor(): RouterProcessor
     {
         return $this->container->get('enqueue.client.router_processor');
+    }
+
+    private function getRouteCollection(): RouteCollection
+    {
+        return $this->container->get('enqueue.client.route_collection');
     }
 
     private function buildContainer($config, ContainerBuilder $container): ContainerInterface

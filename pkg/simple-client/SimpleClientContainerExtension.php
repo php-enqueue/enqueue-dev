@@ -11,6 +11,7 @@ use Enqueue\Client\DriverFactory;
 use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Meta\TopicMetaRegistry;
 use Enqueue\Client\Producer;
+use Enqueue\Client\RouteCollection;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\ConnectionFactoryFactory;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
@@ -40,7 +41,7 @@ class SimpleClientContainerExtension extends Extension
 
         $container->register('enqueue.client.driver_factory', DriverFactory::class)
             ->addArgument(new Reference('enqueue.client.config'))
-            ->addArgument(new Reference('enqueue.client.meta.queue_meta_registry'))
+            ->addArgument(new Reference('enqueue.client.route_collection'))
         ;
 
         $transportFactory = (new TransportFactory('default'));
@@ -61,6 +62,11 @@ class SimpleClientContainerExtension extends Extension
                 'enqueue.client.router_processor',
                 $config['transport'],
             ])
+        ;
+
+        $container->register('enqueue.client.route_collection', RouteCollection::class)
+            ->setPublic(true)
+            ->addArgument([])
         ;
 
         $container->register('enqueue.client.rpc_factory', RpcFactory::class)
