@@ -4,7 +4,6 @@ namespace Enqueue\Client\Driver;
 
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
-use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -59,13 +58,5 @@ class SqsDriver extends GenericDriver
         $name = parent::createTransportQueueName($name, $prefix);
 
         return str_replace('.', '_dot_', $name);
-    }
-
-    /**
-     * @return SqsDestination
-     */
-    protected function createRouterTopic(): PsrTopic
-    {
-        return $this->createQueue($this->getConfig()->getRouterQueueName());
     }
 }

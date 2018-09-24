@@ -56,11 +56,6 @@ class GenericDriverTest extends TestCase
         return new NullMessage();
     }
 
-    protected function getRouterTransportName(): string
-    {
-        return 'aprefix.router';
-    }
-
     protected function assertTransportMessage(PsrMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());

@@ -11,10 +11,10 @@ use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
+use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -94,6 +94,20 @@ class AmqpDriver extends GenericDriver
     }
 
     /**
+     * @return AmqpTopic
+     */
+    protected function createRouterTopic(): PsrDestination
+    {
+        $topic = $this->doCreateTopic(
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
+        );
+        $topic->setType(AmqpTopic::TYPE_FANOUT);
+        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
+
+        return $topic;
+    }
+
+    /**
      * @return AmqpQueue
      */
     protected function doCreateQueue(string $transportQueueName): PsrQueue
@@ -110,7 +124,7 @@ class AmqpDriver extends GenericDriver
      * @param AmqpTopic    $topic
      * @param AmqpMessage  $transportMessage
      */
-    protected function doSendToRouter(PsrProducer $producer, PsrTopic $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(PsrProducer $producer, PsrDestination $topic, PsrMessage $transportMessage): void
     {
         // We should not handle priority, expiration, and delay at this stage.
         // The router will take care of it while re-sending the message to the final destinations.
@@ -118,18 +132,5 @@ class AmqpDriver extends GenericDriver
         $transportMessage->setExpiration(null);
 
         $producer->send($topic, $transportMessage);
-    }
-
-    /**
-     * @return AmqpTopic
-     */
-    protected function createRouterTopic(): PsrTopic
-    {
-        /** @var AmqpTopic $topic */
-        $topic = parent::createRouterTopic();
-        $topic->setType(AmqpTopic::TYPE_FANOUT);
-        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
-
-        return $topic;
     }
 }

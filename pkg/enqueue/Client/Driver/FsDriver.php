@@ -4,7 +4,6 @@ namespace  Enqueue\Client\Driver;
 
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
-use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -46,13 +45,5 @@ class FsDriver extends GenericDriver
 
             $declaredQueues[$queue->getQueueName()] = true;
         }
-    }
-
-    /**
-     * @return FsDestination
-     */
-    protected function createRouterTopic(): PsrTopic
-    {
-        return $this->createQueue($this->getConfig()->getRouterQueueName());
     }
 }

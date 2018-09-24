@@ -11,6 +11,7 @@ use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Interop\Queue\PsrContext;
+use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
@@ -212,7 +213,7 @@ class GenericDriver implements DriverInterface
         return $this->routeCollection;
     }
 
-    protected function doSendToRouter(PsrProducer $producer, PsrTopic $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(PsrProducer $producer, PsrDestination $topic, PsrMessage $transportMessage): void
     {
         $producer->send($topic, $transportMessage);
     }
@@ -222,11 +223,9 @@ class GenericDriver implements DriverInterface
         $producer->send($queue, $transportMessage);
     }
 
-    protected function createRouterTopic(): PsrTopic
+    protected function createRouterTopic(): PsrDestination
     {
-        return $this->doCreateTopic(
-            $this->createTransportRouterTopicName($this->config->getRouterTopicName(), true)
-        );
+        return $this->createQueue($this->getConfig()->getRouterQueueName());
     }
 
     protected function createTransportRouterTopicName(string $name, bool $prefix): string

@@ -5,13 +5,13 @@ namespace Enqueue\Client\Driver;
 use Enqueue\Gps\GpsContext;
 use Enqueue\Gps\GpsQueue;
 use Enqueue\Gps\GpsTopic;
+use Interop\Queue\PsrDestination;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
  * @method GpsContext getContext
  * @method GpsQueue createQueue(string $name)
- * @method GpsTopic createRouterTopic
  */
 class GpsDriver extends GenericDriver
 {
@@ -50,5 +50,15 @@ class GpsDriver extends GenericDriver
 
             $declaredQueues[$queue->getQueueName()] = true;
         }
+    }
+
+    /**
+     * @return GpsTopic
+     */
+    protected function createRouterTopic(): PsrDestination
+    {
+        return $this->doCreateTopic(
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
+        );
     }
 }

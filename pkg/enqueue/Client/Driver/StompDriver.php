@@ -6,9 +6,9 @@ use Enqueue\Client\Message;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
+use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -57,10 +57,12 @@ class StompDriver extends GenericDriver
     /**
      * @return StompDestination
      */
-    protected function createRouterTopic(): PsrTopic
+    protected function createRouterTopic(): PsrDestination
     {
         /** @var StompDestination $topic */
-        $topic = parent::createRouterTopic();
+        $topic = $this->doCreateTopic(
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
+        );
         $topic->setDurable(true);
         $topic->setAutoDelete(false);
 

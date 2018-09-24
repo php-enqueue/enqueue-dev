@@ -9,6 +9,7 @@ use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Interop\Queue\PsrContext;
+use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
@@ -251,15 +252,16 @@ trait GenericDriverTestsTrait
 
     public function testShouldSendMessageToRouter()
     {
-        $topic = $this->createTopic('');
         $transportMessage = $this->createMessage();
 
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function (PsrTopic $topic, PsrMessage $message) use ($transportMessage) {
-                $this->assertSame($this->getRouterTransportName(), $topic->getTopicName());
+            ->willReturnCallback(function (PsrDestination $topic, PsrMessage $message) use ($transportMessage) {
+                $this->assertSame(
+                    $this->getRouterTransportName(),
+                    $topic instanceof PsrTopic ? $topic->getTopicName() : $topic->getQueueName());
                 $this->assertSame($transportMessage, $message);
             })
         ;

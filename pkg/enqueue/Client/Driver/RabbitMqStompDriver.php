@@ -9,10 +9,10 @@ use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
+use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
 use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -151,7 +151,7 @@ class RabbitMqStompDriver extends StompDriver
      * @param StompDestination $topic
      * @param StompMessage     $transportMessage
      */
-    protected function doSendToRouter(PsrProducer $producer, PsrTopic $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(PsrProducer $producer, PsrDestination $topic, PsrMessage $transportMessage): void
     {
         // We should not handle priority, expiration, and delay at this stage.
         // The router will take care of it while re-sending the message to the final destinations.
