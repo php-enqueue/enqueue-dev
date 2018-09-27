@@ -68,7 +68,7 @@ class MessageQueueCollectorTest extends TestCase
                     'messageId' => null,
                 ],
                 [
-                    'topic' => '__command__',
+                    'topic' => null,
                     'command' => 'barCommand',
                     'body' => 'barMessage',
                     'headers' => [],

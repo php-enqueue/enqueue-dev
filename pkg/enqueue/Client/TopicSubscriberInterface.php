@@ -7,21 +7,23 @@ interface TopicSubscriberInterface
     /**
      * The result maybe either:.
      *
-     * ['aTopicName']
+     * 'aTopicName'
+     *
+     * or
+     *
+     * ['aTopicName', 'anotherTopicName']
      *
      * or
      *
      * ['aTopicName' => [
-     *     'processorName' => 'processor',
-     *     'queueName' => 'a_client_queue_name',
-     *     'queueNameHardcoded' => true,
-     *   ]]
+     *     'processor' => 'processor',
+     *     'queue' => 'a_client_queue_name',
+     * ]]
      *
-     * processorName, queueName and queueNameHardcoded are optional.
+     * Note: If you set prefix_queue to true then the queue is used as is and therefor the driver is not used to prepare a transport queue name.
+     * It is possible to pass other options, they could be accessible on a route instance through options.
      *
-     * Note: If you set queueNameHardcoded to true then the queueName is used as is and therefor the driver is not used to create a transport queue name.
-     *
-     * @return array
+     * @return string|array
      */
     public static function getSubscribedTopics();
 }

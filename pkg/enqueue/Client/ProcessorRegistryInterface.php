@@ -6,10 +6,5 @@ use Interop\Queue\PsrProcessor;
 
 interface ProcessorRegistryInterface
 {
-    /**
-     * @param string $processorName
-     *
-     * @return PsrProcessor
-     */
-    public function get($processorName);
+    public function get(string $processorName): PsrProcessor;
 }

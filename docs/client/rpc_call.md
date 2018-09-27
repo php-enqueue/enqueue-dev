@@ -19,7 +19,6 @@ use Interop\Queue\PsrContext;
 use Enqueue\Consumption\Result;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
-use Enqueue\Client\Config;
 use Enqueue\SimpleClient\SimpleClient;
 
 /** @var \Interop\Queue\PsrContext $context */
@@ -27,7 +26,7 @@ use Enqueue\SimpleClient\SimpleClient;
 // composer require enqueue/amqp-ext # or enqueue/amqp-bunny, enqueue/amqp-lib
 $client = new SimpleClient('amqp:');
 
-$client->bind(Config::COMMAND_TOPIC, 'square', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
+$client->bindCommand('square', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
     $number = (int) $message->getBody();
     
     return Result::reply($context->createMessage($number ^ 2));

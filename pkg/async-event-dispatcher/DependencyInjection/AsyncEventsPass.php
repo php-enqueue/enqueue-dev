@@ -9,10 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AsyncEventsPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (false == $container->hasDefinition('enqueue.events.async_listener')) {
             return;
@@ -45,8 +42,9 @@ class AsyncEventsPass implements CompilerPassInterface
                     ;
 
                     $container->getDefinition('enqueue.events.async_processor')
-                        ->addTag('enqueue.client.processor', [
-                            'topicName' => 'event.'.$event,
+                        ->addTag('enqueue.processor', [
+                            'topic' => 'event.'.$event,
+                            'client' => 'default',
                         ])
                     ;
 
@@ -78,8 +76,9 @@ class AsyncEventsPass implements CompilerPassInterface
                         ;
 
                         $container->getDefinition('enqueue.events.async_processor')
-                            ->addTag('enqueue.client.processor', [
+                            ->addTag('enqueue.processor', [
                                 'topicName' => 'event.'.$event,
+                                'client' => 'default',
                             ])
                         ;
 

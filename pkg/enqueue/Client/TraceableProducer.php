@@ -32,7 +32,7 @@ final class TraceableProducer implements ProducerInterface
     {
         $result = $this->producer->sendCommand($command, $message, $needReply);
 
-        $this->collectTrace(Config::COMMAND_TOPIC, $command, $message);
+        $this->collectTrace(null, $command, $message);
 
         return $result;
     }
@@ -86,6 +86,7 @@ final class TraceableProducer implements ProducerInterface
             'contentType' => null,
             'messageId' => null,
         ];
+
         if ($message instanceof Message) {
             $trace['body'] = $message->getBody();
             $trace['headers'] = $message->getHeaders();

@@ -2,115 +2,20 @@
 
 namespace Enqueue\Client\Driver;
 
-use Enqueue\Client\Config;
-use Enqueue\Client\DriverInterface;
-use Enqueue\Client\Message;
-use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\RdKafka\RdKafkaContext;
-use Enqueue\RdKafka\RdKafkaMessage;
 use Enqueue\RdKafka\RdKafkaTopic;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\PsrDestination;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class RdKafkaDriver implements DriverInterface
+/**
+ * @method RdKafkaContext getContext()
+ */
+class RdKafkaDriver extends GenericDriver
 {
-    /**
-     * @var RdKafkaContext
-     */
-    private $context;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var QueueMetaRegistry
-     */
-    private $queueMetaRegistry;
-
-    public function __construct(RdKafkaContext $context, Config $config, QueueMetaRegistry $queueMetaRegistry)
+    public function __construct(RdKafkaContext $context, ...$args)
     {
-        $this->context = $context;
-        $this->config = $config;
-        $this->queueMetaRegistry = $queueMetaRegistry;
-    }
-
-    /**
-     * @return RdKafkaMessage
-     */
-    public function createTransportMessage(Message $message): PsrMessage
-    {
-        $headers = $message->getHeaders();
-        $headers['content_type'] = $message->getContentType();
-
-        $transportMessage = $this->context->createMessage();
-        $transportMessage->setBody($message->getBody());
-        $transportMessage->setHeaders($headers);
-        $transportMessage->setProperties($message->getProperties());
-        $transportMessage->setMessageId($message->getMessageId());
-        $transportMessage->setTimestamp($message->getTimestamp());
-        $transportMessage->setReplyTo($message->getReplyTo());
-        $transportMessage->setCorrelationId($message->getCorrelationId());
-
-        return $transportMessage;
-    }
-
-    public function createClientMessage(PsrMessage $message): Message
-    {
-        $clientMessage = new Message();
-        $clientMessage->setBody($message->getBody());
-        $clientMessage->setHeaders($message->getHeaders());
-        $clientMessage->setProperties($message->getProperties());
-
-        $clientMessage->setContentType($message->getHeader('content_type'));
-
-        $clientMessage->setTimestamp($message->getTimestamp());
-        $clientMessage->setMessageId($message->getMessageId());
-        $clientMessage->setReplyTo($message->getReplyTo());
-        $clientMessage->setCorrelationId($message->getCorrelationId());
-
-        return $clientMessage;
-    }
-
-    public function sendToRouter(Message $message): void
-    {
-        if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
-            throw new \LogicException('Topic name parameter is required but is not set');
-        }
-
-        $topic = $this->createRouterTopic();
-        $transportMessage = $this->createTransportMessage($message);
-
-        $this->context->createProducer()->send($topic, $transportMessage);
-    }
-
-    public function sendToProcessor(Message $message): void
-    {
-        if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-            throw new \LogicException('Processor name parameter is required but is not set');
-        }
-
-        if (false == $queueName = $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-            throw new \LogicException('Queue name parameter is required but is not set');
-        }
-
-        $transportMessage = $this->createTransportMessage($message);
-        $destination = $this->createQueue($queueName);
-
-        $this->context->createProducer()->send($destination, $transportMessage);
-    }
-
-    /**
-     * @return RdKafkaTopic
-     */
-    public function createQueue(string $queueName): PsrQueue
-    {
-        $transportName = $this->queueMetaRegistry->getQueueMeta($queueName)->getTransportName();
-
-        return $this->context->createQueue($transportName);
+        parent::__construct($context, ...$args);
     }
 
     public function setupBroker(LoggerInterface $logger = null): void
@@ -122,29 +27,31 @@ class RdKafkaDriver implements DriverInterface
         };
 
         // setup router
-        $routerQueue = $this->createQueue($this->config->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
         $log('Create router queue: %s', $routerQueue->getQueueName());
-        $this->context->createConsumer($routerQueue);
+        $this->getContext()->createConsumer($routerQueue);
 
         // setup queues
-        foreach ($this->queueMetaRegistry->getQueuesMeta() as $meta) {
-            $queue = $this->createQueue($meta->getClientName());
+        $declaredQueues = [];
+        foreach ($this->getRouteCollection()->all() as $route) {
+            /** @var RdKafkaTopic $queue */
+            $queue = $this->createRouteQueue($route);
+            if (array_key_exists($queue->getQueueName(), $declaredQueues)) {
+                continue;
+            }
+
             $log('Create processor queue: %s', $queue->getQueueName());
-            $this->context->createConsumer($queue);
+            $this->getContext()->createConsumer($queue);
         }
     }
 
-    public function getConfig(): Config
+    /**
+     * @return RdKafkaTopic
+     */
+    protected function createRouterTopic(): PsrDestination
     {
-        return $this->config;
-    }
-
-    private function createRouterTopic(): RdKafkaTopic
-    {
-        $topic = $this->context->createTopic(
-            $this->config->createTransportRouterTopicName($this->config->getRouterTopicName())
+        return $this->doCreateTopic(
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
         );
-
-        return $topic;
     }
 }

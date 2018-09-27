@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Client;
 
+use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
@@ -18,7 +19,9 @@ interface DriverInterface
 
     public function sendToProcessor(Message $message): void;
 
-    public function createQueue(string $queueName): PsrQueue;
+    public function createQueue(string $queueName, bool $prefix = true): PsrQueue;
+
+    public function createRouteQueue(Route $route): PsrQueue;
 
     /**
      * Prepare broker for work.
@@ -27,4 +30,8 @@ interface DriverInterface
     public function setupBroker(LoggerInterface $logger = null): void;
 
     public function getConfig(): Config;
+
+    public function getContext(): PsrContext;
+
+    public function getRouteCollection(): RouteCollection;
 }

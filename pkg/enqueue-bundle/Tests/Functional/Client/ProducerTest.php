@@ -3,11 +3,9 @@
 namespace Enqueue\Bundle\Tests\Functional\Client;
 
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
-use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
-use Enqueue\Client\RouterProcessor;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Rpc\Promise;
 
@@ -16,39 +14,24 @@ use Enqueue\Rpc\Promise;
  */
 class ProducerTest extends WebTestCase
 {
-    public function setUp()
+    public function testCouldBeGetFromContainerByInterface()
     {
-        parent::setUp();
+        $producer = static::$container->get('test_'.ProducerInterface::class);
 
-        static::$container->get(Producer::class)->clearTraces();
+        $this->assertInstanceOf(ProducerInterface::class, $producer);
     }
 
-    public function tearDown()
+    public function testCouldBeGetFromContainerByServiceId()
     {
-        static::$container->get(Producer::class)->clearTraces();
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
-        parent::tearDown();
-    }
-
-    public function testCouldBeGetFromContainerAsService()
-    {
-        $messageProducer = static::$container->get(Producer::class);
-
-        $this->assertInstanceOf(ProducerInterface::class, $messageProducer);
-    }
-
-    public function testCouldBeGetFromContainerAsShortenAlias()
-    {
-        $messageProducer = static::$container->get(Producer::class);
-        $aliasMessageProducer = static::$container->get('enqueue.producer');
-
-        $this->assertSame($messageProducer, $aliasMessageProducer);
+        $this->assertInstanceOf(ProducerInterface::class, $producer);
     }
 
     public function testShouldSendEvent()
     {
         /** @var ProducerInterface $producer */
-        $producer = static::$container->get(Producer::class);
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
         $producer->sendEvent('theTopic', 'theMessage');
 
@@ -61,13 +44,13 @@ class ProducerTest extends WebTestCase
     public function testShouldSendCommandWithoutNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = static::$container->get(Producer::class);
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
         $result = $producer->sendCommand('theCommand', 'theMessage', false);
 
         $this->assertNull($result);
 
-        $traces = $this->getTraceableProducer()->getTopicTraces(Config::COMMAND_TOPIC);
+        $traces = $this->getTraceableProducer()->getCommandTraces('theCommand');
 
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
@@ -76,7 +59,7 @@ class ProducerTest extends WebTestCase
     public function testShouldSendMessageInstanceAsCommandWithoutNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = static::$container->get(Producer::class);
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
         $message = new Message('theMessage');
 
@@ -84,22 +67,20 @@ class ProducerTest extends WebTestCase
 
         $this->assertNull($result);
 
-        $traces = $this->getTraceableProducer()->getTopicTraces(Config::COMMAND_TOPIC);
+        $traces = $this->getTraceableProducer()->getCommandTraces('theCommand');
 
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
-            'enqueue.topic_name' => Config::COMMAND_TOPIC,
-            'enqueue.processor_name' => RouterProcessor::class,
+            'enqueue.processor_name' => 'test_command_subscriber_processor',
             'enqueue.command_name' => 'theCommand',
-            'enqueue.processor_queue_name' => 'default',
         ], $traces[0]['properties']);
     }
 
     public function testShouldSendExclusiveCommandWithNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = static::$container->get(Producer::class);
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
         $message = new Message('theMessage');
 
@@ -112,17 +93,15 @@ class ProducerTest extends WebTestCase
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
-            'enqueue.topic_name' => Config::COMMAND_TOPIC,
             'enqueue.processor_name' => 'theExclusiveCommandName',
             'enqueue.command_name' => 'theExclusiveCommandName',
-            'enqueue.processor_queue_name' => 'the_exclusive_command_queue',
         ], $traces[0]['properties']);
     }
 
     public function testShouldSendMessageInstanceCommandWithNeedForReply()
     {
         /** @var ProducerInterface $producer */
-        $producer = static::$container->get(Producer::class);
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
         $message = new Message('theMessage');
 
@@ -135,18 +114,13 @@ class ProducerTest extends WebTestCase
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
-            'enqueue.topic_name' => Config::COMMAND_TOPIC,
-            'enqueue.processor_name' => RouterProcessor::class,
+            'enqueue.processor_name' => 'test_command_subscriber_processor',
             'enqueue.command_name' => 'theCommand',
-            'enqueue.processor_queue_name' => 'default',
         ], $traces[0]['properties']);
     }
 
-    /**
-     * @return TraceableProducer|object
-     */
-    private function getTraceableProducer()
+    private function getTraceableProducer(): TraceableProducer
     {
-        return static::$container->get(Producer::class);
+        return static::$container->get('test_enqueue.client.default.traceable_producer');
     }
 }

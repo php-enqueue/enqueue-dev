@@ -40,10 +40,7 @@ class ProducerSendCommandTest extends TestCase
         $producer->sendCommand('command', $message);
 
         $expectedProperties = [
-            'enqueue.processor_name' => 'a_router_processor_name',
-            'enqueue.topic_name' => '__command__',
             'enqueue.command_name' => 'command',
-            'enqueue.processor_queue_name' => 'a_router_queue',
         ];
 
         self::assertEquals($expectedProperties, $message->getProperties());
@@ -139,9 +136,8 @@ class ProducerSendCommandTest extends TestCase
     public function testShouldOverwriteExpectedMessageProperties()
     {
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topicShouldBeOverwritten');
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'topicShouldBeOverwritten');
-        $message->setScope('topicShouldBeOverwritten');
+        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'commandShouldBeOverwritten');
+        $message->setScope('scopeShouldBeOverwritten');
 
         $driver = $this->createDriverStub();
 
@@ -149,17 +145,14 @@ class ProducerSendCommandTest extends TestCase
         $producer->sendCommand('expectedCommand', $message);
 
         $expectedProperties = [
-            'enqueue.processor_name' => 'a_router_processor_name',
-            'enqueue.topic_name' => '__command__',
             'enqueue.command_name' => 'expectedCommand',
-            'enqueue.processor_queue_name' => 'a_router_queue',
         ];
 
         self::assertEquals($expectedProperties, $message->getProperties());
         self::assertSame(Message::SCOPE_APP, $message->getScope());
     }
 
-    public function testShouldSendCommandWithNormalPriorityByDefault()
+    public function testShouldSendCommandWithoutPriorityByDefault()
     {
         $message = new Message();
 
@@ -173,7 +166,7 @@ class ProducerSendCommandTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock());
         $producer->sendCommand('command', $message);
 
-        self::assertSame(MessagePriority::NORMAL, $message->getPriority());
+        self::assertNull($message->getPriority());
     }
 
     public function testShouldSendCommandWithCustomPriority()
@@ -306,8 +299,8 @@ class ProducerSendCommandTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) {
                 self::assertSame('aBody', $message->getBody());
-                self::assertSame('a_router_processor_name', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-                self::assertSame('a_router_queue', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME));
+                self::assertNull($message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
+                self::assertSame('command', $message->getProperty(Config::PARAMETER_COMMAND_NAME));
             })
         ;
 
@@ -315,26 +308,23 @@ class ProducerSendCommandTest extends TestCase
         $producer->sendCommand('command', $message);
     }
 
-    public function testShouldSendCommandWithCustomProcessorAndQueueNamePropertiesSetToApplicationRouter()
+    public function testThrowWhenProcessorNamePropertySetToApplicationRouter()
     {
         $message = new Message();
         $message->setBody('aBody');
         $message->setScope(Message::SCOPE_APP);
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aCustomProcessor');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aCustomProcessorQueue');
 
         $driver = $this->createDriverStub();
         $driver
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('sendToProcessor')
-            ->willReturnCallback(function (Message $message) {
-                self::assertSame('aBody', $message->getBody());
-                self::assertSame('aCustomProcessor', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-                self::assertSame('aCustomProcessorQueue', $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME));
-            })
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The enqueue.processor_name property must not be set.');
         $producer->sendCommand('command', $message);
     }
 

@@ -89,7 +89,7 @@ use Interop\Queue\PsrProcessor;
 
 /** @var \Enqueue\SimpleClient\SimpleClient $client */
 
-$client->bind('a_bar_topic', 'a_processor_name', function(PsrMessage $psrMessage) {
+$client->bindTopic('a_bar_topic', function(PsrMessage $psrMessage) {
     // processing logic here
     
     return PsrProcessor::ACK;

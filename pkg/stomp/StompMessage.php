@@ -64,7 +64,11 @@ class StompMessage implements PsrMessage
 
     public function setProperty(string $name, $value): void
     {
-        $this->properties[$name] = $value;
+        if (null === $value) {
+            unset($this->properties[$name]);
+        } else {
+            $this->properties[$name] = $value;
+        }
     }
 
     public function getProperty(string $name, $default = null)
@@ -84,7 +88,11 @@ class StompMessage implements PsrMessage
 
     public function setHeader(string $name, $value): void
     {
-        $this->headers[$name] = $value;
+        if (null === $value) {
+            unset($this->headers[$name]);
+        } else {
+            $this->headers[$name] = $value;
+        }
     }
 
     public function getHeader(string $name, $default = null)

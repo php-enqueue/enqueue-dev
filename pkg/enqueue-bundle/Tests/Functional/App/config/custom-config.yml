@@ -15,17 +15,29 @@ framework:
     default_locale:  '%locale%'
 
 services:
+    test_enqueue.client.default.driver:
+        alias: 'enqueue.client.default.driver'
+        public: true
+
+    test_enqueue.transport.default.context:
+        alias: 'enqueue.transport.default.context'
+        public: true
+
+    test_enqueue.client.default.consume_messages_command:
+        alias: 'enqueue.client.default.consume_messages_command'
+        public: true
+
     test.message.processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.topic_subscriber', client: 'default' }
 
     test.message.command_processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestCommandProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.command_subscriber', client: 'default' }
 
     test.sqs_client:
         public: true

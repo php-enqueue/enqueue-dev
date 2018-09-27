@@ -3,8 +3,8 @@
 namespace Enqueue\Tests\Symfony\Client\Mock;
 
 use Enqueue\Client\Config;
-use Enqueue\Client\Driver\NullDriver;
-use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Client\Driver\GenericDriver;
+use Enqueue\Client\RouteCollection;
 use Enqueue\Null\NullContext;
 use Enqueue\Symfony\Client\SetupBrokerExtensionCommandTrait;
 use Symfony\Component\Console\Command\Command;
@@ -31,10 +31,10 @@ class SetupBrokerExtensionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->extension = $this->getSetupBrokerExtension($input, new NullDriver(
+        $this->extension = $this->getSetupBrokerExtension($input, new GenericDriver(
             new NullContext(),
             Config::create(),
-            new QueueMetaRegistry(Config::create(), [])
+            new RouteCollection([])
         ));
     }
 }

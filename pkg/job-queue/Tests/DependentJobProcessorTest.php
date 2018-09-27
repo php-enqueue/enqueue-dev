@@ -18,7 +18,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     public function testShouldReturnSubscribedTopicNames()
     {
         $this->assertEquals(
-            [Topics::ROOT_JOB_STOPPED],
+            Topics::ROOT_JOB_STOPPED,
             DependentJobProcessor::getSubscribedTopics()
         );
     }

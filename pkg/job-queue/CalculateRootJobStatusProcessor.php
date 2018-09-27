@@ -2,8 +2,8 @@
 
 namespace Enqueue\JobQueue;
 
+use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\ProducerInterface;
-use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\Util\JSON;
@@ -12,7 +12,7 @@ use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 use Psr\Log\LoggerInterface;
 
-class CalculateRootJobStatusProcessor implements PsrProcessor, TopicSubscriberInterface
+class CalculateRootJobStatusProcessor implements PsrProcessor, CommandSubscriberInterface
 {
     /**
      * @var JobStorage
@@ -34,12 +34,6 @@ class CalculateRootJobStatusProcessor implements PsrProcessor, TopicSubscriberIn
      */
     private $logger;
 
-    /**
-     * @param JobStorage                    $jobStorage
-     * @param CalculateRootJobStatusService $calculateRootJobStatusCase
-     * @param ProducerInterface             $producer
-     * @param LoggerInterface               $logger
-     */
     public function __construct(
         JobStorage $jobStorage,
         CalculateRootJobStatusService $calculateRootJobStatusCase,
@@ -52,9 +46,6 @@ class CalculateRootJobStatusProcessor implements PsrProcessor, TopicSubscriberIn
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(PsrMessage $message, PsrContext $context)
     {
         $data = JSON::decode($message->getBody());
@@ -83,11 +74,8 @@ class CalculateRootJobStatusProcessor implements PsrProcessor, TopicSubscriberIn
         return Result::ACK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedCommand()
     {
-        return [Topics::CALCULATE_ROOT_JOB_STATUS];
+        return Commands::CALCULATE_ROOT_JOB_STATUS;
     }
 }

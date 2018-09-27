@@ -23,6 +23,6 @@ class TestCommandSubscriberProcessor implements PsrProcessor, CommandSubscriberI
 
     public static function getSubscribedCommand()
     {
-        return 'test_command_subscriber';
+        return 'theCommand';
     }
 }

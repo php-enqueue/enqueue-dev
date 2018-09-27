@@ -6,29 +6,32 @@ use Enqueue\Client\Config;
 use Enqueue\Client\Driver\AmqpDriver;
 use Enqueue\Client\Driver\DbalDriver;
 use Enqueue\Client\Driver\FsDriver;
+use Enqueue\Client\Driver\GenericDriver;
 use Enqueue\Client\Driver\GpsDriver;
 use Enqueue\Client\Driver\MongodbDriver;
-use Enqueue\Client\Driver\NullDriver;
 use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
 use Enqueue\Client\Driver\RdKafkaDriver;
-use Enqueue\Client\Driver\RedisDriver;
 use Enqueue\Client\Driver\SqsDriver;
 use Enqueue\Client\Driver\StompDriver;
 use Enqueue\Client\DriverFactory;
 use Enqueue\Client\DriverFactoryInterface;
-use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Client\Resources;
+use Enqueue\Client\RouteCollection;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Fs\FsContext;
+use Enqueue\Gearman\GearmanConnectionFactory;
+use Enqueue\Gearman\GearmanContext;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Gps\GpsContext;
 use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\NullContext;
+use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
+use Enqueue\Pheanstalk\PheanstalkContext;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\Redis\RedisConnectionFactory;
@@ -58,9 +61,9 @@ class DriverFactoryTest extends TestCase
         $this->assertTrue($rc->isFinal());
     }
 
-    public function testCouldBeConstructedWithConfigAndQueueMetaAsArguments()
+    public function testCouldBeConstructedWithConfigAndRouteCollectionAsArguments()
     {
-        new DriverFactory($this->createConfigMock(), $this->createQueueMetaRegistryMock());
+        new DriverFactory($this->createConfigMock(), new RouteCollection([]));
     }
 
     public function testThrowIfPackageThatSupportSchemeNotInstalled()
@@ -72,7 +75,7 @@ class DriverFactoryTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('To use given scheme "scheme5b7aa7d7cd213" a package has to be installed. Run "composer req thePackage theOtherPackage" to add it.');
-        $factory = new DriverFactory($this->createConfigMock(), $this->createQueueMetaRegistryMock());
+        $factory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
 
         $factory->create($this->createConnectionFactoryMock(), $scheme.'://foo', []);
     }
@@ -84,7 +87,7 @@ class DriverFactoryTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('A given scheme "scheme5b7aa862e70a5" is not supported. Maybe it is a custom driver, make sure you registered it with "Enqueue\Client\Resources::addDriver".');
 
-        $factory = new DriverFactory($this->createConfigMock(), $this->createQueueMetaRegistryMock());
+        $factory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
 
         $factory->create($this->createConnectionFactoryMock(), $scheme.'://foo', []);
     }
@@ -94,7 +97,7 @@ class DriverFactoryTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The DSN is invalid. It does not have scheme separator ":".');
 
-        $factory = new DriverFactory($this->createConfigMock(), $this->createQueueMetaRegistryMock());
+        $factory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
 
         $factory->create($this->createConnectionFactoryMock(), 'invalidDsn', []);
     }
@@ -116,7 +119,7 @@ class DriverFactoryTest extends TestCase
             ->willReturn($this->createMock($contextClass))
         ;
 
-        $driverFactory = new DriverFactory($this->createConfigMock(), $this->createQueueMetaRegistryMock());
+        $driverFactory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
 
         $driver = $driverFactory->create($connectionFactoryMock, $dsn, $conifg);
 
@@ -125,7 +128,7 @@ class DriverFactoryTest extends TestCase
 
     public static function provideDSN()
     {
-        yield ['null:', NullConnectionFactory::class, NullContext::class, [], NullDriver::class];
+        yield ['null:', NullConnectionFactory::class, NullContext::class, [], GenericDriver::class];
 
         yield ['amqp:', AmqpConnectionFactory::class, AmqpContext::class, [], AmqpDriver::class];
 
@@ -144,9 +147,9 @@ class DriverFactoryTest extends TestCase
 
         yield ['kafka:', RdKafkaConnectionFactory::class, RdKafkaContext::class, [], RdKafkaDriver::class];
 
-        yield ['redis:', RedisConnectionFactory::class, RedisContext::class, [], RedisDriver::class];
+        yield ['redis:', RedisConnectionFactory::class, RedisContext::class, [], GenericDriver::class];
 
-        yield ['redis+predis:', RedisConnectionFactory::class, RedisContext::class, [], RedisDriver::class];
+        yield ['redis+predis:', RedisConnectionFactory::class, RedisContext::class, [], GenericDriver::class];
 
         yield ['sqs:', SqsConnectionFactory::class, SqsContext::class, [], SqsDriver::class];
 
@@ -155,6 +158,10 @@ class DriverFactoryTest extends TestCase
         yield ['stomp+rabbitmq:', StompConnectionFactory::class, StompContext::class, [], RabbitMqStompDriver::class];
 
         yield ['stomp+foo+bar:', StompConnectionFactory::class, StompContext::class, [], StompDriver::class];
+
+        yield ['gearman:', GearmanConnectionFactory::class, GearmanContext::class, [], GenericDriver::class];
+
+        yield ['beanstalk:', PheanstalkConnectionFactory::class, PheanstalkContext::class, [], GenericDriver::class];
     }
 
     private function createConnectionFactoryMock(): PsrConnectionFactory
@@ -165,10 +172,5 @@ class DriverFactoryTest extends TestCase
     private function createConfigMock(): Config
     {
         return $this->createMock(Config::class);
-    }
-
-    private function createQueueMetaRegistryMock()
-    {
-        return $this->createMock(QueueMetaRegistry::class);
     }
 }

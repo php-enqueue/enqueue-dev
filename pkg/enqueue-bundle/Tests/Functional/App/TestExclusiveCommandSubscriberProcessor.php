@@ -22,9 +22,10 @@ class TestExclusiveCommandSubscriberProcessor implements PsrProcessor, CommandSu
     public static function getSubscribedCommand()
     {
         return [
-            'processorName' => 'theExclusiveCommandName',
-            'queueName' => 'the_exclusive_command_queue',
-            'queueNameHardcoded' => true,
+            'command' => 'theExclusiveCommandName',
+            'processor' => 'theExclusiveCommandName',
+            'queue' => 'the_exclusive_command_queue',
+            'prefix_queue' => true,
             'exclusive' => true,
         ];
     }

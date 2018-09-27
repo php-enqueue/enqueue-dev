@@ -111,11 +111,8 @@ class DependentJobProcessor implements PsrProcessor, TopicSubscriberInterface
         return Result::ACK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedTopics()
     {
-        return [Topics::ROOT_JOB_STOPPED];
+        return Topics::ROOT_JOB_STOPPED;
     }
 }

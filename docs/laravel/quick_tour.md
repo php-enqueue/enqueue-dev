@@ -72,7 +72,7 @@ use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 
 $app->resolving(SimpleClient::class, function (SimpleClient $client, $app) {
-    $client->bind('enqueue_test', 'a_processor', function(PsrMessage $message) {
+    $client->bindTopic('enqueue_test', function(PsrMessage $message) {
         // do stuff here
 
         return PsrProcessor::ACK;

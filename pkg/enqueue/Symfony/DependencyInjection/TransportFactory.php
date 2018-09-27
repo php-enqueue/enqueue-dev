@@ -2,13 +2,12 @@
 
 namespace Enqueue\Symfony\DependencyInjection;
 
-use Enqueue\Client\DriverInterface;
+use Enqueue\ConnectionFactoryFactory;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Resources;
 use Interop\Queue\PsrConnectionFactory;
 use Interop\Queue\PsrContext;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -89,14 +88,10 @@ final class TransportFactory
 
     public function createConnectionFactory(ContainerBuilder $container, array $config): string
     {
-        $factoryFactoryId = 'enqueue.connection_factory_factory';
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+        $factoryFactoryId = sprintf('enqueue.transport.%s.connection_factory_factory', $this->getName());
 
-        if (array_key_exists('factory_class', $config)) {
-            $factoryFactoryId = sprintf('enqueue.transport.%s.connection_factory_factory', $this->getName());
-
-            $container->register($factoryFactoryId, $config['factory_class']);
-        }
+        $container->register($factoryFactoryId, $config['factory_class'] ?? ConnectionFactoryFactory::class);
 
         $factoryFactoryService = new Reference(
             array_key_exists('factory_service', $config) ? $config['factory_service'] : $factoryFactoryId
@@ -118,8 +113,6 @@ final class TransportFactory
             ;
         }
 
-        $container->setAlias('enqueue.transport.connection_factory', new Alias($factoryId, true));
-
         return $factoryId;
     }
 
@@ -132,26 +125,7 @@ final class TransportFactory
             ->setFactory([new Reference($factoryId), 'createContext'])
         ;
 
-        $container->setAlias('enqueue.transport.context', new Alias($contextId, true));
-
         return $contextId;
-    }
-
-    public function createDriver(ContainerBuilder $container, array $config): string
-    {
-        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
-        $driverId = sprintf('enqueue.client.%s.driver', $this->getName());
-
-        $container->register($driverId, DriverInterface::class)
-            ->setFactory([new Reference('enqueue.client.driver_factory'), 'create'])
-            ->addArgument(new Reference($factoryId))
-            ->addArgument($config['dsn'])
-            ->addArgument($config)
-        ;
-
-        $container->setAlias('enqueue.client.driver', new Alias($driverId, true));
-
-        return $driverId;
     }
 
     public function getName(): string

@@ -175,16 +175,15 @@ $client = new SimpleClient('amqp:');
 
 // composer require enqueue/fs
 $client = new SimpleClient('file://foo/bar');
-
-$client->setupBroker();
-
-$client->sendEvent('a_foo_topic', 'message');
-
-$client->bind('a_foo_topic', 'fooProcessor', function(PsrMessage $message) {
+$client->bindTopic('a_foo_topic', function(PsrMessage $message) {
     echo $message->getBody().PHP_EOL;
     
     // your event processor logic here
 });
+
+$client->setupBroker();
+
+$client->sendEvent('a_foo_topic', 'message');
 
 // this is a blocking call, it'll consume message until it is interrupted 
 $client->consume();
@@ -207,17 +206,17 @@ $client = new SimpleClient('amqp:');
 // composer require enqueue/fs
 //$client = new SimpleClient('file://foo/bar');
 
-$client->setupBroker();
-
-$client->bind(Config::COMMAND_TOPIC, 'bar_command', function(PsrMessage $message) {
+$client->bindCommand('bar_command', function(PsrMessage $message) {
     // your bar command processor logic here
 });
 
-$client->bind(Config::COMMAND_TOPIC, 'baz_reply_command', function(PsrMessage $message, PsrContext $context) {
+$client->bindCommand('baz_reply_command', function(PsrMessage $message, PsrContext $context) {
     // your baz reply command processor logic here
     
     return Result::reply($context->createMessage('theReplyBody'));
 });
+
+$client->setupBroker();
 
 // It is sent to one consumer.  
 $client->sendCommand('bar_command', 'aMessageData');

@@ -12,6 +12,7 @@ use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class SetRouterPropertiesExtensionTest extends TestCase
 {
@@ -48,6 +49,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $message = new NullMessage();
 
         $context = new Context($this->createPsrContextMock());
+        $context->setLogger(new NullLogger());
         $context->setPsrMessage($message);
         $context->setPsrQueue(new NullQueue('test.router-queue'));
 
@@ -56,7 +58,6 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $this->assertEquals([
             'enqueue.processor_name' => 'router-processor-name',
-            'enqueue.processor_queue_name' => 'router-queue',
         ], $message->getProperties());
     }
 

@@ -2,7 +2,6 @@
 
 namespace Enqueue\Tests\Client;
 
-use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
@@ -165,7 +164,7 @@ class TraceableProducerTest extends TestCase
 
         $this->assertSame([
             [
-                'topic' => Config::COMMAND_TOPIC,
+                'topic' => null,
                 'command' => 'aFooCommand',
                 'body' => 'aFooBody',
                 'headers' => [],
@@ -188,7 +187,7 @@ class TraceableProducerTest extends TestCase
 
         $this->assertSame([
             [
-                'topic' => Config::COMMAND_TOPIC,
+                'topic' => null,
                 'command' => 'aFooCommand',
                 'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
                 'headers' => [],
@@ -222,7 +221,7 @@ class TraceableProducerTest extends TestCase
 
         $this->assertSame([
             [
-                'topic' => Config::COMMAND_TOPIC,
+                'topic' => null,
                 'command' => 'aFooCommand',
                 'body' => ['foo' => 'fooVal', 'bar' => 'barVal'],
                 'headers' => ['fooHeader' => 'fooVal'],

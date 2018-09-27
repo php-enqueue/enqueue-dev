@@ -19,19 +19,12 @@ class ArrayProcessorRegistry implements ProcessorRegistryInterface
         $this->processors = $processors;
     }
 
-    /**
-     * @param string       $name
-     * @param PsrProcessor $processor
-     */
-    public function add($name, PsrProcessor $processor)
+    public function add(string $name, PsrProcessor $processor): void
     {
         $this->processors[$name] = $processor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($processorName)
+    public function get(string $processorName): PsrProcessor
     {
         if (false == isset($this->processors[$processorName])) {
             throw new \LogicException(sprintf('Processor was not found. processorName: "%s"', $processorName));

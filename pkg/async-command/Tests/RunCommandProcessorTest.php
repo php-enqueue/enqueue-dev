@@ -43,9 +43,9 @@ class RunCommandProcessorTest extends TestCase
         $subscription = RunCommandProcessor::getSubscribedCommand();
 
         $this->assertSame([
-            'processorName' => Commands::RUN_COMMAND,
-            'queueName' => Commands::RUN_COMMAND,
-            'queueNameHardcoded' => true,
+            'command' => Commands::RUN_COMMAND,
+            'queue' => Commands::RUN_COMMAND,
+            'prefix_queue' => false,
             'exclusive' => true,
         ], $subscription);
     }

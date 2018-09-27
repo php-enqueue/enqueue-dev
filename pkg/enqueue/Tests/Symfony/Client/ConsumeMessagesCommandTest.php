@@ -5,7 +5,8 @@ namespace Enqueue\Tests\Symfony\Client;
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Client\Meta\QueueMetaRegistry;
+use Enqueue\Client\Route;
+use Enqueue\Client\RouteCollection;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Null\NullQueue;
@@ -21,8 +22,7 @@ class ConsumeMessagesCommandTest extends TestCase
         new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
             $this->createDelegateProcessorMock(),
-            $this->createQueueMetaRegistry([]),
-            $this->createDriverMock()
+            $this->createDriverStub()
         );
     }
 
@@ -31,8 +31,7 @@ class ConsumeMessagesCommandTest extends TestCase
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
             $this->createDelegateProcessorMock(),
-            $this->createQueueMetaRegistry([]),
-            $this->createDriverMock()
+            $this->createDriverStub()
         );
 
         $this->assertEquals('enqueue:consume', $command->getName());
@@ -43,8 +42,7 @@ class ConsumeMessagesCommandTest extends TestCase
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
             $this->createDelegateProcessorMock(),
-            $this->createQueueMetaRegistry([]),
-            $this->createDriverMock()
+            $this->createDriverStub()
         );
 
         $this->assertEquals(['enq:c'], $command->getAliases());
@@ -55,8 +53,7 @@ class ConsumeMessagesCommandTest extends TestCase
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
             $this->createDelegateProcessorMock(),
-            $this->createQueueMetaRegistry([]),
-            $this->createDriverMock()
+            $this->createDriverStub()
         );
 
         $options = $command->getDefinition()->getOptions();
@@ -77,8 +74,7 @@ class ConsumeMessagesCommandTest extends TestCase
         $command = new ConsumeMessagesCommand(
             $this->createQueueConsumerMock(),
             $this->createDelegateProcessorMock(),
-            $this->createQueueMetaRegistry([]),
-            $this->createDriverMock()
+            $this->createDriverStub()
         );
 
         $arguments = $command->getDefinition()->getArguments();
@@ -87,9 +83,11 @@ class ConsumeMessagesCommandTest extends TestCase
         $this->assertArrayHasKey('client-queue-names', $arguments);
     }
 
-    public function testShouldExecuteConsumptionAndUseDefaultQueueName()
+    public function testShouldBindDefaultQueueOnly()
     {
         $queue = new NullQueue('');
+
+        $routeCollection = new RouteCollection([]);
 
         $processor = $this->createDelegateProcessorMock();
 
@@ -111,11 +109,7 @@ class ConsumeMessagesCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $queueMetaRegistry = $this->createQueueMetaRegistry([
-            'default' => [],
-        ]);
-
-        $driver = $this->createDriverMock();
+        $driver = $this->createDriverStub($routeCollection);
         $driver
             ->expects($this->once())
             ->method('createQueue')
@@ -123,15 +117,19 @@ class ConsumeMessagesCommandTest extends TestCase
             ->willReturn($queue)
         ;
 
-        $command = new ConsumeMessagesCommand($consumer, $processor, $queueMetaRegistry, $driver);
+        $command = new ConsumeMessagesCommand($consumer, $processor, $driver);
 
         $tester = new CommandTester($command);
         $tester->execute([]);
     }
 
-    public function testShouldExecuteConsumptionAndUseCustomClientDestinationName()
+    public function testShouldBindDefaultQueueIfRouteDoesNotDefineQueue()
     {
         $queue = new NullQueue('');
+
+        $routeCollection = new RouteCollection([
+            new Route('topic', Route::TOPIC, 'processor'),
+        ]);
 
         $processor = $this->createDelegateProcessorMock();
 
@@ -153,11 +151,79 @@ class ConsumeMessagesCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $queueMetaRegistry = $this->createQueueMetaRegistry([
-            'non-default-queue' => [],
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('default')
+            ->willReturn($queue)
+        ;
+
+        $command = new ConsumeMessagesCommand($consumer, $processor, $driver);
+
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+    }
+
+    public function testShouldBindCustomExecuteConsumptionAndUseCustomClientDestinationName()
+    {
+        $defaultQueue = new NullQueue('');
+        $customQueue = new NullQueue('');
+
+        $routeCollection = new RouteCollection([
+            new Route('topic', Route::TOPIC, 'processor', ['queue' => 'custom']),
         ]);
 
-        $driver = $this->createDriverMock();
+        $processor = $this->createDelegateProcessorMock();
+
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->at(3))
+            ->method('createQueue')
+            ->with('default')
+            ->willReturn($defaultQueue)
+        ;
+        $driver
+            ->expects($this->at(4))
+            ->method('createQueue')
+            ->with('custom')
+            ->willReturn($customQueue)
+        ;
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->at(0))
+            ->method('bind')
+            ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(1))
+            ->method('bind')
+            ->with($this->identicalTo($customQueue), $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(2))
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $command = new ConsumeMessagesCommand($consumer, $processor, $driver);
+
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+    }
+
+    public function testShouldBindUserProvidedQueues()
+    {
+        $queue = new NullQueue('');
+
+        $routeCollection = new RouteCollection([
+            new Route('topic', Route::TOPIC, 'processor', ['queue' => 'custom']),
+        ]);
+
+        $processor = $this->createDelegateProcessorMock();
+
+        $driver = $this->createDriverStub($routeCollection);
         $driver
             ->expects($this->once())
             ->method('createQueue')
@@ -165,11 +231,75 @@ class ConsumeMessagesCommandTest extends TestCase
             ->willReturn($queue)
         ;
 
-        $command = new ConsumeMessagesCommand($consumer, $processor, $queueMetaRegistry, $driver);
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->once())
+            ->method('bind')
+            ->with($this->identicalTo($queue), $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->once())
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $command = new ConsumeMessagesCommand($consumer, $processor, $driver);
 
         $tester = new CommandTester($command);
         $tester->execute([
             'client-queue-names' => ['non-default-queue'],
+        ]);
+    }
+
+    public function testShouldBindQueuesOnlyOnce()
+    {
+        $defaultQueue = new NullQueue('');
+        $customQueue = new NullQueue('');
+
+        $routeCollection = new RouteCollection([
+            new Route('fooTopic', Route::TOPIC, 'processor', ['queue' => 'custom']),
+            new Route('barTopic', Route::TOPIC, 'processor', ['queue' => 'custom']),
+            new Route('ololoTopic', Route::TOPIC, 'processor', []),
+        ]);
+
+        $processor = $this->createDelegateProcessorMock();
+
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->at(3))
+            ->method('createQueue')
+            ->with('default')
+            ->willReturn($defaultQueue)
+        ;
+        $driver
+            ->expects($this->at(4))
+            ->method('createQueue')
+            ->with('custom')
+            ->willReturn($customQueue)
+        ;
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->at(0))
+            ->method('bind')
+            ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(1))
+            ->method('bind')
+            ->with($this->identicalTo($customQueue), $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(2))
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $command = new ConsumeMessagesCommand($consumer, $processor, $driver);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+//            'client-queue-names' => ['non-default-queue'],
         ]);
     }
 
@@ -187,7 +317,7 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('bind')
         ;
         $consumer
@@ -196,57 +326,38 @@ class ConsumeMessagesCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $queueMetaRegistry = $this->createQueueMetaRegistry([
-            'fooQueue' => [
-                'transportName' => 'fooTransportQueue',
-            ],
-            'barQueue' => [
-                'transportName' => 'barTransportQueue',
-            ],
-            'ololoQueue' => [
-                'transportName' => 'ololoTransportQueue',
-            ],
+        $routeCollection = new RouteCollection([
+            new Route('fooTopic', Route::TOPIC, 'processor', ['queue' => 'fooQueue']),
+            new Route('barTopic', Route::TOPIC, 'processor', ['queue' => 'barQueue']),
+            new Route('ololoTopic', Route::TOPIC, 'processor', ['queue' => 'ololoQueue']),
         ]);
 
-        $driver = $this->createDriverMock();
+        $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects($this->at(0))
+            ->expects($this->at(3))
+            ->method('createQueue')
+            ->with('default')
+            ->willReturn($queue)
+        ;
+        $driver
+            ->expects($this->at(4))
             ->method('createQueue')
             ->with('fooQueue')
             ->willReturn($queue)
         ;
         $driver
-            ->expects($this->at(1))
+            ->expects($this->at(5))
             ->method('createQueue')
             ->with('ololoQueue')
             ->willReturn($queue)
         ;
 
-        $command = new ConsumeMessagesCommand($consumer, $processor, $queueMetaRegistry, $driver);
+        $command = new ConsumeMessagesCommand($consumer, $processor, $driver);
 
         $tester = new CommandTester($command);
         $tester->execute([
             '--skip' => ['barQueue'],
         ]);
-    }
-
-    /**
-     * @param array $destinationNames
-     *
-     * @return QueueMetaRegistry
-     */
-    private function createQueueMetaRegistry(array $destinationNames)
-    {
-        $config = new Config(
-            'aPrefix',
-            'anApp',
-            'aRouterTopicName',
-            'aRouterQueueName',
-            'aDefaultQueueName',
-            'aRouterProcessorName'
-        );
-
-        return new QueueMetaRegistry($config, $destinationNames);
     }
 
     /**
@@ -276,8 +387,21 @@ class ConsumeMessagesCommandTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
      */
-    private function createDriverMock()
+    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
     {
-        return $this->createMock(DriverInterface::class);
+        $driverMock = $this->createMock(DriverInterface::class);
+        $driverMock
+            ->expects($this->any())
+            ->method('getRouteCollection')
+            ->willReturn($routeCollection)
+        ;
+
+        $driverMock
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn(Config::create('aPrefix', 'anApp'))
+        ;
+
+        return $driverMock;
     }
 }

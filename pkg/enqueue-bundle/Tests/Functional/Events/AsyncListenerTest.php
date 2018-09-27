@@ -3,6 +3,7 @@
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
 use Enqueue\AsyncEventDispatcher\AsyncListener;
+use Enqueue\AsyncEventDispatcher\Commands;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\TraceableProducer;
@@ -50,13 +51,13 @@ class AsyncListenerTest extends WebTestCase
         $dispatcher->dispatch('test_async', $event);
 
         /** @var TraceableProducer $producer */
-        $producer = static::$container->get('enqueue.producer');
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
-        $traces = $producer->getCommandTraces('symfony_events');
+        $traces = $producer->getCommandTraces(Commands::DISPATCH_ASYNC_EVENTS);
 
         $this->assertCount(1, $traces);
 
-        $this->assertEquals('symfony_events', $traces[0]['command']);
+        $this->assertEquals(Commands::DISPATCH_ASYNC_EVENTS, $traces[0]['command']);
         $this->assertEquals('{"subject":"theSubject","arguments":{"fooArg":"fooVal"}}', $traces[0]['body']);
     }
 
@@ -70,9 +71,9 @@ class AsyncListenerTest extends WebTestCase
         $dispatcher->dispatch('test_async', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
 
         /** @var TraceableProducer $producer */
-        $producer = static::$container->get('enqueue.producer');
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
-        $traces = $producer->getCommandTraces('symfony_events');
+        $traces = $producer->getCommandTraces(Commands::DISPATCH_ASYNC_EVENTS);
 
         $this->assertCount(3, $traces);
     }
@@ -90,9 +91,9 @@ class AsyncListenerTest extends WebTestCase
         $dispatcher->dispatch($eventName);
 
         /** @var TraceableProducer $producer */
-        $producer = static::$container->get('enqueue.producer');
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
-        $traces = $producer->getCommandTraces('symfony_events');
+        $traces = $producer->getCommandTraces(Commands::DISPATCH_ASYNC_EVENTS);
 
         $this->assertCount(1, $traces);
     }

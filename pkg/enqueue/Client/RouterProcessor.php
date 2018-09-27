@@ -7,115 +7,42 @@ use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 
-class RouterProcessor implements PsrProcessor
+final class RouterProcessor implements PsrProcessor
 {
     /**
      * @var DriverInterface
      */
     private $driver;
 
-    /**
-     * @var array
-     */
-    private $eventRoutes;
-
-    /**
-     * @var array
-     */
-    private $commandRoutes;
-
-    /**
-     * @param DriverInterface $driver
-     * @param array           $eventRoutes
-     * @param array           $commandRoutes
-     */
-    public function __construct(DriverInterface $driver, array $eventRoutes = [], array $commandRoutes = [])
+    public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;
-
-        $this->eventRoutes = $eventRoutes;
-        $this->commandRoutes = $commandRoutes;
     }
 
-    /**
-     * @param string $topicName
-     * @param string $queueName
-     * @param string $processorName
-     */
-    public function add($topicName, $queueName, $processorName)
+    public function process(PsrMessage $message, PsrContext $context): Result
     {
-        if (Config::COMMAND_TOPIC === $topicName) {
-            $this->commandRoutes[$processorName] = $queueName;
-        } else {
-            $this->eventRoutes[$topicName][] = [$processorName, $queueName];
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function process(PsrMessage $message, PsrContext $context)
-    {
-        $topicName = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
-        if (false == $topicName) {
+        if ($message->getProperty(Config::PARAMETER_COMMAND_NAME)) {
             return Result::reject(sprintf(
-                'Got message without required parameter: "%s"',
-                Config::PARAMETER_TOPIC_NAME
+                'Unexpected command "%s" got. Command must not go to the router.',
+                $message->getProperty(Config::PARAMETER_COMMAND_NAME)
             ));
         }
 
-        if (Config::COMMAND_TOPIC === $topicName) {
-            return $this->routeCommand($message);
+        $topic = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
+        if (false == $topic) {
+            return Result::reject(sprintf('Topic property "%s" is required but not set or empty.', Config::PARAMETER_TOPIC_NAME));
         }
 
-        return $this->routeEvent($message);
-    }
+        $count = 0;
+        foreach ($this->driver->getRouteCollection()->topic($topic) as $route) {
+            $clientMessage = $this->driver->createClientMessage($message);
+            $clientMessage->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route->getProcessor());
 
-    /**
-     * @param PsrMessage $message
-     *
-     * @return string|Result
-     */
-    private function routeEvent(PsrMessage $message)
-    {
-        $topicName = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
+            $this->driver->sendToProcessor($clientMessage);
 
-        if (array_key_exists($topicName, $this->eventRoutes)) {
-            foreach ($this->eventRoutes[$topicName] as $route) {
-                $processorMessage = clone $message;
-                $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route[0]);
-                $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $route[1]);
-
-                $this->driver->sendToProcessor($this->driver->createClientMessage($processorMessage));
-            }
+            ++$count;
         }
 
-        return self::ACK;
-    }
-
-    /**
-     * @param PsrMessage $message
-     *
-     * @return string|Result
-     */
-    private function routeCommand(PsrMessage $message)
-    {
-        $commandName = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
-        if (false == $commandName) {
-            return Result::reject(sprintf(
-                'Got message without required parameter: "%s"',
-                Config::PARAMETER_COMMAND_NAME
-            ));
-        }
-
-        if (isset($this->commandRoutes[$commandName])) {
-            $processorMessage = clone $message;
-            $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->commandRoutes[$commandName]);
-            $processorMessage->setProperty(Config::PARAMETER_PROCESSOR_NAME, $commandName);
-
-            $this->driver->sendToProcessor($this->driver->createClientMessage($processorMessage));
-        }
-
-        return self::ACK;
+        return Result::ack(sprintf('Routed to "%d" event subscribers', $count));
     }
 }
