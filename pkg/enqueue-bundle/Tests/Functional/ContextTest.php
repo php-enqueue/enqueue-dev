@@ -11,7 +11,7 @@ class ContextTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $connection = static::$container->get('enqueue.transport.context');
+        $connection = static::$container->get('test_enqueue.transport.default.context');
 
         $this->assertInstanceOf(PsrContext::class, $connection);
     }

@@ -48,7 +48,7 @@ class ConfigurationTest extends TestCase
             'extensions' => [
                 'doctrine_ping_connection_extension' => false,
                 'doctrine_clear_identity_map_extension' => false,
-                'signal_extension' => true,
+                'signal_extension' => function_exists('pcntl_signal_dispatch'),
                 'reply_extension' => true,
             ],
         ], $config);
@@ -75,7 +75,7 @@ class ConfigurationTest extends TestCase
             'extensions' => [
                 'doctrine_ping_connection_extension' => false,
                 'doctrine_clear_identity_map_extension' => false,
-                'signal_extension' => true,
+                'signal_extension' => function_exists('pcntl_signal_dispatch'),
                 'reply_extension' => true,
             ],
         ], $config);

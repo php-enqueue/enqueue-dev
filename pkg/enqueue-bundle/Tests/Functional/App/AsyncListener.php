@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional\App;
 
+use Enqueue\AsyncEventDispatcher\Commands;
 use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
@@ -44,7 +45,7 @@ class AsyncListener extends \Enqueue\AsyncEventDispatcher\AsyncListener
             $message->setProperty('event_name', $eventName);
             $message->setProperty('transformer_name', $transformerName);
 
-            $this->producer->sendCommand('symfony_events', $message);
+            $this->producer->sendCommand(Commands::DISPATCH_ASYNC_EVENTS, $message);
         }
     }
 }

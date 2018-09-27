@@ -33,7 +33,7 @@ abstract class WebTestCase extends BaseWebTestCase
         }
 
         /** @var TraceableProducer $producer */
-        $producer = static::$container->get(TraceableProducer::class);
+        $producer = static::$container->get('test_enqueue.client.default.traceable_producer');
         $producer->clearTraces();
     }
 

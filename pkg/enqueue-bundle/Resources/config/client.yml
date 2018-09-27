@@ -1,227 +1,130 @@
 services:
-    enqueue.client.driver_factory:
-      class: 'Enqueue\Client\DriverFactory'
-      arguments:
-        - '@enqueue.client.config'
-        - '@enqueue.client.meta.queue_meta_registry'
+    enqueue.client.default.context: 
+        class: 'Interop\Queue\PsrContext'
+        factory: ['@enqueue.client.default.driver', 'getContext']
 
-    enqueue.client.config:
+    enqueue.client.default.driver_factory:
+        class: 'Enqueue\Client\DriverFactory'
+        arguments:
+            - '@enqueue.client.default.config'
+            - '@enqueue.client.default.route_collection'
+
+    enqueue.client.default.config:
         class: 'Enqueue\Client\Config'
-        public: false
 
-    Enqueue\Client\Producer:
+    enqueue.client.default.route_collection:
+        class: 'Enqueue\Client\RouteCollection'
+        factory: ['Enqueue\Client\RouteCollection', 'fromArray']
+        arguments:
+            - []
+
+    enqueue.client.default.producer:
         class: 'Enqueue\Client\Producer'
         public: true
         arguments:
-            - '@enqueue.client.driver'
-            - '@enqueue.client.rpc_factory'
-            - '@enqueue.client.extensions'
+            - '@enqueue.client.default.driver'
+            - '@enqueue.client.default.rpc_factory'
+            - '@enqueue.client.default.client_extensions'
 
-    Enqueue\Client\ProducerInterface:
-        public: true
-        alias: 'Enqueue\Client\Producer'
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.producer:
-        public: true
-        alias: 'Enqueue\Client\Producer'
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.producer:
-        public: true
-        alias: 'enqueue.client.producer'
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.producer_v2:
-        public: true
-        alias: 'enqueue.client.producer'
-
-    Enqueue\Client\SpoolProducer:
+    enqueue.client.default.spool_producer:
         class: 'Enqueue\Client\SpoolProducer'
         public: true
         arguments:
-            - '@Enqueue\Client\Producer'
+            - '@enqueue.client.default.producer'
 
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.spool_producer:
-        public: true
-        alias: 'Enqueue\Client\SpoolProducer'
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.spool_producer:
-        public: true
-        alias: 'enqueue.client.spool_producer'
-
-    enqueue.client.extensions:
+    enqueue.client.default.client_extensions:
         class: 'Enqueue\Client\ChainExtension'
-        public: false
         arguments:
             - []
 
-    enqueue.client.rpc_factory:
+    enqueue.client.default.rpc_factory:
         class: 'Enqueue\Rpc\RpcFactory'
-        public: false
         arguments:
-            - '@enqueue.transport.context'
+            - '@enqueue.client.default.context'
 
-    Enqueue\Client\RouterProcessor:
+    enqueue.client.default.router_processor:
         class: 'Enqueue\Client\RouterProcessor'
-        public: true
         arguments:
-            - '@enqueue.client.driver'
-            - []
-            - []
-        tags:
-            -
-                name: 'enqueue.client.processor'
-                topicName: '__router__'
-                queueName: '%enqueue.client.router_queue_name%'
+            - '@enqueue.client.default.driver'
 
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.router_processor:
-        public: true
-        alias: 'Enqueue\Client\RouterProcessor'
+    enqueue.client.default.processor_registry:
+        class: 'Enqueue\Symfony\Client\ContainerProcessorRegistry'
 
-    enqueue.client.processor_registry:
-        class: 'Enqueue\Symfony\Client\ContainerAwareProcessorRegistry'
-        public: false
-        calls:
-            - ['setContainer', ['@service_container']]
-
-    Enqueue\Client\Meta\TopicMetaRegistry:
-        class: 'Enqueue\Client\Meta\TopicMetaRegistry'
-        public: true
-        arguments: [[]]
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.meta.topic_meta_registry:
-        public: true
-        alias: 'Enqueue\Client\Meta\TopicMetaRegistry'
-
-    Enqueue\Client\Meta\QueueMetaRegistry:
-        class: 'Enqueue\Client\Meta\QueueMetaRegistry'
-        public: true
-        arguments: ['@enqueue.client.config', []]
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.meta.queue_meta_registry:
-        public: true
-        alias: 'Enqueue\Client\Meta\QueueMetaRegistry'
-
-    enqueue.client.delegate_processor:
+    enqueue.client.default.delegate_processor:
         class: 'Enqueue\Client\DelegateProcessor'
-        public: false
         arguments:
-            - '@enqueue.client.processor_registry'
+            - '@enqueue.client.default.processor_registry'
 
-    enqueue.client.extension.set_router_properties:
+    enqueue.client.default.set_router_properties_extension:
         class: 'Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension'
-        public: false
         arguments:
-            - '@enqueue.client.driver'
+            - '@enqueue.client.default.driver'
         tags:
-            - { name: 'enqueue.consumption.extension', priority: 100 }
+            - { name: 'enqueue.consumption_extension', priority: 100, client: 'default' }
 
-    enqueue.client.queue_consumer:
+    enqueue.client.default.queue_consumer:
         class: 'Enqueue\Consumption\QueueConsumer'
-        public: false
         arguments:
-            - '@enqueue.transport.context'
-            - '@enqueue.consumption.extensions'
+            - '@enqueue.client.default.context'
+            - '@enqueue.client.default.consumption_extensions'
             - ~
             - ~
 
-    Enqueue\Symfony\Client\ConsumeMessagesCommand:
+    enqueue.client.default.consumption_extensions:
+        class: 'Enqueue\Consumption\ChainExtension'
+        arguments:
+            - []
+
+    enqueue.client.default.consume_messages_command:
         class: 'Enqueue\Symfony\Client\ConsumeMessagesCommand'
-        public: true
         arguments:
-            - '@enqueue.client.queue_consumer'
-            - '@enqueue.client.delegate_processor'
-            - '@Enqueue\Client\Meta\QueueMetaRegistry'
-            - '@enqueue.client.driver'
+            - '@enqueue.client.default.queue_consumer'
+            - '@enqueue.client.default.delegate_processor'
+            - '@enqueue.client.default.driver'
         tags:
             - { name: 'console.command' }
 
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.consume_messages_command:
-        public: true
-        alias: 'Enqueue\Symfony\Client\ConsumeMessagesCommand'
-
-    Enqueue\Symfony\Client\ProduceMessageCommand:
+    enqueue.client.default.produce_message_command:
         class: 'Enqueue\Symfony\Client\ProduceMessageCommand'
-        public: true
         arguments:
-            - '@Enqueue\Client\Producer'
+            - '@enqueue.client.default.producer'
         tags:
             - { name: 'console.command' }
 
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.produce_message_command:
-        public: true
-        alias: 'Enqueue\Symfony\Client\ProduceMessageCommand'
-
-    Enqueue\Symfony\Client\Meta\TopicsCommand:
-        class: 'Enqueue\Symfony\Client\Meta\TopicsCommand'
-        public: true
-        arguments:
-            - '@Enqueue\Client\Meta\TopicMetaRegistry'
-        tags:
-            - { name: 'console.command' }
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.meta.topics_command:
-        public: true
-        alias: 'Enqueue\Symfony\Client\Meta\TopicsCommand'
-
-    Enqueue\Symfony\Client\Meta\QueuesCommand:
-        class: 'Enqueue\Symfony\Client\Meta\QueuesCommand'
-        public: true
-        arguments:
-            - '@Enqueue\Client\Meta\QueueMetaRegistry'
-        tags:
-            - { name: 'console.command' }
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.meta.queues_command:
-        public: true
-        alias: 'Enqueue\Symfony\Client\Meta\QueuesCommand'
-
-    Enqueue\Symfony\Client\SetupBrokerCommand:
+    enqueue.client.default.setup_broker_command:
         class: 'Enqueue\Symfony\Client\SetupBrokerCommand'
-        public: true
         arguments:
-            - '@enqueue.client.driver'
+            - '@enqueue.client.default.driver'
         tags:
             - { name: 'console.command' }
 
-    # Deprecated. To be removed in 0.10.
-    enqueue.client.setup_broker_command:
-        public: true
-        alias: 'Enqueue\Symfony\Client\SetupBrokerCommand'
+    enqueue.client.default.routes_command:
+        class: 'Enqueue\Symfony\Client\RoutesCommand'
+        arguments:
+            - '@enqueue.client.default.config'
+            - '@enqueue.client.default.route_collection'
+        tags:
+            - { name: 'console.command' }
 
+    # todo
     enqueue.profiler.message_queue_collector:
         class: 'Enqueue\Bundle\Profiler\MessageQueueCollector'
-        public: false
         arguments:
-            - '@Enqueue\Client\Producer'
+            - '@enqueue.client.default.producer'
         tags:
             - { name: 'data_collector', template: '@Enqueue/Profiler/panel.html.twig', id: 'enqueue.message_queue' }
 
-    Enqueue\Symfony\Client\FlushSpoolProducerListener:
+    enqueue.client.default.flush_spool_producer_listener:
         class: 'Enqueue\Symfony\Client\FlushSpoolProducerListener'
-        public: true
         arguments:
-            - '@Enqueue\Client\SpoolProducer'
+            - '@enqueue.client.default.spool_producer'
         tags:
             - { name: 'kernel.event_subscriber' }
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.flush_spool_producer_listener:
+            
+    Enqueue\Client\ProducerInterface:
         public: true
-        alias: 'Enqueue\Symfony\Client\FlushSpoolProducerListener'
-
-    enqueue.client.default.exclusive_command_extension:
-        class: 'Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension'
-        arguments: '@enqueue.client.default.driver'
-        tags:
-            - { name: 'enqueue.client.extension' }
+        alias: 'enqueue.client.default.producer'
+        
+    Enqueue\Client\SpoolProducer:
+        public: true
+        alias: 'enqueue.client.default.spool_producer'

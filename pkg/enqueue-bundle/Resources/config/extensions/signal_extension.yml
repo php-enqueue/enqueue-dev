@@ -3,4 +3,4 @@ services:
         class: 'Enqueue\Consumption\Extension\SignalExtension'
         public: false
         tags:
-            - { name: 'enqueue.consumption.extension' }
+            - { name: 'enqueue.consumption.extension', client: 'default' }

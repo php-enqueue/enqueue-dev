@@ -30,6 +30,34 @@ enqueue:
     async_commands: true
 
 services:
+    test_enqueue.client.default.traceable_producer:
+        alias: 'enqueue.client.default.traceable_producer'
+        public: true
+
+    test_enqueue.client.default.producer:
+        alias: 'enqueue.client.default.producer'
+        public: true
+
+    test_Enqueue\Client\ProducerInterface:
+        alias: 'Enqueue\Client\ProducerInterface'
+        public: true
+
+    test_enqueue.client.default.driver:
+        alias: 'enqueue.client.default.driver'
+        public: true
+
+    test_enqueue.transport.default.context:
+        alias: 'enqueue.transport.default.context'
+        public: true
+
+    test_enqueue.client.default.consume_messages_command:
+        alias: 'enqueue.client.default.consume_messages_command'
+        public: true
+
+    test.enqueue.client.default.routes_command:
+        alias: 'enqueue.client.default.routes_command'
+        public: true
+
     test_async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncListener'
         public: true
@@ -40,13 +68,19 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestCommandSubscriberProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.command_subscriber', client: 'default' }
+
+    test_topic_subscriber_processor:
+        class: 'Enqueue\Bundle\Tests\Functional\App\TestTopicSubscriberProcessor'
+        public: true
+        tags:
+            - { name: 'enqueue.topic_subscriber', client: 'default' }
 
     test_exclusive_command_subscriber_processor:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestExclusiveCommandSubscriberProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.command_subscriber', client: 'default' }
 
     test_async_subscriber:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber'
@@ -67,4 +101,4 @@ services:
     enqueue.events.async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\AsyncListener'
         public: true
-        arguments: ['@Enqueue\Client\Producer', '@enqueue.events.registry']
+        arguments: ['@enqueue.client.default.producer', '@enqueue.events.registry']

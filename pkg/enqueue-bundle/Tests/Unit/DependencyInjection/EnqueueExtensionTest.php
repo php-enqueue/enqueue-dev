@@ -87,8 +87,7 @@ class EnqueueExtensionTest extends TestCase
         ]], $container);
 
         self::assertTrue($container->hasDefinition('enqueue.client.default.driver'));
-        self::assertTrue($container->hasDefinition('enqueue.client.config'));
-        self::assertTrue($container->hasDefinition(Producer::class));
+        self::assertTrue($container->hasDefinition('enqueue.client.default.config'));
         self::assertTrue($container->hasAlias(ProducerInterface::class));
     }
 
@@ -103,7 +102,7 @@ class EnqueueExtensionTest extends TestCase
             'transport' => 'null',
         ]], $container);
 
-        $producer = $container->getDefinition(Producer::class);
+        $producer = $container->getDefinition('enqueue.client.default.producer');
         self::assertEquals(Producer::class, $producer->getClass());
     }
 
@@ -120,7 +119,7 @@ class EnqueueExtensionTest extends TestCase
             'transport' => 'null:',
         ]], $container);
 
-        $producer = $container->getDefinition(Producer::class);
+        $producer = $container->getDefinition('enqueue.client.default.producer');
         self::assertEquals(Producer::class, $producer->getClass());
     }
 
@@ -135,16 +134,16 @@ class EnqueueExtensionTest extends TestCase
             'client' => null,
         ]], $container);
 
-        $producer = $container->getDefinition(TraceableProducer::class);
+        $producer = $container->getDefinition('enqueue.client.default.traceable_producer');
         self::assertEquals(TraceableProducer::class, $producer->getClass());
         self::assertEquals(
-            [Producer::class, null, 0],
+            ['enqueue.client.default.producer', null, 0],
             $producer->getDecoratedService()
         );
 
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
 
-        $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
+        $innerServiceName = 'enqueue.client.default.traceable_producer.inner';
 
         self::assertEquals(
             $innerServiceName,
@@ -162,7 +161,7 @@ class EnqueueExtensionTest extends TestCase
             'transport' => 'null:',
         ]], $container);
 
-        $this->assertFalse($container->hasDefinition(TraceableProducer::class));
+        $this->assertFalse($container->hasDefinition('enqueue.client.default.traceable_producer'));
     }
 
     public function testShouldUseTraceableMessageProducerIfDebugDisabledButTraceableProducerOptionSetToTrueExplicitly()
@@ -178,16 +177,16 @@ class EnqueueExtensionTest extends TestCase
             'transport' => 'null:',
         ]], $container);
 
-        $producer = $container->getDefinition(TraceableProducer::class);
+        $producer = $container->getDefinition('enqueue.client.default.traceable_producer');
         self::assertEquals(TraceableProducer::class, $producer->getClass());
         self::assertEquals(
-            [Producer::class, null, 0],
+            ['enqueue.client.default.producer', null, 0],
             $producer->getDecoratedService()
         );
 
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
 
-        $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
+        $innerServiceName = 'enqueue.client.default.traceable_producer.inner';
 
         self::assertEquals(
             $innerServiceName,
@@ -208,7 +207,7 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
-        $extension = $container->getDefinition('enqueue.client.delay_redelivered_message_extension');
+        $extension = $container->getDefinition('enqueue.client.default.delay_redelivered_message_extension');
 
         self::assertEquals(12345, $extension->getArgument(1));
     }
@@ -226,7 +225,7 @@ class EnqueueExtensionTest extends TestCase
             ],
         ]], $container);
 
-        $this->assertFalse($container->hasDefinition('enqueue.client.delay_redelivered_message_extension'));
+        $this->assertFalse($container->hasDefinition('enqueue.client.default.delay_redelivered_message_extension'));
     }
 
     public function testShouldLoadJobServicesIfEnabled()
@@ -441,7 +440,7 @@ class EnqueueExtensionTest extends TestCase
         $this->assertSame(123, $def->getArgument(2));
         $this->assertSame(456, $def->getArgument(3));
 
-        $def = $container->getDefinition('enqueue.client.queue_consumer');
+        $def = $container->getDefinition('enqueue.client.default.queue_consumer');
         $this->assertSame(123, $def->getArgument(2));
         $this->assertSame(456, $def->getArgument(3));
     }
@@ -459,11 +458,11 @@ class EnqueueExtensionTest extends TestCase
         $autoconfigured = $container->getAutoconfiguredInstanceof();
 
         self::assertArrayHasKey(CommandSubscriberInterface::class, $autoconfigured);
-        self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+        self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->hasTag('enqueue.command_subscriber'));
         self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->isPublic());
 
         self::assertArrayHasKey(TopicSubscriberInterface::class, $autoconfigured);
-        self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+        self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->hasTag('enqueue.topic_subscriber'));
         self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->isPublic());
     }
 

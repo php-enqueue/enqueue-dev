@@ -2,13 +2,13 @@
 
 namespace Enqueue\Bundle\Tests\Functional\App;
 
-use Enqueue\Client\CommandSubscriberInterface;
+use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 
-class TestCommandSubscriberProcessor implements PsrProcessor, CommandSubscriberInterface
+class TestTopicSubscriberProcessor implements PsrProcessor, TopicSubscriberInterface
 {
     public $calls = [];
 
@@ -21,8 +21,8 @@ class TestCommandSubscriberProcessor implements PsrProcessor, CommandSubscriberI
         );
     }
 
-    public static function getSubscribedCommand()
+    public static function getSubscribedTopics()
     {
-        return 'theCommand';
+        return 'theTopic';
     }
 }

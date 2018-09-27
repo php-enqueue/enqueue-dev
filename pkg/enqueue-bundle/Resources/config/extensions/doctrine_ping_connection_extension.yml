@@ -5,4 +5,4 @@ services:
         arguments:
             - '@doctrine'
         tags:
-            - { name: 'enqueue.consumption.extension' }
+            - { name: 'enqueue.consumption.extension', client: 'default' }

@@ -3,9 +3,6 @@ parameters:
   enqueue.queue_consumer.default_receive_timeout: 10000
 
 services:
-    enqueue.connection_factory_factory:
-      class: 'Enqueue\ConnectionFactoryFactory'
-
     enqueue.consumption.extensions:
         class: 'Enqueue\Consumption\ChainExtension'
         public: false
@@ -16,7 +13,7 @@ services:
         class: 'Enqueue\Consumption\QueueConsumer'
         public: true
         arguments:
-            - '@enqueue.transport.context'
+            - '@enqueue.transport.default.context'
             - '@enqueue.consumption.extensions'
             - '%enqueue.queue_consumer.default_idle_time%'
             - '%enqueue.queue_consumer.default_receive_timeout%'
@@ -43,13 +40,13 @@ services:
         class: 'Enqueue\Rpc\RpcFactory'
         public: false
         arguments:
-            - '@enqueue.transport.context'
+            - '@enqueue.transport.default.context'
 
     Enqueue\Rpc\RpcClient:
         class: 'Enqueue\Rpc\RpcClient'
         public: true
         arguments:
-            - '@enqueue.transport.context'
+            - '@enqueue.transport.default.context'
             - '@enqueue.transport.rpc_factory'
 
     # Deprecated. To be removed in 0.10.
