@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Symfony\DependencyInjection;
+namespace Enqueue\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\RouteCollection;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

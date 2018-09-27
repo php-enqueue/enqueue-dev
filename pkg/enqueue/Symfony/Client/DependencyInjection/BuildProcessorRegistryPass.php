@@ -1,10 +1,12 @@
 <?php
 
-namespace Enqueue\Symfony\DependencyInjection;
+namespace Enqueue\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\RouteCollection;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 final class BuildProcessorRegistryPass implements CompilerPassInterface
 {
@@ -34,6 +36,11 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
             return;
         }
 
+        $routerProcessorId = sprintf('enqueue.client.%s.router_processor', $this->name);
+        if (false == $container->hasDefinition($routerProcessorId)) {
+            return;
+        }
+
         $routeCollection = RouteCollection::fromArray($container->getDefinition($routeCollectionId)->getArgument(0));
 
         $map = [];
@@ -42,13 +49,12 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
                 throw new \LogicException('The route option "processor_service_id" is required');
             }
 
-            $map[$route->getProcessor()] = $processorServiceId;
+            $map[$route->getProcessor()] = new Reference($processorServiceId);
         }
 
+        $map["%enqueue.client.{$this->name}.router_processor%"] = new Reference($routerProcessorId);
+
         $registry = $container->getDefinition($processorRegistryId);
-        $registry->replaceArgument(0, array_replace(
-            $registry->getArgument(0),
-            $map
-        ));
+        $registry->setArgument(0, ServiceLocatorTagPass::register($container, $map, $processorRegistryId));
     }
 }

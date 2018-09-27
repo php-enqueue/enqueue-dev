@@ -1,9 +1,9 @@
 <?php
 
-namespace Enqueue\Tests\Symfony\DependencyInjection;
+namespace Enqueue\Tests\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\Route;
-use Enqueue\Symfony\DependencyInjection\AnalyzeRouteCollectionPass;
+use Enqueue\Symfony\Client\DependencyInjection\AnalyzeRouteCollectionPass;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

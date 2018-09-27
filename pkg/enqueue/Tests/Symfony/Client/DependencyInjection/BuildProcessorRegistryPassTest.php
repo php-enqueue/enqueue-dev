@@ -1,14 +1,15 @@
 <?php
 
-namespace Enqueue\Tests\Symfony\DependencyInjection;
+namespace Enqueue\Tests\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\Route;
-use Enqueue\Symfony\DependencyInjection\BuildProcessorRegistryPass;
+use Enqueue\Symfony\Client\DependencyInjection\BuildProcessorRegistryPass;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 class BuildProcessorRegistryPassTest extends TestCase
 {
@@ -61,6 +62,23 @@ class BuildProcessorRegistryPassTest extends TestCase
         $pass->process($container);
     }
 
+    public function testShouldDoNothingIfRouterProcessorServiceIsNotRegistered()
+    {
+        $container = new ContainerBuilder();
+        $container->register('enqueue.client.aName.route_collection');
+        $container->register('enqueue.client.aName.processor_registry')
+            ->addArgument([])
+        ;
+
+        //guard
+        $this->assertFalse($container->hasDefinition('enqueue.client.aName.router_processor'));
+
+        $pass = new BuildProcessorRegistryPass('aName');
+        $pass->process($container);
+
+        $this->assertSame([], $container->getDefinition('enqueue.client.aName.processor_registry')->getArgument(0));
+    }
+
     public function testThrowIfProcessorServiceIdOptionNotSet()
     {
         $container = new ContainerBuilder();
@@ -68,6 +86,7 @@ class BuildProcessorRegistryPassTest extends TestCase
             (new Route('aCommand', Route::COMMAND, 'aProcessor'))->toArray(),
         ]);
         $container->register('enqueue.client.aName.processor_registry')->addArgument([]);
+        $container->register('enqueue.client.aName.router_processor');
 
         $pass = new BuildProcessorRegistryPass('aName');
 
@@ -76,7 +95,7 @@ class BuildProcessorRegistryPassTest extends TestCase
         $pass->process($container);
     }
 
-    public function testShouldSetProcessorsMapToRegistryAsFirstArgument()
+    public function testShouldPassLocatorAsFirstArgument()
     {
         $registry = new Definition();
         $registry->addArgument([]);
@@ -97,50 +116,12 @@ class BuildProcessorRegistryPassTest extends TestCase
             ))->toArray(),
         ]);
         $container->setDefinition('enqueue.client.aName.processor_registry', $registry);
+        $container->register('enqueue.client.aName.router_processor');
 
         $pass = new BuildProcessorRegistryPass('aName');
         $pass->process($container);
 
-        $this->assertInternalType('array', $registry->getArgument(0));
-        $this->assertEquals([
-            'aBarProcessor' => 'aBarServiceId',
-            'aFooProcessor' => 'aFooServiceId',
-        ], $registry->getArgument(0));
-    }
-
-    public function testShouldMergeWithAddedPreviously()
-    {
-        $registry = new Definition();
-        $registry->addArgument([
-            'aBarProcessor' => 'aBarServiceIdAddedPreviously',
-            'aOloloProcessor' => 'aOloloServiceIdAddedPreviously',
-        ]);
-
-        $container = new ContainerBuilder();
-        $container->register('enqueue.client.aName.route_collection')->addArgument([
-            (new Route(
-                'aCommand',
-                Route::COMMAND,
-                'aBarProcessor',
-                ['processor_service_id' => 'aBarServiceId']
-            ))->toArray(),
-            (new Route(
-                'aTopic',
-                Route::TOPIC,
-                'aFooProcessor',
-                ['processor_service_id' => 'aFooServiceId']
-            ))->toArray(),
-        ]);
-        $container->setDefinition('enqueue.client.aName.processor_registry', $registry);
-
-        $pass = new BuildProcessorRegistryPass('aName');
-        $pass->process($container);
-
-        $this->assertInternalType('array', $registry->getArgument(0));
-        $this->assertEquals([
-            'aOloloProcessor' => 'aOloloServiceIdAddedPreviously',
-            'aBarProcessor' => 'aBarServiceId',
-            'aFooProcessor' => 'aFooServiceId',
-        ], $registry->getArgument(0));
+        $this->assertInstanceOf(Reference::class, $registry->getArgument(0));
+        $this->assertRegExp('/service_locator\..*?\.enqueue\.client\.aName\.processor_registry/', (string) $registry->getArgument(0));
     }
 }

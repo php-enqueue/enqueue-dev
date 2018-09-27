@@ -1,14 +1,14 @@
 <?php
 
-namespace Enqueue\Symfony\DependencyInjection;
+namespace Enqueue\Symfony\Client\DependencyInjection;
 
-use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
+use Enqueue\Client\TopicSubscriberInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-final class BuildCommandSubscriberRoutesPass implements CompilerPassInterface
+final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
 {
     /**
      * @var string
@@ -31,12 +31,12 @@ final class BuildCommandSubscriberRoutesPass implements CompilerPassInterface
             return;
         }
 
-        $tag = 'enqueue.command_subscriber';
+        $tag = 'enqueue.topic_subscriber';
         $routeCollection = new RouteCollection([]);
         foreach ($container->findTaggedServiceIds($tag) as $serviceId => $tagAttributes) {
             $processorDefinition = $container->getDefinition($serviceId);
             if ($processorDefinition->getFactory()) {
-                throw new \LogicException('The command subscriber tag could not be applied to a service created by factory.');
+                throw new \LogicException('The topic subscriber tag could not be applied to a service created by factory.');
             }
 
             $processorClass = $processorDefinition->getClass();
@@ -44,8 +44,8 @@ final class BuildCommandSubscriberRoutesPass implements CompilerPassInterface
                 throw new \LogicException(sprintf('The processor class "%s" could not be found.', $processorClass));
             }
 
-            if (false == is_subclass_of($processorClass, CommandSubscriberInterface::class)) {
-                throw new \LogicException(sprintf('The processor must implement "%s" interface to be used with the tag "%s"', CommandSubscriberInterface::class, $tag));
+            if (false == is_subclass_of($processorClass, TopicSubscriberInterface::class)) {
+                throw new \LogicException(sprintf('The processor must implement "%s" interface to be used with the tag "%s"', TopicSubscriberInterface::class, $tag));
             }
 
             foreach ($tagAttributes as $tagAttribute) {
@@ -55,37 +55,37 @@ final class BuildCommandSubscriberRoutesPass implements CompilerPassInterface
                     continue;
                 }
 
-                /** @var CommandSubscriberInterface $processorClass */
-                $commands = $processorClass::getSubscribedCommand();
+                /** @var TopicSubscriberInterface $processorClass */
+                $topics = $processorClass::getSubscribedTopics();
 
-                if (empty($commands)) {
-                    throw new \LogicException('Command subscriber must return something.');
+                if (empty($topics)) {
+                    throw new \LogicException('Topic subscriber must return something.');
                 }
 
-                if (is_string($commands)) {
-                    $commands = [$commands];
+                if (is_string($topics)) {
+                    $topics = [$topics];
                 }
 
-                if (!is_array($commands)) {
-                    throw new \LogicException('Command subscriber configuration is invalid. Should be an array or string.');
+                if (!is_array($topics)) {
+                    throw new \LogicException('Topic subscriber configuration is invalid. Should be an array or string.');
                 }
 
-                foreach ($commands as $key => $params) {
+                foreach ($topics as $key => $params) {
                     if (is_string($params)) {
-                        $routeCollection->add(new Route($params, Route::COMMAND, $serviceId, ['processor_service_id' => $serviceId]));
+                        $routeCollection->add(new Route($params, Route::TOPIC, $serviceId, ['processor_service_id' => $serviceId]));
                     } elseif (is_array($params)) {
-                        $source = $params['command'] ?? null;
+                        $source = $params['topic'] ?? null;
                         $processor = $params['processor'] ?? $serviceId;
-                        unset($params['command'], $params['source'], $params['source_type'], $params['processor'], $params['options']);
+                        unset($params['topic'], $params['source'], $params['source_type'], $params['processor'], $params['options']);
                         $options = $params;
                         $options['processor_service_id'] = $serviceId;
 
-                        $routeCollection->add(new Route($source, Route::COMMAND, $processor, $options));
+                        $routeCollection->add(new Route($source, Route::TOPIC, $processor, $options));
                     } else {
                         throw new \LogicException(sprintf(
-                            'Command subscriber configuration is invalid for "%s::getSubscribedCommand()". "%s"',
+                            'Topic subscriber configuration is invalid for "%s::getSubscribedTopics()". Got "%s"',
                             $processorClass,
-                            json_encode($processorClass::getSubscribedCommand())
+                            json_encode($processorClass::getSubscribedTopics())
                         ));
                     }
                 }

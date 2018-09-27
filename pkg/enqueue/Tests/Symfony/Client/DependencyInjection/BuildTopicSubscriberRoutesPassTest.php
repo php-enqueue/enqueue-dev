@@ -1,11 +1,11 @@
 <?php
 
-namespace Enqueue\Tests\Symfony\DependencyInjection;
+namespace Enqueue\Tests\Symfony\Client\DependencyInjection;
 
-use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
-use Enqueue\Symfony\DependencyInjection\BuildCommandSubscriberRoutesPass;
+use Enqueue\Client\TopicSubscriberInterface;
+use Enqueue\Symfony\Client\DependencyInjection\BuildTopicSubscriberRoutesPass;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
@@ -15,23 +15,23 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
-class BuildCommandSubscriberRoutesPassTest extends TestCase
+class BuildTopicSubscriberRoutesPassTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementCompilerPassInterface()
     {
-        $this->assertClassImplements(CompilerPassInterface::class, BuildCommandSubscriberRoutesPass::class);
+        $this->assertClassImplements(CompilerPassInterface::class, BuildTopicSubscriberRoutesPass::class);
     }
 
     public function testShouldBeFinal()
     {
-        $this->assertClassFinal(BuildCommandSubscriberRoutesPass::class);
+        $this->assertClassFinal(BuildTopicSubscriberRoutesPass::class);
     }
 
     public function testCouldBeConstructedWithName()
     {
-        $pass = new BuildCommandSubscriberRoutesPass('aName');
+        $pass = new BuildTopicSubscriberRoutesPass('aName');
 
         $this->assertAttributeSame('aName', 'name', $pass);
     }
@@ -40,12 +40,12 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The name could not be empty.');
-        new BuildCommandSubscriberRoutesPass('');
+        new BuildTopicSubscriberRoutesPass('');
     }
 
     public function testShouldDoNothingIfRouteCollectionServiceIsNotRegistered()
     {
-        $pass = new BuildCommandSubscriberRoutesPass('aName');
+        $pass = new BuildTopicSubscriberRoutesPass('aName');
         $pass->process(new ContainerBuilder());
     }
 
@@ -57,13 +57,13 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         ;
         $container->register('aProcessor', PsrProcessor::class)
             ->setFactory('foo')
-            ->addTag('enqueue.command_subscriber')
+            ->addTag('enqueue.topic_subscriber')
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('aName');
+        $pass = new BuildTopicSubscriberRoutesPass('aName');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The command subscriber tag could not be applied to a service created by factory.');
+        $this->expectExceptionMessage('The topic subscriber tag could not be applied to a service created by factory.');
         $pass->process($container);
     }
 
@@ -74,14 +74,14 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($this->createCommandSubscriberProcessor()))
-            ->addTag('enqueue.command_subscriber', ['client' => 'foo'])
+        $container->register('aFooProcessor', get_class($this->createTopicSubscriberProcessor()))
+            ->addTag('enqueue.topic_subscriber', ['client' => 'foo'])
         ;
-        $container->register('aProcessor', get_class($this->createCommandSubscriberProcessor()))
-            ->addTag('enqueue.command_subscriber', ['client' => 'bar'])
+        $container->register('aProcessor', get_class($this->createTopicSubscriberProcessor()))
+            ->addTag('enqueue.topic_subscriber', ['client' => 'bar'])
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('foo');
+        $pass = new BuildTopicSubscriberRoutesPass('foo');
 
         $pass->process($container);
 
@@ -96,14 +96,14 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($this->createCommandSubscriberProcessor()))
-            ->addTag('enqueue.command_subscriber')
+        $container->register('aFooProcessor', get_class($this->createTopicSubscriberProcessor()))
+            ->addTag('enqueue.topic_subscriber')
         ;
-        $container->register('aProcessor', get_class($this->createCommandSubscriberProcessor()))
-            ->addTag('enqueue.command_subscriber', ['client' => 'bar'])
+        $container->register('aProcessor', get_class($this->createTopicSubscriberProcessor()))
+            ->addTag('enqueue.topic_subscriber', ['client' => 'bar'])
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
 
         $pass->process($container);
 
@@ -118,14 +118,14 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($this->createCommandSubscriberProcessor()))
-            ->addTag('enqueue.command_subscriber', ['client' => 'all'])
+        $container->register('aFooProcessor', get_class($this->createTopicSubscriberProcessor()))
+            ->addTag('enqueue.topic_subscriber', ['client' => 'all'])
         ;
-        $container->register('aProcessor', get_class($this->createCommandSubscriberProcessor()))
-            ->addTag('enqueue.command_subscriber', ['client' => 'bar'])
+        $container->register('aProcessor', get_class($this->createTopicSubscriberProcessor()))
+            ->addTag('enqueue.topic_subscriber', ['client' => 'bar'])
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
 
         $pass->process($container);
 
@@ -133,20 +133,20 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $this->assertCount(1, $routeCollection->getArgument(0));
     }
 
-    public function testShouldRegisterProcessorIfCommandsIsString()
+    public function testShouldRegisterProcessorIfTopicsIsString()
     {
         $routeCollection = new Definition(RouteCollection::class);
         $routeCollection->addArgument([]);
 
-        $processor = $this->createCommandSubscriberProcessor('fooCommand');
+        $processor = $this->createTopicSubscriberProcessor('fooTopic');
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
-            ->addTag('enqueue.command_subscriber')
+            ->addTag('enqueue.topic_subscriber')
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
@@ -155,8 +155,8 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $this->assertEquals(
             [
                 [
-                    'source' => 'fooCommand',
-                    'source_type' => 'enqueue.client.command_route',
+                    'source' => 'fooTopic',
+                    'source_type' => 'enqueue.client.topic_route',
                     'processor' => 'aFooProcessor',
                     'processor_service_id' => 'aFooProcessor',
                 ],
@@ -165,40 +165,40 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         );
     }
 
-    public function testThrowIfCommandSubscriberReturnsNothing()
+    public function testThrowIfTopicSubscriberReturnsNothing()
     {
         $routeCollection = new Definition(RouteCollection::class);
         $routeCollection->addArgument([]);
 
-        $processor = $this->createCommandSubscriberProcessor(null);
+        $processor = $this->createTopicSubscriberProcessor(null);
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
-            ->addTag('enqueue.command_subscriber')
+            ->addTag('enqueue.topic_subscriber')
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Command subscriber must return something.');
+        $this->expectExceptionMessage('Topic subscriber must return something.');
         $pass->process($container);
     }
 
-    public function testShouldRegisterProcessorIfCommandsAreStrings()
+    public function testShouldRegisterProcessorIfTopicsAreStrings()
     {
         $routeCollection = new Definition(RouteCollection::class);
         $routeCollection->addArgument([]);
 
-        $processor = $this->createCommandSubscriberProcessor(['fooCommand', 'barCommand']);
+        $processor = $this->createTopicSubscriberProcessor(['fooTopic', 'barTopic']);
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
-            ->addTag('enqueue.command_subscriber')
+            ->addTag('enqueue.topic_subscriber')
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
@@ -207,14 +207,14 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $this->assertEquals(
             [
                 [
-                    'source' => 'fooCommand',
-                    'source_type' => 'enqueue.client.command_route',
+                    'source' => 'fooTopic',
+                    'source_type' => 'enqueue.client.topic_route',
                     'processor' => 'aFooProcessor',
                     'processor_service_id' => 'aFooProcessor',
                 ],
                 [
-                    'source' => 'barCommand',
-                    'source_type' => 'enqueue.client.command_route',
+                    'source' => 'barTopic',
+                    'source_type' => 'enqueue.client.topic_route',
                     'processor' => 'aFooProcessor',
                     'processor_service_id' => 'aFooProcessor',
                 ],
@@ -223,23 +223,23 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         );
     }
 
-    public function testShouldRegisterProcessorIfCommandsAreParamArrays()
+    public function testShouldRegisterProcessorIfTopicsAreParamArrays()
     {
         $routeCollection = new Definition(RouteCollection::class);
         $routeCollection->addArgument([]);
 
-        $processor = $this->createCommandSubscriberProcessor([
-            ['command' => 'fooCommand', 'processor' => 'aCustomFooProcessorName', 'anOption' => 'aFooVal'],
-            ['command' => 'barCommand', 'processor' => 'aCustomBarProcessorName', 'anOption' => 'aBarVal'],
+        $processor = $this->createTopicSubscriberProcessor([
+            ['topic' => 'fooTopic', 'processor' => 'aCustomFooProcessorName', 'anOption' => 'aFooVal'],
+            ['topic' => 'barTopic', 'processor' => 'aCustomBarProcessorName', 'anOption' => 'aBarVal'],
         ]);
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
-            ->addTag('enqueue.command_subscriber')
+            ->addTag('enqueue.topic_subscriber')
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
@@ -248,15 +248,15 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $this->assertEquals(
             [
                 [
-                    'source' => 'fooCommand',
-                    'source_type' => 'enqueue.client.command_route',
+                    'source' => 'fooTopic',
+                    'source_type' => 'enqueue.client.topic_route',
                     'processor' => 'aCustomFooProcessorName',
                     'processor_service_id' => 'aFooProcessor',
                     'anOption' => 'aFooVal',
                 ],
                 [
-                    'source' => 'barCommand',
-                    'source_type' => 'enqueue.client.command_route',
+                    'source' => 'barTopic',
+                    'source_type' => 'enqueue.client.topic_route',
                     'processor' => 'aCustomBarProcessorName',
                     'processor_service_id' => 'aFooProcessor',
                     'anOption' => 'aBarVal',
@@ -266,23 +266,23 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         );
     }
 
-    public function testThrowIfCommandSubscriberParamsInvalid()
+    public function testThrowIfTopicSubscriberParamsInvalid()
     {
         $routeCollection = new Definition(RouteCollection::class);
         $routeCollection->addArgument([]);
 
-        $processor = $this->createCommandSubscriberProcessor(['fooBar', true]);
+        $processor = $this->createTopicSubscriberProcessor(['fooBar', true]);
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
-            ->addTag('enqueue.command_subscriber')
+            ->addTag('enqueue.topic_subscriber')
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Command subscriber configuration is invalid');
+        $this->expectExceptionMessage('Topic subscriber configuration is invalid');
         $pass->process($container);
     }
 
@@ -290,19 +290,19 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
     {
         $routeCollection = new Definition(RouteCollection::class);
         $routeCollection->addArgument([
-            (new Route('aCommand', Route::COMMAND, 'aProcessor'))->toArray(),
+            (new Route('aTopic', Route::TOPIC, 'aProcessor'))->toArray(),
             (new Route('aCommand', Route::COMMAND, 'aProcessor'))->toArray(),
         ]);
 
-        $processor = $this->createCommandSubscriberProcessor(['fooCommand']);
+        $processor = $this->createTopicSubscriberProcessor(['fooTopic']);
 
         $container = new ContainerBuilder();
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
-            ->addTag('enqueue.command_subscriber')
+            ->addTag('enqueue.topic_subscriber')
         ;
 
-        $pass = new BuildCommandSubscriberRoutesPass('default');
+        $pass = new BuildTopicSubscriberRoutesPass('default');
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
@@ -311,8 +311,8 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $this->assertEquals(
             [
                 [
-                    'source' => 'aCommand',
-                    'source_type' => 'enqueue.client.command_route',
+                    'source' => 'aTopic',
+                    'source_type' => 'enqueue.client.topic_route',
                     'processor' => 'aProcessor',
                 ],
                 [
@@ -321,8 +321,8 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
                     'processor' => 'aProcessor',
                 ],
                 [
-                    'source' => 'fooCommand',
-                    'source_type' => 'enqueue.client.command_route',
+                    'source' => 'fooTopic',
+                    'source_type' => 'enqueue.client.topic_route',
                     'processor' => 'aFooProcessor',
                     'processor_service_id' => 'aFooProcessor',
                 ],
@@ -331,22 +331,22 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         );
     }
 
-    private function createCommandSubscriberProcessor($commandSubscriberReturns = ['aCommand'])
+    private function createTopicSubscriberProcessor($topicSubscriberReturns = ['aTopic'])
     {
-        $processor = new class() implements PsrProcessor, CommandSubscriberInterface {
+        $processor = new class() implements PsrProcessor, TopicSubscriberInterface {
             public static $return;
 
             public function process(PsrMessage $message, PsrContext $context)
             {
             }
 
-            public static function getSubscribedCommand()
+            public static function getSubscribedTopics()
             {
                 return static::$return;
             }
         };
 
-        $processor::$return = $commandSubscriberReturns;
+        $processor::$return = $topicSubscriberReturns;
 
         return $processor;
     }

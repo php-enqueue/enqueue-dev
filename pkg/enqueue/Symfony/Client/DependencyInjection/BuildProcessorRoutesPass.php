@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Symfony\DependencyInjection;
+namespace Enqueue\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
@@ -44,10 +44,10 @@ final class BuildProcessorRoutesPass implements CompilerPassInterface
                 $command = $tagAttribute['command'] ?? null;
 
                 if (false == $topic && false == $command) {
-                    throw new \LogicException('Either "topic" or "command" tag attribute must be set. None is set.');
+                    throw new \LogicException(sprintf('Either "topic" or "command" tag attribute must be set on service "%s". None is set.', $serviceId));
                 }
                 if ($topic && $command) {
-                    throw new \LogicException('Either "topic" or "command" tag attribute must be set. Both are set.');
+                    throw new \LogicException(sprintf('Either "topic" or "command" tag attribute must be set on service "%s". Both are set.', $serviceId));
                 }
 
                 $source = $command ?: $topic;

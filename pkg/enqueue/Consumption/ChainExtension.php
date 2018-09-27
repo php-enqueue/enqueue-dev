@@ -16,7 +16,10 @@ class ChainExtension implements ExtensionInterface
      */
     public function __construct(array $extensions)
     {
-        $this->extensions = $extensions;
+        $this->extensions = [];
+        array_walk($extensions, function (ExtensionInterface $extension) {
+            $this->extensions[] = $extension;
+        });
     }
 
     /**

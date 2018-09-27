@@ -1,10 +1,10 @@
 <?php
 
-namespace Enqueue\Tests\Symfony\DependencyInjection;
+namespace Enqueue\Tests\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
-use Enqueue\Symfony\DependencyInjection\BuildProcessorRoutesPass;
+use Enqueue\Symfony\Client\DependencyInjection\BuildProcessorRoutesPass;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -59,7 +59,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $pass = new BuildProcessorRoutesPass('default');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Either "topic" or "command" tag attribute must be set. Both are set.');
+        $this->expectExceptionMessage('Either "topic" or "command" tag attribute must be set on service "aFooProcessor". Both are set.');
         $pass->process($container);
     }
 
@@ -77,7 +77,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $pass = new BuildProcessorRoutesPass('default');
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Either "topic" or "command" tag attribute must be set. None is set.');
+        $this->expectExceptionMessage('Either "topic" or "command" tag attribute must be set on service "aFooProcessor". None is set.');
         $pass->process($container);
     }
 

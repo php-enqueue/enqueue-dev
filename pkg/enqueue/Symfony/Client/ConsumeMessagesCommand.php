@@ -4,10 +4,9 @@ namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Client\Meta\QueueMeta;
-use Enqueue\Client\Meta\QueueMetaRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
+use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Symfony\Consumption\LimitsExtensionsCommandTrait;
 use Enqueue\Symfony\Consumption\QueueConsumerOptionsCommandTrait;
@@ -37,39 +36,23 @@ class ConsumeMessagesCommand extends Command
     private $processor;
 
     /**
-     * @var QueueMetaRegistry
-     */
-    private $queueMetaRegistry;
-
-    /**
      * @var DriverInterface
      */
     private $driver;
 
-    /**
-     * @param QueueConsumerInterface $consumer
-     * @param DelegateProcessor      $processor
-     * @param QueueMetaRegistry      $queueMetaRegistry
-     * @param DriverInterface        $driver
-     */
     public function __construct(
         QueueConsumerInterface $consumer,
         DelegateProcessor $processor,
-        QueueMetaRegistry $queueMetaRegistry,
         DriverInterface $driver
     ) {
         parent::__construct(static::$defaultName);
 
         $this->consumer = $consumer;
         $this->processor = $processor;
-        $this->queueMetaRegistry = $queueMetaRegistry;
         $this->driver = $driver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this->configureLimitsExtensions();
         $this->configureSetupBrokerExtension();
@@ -85,35 +68,36 @@ class ConsumeMessagesCommand extends Command
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $this->setQueueConsumerOptions($this->consumer, $input);
 
-        $queueMetas = [];
-        if ($clientQueueNames = $input->getArgument('client-queue-names')) {
-            foreach ($clientQueueNames as $clientQueueName) {
-                $queueMetas[] = $this->queueMetaRegistry->getQueueMeta($clientQueueName);
-            }
-        } else {
-            /** @var QueueMeta[] $queueMetas */
-            $queueMetas = iterator_to_array($this->queueMetaRegistry->getQueuesMeta());
+        $clientQueueNames = $input->getArgument('client-queue-names');
+        if (empty($clientQueueNames)) {
+            $clientQueueNames[$this->driver->getConfig()->getDefaultProcessorQueueName()] = true;
+            $clientQueueNames[$this->driver->getConfig()->getRouterQueueName()] = true;
 
-            foreach ($queueMetas as $index => $queueMeta) {
-                if (in_array($queueMeta->getClientName(), $input->getOption('skip'), true)) {
-                    unset($queueMetas[$index]);
+            foreach ($this->driver->getRouteCollection()->all() as $route) {
+                if ($route->getQueue()) {
+                    $clientQueueNames[$route->getQueue()] = true;
                 }
             }
+
+            foreach ($input->getOption('skip') as $skipClientQueueName) {
+                unset($clientQueueNames[$skipClientQueueName]);
+            }
+
+            $clientQueueNames = array_keys($clientQueueNames);
         }
 
-        foreach ($queueMetas as $queueMeta) {
-            $queue = $this->driver->createQueue($queueMeta->getClientName());
+        foreach ($clientQueueNames as $clientQueueName) {
+            $queue = $this->driver->createQueue($clientQueueName);
             $this->consumer->bind($queue, $this->processor);
         }
 
         $this->consumer->consume($this->getRuntimeExtensions($input, $output));
+
+        return null;
     }
 
     /**
@@ -122,7 +106,7 @@ class ConsumeMessagesCommand extends Command
      *
      * @return ChainExtension
      */
-    protected function getRuntimeExtensions(InputInterface $input, OutputInterface $output)
+    protected function getRuntimeExtensions(InputInterface $input, OutputInterface $output): ExtensionInterface
     {
         $extensions = [new LoggerExtension(new ConsoleLogger($output))];
         $extensions = array_merge($extensions, $this->getLimitsExtensions($input, $output));

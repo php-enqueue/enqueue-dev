@@ -19,7 +19,7 @@ interface DriverInterface
 
     public function sendToProcessor(Message $message): void;
 
-    public function createQueue(string $queueName): PsrQueue;
+    public function createQueue(string $queueName, bool $prefix = true): PsrQueue;
 
     public function createRouteQueue(Route $route): PsrQueue;
 

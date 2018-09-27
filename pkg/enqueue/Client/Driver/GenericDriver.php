@@ -117,9 +117,9 @@ class GenericDriver implements DriverInterface
     {
     }
 
-    public function createQueue(string $clientQueueName): PsrQueue
+    public function createQueue(string $clientQueueName, bool $prefix = true): PsrQueue
     {
-        $transportName = $this->createTransportQueueName($clientQueueName, true);
+        $transportName = $this->createTransportQueueName($clientQueueName, $prefix);
 
         return $this->doCreateQueue($transportName);
     }

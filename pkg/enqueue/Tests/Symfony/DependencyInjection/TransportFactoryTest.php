@@ -257,19 +257,13 @@ class TransportFactoryTest extends TestCase
 
         $this->assertNotEmpty($container->getDefinition('enqueue.transport.default.connection_factory')->getFactory());
         $this->assertEquals(
-            [new Reference('enqueue.connection_factory_factory'), 'create'],
+            [new Reference('enqueue.transport.default.connection_factory_factory'), 'create'],
             $container->getDefinition('enqueue.transport.default.connection_factory')->getFactory())
         ;
         $this->assertSame(
             [['dsn' => 'foo://bar/baz']],
             $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
         ;
-
-        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
-        $this->assertEquals(
-            'enqueue.transport.default.connection_factory',
-            (string) $container->getAlias('enqueue.transport.connection_factory')
-        );
     }
 
     public function testShouldCreateConnectionFactoryUsingCustomFactoryClass()
@@ -299,12 +293,6 @@ class TransportFactoryTest extends TestCase
             [['dsn' => 'foo:']],
             $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
         ;
-
-        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
-        $this->assertEquals(
-            'enqueue.transport.default.connection_factory',
-            (string) $container->getAlias('enqueue.transport.connection_factory')
-        );
     }
 
     public function testShouldCreateConnectionFactoryUsingCustomFactoryService()
@@ -328,12 +316,6 @@ class TransportFactoryTest extends TestCase
             [['dsn' => 'foo:']],
             $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
         ;
-
-        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
-        $this->assertEquals(
-            'enqueue.transport.default.connection_factory',
-            (string) $container->getAlias('enqueue.transport.connection_factory')
-        );
     }
 
     public function testShouldCreateConnectionFactoryUsingConnectionFactoryClassWithoutFactory()
@@ -354,12 +336,6 @@ class TransportFactoryTest extends TestCase
             [['dsn' => 'foo:']],
             $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
         ;
-
-        $this->assertTrue($container->hasAlias('enqueue.transport.connection_factory'));
-        $this->assertEquals(
-            'enqueue.transport.default.connection_factory',
-            (string) $container->getAlias('enqueue.transport.connection_factory')
-        );
     }
 
     public function testShouldCreateContextFromDsn()
@@ -381,44 +357,5 @@ class TransportFactoryTest extends TestCase
             [],
             $container->getDefinition('enqueue.transport.default.context')->getArguments())
         ;
-
-        $this->assertTrue($container->hasAlias('enqueue.transport.context'));
-        $this->assertEquals(
-            'enqueue.transport.default.context',
-            (string) $container->getAlias('enqueue.transport.context')
-        );
-    }
-
-    public function testShouldCreateDriverFromDsn()
-    {
-        $container = new ContainerBuilder();
-
-        $transport = new TransportFactory('default');
-
-        $serviceId = $transport->createDriver($container, ['dsn' => 'foo://bar/baz', 'foo' => 'fooVal']);
-
-        $this->assertEquals('enqueue.client.default.driver', $serviceId);
-
-        $this->assertTrue($container->hasDefinition('enqueue.client.default.driver'));
-
-        $this->assertNotEmpty($container->getDefinition('enqueue.client.default.driver')->getFactory());
-        $this->assertEquals(
-            [new Reference('enqueue.client.driver_factory'), 'create'],
-            $container->getDefinition('enqueue.client.default.driver')->getFactory())
-        ;
-        $this->assertEquals(
-            [
-                new Reference('enqueue.transport.default.connection_factory'),
-                'foo://bar/baz',
-                ['dsn' => 'foo://bar/baz', 'foo' => 'fooVal'],
-            ],
-            $container->getDefinition('enqueue.client.default.driver')->getArguments())
-        ;
-
-        $this->assertTrue($container->hasAlias('enqueue.client.driver'));
-        $this->assertEquals(
-            'enqueue.client.default.driver',
-            (string) $container->getAlias('enqueue.client.driver')
-        );
     }
 }

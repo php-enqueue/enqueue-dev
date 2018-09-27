@@ -27,6 +27,13 @@ class ChainExtensionTest extends TestCase
         $this->assertClassFinal(ChainExtension::class);
     }
 
+    public function testShouldInitEmptyExtensionsArrayOnConstruct()
+    {
+        $extension = new ChainExtension([]);
+
+        $this->assertAttributeSame([], 'extensions', $extension);
+    }
+
     public function testCouldBeConstructedWithExtensionsArray()
     {
         new ChainExtension([$this->createExtension(), $this->createExtension()]);
