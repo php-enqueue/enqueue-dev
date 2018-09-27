@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Enqueue\Fs;
 
 use Interop\Queue\DeliveryDelayNotSupportedException;
+use Interop\Queue\Destination;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Message;
 use Interop\Queue\PriorityNotSupportedException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Producer;
 use Makasim\File\TempFile;
 
-class FsProducer implements PsrProducer
+class FsProducer implements Producer
 {
     /**
      * @var float|int|null
@@ -34,7 +34,7 @@ class FsProducer implements PsrProducer
      * @param FsDestination $destination
      * @param FsMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message): void
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, FsMessage::class);
@@ -67,7 +67,7 @@ class FsProducer implements PsrProducer
         });
     }
 
-    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -81,7 +81,7 @@ class FsProducer implements PsrProducer
         return null;
     }
 
-    public function setPriority(int $priority = null): PsrProducer
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -95,7 +95,7 @@ class FsProducer implements PsrProducer
         return null;
     }
 
-    public function setTimeToLive(int $timeToLive = null): PsrProducer
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

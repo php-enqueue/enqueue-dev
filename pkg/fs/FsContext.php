@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Enqueue\Fs;
 
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
 use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
 use Interop\Queue\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Topic;
 use Makasim\File\TempFile;
 use Symfony\Component\Filesystem\Filesystem;
 
-class FsContext implements PsrContext
+class FsContext implements Context
 {
     /**
      * @var string
@@ -60,7 +60,7 @@ class FsContext implements PsrContext
     /**
      * @return FsMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new FsMessage($body, $properties, $headers);
     }
@@ -68,7 +68,7 @@ class FsContext implements PsrContext
     /**
      * @return FsDestination
      */
-    public function createTopic(string $topicName): PsrTopic
+    public function createTopic(string $topicName): Topic
     {
         return $this->createQueue($topicName);
     }
@@ -76,7 +76,7 @@ class FsContext implements PsrContext
     /**
      * @return FsDestination
      */
-    public function createQueue(string $queueName): PsrQueue
+    public function createQueue(string $queueName): Queue
     {
         return new FsDestination(new \SplFileInfo($this->getStoreDir().'/'.$queueName));
     }
@@ -125,7 +125,7 @@ class FsContext implements PsrContext
     /**
      * @return FsDestination
      */
-    public function createTemporaryQueue(): PsrQueue
+    public function createTemporaryQueue(): Queue
     {
         return new FsDestination(
             new TempFile($this->getStoreDir().'/'.uniqid('tmp-q-', true))
@@ -135,7 +135,7 @@ class FsContext implements PsrContext
     /**
      * @return FsProducer
      */
-    public function createProducer(): PsrProducer
+    public function createProducer(): Producer
     {
         return new FsProducer($this);
     }
@@ -145,7 +145,7 @@ class FsContext implements PsrContext
      *
      * @return FsConsumer
      */
-    public function createConsumer(PsrDestination $destination): PsrConsumer
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, FsDestination::class);
 
@@ -163,7 +163,7 @@ class FsContext implements PsrContext
         $this->lock->releaseAll();
     }
 
-    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    public function createSubscriptionConsumer(): SubscriptionConsumer
     {
         throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
     }
@@ -171,7 +171,7 @@ class FsContext implements PsrContext
     /**
      * @param FsDestination $queue
      */
-    public function purgeQueue(PsrQueue $queue): void
+    public function purgeQueue(Queue $queue): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, FsDestination::class);
 
