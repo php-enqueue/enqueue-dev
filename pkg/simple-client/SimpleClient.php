@@ -3,35 +3,59 @@
 namespace Enqueue\SimpleClient;
 
 use Enqueue\Client\ArrayProcessorRegistry;
+use Enqueue\Client\ChainExtension as ClientChainExtensions;
 use Enqueue\Client\Config;
+use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
+use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DelegateProcessor;
+use Enqueue\Client\DriverFactory;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
-use Enqueue\Client\ProcessorRegistryInterface;
+use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Client\RouterProcessor;
+use Enqueue\ConnectionFactoryFactory;
 use Enqueue\Consumption\CallbackProcessor;
+use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Rpc\Promise;
-use Interop\Queue\PsrContext;
+use Enqueue\Rpc\RpcFactory;
+use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Interop\Queue\PsrProcessor;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\NodeInterface;
+use Symfony\Component\Config\Definition\Processor;
 
 final class SimpleClient
 {
     /**
-     * @var ContainerInterface
+     * @var DriverInterface
      */
-    private $container;
+    private $driver;
 
     /**
-     * @var array|string
+     * @var Producer
      */
-    private $config;
+    private $producer;
+
+    /**
+     * @var QueueConsumer
+     */
+    private $queueConsumer;
+
+    /**
+     * @var ArrayProcessorRegistry
+     */
+    private $processorRegistry;
+
+    /**
+     * @var DelegateProcessor
+     */
+    private $delegateProcessor;
 
     /**
      * The config could be a transport DSN (string) or an array, here's an example of a few DSNs:.
@@ -78,13 +102,11 @@ final class SimpleClient
      * ]
      *
      *
-     * @param string|array          $config
-     * @param ContainerBuilder|null $container
+     * @param string|array $config
      */
-    public function __construct($config, ContainerBuilder $container = null)
+    public function __construct($config)
     {
-        $this->container = $this->buildContainer($config, $container ?: new ContainerBuilder());
-        $this->config = $config;
+        $this->build(['enqueue' => $config]);
     }
 
     /**
@@ -102,8 +124,8 @@ final class SimpleClient
 
         $processorName = $processorName ?: uniqid(get_class($processor));
 
-        $this->getRouteCollection()->add(new Route($topic, Route::TOPIC, $processorName));
-        $this->getProcessorRegistry()->add($processorName, $processor);
+        $this->driver->getRouteCollection()->add(new Route($topic, Route::TOPIC, $processorName));
+        $this->processorRegistry->add($processorName, $processor);
     }
 
     /**
@@ -121,8 +143,8 @@ final class SimpleClient
 
         $processorName = $processorName ?: uniqid(get_class($processor));
 
-        $this->getRouteCollection()->add(new Route($command, Route::COMMAND, $processorName));
-        $this->getProcessorRegistry()->add($processorName, $processor);
+        $this->driver->getRouteCollection()->add(new Route($command, Route::COMMAND, $processorName));
+        $this->processorRegistry->add($processorName, $processor);
     }
 
     /**
@@ -130,7 +152,7 @@ final class SimpleClient
      */
     public function sendCommand(string $command, $message, bool $needReply = false): ?Promise
     {
-        return $this->getProducer()->sendCommand($command, $message, $needReply);
+        return $this->producer->sendCommand($command, $message, $needReply);
     }
 
     /**
@@ -138,61 +160,48 @@ final class SimpleClient
      */
     public function sendEvent(string $topic, $message): void
     {
-        $this->getProducer()->sendEvent($topic, $message);
+        $this->producer->sendEvent($topic, $message);
     }
 
     public function consume(ExtensionInterface $runtimeExtension = null): void
     {
         $this->setupBroker();
 
-        $processor = $this->getDelegateProcessor();
-        $consumer = $this->getQueueConsumer();
-
         $boundQueues = [];
 
-        $routerQueue = $this->getDriver()->createQueue($this->getConfig()->getRouterQueueName());
-        $consumer->bind($routerQueue, $processor);
+        $routerQueue = $this->getDriver()->createQueue($this->getDriver()->getConfig()->getRouterQueueName());
+        $this->queueConsumer->bind($routerQueue, $this->delegateProcessor);
         $boundQueues[$routerQueue->getQueueName()] = true;
 
-        foreach ($this->getRouteCollection()->all() as $route) {
+        foreach ($this->driver->getRouteCollection()->all() as $route) {
             $queue = $this->getDriver()->createRouteQueue($route);
             if (array_key_exists($queue->getQueueName(), $boundQueues)) {
                 continue;
             }
 
-            $consumer->bind($queue, $processor);
+            $this->queueConsumer->bind($queue, $this->delegateProcessor);
 
             $boundQueues[$queue->getQueueName()] = true;
         }
 
-        $consumer->consume($runtimeExtension);
-    }
-
-    public function getContext(): PsrContext
-    {
-        return $this->container->get('enqueue.transport.context');
+        $this->queueConsumer->consume($runtimeExtension);
     }
 
     public function getQueueConsumer(): QueueConsumerInterface
     {
-        return $this->container->get('enqueue.client.queue_consumer');
-    }
-
-    public function getConfig(): Config
-    {
-        return $this->container->get('enqueue.client.config');
+        return $this->queueConsumer;
     }
 
     public function getDriver(): DriverInterface
     {
-        return $this->container->get('enqueue.client.default.driver');
+        return $this->driver;
     }
 
     public function getProducer(bool $setupBroker = false): ProducerInterface
     {
         $setupBroker && $this->setupBroker();
 
-        return $this->container->get('enqueue.client.producer');
+        return $this->producer;
     }
 
     public function setupBroker(): void
@@ -200,37 +209,105 @@ final class SimpleClient
         $this->getDriver()->setupBroker();
     }
 
-    /**
-     * @return ArrayProcessorRegistry
-     */
-    public function getProcessorRegistry(): ProcessorRegistryInterface
+    public function build(array $configs): void
     {
-        return $this->container->get('enqueue.client.processor_registry');
+        $configProcessor = new Processor();
+        $simpleClientConfig = $configProcessor->process($this->createConfiguration(), $configs);
+
+        if (isset($simpleClientConfig['transport']['factory_service'])) {
+            throw new \LogicException('transport.factory_service option is not supported by simple client');
+        }
+        if (isset($simpleClientConfig['transport']['factory_class'])) {
+            throw new \LogicException('transport.factory_class option is not supported by simple client');
+        }
+        if (isset($simpleClientConfig['transport']['connection_factory_class'])) {
+            throw new \LogicException('transport.connection_factory_class option is not supported by simple client');
+        }
+
+        $connectionFactoryFactory = new ConnectionFactoryFactory();
+        $connection = $connectionFactoryFactory->create($simpleClientConfig['transport']);
+
+        $clientExtensions = new ClientChainExtensions([]);
+
+        $config = new Config(
+            $simpleClientConfig['client']['prefix'],
+            $simpleClientConfig['client']['app_name'],
+            $simpleClientConfig['client']['router_topic'],
+            $simpleClientConfig['client']['router_queue'],
+            $simpleClientConfig['client']['default_processor_queue'],
+            'enqueue.client.router_processor',
+            $simpleClientConfig['transport']
+        );
+        $routeCollection = new RouteCollection([]);
+        $driverFactory = new DriverFactory($config, $routeCollection);
+
+        $driver = $driverFactory->create(
+            $connection,
+            $simpleClientConfig['transport']['dsn'],
+            $simpleClientConfig['transport']
+        );
+
+        $rpcFactory = new RpcFactory($driver->getContext());
+
+        $producer = new Producer($driver, $rpcFactory, $clientExtensions);
+
+        $processorRegistry = new ArrayProcessorRegistry([]);
+
+        $delegateProcessor = new DelegateProcessor($processorRegistry);
+
+        // consumption extensions
+        $consumptionExtensions = [];
+        if ($simpleClientConfig['client']['redelivered_delay_time']) {
+            $consumptionExtensions[] = new DelayRedeliveredMessageExtension($driver, $simpleClientConfig['client']['redelivered_delay_time']);
+        }
+
+        $consumptionExtensions[] = new SetRouterPropertiesExtension($driver);
+
+        $consumptionChainExtension = new ConsumptionChainExtension($consumptionExtensions);
+        $queueConsumer = new QueueConsumer($driver->getContext(), $consumptionChainExtension);
+
+        $routerProcessor = new RouterProcessor($driver);
+
+        $processorRegistry->add($config->getRouterProcessorName(), $routerProcessor);
+
+        $this->driver = $driver;
+        $this->producer = $producer;
+        $this->queueConsumer = $queueConsumer;
+        $this->delegateProcessor = $delegateProcessor;
+        $this->processorRegistry = $processorRegistry;
     }
 
-    public function getDelegateProcessor(): DelegateProcessor
+    private function createConfiguration(): NodeInterface
     {
-        return $this->container->get('enqueue.client.delegate_processor');
-    }
+        $tb = new TreeBuilder();
+        $rootNode = $tb->root('enqueue');
 
-    public function getRouterProcessor(): RouterProcessor
-    {
-        return $this->container->get('enqueue.client.router_processor');
-    }
+        $rootNode
+            ->beforeNormalization()
+            ->ifEmpty()->then(function () {
+                return ['transport' => ['dsn' => 'null:']];
+            });
 
-    public function getRouteCollection(): RouteCollection
-    {
-        return $this->container->get('enqueue.client.route_collection');
-    }
+        $transportNode = $rootNode->children()->arrayNode('transport');
+        (new TransportFactory('default'))->addConfiguration($transportNode);
 
-    private function buildContainer($config, ContainerBuilder $container): ContainerInterface
-    {
-        $extension = new SimpleClientContainerExtension();
-        $container->registerExtension($extension);
-        $container->loadFromExtension($extension->getAlias(), $config);
+        $rootNode->children()
+            ->arrayNode('client')
+            ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('prefix')->defaultValue('enqueue')->end()
+                    ->scalarNode('app_name')->defaultValue('app')->end()
+                    ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                    ->scalarNode('router_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                    ->scalarNode('default_processor_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                    ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
+                ->end()
+            ->end()
+                ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
+                ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
+            ->end()->end()
+        ;
 
-        $container->compile();
-
-        return $container;
+        return $tb->buildTree();
     }
 }

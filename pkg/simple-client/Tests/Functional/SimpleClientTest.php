@@ -184,7 +184,7 @@ class SimpleClientTest extends TestCase
         $queue = $driver->createQueue($driver->getConfig()->getDefaultProcessorQueueName());
 
         try {
-            $client->getContext()->purgeQueue($queue);
+            $client->getDriver()->getContext()->purgeQueue($queue);
         } catch (PurgeQueueNotSupportedException $e) {
         }
     }
