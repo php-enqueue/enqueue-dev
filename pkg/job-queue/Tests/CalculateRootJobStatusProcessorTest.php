@@ -6,6 +6,7 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\CalculateRootJobStatusProcessor;
 use Enqueue\JobQueue\CalculateRootJobStatusService;
+use Enqueue\JobQueue\Commands;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
@@ -28,8 +29,8 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     public function testShouldReturnSubscribedTopicNames()
     {
         $this->assertEquals(
-            [Topics::CALCULATE_ROOT_JOB_STATUS],
-            CalculateRootJobStatusProcessor::getSubscribedTopics()
+            Commands::CALCULATE_ROOT_JOB_STATUS,
+            CalculateRootJobStatusProcessor::getSubscribedCommand()
         );
     }
 
