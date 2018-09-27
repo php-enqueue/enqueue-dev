@@ -2,13 +2,14 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
+use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AsyncProcessor implements PsrProcessor
+class AsyncProcessor implements PsrProcessor, CommandSubscriberInterface
 {
     /**
      * @var Registry
@@ -20,10 +21,6 @@ class AsyncProcessor implements PsrProcessor
      */
     private $dispatcher;
 
-    /**
-     * @param Registry                 $registry
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(Registry $registry, EventDispatcherInterface $dispatcher)
     {
         $this->registry = $registry;
@@ -39,9 +36,6 @@ class AsyncProcessor implements PsrProcessor
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(PsrMessage $message, PsrContext $context)
     {
         if (false == $eventName = $message->getProperty('event_name')) {
@@ -56,5 +50,10 @@ class AsyncProcessor implements PsrProcessor
         $this->dispatcher->dispatchAsyncListenersOnly($eventName, $event);
 
         return self::ACK;
+    }
+
+    public static function getSubscribedCommand()
+    {
+        return Commands::DISPATCH_ASYNC_EVENTS;
     }
 }

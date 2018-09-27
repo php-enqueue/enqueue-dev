@@ -33,11 +33,10 @@ services:
             - '@enqueue.events.event_dispatcher'
         tags:
             -
-                name: 'enqueue.client.processor'
-                topicName: '__command__'
-                processorName: '%enqueue_events_queue%'
-                queueName: '%enqueue_events_queue%'
-                queueNameHardcoded: true
+                name: 'enqueue.processor'
+                command: 'symfony.dispatch_async_events'
+                queue: '%enqueue_events_queue%'
+                queue_prefixed: false
                 exclusive: true
 
     enqueue.events.php_serializer_event_transofrmer:

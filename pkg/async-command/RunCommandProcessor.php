@@ -45,9 +45,9 @@ final class RunCommandProcessor implements PsrProcessor, CommandSubscriberInterf
     public static function getSubscribedCommand(): array
     {
         return [
-            'processorName' => Commands::RUN_COMMAND,
-            'queueName' => Commands::RUN_COMMAND,
-            'queueNameHardcoded' => true,
+            'command' => Commands::RUN_COMMAND,
+            'queue' => Commands::RUN_COMMAND,
+            'prefix_queue' => false,
             'exclusive' => true,
         ];
     }
