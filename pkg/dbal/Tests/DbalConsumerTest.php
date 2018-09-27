@@ -8,9 +8,9 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Consumer;
 use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
 class DbalConsumerTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,7 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, DbalConsumer::class);
+        $this->assertClassImplements(Consumer::class, DbalConsumer::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -125,7 +125,7 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class InvalidMessage implements PsrMessage
+class InvalidMessage implements Message
 {
     public function getBody(): string
     {

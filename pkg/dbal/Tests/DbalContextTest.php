@@ -9,9 +9,9 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
 use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
 use Interop\Queue\TemporaryQueueNotSupportedException;
 
 class DbalContextTest extends \PHPUnit_Framework_TestCase
@@ -20,7 +20,7 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementContextInterface()
     {
-        $this->assertClassImplements(PsrContext::class, DbalContext::class);
+        $this->assertClassImplements(Context::class, DbalContext::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -154,6 +154,6 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class NotSupportedDestination2 implements PsrDestination
+class NotSupportedDestination2 implements Destination
 {
 }

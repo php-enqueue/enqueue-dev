@@ -6,12 +6,12 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
+use Interop\Queue\Consumer;
 use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class DbalConsumer implements PsrConsumer
+class DbalConsumer implements Consumer
 {
     /**
      * @var DbalContext
@@ -61,12 +61,12 @@ class DbalConsumer implements PsrConsumer
     /**
      * @return DbalDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
 
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         $timeout /= 1000;
         $startAt = microtime(true);
@@ -90,7 +90,7 @@ class DbalConsumer implements PsrConsumer
         }
     }
 
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         return $this->receiveMessage();
     }
@@ -98,7 +98,7 @@ class DbalConsumer implements PsrConsumer
     /**
      * @param DbalMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         // does nothing
     }
@@ -106,7 +106,7 @@ class DbalConsumer implements PsrConsumer
     /**
      * @param DbalMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 

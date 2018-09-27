@@ -6,9 +6,9 @@ use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Destination;
 use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Producer;
 
 class DbalProducerTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class DbalProducerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementProducerInterface()
     {
-        $this->assertClassImplements(PsrProducer::class, DbalProducer::class);
+        $this->assertClassImplements(Producer::class, DbalProducer::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -47,6 +47,6 @@ class DbalProducerTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class NotSupportedDestination1 implements PsrDestination
+class NotSupportedDestination1 implements Destination
 {
 }
