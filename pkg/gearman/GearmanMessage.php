@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\Gearman;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class GearmanMessage implements PsrMessage, \JsonSerializable
+class GearmanMessage implements Message, \JsonSerializable
 {
     /**
      * @var string
