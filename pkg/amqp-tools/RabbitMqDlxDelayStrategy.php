@@ -9,7 +9,7 @@ use Interop\Amqp\AmqpDestination;
 use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
 
 class RabbitMqDlxDelayStrategy implements DelayStrategy
 {

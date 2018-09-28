@@ -4,8 +4,8 @@ namespace Enqueue\Gearman\Tests;
 
 use Enqueue\Gearman\GearmanDestination;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 use PHPUnit\Framework\TestCase;
 
 class GearmanDestinationTest extends TestCase
@@ -13,14 +13,14 @@ class GearmanDestinationTest extends TestCase
     use ClassExtensionTrait;
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 
-    public function testShouldImplementPsrQueueInterface()
+    public function testShouldImplementQueueInterface()
     {
-        $this->assertClassImplements(PsrQueue::class, GearmanDestination::class);
+        $this->assertClassImplements(Queue::class, GearmanDestination::class);
     }
 
-    public function testShouldImplementPsrTopicInterface()
+    public function testShouldImplementTopicInterface()
     {
-        $this->assertClassImplements(PsrTopic::class, GearmanDestination::class);
+        $this->assertClassImplements(Topic::class, GearmanDestination::class);
     }
 
     public function testShouldAllowGetNameSetInConstructor()

@@ -3,9 +3,9 @@
 namespace Enqueue\AmqpBunny\Tests\Spec;
 
 use Enqueue\AmqpBunny\AmqpConnectionFactory;
-use Interop\Queue\Spec\PsrConnectionFactorySpec;
+use Interop\Queue\Spec\ConnectionFactorySpec;
 
-class AmqpConnectionFactoryTest extends PsrConnectionFactorySpec
+class AmqpConnectionFactoryTest extends ConnectionFactorySpec
 {
     protected function createConnectionFactory()
     {

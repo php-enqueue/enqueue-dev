@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class SqsMessage implements PsrMessage
+class SqsMessage implements Message
 {
     /**
      * @var string

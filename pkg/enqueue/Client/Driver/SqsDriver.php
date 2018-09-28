@@ -9,7 +9,7 @@ use Psr\Log\NullLogger;
 
 /**
  * @method SqsContext getContext
- * @method SqsDestination createQueue(string $clientQueueName): PsrQueue
+ * @method SqsDestination createQueue(string $clientQueueName): InteropQueue
  */
 class SqsDriver extends GenericDriver
 {

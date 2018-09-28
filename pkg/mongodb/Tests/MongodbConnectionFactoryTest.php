@@ -5,7 +5,7 @@ namespace Enqueue\Mongodb\Tests;
 use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 
 /**
  * @group mongodb
@@ -16,7 +16,7 @@ class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementConnectionFactoryInterface()
     {
-        $this->assertClassImplements(PsrConnectionFactory::class, MongodbConnectionFactory::class);
+        $this->assertClassImplements(ConnectionFactory::class, MongodbConnectionFactory::class);
     }
 
     public function testCouldBeConstructedWithEmptyConfiguration()

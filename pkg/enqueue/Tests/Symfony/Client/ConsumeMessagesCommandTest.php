@@ -11,7 +11,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Null\NullQueue;
 use Enqueue\Symfony\Client\ConsumeMessagesCommand;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -91,7 +91,7 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $processor = $this->createDelegateProcessorMock();
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->never())
             ->method('close')
@@ -133,7 +133,7 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $processor = $this->createDelegateProcessorMock();
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->never())
             ->method('close')
@@ -309,7 +309,7 @@ class ConsumeMessagesCommandTest extends TestCase
 
         $processor = $this->createDelegateProcessorMock();
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->never())
             ->method('close')
@@ -361,11 +361,11 @@ class ConsumeMessagesCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
-    private function createPsrContextMock()
+    private function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
     /**

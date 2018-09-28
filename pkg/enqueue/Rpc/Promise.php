@@ -2,7 +2,7 @@
 
 namespace Enqueue\Rpc;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message as InteropMessage;
 
 class Promise
 {
@@ -27,7 +27,7 @@ class Promise
     private $deleteReplyQueue;
 
     /**
-     * @var PsrMessage
+     * @var InteropMessage
      */
     private $message;
 
@@ -52,7 +52,7 @@ class Promise
      *
      * @throws TimeoutException if the wait timeout is reached
      *
-     * @return PsrMessage
+     * @return InteropMessage
      */
     public function receive($timeout = null)
     {
@@ -72,7 +72,7 @@ class Promise
     /**
      * Non blocking function. Returns message or null.
      *
-     * @return PsrMessage|null
+     * @return InteropMessage|null
      */
     public function receiveNoWait()
     {
@@ -109,15 +109,15 @@ class Promise
      * @param \Closure $cb
      * @param array    $args
      *
-     * @return PsrMessage
+     * @return InteropMessage
      */
     private function doReceive(\Closure $cb, ...$args)
     {
         $message = call_user_func_array($cb, $args);
 
-        if (null !== $message && false == $message instanceof PsrMessage) {
+        if (null !== $message && false == $message instanceof InteropMessage) {
             throw new \RuntimeException(sprintf(
-                'Expected "%s" but got: "%s"', PsrMessage::class, is_object($message) ? get_class($message) : gettype($message)));
+                'Expected "%s" but got: "%s"', InteropMessage::class, is_object($message) ? get_class($message) : gettype($message)));
         }
 
         return $message;

@@ -5,7 +5,7 @@ namespace Enqueue\AsyncCommand\Tests;
 use Enqueue\AsyncCommand\Commands;
 use Enqueue\AsyncCommand\RunCommandProcessor;
 use Enqueue\Client\CommandSubscriberInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 
 class RunCommandProcessorTest extends TestCase
@@ -14,7 +14,7 @@ class RunCommandProcessorTest extends TestCase
     {
         $rc = new \ReflectionClass(RunCommandProcessor::class);
 
-        $this->assertTrue($rc->implementsInterface(PsrProcessor::class));
+        $this->assertTrue($rc->implementsInterface(Processor::class));
     }
 
     public function testShouldImplementCommandSubscriberInterfaceInterface()

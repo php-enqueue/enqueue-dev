@@ -11,9 +11,9 @@ use Enqueue\Consumption\Result;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\RetryTrait;
 use Enqueue\Test\SqsExtension;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 
 class SqsConsumptionUseCasesTest extends TestCase
@@ -65,7 +65,7 @@ class SqsConsumptionUseCasesTest extends TestCase
 
         $queueConsumer->consume();
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->lastProcessedMessage);
+        $this->assertInstanceOf(Message::class, $processor->lastProcessedMessage);
         $this->assertEquals(__METHOD__, $processor->lastProcessedMessage->getBody());
     }
 
@@ -98,22 +98,22 @@ class SqsConsumptionUseCasesTest extends TestCase
         $queueConsumer->bind($replyQueue, $replyProcessor);
         $queueConsumer->consume();
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->lastProcessedMessage);
+        $this->assertInstanceOf(Message::class, $processor->lastProcessedMessage);
         $this->assertEquals(__METHOD__, $processor->lastProcessedMessage->getBody());
 
-        $this->assertInstanceOf(PsrMessage::class, $replyProcessor->lastProcessedMessage);
+        $this->assertInstanceOf(Message::class, $replyProcessor->lastProcessedMessage);
         $this->assertEquals(__METHOD__.'.reply', $replyProcessor->lastProcessedMessage->getBody());
     }
 }
 
-class StubProcessor implements PsrProcessor
+class StubProcessor implements Processor
 {
     public $result = self::ACK;
 
-    /** @var PsrMessage */
+    /** @var Message */
     public $lastProcessedMessage;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $this->lastProcessedMessage = $message;
 

@@ -16,7 +16,7 @@ class ReplyExtension implements ExtensionInterface
      */
     public function onPostReceived(Context $context)
     {
-        $replyTo = $context->getPsrMessage()->getReplyTo();
+        $replyTo = $context->getInteropMessage()->getReplyTo();
         if (false == $replyTo) {
             return;
         }
@@ -31,13 +31,13 @@ class ReplyExtension implements ExtensionInterface
             return;
         }
 
-        $correlationId = $context->getPsrMessage()->getCorrelationId();
+        $correlationId = $context->getInteropMessage()->getCorrelationId();
         $replyMessage = clone $result->getReply();
         $replyMessage->setCorrelationId($correlationId);
 
-        $replyQueue = $context->getPsrContext()->createQueue($replyTo);
+        $replyQueue = $context->getInteropContext()->createQueue($replyTo);
 
         $context->getLogger()->debug(sprintf('[ReplyExtension] Send reply to "%s"', $replyTo));
-        $context->getPsrContext()->createProducer()->send($replyQueue, $replyMessage);
+        $context->getInteropContext()->createProducer()->send($replyQueue, $replyMessage);
     }
 }

@@ -8,7 +8,7 @@ use Enqueue\AsyncCommand\RunCommandProcessor;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,15 +20,15 @@ class UseCasesTest extends TestCase
     {
         $runCommand = new RunCommand('foo');
 
-        $psrMessage = new NullMessage(json_encode($runCommand));
-        $psrMessage->setReplyTo('aReplyToQueue');
+        $Message = new NullMessage(json_encode($runCommand));
+        $Message->setReplyTo('aReplyToQueue');
 
         $processor = new RunCommandProcessor(__DIR__);
 
-        $result = $processor->process($psrMessage, new NullContext());
+        $result = $processor->process($Message, new NullContext());
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertInstanceOf(PsrMessage::class, $result->getReply());
+        $this->assertInstanceOf(Message::class, $result->getReply());
 
         $replyMessage = $result->getReply();
 

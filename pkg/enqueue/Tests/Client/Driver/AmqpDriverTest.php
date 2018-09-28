@@ -17,10 +17,10 @@ use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 
 class AmqpDriverTest extends TestCase
@@ -291,7 +291,7 @@ class AmqpDriverTest extends TestCase
     /**
      * @return AmqpContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(AmqpContext::class);
     }
@@ -299,7 +299,7 @@ class AmqpDriverTest extends TestCase
     /**
      * @return AmqpProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(AmqpProducer::class);
     }
@@ -307,7 +307,7 @@ class AmqpDriverTest extends TestCase
     /**
      * @return AmqpQueue
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new AmqpQueue($name);
     }
@@ -323,7 +323,7 @@ class AmqpDriverTest extends TestCase
     /**
      * @return AmqpMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new AmqpMessage();
     }
@@ -333,7 +333,7 @@ class AmqpDriverTest extends TestCase
         return 'aprefix.router';
     }
 
-    protected function assertTransportMessage(PsrMessage $transportMessage): void
+    protected function assertTransportMessage(InteropMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertArraySubset([

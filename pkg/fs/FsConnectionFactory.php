@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Fs;
 
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class FsConnectionFactory implements PsrConnectionFactory
+class FsConnectionFactory implements ConnectionFactory
 {
     /**
      * @var string
@@ -49,7 +49,7 @@ class FsConnectionFactory implements PsrConnectionFactory
     /**
      * @return FsContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         return new FsContext(
             $this->config['path'],

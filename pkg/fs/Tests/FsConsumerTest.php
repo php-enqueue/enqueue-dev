@@ -8,7 +8,7 @@ use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\Consumer;
 use Makasim\File\TempFile;
 
 class FsConsumerTest extends \PHPUnit\Framework\TestCase
@@ -17,7 +17,7 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, FsConsumer::class);
+        $this->assertClassImplements(Consumer::class, FsConsumer::class);
     }
 
     public function testCouldBeConstructedWithContextAndDestinationAndPreFetchCountAsArguments()

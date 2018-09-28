@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 
-class NullContext implements PsrContext
+class NullContext implements Context
 {
     /**
      * @return NullMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         $message = new NullMessage();
         $message->setBody($body);
@@ -31,7 +31,7 @@ class NullContext implements PsrContext
     /**
      * @return NullQueue
      */
-    public function createQueue(string $name): PsrQueue
+    public function createQueue(string $name): Queue
     {
         return new NullQueue($name);
     }
@@ -39,7 +39,7 @@ class NullContext implements PsrContext
     /**
      * @return NullQueue
      */
-    public function createTemporaryQueue(): PsrQueue
+    public function createTemporaryQueue(): Queue
     {
         return $this->createQueue(uniqid('', true));
     }
@@ -47,7 +47,7 @@ class NullContext implements PsrContext
     /**
      * @return NullTopic
      */
-    public function createTopic(string $name): PsrTopic
+    public function createTopic(string $name): Topic
     {
         return new NullTopic($name);
     }
@@ -55,7 +55,7 @@ class NullContext implements PsrContext
     /**
      * @return NullConsumer
      */
-    public function createConsumer(PsrDestination $destination): PsrConsumer
+    public function createConsumer(Destination $destination): Consumer
     {
         return new NullConsumer($destination);
     }
@@ -63,7 +63,7 @@ class NullContext implements PsrContext
     /**
      * @return NullProducer
      */
-    public function createProducer(): PsrProducer
+    public function createProducer(): Producer
     {
         return new NullProducer();
     }
@@ -71,12 +71,12 @@ class NullContext implements PsrContext
     /**
      * @return NullSubscriptionConsumer
      */
-    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    public function createSubscriptionConsumer(): SubscriptionConsumer
     {
         return new NullSubscriptionConsumer();
     }
 
-    public function purgeQueue(PsrQueue $queue): void
+    public function purgeQueue(Queue $queue): void
     {
     }
 

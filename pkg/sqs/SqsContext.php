@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrTopic;
-use Interop\Queue\SubscriptionConsumerNotSupportedException;
-use Interop\Queue\TemporaryQueueNotSupportedException;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 
-class SqsContext implements PsrContext
+class SqsContext implements Context
 {
     /**
      * @var SqsClient
@@ -57,7 +57,7 @@ class SqsContext implements PsrContext
     /**
      * @return SqsMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new SqsMessage($body, $properties, $headers);
     }
@@ -65,7 +65,7 @@ class SqsContext implements PsrContext
     /**
      * @return SqsDestination
      */
-    public function createTopic(string $topicName): PsrTopic
+    public function createTopic(string $topicName): Topic
     {
         return new SqsDestination($topicName);
     }
@@ -73,12 +73,12 @@ class SqsContext implements PsrContext
     /**
      * @return SqsDestination
      */
-    public function createQueue(string $queueName): PsrQueue
+    public function createQueue(string $queueName): Queue
     {
         return new SqsDestination($queueName);
     }
 
-    public function createTemporaryQueue(): PsrQueue
+    public function createTemporaryQueue(): Queue
     {
         throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
@@ -86,7 +86,7 @@ class SqsContext implements PsrContext
     /**
      * @return SqsProducer
      */
-    public function createProducer(): PsrProducer
+    public function createProducer(): Producer
     {
         return new SqsProducer($this);
     }
@@ -96,7 +96,7 @@ class SqsContext implements PsrContext
      *
      * @return SqsConsumer
      */
-    public function createConsumer(PsrDestination $destination): PsrConsumer
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, SqsDestination::class);
 
@@ -110,7 +110,7 @@ class SqsContext implements PsrContext
     /**
      * @param SqsDestination $queue
      */
-    public function purgeQueue(PsrQueue $queue): void
+    public function purgeQueue(Queue $queue): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, SqsDestination::class);
 
@@ -119,7 +119,7 @@ class SqsContext implements PsrContext
         ]);
     }
 
-    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    public function createSubscriptionConsumer(): SubscriptionConsumer
     {
         throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
     }

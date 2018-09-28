@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkMessage implements PsrMessage, \JsonSerializable
+class PheanstalkMessage implements Message, \JsonSerializable
 {
     /**
      * @var string

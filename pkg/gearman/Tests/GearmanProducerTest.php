@@ -8,8 +8,8 @@ use Enqueue\Gearman\GearmanProducer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
 use PHPUnit\Framework\TestCase;
 
 class GearmanProducerTest extends TestCase

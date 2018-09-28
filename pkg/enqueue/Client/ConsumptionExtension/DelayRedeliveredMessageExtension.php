@@ -41,7 +41,7 @@ class DelayRedeliveredMessageExtension implements ExtensionInterface
      */
     public function onPreReceived(Context $context)
     {
-        $message = $context->getPsrMessage();
+        $message = $context->getInteropMessage();
         if (false == $message->isRedelivered()) {
             return;
         }

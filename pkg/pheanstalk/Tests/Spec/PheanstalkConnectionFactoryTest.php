@@ -3,9 +3,9 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
-use Interop\Queue\Spec\PsrConnectionFactorySpec;
+use Interop\Queue\Spec\ConnectionFactorySpec;
 
-class PheanstalkConnectionFactoryTest extends PsrConnectionFactorySpec
+class PheanstalkConnectionFactoryTest extends ConnectionFactorySpec
 {
     /**
      * {@inheritdoc}

@@ -3,9 +3,9 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkDestination;
-use Interop\Queue\Spec\PsrTopicSpec;
+use Interop\Queue\Spec\TopicSpec;
 
-class PheanstalkTopicTest extends PsrTopicSpec
+class PheanstalkTopicTest extends TopicSpec
 {
     /**
      * {@inheritdoc}

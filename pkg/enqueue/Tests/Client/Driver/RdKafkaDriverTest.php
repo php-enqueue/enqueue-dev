@@ -13,10 +13,10 @@ use Enqueue\RdKafka\RdKafkaMessage;
 use Enqueue\RdKafka\RdKafkaProducer;
 use Enqueue\RdKafka\RdKafkaTopic;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -81,7 +81,7 @@ class RdKafkaDriverTest extends TestCase
     /**
      * @return RdKafkaContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(RdKafkaContext::class);
     }
@@ -89,7 +89,7 @@ class RdKafkaDriverTest extends TestCase
     /**
      * @return RdKafkaProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(RdKafkaProducer::class);
     }
@@ -97,7 +97,7 @@ class RdKafkaDriverTest extends TestCase
     /**
      * @return RdKafkaTopic
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new RdKafkaTopic($name);
     }
@@ -113,7 +113,7 @@ class RdKafkaDriverTest extends TestCase
     /**
      * @return RdKafkaMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new RdKafkaMessage();
     }

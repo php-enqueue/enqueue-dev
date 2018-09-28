@@ -3,20 +3,20 @@
 namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Client\TopicSubscriberInterface;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class TestProcessor implements PsrProcessor, TopicSubscriberInterface
+class TestProcessor implements Processor, TopicSubscriberInterface
 {
     const TOPIC = 'test-topic';
 
     /**
-     * @var PsrMessage
+     * @var Message
      */
     public $message;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $this->message = $message;
 

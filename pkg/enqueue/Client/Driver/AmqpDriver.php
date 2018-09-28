@@ -11,10 +11,10 @@ use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -31,7 +31,7 @@ class AmqpDriver extends GenericDriver
     /**
      * @return AmqpMessage
      */
-    public function createTransportMessage(Message $clientMessage): PsrMessage
+    public function createTransportMessage(Message $clientMessage): InteropMessage
     {
         /** @var AmqpMessage $transportMessage */
         $transportMessage = parent::createTransportMessage($clientMessage);
@@ -96,7 +96,7 @@ class AmqpDriver extends GenericDriver
     /**
      * @return AmqpTopic
      */
-    protected function createRouterTopic(): PsrDestination
+    protected function createRouterTopic(): Destination
     {
         $topic = $this->doCreateTopic(
             $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
@@ -110,7 +110,7 @@ class AmqpDriver extends GenericDriver
     /**
      * @return AmqpQueue
      */
-    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): InteropQueue
     {
         /** @var AmqpQueue $queue */
         $queue = parent::doCreateQueue($transportQueueName);
@@ -124,7 +124,7 @@ class AmqpDriver extends GenericDriver
      * @param AmqpTopic    $topic
      * @param AmqpMessage  $transportMessage
      */
-    protected function doSendToRouter(PsrProducer $producer, PsrDestination $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(InteropProducer $producer, Destination $topic, InteropMessage $transportMessage): void
     {
         // We should not handle priority, expiration, and delay at this stage.
         // The router will take care of it while re-sending the message to the final destinations.

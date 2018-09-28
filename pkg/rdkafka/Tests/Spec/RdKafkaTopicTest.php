@@ -3,12 +3,12 @@
 namespace Enqueue\RdKafka\Tests\Spec;
 
 use Enqueue\RdKafka\RdKafkaTopic;
-use Interop\Queue\Spec\PsrTopicSpec;
+use Interop\Queue\Spec\TopicSpec;
 
 /**
  * @group rdkafka
  */
-class RdKafkaTopicTest extends PsrTopicSpec
+class RdKafkaTopicTest extends TopicSpec
 {
     /**
      * {@inheritdoc}

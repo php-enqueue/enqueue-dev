@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Gps;
 
-use Google\Cloud\PubSub\Message;
-use Interop\Queue\PsrMessage;
+use Google\Cloud\PubSub\Message as GoogleMessage;
+use Interop\Queue\Message;
 
-class GpsMessage implements PsrMessage, \JsonSerializable
+class GpsMessage implements Message, \JsonSerializable
 {
     /**
      * @var string
@@ -30,7 +30,7 @@ class GpsMessage implements PsrMessage, \JsonSerializable
     private $redelivered;
 
     /**
-     * @var Message
+     * @var GoogleMessage
      */
     private $nativeMessage;
 
@@ -168,12 +168,12 @@ class GpsMessage implements PsrMessage, \JsonSerializable
         return new self($data['body'], $data['properties'], $data['headers']);
     }
 
-    public function getNativeMessage(): ?Message
+    public function getNativeMessage(): ?GoogleMessage
     {
         return $this->nativeMessage;
     }
 
-    public function setNativeMessage(Message $message = null): void
+    public function setNativeMessage(GoogleMessage $message = null): void
     {
         $this->nativeMessage = $message;
     }

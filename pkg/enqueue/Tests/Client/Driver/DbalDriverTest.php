@@ -11,11 +11,11 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 
 class DbalDriverTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,7 +61,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(DbalContext::class);
     }
@@ -69,7 +69,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(DbalProducer::class);
     }
@@ -77,7 +77,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalDestination
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new DbalDestination($name);
     }
@@ -85,7 +85,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalDestination
      */
-    protected function createTopic(string $name): PsrTopic
+    protected function createTopic(string $name): InteropTopic
     {
         return new DbalDestination($name);
     }
@@ -93,7 +93,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new DbalMessage();
     }

@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/null/d/total.png)](https://packagist.org/packages/enqueue/null)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/null/version.png)](https://packagist.org/packages/enqueue/null)
  
-This is an implementation of PSR queue specification. It does not send messages any where and could be used as mock. Suitable in tests.
+This is an implementation of Queue Interop specification. It does not send messages any where and could be used as mock. Suitable in tests.
 
 ## Resources
 

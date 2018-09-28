@@ -3,12 +3,12 @@
 namespace Enqueue\Sqs\Tests\Spec;
 
 use Enqueue\Test\SqsExtension;
-use Interop\Queue\Spec\PsrProducerSpec;
+use Interop\Queue\Spec\ProducerSpec;
 
 /**
  * @group functional
  */
-class SqsProducerTest extends PsrProducerSpec
+class SqsProducerTest extends ProducerSpec
 {
     use SqsExtension;
 

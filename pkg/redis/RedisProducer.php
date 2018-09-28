@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Enqueue\Redis;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 
-class RedisProducer implements PsrProducer
+class RedisProducer implements Producer
 {
     /**
      * @var Redis
@@ -29,7 +29,7 @@ class RedisProducer implements PsrProducer
      * @param RedisDestination $destination
      * @param RedisMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message): void
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
@@ -40,7 +40,7 @@ class RedisProducer implements PsrProducer
     /**
      * @return RedisProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -57,7 +57,7 @@ class RedisProducer implements PsrProducer
     /**
      * @return RedisProducer
      */
-    public function setPriority(int $priority = null): PsrProducer
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -74,7 +74,7 @@ class RedisProducer implements PsrProducer
     /**
      * @return RedisProducer
      */
-    public function setTimeToLive(int $timeToLive = null): PsrProducer
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;

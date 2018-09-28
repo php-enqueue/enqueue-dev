@@ -6,10 +6,10 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -19,50 +19,50 @@ class ContextTest extends TestCase
 
     public function testCouldBeConstructedWithSessionAsFirstArgument()
     {
-        new Context($this->createPsrContext());
+        new Context($this->createContext());
     }
 
     public function testShouldAllowGetSessionSetInConstructor()
     {
-        $psrContext = $this->createPsrContext();
+        $interopContext = $this->createContext();
 
-        $context = new Context($psrContext);
+        $context = new Context($interopContext);
 
-        $this->assertSame($psrContext, $context->getPsrContext());
+        $this->assertSame($interopContext, $context->getInteropContext());
     }
 
     public function testShouldAllowGetMessageConsumerPreviouslySet()
     {
-        $messageConsumer = $this->createPsrConsumer();
+        $messageConsumer = $this->createConsumer();
 
-        $context = new Context($this->createPsrContext());
-        $context->setPsrConsumer($messageConsumer);
+        $context = new Context($this->createContext());
+        $context->setConsumer($messageConsumer);
 
-        $this->assertSame($messageConsumer, $context->getPsrConsumer());
+        $this->assertSame($messageConsumer, $context->getConsumer());
     }
 
     public function testThrowOnTryToChangeMessageConsumerIfAlreadySet()
     {
-        $messageConsumer = $this->createPsrConsumer();
-        $anotherMessageConsumer = $this->createPsrConsumer();
+        $messageConsumer = $this->createConsumer();
+        $anotherMessageConsumer = $this->createConsumer();
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
-        $context->setPsrConsumer($messageConsumer);
+        $context->setConsumer($messageConsumer);
 
         $this->expectException(IllegalContextModificationException::class);
 
-        $context->setPsrConsumer($anotherMessageConsumer);
+        $context->setConsumer($anotherMessageConsumer);
     }
 
     public function testShouldAllowGetMessageProducerPreviouslySet()
     {
         $processorMock = $this->createProcessorMock();
 
-        $context = new Context($this->createPsrContext());
-        $context->setPsrProcessor($processorMock);
+        $context = new Context($this->createContext());
+        $context->setProcessor($processorMock);
 
-        $this->assertSame($processorMock, $context->getPsrProcessor());
+        $this->assertSame($processorMock, $context->getProcessor());
     }
 
     public function testThrowOnTryToChangeProcessorIfAlreadySet()
@@ -70,20 +70,20 @@ class ContextTest extends TestCase
         $processor = $this->createProcessorMock();
         $anotherProcessor = $this->createProcessorMock();
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
-        $context->setPsrProcessor($processor);
+        $context->setProcessor($processor);
 
         $this->expectException(IllegalContextModificationException::class);
 
-        $context->setPsrProcessor($anotherProcessor);
+        $context->setProcessor($anotherProcessor);
     }
 
     public function testShouldAllowGetLoggerPreviouslySet()
     {
         $logger = new NullLogger();
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
         $context->setLogger($logger);
 
         $this->assertSame($logger, $context->getLogger());
@@ -91,42 +91,42 @@ class ContextTest extends TestCase
 
     public function testShouldSetExecutionInterruptedToFalseInConstructor()
     {
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $this->assertFalse($context->isExecutionInterrupted());
     }
 
     public function testShouldAllowGetPreviouslySetMessage()
     {
-        /** @var PsrMessage $message */
-        $message = $this->createMock(PsrMessage::class);
+        /** @var InteropMessage $message */
+        $message = $this->createMock(InteropMessage::class);
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
 
-        $this->assertSame($message, $context->getPsrMessage());
+        $this->assertSame($message, $context->getInteropMessage());
     }
 
     public function testThrowOnTryToChangeMessageIfAlreadySet()
     {
-        /** @var PsrMessage $message */
-        $message = $this->createMock(PsrMessage::class);
+        /** @var InteropMessage $message */
+        $message = $this->createMock(InteropMessage::class);
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $this->expectException(IllegalContextModificationException::class);
         $this->expectExceptionMessage('The message could be set once');
 
-        $context->setPsrMessage($message);
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
+        $context->setInteropMessage($message);
     }
 
     public function testShouldAllowGetPreviouslySetException()
     {
         $exception = new \Exception();
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $context->setException($exception);
 
@@ -137,7 +137,7 @@ class ContextTest extends TestCase
     {
         $result = 'aResult';
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $context->setResult($result);
 
@@ -148,7 +148,7 @@ class ContextTest extends TestCase
     {
         $result = 'aResult';
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $this->expectException(IllegalContextModificationException::class);
         $this->expectExceptionMessage('The result modification is not allowed');
@@ -159,7 +159,7 @@ class ContextTest extends TestCase
 
     public function testShouldAllowGetPreviouslySetExecutionInterrupted()
     {
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -171,7 +171,7 @@ class ContextTest extends TestCase
 
     public function testThrowOnTryToRollbackExecutionInterruptedIfAlreadySetToTrue()
     {
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $this->expectException(IllegalContextModificationException::class);
         $this->expectExceptionMessage('The execution once interrupted could not be roll backed');
@@ -182,7 +182,7 @@ class ContextTest extends TestCase
 
     public function testNotThrowOnSettingExecutionInterruptedToTrueIfAlreadySetToTrue()
     {
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $context->setExecutionInterrupted(true);
         $context->setExecutionInterrupted(true);
@@ -192,7 +192,7 @@ class ContextTest extends TestCase
     {
         $expectedLogger = new NullLogger();
 
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $context->setLogger($expectedLogger);
 
@@ -201,7 +201,7 @@ class ContextTest extends TestCase
 
     public function testThrowOnSettingLoggerIfAlreadySet()
     {
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
         $context->setLogger(new NullLogger());
 
@@ -213,46 +213,46 @@ class ContextTest extends TestCase
 
     public function testShouldAllowGetPreviouslySetQueue()
     {
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
-        $context->setPsrQueue($queue = new NullQueue(''));
+        $context->setInteropQueue($queue = new NullQueue(''));
 
-        $this->assertSame($queue, $context->getPsrQueue());
+        $this->assertSame($queue, $context->getInteropQueue());
     }
 
     public function testThrowOnSettingQueueNameIfAlreadySet()
     {
-        $context = new Context($this->createPsrContext());
+        $context = new Context($this->createContext());
 
-        $context->setPsrQueue(new NullQueue(''));
+        $context->setInteropQueue(new NullQueue(''));
 
         $this->expectException(IllegalContextModificationException::class);
         $this->expectExceptionMessage('The queue modification is not allowed');
 
-        $context->setPsrQueue(new NullQueue(''));
+        $context->setInteropQueue(new NullQueue(''));
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
      */
-    protected function createPsrContext()
+    protected function createContext(): InteropContext
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(InteropContext::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
      */
-    protected function createPsrConsumer()
+    protected function createConsumer()
     {
-        return $this->createMock(PsrConsumer::class);
+        return $this->createMock(Consumer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
      */
     protected function createProcessorMock()
     {
-        return $this->createMock(PsrProcessor::class);
+        return $this->createMock(Processor::class);
     }
 }

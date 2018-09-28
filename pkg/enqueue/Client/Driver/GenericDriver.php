@@ -10,18 +10,18 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 use Psr\Log\LoggerInterface;
 
 class GenericDriver implements DriverInterface
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     private $context;
 
@@ -36,7 +36,7 @@ class GenericDriver implements DriverInterface
     private $routeCollection;
 
     public function __construct(
-        PsrContext $context,
+        Context $context,
         Config $config,
         RouteCollection $routeCollection
     ) {
@@ -66,7 +66,7 @@ class GenericDriver implements DriverInterface
         $topic = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
         $command = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
 
-        /** @var PsrQueue $queue */
+        /** @var InteropQueue $queue */
         $queue = null;
         if ($topic && $processor = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             $route = $this->routeCollection->topicAndProcessor($topic, $processor);
@@ -117,14 +117,14 @@ class GenericDriver implements DriverInterface
     {
     }
 
-    public function createQueue(string $clientQueueName, bool $prefix = true): PsrQueue
+    public function createQueue(string $clientQueueName, bool $prefix = true): InteropQueue
     {
         $transportName = $this->createTransportQueueName($clientQueueName, $prefix);
 
         return $this->doCreateQueue($transportName);
     }
 
-    public function createRouteQueue(Route $route): PsrQueue
+    public function createRouteQueue(Route $route): InteropQueue
     {
         $transportName = $this->createTransportQueueName(
             $route->getQueue() ?: $this->config->getDefaultProcessorQueueName(),
@@ -134,7 +134,7 @@ class GenericDriver implements DriverInterface
         return $this->doCreateQueue($transportName);
     }
 
-    public function createTransportMessage(Message $clientMessage): PsrMessage
+    public function createTransportMessage(Message $clientMessage): InteropMessage
     {
         $headers = $clientMessage->getHeaders();
         $properties = $clientMessage->getProperties();
@@ -167,7 +167,7 @@ class GenericDriver implements DriverInterface
         return $transportMessage;
     }
 
-    public function createClientMessage(PsrMessage $transportMessage): Message
+    public function createClientMessage(InteropMessage $transportMessage): Message
     {
         $clientMessage = new Message();
 
@@ -203,7 +203,7 @@ class GenericDriver implements DriverInterface
         return $this->config;
     }
 
-    public function getContext(): PsrContext
+    public function getContext(): Context
     {
         return $this->context;
     }
@@ -213,17 +213,17 @@ class GenericDriver implements DriverInterface
         return $this->routeCollection;
     }
 
-    protected function doSendToRouter(PsrProducer $producer, PsrDestination $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(InteropProducer $producer, Destination $topic, InteropMessage $transportMessage): void
     {
         $producer->send($topic, $transportMessage);
     }
 
-    protected function doSendToProcessor(PsrProducer $producer, PsrQueue $queue, PsrMessage $transportMessage): void
+    protected function doSendToProcessor(InteropProducer $producer, InteropQueue $queue, InteropMessage $transportMessage): void
     {
         $producer->send($queue, $transportMessage);
     }
 
-    protected function createRouterTopic(): PsrDestination
+    protected function createRouterTopic(): Destination
     {
         return $this->createQueue($this->getConfig()->getRouterQueueName());
     }
@@ -243,12 +243,12 @@ class GenericDriver implements DriverInterface
         return strtolower(implode($this->config->getSeparator(), array_filter([$clientPrefix, $clientAppName, $name])));
     }
 
-    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): InteropQueue
     {
         return $this->context->createQueue($transportQueueName);
     }
 
-    protected function doCreateTopic(string $transportTopicName): PsrTopic
+    protected function doCreateTopic(string $transportTopicName): InteropTopic
     {
         return $this->context->createTopic($transportTopicName);
     }

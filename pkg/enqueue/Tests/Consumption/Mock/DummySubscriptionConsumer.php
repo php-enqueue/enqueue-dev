@@ -2,11 +2,11 @@
 
 namespace Enqueue\Tests\Consumption\Mock;
 
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\Consumer;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\SubscriptionConsumer;
 
-class DummySubscriptionConsumer implements PsrSubscriptionConsumer
+class DummySubscriptionConsumer implements SubscriptionConsumer
 {
     private $subscriptions = [];
 
@@ -18,7 +18,7 @@ class DummySubscriptionConsumer implements PsrSubscriptionConsumer
     public function consume(int $timeout = 0): void
     {
         foreach ($this->messages as list($message, $queueName)) {
-            /** @var PsrMessage $message */
+            /** @var InteropMessage $message */
             /** @var string $queueName */
             if (false == call_user_func($this->subscriptions[$queueName][1], $message, $this->subscriptions[$queueName][0])) {
                 return;
@@ -26,12 +26,12 @@ class DummySubscriptionConsumer implements PsrSubscriptionConsumer
         }
     }
 
-    public function subscribe(PsrConsumer $consumer, callable $callback): void
+    public function subscribe(Consumer $consumer, callable $callback): void
     {
         $this->subscriptions[$consumer->getQueue()->getQueueName()] = [$consumer, $callback];
     }
 
-    public function unsubscribe(PsrConsumer $consumer): void
+    public function unsubscribe(Consumer $consumer): void
     {
         unset($this->subscriptions[$consumer->getQueue()->getQueueName()]);
     }
@@ -41,7 +41,7 @@ class DummySubscriptionConsumer implements PsrSubscriptionConsumer
         $this->subscriptions = [];
     }
 
-    public function addMessage(PsrMessage $message, string $queueName): void
+    public function addMessage(InteropMessage $message, string $queueName): void
     {
         $this->messages[] = [$message, $queueName];
     }

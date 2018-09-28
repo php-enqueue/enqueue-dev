@@ -6,10 +6,10 @@ namespace Enqueue\Dbal;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class ManagerRegistryConnectionFactory implements PsrConnectionFactory
+class ManagerRegistryConnectionFactory implements ConnectionFactory
 {
     /**
      * @var ManagerRegistry
@@ -45,7 +45,7 @@ class ManagerRegistryConnectionFactory implements PsrConnectionFactory
     /**
      * @return DbalContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         if ($this->config['lazy']) {
             return new DbalContext(function () {

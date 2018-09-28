@@ -9,7 +9,7 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Redis\RedisContext;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
 trait ConsumptionUseCasesTrait
 {
@@ -30,7 +30,7 @@ trait ConsumptionUseCasesTrait
 
         $queueConsumer->consume();
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->lastProcessedMessage);
+        $this->assertInstanceOf(Message::class, $processor->lastProcessedMessage);
         $this->assertEquals(__METHOD__, $processor->lastProcessedMessage->getBody());
     }
 
@@ -61,10 +61,10 @@ trait ConsumptionUseCasesTrait
         $queueConsumer->bind($replyQueue, $replyProcessor);
         $queueConsumer->consume();
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->lastProcessedMessage);
+        $this->assertInstanceOf(Message::class, $processor->lastProcessedMessage);
         $this->assertEquals(__METHOD__, $processor->lastProcessedMessage->getBody());
 
-        $this->assertInstanceOf(PsrMessage::class, $replyProcessor->lastProcessedMessage);
+        $this->assertInstanceOf(Message::class, $replyProcessor->lastProcessedMessage);
         $this->assertEquals(__METHOD__.'.reply', $replyProcessor->lastProcessedMessage->getBody());
     }
 

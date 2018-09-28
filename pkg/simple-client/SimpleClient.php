@@ -25,10 +25,10 @@ use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\NodeInterface;
-use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Definition\Processor as ConfigProcessor;
 
 final class SimpleClient
 {
@@ -110,7 +110,7 @@ final class SimpleClient
     }
 
     /**
-     * @param callable|PsrProcessor $processor
+     * @param callable|Processor $processor
      */
     public function bindTopic(string $topic, $processor, string $processorName = null): void
     {
@@ -118,8 +118,8 @@ final class SimpleClient
             $processor = new CallbackProcessor($processor);
         }
 
-        if (false == $processor instanceof PsrProcessor) {
-            throw new \LogicException('The processor must be either callable or instance of PsrProcessor');
+        if (false == $processor instanceof Processor) {
+            throw new \LogicException('The processor must be either callable or instance of Processor');
         }
 
         $processorName = $processorName ?: uniqid(get_class($processor));
@@ -129,7 +129,7 @@ final class SimpleClient
     }
 
     /**
-     * @param callable|PsrProcessor $processor
+     * @param callable|Processor $processor
      */
     public function bindCommand(string $command, $processor, string $processorName = null): void
     {
@@ -137,8 +137,8 @@ final class SimpleClient
             $processor = new CallbackProcessor($processor);
         }
 
-        if (false == $processor instanceof PsrProcessor) {
-            throw new \LogicException('The processor must be either callable or instance of PsrProcessor');
+        if (false == $processor instanceof Processor) {
+            throw new \LogicException('The processor must be either callable or instance of Processor');
         }
 
         $processorName = $processorName ?: uniqid(get_class($processor));
@@ -211,7 +211,7 @@ final class SimpleClient
 
     public function build(array $configs): void
     {
-        $configProcessor = new Processor();
+        $configProcessor = new ConfigProcessor();
         $simpleClientConfig = $configProcessor->process($this->createConfiguration(), $configs);
 
         if (isset($simpleClientConfig['transport']['factory_service'])) {

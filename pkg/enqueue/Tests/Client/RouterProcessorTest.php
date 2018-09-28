@@ -12,7 +12,7 @@ use Enqueue\Consumption\Result;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 
 class RouterProcessorTest extends TestCase
@@ -21,7 +21,7 @@ class RouterProcessorTest extends TestCase
 
     public function testShouldImplementProcessorInterface()
     {
-        $this->assertClassImplements(PsrProcessor::class, RouterProcessor::class);
+        $this->assertClassImplements(Processor::class, RouterProcessor::class);
     }
 
     public function testShouldBeFinal()

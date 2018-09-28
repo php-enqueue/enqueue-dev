@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrTopic;
-use Interop\Queue\PurgeQueueNotSupportedException;
-use Interop\Queue\SubscriptionConsumerNotSupportedException;
-use Interop\Queue\TemporaryQueueNotSupportedException;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkContext implements PsrContext
+class PheanstalkContext implements Context
 {
     /**
      * @var Pheanstalk
@@ -33,7 +33,7 @@ class PheanstalkContext implements PsrContext
     /**
      * @return PheanstalkMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new PheanstalkMessage($body, $properties, $headers);
     }
@@ -41,7 +41,7 @@ class PheanstalkContext implements PsrContext
     /**
      * @return PheanstalkDestination
      */
-    public function createTopic(string $topicName): PsrTopic
+    public function createTopic(string $topicName): Topic
     {
         return new PheanstalkDestination($topicName);
     }
@@ -49,12 +49,12 @@ class PheanstalkContext implements PsrContext
     /**
      * @return PheanstalkDestination
      */
-    public function createQueue(string $queueName): PsrQueue
+    public function createQueue(string $queueName): Queue
     {
         return new PheanstalkDestination($queueName);
     }
 
-    public function createTemporaryQueue(): PsrQueue
+    public function createTemporaryQueue(): Queue
     {
         throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
@@ -62,7 +62,7 @@ class PheanstalkContext implements PsrContext
     /**
      * @return PheanstalkProducer
      */
-    public function createProducer(): PsrProducer
+    public function createProducer(): Producer
     {
         return new PheanstalkProducer($this->pheanstalk);
     }
@@ -72,7 +72,7 @@ class PheanstalkContext implements PsrContext
      *
      * @return PheanstalkConsumer
      */
-    public function createConsumer(PsrDestination $destination): PsrConsumer
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, PheanstalkDestination::class);
 
@@ -84,12 +84,12 @@ class PheanstalkContext implements PsrContext
         $this->pheanstalk->getConnection()->disconnect();
     }
 
-    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    public function createSubscriptionConsumer(): SubscriptionConsumer
     {
         throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
     }
 
-    public function purgeQueue(PsrQueue $queue): void
+    public function purgeQueue(Queue $queue): void
     {
         throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
     }

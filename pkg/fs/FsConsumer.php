@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Fs;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class FsConsumer implements PsrConsumer
+class FsConsumer implements Consumer
 {
     /**
      * @var FsDestination
@@ -66,7 +66,7 @@ class FsConsumer implements PsrConsumer
     /**
      * @return FsDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->destination;
     }
@@ -74,7 +74,7 @@ class FsConsumer implements PsrConsumer
     /**
      * @return FsMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         $timeout /= 1000;
         $startAt = microtime(true);
@@ -101,7 +101,7 @@ class FsConsumer implements PsrConsumer
     /**
      * @return FsMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         if ($this->preFetchedMessages) {
             return array_shift($this->preFetchedMessages);
@@ -154,12 +154,12 @@ class FsConsumer implements PsrConsumer
         return null;
     }
 
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         // do nothing. fs transport always works in auto ack mode
     }
 
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, FsMessage::class);
 

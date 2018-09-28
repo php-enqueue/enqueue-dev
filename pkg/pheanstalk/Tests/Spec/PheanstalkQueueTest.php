@@ -3,9 +3,9 @@
 namespace Enqueue\Pheanstalk\Tests\Spec;
 
 use Enqueue\Pheanstalk\PheanstalkDestination;
-use Interop\Queue\Spec\PsrQueueSpec;
+use Interop\Queue\Spec\QueueSpec;
 
-class PheanstalkQueueTest extends PsrQueueSpec
+class PheanstalkQueueTest extends QueueSpec
 {
     /**
      * {@inheritdoc}
