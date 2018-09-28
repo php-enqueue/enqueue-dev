@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicPartition;
 
-class RdKafkaConsumer implements PsrConsumer
+class RdKafkaConsumer implements Consumer
 {
     use SerializerAwareTrait;
 
@@ -75,7 +75,7 @@ class RdKafkaConsumer implements PsrConsumer
         $this->offset = $offset;
     }
 
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->topic;
     }
@@ -83,7 +83,7 @@ class RdKafkaConsumer implements PsrConsumer
     /**
      * @return RdKafkaMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         if (false === $this->subscribed) {
             if (null === $this->offset) {
@@ -116,7 +116,7 @@ class RdKafkaConsumer implements PsrConsumer
     /**
      * @return RdKafkaMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         throw new \LogicException('Not implemented');
     }
@@ -124,7 +124,7 @@ class RdKafkaConsumer implements PsrConsumer
     /**
      * @param RdKafkaMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
@@ -142,7 +142,7 @@ class RdKafkaConsumer implements PsrConsumer
     /**
      * @param RdKafkaMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         $this->acknowledge($message);
 

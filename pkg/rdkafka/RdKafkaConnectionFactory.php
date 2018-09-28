@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class RdKafkaConnectionFactory implements PsrConnectionFactory
+class RdKafkaConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -53,7 +53,7 @@ class RdKafkaConnectionFactory implements PsrConnectionFactory
     /**
      * @return RdKafkaContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         return new RdKafkaContext($this->config);
     }

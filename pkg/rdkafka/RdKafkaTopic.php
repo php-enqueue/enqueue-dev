@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 use RdKafka\TopicConf;
 
-class RdKafkaTopic implements PsrTopic, PsrQueue
+class RdKafkaTopic implements Topic, Queue
 {
     /**
      * @var string

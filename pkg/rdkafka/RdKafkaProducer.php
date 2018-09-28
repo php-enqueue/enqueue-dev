@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use RdKafka\Producer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use RdKafka\Producer as VendorProducer;
 
-class RdKafkaProducer implements PsrProducer
+class RdKafkaProducer implements Producer
 {
     use SerializerAwareTrait;
 
     /**
-     * @var Producer
+     * @var VendorProducer
      */
     private $producer;
 
-    public function __construct(Producer $producer, Serializer $serializer)
+    public function __construct(VendorProducer $producer, Serializer $serializer)
     {
         $this->producer = $producer;
 
@@ -31,7 +31,7 @@ class RdKafkaProducer implements PsrProducer
      * @param RdKafkaTopic   $destination
      * @param RdKafkaMessage $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message): void
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
@@ -47,7 +47,7 @@ class RdKafkaProducer implements PsrProducer
     /**
      * @return RdKafkaProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -64,7 +64,7 @@ class RdKafkaProducer implements PsrProducer
     /**
      * @return RdKafkaProducer
      */
-    public function setPriority(int $priority = null): PsrProducer
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -78,7 +78,7 @@ class RdKafkaProducer implements PsrProducer
         return null;
     }
 
-    public function setTimeToLive(int $timeToLive = null): PsrProducer
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;
