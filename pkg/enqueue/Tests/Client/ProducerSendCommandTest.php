@@ -40,7 +40,7 @@ class ProducerSendCommandTest extends TestCase
         $producer->sendCommand('command', $message);
 
         $expectedProperties = [
-            'enqueue.command_name' => 'command',
+            'enqueue.command' => 'command',
         ];
 
         self::assertEquals($expectedProperties, $message->getProperties());
@@ -136,7 +136,7 @@ class ProducerSendCommandTest extends TestCase
     public function testShouldOverwriteExpectedMessageProperties()
     {
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'commandShouldBeOverwritten');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'commandShouldBeOverwritten');
         $message->setScope('scopeShouldBeOverwritten');
 
         $driver = $this->createDriverStub();
@@ -145,7 +145,7 @@ class ProducerSendCommandTest extends TestCase
         $producer->sendCommand('expectedCommand', $message);
 
         $expectedProperties = [
-            'enqueue.command_name' => 'expectedCommand',
+            'enqueue.command' => 'expectedCommand',
         ];
 
         self::assertEquals($expectedProperties, $message->getProperties());
@@ -299,8 +299,8 @@ class ProducerSendCommandTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) {
                 self::assertSame('aBody', $message->getBody());
-                self::assertNull($message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-                self::assertSame('command', $message->getProperty(Config::PARAMETER_COMMAND_NAME));
+                self::assertNull($message->getProperty(Config::PROCESSOR_PARAMETER));
+                self::assertSame('command', $message->getProperty(Config::COMMAND_PARAMETER));
             })
         ;
 
@@ -313,7 +313,7 @@ class ProducerSendCommandTest extends TestCase
         $message = new Message();
         $message->setBody('aBody');
         $message->setScope(Message::SCOPE_APP);
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aCustomProcessor');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'aCustomProcessor');
 
         $driver = $this->createDriverStub();
         $driver
@@ -324,7 +324,7 @@ class ProducerSendCommandTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock());
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The enqueue.processor_name property must not be set.');
+        $this->expectExceptionMessage('The enqueue.processor property must not be set.');
         $producer->sendCommand('command', $message);
     }
 

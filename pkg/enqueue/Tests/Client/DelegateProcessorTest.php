@@ -21,7 +21,7 @@ class DelegateProcessorTest extends TestCase
     {
         $this->setExpectedException(
             \LogicException::class,
-            'Got message without required parameter: "enqueue.processor_name"'
+            'Got message without required parameter: "enqueue.processor"'
         );
 
         $processor = new DelegateProcessor($this->createProcessorRegistryMock());
@@ -33,7 +33,7 @@ class DelegateProcessorTest extends TestCase
         $session = $this->createContextMock();
         $message = new NullMessage();
         $message->setProperties([
-            Config::PARAMETER_PROCESSOR_NAME => 'processor-name',
+            Config::PROCESSOR_PARAMETER => 'processor-name',
         ]);
 
         $processor = $this->createProcessorMock();

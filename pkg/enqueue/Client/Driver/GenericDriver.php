@@ -47,10 +47,10 @@ class GenericDriver implements DriverInterface
 
     public function sendToRouter(Message $message): void
     {
-        if ($message->getProperty(Config::PARAMETER_COMMAND_NAME)) {
+        if ($message->getProperty(Config::COMMAND_PARAMETER)) {
             throw new \LogicException('Command must not be send to router but go directly to its processor.');
         }
-        if (false == $message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
+        if (false == $message->getProperty(Config::TOPIC_PARAMETER)) {
             throw new \LogicException('Topic name parameter is required but is not set');
         }
 
@@ -63,21 +63,21 @@ class GenericDriver implements DriverInterface
 
     public function sendToProcessor(Message $message): void
     {
-        $topic = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
-        $command = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
+        $topic = $message->getProperty(Config::TOPIC_PARAMETER);
+        $command = $message->getProperty(Config::COMMAND_PARAMETER);
 
         /** @var InteropQueue $queue */
         $queue = null;
-        if ($topic && $processor = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
+        if ($topic && $processor = $message->getProperty(Config::PROCESSOR_PARAMETER)) {
             $route = $this->routeCollection->topicAndProcessor($topic, $processor);
             if (false == $route) {
                 throw new \LogicException(sprintf('There is no route for topic "%s" and processor "%s"', $topic, $processor));
             }
 
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route->getProcessor());
+            $message->setProperty(Config::PROCESSOR_PARAMETER, $route->getProcessor());
             $queue = $this->createRouteQueue($route);
-        } elseif ($topic && false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->config->getRouterProcessorName());
+        } elseif ($topic && false == $message->getProperty(Config::PROCESSOR_PARAMETER)) {
+            $message->setProperty(Config::PROCESSOR_PARAMETER, $this->config->getRouterProcessorName());
 
             $queue = $this->createQueue($this->config->getRouterQueueName());
         } elseif ($command) {
@@ -86,7 +86,7 @@ class GenericDriver implements DriverInterface
                 throw new \LogicException(sprintf('There is no route for command "%s".', $command));
             }
 
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route->getProcessor());
+            $message->setProperty(Config::PROCESSOR_PARAMETER, $route->getProcessor());
             $queue = $this->createRouteQueue($route);
         } else {
             throw new \LogicException('Either topic or command parameter must be set.');

@@ -38,7 +38,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     public function testShouldDoNothingIfMessageHasTopicPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'aTopic');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'aTopic');
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
@@ -56,14 +56,14 @@ class ExclusiveCommandExtensionTest extends TestCase
         self::assertNull($context->getResult());
 
         $this->assertEquals([
-            'enqueue.topic_name' => 'aTopic',
+            'enqueue.topic' => 'aTopic',
         ], $message->getProperties());
     }
 
     public function testShouldDoNothingIfMessageHasCommandPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'aCommand');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'aCommand');
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
@@ -81,14 +81,14 @@ class ExclusiveCommandExtensionTest extends TestCase
         self::assertNull($context->getResult());
 
         $this->assertEquals([
-            'enqueue.command_name' => 'aCommand',
+            'enqueue.command' => 'aCommand',
         ], $message->getProperties());
     }
 
     public function testShouldDoNothingIfMessageHasProcessorPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aProcessor');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'aProcessor');
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
@@ -106,7 +106,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         self::assertNull($context->getResult());
 
         $this->assertEquals([
-            'enqueue.processor_name' => 'aProcessor',
+            'enqueue.processor' => 'aProcessor',
         ], $message->getProperties());
     }
 
@@ -164,8 +164,8 @@ class ExclusiveCommandExtensionTest extends TestCase
         self::assertNull($context->getResult());
 
         $this->assertEquals([
-            'enqueue.processor_name' => 'theFooProcessor',
-            'enqueue.command_name' => 'fooCommand',
+            'enqueue.processor' => 'theFooProcessor',
+            'enqueue.command' => 'fooCommand',
         ], $message->getProperties());
     }
 

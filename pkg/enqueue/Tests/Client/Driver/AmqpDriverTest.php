@@ -170,7 +170,7 @@ class AmqpDriverTest extends TestCase
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
         $message->setExpire(123);
         $message->setPriority(MessagePriority::HIGH);
 

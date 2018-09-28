@@ -284,7 +284,7 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
 
         $driver->sendToRouter($message);
     }
@@ -323,7 +323,7 @@ trait GenericDriverTestsTrait
 
         $message = new Message();
         $message->setDelay(456);
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
 
         $driver->sendToRouter($message);
     }
@@ -362,7 +362,7 @@ trait GenericDriverTestsTrait
 
         $message = new Message();
         $message->setExpire(456);
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
 
         $driver->sendToRouter($message);
     }
@@ -401,7 +401,7 @@ trait GenericDriverTestsTrait
 
         $message = new Message();
         $message->setPriority(MessagePriority::HIGH);
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
 
         $driver->sendToRouter($message);
     }
@@ -429,7 +429,7 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'aCommand');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'aCommand');
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Command must not be send to router but go directly to its processor.');
@@ -475,8 +475,8 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $driver->sendToProcessor($message);
     }
@@ -519,8 +519,8 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $driver->sendToProcessor($message);
     }
@@ -569,8 +569,8 @@ trait GenericDriverTestsTrait
 
         $message = new Message();
         $message->setDelay(456);
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $driver->sendToProcessor($message);
     }
@@ -619,8 +619,8 @@ trait GenericDriverTestsTrait
 
         $message = new Message();
         $message->setExpire(678);
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $driver->sendToProcessor($message);
     }
@@ -669,8 +669,8 @@ trait GenericDriverTestsTrait
 
         $message = new Message();
         $message->setPriority(MessagePriority::HIGH);
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $driver->sendToProcessor($message);
     }
@@ -694,8 +694,8 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('There is no route for topic "topic" and processor "processor"');
@@ -740,11 +740,11 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
 
         $driver->sendToProcessor($message);
 
-        $this->assertSame('router', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
+        $this->assertSame('router', $message->getProperty(Config::PROCESSOR_PARAMETER));
     }
 
     public function testShouldSendCommandMessageToProcessorToDefaultQueue()
@@ -785,8 +785,8 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'command');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $driver->sendToProcessor($message);
     }
@@ -829,8 +829,8 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'command');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $driver->sendToProcessor($message);
     }
@@ -854,8 +854,8 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'command');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('There is no route for command "command".');
@@ -900,12 +900,12 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processorShouldBeOverwritten');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'command');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processorShouldBeOverwritten');
 
         $driver->sendToProcessor($message);
 
-        $this->assertSame('expectedProcessor', $message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
+        $this->assertSame('expectedProcessor', $message->getProperty(Config::PROCESSOR_PARAMETER));
     }
 
     public function testShouldNotInitDeliveryDelayOnSendMessageToProcessorIfPropertyNull()
@@ -948,7 +948,7 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'command');
         $message->setDelay(null);
 
         $driver->sendToProcessor($message);
@@ -994,7 +994,7 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'command');
         $message->setPriority(null);
 
         $driver->sendToProcessor($message);
@@ -1040,7 +1040,7 @@ trait GenericDriverTestsTrait
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'command');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'command');
         $message->setExpire(null);
 
         $driver->sendToProcessor($message);
@@ -1058,7 +1058,7 @@ trait GenericDriverTestsTrait
         $this->expectExceptionMessage('Queue name parameter is required but is not set');
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Either topic or command parameter must be set.');

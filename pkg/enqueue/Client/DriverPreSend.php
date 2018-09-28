@@ -34,21 +34,21 @@ final class DriverPreSend
 
     public function isEvent(): bool
     {
-        return (bool) $this->message->getProperty(Config::PARAMETER_TOPIC_NAME);
+        return (bool) $this->message->getProperty(Config::TOPIC_PARAMETER);
     }
 
     public function isCommand(): bool
     {
-        return (bool) $this->message->getProperty(Config::PARAMETER_COMMAND_NAME);
+        return (bool) $this->message->getProperty(Config::COMMAND_PARAMETER);
     }
 
     public function getCommand(): string
     {
-        return $this->message->getProperty(Config::PARAMETER_COMMAND_NAME);
+        return $this->message->getProperty(Config::COMMAND_PARAMETER);
     }
 
     public function getTopic(): string
     {
-        return $this->message->getProperty(Config::PARAMETER_TOPIC_NAME);
+        return $this->message->getProperty(Config::TOPIC_PARAMETER);
     }
 }

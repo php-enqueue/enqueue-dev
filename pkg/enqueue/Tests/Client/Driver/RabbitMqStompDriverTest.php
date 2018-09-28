@@ -250,8 +250,8 @@ class RabbitMqStompDriverTest extends TestCase
         );
 
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topic');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'processor');
+        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
+        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
         $message->setDelay(10);
 
         $driver->sendToProcessor($message);

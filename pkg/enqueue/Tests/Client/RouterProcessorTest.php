@@ -45,7 +45,7 @@ class RouterProcessorTest extends TestCase
         $result = $router->process(new NullMessage(), new NullContext());
 
         $this->assertEquals(Result::REJECT, $result->getStatus());
-        $this->assertEquals('Topic property "enqueue.topic_name" is required but not set or empty.', $result->getReason());
+        $this->assertEquals('Topic property "enqueue.topic" is required but not set or empty.', $result->getReason());
     }
 
     public function testShouldRejectIfCommandSet()
@@ -53,7 +53,7 @@ class RouterProcessorTest extends TestCase
         $router = new RouterProcessor($this->createDriverStub());
 
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'aCommand');
+        $message->setProperty(Config::COMMAND_PARAMETER, 'aCommand');
 
         $result = $router->process($message, new NullContext());
 
@@ -66,7 +66,7 @@ class RouterProcessorTest extends TestCase
         $message = new NullMessage();
         $message->setBody('theBody');
         $message->setHeaders(['aHeader' => 'aHeaderVal']);
-        $message->setProperties(['aProp' => 'aPropVal', Config::PARAMETER_TOPIC_NAME => 'theTopicName']);
+        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName']);
 
         /** @var Message[] $routedMessages */
         $routedMessages = new \ArrayObject();
@@ -103,16 +103,9 @@ class RouterProcessorTest extends TestCase
         $this->assertContainsOnly(Message::class, $routedMessages);
         $this->assertCount(3, $routedMessages);
 
-        $this->assertSame('aFooProcessor', $routedMessages[0]->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-        $this->assertSame('aBarProcessor', $routedMessages[1]->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-        $this->assertSame('aBazProcessor', $routedMessages[2]->getProperty(Config::PARAMETER_PROCESSOR_NAME));
-
-//        $this->assertEquals([
-//            'aProp' => 'aPropVal',
-//            'enqueue.topic_name' => 'theTopicName',
-//            'enqueue.processor_name' => 'aFooProcessor',
-//            'enqueue.processor_queue_name' => 'aQueueName',
-//        ], $routedMessages[0]->getProperties());
+        $this->assertSame('aFooProcessor', $routedMessages[0]->getProperty(Config::PROCESSOR_PARAMETER));
+        $this->assertSame('aBarProcessor', $routedMessages[1]->getProperty(Config::PROCESSOR_PARAMETER));
+        $this->assertSame('aBazProcessor', $routedMessages[2]->getProperty(Config::PROCESSOR_PARAMETER));
     }
 
     public function testShouldDoNothingIfNoRoutes()
@@ -120,7 +113,7 @@ class RouterProcessorTest extends TestCase
         $message = new NullMessage();
         $message->setBody('theBody');
         $message->setHeaders(['aHeader' => 'aHeaderVal']);
-        $message->setProperties(['aProp' => 'aPropVal', Config::PARAMETER_TOPIC_NAME => 'theTopicName']);
+        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName']);
 
         /** @var Message[] $routedMessages */
         $routedMessages = new \ArrayObject();
@@ -158,7 +151,7 @@ class RouterProcessorTest extends TestCase
         $message = new NullMessage();
         $message->setBody('theBody');
         $message->setHeaders(['aHeader' => 'aHeaderVal']);
-        $message->setProperties(['aProp' => 'aPropVal', Config::PARAMETER_TOPIC_NAME => 'theTopicName']);
+        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName']);
 
         /** @var Message[] $routedMessages */
         $routedMessages = new \ArrayObject();
@@ -190,7 +183,7 @@ class RouterProcessorTest extends TestCase
         $this->assertEquals(Result::ACK, $result->getStatus());
 
         $this->assertSame('theBody', $message->getBody());
-        $this->assertSame(['aProp' => 'aPropVal', Config::PARAMETER_TOPIC_NAME => 'theTopicName'], $message->getProperties());
+        $this->assertSame(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName'], $message->getProperties());
         $this->assertSame(['aHeader' => 'aHeaderVal'], $message->getHeaders());
     }
 

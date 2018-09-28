@@ -33,13 +33,13 @@ final class ExclusiveCommandExtension implements ConsumptionExtensionInterface
         $message = $context->getInteropMessage();
         $queue = $context->getInteropQueue();
 
-        if ($message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
+        if ($message->getProperty(Config::TOPIC_PARAMETER)) {
             return;
         }
-        if ($message->getProperty(Config::PARAMETER_COMMAND_NAME)) {
+        if ($message->getProperty(Config::COMMAND_PARAMETER)) {
             return;
         }
-        if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
+        if ($message->getProperty(Config::PROCESSOR_PARAMETER)) {
             return;
         }
 
@@ -51,8 +51,8 @@ final class ExclusiveCommandExtension implements ConsumptionExtensionInterface
             $context->getLogger()->debug('[ExclusiveCommandExtension] This is a exclusive command queue and client\'s properties are not set. Setting them');
 
             $route = $this->queueToRouteMap[$queue->getQueueName()];
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $route->getProcessor());
-            $message->setProperty(Config::PARAMETER_COMMAND_NAME, $route->getSource());
+            $message->setProperty(Config::PROCESSOR_PARAMETER, $route->getProcessor());
+            $message->setProperty(Config::COMMAND_PARAMETER, $route->getSource());
         }
     }
 
