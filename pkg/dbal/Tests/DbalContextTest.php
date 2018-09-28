@@ -11,8 +11,8 @@ use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\TemporaryQueueNotSupportedException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 
 class DbalContextTest extends \PHPUnit_Framework_TestCase
 {

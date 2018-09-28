@@ -7,7 +7,7 @@ namespace Enqueue\Dbal;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Consumer;
-use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
 

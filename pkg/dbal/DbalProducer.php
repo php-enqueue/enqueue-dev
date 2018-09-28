@@ -6,9 +6,9 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Destination;
-use Interop\Queue\Exception;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Exception\Exception;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
 use Ramsey\Uuid\Codec\OrderedTimeCodec;

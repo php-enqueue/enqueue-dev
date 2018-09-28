@@ -10,7 +10,7 @@ use Enqueue\Fs\FsProducer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
 use Makasim\File\TempFile;
 
 class FsContextTest extends \PHPUnit\Framework\TestCase

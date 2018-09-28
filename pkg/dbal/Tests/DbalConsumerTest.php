@@ -9,7 +9,7 @@ use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
-use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 
 class DbalConsumerTest extends \PHPUnit_Framework_TestCase

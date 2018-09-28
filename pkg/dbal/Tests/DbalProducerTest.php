@@ -7,7 +7,7 @@ use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Producer;
 
 class DbalProducerTest extends \PHPUnit_Framework_TestCase

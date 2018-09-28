@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Enqueue\Fs;
 
 use Interop\Queue\Consumer;
-use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
 

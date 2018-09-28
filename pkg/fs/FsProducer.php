@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Fs;
 
-use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\Destination;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
 use Interop\Queue\Message;
-use Interop\Queue\PriorityNotSupportedException;
 use Interop\Queue\Producer;
 use Makasim\File\TempFile;
 
