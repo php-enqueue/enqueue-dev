@@ -3,12 +3,12 @@
 namespace Enqueue\Mongodb\Tests\Spec;
 
 use Enqueue\Mongodb\MongodbMessage;
-use Interop\Queue\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\MessageSpec;
 
 /**
  * @group mongodb
  */
-class MongodbMessageTest extends PsrMessageSpec
+class MongodbMessageTest extends MessageSpec
 {
     /**
      * {@inheritdoc}

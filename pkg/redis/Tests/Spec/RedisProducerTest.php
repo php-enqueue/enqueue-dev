@@ -3,13 +3,13 @@
 namespace Enqueue\Redis\Tests\Spec;
 
 use Enqueue\Test\RedisExtension;
-use Interop\Queue\Spec\PsrProducerSpec;
+use Interop\Queue\Spec\ProducerSpec;
 
 /**
  * @group functional
  * @group Redis
  */
-class RedisProducerTest extends PsrProducerSpec
+class RedisProducerTest extends ProducerSpec
 {
     use RedisExtension;
 

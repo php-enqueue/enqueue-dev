@@ -3,11 +3,11 @@
 namespace Enqueue\AmqpLib\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpContext;
-use Interop\Queue\Spec\PsrContextSpec;
+use Interop\Queue\Spec\ContextSpec;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 
-class AmqpContextTest extends PsrContextSpec
+class AmqpContextTest extends ContextSpec
 {
     protected function createContext()
     {

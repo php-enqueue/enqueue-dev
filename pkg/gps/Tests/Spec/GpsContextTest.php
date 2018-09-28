@@ -4,9 +4,9 @@ namespace Enqueue\Gps\Tests\Spec;
 
 use Enqueue\Gps\GpsContext;
 use Google\Cloud\PubSub\PubSubClient;
-use Interop\Queue\Spec\PsrContextSpec;
+use Interop\Queue\Spec\ContextSpec;
 
-class GpsContextTest extends PsrContextSpec
+class GpsContextTest extends ContextSpec
 {
     protected function createContext()
     {

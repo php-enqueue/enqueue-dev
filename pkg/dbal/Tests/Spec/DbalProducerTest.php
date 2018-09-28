@@ -2,12 +2,12 @@
 
 namespace Enqueue\Dbal\Tests\Spec;
 
-use Interop\Queue\Spec\PsrProducerSpec;
+use Interop\Queue\Spec\ProducerSpec;
 
 /**
  * @group functional
  */
-class DbalProducerTest extends PsrProducerSpec
+class DbalProducerTest extends ProducerSpec
 {
     use CreateDbalContextTrait;
 

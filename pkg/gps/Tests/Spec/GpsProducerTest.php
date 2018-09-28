@@ -4,9 +4,9 @@ namespace Enqueue\Gps\Tests\Spec;
 
 use Enqueue\Gps\GpsContext;
 use Enqueue\Gps\GpsProducer;
-use Interop\Queue\Spec\PsrProducerSpec;
+use Interop\Queue\Spec\ProducerSpec;
 
-class GpsProducerTest extends PsrProducerSpec
+class GpsProducerTest extends ProducerSpec
 {
     protected function createProducer()
     {
