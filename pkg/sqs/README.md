@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/sqs/d/total.png)](https://packagist.org/packages/enqueue/sqs)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/sqs/version.png)](https://packagist.org/packages/enqueue/sqs)
  
-This is an implementation of PSR specification. It allows you to send and consume message through Amazon SQS library.  
+This is an implementation of Queue Interop specification. It allows you to send and consume message through Amazon SQS library.  
 
 ## Resources
 

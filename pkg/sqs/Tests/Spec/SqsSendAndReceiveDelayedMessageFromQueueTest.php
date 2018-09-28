@@ -6,7 +6,7 @@ use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Test\RetryTrait;
 use Enqueue\Test\SqsExtension;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
 /**
@@ -50,7 +50,7 @@ class SqsSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayed
      *
      * @param SqsContext $context
      */
-    protected function createQueue(PsrContext $context, $queueName)
+    protected function createQueue(Context $context, $queueName)
     {
         $queueName = $queueName.time();
 

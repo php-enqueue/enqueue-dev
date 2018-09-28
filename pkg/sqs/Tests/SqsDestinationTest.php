@@ -4,8 +4,8 @@ namespace Enqueue\Sqs\Tests;
 
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
 class SqsDestinationTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,8 +13,8 @@ class SqsDestinationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsTopicAndQueueInterfaces()
     {
-        $this->assertClassImplements(PsrTopic::class, SqsDestination::class);
-        $this->assertClassImplements(PsrQueue::class, SqsDestination::class);
+        $this->assertClassImplements(Topic::class, SqsDestination::class);
+        $this->assertClassImplements(Queue::class, SqsDestination::class);
     }
 
     public function testShouldReturnNameSetInConstructor()

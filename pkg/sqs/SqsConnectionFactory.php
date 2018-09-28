@@ -6,10 +6,10 @@ namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
 use Enqueue\Dsn\Dsn;
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class SqsConnectionFactory implements PsrConnectionFactory
+class SqsConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -69,7 +69,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
     /**
      * @return SqsContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         if ($this->config['lazy']) {
             return new SqsContext(function () {
