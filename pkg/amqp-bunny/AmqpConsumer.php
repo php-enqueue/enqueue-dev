@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Enqueue\AmqpBunny;
 
 use Bunny\Channel;
-use Bunny\Message;
+use Bunny\Message as BunnyMessage;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
 class AmqpConsumer implements InteropAmqpConsumer
 {
@@ -81,7 +81,7 @@ class AmqpConsumer implements InteropAmqpConsumer
     /**
      * @return InteropAmqpQueue
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
@@ -89,7 +89,7 @@ class AmqpConsumer implements InteropAmqpConsumer
     /**
      * @return InteropAmqpMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         $end = microtime(true) + ($timeout / 1000);
 
@@ -107,7 +107,7 @@ class AmqpConsumer implements InteropAmqpConsumer
     /**
      * @return InteropAmqpMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         if ($message = $this->channel->get($this->queue->getQueueName(), (bool) ($this->getFlags() & InteropAmqpConsumer::FLAG_NOACK))) {
             return $this->context->convertMessage($message);
@@ -119,22 +119,22 @@ class AmqpConsumer implements InteropAmqpConsumer
     /**
      * @param InteropAmqpMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
+        $bunnyMessage = new BunnyMessage('', $message->getDeliveryTag(), '', '', '', [], '');
         $this->channel->ack($bunnyMessage);
     }
 
     /**
      * @param InteropAmqpMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-        $bunnyMessage = new Message('', $message->getDeliveryTag(), '', '', '', [], '');
+        $bunnyMessage = new BunnyMessage('', $message->getDeliveryTag(), '', '', '', [], '');
         $this->channel->reject($bunnyMessage, $requeue);
     }
 }

@@ -12,8 +12,8 @@ use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\WriteAttributeTrait;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConsumerTest extends TestCase
@@ -23,7 +23,7 @@ class AmqpConsumerTest extends TestCase
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, AmqpConsumer::class);
+        $this->assertClassImplements(Consumer::class, AmqpConsumer::class);
     }
 
     public function testCouldBeConstructedWithContextAndQueueAsArguments()

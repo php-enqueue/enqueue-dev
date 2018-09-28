@@ -11,7 +11,7 @@ use Bunny\Message;
 use Enqueue\AmqpTools\SignalSocketHelper;
 use Interop\Amqp\AmqpConsumer as InteropAmqpConsumer;
 use Interop\Amqp\AmqpSubscriptionConsumer as InteropAmqpSubscriptionConsumer;
-use Interop\Queue\Exception;
+use Interop\Queue\Exception\Exception;
 use Interop\Queue\PsrConsumer;
 
 class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
