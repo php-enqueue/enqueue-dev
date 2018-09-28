@@ -6,10 +6,10 @@ namespace Enqueue\Gps;
 
 use Enqueue\Dsn\Dsn;
 use Google\Cloud\PubSub\PubSubClient;
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class GpsConnectionFactory implements PsrConnectionFactory
+class GpsConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -72,7 +72,7 @@ class GpsConnectionFactory implements PsrConnectionFactory
     /**
      * @return GpsContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         if ($this->config['lazy']) {
             return new GpsContext(function () {

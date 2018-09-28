@@ -7,7 +7,7 @@ use Enqueue\Gps\GpsQueue;
 use Enqueue\Gps\GpsTopic;
 use Google\Cloud\Core\Exception\ConflictException;
 use Google\Cloud\PubSub\PubSubClient;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
 use PHPUnit\Framework\TestCase;
 
 class GpsContextTest extends TestCase

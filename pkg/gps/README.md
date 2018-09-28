@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/gps/d/total.png)](https://packagist.org/packages/enqueue/gps)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/gps/version.png)](https://packagist.org/packages/enqueue/gps)
  
-This is an implementation of PSR specification. It allows you to send and consume message through Google Pub/Sub library.  
+This is an implementation of Queue Interop specification. It allows you to send and consume message through Google Pub/Sub library.  
 
 ## Resources
 

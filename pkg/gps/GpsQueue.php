@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\Gps;
 
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue;
 
-class GpsQueue implements PsrQueue
+class GpsQueue implements Queue
 {
     /**
      * @var string
