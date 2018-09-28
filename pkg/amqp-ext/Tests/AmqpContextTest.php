@@ -12,17 +12,17 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
+use Interop\Queue\Exception\InvalidDestinationException;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementPsrContextInterface()
+    public function testShouldImplementQueueInteropContextInterface()
     {
-        $this->assertClassImplements(PsrContext::class, AmqpContext::class);
+        $this->assertClassImplements(Context::class, AmqpContext::class);
     }
 
     public function testCouldBeConstructedWithExtChannelAsFirstArgument()
