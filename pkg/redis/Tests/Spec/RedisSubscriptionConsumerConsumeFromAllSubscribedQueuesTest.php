@@ -5,7 +5,7 @@ namespace Enqueue\Redis\Tests\Spec;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Test\RedisExtension;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SubscriptionConsumerConsumeFromAllSubscribedQueuesSpec;
 
 /**
@@ -31,7 +31,7 @@ class RedisSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscr
      *
      * {@inheritdoc}
      */
-    protected function createQueue(PsrContext $context, $queueName)
+    protected function createQueue(Context $context, $queueName)
     {
         /** @var RedisDestination $queue */
         $queue = parent::createQueue($context, $queueName);

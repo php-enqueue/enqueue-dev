@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Redis;
 
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\Consumer;
+use Interop\Queue\SubscriptionConsumer;
 
-class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
+class RedisSubscriptionConsumer implements SubscriptionConsumer
 {
     /**
      * @var RedisContext
@@ -52,8 +52,8 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
 
             /**
              * @var string
-             * @var PsrConsumer $consumer
-             * @var callable    $processor
+             * @var Consumer $consumer
+             * @var callable $processor
              */
             $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout ?: 5);
             if ($result) {
@@ -81,7 +81,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
     /**
      * @param RedisConsumer $consumer
      */
-    public function subscribe(PsrConsumer $consumer, callable $callback): void
+    public function subscribe(Consumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof RedisConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));
@@ -102,7 +102,7 @@ class RedisSubscriptionConsumer implements PsrSubscriptionConsumer
     /**
      * @param RedisConsumer $consumer
      */
-    public function unsubscribe(PsrConsumer $consumer): void
+    public function unsubscribe(Consumer $consumer): void
     {
         if (false == $consumer instanceof RedisConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));

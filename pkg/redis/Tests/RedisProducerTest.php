@@ -9,9 +9,9 @@ use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Redis\RedisProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 
 class RedisProducerTest extends TestCase
@@ -20,7 +20,7 @@ class RedisProducerTest extends TestCase
 
     public function testShouldImplementProducerInterface()
     {
-        $this->assertClassImplements(PsrProducer::class, RedisProducer::class);
+        $this->assertClassImplements(Producer::class, RedisProducer::class);
     }
 
     public function testCouldBeConstructedWithRedisAsFirstArgument()
