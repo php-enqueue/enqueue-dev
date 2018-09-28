@@ -90,7 +90,7 @@ class Context
     /**
      * @return InteropContext
      */
-    public function getContext()
+    public function getInteropContext()
     {
         return $this->context;
     }

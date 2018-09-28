@@ -6,10 +6,10 @@ use Enqueue\Bundle\Tests\Functional\App\CustomAppKernel;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Stomp\StompDestination;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PurgeQueueNotSupportedException;
+use Interop\Queue\Context;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -26,8 +26,8 @@ class UseCasesTest extends WebTestCase
 
     public function tearDown()
     {
-        if ($this->getPsrContext()) {
-            $this->getPsrContext()->close();
+        if ($this->getContext()) {
+            $this->getContext()->close();
         }
 
         if (static::$kernel) {
@@ -133,10 +133,10 @@ class UseCasesTest extends WebTestCase
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
-        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
         $message = $consumer->receive(100);
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
         $this->assertSame($expectedBody, $message->getBody());
@@ -153,13 +153,13 @@ class UseCasesTest extends WebTestCase
 
         $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
 
-        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
         $message = $consumer->receive(100);
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $this->assertSame($expectedBody, $message->getBody());
     }
 
@@ -184,7 +184,7 @@ class UseCasesTest extends WebTestCase
             'client-queue-names' => ['test'],
         ]);
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertInstanceOf(Message::class, $processor->message);
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
@@ -209,7 +209,7 @@ class UseCasesTest extends WebTestCase
             'client-queue-names' => ['test'],
         ]);
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertInstanceOf(Message::class, $processor->message);
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
@@ -243,7 +243,7 @@ class UseCasesTest extends WebTestCase
 //            'processor-service' => 'test.message.processor',
 //        ]);
 //
-//        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+//        $this->assertInstanceOf(Message::class, $processor->message);
 //        $this->assertEquals($expectedBody, $processor->message->getBody());
 //    }
 
@@ -268,7 +268,7 @@ class UseCasesTest extends WebTestCase
 
         /** @var DriverInterface $driver */
         $driver = static::$container->get('test_enqueue.client.default.driver');
-        $context = $this->getPsrContext();
+        $context = $this->getContext();
 
         $driver->setupBroker();
 
@@ -279,7 +279,7 @@ class UseCasesTest extends WebTestCase
     }
 
     /**
-     * @return PsrQueue
+     * @return Queue
      */
     protected function getTestQueue()
     {
@@ -289,10 +289,7 @@ class UseCasesTest extends WebTestCase
         return $driver->createQueue('test');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function createKernel(array $options = [])
+    protected static function createKernel(array $options = []): CustomAppKernel
     {
         /** @var CustomAppKernel $kernel */
         $kernel = parent::createKernel($options);
@@ -302,18 +299,12 @@ class UseCasesTest extends WebTestCase
         return $kernel;
     }
 
-    /**
-     * @return ProducerInterface|object
-     */
-    private function getMessageProducer()
+    private function getMessageProducer(): ProducerInterface
     {
         return static::$container->get('enqueue.client.default.producer');
     }
 
-    /**
-     * @return PsrContext|object
-     */
-    private function getPsrContext()
+    private function getContext(): Context
     {
         return static::$container->get('test_enqueue.transport.default.context');
     }

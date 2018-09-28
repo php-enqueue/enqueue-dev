@@ -539,7 +539,7 @@ class QueueConsumerTest extends TestCase
             ->method('onStart')
             ->with($this->isInstanceOf(Context::class))
             ->willReturnCallback(function (Context $context) use ($contextStub) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertNull($context->getConsumer());
                 $this->assertNull($context->getProcessor());
                 $this->assertNull($context->getLogger());
@@ -573,7 +573,7 @@ class QueueConsumerTest extends TestCase
             ->method('onIdle')
             ->with($this->isInstanceOf(Context::class))
             ->willReturnCallback(function (Context $context) use ($contextStub) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
                 $this->assertNull($context->getProcessor());
                 $this->assertNull($context->getConsumer());
@@ -608,7 +608,7 @@ class QueueConsumerTest extends TestCase
             ->method('onBeforeReceive')
             ->with($this->isInstanceOf(Context::class))
             ->willReturnCallback(function (Context $context) use ($contextStub) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
                 $this->assertNull($context->getProcessor());
                 $this->assertNull($context->getConsumer());
@@ -652,7 +652,7 @@ class QueueConsumerTest extends TestCase
                 $processorMock,
                 $expectedMessage
             ) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertSame($consumerStub, $context->getConsumer());
                 $this->assertSame($processorMock, $context->getProcessor());
                 $this->assertSame($expectedMessage, $context->getInteropMessage());
@@ -695,7 +695,7 @@ class QueueConsumerTest extends TestCase
                 $processorMock,
                 $expectedMessage
             ) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertSame($consumerStub, $context->getConsumer());
                 $this->assertSame($processorMock, $context->getProcessor());
                 $this->assertSame($expectedMessage, $context->getInteropMessage());
@@ -738,7 +738,7 @@ class QueueConsumerTest extends TestCase
                 $processorMock,
                 $expectedMessage
             ) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertSame($consumerStub, $context->getConsumer());
                 $this->assertSame($processorMock, $context->getProcessor());
                 $this->assertSame($expectedMessage, $context->getInteropMessage());
@@ -779,7 +779,7 @@ class QueueConsumerTest extends TestCase
             ->method('onInterrupted')
             ->with($this->isInstanceOf(Context::class))
             ->willReturnCallback(function (Context $context) use ($contextStub) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
                 $this->assertNull($context->getConsumer());
                 $this->assertNull($context->getProcessor());
@@ -946,7 +946,7 @@ class QueueConsumerTest extends TestCase
                 $processorMock,
                 $expectedMessage
             ) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertSame($consumerStub, $context->getConsumer());
                 $this->assertSame($processorMock, $context->getProcessor());
                 $this->assertSame($expectedMessage, $context->getInteropMessage());
@@ -1002,7 +1002,7 @@ class QueueConsumerTest extends TestCase
                 $processorMock,
                 $expectedMessage
             ) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertSame($consumerStub, $context->getConsumer());
                 $this->assertSame($processorMock, $context->getProcessor());
                 $this->assertSame($expectedMessage, $context->getInteropMessage());
@@ -1058,7 +1058,7 @@ class QueueConsumerTest extends TestCase
                 $processorMock,
                 $expectedMessage
             ) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertSame($consumerStub, $context->getConsumer());
                 $this->assertSame($processorMock, $context->getProcessor());
                 $this->assertSame($expectedMessage, $context->getInteropMessage());
@@ -1108,7 +1108,7 @@ class QueueConsumerTest extends TestCase
                 $expectedMessage,
                 $expectedException
             ) {
-                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($contextStub, $context->getInteropContext());
                 $this->assertSame($consumerStub, $context->getConsumer());
                 $this->assertSame($processorMock, $context->getProcessor());
                 $this->assertSame($expectedMessage, $context->getInteropMessage());

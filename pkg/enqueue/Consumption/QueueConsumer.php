@@ -320,7 +320,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
         $this->extension->onPreReceived($context);
         if (!$context->getResult()) {
-            $result = $processor->process($message, $context->getContext());
+            $result = $processor->process($message, $context->getInteropContext());
             $context->setResult($result);
         }
 

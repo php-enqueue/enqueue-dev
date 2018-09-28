@@ -35,9 +35,9 @@ class ReplyExtension implements ExtensionInterface
         $replyMessage = clone $result->getReply();
         $replyMessage->setCorrelationId($correlationId);
 
-        $replyQueue = $context->getContext()->createQueue($replyTo);
+        $replyQueue = $context->getInteropContext()->createQueue($replyTo);
 
         $context->getLogger()->debug(sprintf('[ReplyExtension] Send reply to "%s"', $replyTo));
-        $context->getContext()->createProducer()->send($replyQueue, $replyMessage);
+        $context->getInteropContext()->createProducer()->send($replyQueue, $replyMessage);
     }
 }

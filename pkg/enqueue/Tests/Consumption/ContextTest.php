@@ -28,7 +28,7 @@ class ContextTest extends TestCase
 
         $context = new Context($interopContext);
 
-        $this->assertSame($interopContext, $context->getContext());
+        $this->assertSame($interopContext, $context->getInteropContext());
     }
 
     public function testShouldAllowGetMessageConsumerPreviouslySet()
