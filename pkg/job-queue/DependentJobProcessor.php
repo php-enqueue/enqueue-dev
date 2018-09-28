@@ -2,18 +2,18 @@
 
 namespace Enqueue\JobQueue;
 
-use Enqueue\Client\Message;
+use Enqueue\Client\Message as ClientMessage;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\Util\JSON;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 use Psr\Log\LoggerInterface;
 
-class DependentJobProcessor implements PsrProcessor, TopicSubscriberInterface
+class DependentJobProcessor implements Processor, TopicSubscriberInterface
 {
     /**
      * @var JobStorage
@@ -45,7 +45,7 @@ class DependentJobProcessor implements PsrProcessor, TopicSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -98,7 +98,7 @@ class DependentJobProcessor implements PsrProcessor, TopicSubscriberInterface
         }
 
         foreach ($dependentJobs as $dependentJob) {
-            $message = new Message();
+            $message = new ClientMessage();
             $message->setBody($dependentJob['message']);
 
             if (isset($dependentJob['priority'])) {

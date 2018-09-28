@@ -3,9 +3,9 @@
 namespace Enqueue\Sqs\Tests\Spec;
 
 use Enqueue\Sqs\SqsMessage;
-use Interop\Queue\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\MessageSpec;
 
-class SqsMessageTest extends PsrMessageSpec
+class SqsMessageTest extends MessageSpec
 {
     /**
      * {@inheritdoc}

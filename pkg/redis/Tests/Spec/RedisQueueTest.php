@@ -3,12 +3,12 @@
 namespace Enqueue\Redis\Tests\Spec;
 
 use Enqueue\Redis\RedisDestination;
-use Interop\Queue\Spec\PsrQueueSpec;
+use Interop\Queue\Spec\QueueSpec;
 
 /**
  * @group Redis
  */
-class RedisQueueTest extends PsrQueueSpec
+class RedisQueueTest extends QueueSpec
 {
     /**
      * {@inheritdoc}

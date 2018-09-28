@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class SqsConsumer implements PsrConsumer
+class SqsConsumer implements Consumer
 {
     /**
      * @var SqsDestination
@@ -75,7 +75,7 @@ class SqsConsumer implements PsrConsumer
     /**
      * @return SqsDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
@@ -83,7 +83,7 @@ class SqsConsumer implements PsrConsumer
     /**
      * @return SqsMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         $maxLongPollingTime = 20; // 20 is max allowed long polling value
 
@@ -107,7 +107,7 @@ class SqsConsumer implements PsrConsumer
     /**
      * @return SqsMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         return $this->receiveMessage(0);
     }
@@ -115,7 +115,7 @@ class SqsConsumer implements PsrConsumer
     /**
      * @param SqsMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
@@ -128,7 +128,7 @@ class SqsConsumer implements PsrConsumer
     /**
      * @param SqsMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 

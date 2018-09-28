@@ -8,11 +8,11 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
@@ -27,9 +27,9 @@ class AmqpProducerTest extends TestCase
         new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock());
     }
 
-    public function testShouldImplementPsrProducerInterface()
+    public function testShouldImplementProducerInterface()
     {
-        $this->assertClassImplements(PsrProducer::class, AmqpProducer::class);
+        $this->assertClassImplements(Producer::class, AmqpProducer::class);
     }
 
     public function testShouldThrowExceptionWhenDestinationTypeIsInvalid()
@@ -142,19 +142,19 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrMessage
+     * @return \PHPUnit_Framework_MockObject_MockObject|Message
      */
     private function createMessageMock()
     {
-        return $this->createMock(PsrMessage::class);
+        return $this->createMock(Message::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrDestination
+     * @return \PHPUnit_Framework_MockObject_MockObject|Destination
      */
     private function createDestinationMock()
     {
-        return $this->createMock(PsrDestination::class);
+        return $this->createMock(Destination::class);
     }
 
     /**

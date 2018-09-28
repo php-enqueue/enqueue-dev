@@ -3,12 +3,12 @@
 namespace Enqueue\RdKafka\Tests\Spec;
 
 use Enqueue\RdKafka\RdKafkaContext;
-use Interop\Queue\Spec\PsrContextSpec;
+use Interop\Queue\Spec\ContextSpec;
 
 /**
  * @group rdkafka
  */
-class RdKafkaContextTest extends PsrContextSpec
+class RdKafkaContextTest extends ContextSpec
 {
     protected function createContext()
     {

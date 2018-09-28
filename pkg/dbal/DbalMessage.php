@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class DbalMessage implements PsrMessage
+class DbalMessage implements Message
 {
     /**
      * @var string

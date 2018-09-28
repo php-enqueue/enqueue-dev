@@ -11,7 +11,7 @@ use Interop\Amqp\AmqpProducer;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
 use PHPUnit\Framework\TestCase;
 
 class RabbitMqDlxDelayStrategyTest extends TestCase

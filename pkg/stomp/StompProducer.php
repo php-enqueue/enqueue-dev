@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Enqueue\Stomp;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 use Stomp\Client;
 use Stomp\Transport\Message as StompLibMessage;
 
-class StompProducer implements PsrProducer
+class StompProducer implements Producer
 {
     /**
      * @var Client
@@ -31,7 +31,7 @@ class StompProducer implements PsrProducer
      * @param StompDestination $destination
      * @param StompMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message): void
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
@@ -44,7 +44,7 @@ class StompProducer implements PsrProducer
         $this->stomp->send($destination->getQueueName(), $stompMessage);
     }
 
-    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -58,7 +58,7 @@ class StompProducer implements PsrProducer
         return null;
     }
 
-    public function setPriority(int $priority = null): PsrProducer
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -72,7 +72,7 @@ class StompProducer implements PsrProducer
         return null;
     }
 
-    public function setTimeToLive(int $timeToLive = null): PsrProducer
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;

@@ -3,9 +3,9 @@
 namespace Enqueue\Dbal\Tests\Spec;
 
 use Enqueue\Dbal\DbalConnectionFactory;
-use Interop\Queue\Spec\PsrConnectionFactorySpec;
+use Interop\Queue\Spec\ConnectionFactorySpec;
 
-class DbalConnectionFactoryTest extends PsrConnectionFactorySpec
+class DbalConnectionFactoryTest extends ConnectionFactorySpec
 {
     /**
      * {@inheritdoc}

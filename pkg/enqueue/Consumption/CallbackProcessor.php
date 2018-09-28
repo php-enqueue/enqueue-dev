@@ -2,11 +2,11 @@
 
 namespace Enqueue\Consumption;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Processor;
 
-class CallbackProcessor implements PsrProcessor
+class CallbackProcessor implements Processor
 {
     /**
      * @var callable
@@ -24,7 +24,7 @@ class CallbackProcessor implements PsrProcessor
     /**
      * {@inheritdoc}
      */
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(InteropMessage $message, Context $context)
     {
         return call_user_func($this->callback, $message, $context);
     }

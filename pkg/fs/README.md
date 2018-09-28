@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/fs/d/total.png)](https://packagist.org/packages/enqueue/fs)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/fs/version.png)](https://packagist.org/packages/enqueue/fs)
  
-This is an implementation of PSR queue specification. It allows you to send and consume message stored locally in files.
+This is an implementation of Queue Interop specification. It allows you to send and consume message stored locally in files.
 
 ## Resources
 

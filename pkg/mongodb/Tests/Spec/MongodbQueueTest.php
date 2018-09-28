@@ -3,12 +3,12 @@
 namespace Enqueue\Mongodb\Tests\Spec;
 
 use Enqueue\Mongodb\MongodbDestination;
-use Interop\Queue\Spec\PsrQueueSpec;
+use Interop\Queue\Spec\QueueSpec;
 
 /**
  * @group mongodb
  */
-class MongodbQueueTest extends PsrQueueSpec
+class MongodbQueueTest extends QueueSpec
 {
     /**
      * {@inheritdoc}

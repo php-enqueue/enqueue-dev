@@ -4,16 +4,16 @@ namespace Enqueue\AmqpLib\Tests;
 
 use Enqueue\AmqpLib\AmqpContext;
 use Enqueue\AmqpLib\AmqpSubscriptionConsumer;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 
 class AmqpSubscriptionConsumerTest extends TestCase
 {
-    public function testShouldImplementPsrSubscriptionConsumerInterface()
+    public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(AmqpSubscriptionConsumer::class);
 
-        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumer::class));
+        $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
     public function testCouldBeConstructedWithAmqpContextAsFirstArgument()

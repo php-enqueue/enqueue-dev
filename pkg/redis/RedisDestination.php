@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Redis;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class RedisDestination implements PsrQueue, PsrTopic
+class RedisDestination implements Queue, Topic
 {
     /**
      * @var string

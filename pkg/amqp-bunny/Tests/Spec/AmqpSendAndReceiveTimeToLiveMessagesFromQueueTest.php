@@ -4,7 +4,7 @@ namespace Enqueue\AmqpBunny\Tests\Spec;
 
 use Enqueue\AmqpBunny\AmqpConnectionFactory;
 use Enqueue\AmqpBunny\AmqpContext;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SendAndReceiveTimeToLiveMessagesFromQueueSpec;
 
 /**
@@ -27,7 +27,7 @@ class AmqpSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTi
      *
      * @param AmqpContext $context
      */
-    protected function createQueue(PsrContext $context, $queueName)
+    protected function createQueue(Context $context, $queueName)
     {
         $queue = $context->createQueue($queueName);
         $context->declareQueue($queue);

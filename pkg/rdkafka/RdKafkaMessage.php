@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\PsrMessage;
-use RdKafka\Message;
+use Interop\Queue\Message;
+use RdKafka\Message as VendorMessage;
 
-class RdKafkaMessage implements PsrMessage
+class RdKafkaMessage implements Message
 {
     /**
      * @var string
@@ -174,12 +174,12 @@ class RdKafkaMessage implements PsrMessage
         $this->key = $key;
     }
 
-    public function getKafkaMessage(): ?Message
+    public function getKafkaMessage(): ?VendorMessage
     {
         return $this->kafkaMessage;
     }
 
-    public function setKafkaMessage(Message $message = null): void
+    public function setKafkaMessage(VendorMessage $message = null): void
     {
         $this->kafkaMessage = $message;
     }

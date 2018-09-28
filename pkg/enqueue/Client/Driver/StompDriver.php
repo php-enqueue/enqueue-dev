@@ -6,9 +6,9 @@ use Enqueue\Client\Message;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Queue as InteropQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -31,7 +31,7 @@ class StompDriver extends GenericDriver
     /**
      * @return StompMessage
      */
-    public function createTransportMessage(Message $message): PsrMessage
+    public function createTransportMessage(Message $message): InteropMessage
     {
         /** @var StompMessage $transportMessage */
         $transportMessage = parent::createTransportMessage($message);
@@ -43,7 +43,7 @@ class StompDriver extends GenericDriver
     /**
      * @return StompDestination
      */
-    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): InteropQueue
     {
         /** @var StompDestination $queue */
         $queue = parent::doCreateQueue($transportQueueName);
@@ -57,7 +57,7 @@ class StompDriver extends GenericDriver
     /**
      * @return StompDestination
      */
-    protected function createRouterTopic(): PsrDestination
+    protected function createRouterTopic(): Destination
     {
         /** @var StompDestination $topic */
         $topic = $this->doCreateTopic(

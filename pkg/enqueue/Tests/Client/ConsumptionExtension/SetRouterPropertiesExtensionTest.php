@@ -10,7 +10,7 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context as InteropContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -48,10 +48,10 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $message = new NullMessage();
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
         $context->setLogger(new NullLogger());
-        $context->setPsrMessage($message);
-        $context->setPsrQueue(new NullQueue('test.router-queue'));
+        $context->setInteropMessage($message);
+        $context->setInteropQueue(new NullQueue('test.router-queue'));
 
         $extension = new SetRouterPropertiesExtension($driver);
         $extension->onPreReceived($context);
@@ -81,9 +81,9 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $message = new NullMessage();
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
-        $context->setPsrQueue(new NullQueue('test.another-queue'));
+        $context = new Context($this->createContextMock());
+        $context->setInteropMessage($message);
+        $context->setInteropQueue(new NullQueue('test.another-queue'));
 
         $extension = new SetRouterPropertiesExtension($driver);
         $extension->onPreReceived($context);
@@ -102,8 +102,8 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'non-router-processor');
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
+        $context = new Context($this->createContextMock());
+        $context->setInteropMessage($message);
 
         $extension = new SetRouterPropertiesExtension($driver);
         $extension->onPreReceived($context);
@@ -114,11 +114,11 @@ class SetRouterPropertiesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
      */
-    protected function createPsrContextMock()
+    protected function createContextMock(): InteropContext
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(InteropContext::class);
     }
 
     /**

@@ -6,7 +6,7 @@ use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Test\RetryTrait;
 use Enqueue\Test\SqsExtension;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
 
 /**
@@ -50,7 +50,7 @@ class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
      *
      * @param SqsContext $context
      */
-    protected function createTopic(PsrContext $context, $topicName)
+    protected function createTopic(Context $context, $topicName)
     {
         $topicName = $topicName.time();
 

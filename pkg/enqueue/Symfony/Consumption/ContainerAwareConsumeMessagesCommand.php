@@ -6,7 +6,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Consumption\QueueSubscriberInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -65,12 +65,12 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
     {
         $this->setQueueConsumerOptions($this->consumer, $input);
 
-        /** @var PsrProcessor $processor */
+        /** @var Processor $processor */
         $processor = $this->container->get($input->getArgument('processor-service'));
-        if (false == $processor instanceof  PsrProcessor) {
+        if (false == $processor instanceof  Processor) {
             throw new \LogicException(sprintf(
                 'Invalid message processor service given. It must be an instance of %s but %s',
-                PsrProcessor::class,
+                Processor::class,
                 get_class($processor)
             ));
         }

@@ -7,7 +7,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context as InteropContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -36,7 +36,7 @@ class SetupBrokerExtensionTest extends TestCase
             ->with($this->identicalTo($logger))
         ;
 
-        $context = new Context($this->createMock(PsrContext::class));
+        $context = new Context($this->createMock(InteropContext::class));
         $context->setLogger($logger);
 
         $extension = new SetupBrokerExtension($driver);
@@ -54,7 +54,7 @@ class SetupBrokerExtensionTest extends TestCase
             ->with($this->identicalTo($logger))
         ;
 
-        $context = new Context($this->createMock(PsrContext::class));
+        $context = new Context($this->createMock(InteropContext::class));
         $context->setLogger($logger);
 
         $extension = new SetupBrokerExtension($driver);

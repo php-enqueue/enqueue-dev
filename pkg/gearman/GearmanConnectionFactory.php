@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Gearman;
 
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class GearmanConnectionFactory implements PsrConnectionFactory
+class GearmanConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -45,7 +45,7 @@ class GearmanConnectionFactory implements PsrConnectionFactory
     /**
      * @return GearmanContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         return new GearmanContext($this->config);
     }

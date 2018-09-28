@@ -2,12 +2,12 @@
 
 namespace Enqueue\Dbal\Tests\Spec;
 
-use Interop\Queue\Spec\PsrContextSpec;
+use Interop\Queue\Spec\ContextSpec;
 
 /**
  * @group functional
  */
-class DbalContextTest extends PsrContextSpec
+class DbalContextTest extends ContextSpec
 {
     use CreateDbalContextTrait;
 

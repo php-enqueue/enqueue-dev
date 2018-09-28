@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\Fs;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class FsMessage implements PsrMessage, \JsonSerializable
+class FsMessage implements Message, \JsonSerializable
 {
     /**
      * @var string

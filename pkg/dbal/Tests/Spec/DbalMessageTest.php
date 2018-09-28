@@ -3,9 +3,9 @@
 namespace Enqueue\Dbal\Tests\Spec;
 
 use Enqueue\Dbal\DbalMessage;
-use Interop\Queue\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\MessageSpec;
 
-class DbalMessageTest extends PsrMessageSpec
+class DbalMessageTest extends MessageSpec
 {
     /**
      * {@inheritdoc}

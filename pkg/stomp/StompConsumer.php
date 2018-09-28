@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Enqueue\Stomp;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use Stomp\Client;
 use Stomp\Transport\Frame;
 
-class StompConsumer implements PsrConsumer
+class StompConsumer implements Consumer
 {
     const ACK_AUTO = 'auto';
     const ACK_CLIENT = 'client';
@@ -87,12 +87,12 @@ class StompConsumer implements PsrConsumer
     /**
      * @return StompDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
 
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         $this->subscribe();
 
@@ -111,7 +111,7 @@ class StompConsumer implements PsrConsumer
         return null;
     }
 
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         $this->subscribe();
 
@@ -125,7 +125,7 @@ class StompConsumer implements PsrConsumer
     /**
      * @param StompMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
 
@@ -137,7 +137,7 @@ class StompConsumer implements PsrConsumer
     /**
      * @param StompMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
 

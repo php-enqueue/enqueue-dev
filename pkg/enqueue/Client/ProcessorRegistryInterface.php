@@ -2,9 +2,9 @@
 
 namespace Enqueue\Client;
 
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 
 interface ProcessorRegistryInterface
 {
-    public function get(string $processorName): PsrProcessor;
+    public function get(string $processorName): Processor;
 }

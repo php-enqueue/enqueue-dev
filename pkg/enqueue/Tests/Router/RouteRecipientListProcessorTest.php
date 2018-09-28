@@ -9,9 +9,9 @@ use Enqueue\Router\Recipient;
 use Enqueue\Router\RecipientListRouterInterface;
 use Enqueue\Router\RouteRecipientListProcessor;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
+use Interop\Queue\Producer as InteropProducer;
 use PHPUnit\Framework\TestCase;
 
 class RouteRecipientListProcessorTest extends TestCase
@@ -20,7 +20,7 @@ class RouteRecipientListProcessorTest extends TestCase
 
     public function testShouldImplementProcessorInterface()
     {
-        $this->assertClassImplements(PsrProcessor::class, RouteRecipientListProcessor::class);
+        $this->assertClassImplements(Processor::class, RouteRecipientListProcessor::class);
     }
 
     public function testCouldBeConstructedWithRouterAsFirstArgument()
@@ -55,7 +55,7 @@ class RouteRecipientListProcessorTest extends TestCase
             ->with($this->identicalTo($barRecipient->getDestination()), $this->identicalTo($barRecipient->getMessage()))
         ;
 
-        $sessionMock = $this->createPsrContextMock();
+        $sessionMock = $this->createContextMock();
         $sessionMock
             ->expects($this->once())
             ->method('createProducer')
@@ -70,19 +70,19 @@ class RouteRecipientListProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProducer
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropProducer
      */
     protected function createProducerMock()
     {
-        return $this->createMock(PsrProducer::class);
+        return $this->createMock(InteropProducer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
-    protected function createPsrContextMock()
+    protected function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
     /**

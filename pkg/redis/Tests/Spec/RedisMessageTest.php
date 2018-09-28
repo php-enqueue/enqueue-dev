@@ -3,12 +3,12 @@
 namespace Enqueue\Redis\Tests\Spec;
 
 use Enqueue\Redis\RedisMessage;
-use Interop\Queue\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\MessageSpec;
 
 /**
  * @group Redis
  */
-class RedisMessageTest extends PsrMessageSpec
+class RedisMessageTest extends MessageSpec
 {
     /**
      * {@inheritdoc}

@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrTopic;
-use Interop\Queue\SubscriptionConsumerNotSupportedException;
-use Interop\Queue\TemporaryQueueNotSupportedException;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 use MongoDB\Client;
 use MongoDB\Collection;
 
-class MongodbContext implements PsrContext
+class MongodbContext implements Context
 {
     /**
      * @var array
@@ -44,7 +44,7 @@ class MongodbContext implements PsrContext
     /**
      * @return MongodbMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         $message = new MongodbMessage();
         $message->setBody($body);
@@ -57,7 +57,7 @@ class MongodbContext implements PsrContext
     /**
      * @return MongodbDestination
      */
-    public function createTopic(string $name): PsrTopic
+    public function createTopic(string $name): Topic
     {
         return new MongodbDestination($name);
     }
@@ -65,12 +65,12 @@ class MongodbContext implements PsrContext
     /**
      * @return MongodbDestination
      */
-    public function createQueue(string $queueName): PsrQueue
+    public function createQueue(string $queueName): Queue
     {
         return new MongodbDestination($queueName);
     }
 
-    public function createTemporaryQueue(): PsrQueue
+    public function createTemporaryQueue(): Queue
     {
         throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
@@ -78,7 +78,7 @@ class MongodbContext implements PsrContext
     /**
      * @return MongodbProducer
      */
-    public function createProducer(): PsrProducer
+    public function createProducer(): Producer
     {
         return new MongodbProducer($this);
     }
@@ -88,7 +88,7 @@ class MongodbContext implements PsrContext
      *
      * @return MongodbConsumer
      */
-    public function createConsumer(PsrDestination $destination): PsrConsumer
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, MongodbDestination::class);
 
@@ -105,7 +105,7 @@ class MongodbContext implements PsrContext
     {
     }
 
-    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    public function createSubscriptionConsumer(): SubscriptionConsumer
     {
         throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
     }
@@ -113,7 +113,7 @@ class MongodbContext implements PsrContext
     /**
      * @param MongodbDestination $queue
      */
-    public function purgeQueue(PsrQueue $queue): void
+    public function purgeQueue(Queue $queue): void
     {
         $this->getCollection()->deleteMany([
             'queue' => $queue->getQueueName(),

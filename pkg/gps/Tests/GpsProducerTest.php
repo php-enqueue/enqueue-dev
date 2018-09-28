@@ -9,7 +9,7 @@ use Enqueue\Gps\GpsQueue;
 use Enqueue\Gps\GpsTopic;
 use Google\Cloud\PubSub\PubSubClient;
 use Google\Cloud\PubSub\Topic;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
 use PHPUnit\Framework\TestCase;
 
 class GpsProducerTest extends TestCase

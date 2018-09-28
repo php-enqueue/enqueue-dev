@@ -5,7 +5,7 @@ namespace Enqueue\AmqpLib\Tests\Spec;
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Enqueue\AmqpLib\AmqpContext;
 use Interop\Amqp\AmqpQueue;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SubscriptionConsumerConsumeFromAllSubscribedQueuesSpec;
 
 /**
@@ -33,7 +33,7 @@ class AmqpSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscri
      *
      * {@inheritdoc}
      */
-    protected function createQueue(PsrContext $context, $queueName)
+    protected function createQueue(Context $context, $queueName)
     {
         /** @var AmqpQueue $queue */
         $queue = parent::createQueue($context, $queueName);

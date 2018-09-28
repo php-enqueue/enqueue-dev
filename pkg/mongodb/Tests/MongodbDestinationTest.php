@@ -4,9 +4,9 @@ namespace Enqueue\Mongodb\Tests;
 
 use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Destination;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
 /**
  * @group mongodb
@@ -17,17 +17,17 @@ class MongodbDestinationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementDestinationInterface()
     {
-        $this->assertClassImplements(PsrDestination::class, MongodbDestination::class);
+        $this->assertClassImplements(Destination::class, MongodbDestination::class);
     }
 
     public function testShouldImplementTopicInterface()
     {
-        $this->assertClassImplements(PsrTopic::class, MongodbDestination::class);
+        $this->assertClassImplements(Topic::class, MongodbDestination::class);
     }
 
     public function testShouldImplementQueueInterface()
     {
-        $this->assertClassImplements(PsrQueue::class, MongodbDestination::class);
+        $this->assertClassImplements(Queue::class, MongodbDestination::class);
     }
 
     public function testShouldReturnTopicAndQueuePreviouslySetInConstructor()

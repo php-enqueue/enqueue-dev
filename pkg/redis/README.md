@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/redis/d/total.png)](https://packagist.org/packages/enqueue/redis)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/redis/version.png)](https://packagist.org/packages/enqueue/redis)
  
-This is an implementation of PSR specification. It allows you to send and consume message with Redis store as a broker.  
+This is an implementation of Queue Interop specification. It allows you to send and consume message with Redis store as a broker.  
 
 ## Resources
 

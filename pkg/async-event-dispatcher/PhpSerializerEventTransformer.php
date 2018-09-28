@@ -2,21 +2,21 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
 use Symfony\Component\EventDispatcher\Event;
 
 class PhpSerializerEventTransformer implements EventTransformer
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     private $context;
 
     /**
-     * @param PsrContext $context
+     * @param Context $context
      */
-    public function __construct(PsrContext $context)
+    public function __construct(Context $context)
     {
         $this->context = $context;
     }
@@ -32,7 +32,7 @@ class PhpSerializerEventTransformer implements EventTransformer
     /**
      * {@inheritdoc}
      */
-    public function toEvent($eventName, PsrMessage $message)
+    public function toEvent($eventName, Message $message)
     {
         return unserialize($message->getBody());
     }

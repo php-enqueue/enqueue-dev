@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Redis;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class RedisConsumer implements PsrConsumer
+class RedisConsumer implements Consumer
 {
     /**
      * @var RedisDestination
@@ -30,7 +30,7 @@ class RedisConsumer implements PsrConsumer
     /**
      * @return RedisDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
@@ -38,7 +38,7 @@ class RedisConsumer implements PsrConsumer
     /**
      * @return RedisMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         $timeout = (int) ($timeout / 1000);
         if (empty($timeout)) {
@@ -59,7 +59,7 @@ class RedisConsumer implements PsrConsumer
     /**
      * @return RedisMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         if ($result = $this->getRedis()->rpop($this->queue->getName())) {
             return RedisMessage::jsonUnserialize($result->getMessage());
@@ -71,7 +71,7 @@ class RedisConsumer implements PsrConsumer
     /**
      * @param RedisMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         // do nothing. redis transport always works in auto ack mode
     }
@@ -79,7 +79,7 @@ class RedisConsumer implements PsrConsumer
     /**
      * @param RedisMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 

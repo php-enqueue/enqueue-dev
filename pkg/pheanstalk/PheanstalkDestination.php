@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class PheanstalkDestination implements PsrQueue, PsrTopic
+class PheanstalkDestination implements Queue, Topic
 {
     /**
      * @var string

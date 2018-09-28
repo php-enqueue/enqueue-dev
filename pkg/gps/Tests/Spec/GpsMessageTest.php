@@ -3,9 +3,9 @@
 namespace Enqueue\Gps\Tests\Spec;
 
 use Enqueue\Gps\GpsMessage;
-use Interop\Queue\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\MessageSpec;
 
-class GpsMessageTest extends PsrMessageSpec
+class GpsMessageTest extends MessageSpec
 {
     protected function createMessage()
     {

@@ -6,7 +6,7 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message as InteropMessage;
 use Psr\Log\LoggerInterface;
 
 class LoggerExtension implements ExtensionInterface
@@ -59,13 +59,13 @@ class LoggerExtension implements ExtensionInterface
             case Result::REJECT:
             case Result::REQUEUE:
                 if ($result->getReason()) {
-                    $this->logger->error($result->getReason(), $this->messageToLogContext($context->getPsrMessage()));
+                    $this->logger->error($result->getReason(), $this->messageToLogContext($context->getInteropMessage()));
                 }
 
                 break;
             case Result::ACK:
                 if ($result->getReason()) {
-                    $this->logger->info($result->getReason(), $this->messageToLogContext($context->getPsrMessage()));
+                    $this->logger->info($result->getReason(), $this->messageToLogContext($context->getInteropMessage()));
                 }
 
                 break;
@@ -75,11 +75,11 @@ class LoggerExtension implements ExtensionInterface
     }
 
     /**
-     * @param PsrMessage $message
+     * @param InteropMessage $message
      *
      * @return array
      */
-    private function messageToLogContext(PsrMessage $message)
+    private function messageToLogContext(InteropMessage $message)
     {
         return [
             'body' => $message->getBody(),

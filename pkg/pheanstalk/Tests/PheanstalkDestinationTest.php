@@ -4,22 +4,22 @@ namespace Enqueue\Pheanstalk\Tests;
 
 use Enqueue\Pheanstalk\PheanstalkDestination;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 use PHPUnit\Framework\TestCase;
 
 class PheanstalkDestinationTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementPsrQueueInterface()
+    public function testShouldImplementQueueInterface()
     {
-        $this->assertClassImplements(PsrQueue::class, PheanstalkDestination::class);
+        $this->assertClassImplements(Queue::class, PheanstalkDestination::class);
     }
 
-    public function testShouldImplementPsrTopicInterface()
+    public function testShouldImplementTopicInterface()
     {
-        $this->assertClassImplements(PsrTopic::class, PheanstalkDestination::class);
+        $this->assertClassImplements(Topic::class, PheanstalkDestination::class);
     }
 
     public function testShouldAllowGetNameSetInConstructor()

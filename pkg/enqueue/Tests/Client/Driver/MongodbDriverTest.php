@@ -11,11 +11,11 @@ use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Mongodb\MongodbProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 
 class MongodbDriverTest extends \PHPUnit_Framework_TestCase
 {
@@ -65,7 +65,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(MongodbContext::class);
     }
@@ -73,7 +73,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(MongodbProducer::class);
     }
@@ -81,7 +81,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbDestination
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new MongodbDestination($name);
     }
@@ -89,7 +89,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbDestination
      */
-    protected function createTopic(string $name): PsrTopic
+    protected function createTopic(string $name): InteropTopic
     {
         return new MongodbDestination($name);
     }
@@ -97,7 +97,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new MongodbMessage();
     }

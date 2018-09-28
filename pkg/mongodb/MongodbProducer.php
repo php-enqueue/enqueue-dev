@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\Exception;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\Exception;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 
-class MongodbProducer implements PsrProducer
+class MongodbProducer implements Producer
 {
     /**
      * @var int|null
@@ -42,7 +42,7 @@ class MongodbProducer implements PsrProducer
      * @param MongodbDestination $destination
      * @param MongodbMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message): void
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, MongodbDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
@@ -117,7 +117,7 @@ class MongodbProducer implements PsrProducer
     /**
      * @return self
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
@@ -132,7 +132,7 @@ class MongodbProducer implements PsrProducer
     /**
      * @return self
      */
-    public function setPriority(int $priority = null): PsrProducer
+    public function setPriority(int $priority = null): Producer
     {
         $this->priority = $priority;
 
@@ -147,7 +147,7 @@ class MongodbProducer implements PsrProducer
     /**
      * @return self
      */
-    public function setTimeToLive(int $timeToLive = null): PsrProducer
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

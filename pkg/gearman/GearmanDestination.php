@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Gearman;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class GearmanDestination implements PsrQueue, PsrTopic
+class GearmanDestination implements Queue, Topic
 {
     /**
      * @var string

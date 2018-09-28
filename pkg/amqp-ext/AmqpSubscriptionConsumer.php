@@ -3,7 +3,7 @@
 namespace Enqueue\AmqpExt;
 
 use Interop\Amqp\AmqpSubscriptionConsumer as InteropAmqpSubscriptionConsumer;
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\Consumer;
 
 class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
 {
@@ -83,7 +83,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
     /**
      * @param AmqpConsumer $consumer
      */
-    public function subscribe(PsrConsumer $consumer, callable $callback): void
+    public function subscribe(Consumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
@@ -106,7 +106,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
     /**
      * @param AmqpConsumer $consumer
      */
-    public function unsubscribe(PsrConsumer $consumer): void
+    public function unsubscribe(Consumer $consumer): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));

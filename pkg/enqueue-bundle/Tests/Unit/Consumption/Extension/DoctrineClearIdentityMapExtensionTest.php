@@ -5,9 +5,9 @@ namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 use Doctrine\Common\Persistence\ObjectManager;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
 use Enqueue\Consumption\Context;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -34,7 +34,7 @@ class DoctrineClearIdentityMapExtensionTest extends TestCase
             ->will($this->returnValue(['manager-name' => $manager]))
         ;
 
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
         $context->getLogger()
             ->expects($this->once())
             ->method('debug')
@@ -45,15 +45,12 @@ class DoctrineClearIdentityMapExtensionTest extends TestCase
         $extension->onPreReceived($context);
     }
 
-    /**
-     * @return Context
-     */
-    protected function createPsrContext()
+    protected function createContext(): Context
     {
-        $context = new Context($this->createMock(PsrContext::class));
+        $context = new Context($this->createMock(InteropContext::class));
         $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setPsrConsumer($this->createMock(PsrConsumer::class));
-        $context->setPsrProcessor($this->createMock(PsrProcessor::class));
+        $context->setConsumer($this->createMock(Consumer::class));
+        $context->setProcessor($this->createMock(Processor::class));
 
         return $context;
     }
@@ -61,7 +58,7 @@ class DoctrineClearIdentityMapExtensionTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|RegistryInterface
      */
-    protected function createRegistryMock()
+    protected function createRegistryMock(): RegistryInterface
     {
         return $this->createMock(RegistryInterface::class);
     }
@@ -69,7 +66,7 @@ class DoctrineClearIdentityMapExtensionTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ObjectManager
      */
-    protected function createManagerMock()
+    protected function createManagerMock(): ObjectManager
     {
         return $this->createMock(ObjectManager::class);
     }

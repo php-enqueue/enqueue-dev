@@ -3,13 +3,13 @@
 namespace Enqueue\Mongodb\Tests\Spec;
 
 use Enqueue\Test\MongodbExtensionTrait;
-use Interop\Queue\Spec\PsrProducerSpec;
+use Interop\Queue\Spec\ProducerSpec;
 
 /**
  * @group functional
  * @group mongodb
  */
-class MongodbProducerTest extends PsrProducerSpec
+class MongodbProducerTest extends ProducerSpec
 {
     use MongodbExtensionTrait;
 

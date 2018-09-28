@@ -5,7 +5,7 @@ namespace Enqueue\AmqpExt\Tests\Spec;
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Interop\Amqp\AmqpContext;
 use Interop\Amqp\AmqpQueue;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SubscriptionConsumerStopOnFalseSpec;
 
 /**
@@ -33,7 +33,7 @@ class AmqpSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopOn
      *
      * {@inheritdoc}
      */
-    protected function createQueue(PsrContext $context, $queueName)
+    protected function createQueue(Context $context, $queueName)
     {
         /** @var AmqpQueue $queue */
         $queue = parent::createQueue($context, $queueName);

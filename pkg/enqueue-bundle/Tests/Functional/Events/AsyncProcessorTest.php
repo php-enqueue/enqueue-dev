@@ -10,7 +10,7 @@ use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Util\JSON;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -45,7 +45,7 @@ class AsyncProcessorTest extends WebTestCase
 
         $message = new NullMessage();
 
-        $this->assertEquals(PsrProcessor::REJECT, $processor->process($message, new NullContext()));
+        $this->assertEquals(Processor::REJECT, $processor->process($message, new NullContext()));
     }
 
     public function testShouldRejectIfMessageDoesNotContainTransformerNameProperty()
@@ -56,7 +56,7 @@ class AsyncProcessorTest extends WebTestCase
         $message = new NullMessage();
         $message->setProperty('event_name', 'anEventName');
 
-        $this->assertEquals(PsrProcessor::REJECT, $processor->process($message, new NullContext()));
+        $this->assertEquals(Processor::REJECT, $processor->process($message, new NullContext()));
     }
 
     public function testShouldCallRealListener()
@@ -72,7 +72,7 @@ class AsyncProcessorTest extends WebTestCase
             'arguments' => ['fooArg' => 'fooVal'],
         ]));
 
-        $this->assertEquals(PsrProcessor::ACK, $processor->process($message, new NullContext()));
+        $this->assertEquals(Processor::ACK, $processor->process($message, new NullContext()));
 
         /** @var TestAsyncListener $listener */
         $listener = static::$container->get('test_async_listener');
@@ -103,7 +103,7 @@ class AsyncProcessorTest extends WebTestCase
             'arguments' => ['fooArg' => 'fooVal'],
         ]));
 
-        $this->assertEquals(PsrProcessor::ACK, $processor->process($message, new NullContext()));
+        $this->assertEquals(Processor::ACK, $processor->process($message, new NullContext()));
 
         /** @var TestAsyncSubscriber $subscriber */
         $subscriber = static::$container->get('test_async_subscriber');

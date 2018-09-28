@@ -4,7 +4,7 @@ namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
 
 /**
@@ -27,7 +27,7 @@ class AmqpSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFrom
      *
      * @param AmqpContext $context
      */
-    protected function createQueue(PsrContext $context, $queueName)
+    protected function createQueue(Context $context, $queueName)
     {
         $queue = $context->createQueue($queueName);
         $context->declareQueue($queue);

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkConnectionFactory implements PsrConnectionFactory
+class PheanstalkConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -54,7 +54,7 @@ class PheanstalkConnectionFactory implements PsrConnectionFactory
     /**
      * @return PheanstalkContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         return new PheanstalkContext($this->establishConnection());
     }
