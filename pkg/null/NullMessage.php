@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class NullMessage implements PsrMessage
+class NullMessage implements Message
 {
     /**
      * @var string

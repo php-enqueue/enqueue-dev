@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Destination;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class NullConsumer implements PsrConsumer
+class NullConsumer implements Consumer
 {
     /**
-     * @var PsrDestination
+     * @var Destination
      */
     private $queue;
 
-    public function __construct(PsrDestination $queue)
+    public function __construct(Destination $queue)
     {
         $this->queue = $queue;
     }
 
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
@@ -29,7 +29,7 @@ class NullConsumer implements PsrConsumer
     /**
      * @return NullMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         return null;
     }
@@ -37,16 +37,16 @@ class NullConsumer implements PsrConsumer
     /**
      * @return NullMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         return null;
     }
 
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
     }
 
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
     }
 }

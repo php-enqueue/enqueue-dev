@@ -4,7 +4,7 @@ namespace Enqueue\Null\Tests;
 
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 
 class NullMessageTest extends TestCase
@@ -13,7 +13,7 @@ class NullMessageTest extends TestCase
 
     public function testShouldImplementMessageInterface()
     {
-        $this->assertClassImplements(PsrMessage::class, NullMessage::class);
+        $this->assertClassImplements(Message::class, NullMessage::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
