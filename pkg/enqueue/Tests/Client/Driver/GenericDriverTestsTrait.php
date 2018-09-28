@@ -200,7 +200,7 @@ trait GenericDriverTestsTrait
         $transportMessage->setProperty('X-Enqueue-Content-Type', 'theContentType');
         $transportMessage->setProperty('X-Enqueue-Expire', '22');
         $transportMessage->setProperty('X-Enqueue-Priority', MessagePriority::HIGH);
-        $transportMessage->setProperty('X-Enqueue-Delay', '44');
+        $transportMessage->setProperty('enqueue.delay', '44');
         $transportMessage->setMessageId('theMessageId');
         $transportMessage->setTimestamp(1000);
         $transportMessage->setReplyTo('theReplyTo');
@@ -1124,7 +1124,7 @@ trait GenericDriverTestsTrait
             'X-Enqueue-Content-Type' => 'ContentType',
             'X-Enqueue-Priority' => MessagePriority::HIGH,
             'X-Enqueue-Expire' => 123,
-            'X-Enqueue-Delay' => 345,
+            'enqueue.delay' => 345,
         ], $transportMessage->getProperties());
         $this->assertSame('theMessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());
@@ -1143,7 +1143,7 @@ trait GenericDriverTestsTrait
             'X-Enqueue-Content-Type' => 'theContentType',
             'X-Enqueue-Expire' => '22',
             'X-Enqueue-Priority' => MessagePriority::HIGH,
-            'X-Enqueue-Delay' => '44',
+            'enqueue.delay' => '44',
         ], $clientMessage->getProperties());
         $this->assertSame('theMessageId', $clientMessage->getMessageId());
         $this->assertSame(22, $clientMessage->getExpire());

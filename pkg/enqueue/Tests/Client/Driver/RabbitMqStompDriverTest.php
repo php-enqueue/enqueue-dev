@@ -543,7 +543,7 @@ class RabbitMqStompDriverTest extends TestCase
             'X-Enqueue-Content-Type' => 'ContentType',
             'X-Enqueue-Priority' => MessagePriority::HIGH,
             'X-Enqueue-Expire' => 123,
-            'X-Enqueue-Delay' => 345,
+            'enqueue.delay' => 345,
         ], $transportMessage->getProperties());
         $this->assertSame('theMessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());

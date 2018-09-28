@@ -96,7 +96,7 @@ class GenericDriver implements DriverInterface
 
         $producer = $this->context->createProducer();
 
-        if (null !== $delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
+        if (null !== $delay = $transportMessage->getProperty(Config::DELAY_PARAMETER)) {
             $producer->setDeliveryDelay($delay * 1000);
         }
 
@@ -161,7 +161,7 @@ class GenericDriver implements DriverInterface
         }
 
         if ($delay = $clientMessage->getDelay()) {
-            $transportMessage->setProperty('X-Enqueue-Delay', $delay);
+            $transportMessage->setProperty(Config::DELAY_PARAMETER, $delay);
         }
 
         return $transportMessage;
@@ -187,7 +187,7 @@ class GenericDriver implements DriverInterface
             $clientMessage->setPriority($priority);
         }
 
-        if ($delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
+        if ($delay = $transportMessage->getProperty(Config::DELAY_PARAMETER)) {
             $clientMessage->setDelay((int) $delay);
         }
 
