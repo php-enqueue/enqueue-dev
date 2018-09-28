@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class MongodbMessage implements PsrMessage
+class MongodbMessage implements Message
 {
     /**
      * @var string

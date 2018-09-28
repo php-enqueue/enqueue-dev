@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class MongodbDestination implements PsrTopic, PsrQueue
+class MongodbDestination implements Topic, Queue
 {
     /**
      * @var string

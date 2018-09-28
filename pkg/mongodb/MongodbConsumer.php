@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class MongodbConsumer implements PsrConsumer
+class MongodbConsumer implements Consumer
 {
     /**
      * @var MongodbContext
@@ -53,7 +53,7 @@ class MongodbConsumer implements PsrConsumer
     /**
      * @return MongodbDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
@@ -61,7 +61,7 @@ class MongodbConsumer implements PsrConsumer
     /**
      * @return MongodbMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         $timeout /= 1000;
         $startAt = microtime(true);
@@ -88,7 +88,7 @@ class MongodbConsumer implements PsrConsumer
     /**
      * @return MongodbMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         return $this->receiveMessage();
     }
@@ -96,7 +96,7 @@ class MongodbConsumer implements PsrConsumer
     /**
      * @param MongodbMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         // does nothing
     }
@@ -104,7 +104,7 @@ class MongodbConsumer implements PsrConsumer
     /**
      * @param MongodbMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
 
