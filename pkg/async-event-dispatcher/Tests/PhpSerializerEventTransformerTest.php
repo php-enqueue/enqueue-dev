@@ -6,8 +6,8 @@ use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -34,7 +34,7 @@ class PhpSerializerEventTransformerTest extends TestCase
 
         $message = $transformer->toMessage('fooEvent', $event);
 
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $this->assertEquals($expectedBody, $message->getBody());
     }
 
@@ -52,11 +52,11 @@ class PhpSerializerEventTransformerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
     private function createContextStub()
     {
-        $context = $this->createMock(PsrContext::class);
+        $context = $this->createMock(Context::class);
         $context
             ->expects($this->any())
             ->method('createMessage')

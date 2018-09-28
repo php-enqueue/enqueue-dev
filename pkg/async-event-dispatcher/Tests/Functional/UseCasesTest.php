@@ -8,9 +8,9 @@ use Enqueue\AsyncEventDispatcher\AsyncProcessor;
 use Enqueue\AsyncEventDispatcher\SimpleRegistry;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncEventTransformer;
 use Enqueue\Fs\FsConnectionFactory;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
+use Interop\Queue\Queue;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,12 +23,12 @@ use Symfony\Component\Filesystem\Filesystem;
 class UseCasesTest extends TestCase
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     protected $context;
 
     /**
-     * @var PsrQueue
+     * @var Queue
      */
     protected $queue;
 
@@ -184,13 +184,13 @@ class UseCasesTest extends TestCase
             $result = $this->asyncProcessor->process($message, $this->context);
 
             switch ((string) $result) {
-                case PsrProcessor::ACK:
+                case Processor::ACK:
                     $consumer->acknowledge($message);
                     break;
-                case PsrProcessor::REJECT:
+                case Processor::REJECT:
                     $consumer->reject($message);
                     break;
-                case PsrProcessor::REQUEUE:
+                case Processor::REQUEUE:
                     $consumer->reject($message, true);
                     break;
                 default:
