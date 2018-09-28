@@ -7,16 +7,16 @@ use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Producer as InteropProducer;
 use PHPUnit\Framework\TestCase;
 
 class RpcClientTest extends TestCase
 {
-    public function testCouldBeConstructedWithPsrContextAsFirstArgument()
+    public function testCouldBeConstructedWithContextAsFirstArgument()
     {
-        new RpcClient($this->createPsrContextMock());
+        new RpcClient($this->createContextMock());
     }
 
     public function testShouldSetReplyToIfNotSet()
@@ -80,14 +80,14 @@ class RpcClientTest extends TestCase
         $message->setCorrelationId('theCorrelationId');
         $message->setReplyTo('theReplyTo');
 
-        $producer = $this->createPsrProducerMock();
+        $producer = $this->createInteropProducerMock();
         $producer
             ->expects($this->once())
             ->method('send')
             ->with($this->identicalTo($queue), $this->identicalTo($message))
         ;
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createProducer')
@@ -110,7 +110,7 @@ class RpcClientTest extends TestCase
         $receivedMessage = new NullMessage();
         $receivedMessage->setCorrelationId('theCorrelationId');
 
-        $consumer = $this->createPsrConsumerMock();
+        $consumer = $this->createConsumerMock();
         $consumer
             ->expects($this->once())
             ->method('receive')
@@ -127,11 +127,11 @@ class RpcClientTest extends TestCase
             ->method('reject')
         ;
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createProducer')
-            ->willReturn($this->createPsrProducerMock())
+            ->willReturn($this->createInteropProducerMock())
         ;
         $context
             ->expects($this->atLeastOnce())
@@ -162,7 +162,7 @@ class RpcClientTest extends TestCase
         $receivedMessage = new NullMessage();
         $receivedMessage->setCorrelationId('theCorrelationId');
 
-        $consumer = $this->createPsrConsumerMock();
+        $consumer = $this->createConsumerMock();
         $consumer
             ->expects($this->once())
             ->method('receiveNoWait')
@@ -178,11 +178,11 @@ class RpcClientTest extends TestCase
             ->method('reject')
         ;
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createProducer')
-            ->willReturn($this->createPsrProducerMock())
+            ->willReturn($this->createInteropProducerMock())
         ;
         $context
             ->expects($this->atLeastOnce())
@@ -213,14 +213,14 @@ class RpcClientTest extends TestCase
         $receivedMessage = new NullMessage();
         $receivedMessage->setCorrelationId('theCorrelationId');
 
-        $consumer = $this->createPsrConsumerMock();
+        $consumer = $this->createConsumerMock();
         $consumer
             ->expects($this->once())
             ->method('receive')
             ->willReturn($receivedMessage)
         ;
 
-        $context = $this->getMockBuilder(PsrContext::class)
+        $context = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->setMethods(['deleteQueue'])
             ->getMockForAbstractClass()
@@ -229,7 +229,7 @@ class RpcClientTest extends TestCase
         $context
             ->expects($this->once())
             ->method('createProducer')
-            ->willReturn($this->createPsrProducerMock())
+            ->willReturn($this->createInteropProducerMock())
         ;
         $context
             ->expects($this->atLeastOnce())
@@ -267,18 +267,18 @@ class RpcClientTest extends TestCase
         $receivedMessage = new NullMessage();
         $receivedMessage->setCorrelationId('theCorrelationId');
 
-        $consumer = $this->createPsrConsumerMock();
+        $consumer = $this->createConsumerMock();
         $consumer
             ->expects($this->once())
             ->method('receive')
             ->willReturn($receivedMessage)
         ;
 
-        $context = $this->createPsrContextMock();
+        $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('createProducer')
-            ->willReturn($this->createPsrProducerMock())
+            ->willReturn($this->createInteropProducerMock())
         ;
         $context
             ->expects($this->once())
@@ -329,26 +329,26 @@ class RpcClientTest extends TestCase
     }
 
     /**
-     * @return PsrContext|\PHPUnit_Framework_MockObject_MockObject|PsrProducer
+     * @return Context|\PHPUnit_Framework_MockObject_MockObject|InteropProducer
      */
-    private function createPsrProducerMock()
+    private function createInteropProducerMock()
     {
-        return $this->createMock(PsrProducer::class);
+        return $this->createMock(InteropProducer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
      */
-    private function createPsrConsumerMock()
+    private function createConsumerMock()
     {
-        return $this->createMock(PsrConsumer::class);
+        return $this->createMock(Consumer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
-    private function createPsrContextMock()
+    private function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 }

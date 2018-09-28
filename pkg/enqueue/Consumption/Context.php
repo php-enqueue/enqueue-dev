@@ -3,29 +3,29 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Exception\IllegalContextModificationException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Processor;
 use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 
 class Context
 {
     /**
-     * @var PsrContext
+     * @var InteropContext
      */
-    private $psrContext;
+    private $context;
 
     /**
-     * @var PsrConsumer
+     * @var Consumer
      */
-    private $psrConsumer;
+    private $consumer;
 
     /**
-     * @var PsrProcessor
+     * @var Processor
      */
-    private $psrProcessor;
+    private $processor;
 
     /**
      * @var LoggerInterface
@@ -33,9 +33,9 @@ class Context
     private $logger;
 
     /**
-     * @var PsrMessage
+     * @var InteropMessage
      */
-    private $psrMessage;
+    private $interopMessage;
 
     /**
      * @var \Exception
@@ -58,81 +58,81 @@ class Context
     private $executionInterrupted;
 
     /**
-     * @param PsrContext $psrContext
+     * @param InteropContext $interopContext
      */
-    public function __construct(PsrContext $psrContext)
+    public function __construct(InteropContext $interopContext)
     {
-        $this->psrContext = $psrContext;
+        $this->context = $interopContext;
 
         $this->executionInterrupted = false;
     }
 
     /**
-     * @return PsrMessage
+     * @return InteropMessage
      */
-    public function getPsrMessage()
+    public function getInteropMessage()
     {
-        return $this->psrMessage;
+        return $this->interopMessage;
     }
 
     /**
-     * @param PsrMessage $psrMessage
+     * @param InteropMessage $interopMessage
      */
-    public function setPsrMessage(PsrMessage $psrMessage)
+    public function setInteropMessage(InteropMessage $interopMessage)
     {
-        if ($this->psrMessage) {
+        if ($this->interopMessage) {
             throw new IllegalContextModificationException('The message could be set once');
         }
 
-        $this->psrMessage = $psrMessage;
+        $this->interopMessage = $interopMessage;
     }
 
     /**
-     * @return PsrContext
+     * @return InteropContext
      */
-    public function getPsrContext()
+    public function getContext()
     {
-        return $this->psrContext;
+        return $this->context;
     }
 
     /**
-     * @return PsrConsumer
+     * @return Consumer
      */
-    public function getPsrConsumer()
+    public function getConsumer()
     {
-        return $this->psrConsumer;
+        return $this->consumer;
     }
 
     /**
-     * @param PsrConsumer $psrConsumer
+     * @param Consumer $consumer
      */
-    public function setPsrConsumer(PsrConsumer $psrConsumer)
+    public function setConsumer(Consumer $consumer)
     {
-        if ($this->psrConsumer) {
+        if ($this->consumer) {
             throw new IllegalContextModificationException('The message consumer could be set once');
         }
 
-        $this->psrConsumer = $psrConsumer;
+        $this->consumer = $consumer;
     }
 
     /**
-     * @return PsrProcessor
+     * @return Processor
      */
-    public function getPsrProcessor()
+    public function getProcessor()
     {
-        return $this->psrProcessor;
+        return $this->processor;
     }
 
     /**
-     * @param PsrProcessor $psrProcessor
+     * @param Processor $processor
      */
-    public function setPsrProcessor(PsrProcessor $psrProcessor)
+    public function setProcessor(Processor $processor)
     {
-        if ($this->psrProcessor) {
+        if ($this->processor) {
             throw new IllegalContextModificationException('The message processor could be set once');
         }
 
-        $this->psrProcessor = $psrProcessor;
+        $this->processor = $processor;
     }
 
     /**

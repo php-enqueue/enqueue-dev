@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Enqueue\Client;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\PsrQueue;
 use Psr\Log\LoggerInterface;
 
 interface DriverInterface
 {
-    public function createTransportMessage(Message $message): PsrMessage;
+    public function createTransportMessage(Message $message): InteropMessage;
 
-    public function createClientMessage(PsrMessage $message): Message;
+    public function createClientMessage(InteropMessage $message): Message;
 
     public function sendToRouter(Message $message): void;
 
@@ -31,7 +31,7 @@ interface DriverInterface
 
     public function getConfig(): Config;
 
-    public function getContext(): PsrContext;
+    public function getContext(): Context;
 
     public function getRouteCollection(): RouteCollection;
 }

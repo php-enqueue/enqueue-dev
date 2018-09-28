@@ -5,7 +5,7 @@ namespace Enqueue\Tests\Client;
 use Enqueue\Client\ArrayProcessorRegistry;
 use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 
 class ArrayProcessorRegistryTest extends TestCase
@@ -51,10 +51,10 @@ class ArrayProcessorRegistryTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
      */
     protected function createProcessorMock()
     {
-        return $this->createMock(PsrProcessor::class);
+        return $this->createMock(Processor::class);
     }
 }

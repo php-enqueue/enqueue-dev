@@ -11,9 +11,9 @@ use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Mongodb\MongodbProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 
@@ -65,7 +65,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(MongodbContext::class);
     }
@@ -73,7 +73,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(MongodbProducer::class);
     }
@@ -97,7 +97,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new MongodbMessage();
     }

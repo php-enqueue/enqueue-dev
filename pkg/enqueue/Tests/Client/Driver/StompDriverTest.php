@@ -13,9 +13,9 @@ use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use PHPUnit\Framework\TestCase;
@@ -108,7 +108,7 @@ class StompDriverTest extends TestCase
     /**
      * @return StompContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(StompContext::class);
     }
@@ -116,7 +116,7 @@ class StompDriverTest extends TestCase
     /**
      * @return StompProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(StompProducer::class);
     }
@@ -148,12 +148,12 @@ class StompDriverTest extends TestCase
     /**
      * @return StompMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new StompMessage();
     }
 
-    protected function assertTransportMessage(PsrMessage $transportMessage): void
+    protected function assertTransportMessage(InteropMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertEquals([

@@ -11,9 +11,9 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 
@@ -61,7 +61,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(DbalContext::class);
     }
@@ -69,7 +69,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(DbalProducer::class);
     }
@@ -93,7 +93,7 @@ class DbalDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return DbalMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new DbalMessage();
     }

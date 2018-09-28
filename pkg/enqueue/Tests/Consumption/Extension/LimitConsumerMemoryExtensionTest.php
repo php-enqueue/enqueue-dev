@@ -4,9 +4,9 @@ namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Extension\LimitConsumerMemoryExtension;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -26,7 +26,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testOnIdleShouldInterruptExecutionIfMemoryLimitReached()
     {
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
         $context->getLogger()
             ->expects($this->once())
             ->method('debug')
@@ -45,7 +45,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testOnPostReceivedShouldInterruptExecutionIfMemoryLimitReached()
     {
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
         $context->getLogger()
             ->expects($this->once())
             ->method('debug')
@@ -64,7 +64,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testOnBeforeReceivedShouldInterruptExecutionIfMemoryLimitReached()
     {
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
         $context->getLogger()
             ->expects($this->once())
             ->method('debug')
@@ -83,7 +83,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testOnBeforeReceiveShouldNotInterruptExecutionIfMemoryLimitIsNotReached()
     {
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -97,7 +97,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testOnIdleShouldNotInterruptExecutionIfMemoryLimitIsNotReached()
     {
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -111,7 +111,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testOnPostReceivedShouldNotInterruptExecutionIfMemoryLimitIsNotReached()
     {
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -126,12 +126,12 @@ class LimitConsumerMemoryExtensionTest extends TestCase
     /**
      * @return Context
      */
-    protected function createPsrContext()
+    protected function createContext(): Context
     {
-        $context = new Context($this->createMock(PsrContext::class));
+        $context = new Context($this->createMock(InteropContext::class));
         $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setPsrConsumer($this->createMock(PsrConsumer::class));
-        $context->setPsrProcessor($this->createMock(PsrProcessor::class));
+        $context->setConsumer($this->createMock(Consumer::class));
+        $context->setProcessor($this->createMock(Processor::class));
 
         return $context;
     }

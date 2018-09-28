@@ -3,8 +3,8 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\FallbackSubscriptionConsumer;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrSubscriptionConsumer;
 
@@ -176,7 +176,7 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $actualOrder = [];
-        $callback = function (PsrMessage $message, PsrConsumer $consumer) use (&$actualOrder) {
+        $callback = function (InteropMessage $message, Consumer $consumer) use (&$actualOrder) {
             $actualOrder[] = [$message->getBody(), $consumer->getQueue()->getQueueName()];
         };
 
@@ -228,11 +228,11 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param null|mixed $body
      *
-     * @return PsrMessage|\PHPUnit_Framework_MockObject_MockObject
+     * @return InteropMessage|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createMessageStub($body = null)
     {
-        $messageMock = $this->createMock(PsrMessage::class);
+        $messageMock = $this->createMock(InteropMessage::class);
         $messageMock
             ->expects($this->any())
             ->method('getBody')
@@ -245,7 +245,7 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param null|mixed $queueName
      *
-     * @return PsrConsumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createConsumerStub($queueName = null)
     {
@@ -255,7 +255,7 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
             ->method('getQueueName')
             ->willReturn($queueName);
 
-        $consumerMock = $this->createMock(PsrConsumer::class);
+        $consumerMock = $this->createMock(Consumer::class);
         $consumerMock
             ->expects($this->any())
             ->method('getQueue')

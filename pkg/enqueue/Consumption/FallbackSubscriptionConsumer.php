@@ -2,13 +2,13 @@
 
 namespace Enqueue\Consumption;
 
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\Consumer;
 use Interop\Queue\PsrSubscriptionConsumer;
 
 final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
 {
     /**
-     * an item contains an array: [PsrConsumer $consumer, callable $callback];.
+     * an item contains an array: [Consumer $consumer, callable $callback];.
      * an item key is a queue name.
      *
      * @var array
@@ -37,8 +37,8 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
         while (true) {
             /**
              * @var string
-             * @var PsrConsumer $consumer
-             * @var callable    $processor
+             * @var Consumer $consumer
+             * @var callable $processor
              */
             foreach ($this->subscribers as $queueName => list($consumer, $callback)) {
                 $message = $consumer->receiveNoWait();
@@ -62,7 +62,7 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
         }
     }
 
-    public function subscribe(PsrConsumer $consumer, callable $callback): void
+    public function subscribe(Consumer $consumer, callable $callback): void
     {
         $queueName = $consumer->getQueue()->getQueueName();
         if (array_key_exists($queueName, $this->subscribers)) {
@@ -76,7 +76,7 @@ final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
         $this->subscribers[$queueName] = [$consumer, $callback];
     }
 
-    public function unsubscribe(PsrConsumer $consumer): void
+    public function unsubscribe(Consumer $consumer): void
     {
         if (false == array_key_exists($consumer->getQueue()->getQueueName(), $this->subscribers)) {
             return;

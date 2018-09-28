@@ -10,10 +10,10 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use Psr\Log\LoggerInterface;
@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
 class GenericDriver implements DriverInterface
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     private $context;
 
@@ -36,7 +36,7 @@ class GenericDriver implements DriverInterface
     private $routeCollection;
 
     public function __construct(
-        PsrContext $context,
+        Context $context,
         Config $config,
         RouteCollection $routeCollection
     ) {
@@ -134,7 +134,7 @@ class GenericDriver implements DriverInterface
         return $this->doCreateQueue($transportName);
     }
 
-    public function createTransportMessage(Message $clientMessage): PsrMessage
+    public function createTransportMessage(Message $clientMessage): InteropMessage
     {
         $headers = $clientMessage->getHeaders();
         $properties = $clientMessage->getProperties();
@@ -167,7 +167,7 @@ class GenericDriver implements DriverInterface
         return $transportMessage;
     }
 
-    public function createClientMessage(PsrMessage $transportMessage): Message
+    public function createClientMessage(InteropMessage $transportMessage): Message
     {
         $clientMessage = new Message();
 
@@ -203,7 +203,7 @@ class GenericDriver implements DriverInterface
         return $this->config;
     }
 
-    public function getContext(): PsrContext
+    public function getContext(): Context
     {
         return $this->context;
     }
@@ -213,17 +213,17 @@ class GenericDriver implements DriverInterface
         return $this->routeCollection;
     }
 
-    protected function doSendToRouter(PsrProducer $producer, PsrDestination $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(InteropProducer $producer, Destination $topic, InteropMessage $transportMessage): void
     {
         $producer->send($topic, $transportMessage);
     }
 
-    protected function doSendToProcessor(PsrProducer $producer, PsrQueue $queue, PsrMessage $transportMessage): void
+    protected function doSendToProcessor(InteropProducer $producer, PsrQueue $queue, InteropMessage $transportMessage): void
     {
         $producer->send($queue, $transportMessage);
     }
 
-    protected function createRouterTopic(): PsrDestination
+    protected function createRouterTopic(): Destination
     {
         return $this->createQueue($this->getConfig()->getRouterQueueName());
     }

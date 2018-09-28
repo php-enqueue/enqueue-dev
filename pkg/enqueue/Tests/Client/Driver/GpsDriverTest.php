@@ -13,9 +13,9 @@ use Enqueue\Gps\GpsProducer;
 use Enqueue\Gps\GpsQueue;
 use Enqueue\Gps\GpsTopic;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use PHPUnit\Framework\TestCase;
@@ -98,7 +98,7 @@ class GpsDriverTest extends TestCase
     /**
      * @return GpsContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(GpsContext::class);
     }
@@ -106,7 +106,7 @@ class GpsDriverTest extends TestCase
     /**
      * @return GpsProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(GpsProducer::class);
     }
@@ -130,7 +130,7 @@ class GpsDriverTest extends TestCase
     /**
      * @return GpsMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new GpsMessage();
     }

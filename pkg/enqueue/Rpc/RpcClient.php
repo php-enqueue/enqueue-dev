@@ -3,14 +3,14 @@
 namespace Enqueue\Rpc;
 
 use Enqueue\Util\UUID;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
 
 class RpcClient
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     private $context;
 
@@ -20,37 +20,37 @@ class RpcClient
     private $rpcFactory;
 
     /**
-     * @param PsrContext $context
+     * @param Context    $context
      * @param RpcFactory $promiseFactory
      */
-    public function __construct(PsrContext $context, RpcFactory $promiseFactory = null)
+    public function __construct(Context $context, RpcFactory $promiseFactory = null)
     {
         $this->context = $context;
         $this->rpcFactory = $promiseFactory ?: new RpcFactory($context);
     }
 
     /**
-     * @param PsrDestination $destination
-     * @param PsrMessage     $message
+     * @param Destination    $destination
+     * @param InteropMessage $message
      * @param int            $timeout
      *
      * @throws TimeoutException if the wait timeout is reached
      *
-     * @return PsrMessage
+     * @return InteropMessage
      */
-    public function call(PsrDestination $destination, PsrMessage $message, $timeout)
+    public function call(Destination $destination, InteropMessage $message, $timeout)
     {
         return $this->callAsync($destination, $message, $timeout)->receive();
     }
 
     /**
-     * @param PsrDestination $destination
-     * @param PsrMessage     $message
+     * @param Destination    $destination
+     * @param InteropMessage $message
      * @param int            $timeout
      *
      * @return Promise
      */
-    public function callAsync(PsrDestination $destination, PsrMessage $message, $timeout)
+    public function callAsync(Destination $destination, InteropMessage $message, $timeout)
     {
         if ($timeout < 1) {
             throw new \InvalidArgumentException(sprintf('Timeout must be positive not zero integer. Got %s', $timeout));

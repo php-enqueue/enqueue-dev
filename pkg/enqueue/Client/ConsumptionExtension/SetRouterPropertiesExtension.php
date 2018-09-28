@@ -27,7 +27,7 @@ class SetRouterPropertiesExtension implements ExtensionInterface
 
     public function onPreReceived(Context $context)
     {
-        $message = $context->getPsrMessage();
+        $message = $context->getInteropMessage();
         if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             return;
         }

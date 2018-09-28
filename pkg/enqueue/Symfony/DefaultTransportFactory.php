@@ -3,8 +3,8 @@
 namespace Enqueue\Symfony;
 
 use Enqueue\Client\DriverInterface;
+use Interop\Queue\Context;
 use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -60,7 +60,7 @@ class DefaultTransportFactory
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
-        $container->register($contextId, PsrContext::class)
+        $container->register($contextId, Context::class)
             ->setFactory([new Reference($factoryId), 'createContext'])
         ;
 

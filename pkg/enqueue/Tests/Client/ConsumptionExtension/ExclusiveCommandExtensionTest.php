@@ -41,7 +41,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'aTopic');
 
         $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
 
         $driver = $this->createDriverStub();
         $driver
@@ -66,7 +66,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'aCommand');
 
         $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
 
         $driver = $this->createDriverStub();
         $driver
@@ -91,7 +91,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aProcessor');
 
         $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
 
         $driver = $this->createDriverStub();
         $driver
@@ -116,7 +116,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         $queue = new NullQueue('aBarQueueName');
 
         $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
         $context->setPsrQueue($queue);
 
         $extension = new ExclusiveCommandExtension($this->createDriverStub(new RouteCollection([])));
@@ -134,7 +134,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         $queue = new NullQueue('fooQueue');
 
         $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
         $context->setPsrQueue($queue);
         $context->setLogger(new NullLogger());
 
@@ -175,7 +175,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         $queue = new NullQueue('barQueue');
 
         $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
         $context->setPsrQueue($queue);
         $context->setLogger(new NullLogger());
 

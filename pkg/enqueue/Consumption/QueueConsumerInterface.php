@@ -2,8 +2,8 @@
 
 namespace Enqueue\Consumption;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
 use Interop\Queue\PsrQueue;
 
 interface QueueConsumerInterface
@@ -22,12 +22,12 @@ interface QueueConsumerInterface
 
     public function getReceiveTimeout(): float;
 
-    public function getPsrContext(): PsrContext;
+    public function getContext(): Context;
 
     /**
      * @param string|PsrQueue $queueName
      */
-    public function bind($queueName, PsrProcessor $processor): self;
+    public function bind($queueName, Processor $processor): self;
 
     /**
      * @param string|PsrQueue $queueName

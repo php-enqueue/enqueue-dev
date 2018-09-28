@@ -12,9 +12,9 @@ use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use Makasim\File\TempFile;
@@ -86,7 +86,7 @@ class FsDriverTest extends TestCase
     /**
      * @return FsContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(FsContext::class);
     }
@@ -94,7 +94,7 @@ class FsDriverTest extends TestCase
     /**
      * @return FsProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(FsProducer::class);
     }
@@ -118,7 +118,7 @@ class FsDriverTest extends TestCase
     /**
      * @return FsMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new FsMessage();
     }

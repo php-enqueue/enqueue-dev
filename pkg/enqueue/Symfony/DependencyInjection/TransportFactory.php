@@ -5,8 +5,8 @@ namespace Enqueue\Symfony\DependencyInjection;
 use Enqueue\ConnectionFactoryFactory;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Resources;
+use Interop\Queue\Context;
 use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -121,7 +121,7 @@ final class TransportFactory
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
 
-        $container->register($contextId, PsrContext::class)
+        $container->register($contextId, Context::class)
             ->setFactory([new Reference($factoryId), 'createContext'])
         ;
 

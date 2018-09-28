@@ -12,9 +12,9 @@ use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Enqueue\Sqs\SqsProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use PHPUnit\Framework\TestCase;
@@ -84,7 +84,7 @@ class SqsDriverTest extends TestCase
     /**
      * @return SqsContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(SqsContext::class);
     }
@@ -92,7 +92,7 @@ class SqsDriverTest extends TestCase
     /**
      * @return SqsProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(SqsProducer::class);
     }
@@ -116,7 +116,7 @@ class SqsDriverTest extends TestCase
     /**
      * @return SqsMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new SqsMessage();
     }

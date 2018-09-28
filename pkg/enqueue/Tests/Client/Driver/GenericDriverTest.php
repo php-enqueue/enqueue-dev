@@ -9,9 +9,9 @@ use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 use PHPUnit\Framework\TestCase;
@@ -31,14 +31,14 @@ class GenericDriverTest extends TestCase
         return new GenericDriver(...$args);
     }
 
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
-        return $this->createMock(PsrProducer::class);
+        return $this->createMock(InteropProducer::class);
     }
 
     protected function createQueue(string $name): PsrQueue
@@ -51,12 +51,12 @@ class GenericDriverTest extends TestCase
         return new NullTopic($name);
     }
 
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new NullMessage();
     }
 
-    protected function assertTransportMessage(PsrMessage $transportMessage): void
+    protected function assertTransportMessage(InteropMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertArraySubset([

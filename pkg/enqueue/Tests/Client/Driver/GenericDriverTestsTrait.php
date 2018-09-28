@@ -8,10 +8,10 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 
@@ -28,7 +28,7 @@ trait GenericDriverTestsTrait
         $this->assertInstanceOf(DriverInterface::class, $driver);
     }
 
-    public function testShouldReturnPsrContextSetInConstructor()
+    public function testShouldReturnContextSetInConstructor()
     {
         $context = $this->createContextMock();
 
@@ -258,7 +258,7 @@ trait GenericDriverTestsTrait
         $producer
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function (PsrDestination $topic, PsrMessage $message) use ($transportMessage) {
+            ->willReturnCallback(function (Destination $topic, InteropMessage $message) use ($transportMessage) {
                 $this->assertSame(
                     $this->getRouterTransportName(),
                     $topic instanceof PsrTopic ? $topic->getTopicName() : $topic->getQueueName());
@@ -1070,23 +1070,23 @@ trait GenericDriverTestsTrait
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    abstract protected function createContextMock(): PsrContext;
+    abstract protected function createContextMock(): Context;
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    abstract protected function createProducerMock(): PsrProducer;
+    abstract protected function createProducerMock(): InteropProducer;
 
     abstract protected function createQueue(string $name): PsrQueue;
 
     abstract protected function createTopic(string $name): PsrTopic;
 
-    abstract protected function createMessage(): PsrMessage;
+    abstract protected function createMessage(): InteropMessage;
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createContextStub(): PsrContext
+    protected function createContextStub(): Context
     {
         $context = $this->createContextMock();
 
@@ -1109,7 +1109,7 @@ trait GenericDriverTestsTrait
         return $context;
     }
 
-    protected function assertTransportMessage(PsrMessage $transportMessage): void
+    protected function assertTransportMessage(InteropMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertEquals([
