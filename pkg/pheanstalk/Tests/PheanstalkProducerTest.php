@@ -8,8 +8,8 @@ use Enqueue\Pheanstalk\PheanstalkDestination;
 use Enqueue\Pheanstalk\PheanstalkMessage;
 use Enqueue\Pheanstalk\PheanstalkProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
 use Pheanstalk\Pheanstalk;
 use PHPUnit\Framework\TestCase;
 
