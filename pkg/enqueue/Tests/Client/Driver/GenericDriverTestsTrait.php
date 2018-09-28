@@ -12,8 +12,8 @@ use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 
 trait GenericDriverTestsTrait
 {
@@ -261,7 +261,7 @@ trait GenericDriverTestsTrait
             ->willReturnCallback(function (Destination $topic, InteropMessage $message) use ($transportMessage) {
                 $this->assertSame(
                     $this->getRouterTransportName(),
-                    $topic instanceof PsrTopic ? $topic->getTopicName() : $topic->getQueueName());
+                    $topic instanceof InteropTopic ? $topic->getTopicName() : $topic->getQueueName());
                 $this->assertSame($transportMessage, $message);
             })
         ;
@@ -1077,9 +1077,9 @@ trait GenericDriverTestsTrait
      */
     abstract protected function createProducerMock(): InteropProducer;
 
-    abstract protected function createQueue(string $name): PsrQueue;
+    abstract protected function createQueue(string $name): InteropQueue;
 
-    abstract protected function createTopic(string $name): PsrTopic;
+    abstract protected function createTopic(string $name): InteropTopic;
 
     abstract protected function createMessage(): InteropMessage;
 

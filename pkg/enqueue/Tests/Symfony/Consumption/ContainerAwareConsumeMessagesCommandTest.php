@@ -8,7 +8,7 @@ use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Enqueue\Tests\Symfony\Consumption\Mock\QueueSubscriberProcessor;
 use Interop\Queue\Context;
 use Interop\Queue\Processor;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
@@ -183,11 +183,11 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrQueue
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropQueue
      */
     protected function createQueueMock()
     {
-        return $this->createMock(PsrQueue::class);
+        return $this->createMock(InteropQueue::class);
     }
 
     /**

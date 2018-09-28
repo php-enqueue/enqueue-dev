@@ -16,7 +16,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -97,7 +97,7 @@ class RdKafkaDriverTest extends TestCase
     /**
      * @return RdKafkaTopic
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new RdKafkaTopic($name);
     }

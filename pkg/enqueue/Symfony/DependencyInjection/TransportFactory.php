@@ -5,8 +5,8 @@ namespace Enqueue\Symfony\DependencyInjection;
 use Enqueue\ConnectionFactoryFactory;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Resources;
+use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
-use Interop\Queue\PsrConnectionFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -74,7 +74,7 @@ final class TransportFactory
                 ))
             ->end()
             ->scalarNode('connection_factory_class')
-                ->info(sprintf('The connection factory class should implement "%s" interface', PsrConnectionFactory::class))
+                ->info(sprintf('The connection factory class should implement "%s" interface', ConnectionFactory::class))
             ->end()
             ->scalarNode('factory_service')
                 ->info(sprintf('The factory class should implement "%s" interface', ConnectionFactoryFactoryInterface::class))
@@ -107,7 +107,7 @@ final class TransportFactory
                 ->addArgument($config)
             ;
         } else {
-            $container->register($factoryId, PsrConnectionFactory::class)
+            $container->register($factoryId, ConnectionFactory::class)
                 ->setFactory([$factoryFactoryService, 'create'])
                 ->addArgument($config)
             ;

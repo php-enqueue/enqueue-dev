@@ -117,7 +117,7 @@ class ExclusiveCommandExtensionTest extends TestCase
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
-        $context->setPsrQueue($queue);
+        $context->setInteropQueue($queue);
 
         $extension = new ExclusiveCommandExtension($this->createDriverStub(new RouteCollection([])));
 
@@ -135,7 +135,7 @@ class ExclusiveCommandExtensionTest extends TestCase
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
-        $context->setPsrQueue($queue);
+        $context->setInteropQueue($queue);
         $context->setLogger(new NullLogger());
 
         $routeCollection = new RouteCollection([
@@ -176,7 +176,7 @@ class ExclusiveCommandExtensionTest extends TestCase
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
-        $context->setPsrQueue($queue);
+        $context->setInteropQueue($queue);
         $context->setLogger(new NullLogger());
 
         $routeCollection = new RouteCollection([

@@ -4,9 +4,9 @@ namespace Enqueue\Tests\Consumption\Mock;
 
 use Interop\Queue\Consumer;
 use Interop\Queue\Message as InteropMessage;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\SubscriptionConsumer;
 
-class DummySubscriptionConsumer implements PsrSubscriptionConsumer
+class DummySubscriptionConsumer implements SubscriptionConsumer
 {
     private $subscriptions = [];
 

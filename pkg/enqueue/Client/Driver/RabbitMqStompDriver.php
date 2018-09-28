@@ -12,7 +12,7 @@ use Enqueue\Stomp\StompProducer;
 use Interop\Queue\Destination;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -138,7 +138,7 @@ class RabbitMqStompDriver extends StompDriver
     /**
      * @return StompDestination
      */
-    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): InteropQueue
     {
         $queue = parent::doCreateQueue($transportQueueName);
         $queue->setHeader('x-max-priority', 4);
@@ -167,7 +167,7 @@ class RabbitMqStompDriver extends StompDriver
      * @param StompDestination $destination
      * @param StompMessage     $transportMessage
      */
-    protected function doSendToProcessor(InteropProducer $producer, PsrQueue $destination, InteropMessage $transportMessage): void
+    protected function doSendToProcessor(InteropProducer $producer, InteropQueue $destination, InteropMessage $transportMessage): void
     {
         if ($delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
             $producer->setDeliveryDelay(null);

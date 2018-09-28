@@ -3,9 +3,9 @@
 namespace Enqueue\Consumption;
 
 use Interop\Queue\Consumer;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\SubscriptionConsumer;
 
-final class FallbackSubscriptionConsumer implements PsrSubscriptionConsumer
+final class FallbackSubscriptionConsumer implements SubscriptionConsumer
 {
     /**
      * an item contains an array: [Consumer $consumer, callable $callback];.

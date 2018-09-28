@@ -14,7 +14,7 @@ use Interop\Amqp\Impl\AmqpBind;
 use Interop\Queue\Destination;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -110,7 +110,7 @@ class AmqpDriver extends GenericDriver
     /**
      * @return AmqpQueue
      */
-    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): InteropQueue
     {
         /** @var AmqpQueue $queue */
         $queue = parent::doCreateQueue($transportQueueName);

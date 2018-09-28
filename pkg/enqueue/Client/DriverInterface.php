@@ -6,7 +6,7 @@ namespace Enqueue\Client;
 
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 use Psr\Log\LoggerInterface;
 
 interface DriverInterface
@@ -19,9 +19,9 @@ interface DriverInterface
 
     public function sendToProcessor(Message $message): void;
 
-    public function createQueue(string $queueName, bool $prefix = true): PsrQueue;
+    public function createQueue(string $queueName, bool $prefix = true): InteropQueue;
 
-    public function createRouteQueue(Route $route): PsrQueue;
+    public function createRouteQueue(Route $route): InteropQueue;
 
     /**
      * Prepare broker for work.

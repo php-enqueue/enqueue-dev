@@ -12,8 +12,8 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 use PHPUnit\Framework\TestCase;
 
 class GenericDriverTest extends TestCase
@@ -41,12 +41,12 @@ class GenericDriverTest extends TestCase
         return $this->createMock(InteropProducer::class);
     }
 
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new NullQueue($name);
     }
 
-    protected function createTopic(string $name): PsrTopic
+    protected function createTopic(string $name): InteropTopic
     {
         return new NullTopic($name);
     }

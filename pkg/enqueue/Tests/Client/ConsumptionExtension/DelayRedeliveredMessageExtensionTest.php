@@ -62,7 +62,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
         ;
 
         $context = new Context($this->createContextMock());
-        $context->setPsrQueue($queue);
+        $context->setInteropQueue($queue);
         $context->setInteropMessage($originMessage);
         $context->setLogger($logger);
 

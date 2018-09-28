@@ -51,7 +51,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $context = new Context($this->createContextMock());
         $context->setLogger(new NullLogger());
         $context->setInteropMessage($message);
-        $context->setPsrQueue(new NullQueue('test.router-queue'));
+        $context->setInteropQueue(new NullQueue('test.router-queue'));
 
         $extension = new SetRouterPropertiesExtension($driver);
         $extension->onPreReceived($context);
@@ -83,7 +83,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $context = new Context($this->createContextMock());
         $context->setInteropMessage($message);
-        $context->setPsrQueue(new NullQueue('test.another-queue'));
+        $context->setInteropQueue(new NullQueue('test.another-queue'));
 
         $extension = new SetRouterPropertiesExtension($driver);
         $extension->onPreReceived($context);

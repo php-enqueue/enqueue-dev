@@ -215,21 +215,21 @@ class ContextTest extends TestCase
     {
         $context = new Context($this->createContext());
 
-        $context->setPsrQueue($queue = new NullQueue(''));
+        $context->setInteropQueue($queue = new NullQueue(''));
 
-        $this->assertSame($queue, $context->getPsrQueue());
+        $this->assertSame($queue, $context->getInteropQueue());
     }
 
     public function testThrowOnSettingQueueNameIfAlreadySet()
     {
         $context = new Context($this->createContext());
 
-        $context->setPsrQueue(new NullQueue(''));
+        $context->setInteropQueue(new NullQueue(''));
 
         $this->expectException(IllegalContextModificationException::class);
         $this->expectExceptionMessage('The queue modification is not allowed');
 
-        $context->setPsrQueue(new NullQueue(''));
+        $context->setInteropQueue(new NullQueue(''));
     }
 
     /**

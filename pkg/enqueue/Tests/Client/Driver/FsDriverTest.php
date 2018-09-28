@@ -15,8 +15,8 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 use Makasim\File\TempFile;
 use PHPUnit\Framework\TestCase;
 
@@ -102,7 +102,7 @@ class FsDriverTest extends TestCase
     /**
      * @return FsDestination
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new FsDestination(new \SplFileInfo($name));
     }
@@ -110,7 +110,7 @@ class FsDriverTest extends TestCase
     /**
      * @return FsDestination
      */
-    protected function createTopic(string $name): PsrTopic
+    protected function createTopic(string $name): InteropTopic
     {
         return new FsDestination(new \SplFileInfo($name));
     }

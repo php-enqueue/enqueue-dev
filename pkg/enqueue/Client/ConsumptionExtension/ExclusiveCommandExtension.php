@@ -31,7 +31,7 @@ final class ExclusiveCommandExtension implements ConsumptionExtensionInterface
     public function onPreReceived(Context $context)
     {
         $message = $context->getInteropMessage();
-        $queue = $context->getPsrQueue();
+        $queue = $context->getInteropQueue();
 
         if ($message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
             return;

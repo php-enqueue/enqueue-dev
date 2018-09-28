@@ -4,7 +4,7 @@ namespace Enqueue\Consumption;
 
 use Interop\Queue\Context;
 use Interop\Queue\Processor;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 
 interface QueueConsumerInterface
 {
@@ -25,13 +25,13 @@ interface QueueConsumerInterface
     public function getContext(): Context;
 
     /**
-     * @param string|PsrQueue $queueName
+     * @param string|InteropQueue $queueName
      */
     public function bind($queueName, Processor $processor): self;
 
     /**
-     * @param string|PsrQueue $queueName
-     * @param mixed           $queue
+     * @param string|InteropQueue $queueName
+     * @param mixed               $queue
      */
     public function bindCallback($queue, callable $processor): self;
 

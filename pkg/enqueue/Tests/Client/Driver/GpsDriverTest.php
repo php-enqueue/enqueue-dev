@@ -16,8 +16,8 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 use PHPUnit\Framework\TestCase;
 
 class GpsDriverTest extends TestCase
@@ -114,7 +114,7 @@ class GpsDriverTest extends TestCase
     /**
      * @return GpsQueue
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new GpsQueue($name);
     }
@@ -122,7 +122,7 @@ class GpsDriverTest extends TestCase
     /**
      * @return GpsTopic
      */
-    protected function createTopic(string $name): PsrTopic
+    protected function createTopic(string $name): InteropTopic
     {
         return new GpsTopic($name);
     }

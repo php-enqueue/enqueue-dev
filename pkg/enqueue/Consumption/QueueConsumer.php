@@ -11,8 +11,8 @@ use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Processor;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\SubscriptionConsumer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -30,7 +30,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
     /**
      * [
-     *   [PsrQueue, Processor],
+     *   [InteropQueue, Processor],
      * ].
      *
      * @var array
@@ -58,7 +58,7 @@ final class QueueConsumer implements QueueConsumerInterface
     private $logger;
 
     /**
-     * @var PsrSubscriptionConsumer
+     * @var SubscriptionConsumer
      */
     private $fallbackSubscriptionConsumer;
 
@@ -121,7 +121,7 @@ final class QueueConsumer implements QueueConsumerInterface
             $queue = $this->interopContext->createQueue($queue);
         }
 
-        InvalidArgumentException::assertInstanceOf($queue, PsrQueue::class);
+        InvalidArgumentException::assertInstanceOf($queue, InteropQueue::class);
 
         if (empty($queue->getQueueName())) {
             throw new LogicException('The queue name must be not empty.');
@@ -154,7 +154,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
         /** @var Consumer[] $consumers */
         $consumers = [];
-        /** @var PsrQueue $queue */
+        /** @var InteropQueue $queue */
         foreach ($this->boundProcessors as list($queue, $processor)) {
             $consumers[$queue->getQueueName()] = $this->interopContext->createConsumer($queue);
         }
@@ -185,7 +185,7 @@ final class QueueConsumer implements QueueConsumerInterface
         $callback = function (InteropMessage $message, Consumer $consumer) use (&$context) {
             $currentProcessor = null;
 
-            /** @var PsrQueue $queue */
+            /** @var InteropQueue $queue */
             foreach ($this->boundProcessors as list($queue, $processor)) {
                 if ($queue->getQueueName() === $consumer->getQueue()->getQueueName()) {
                     $currentProcessor = $processor;
@@ -198,7 +198,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
             $context = new Context($this->interopContext);
             $context->setLogger($this->logger);
-            $context->setPsrQueue($consumer->getQueue());
+            $context->setInteropQueue($consumer->getQueue());
             $context->setConsumer($consumer);
             $context->setProcessor($currentProcessor);
             $context->setInteropMessage($message);
@@ -262,9 +262,9 @@ final class QueueConsumer implements QueueConsumerInterface
     /**
      * @internal
      *
-     * @param PsrSubscriptionConsumer $fallbackSubscriptionConsumer
+     * @param SubscriptionConsumer $fallbackSubscriptionConsumer
      */
-    public function setFallbackSubscriptionConsumer(PsrSubscriptionConsumer $fallbackSubscriptionConsumer): void
+    public function setFallbackSubscriptionConsumer(SubscriptionConsumer $fallbackSubscriptionConsumer): void
     {
         $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
@@ -313,7 +313,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
     private function processMessage(Consumer $consumer, Processor $processor, InteropMessage $message, Context $context)
     {
-        $this->logger->info('Message received from the queue: '.$context->getPsrQueue()->getQueueName());
+        $this->logger->info('Message received from the queue: '.$context->getInteropQueue()->getQueueName());
         $this->logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
         $this->logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
         $this->logger->debug('Payload: {payload}', ['payload' => new VarExport($message->getBody())]);

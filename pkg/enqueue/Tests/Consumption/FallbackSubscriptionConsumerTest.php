@@ -5,16 +5,16 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\FallbackSubscriptionConsumer;
 use Interop\Queue\Consumer;
 use Interop\Queue\Message as InteropMessage;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\SubscriptionConsumer;
 
 class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testShouldImplementPsrSubscriptionConsumerInterface()
+    public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(FallbackSubscriptionConsumer::class);
 
-        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumer::class));
+        $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
@@ -249,7 +249,7 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
      */
     private function createConsumerStub($queueName = null)
     {
-        $queueMock = $this->createMock(PsrQueue::class);
+        $queueMock = $this->createMock(InteropQueue::class);
         $queueMock
             ->expects($this->any())
             ->method('getQueueName')

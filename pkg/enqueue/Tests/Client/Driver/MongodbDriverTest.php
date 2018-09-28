@@ -14,8 +14,8 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 
 class MongodbDriverTest extends \PHPUnit_Framework_TestCase
 {
@@ -81,7 +81,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbDestination
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         return new MongodbDestination($name);
     }
@@ -89,7 +89,7 @@ class MongodbDriverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return MongodbDestination
      */
-    protected function createTopic(string $name): PsrTopic
+    protected function createTopic(string $name): InteropTopic
     {
         return new MongodbDestination($name);
     }

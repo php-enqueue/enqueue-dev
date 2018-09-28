@@ -98,7 +98,7 @@ class QueueConsumerTest extends TestCase
         $consumer = new QueueConsumer($this->createContextStub(), null, 0);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The argument must be an instance of Interop\Queue\PsrQueue but got stdClass.');
+        $this->expectExceptionMessage('The argument must be an instance of Interop\Queue\Queue but got stdClass.');
         $consumer->bind(new \stdClass(), $processorMock);
     }
 
@@ -546,7 +546,7 @@ class QueueConsumerTest extends TestCase
                 $this->assertNull($context->getInteropMessage());
                 $this->assertNull($context->getException());
                 $this->assertNull($context->getResult());
-                $this->assertNull($context->getPsrQueue());
+                $this->assertNull($context->getInteropQueue());
                 $this->assertFalse($context->isExecutionInterrupted());
             })
         ;
@@ -615,7 +615,7 @@ class QueueConsumerTest extends TestCase
                 $this->assertNull($context->getInteropMessage());
                 $this->assertNull($context->getException());
                 $this->assertNull($context->getResult());
-                $this->assertNull($context->getPsrQueue());
+                $this->assertNull($context->getInteropQueue());
                 $this->assertFalse($context->isExecutionInterrupted());
             })
         ;

@@ -7,7 +7,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Processor;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 use Psr\Log\LoggerInterface;
 
 class Context
@@ -48,9 +48,9 @@ class Context
     private $result;
 
     /**
-     * @var PsrQueue
+     * @var InteropQueue
      */
-    private $psrQueue;
+    private $InteropQueue;
 
     /**
      * @var bool
@@ -212,22 +212,22 @@ class Context
     }
 
     /**
-     * @return PsrQueue
+     * @return InteropQueue
      */
-    public function getPsrQueue()
+    public function getInteropQueue()
     {
-        return $this->psrQueue;
+        return $this->InteropQueue;
     }
 
     /**
-     * @param PsrQueue $psrQueue
+     * @param InteropQueue $InteropQueue
      */
-    public function setPsrQueue(PsrQueue $psrQueue)
+    public function setInteropQueue(InteropQueue $InteropQueue)
     {
-        if ($this->psrQueue) {
+        if ($this->InteropQueue) {
             throw new IllegalContextModificationException('The queue modification is not allowed');
         }
 
-        $this->psrQueue = $psrQueue;
+        $this->InteropQueue = $InteropQueue;
     }
 }

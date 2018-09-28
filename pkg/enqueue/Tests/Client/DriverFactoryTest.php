@@ -42,7 +42,7 @@ use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Interop\Amqp\AmqpConnectionFactory;
 use Interop\Amqp\AmqpContext;
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class DriverFactoryTest extends TestCase
@@ -164,9 +164,9 @@ class DriverFactoryTest extends TestCase
         yield ['beanstalk:', PheanstalkConnectionFactory::class, PheanstalkContext::class, [], GenericDriver::class];
     }
 
-    private function createConnectionFactoryMock(): PsrConnectionFactory
+    private function createConnectionFactoryMock(): ConnectionFactory
     {
-        return $this->createMock(PsrConnectionFactory::class);
+        return $this->createMock(ConnectionFactory::class);
     }
 
     private function createConfigMock(): Config
