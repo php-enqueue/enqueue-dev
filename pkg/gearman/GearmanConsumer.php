@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Enqueue\Gearman;
 
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class GearmanConsumer implements PsrConsumer
+class GearmanConsumer implements Consumer
 {
     /**
      * @var \GearmanWorker
@@ -36,7 +36,7 @@ class GearmanConsumer implements PsrConsumer
     /**
      * @return GearmanDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->destination;
     }
@@ -44,7 +44,7 @@ class GearmanConsumer implements PsrConsumer
     /**
      * @return GearmanMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         set_error_handler(function ($severity, $message, $file, $line) {
             throw new \ErrorException($message, 0, $severity, $file, $line);
@@ -70,7 +70,7 @@ class GearmanConsumer implements PsrConsumer
     /**
      * @return GearmanMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         return $this->receive(100);
     }
@@ -78,14 +78,14 @@ class GearmanConsumer implements PsrConsumer
     /**
      * @param GearmanMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
     }
 
     /**
      * @param GearmanMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         if ($requeue) {
             $this->context->createProducer()->send($this->destination, $message);

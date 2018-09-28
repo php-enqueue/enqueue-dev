@@ -3,7 +3,7 @@
 namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\ProcessorRegistryInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 use Psr\Container\ContainerInterface;
 
 final class ContainerProcessorRegistry implements ProcessorRegistryInterface
@@ -18,7 +18,7 @@ final class ContainerProcessorRegistry implements ProcessorRegistryInterface
         $this->locator = $locator;
     }
 
-    public function get(string $processorName): PsrProcessor
+    public function get(string $processorName): Processor
     {
         if (false == $this->locator->has($processorName)) {
             throw new \LogicException(sprintf('Service locator does not have a processor with name "%s".', $processorName));

@@ -9,10 +9,10 @@ use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -33,7 +33,7 @@ class RabbitMqStompDriver extends StompDriver
     /**
      * @return StompMessage
      */
-    public function createTransportMessage(Message $message): PsrMessage
+    public function createTransportMessage(Message $message): InteropMessage
     {
         $transportMessage = parent::createTransportMessage($message);
 
@@ -138,7 +138,7 @@ class RabbitMqStompDriver extends StompDriver
     /**
      * @return StompDestination
      */
-    protected function doCreateQueue(string $transportQueueName): PsrQueue
+    protected function doCreateQueue(string $transportQueueName): InteropQueue
     {
         $queue = parent::doCreateQueue($transportQueueName);
         $queue->setHeader('x-max-priority', 4);
@@ -151,7 +151,7 @@ class RabbitMqStompDriver extends StompDriver
      * @param StompDestination $topic
      * @param StompMessage     $transportMessage
      */
-    protected function doSendToRouter(PsrProducer $producer, PsrDestination $topic, PsrMessage $transportMessage): void
+    protected function doSendToRouter(InteropProducer $producer, Destination $topic, InteropMessage $transportMessage): void
     {
         // We should not handle priority, expiration, and delay at this stage.
         // The router will take care of it while re-sending the message to the final destinations.
@@ -167,7 +167,7 @@ class RabbitMqStompDriver extends StompDriver
      * @param StompDestination $destination
      * @param StompMessage     $transportMessage
      */
-    protected function doSendToProcessor(PsrProducer $producer, PsrQueue $destination, PsrMessage $transportMessage): void
+    protected function doSendToProcessor(InteropProducer $producer, InteropQueue $destination, InteropMessage $transportMessage): void
     {
         if ($delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
             $producer->setDeliveryDelay(null);

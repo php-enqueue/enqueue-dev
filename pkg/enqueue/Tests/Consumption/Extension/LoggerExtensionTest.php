@@ -8,8 +8,8 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -33,7 +33,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
 
         $extension->onStart($context);
 
@@ -51,7 +51,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
 
         $extension->onStart($context);
     }
@@ -70,9 +70,9 @@ class LoggerExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setBody('message body');
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
         $context->setResult(Result::reject('reason'));
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
 
         $extension->onPostReceived($context);
     }
@@ -91,9 +91,9 @@ class LoggerExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setBody('message body');
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
         $context->setResult(Result::requeue('reason'));
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
 
         $extension->onPostReceived($context);
     }
@@ -108,7 +108,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
         $context->setResult(Result::requeue());
 
         $extension->onPostReceived($context);
@@ -128,9 +128,9 @@ class LoggerExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setBody('message body');
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
         $context->setResult(Result::ack('reason'));
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
 
         $extension->onPostReceived($context);
     }
@@ -145,7 +145,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
         $context->setResult(Result::ack());
 
         $extension->onPostReceived($context);
@@ -168,18 +168,18 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new Context($this->createContextMock());
         $context->setLogger($alreadySetLogger);
 
         $extension->onStart($context);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
      */
-    protected function createPsrContextMock()
+    protected function createContextMock(): InteropContext
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(InteropContext::class);
     }
 
     /**
@@ -191,10 +191,10 @@ class LoggerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
+     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
      */
     protected function createConsumerMock()
     {
-        return $this->createMock(PsrConsumer::class);
+        return $this->createMock(Consumer::class);
     }
 }

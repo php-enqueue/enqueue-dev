@@ -7,19 +7,19 @@ namespace Enqueue\Dbal;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrTopic;
-use Interop\Queue\SubscriptionConsumerNotSupportedException;
-use Interop\Queue\TemporaryQueueNotSupportedException;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 
-class DbalContext implements PsrContext
+class DbalContext implements Context
 {
     /**
      * @var Connection
@@ -65,7 +65,7 @@ class DbalContext implements PsrContext
     /**
      * {@inheritdoc}
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         $message = new DbalMessage();
         $message->setBody($body);
@@ -78,7 +78,7 @@ class DbalContext implements PsrContext
     /**
      * @return DbalDestination
      */
-    public function createQueue(string $name): PsrQueue
+    public function createQueue(string $name): Queue
     {
         return new DbalDestination($name);
     }
@@ -86,12 +86,12 @@ class DbalContext implements PsrContext
     /**
      * @return DbalDestination
      */
-    public function createTopic(string $name): PsrTopic
+    public function createTopic(string $name): Topic
     {
         return new DbalDestination($name);
     }
 
-    public function createTemporaryQueue(): PsrQueue
+    public function createTemporaryQueue(): Queue
     {
         throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
@@ -99,7 +99,7 @@ class DbalContext implements PsrContext
     /**
      * @return DbalProducer
      */
-    public function createProducer(): PsrProducer
+    public function createProducer(): Producer
     {
         return new DbalProducer($this);
     }
@@ -107,7 +107,7 @@ class DbalContext implements PsrContext
     /**
      * @return DbalConsumer
      */
-    public function createConsumer(PsrDestination $destination): PsrConsumer
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
 
@@ -124,7 +124,7 @@ class DbalContext implements PsrContext
     {
     }
 
-    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    public function createSubscriptionConsumer(): SubscriptionConsumer
     {
         throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
     }
@@ -132,7 +132,7 @@ class DbalContext implements PsrContext
     /**
      * @param DbalDestination $queue
      */
-    public function purgeQueue(PsrQueue $queue): void
+    public function purgeQueue(Queue $queue): void
     {
         $this->getDbalConnection()->delete(
             $this->getTableName(),

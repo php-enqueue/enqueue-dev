@@ -17,11 +17,11 @@ use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\Topic as InteropTopic;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -479,7 +479,7 @@ class RabbitMqStompDriverTest extends TestCase
     /**
      * @return StompContext
      */
-    protected function createContextMock(): PsrContext
+    protected function createContextMock(): Context
     {
         return $this->createMock(StompContext::class);
     }
@@ -487,7 +487,7 @@ class RabbitMqStompDriverTest extends TestCase
     /**
      * @return StompProducer
      */
-    protected function createProducerMock(): PsrProducer
+    protected function createProducerMock(): InteropProducer
     {
         return $this->createMock(StompProducer::class);
     }
@@ -495,7 +495,7 @@ class RabbitMqStompDriverTest extends TestCase
     /**
      * @return StompDestination
      */
-    protected function createQueue(string $name): PsrQueue
+    protected function createQueue(string $name): InteropQueue
     {
         $destination = new StompDestination();
         $destination->setType(StompDestination::TYPE_QUEUE);
@@ -507,7 +507,7 @@ class RabbitMqStompDriverTest extends TestCase
     /**
      * @return StompDestination
      */
-    protected function createTopic(string $name): PsrTopic
+    protected function createTopic(string $name): InteropTopic
     {
         $destination = new StompDestination();
         $destination->setType(StompDestination::TYPE_TOPIC);
@@ -519,12 +519,12 @@ class RabbitMqStompDriverTest extends TestCase
     /**
      * @return StompMessage
      */
-    protected function createMessage(): PsrMessage
+    protected function createMessage(): InteropMessage
     {
         return new StompMessage();
     }
 
-    protected function assertTransportMessage(PsrMessage $transportMessage): void
+    protected function assertTransportMessage(InteropMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
         $this->assertEquals([

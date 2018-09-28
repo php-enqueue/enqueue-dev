@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkConsumer implements PsrConsumer
+class PheanstalkConsumer implements Consumer
 {
     /**
      * @var PheanstalkDestination
@@ -32,7 +32,7 @@ class PheanstalkConsumer implements PsrConsumer
     /**
      * @return PheanstalkDestination
      */
-    public function getQueue(): PsrQueue
+    public function getQueue(): Queue
     {
         return $this->destination;
     }
@@ -40,7 +40,7 @@ class PheanstalkConsumer implements PsrConsumer
     /**
      * @return PheanstalkMessage
      */
-    public function receive(int $timeout = 0): ?PsrMessage
+    public function receive(int $timeout = 0): ?Message
     {
         if (0 === $timeout) {
             while (true) {
@@ -60,7 +60,7 @@ class PheanstalkConsumer implements PsrConsumer
     /**
      * @return PheanstalkMessage
      */
-    public function receiveNoWait(): ?PsrMessage
+    public function receiveNoWait(): ?Message
     {
         if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), 0)) {
             return $this->convertJobToMessage($job);
@@ -72,7 +72,7 @@ class PheanstalkConsumer implements PsrConsumer
     /**
      * @param PheanstalkMessage $message
      */
-    public function acknowledge(PsrMessage $message): void
+    public function acknowledge(Message $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, PheanstalkMessage::class);
 
@@ -86,7 +86,7 @@ class PheanstalkConsumer implements PsrConsumer
     /**
      * @param PheanstalkMessage $message
      */
-    public function reject(PsrMessage $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         $this->acknowledge($message);
 

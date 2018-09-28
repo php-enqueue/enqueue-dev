@@ -3,7 +3,7 @@
 namespace Enqueue\RdKafka\Tests\Spec;
 
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
 
 /**
@@ -27,7 +27,7 @@ class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 
         $message = $consumer->receive(10000); // 10 sec
 
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
         $this->assertSame($expectedBody, $message->getBody());

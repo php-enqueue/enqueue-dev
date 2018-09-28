@@ -39,8 +39,8 @@ class AsyncListener extends \Enqueue\AsyncEventDispatcher\AsyncListener
         if (false == $this->isSyncMode($eventName)) {
             $transformerName = $this->registry->getTransformerNameForEvent($eventName);
 
-            $psrMessage = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
-            $message = new Message($psrMessage->getBody());
+            $interopMessage = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
+            $message = new Message($interopMessage->getBody());
             $message->setScope(Message::SCOPE_APP);
             $message->setProperty('event_name', $eventName);
             $message->setProperty('transformer_name', $transformerName);

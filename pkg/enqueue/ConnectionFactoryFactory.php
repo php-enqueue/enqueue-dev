@@ -3,11 +3,11 @@
 namespace Enqueue;
 
 use Enqueue\Dsn\Dsn;
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 
 final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterface
 {
-    public function create($config): PsrConnectionFactory
+    public function create($config): ConnectionFactory
     {
         if (is_string($config)) {
             $config = ['dsn' => $config];

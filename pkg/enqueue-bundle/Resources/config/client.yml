@@ -1,6 +1,6 @@
 services:
     enqueue.client.default.context: 
-        class: 'Interop\Queue\PsrContext'
+        class: 'Interop\Queue\Context'
         factory: ['@enqueue.client.default.driver', 'getContext']
 
     enqueue.client.default.driver_factory:

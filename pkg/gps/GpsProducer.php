@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Enqueue\Gps;
 
 use Google\Cloud\PubSub\Topic;
-use Interop\Queue\DeliveryDelayNotSupportedException;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PriorityNotSupportedException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\TimeToLiveNotSupportedException;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Exception\TimeToLiveNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 
-class GpsProducer implements PsrProducer
+class GpsProducer implements Producer
 {
     /**
      * @var GpsContext
@@ -30,7 +30,7 @@ class GpsProducer implements PsrProducer
      * @param GpsTopic   $destination
      * @param GpsMessage $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message): void
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GpsTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, GpsMessage::class);
@@ -42,7 +42,7 @@ class GpsProducer implements PsrProducer
         ]);
     }
 
-    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -56,7 +56,7 @@ class GpsProducer implements PsrProducer
         return null;
     }
 
-    public function setPriority(int $priority = null): PsrProducer
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -70,7 +70,7 @@ class GpsProducer implements PsrProducer
         return null;
     }
 
-    public function setTimeToLive(int $timeToLive = null): PsrProducer
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;

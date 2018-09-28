@@ -4,7 +4,7 @@ namespace Enqueue\Tests;
 
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Resources;
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class ResourcesTest extends TestCase
@@ -62,14 +62,14 @@ class ResourcesTest extends TestCase
     public function testThrowsIfConnectionClassNotImplementConnectionFactoryInterfaceOnAddConnection()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The connection factory class "stdClass" must implement "Interop\Queue\PsrConnectionFactory" interface.');
+        $this->expectExceptionMessage('The connection factory class "stdClass" must implement "Interop\Queue\ConnectionFactory" interface.');
 
         Resources::addConnection(\stdClass::class, [], [], 'foo');
     }
 
     public function testThrowsIfNoSchemesProvidedOnAddConnection()
     {
-        $connectionClass = $this->getMockClass(PsrConnectionFactory::class);
+        $connectionClass = $this->getMockClass(ConnectionFactory::class);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Schemes could not be empty.');
@@ -79,7 +79,7 @@ class ResourcesTest extends TestCase
 
     public function testThrowsIfNoPackageProvidedOnAddConnection()
     {
-        $connectionClass = $this->getMockClass(PsrConnectionFactory::class);
+        $connectionClass = $this->getMockClass(ConnectionFactory::class);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Package name could not be empty.');
@@ -103,7 +103,7 @@ class ResourcesTest extends TestCase
 
     public function testShouldAllowGetPreviouslyRegisteredConnection()
     {
-        $connectionClass = $this->getMockClass(PsrConnectionFactory::class);
+        $connectionClass = $this->getMockClass(ConnectionFactory::class);
 
         Resources::addConnection(
             $connectionClass,

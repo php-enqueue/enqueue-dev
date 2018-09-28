@@ -3,9 +3,9 @@
 namespace Enqueue\Dbal\Tests\Spec;
 
 use Enqueue\Dbal\DbalDestination;
-use Interop\Queue\Spec\PsrTopicSpec;
+use Interop\Queue\Spec\TopicSpec;
 
-class DbalTopicTest extends PsrTopicSpec
+class DbalTopicTest extends TopicSpec
 {
     /**
      * {@inheritdoc}

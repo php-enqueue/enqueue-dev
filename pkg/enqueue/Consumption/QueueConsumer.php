@@ -6,22 +6,22 @@ use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Util\VarExport;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Processor;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\SubscriptionConsumer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 final class QueueConsumer implements QueueConsumerInterface
 {
     /**
-     * @var PsrContext
+     * @var InteropContext
      */
-    private $psrContext;
+    private $interopContext;
 
     /**
      * @var ExtensionInterface|ChainExtension
@@ -30,7 +30,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
     /**
      * [
-     *   [PsrQueue, PsrProcessor],
+     *   [InteropQueue, Processor],
      * ].
      *
      * @var array
@@ -58,23 +58,23 @@ final class QueueConsumer implements QueueConsumerInterface
     private $logger;
 
     /**
-     * @var PsrSubscriptionConsumer
+     * @var SubscriptionConsumer
      */
     private $fallbackSubscriptionConsumer;
 
     /**
-     * @param PsrContext                             $psrContext
+     * @param InteropContext                         $interopContext
      * @param ExtensionInterface|ChainExtension|null $extension
      * @param int|float                              $idleTimeout    the time in milliseconds queue consumer waits if no message received
      * @param int|float                              $receiveTimeout the time in milliseconds queue consumer waits for a message (10 ms by default)
      */
     public function __construct(
-        PsrContext $psrContext,
+        InteropContext $interopContext,
         ExtensionInterface $extension = null,
         float $idleTimeout = 0.,
         float $receiveTimeout = 10000.
     ) {
-        $this->psrContext = $psrContext;
+        $this->interopContext = $interopContext;
         $this->staticExtension = $extension ?: new ChainExtension([]);
         $this->idleTimeout = $idleTimeout;
         $this->receiveTimeout = $receiveTimeout;
@@ -100,40 +100,28 @@ final class QueueConsumer implements QueueConsumerInterface
         return $this->idleTimeout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setReceiveTimeout(float $timeout): void
     {
         $this->receiveTimeout = $timeout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReceiveTimeout(): float
     {
         return $this->receiveTimeout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPsrContext(): PsrContext
+    public function getContext(): InteropContext
     {
-        return $this->psrContext;
+        return $this->interopContext;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function bind($queue, PsrProcessor $processor): QueueConsumerInterface
+    public function bind($queue, Processor $processor): QueueConsumerInterface
     {
         if (is_string($queue)) {
-            $queue = $this->psrContext->createQueue($queue);
+            $queue = $this->interopContext->createQueue($queue);
         }
 
-        InvalidArgumentException::assertInstanceOf($queue, PsrQueue::class);
+        InvalidArgumentException::assertInstanceOf($queue, InteropQueue::class);
 
         if (empty($queue->getQueueName())) {
             throw new LogicException('The queue name must be not empty.');
@@ -164,11 +152,11 @@ final class QueueConsumer implements QueueConsumerInterface
             throw new \LogicException('There is nothing to consume. It is required to bind something before calling consume method.');
         }
 
-        /** @var PsrConsumer[] $consumers */
+        /** @var Consumer[] $consumers */
         $consumers = [];
-        /** @var PsrQueue $queue */
+        /** @var InteropQueue $queue */
         foreach ($this->boundProcessors as list($queue, $processor)) {
-            $consumers[$queue->getQueueName()] = $this->psrContext->createConsumer($queue);
+            $consumers[$queue->getQueueName()] = $this->interopContext->createConsumer($queue);
         }
 
         $this->extension = $runtimeExtension ?
@@ -176,7 +164,7 @@ final class QueueConsumer implements QueueConsumerInterface
             $this->staticExtension
         ;
 
-        $context = new Context($this->psrContext);
+        $context = new Context($this->interopContext);
         $this->extension->onStart($context);
 
         if ($context->getLogger()) {
@@ -189,15 +177,15 @@ final class QueueConsumer implements QueueConsumerInterface
         $this->logger->info('Start consuming');
 
         try {
-            $subscriptionConsumer = $this->psrContext->createSubscriptionConsumer();
+            $subscriptionConsumer = $this->interopContext->createSubscriptionConsumer();
         } catch (SubscriptionConsumerNotSupportedException $e) {
             $subscriptionConsumer = $this->fallbackSubscriptionConsumer;
         }
 
-        $callback = function (PsrMessage $message, PsrConsumer $consumer) use (&$context) {
+        $callback = function (InteropMessage $message, Consumer $consumer) use (&$context) {
             $currentProcessor = null;
 
-            /** @var PsrQueue $queue */
+            /** @var InteropQueue $queue */
             foreach ($this->boundProcessors as list($queue, $processor)) {
                 if ($queue->getQueueName() === $consumer->getQueue()->getQueueName()) {
                     $currentProcessor = $processor;
@@ -208,12 +196,12 @@ final class QueueConsumer implements QueueConsumerInterface
                 throw new \LogicException(sprintf('The processor for the queue "%s" could not be found.', $consumer->getQueue()->getQueueName()));
             }
 
-            $context = new Context($this->psrContext);
+            $context = new Context($this->interopContext);
             $context->setLogger($this->logger);
-            $context->setPsrQueue($consumer->getQueue());
-            $context->setPsrConsumer($consumer);
-            $context->setPsrProcessor($currentProcessor);
-            $context->setPsrMessage($message);
+            $context->setInteropQueue($consumer->getQueue());
+            $context->setConsumer($consumer);
+            $context->setProcessor($currentProcessor);
+            $context->setInteropMessage($message);
 
             $this->processMessage($consumer, $currentProcessor, $message, $context);
 
@@ -225,7 +213,7 @@ final class QueueConsumer implements QueueConsumerInterface
         };
 
         foreach ($consumers as $consumer) {
-            /* @var PsrConsumer $consumer */
+            /* @var Consumer $consumer */
 
             $subscriptionConsumer->subscribe($consumer, $callback);
         }
@@ -250,7 +238,7 @@ final class QueueConsumer implements QueueConsumerInterface
                 $this->logger->info(sprintf('Consuming interrupted'));
 
                 foreach ($consumers as $consumer) {
-                    /* @var PsrConsumer $consumer */
+                    /* @var Consumer $consumer */
 
                     $subscriptionConsumer->unsubscribe($consumer);
                 }
@@ -274,9 +262,9 @@ final class QueueConsumer implements QueueConsumerInterface
     /**
      * @internal
      *
-     * @param PsrSubscriptionConsumer $fallbackSubscriptionConsumer
+     * @param SubscriptionConsumer $fallbackSubscriptionConsumer
      */
-    public function setFallbackSubscriptionConsumer(PsrSubscriptionConsumer $fallbackSubscriptionConsumer): void
+    public function setFallbackSubscriptionConsumer(SubscriptionConsumer $fallbackSubscriptionConsumer): void
     {
         $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
@@ -323,16 +311,16 @@ final class QueueConsumer implements QueueConsumerInterface
         throw $exception;
     }
 
-    private function processMessage(PsrConsumer $consumer, PsrProcessor $processor, PsrMessage $message, Context $context)
+    private function processMessage(Consumer $consumer, Processor $processor, InteropMessage $message, Context $context)
     {
-        $this->logger->info('Message received from the queue: '.$context->getPsrQueue()->getQueueName());
+        $this->logger->info('Message received from the queue: '.$context->getInteropQueue()->getQueueName());
         $this->logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
         $this->logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
         $this->logger->debug('Payload: {payload}', ['payload' => new VarExport($message->getBody())]);
 
         $this->extension->onPreReceived($context);
         if (!$context->getResult()) {
-            $result = $processor->process($message, $context->getPsrContext());
+            $result = $processor->process($message, $context->getInteropContext());
             $context->setResult($result);
         }
 

@@ -9,7 +9,7 @@ use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context as InteropContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -61,9 +61,9 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             )
         ;
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrQueue($queue);
-        $context->setPsrMessage($originMessage);
+        $context = new Context($this->createContextMock());
+        $context->setInteropQueue($queue);
+        $context->setInteropMessage($originMessage);
         $context->setLogger($logger);
 
         $this->assertNull($context->getResult());
@@ -92,8 +92,8 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
+        $context = new Context($this->createContextMock());
+        $context->setInteropMessage($message);
 
         $extension = new DelayRedeliveredMessageExtension($driver, 12345);
         $extension->onPreReceived($context);
@@ -112,8 +112,8 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
+        $context = new Context($this->createContextMock());
+        $context->setInteropMessage($message);
         $context->setResult('aStatus');
 
         $extension = new DelayRedeliveredMessageExtension($driver, 12345);
@@ -129,11 +129,11 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
      */
-    private function createPsrContextMock()
+    private function createContextMock(): InteropContext
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(InteropContext::class);
     }
 
     /**

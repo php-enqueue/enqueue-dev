@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/dbal/d/total.png)](https://packagist.org/packages/enqueue/dbal)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/dbal/version.png)](https://packagist.org/packages/enqueue/dbal)
  
-This is an implementation of PSR specification. It allows you to send and consume message through Doctrine DBAL library and SQL like database as broker.  
+This is an implementation of Queue Interop specification. It allows you to send and consume message through Doctrine DBAL library and SQL like database as broker.  
 
 ## Resources
 

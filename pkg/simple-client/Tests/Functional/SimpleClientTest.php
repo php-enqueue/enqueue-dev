@@ -7,8 +7,8 @@ use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 use Enqueue\Consumption\Result;
 use Enqueue\SimpleClient\SimpleClient;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PurgeQueueNotSupportedException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -75,7 +75,7 @@ class SimpleClientTest extends TestCase
 
         $client = new SimpleClient($config);
 
-        $client->bindTopic('foo_topic', function (PsrMessage $message) use (&$actualMessage) {
+        $client->bindTopic('foo_topic', function (Message $message) use (&$actualMessage) {
             $actualMessage = $message;
 
             return Result::ACK;
@@ -92,7 +92,7 @@ class SimpleClientTest extends TestCase
             new LimitConsumedMessagesExtension(2),
         ]));
 
-        $this->assertInstanceOf(PsrMessage::class, $actualMessage);
+        $this->assertInstanceOf(Message::class, $actualMessage);
         $this->assertSame('Hello there!', $actualMessage->getBody());
     }
 

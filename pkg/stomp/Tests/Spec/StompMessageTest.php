@@ -3,9 +3,9 @@
 namespace Enqueue\Stomp\Tests\Spec;
 
 use Enqueue\Stomp\StompMessage;
-use Interop\Queue\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\MessageSpec;
 
-class StompMessageTest extends PsrMessageSpec
+class StompMessageTest extends MessageSpec
 {
     /**
      * {@inheritdoc}

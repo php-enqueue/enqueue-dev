@@ -3,12 +3,12 @@
 namespace Enqueue\Mongodb\Tests\Spec;
 
 use Enqueue\Mongodb\MongodbDestination;
-use Interop\Queue\Spec\PsrTopicSpec;
+use Interop\Queue\Spec\TopicSpec;
 
 /**
  * @group mongodb
  */
-class MongodbTopicTest extends PsrTopicSpec
+class MongodbTopicTest extends TopicSpec
 {
     /**
      * {@inheritdoc}

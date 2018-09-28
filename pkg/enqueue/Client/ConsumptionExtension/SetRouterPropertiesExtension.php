@@ -27,14 +27,14 @@ class SetRouterPropertiesExtension implements ExtensionInterface
 
     public function onPreReceived(Context $context)
     {
-        $message = $context->getPsrMessage();
+        $message = $context->getInteropMessage();
         if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
             return;
         }
 
         $config = $this->driver->getConfig();
         $queue = $this->driver->createQueue($config->getRouterQueueName());
-        if ($context->getPsrQueue()->getQueueName() != $queue->getQueueName()) {
+        if ($context->getInteropQueue()->getQueueName() != $queue->getQueueName()) {
             return;
         }
 

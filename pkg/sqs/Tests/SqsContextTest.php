@@ -10,10 +10,10 @@ use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Enqueue\Sqs\SqsProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\TemporaryQueueNotSupportedException;
+use Interop\Queue\Context;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Queue;
 
 class SqsContextTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,7 +21,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementContextInterface()
     {
-        $this->assertClassImplements(PsrContext::class, SqsContext::class);
+        $this->assertClassImplements(Context::class, SqsContext::class);
     }
 
     public function testCouldBeConstructedWithSqsClientAsFirstArgument()
@@ -112,9 +112,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $context = new SqsContext($this->createSqsClientMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Sqs\SqsDestination but got Mock_PsrQueue');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Sqs\SqsDestination but got Mock_Queue');
 
-        $context->createConsumer($this->createMock(PsrQueue::class));
+        $context->createConsumer($this->createMock(Queue::class));
     }
 
     public function testShouldCreateConsumer()

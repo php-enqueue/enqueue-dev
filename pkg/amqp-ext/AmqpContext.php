@@ -13,15 +13,15 @@ use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\Exception;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Consumer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\Exception;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 
 class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 {
@@ -56,7 +56,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     /**
      * @return InteropAmqpMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): PsrMessage
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new AmqpMessage($body, $properties, $headers);
     }
@@ -64,7 +64,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     /**
      * @return InteropAmqpTopic
      */
-    public function createTopic(string $topicName): PsrTopic
+    public function createTopic(string $topicName): Topic
     {
         return new AmqpTopic($topicName);
     }
@@ -89,7 +89,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     /**
      * @return InteropAmqpQueue
      */
-    public function createQueue(string $queueName): PsrQueue
+    public function createQueue(string $queueName): Queue
     {
         return new AmqpQueue($queueName);
     }
@@ -114,7 +114,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     /**
      * @param InteropAmqpQueue $queue
      */
-    public function purgeQueue(PsrQueue $queue): void
+    public function purgeQueue(Queue $queue): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, InteropAmqpQueue::class);
 
@@ -174,7 +174,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     /**
      * @return InteropAmqpQueue
      */
-    public function createTemporaryQueue(): PsrQueue
+    public function createTemporaryQueue(): Queue
     {
         $extQueue = new \AMQPQueue($this->getExtChannel());
         $extQueue->setFlags(AMQP_EXCLUSIVE);
@@ -190,7 +190,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     /**
      * @return AmqpProducer
      */
-    public function createProducer(): PsrProducer
+    public function createProducer(): Producer
     {
         $producer = new AmqpProducer($this->getExtChannel(), $this);
         $producer->setDelayStrategy($this->delayStrategy);
@@ -203,9 +203,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      *
      * @return AmqpConsumer
      */
-    public function createConsumer(PsrDestination $destination): PsrConsumer
+    public function createConsumer(Destination $destination): Consumer
     {
-        $destination instanceof PsrTopic
+        $destination instanceof Topic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
             : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class)
         ;
@@ -220,7 +220,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         return new AmqpConsumer($this, $destination);
     }
 
-    public function createSubscriptionConsumer(): PsrSubscriptionConsumer
+    public function createSubscriptionConsumer(): SubscriptionConsumer
     {
         return new AmqpSubscriptionConsumer($this);
     }

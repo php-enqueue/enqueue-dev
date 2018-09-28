@@ -3,13 +3,13 @@
 namespace Enqueue\Redis\Tests\Spec;
 
 use Enqueue\Test\RedisExtension;
-use Interop\Queue\Spec\PsrContextSpec;
+use Interop\Queue\Spec\ContextSpec;
 
 /**
  * @group functional
  * @group Redis
  */
-class RedisContextTest extends PsrContextSpec
+class RedisContextTest extends ContextSpec
 {
     use RedisExtension;
 

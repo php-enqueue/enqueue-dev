@@ -8,9 +8,9 @@ use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Mongodb\MongodbProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
 
 /**
  * @group mongodb
@@ -21,7 +21,7 @@ class MongodbConsumerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, MongodbConsumer::class);
+        $this->assertClassImplements(Consumer::class, MongodbConsumer::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -128,7 +128,7 @@ class MongodbConsumerTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class InvalidMessage implements PsrMessage
+class InvalidMessage implements Message
 {
     public function getBody(): string
     {

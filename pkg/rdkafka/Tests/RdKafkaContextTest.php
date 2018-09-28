@@ -6,8 +6,8 @@ use Enqueue\Null\NullQueue;
 use Enqueue\RdKafka\JsonSerializer;
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\Serializer;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\TemporaryQueueNotSupportedException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use PHPUnit\Framework\TestCase;
 
 /**

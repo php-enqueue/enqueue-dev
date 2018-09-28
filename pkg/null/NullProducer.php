@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 
-class NullProducer implements PsrProducer
+class NullProducer implements Producer
 {
     private $priority;
 
@@ -16,14 +16,14 @@ class NullProducer implements PsrProducer
 
     private $deliveryDelay;
 
-    public function send(PsrDestination $destination, PsrMessage $message): void
+    public function send(Destination $destination, Message $message): void
     {
     }
 
     /**
      * @return NullProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): PsrProducer
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
@@ -38,7 +38,7 @@ class NullProducer implements PsrProducer
     /**
      * @return NullProducer
      */
-    public function setPriority(int $priority = null): PsrProducer
+    public function setPriority(int $priority = null): Producer
     {
         $this->priority = $priority;
 
@@ -53,7 +53,7 @@ class NullProducer implements PsrProducer
     /**
      * @return NullProducer
      */
-    public function setTimeToLive(int $timeToLive = null): PsrProducer
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

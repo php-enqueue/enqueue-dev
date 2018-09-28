@@ -6,7 +6,7 @@ use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConnectionFactoryTest extends TestCase
@@ -15,7 +15,7 @@ class AmqpConnectionFactoryTest extends TestCase
 
     public function testShouldImplementConnectionFactoryInterface()
     {
-        $this->assertClassImplements(PsrConnectionFactory::class, AmqpConnectionFactory::class);
+        $this->assertClassImplements(ConnectionFactory::class, AmqpConnectionFactory::class);
     }
 
     public function testShouldSetRabbitMqDlxDelayStrategyIfRabbitMqSchemeExtensionPresent()

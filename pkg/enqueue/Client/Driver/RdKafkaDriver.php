@@ -4,7 +4,7 @@ namespace Enqueue\Client\Driver;
 
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\RdKafkaTopic;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Destination;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -48,7 +48,7 @@ class RdKafkaDriver extends GenericDriver
     /**
      * @return RdKafkaTopic
      */
-    protected function createRouterTopic(): PsrDestination
+    protected function createRouterTopic(): Destination
     {
         return $this->doCreateTopic(
             $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)

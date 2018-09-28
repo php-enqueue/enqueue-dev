@@ -4,9 +4,9 @@ namespace Enqueue\AmqpBunny\Tests\Spec;
 
 use Bunny\Channel;
 use Enqueue\AmqpBunny\AmqpContext;
-use Interop\Queue\Spec\PsrContextSpec;
+use Interop\Queue\Spec\ContextSpec;
 
-class AmqpContextTest extends PsrContextSpec
+class AmqpContextTest extends ContextSpec
 {
     protected function createContext()
     {

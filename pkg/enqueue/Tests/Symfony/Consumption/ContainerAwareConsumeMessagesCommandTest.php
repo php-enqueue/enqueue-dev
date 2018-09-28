@@ -6,9 +6,9 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
 use Enqueue\Tests\Symfony\Consumption\Mock\QueueSubscriberProcessor;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
+use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
@@ -64,7 +64,7 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
         $tester = new CommandTester($command);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Invalid message processor service given. It must be an instance of Interop\Queue\PsrProcessor but stdClass');
+        $this->expectExceptionMessage('Invalid message processor service given. It must be an instance of Interop\Queue\Processor but stdClass');
         $tester->execute([
             'processor-service' => 'processor-service',
             '--queue' => ['queue-name'],
@@ -175,27 +175,27 @@ class ContainerAwareConsumeMessagesCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
     protected function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrQueue
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropQueue
      */
     protected function createQueueMock()
     {
-        return $this->createMock(PsrQueue::class);
+        return $this->createMock(InteropQueue::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
      */
     protected function createProcessor()
     {
-        return $this->createMock(PsrProcessor::class);
+        return $this->createMock(Processor::class);
     }
 
     /**

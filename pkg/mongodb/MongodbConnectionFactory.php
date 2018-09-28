@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\PsrConnectionFactory;
-use Interop\Queue\PsrContext;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 use MongoDB\Client;
 
-class MongodbConnectionFactory implements PsrConnectionFactory
+class MongodbConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -54,7 +54,7 @@ class MongodbConnectionFactory implements PsrConnectionFactory
     /**
      * @return MongodbContext
      */
-    public function createContext(): PsrContext
+    public function createContext(): Context
     {
         $client = new Client($this->config['dsn']);
 

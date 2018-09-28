@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class SqsDestination implements PsrTopic, PsrQueue
+class SqsDestination implements Topic, Queue
 {
     /**
      * @var string

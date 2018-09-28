@@ -3,13 +3,13 @@
 namespace Enqueue\Mongodb\Tests\Spec;
 
 use Enqueue\Test\MongodbExtensionTrait;
-use Interop\Queue\Spec\PsrContextSpec;
+use Interop\Queue\Spec\ContextSpec;
 
 /**
  * @group functional
  * @group mongodb
  */
-class MongodbContextTest extends PsrContextSpec
+class MongodbContextTest extends ContextSpec
 {
     use MongodbExtensionTrait;
 

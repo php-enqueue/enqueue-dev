@@ -4,12 +4,12 @@ namespace Enqueue\AsyncEventDispatcher;
 
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AsyncProcessor implements PsrProcessor, CommandSubscriberInterface
+class AsyncProcessor implements Processor, CommandSubscriberInterface
 {
     /**
      * @var Registry
@@ -36,7 +36,7 @@ class AsyncProcessor implements PsrProcessor, CommandSubscriberInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         if (false == $eventName = $message->getProperty('event_name')) {
             return Result::reject('The message is missing "event_name" property');

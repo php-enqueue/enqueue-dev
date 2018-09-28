@@ -3,12 +3,12 @@
 namespace Enqueue\RdKafka\Tests\Spec;
 
 use Enqueue\RdKafka\RdKafkaTopic;
-use Interop\Queue\Spec\PsrQueueSpec;
+use Interop\Queue\Spec\QueueSpec;
 
 /**
  * @group rdkafka
  */
-class RdKafkaQueueTest extends PsrQueueSpec
+class RdKafkaQueueTest extends QueueSpec
 {
     protected function createQueue()
     {

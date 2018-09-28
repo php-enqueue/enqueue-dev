@@ -2,7 +2,7 @@
 
 namespace Enqueue;
 
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 
 interface ConnectionFactoryFactoryInterface
 {
@@ -18,5 +18,5 @@ interface ConnectionFactoryFactoryInterface
      *
      * @throws \InvalidArgumentException if invalid config provided
      */
-    public function create($config): PsrConnectionFactory;
+    public function create($config): ConnectionFactory;
 }

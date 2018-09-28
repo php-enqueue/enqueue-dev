@@ -3,9 +3,9 @@
 namespace Enqueue\Gps\Tests\Spec;
 
 use Enqueue\Gps\GpsTopic;
-use Interop\Queue\Spec\PsrTopicSpec;
+use Interop\Queue\Spec\TopicSpec;
 
-class GpsTopicTest extends PsrTopicSpec
+class GpsTopicTest extends TopicSpec
 {
     protected function createTopic()
     {

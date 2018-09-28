@@ -9,8 +9,8 @@ use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Producer as InteropProducer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -61,7 +61,7 @@ class ReplyExtensionTest extends TestCase
         $extension = new ReplyExtension();
 
         $context = new Context($this->createNeverUsedContextMock());
-        $context->setPsrMessage(new NullMessage());
+        $context->setInteropMessage(new NullMessage());
 
         $extension->onPostReceived($context);
     }
@@ -74,7 +74,7 @@ class ReplyExtensionTest extends TestCase
         $message->setReplyTo('aReplyToQueue');
 
         $context = new Context($this->createNeverUsedContextMock());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
         $context->setResult('notInstanceOfResult');
 
         $extension->onPostReceived($context);
@@ -88,7 +88,7 @@ class ReplyExtensionTest extends TestCase
         $message->setReplyTo('aReplyToQueue');
 
         $context = new Context($this->createNeverUsedContextMock());
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
         $context->setResult(Result::ack());
 
         $extension->onPostReceived($context);
@@ -107,15 +107,15 @@ class ReplyExtensionTest extends TestCase
 
         $replyQueue = new NullQueue('aReplyName');
 
-        $producerMock = $this->createMock(PsrProducer::class);
+        $producerMock = $this->createMock(InteropProducer::class);
         $producerMock
             ->expects($this->once())
             ->method('send')
             ->with($replyQueue, $replyMessage)
         ;
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PsrContext $contextMock */
-        $contextMock = $this->createMock(PsrContext::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|InteropContext $contextMock */
+        $contextMock = $this->createMock(InteropContext::class);
         $contextMock
             ->expects($this->once())
             ->method('createQueue')
@@ -128,7 +128,7 @@ class ReplyExtensionTest extends TestCase
         ;
 
         $context = new Context($contextMock);
-        $context->setPsrMessage($message);
+        $context->setInteropMessage($message);
         $context->setResult(Result::reply($replyMessage));
         $context->setLogger(new NullLogger());
 
@@ -136,11 +136,11 @@ class ReplyExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
      */
-    private function createNeverUsedContextMock()
+    private function createNeverUsedContextMock(): InteropContext
     {
-        $contextMock = $this->createMock(PsrContext::class);
+        $contextMock = $this->createMock(InteropContext::class);
         $contextMock
             ->expects($this->never())
             ->method('createProducer')
