@@ -4,8 +4,8 @@ namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
 class StompDestinationTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,8 +13,8 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementsTopicAndQueueInterfaces()
     {
-        $this->assertClassImplements(PsrTopic::class, StompDestination::class);
-        $this->assertClassImplements(PsrQueue::class, StompDestination::class);
+        $this->assertClassImplements(Topic::class, StompDestination::class);
+        $this->assertClassImplements(Queue::class, StompDestination::class);
     }
 
     public function testShouldReturnDestinationStringWithRoutingKey()

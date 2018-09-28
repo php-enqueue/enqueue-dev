@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\Stomp;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 use Stomp\Transport\Frame;
 
-class StompMessage implements PsrMessage
+class StompMessage implements Message
 {
     /**
      * @var string

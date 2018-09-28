@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/enqueue/stomp/d/total.png)](https://packagist.org/packages/enqueue/stomp)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/stomp/version.png)](https://packagist.org/packages/enqueue/stomp)
 
-This is an implementation of PSR specification. It allows you to send and consume message via STOMP protocol.  
+This is an implementation of Queue Interop specification. It allows you to send and consume message via STOMP protocol.  
 
 ## Resources
 

@@ -6,13 +6,13 @@ use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
 use Stomp\Client;
-use Stomp\Transport\Message;
+use Stomp\Transport\Message as VendorMessage;
 
 class StompProducerTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +20,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementProducerInterface()
     {
-        $this->assertClassImplements(PsrProducer::class, StompProducer::class);
+        $this->assertClassImplements(Producer::class, StompProducer::class);
     }
 
     public function testShouldThrowInvalidDestinationExceptionWhenDestinationIsWrongType()
@@ -30,7 +30,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
 
         $producer = new StompProducer($this->createStompClientMock());
 
-        $producer->send($this->createMock(PsrQueue::class), new StompMessage());
+        $producer->send($this->createMock(Queue::class), new StompMessage());
     }
 
     public function testShouldThrowInvalidMessageExceptionWhenMessageIsWrongType()
@@ -40,7 +40,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
 
         $producer = new StompProducer($this->createStompClientMock());
 
-        $producer->send(new StompDestination(), $this->createMock(PsrMessage::class));
+        $producer->send(new StompDestination(), $this->createMock(Message::class));
     }
 
     public function testShouldSendMessage()
@@ -49,7 +49,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
         $client
             ->expects($this->once())
             ->method('send')
-            ->with('/queue/name', $this->isInstanceOf(Message::class))
+            ->with('/queue/name', $this->isInstanceOf(VendorMessage::class))
         ;
 
         $producer = new StompProducer($client);
@@ -68,7 +68,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
         $client
             ->expects($this->once())
             ->method('send')
-            ->willReturnCallback(function ($destination, Message $message) use (&$stompMessage) {
+            ->willReturnCallback(function ($destination, VendorMessage $message) use (&$stompMessage) {
                 $stompMessage = $message;
             })
         ;
