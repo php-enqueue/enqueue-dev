@@ -21,22 +21,22 @@ final class RouterProcessor implements Processor
 
     public function process(InteropMessage $message, Context $context): Result
     {
-        if ($message->getProperty(Config::COMMAND_PARAMETER)) {
+        if ($message->getProperty(Config::COMMAND)) {
             return Result::reject(sprintf(
                 'Unexpected command "%s" got. Command must not go to the router.',
-                $message->getProperty(Config::COMMAND_PARAMETER)
+                $message->getProperty(Config::COMMAND)
             ));
         }
 
-        $topic = $message->getProperty(Config::TOPIC_PARAMETER);
+        $topic = $message->getProperty(Config::TOPIC);
         if (false == $topic) {
-            return Result::reject(sprintf('Topic property "%s" is required but not set or empty.', Config::TOPIC_PARAMETER));
+            return Result::reject(sprintf('Topic property "%s" is required but not set or empty.', Config::TOPIC));
         }
 
         $count = 0;
         foreach ($this->driver->getRouteCollection()->topic($topic) as $route) {
             $clientMessage = $this->driver->createClientMessage($message);
-            $clientMessage->setProperty(Config::PROCESSOR_PARAMETER, $route->getProcessor());
+            $clientMessage->setProperty(Config::PROCESSOR, $route->getProcessor());
 
             $this->driver->sendToProcessor($clientMessage);
 

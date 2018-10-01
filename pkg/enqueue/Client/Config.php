@@ -4,12 +4,13 @@ namespace Enqueue\Client;
 
 class Config
 {
-    const TOPIC_PARAMETER = 'enqueue.topic';
-    const COMMAND_PARAMETER = 'enqueue.command';
-    const PROCESSOR_PARAMETER = 'enqueue.processor';
-    const EXPIRE_PARAMETER = 'enqueue.expire';
-    const PRIORITY_PARAMETER = 'enqueue.priority';
-    const DELAY_PARAMETER = 'enqueue.delay';
+    const TOPIC = 'enqueue.topic';
+    const COMMAND = 'enqueue.command';
+    const PROCESSOR = 'enqueue.processor';
+    const EXPIRE = 'enqueue.expire';
+    const PRIORITY = 'enqueue.priority';
+    const DELAY = 'enqueue.delay';
+    const CONTENT_TYPE = 'enqueue.content_type';
 
     /**
      * @var string

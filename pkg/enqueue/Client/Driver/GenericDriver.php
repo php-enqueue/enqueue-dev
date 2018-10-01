@@ -47,10 +47,10 @@ class GenericDriver implements DriverInterface
 
     public function sendToRouter(Message $message): void
     {
-        if ($message->getProperty(Config::COMMAND_PARAMETER)) {
+        if ($message->getProperty(Config::COMMAND)) {
             throw new \LogicException('Command must not be send to router but go directly to its processor.');
         }
-        if (false == $message->getProperty(Config::TOPIC_PARAMETER)) {
+        if (false == $message->getProperty(Config::TOPIC)) {
             throw new \LogicException('Topic name parameter is required but is not set');
         }
 
@@ -63,21 +63,21 @@ class GenericDriver implements DriverInterface
 
     public function sendToProcessor(Message $message): void
     {
-        $topic = $message->getProperty(Config::TOPIC_PARAMETER);
-        $command = $message->getProperty(Config::COMMAND_PARAMETER);
+        $topic = $message->getProperty(Config::TOPIC);
+        $command = $message->getProperty(Config::COMMAND);
 
         /** @var InteropQueue $queue */
         $queue = null;
-        if ($topic && $processor = $message->getProperty(Config::PROCESSOR_PARAMETER)) {
+        if ($topic && $processor = $message->getProperty(Config::PROCESSOR)) {
             $route = $this->routeCollection->topicAndProcessor($topic, $processor);
             if (false == $route) {
                 throw new \LogicException(sprintf('There is no route for topic "%s" and processor "%s"', $topic, $processor));
             }
 
-            $message->setProperty(Config::PROCESSOR_PARAMETER, $route->getProcessor());
+            $message->setProperty(Config::PROCESSOR, $route->getProcessor());
             $queue = $this->createRouteQueue($route);
-        } elseif ($topic && false == $message->getProperty(Config::PROCESSOR_PARAMETER)) {
-            $message->setProperty(Config::PROCESSOR_PARAMETER, $this->config->getRouterProcessorName());
+        } elseif ($topic && false == $message->getProperty(Config::PROCESSOR)) {
+            $message->setProperty(Config::PROCESSOR, $this->config->getRouterProcessorName());
 
             $queue = $this->createQueue($this->config->getRouterQueueName());
         } elseif ($command) {
@@ -86,7 +86,7 @@ class GenericDriver implements DriverInterface
                 throw new \LogicException(sprintf('There is no route for command "%s".', $command));
             }
 
-            $message->setProperty(Config::PROCESSOR_PARAMETER, $route->getProcessor());
+            $message->setProperty(Config::PROCESSOR, $route->getProcessor());
             $queue = $this->createRouteQueue($route);
         } else {
             throw new \LogicException('Either topic or command parameter must be set.');
@@ -96,15 +96,15 @@ class GenericDriver implements DriverInterface
 
         $producer = $this->context->createProducer();
 
-        if (null !== $delay = $transportMessage->getProperty(Config::DELAY_PARAMETER)) {
+        if (null !== $delay = $transportMessage->getProperty(Config::DELAY)) {
             $producer->setDeliveryDelay($delay * 1000);
         }
 
-        if (null !== $expire = $transportMessage->getProperty('X-Enqueue-Expire')) {
+        if (null !== $expire = $transportMessage->getProperty(Config::EXPIRE)) {
             $producer->setTimeToLive($expire * 1000);
         }
 
-        if (null !== $priority = $transportMessage->getProperty('X-Enqueue-Priority')) {
+        if (null !== $priority = $transportMessage->getProperty(Config::PRIORITY)) {
             $priorityMap = $this->getPriorityMap();
 
             $producer->setPriority($priorityMap[$priority]);
@@ -149,19 +149,19 @@ class GenericDriver implements DriverInterface
         $transportMessage->setCorrelationId($clientMessage->getCorrelationId());
 
         if ($contentType = $clientMessage->getContentType()) {
-            $transportMessage->setProperty('X-Enqueue-Content-Type', $contentType);
+            $transportMessage->setProperty(Config::CONTENT_TYPE, $contentType);
         }
 
         if ($priority = $clientMessage->getPriority()) {
-            $transportMessage->setProperty('X-Enqueue-Priority', $priority);
+            $transportMessage->setProperty(Config::PRIORITY, $priority);
         }
 
         if ($expire = $clientMessage->getExpire()) {
-            $transportMessage->setProperty('X-Enqueue-Expire', $expire);
+            $transportMessage->setProperty(Config::EXPIRE, $expire);
         }
 
         if ($delay = $clientMessage->getDelay()) {
-            $transportMessage->setProperty(Config::DELAY_PARAMETER, $delay);
+            $transportMessage->setProperty(Config::DELAY, $delay);
         }
 
         return $transportMessage;
@@ -179,19 +179,19 @@ class GenericDriver implements DriverInterface
         $clientMessage->setReplyTo($transportMessage->getReplyTo());
         $clientMessage->setCorrelationId($transportMessage->getCorrelationId());
 
-        if ($contentType = $transportMessage->getProperty('X-Enqueue-Content-Type')) {
+        if ($contentType = $transportMessage->getProperty(Config::CONTENT_TYPE)) {
             $clientMessage->setContentType($contentType);
         }
 
-        if ($priority = $transportMessage->getProperty('X-Enqueue-Priority')) {
+        if ($priority = $transportMessage->getProperty(Config::PRIORITY)) {
             $clientMessage->setPriority($priority);
         }
 
-        if ($delay = $transportMessage->getProperty(Config::DELAY_PARAMETER)) {
+        if ($delay = $transportMessage->getProperty(Config::DELAY)) {
             $clientMessage->setDelay((int) $delay);
         }
 
-        if ($expire = $transportMessage->getProperty('X-Enqueue-Expire')) {
+        if ($expire = $transportMessage->getProperty(Config::EXPIRE)) {
             $clientMessage->setExpire((int) $expire);
         }
 

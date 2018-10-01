@@ -34,21 +34,21 @@ final class PostSend
 
     public function isEvent(): bool
     {
-        return (bool) $this->message->getProperty(Config::TOPIC_PARAMETER);
+        return (bool) $this->message->getProperty(Config::TOPIC);
     }
 
     public function isCommand(): bool
     {
-        return (bool) $this->message->getProperty(Config::COMMAND_PARAMETER);
+        return (bool) $this->message->getProperty(Config::COMMAND);
     }
 
     public function getCommand(): string
     {
-        return $this->message->getProperty(Config::COMMAND_PARAMETER);
+        return $this->message->getProperty(Config::COMMAND);
     }
 
     public function getTopic(): string
     {
-        return $this->message->getProperty(Config::TOPIC_PARAMETER);
+        return $this->message->getProperty(Config::TOPIC);
     }
 }

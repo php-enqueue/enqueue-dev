@@ -100,7 +100,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         ;
 
         $message = new NullMessage();
-        $message->setProperty(Config::PROCESSOR_PARAMETER, 'non-router-processor');
+        $message->setProperty(Config::PROCESSOR, 'non-router-processor');
 
         $context = new Context($this->createContextMock());
         $context->setInteropMessage($message);

@@ -169,7 +169,7 @@ class RabbitMqStompDriver extends StompDriver
      */
     protected function doSendToProcessor(InteropProducer $producer, InteropQueue $destination, InteropMessage $transportMessage): void
     {
-        if ($delay = $transportMessage->getProperty(Config::DELAY_PARAMETER)) {
+        if ($delay = $transportMessage->getProperty(Config::DELAY)) {
             $producer->setDeliveryDelay(null);
             $destination = $this->createDelayedTopic($destination);
         }

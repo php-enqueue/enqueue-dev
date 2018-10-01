@@ -38,7 +38,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     public function testShouldDoNothingIfMessageHasTopicPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::TOPIC_PARAMETER, 'aTopic');
+        $message->setProperty(Config::TOPIC, 'aTopic');
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
@@ -63,7 +63,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     public function testShouldDoNothingIfMessageHasCommandPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::COMMAND_PARAMETER, 'aCommand');
+        $message->setProperty(Config::COMMAND, 'aCommand');
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);
@@ -88,7 +88,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     public function testShouldDoNothingIfMessageHasProcessorPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::PROCESSOR_PARAMETER, 'aProcessor');
+        $message->setProperty(Config::PROCESSOR, 'aProcessor');
 
         $context = new Context(new NullContext());
         $context->setInteropMessage($message);

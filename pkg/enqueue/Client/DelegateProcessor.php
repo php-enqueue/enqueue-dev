@@ -26,11 +26,11 @@ class DelegateProcessor implements Processor
      */
     public function process(InteropMessage $message, Context $context)
     {
-        $processorName = $message->getProperty(Config::PROCESSOR_PARAMETER);
+        $processorName = $message->getProperty(Config::PROCESSOR);
         if (false == $processorName) {
             throw new \LogicException(sprintf(
                 'Got message without required parameter: "%s"',
-                Config::PROCESSOR_PARAMETER
+                Config::PROCESSOR
             ));
         }
 

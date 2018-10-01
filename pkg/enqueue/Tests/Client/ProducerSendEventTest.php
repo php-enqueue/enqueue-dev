@@ -45,7 +45,7 @@ class ProducerSendEventTest extends TestCase
     public function testShouldOverwriteTopicProperty()
     {
         $message = new Message();
-        $message->setProperty(Config::TOPIC_PARAMETER, 'topicShouldBeOverwritten');
+        $message->setProperty(Config::TOPIC, 'topicShouldBeOverwritten');
 
         $driver = $this->createDriverStub();
 
@@ -198,7 +198,7 @@ class ProducerSendEventTest extends TestCase
     {
         $message = new Message();
         $message->setBody('');
-        $message->setProperty(Config::PROCESSOR_PARAMETER, 'aProcessor');
+        $message->setProperty(Config::PROCESSOR, 'aProcessor');
 
         $driver = $this->createDriverStub();
         $driver
@@ -235,7 +235,7 @@ class ProducerSendEventTest extends TestCase
                 self::assertSame('aBody', $message->getBody());
 
                 // null means a driver sends a message to router processor.
-                self::assertNull($message->getProperty(Config::PROCESSOR_PARAMETER));
+                self::assertNull($message->getProperty(Config::PROCESSOR));
             })
         ;
 
@@ -248,7 +248,7 @@ class ProducerSendEventTest extends TestCase
         $message = new Message();
         $message->setBody('aBody');
         $message->setScope(Message::SCOPE_APP);
-        $message->setProperty(Config::PROCESSOR_PARAMETER, 'aCustomProcessor');
+        $message->setProperty(Config::PROCESSOR, 'aCustomProcessor');
 
         $driver = $this->createDriverStub();
         $driver

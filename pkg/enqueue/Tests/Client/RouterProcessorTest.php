@@ -53,7 +53,7 @@ class RouterProcessorTest extends TestCase
         $router = new RouterProcessor($this->createDriverStub());
 
         $message = new NullMessage();
-        $message->setProperty(Config::COMMAND_PARAMETER, 'aCommand');
+        $message->setProperty(Config::COMMAND, 'aCommand');
 
         $result = $router->process($message, new NullContext());
 
@@ -66,7 +66,7 @@ class RouterProcessorTest extends TestCase
         $message = new NullMessage();
         $message->setBody('theBody');
         $message->setHeaders(['aHeader' => 'aHeaderVal']);
-        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName']);
+        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC => 'theTopicName']);
 
         /** @var Message[] $routedMessages */
         $routedMessages = new \ArrayObject();
@@ -103,9 +103,9 @@ class RouterProcessorTest extends TestCase
         $this->assertContainsOnly(Message::class, $routedMessages);
         $this->assertCount(3, $routedMessages);
 
-        $this->assertSame('aFooProcessor', $routedMessages[0]->getProperty(Config::PROCESSOR_PARAMETER));
-        $this->assertSame('aBarProcessor', $routedMessages[1]->getProperty(Config::PROCESSOR_PARAMETER));
-        $this->assertSame('aBazProcessor', $routedMessages[2]->getProperty(Config::PROCESSOR_PARAMETER));
+        $this->assertSame('aFooProcessor', $routedMessages[0]->getProperty(Config::PROCESSOR));
+        $this->assertSame('aBarProcessor', $routedMessages[1]->getProperty(Config::PROCESSOR));
+        $this->assertSame('aBazProcessor', $routedMessages[2]->getProperty(Config::PROCESSOR));
     }
 
     public function testShouldDoNothingIfNoRoutes()
@@ -113,7 +113,7 @@ class RouterProcessorTest extends TestCase
         $message = new NullMessage();
         $message->setBody('theBody');
         $message->setHeaders(['aHeader' => 'aHeaderVal']);
-        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName']);
+        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC => 'theTopicName']);
 
         /** @var Message[] $routedMessages */
         $routedMessages = new \ArrayObject();
@@ -151,7 +151,7 @@ class RouterProcessorTest extends TestCase
         $message = new NullMessage();
         $message->setBody('theBody');
         $message->setHeaders(['aHeader' => 'aHeaderVal']);
-        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName']);
+        $message->setProperties(['aProp' => 'aPropVal', Config::TOPIC => 'theTopicName']);
 
         /** @var Message[] $routedMessages */
         $routedMessages = new \ArrayObject();
@@ -183,7 +183,7 @@ class RouterProcessorTest extends TestCase
         $this->assertEquals(Result::ACK, $result->getStatus());
 
         $this->assertSame('theBody', $message->getBody());
-        $this->assertSame(['aProp' => 'aPropVal', Config::TOPIC_PARAMETER => 'theTopicName'], $message->getProperties());
+        $this->assertSame(['aProp' => 'aPropVal', Config::TOPIC => 'theTopicName'], $message->getProperties());
         $this->assertSame(['aHeader' => 'aHeaderVal'], $message->getHeaders());
     }
 

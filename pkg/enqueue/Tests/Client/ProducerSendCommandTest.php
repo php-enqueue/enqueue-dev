@@ -136,7 +136,7 @@ class ProducerSendCommandTest extends TestCase
     public function testShouldOverwriteExpectedMessageProperties()
     {
         $message = new Message();
-        $message->setProperty(Config::COMMAND_PARAMETER, 'commandShouldBeOverwritten');
+        $message->setProperty(Config::COMMAND, 'commandShouldBeOverwritten');
         $message->setScope('scopeShouldBeOverwritten');
 
         $driver = $this->createDriverStub();
@@ -299,8 +299,8 @@ class ProducerSendCommandTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) {
                 self::assertSame('aBody', $message->getBody());
-                self::assertNull($message->getProperty(Config::PROCESSOR_PARAMETER));
-                self::assertSame('command', $message->getProperty(Config::COMMAND_PARAMETER));
+                self::assertNull($message->getProperty(Config::PROCESSOR));
+                self::assertSame('command', $message->getProperty(Config::COMMAND));
             })
         ;
 
@@ -313,7 +313,7 @@ class ProducerSendCommandTest extends TestCase
         $message = new Message();
         $message->setBody('aBody');
         $message->setScope(Message::SCOPE_APP);
-        $message->setProperty(Config::PROCESSOR_PARAMETER, 'aCustomProcessor');
+        $message->setProperty(Config::PROCESSOR, 'aCustomProcessor');
 
         $driver = $this->createDriverStub();
         $driver

@@ -137,7 +137,7 @@ class FsConsumerTest extends TestCase
         $context->purgeQueue($queue);
 
         $context->workWithFile($queue, 'a+', function (FsDestination $destination, $file) {
-            fwrite($file, '|{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_red_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"46fdc345-5d0c-426e-95ac-227c7e657839","timestamp":1505379216,"reply_to":null,"correlation_id":""}}                                                          |{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_black_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"c4d60e39-3a8c-42df-b536-c8b7c13e006d","timestamp":1505379216,"reply_to":null,"correlation_id":""}}                                                          |{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_green_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"3a6aa176-c879-4435-9626-c48e0643defa","timestamp":1505379216,"reply_to":null,"correlation_id":""}}');
+            fwrite($file, '|{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_red_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic_name":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"46fdc345-5d0c-426e-95ac-227c7e657839","timestamp":1505379216,"reply_to":null,"correlation_id":""}}                                                          |{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_black_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic_name":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"c4d60e39-3a8c-42df-b536-c8b7c13e006d","timestamp":1505379216,"reply_to":null,"correlation_id":""}}                                                          |{"body":"{\"path\":\"\\\/p\\\/r\\\/pr_swoppad_6_4910_green_1.jpg\",\"filters\":null,\"force\":false}","properties":{"enqueue.topic_name":"liip_imagine_resolve_cache"},"headers":{"content_type":"application\/json","message_id":"3a6aa176-c879-4435-9626-c48e0643defa","timestamp":1505379216,"reply_to":null,"correlation_id":""}}');
         });
 
         $consumer = $context->createConsumer($queue);
@@ -182,13 +182,13 @@ class FsConsumerTest extends TestCase
         $queue = $context->createQueue('fs_test_queue');
         $context->purgeQueue($queue);
 
-        $message = $this->fsContext->createMessage('                             |{"body":"aMessageData","properties":{"enqueue.topic":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"correlation_id":""}}');
+        $message = $this->fsContext->createMessage('                             |{"body":"aMessageData","properties":{"enqueue.topic_name":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"correlation_id":""}}');
 
         $this->fsContext->createProducer()->send($queue, $message);
 
         $this->assertSame(0, strlen(file_get_contents(sys_get_temp_dir().'/fs_test_queue')) % 64);
         $this->assertSame(
-            '                                                       |{"body":"                             \|\{\"body\":\"aMessageData\",\"properties\":{\"enqueue.topic\":\"user_updated\"},\"headers\":{\"content_type\":\"text\\\\\/plain\",\"message_id\":\"90979b6c-d9ff-4b39-9938-878b83a95360\",\"timestamp\":1519899428,\"reply_to\":null,\"correlation_id\":\"\"}}","properties":[],"headers":[]}',
+            '                                                       |{"body":"                             \|\{\"body\":\"aMessageData\",\"properties\":{\"enqueue.topic_name\":\"user_updated\"},\"headers\":{\"content_type\":\"text\\\\\/plain\",\"message_id\":\"90979b6c-d9ff-4b39-9938-878b83a95360\",\"timestamp\":1519899428,\"reply_to\":null,\"correlation_id\":\"\"}}","properties":[],"headers":[]}',
             file_get_contents(sys_get_temp_dir().'/fs_test_queue')
         );
 
@@ -196,6 +196,6 @@ class FsConsumerTest extends TestCase
 
         $message = $consumer->receiveNoWait();
 
-        $this->assertSame('                             |{"body":"aMessageData","properties":{"enqueue.topic":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"correlation_id":""}}', $message->getBody());
+        $this->assertSame('                             |{"body":"aMessageData","properties":{"enqueue.topic_name":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"correlation_id":""}}', $message->getBody());
     }
 }

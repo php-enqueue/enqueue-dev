@@ -48,7 +48,7 @@ final class Producer implements ProducerInterface
         $this->extension->onPreSendEvent($preSend);
 
         $message = $preSend->getMessage();
-        $message->setProperty(Config::TOPIC_PARAMETER, $preSend->getTopic());
+        $message->setProperty(Config::TOPIC, $preSend->getTopic());
 
         $this->doSend($message);
     }
@@ -79,7 +79,7 @@ final class Producer implements ProducerInterface
             }
         }
 
-        $message->setProperty(Config::COMMAND_PARAMETER, $command);
+        $message->setProperty(Config::COMMAND, $command);
         $message->setScope(Message::SCOPE_APP);
 
         $this->doSend($message);
@@ -103,8 +103,8 @@ final class Producer implements ProducerInterface
             ));
         }
 
-        if ($message->getProperty(Config::PROCESSOR_PARAMETER)) {
-            throw new \LogicException(sprintf('The %s property must not be set.', Config::PROCESSOR_PARAMETER));
+        if ($message->getProperty(Config::PROCESSOR)) {
+            throw new \LogicException(sprintf('The %s property must not be set.', Config::PROCESSOR));
         }
 
         if (!$message->getMessageId()) {

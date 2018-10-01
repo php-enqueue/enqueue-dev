@@ -250,8 +250,8 @@ class RabbitMqStompDriverTest extends TestCase
         );
 
         $message = new Message();
-        $message->setProperty(Config::TOPIC_PARAMETER, 'topic');
-        $message->setProperty(Config::PROCESSOR_PARAMETER, 'processor');
+        $message->setProperty(Config::TOPIC, 'topic');
+        $message->setProperty(Config::PROCESSOR, 'processor');
         $message->setDelay(10);
 
         $driver->sendToProcessor($message);
@@ -540,10 +540,10 @@ class RabbitMqStompDriverTest extends TestCase
         ], $transportMessage->getHeaders());
         $this->assertEquals([
             'pkey' => 'pval',
-            'X-Enqueue-Content-Type' => 'ContentType',
-            'X-Enqueue-Priority' => MessagePriority::HIGH,
-            'X-Enqueue-Expire' => 123,
-            'enqueue.delay' => 345,
+            Config::CONTENT_TYPE => 'ContentType',
+            Config::PRIORITY => MessagePriority::HIGH,
+            Config::EXPIRE => 123,
+            Config::DELAY => 345,
         ], $transportMessage->getProperties());
         $this->assertSame('theMessageId', $transportMessage->getMessageId());
         $this->assertSame(1000, $transportMessage->getTimestamp());

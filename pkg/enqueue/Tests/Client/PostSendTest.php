@@ -48,7 +48,7 @@ class PostSendTest extends TestCase
     public function testShouldAllowGetCommand()
     {
         $message = new Message();
-        $message->setProperty(Config::COMMAND_PARAMETER, 'theCommand');
+        $message->setProperty(Config::COMMAND, 'theCommand');
 
         $context = new PostSend(
             $message,
@@ -63,7 +63,7 @@ class PostSendTest extends TestCase
     public function testShouldAllowGetTopic()
     {
         $message = new Message();
-        $message->setProperty(Config::TOPIC_PARAMETER, 'theTopic');
+        $message->setProperty(Config::TOPIC, 'theTopic');
 
         $context = new PostSend(
             $message,

@@ -33,7 +33,7 @@ class DelegateProcessorTest extends TestCase
         $session = $this->createContextMock();
         $message = new NullMessage();
         $message->setProperties([
-            Config::PROCESSOR_PARAMETER => 'processor-name',
+            Config::PROCESSOR => 'processor-name',
         ]);
 
         $processor = $this->createProcessorMock();
