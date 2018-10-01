@@ -29,7 +29,7 @@ class GpsDriver extends GenericDriver
 
         // setup router
         $routerTopic = $this->createRouterTopic();
-        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueue());
 
         $log('Subscribe router topic to queue: %s -> %s', $routerTopic->getTopicName(), $routerQueue->getQueueName());
         $this->getContext()->subscribe($routerTopic, $routerQueue);
@@ -58,7 +58,7 @@ class GpsDriver extends GenericDriver
     protected function createRouterTopic(): Destination
     {
         return $this->doCreateTopic(
-            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopic(), true)
         );
     }
 }

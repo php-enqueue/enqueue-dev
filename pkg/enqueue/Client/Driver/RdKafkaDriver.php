@@ -27,7 +27,7 @@ class RdKafkaDriver extends GenericDriver
         };
 
         // setup router
-        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueue());
         $log('Create router queue: %s', $routerQueue->getQueueName());
         $this->getContext()->createConsumer($routerQueue);
 
@@ -51,7 +51,7 @@ class RdKafkaDriver extends GenericDriver
     protected function createRouterTopic(): Destination
     {
         return $this->doCreateTopic(
-            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopic(), true)
         );
     }
 }

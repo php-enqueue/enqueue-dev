@@ -76,7 +76,7 @@ class RabbitMqStompDriver extends StompDriver
         }
 
         // setup router
-        $routerExchange = $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true);
+        $routerExchange = $this->createTransportRouterTopicName($this->getConfig()->getRouterTopic(), true);
         $log('Declare router exchange: %s', $routerExchange);
         $this->management->declareExchange($routerExchange, [
             'type' => 'fanout',
@@ -84,7 +84,7 @@ class RabbitMqStompDriver extends StompDriver
             'auto_delete' => false,
         ]);
 
-        $routerQueue = $this->createTransportQueueName($this->getConfig()->getRouterQueueName(), true);
+        $routerQueue = $this->createTransportQueueName($this->getConfig()->getRouterQueue(), true);
         $log('Declare router queue: %s', $routerQueue);
         $this->management->declareQueue($routerQueue, [
             'auto_delete' => false,

@@ -119,7 +119,7 @@ final class RoutesCommand extends Command
 
     private function formatQueue(Route $route): string
     {
-        $queue = $route->getQueue() ?: $this->config->getDefaultProcessorQueueName();
+        $queue = $route->getQueue() ?: $this->config->getDefaultQueue();
 
         return $route->isPrefixQueue() ? $queue.' (prefixed)' : $queue.' (as is)';
     }

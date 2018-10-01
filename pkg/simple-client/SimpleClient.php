@@ -169,7 +169,7 @@ final class SimpleClient
 
         $boundQueues = [];
 
-        $routerQueue = $this->getDriver()->createQueue($this->getDriver()->getConfig()->getRouterQueueName());
+        $routerQueue = $this->getDriver()->createQueue($this->getDriver()->getConfig()->getRouterQueue());
         $this->queueConsumer->bind($routerQueue, $this->delegateProcessor);
         $boundQueues[$routerQueue->getQueueName()] = true;
 
@@ -268,7 +268,7 @@ final class SimpleClient
 
         $routerProcessor = new RouterProcessor($driver);
 
-        $processorRegistry->add($config->getRouterProcessorName(), $routerProcessor);
+        $processorRegistry->add($config->getRouterProcessor(), $routerProcessor);
 
         $this->driver = $driver;
         $this->producer = $producer;

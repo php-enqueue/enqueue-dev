@@ -74,8 +74,8 @@ class ConsumeMessagesCommand extends Command
 
         $clientQueueNames = $input->getArgument('client-queue-names');
         if (empty($clientQueueNames)) {
-            $clientQueueNames[$this->driver->getConfig()->getDefaultProcessorQueueName()] = true;
-            $clientQueueNames[$this->driver->getConfig()->getRouterQueueName()] = true;
+            $clientQueueNames[$this->driver->getConfig()->getDefaultQueue()] = true;
+            $clientQueueNames[$this->driver->getConfig()->getRouterQueue()] = true;
 
             foreach ($this->driver->getRouteCollection()->all() as $route) {
                 if ($route->getQueue()) {

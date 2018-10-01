@@ -77,9 +77,9 @@ class GenericDriver implements DriverInterface
             $message->setProperty(Config::PROCESSOR, $route->getProcessor());
             $queue = $this->createRouteQueue($route);
         } elseif ($topic && false == $message->getProperty(Config::PROCESSOR)) {
-            $message->setProperty(Config::PROCESSOR, $this->config->getRouterProcessorName());
+            $message->setProperty(Config::PROCESSOR, $this->config->getRouterProcessor());
 
-            $queue = $this->createQueue($this->config->getRouterQueueName());
+            $queue = $this->createQueue($this->config->getRouterQueue());
         } elseif ($command) {
             $route = $this->routeCollection->command($command);
             if (false == $route) {
@@ -127,7 +127,7 @@ class GenericDriver implements DriverInterface
     public function createRouteQueue(Route $route): InteropQueue
     {
         $transportName = $this->createTransportQueueName(
-            $route->getQueue() ?: $this->config->getDefaultProcessorQueueName(),
+            $route->getQueue() ?: $this->config->getDefaultQueue(),
             $route->isPrefixQueue()
         );
 
@@ -225,7 +225,7 @@ class GenericDriver implements DriverInterface
 
     protected function createRouterTopic(): Destination
     {
-        return $this->createQueue($this->getConfig()->getRouterQueueName());
+        return $this->createQueue($this->getConfig()->getRouterQueue());
     }
 
     protected function createTransportRouterTopicName(string $name, bool $prefix): string
@@ -238,7 +238,7 @@ class GenericDriver implements DriverInterface
     protected function createTransportQueueName(string $name, bool $prefix): string
     {
         $clientPrefix = $prefix ? $this->config->getPrefix() : '';
-        $clientAppName = $prefix ? $this->config->getAppName() : '';
+        $clientAppName = $prefix ? $this->config->getApp() : '';
 
         return strtolower(implode($this->config->getSeparator(), array_filter([$clientPrefix, $clientAppName, $name])));
     }
