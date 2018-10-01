@@ -48,7 +48,7 @@ class DriverPreSendTest extends TestCase
     public function testShouldAllowGetCommand()
     {
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'theCommand');
+        $message->setProperty(Config::COMMAND, 'theCommand');
 
         $context = new DriverPreSend(
             $message,
@@ -63,7 +63,7 @@ class DriverPreSendTest extends TestCase
     public function testShouldAllowGetTopic()
     {
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'theTopic');
+        $message->setProperty(Config::TOPIC, 'theTopic');
 
         $context = new DriverPreSend(
             $message,

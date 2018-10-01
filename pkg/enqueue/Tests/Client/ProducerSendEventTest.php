@@ -36,7 +36,7 @@ class ProducerSendEventTest extends TestCase
         $producer->sendEvent('topic', $message);
 
         $expectedProperties = [
-            'enqueue.topic_name' => 'topic',
+            'enqueue.topic' => 'topic',
         ];
 
         self::assertEquals($expectedProperties, $message->getProperties());
@@ -45,7 +45,7 @@ class ProducerSendEventTest extends TestCase
     public function testShouldOverwriteTopicProperty()
     {
         $message = new Message();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'topicShouldBeOverwritten');
+        $message->setProperty(Config::TOPIC, 'topicShouldBeOverwritten');
 
         $driver = $this->createDriverStub();
 
@@ -53,7 +53,7 @@ class ProducerSendEventTest extends TestCase
         $producer->sendEvent('expectedTopic', $message);
 
         $expectedProperties = [
-            'enqueue.topic_name' => 'expectedTopic',
+            'enqueue.topic' => 'expectedTopic',
         ];
 
         self::assertEquals($expectedProperties, $message->getProperties());
@@ -198,7 +198,7 @@ class ProducerSendEventTest extends TestCase
     {
         $message = new Message();
         $message->setBody('');
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aProcessor');
+        $message->setProperty(Config::PROCESSOR, 'aProcessor');
 
         $driver = $this->createDriverStub();
         $driver
@@ -213,7 +213,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock());
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The enqueue.processor_name property must not be set.');
+        $this->expectExceptionMessage('The enqueue.processor property must not be set.');
         $producer->sendEvent('topic', $message);
     }
 
@@ -235,7 +235,7 @@ class ProducerSendEventTest extends TestCase
                 self::assertSame('aBody', $message->getBody());
 
                 // null means a driver sends a message to router processor.
-                self::assertNull($message->getProperty(Config::PARAMETER_PROCESSOR_NAME));
+                self::assertNull($message->getProperty(Config::PROCESSOR));
             })
         ;
 
@@ -248,7 +248,7 @@ class ProducerSendEventTest extends TestCase
         $message = new Message();
         $message->setBody('aBody');
         $message->setScope(Message::SCOPE_APP);
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aCustomProcessor');
+        $message->setProperty(Config::PROCESSOR, 'aCustomProcessor');
 
         $driver = $this->createDriverStub();
         $driver
@@ -259,7 +259,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock());
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The enqueue.processor_name property must not be set.');
+        $this->expectExceptionMessage('The enqueue.processor property must not be set.');
         $producer->sendEvent('topic', $message);
     }
 

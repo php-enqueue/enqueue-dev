@@ -76,7 +76,7 @@ class RabbitMqStompDriver extends StompDriver
         }
 
         // setup router
-        $routerExchange = $this->getConfig()->createTransportRouterTopicName($this->getConfig()->getRouterTopicName());
+        $routerExchange = $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true);
         $log('Declare router exchange: %s', $routerExchange);
         $this->management->declareExchange($routerExchange, [
             'type' => 'fanout',
@@ -84,7 +84,7 @@ class RabbitMqStompDriver extends StompDriver
             'auto_delete' => false,
         ]);
 
-        $routerQueue = $this->getConfig()->createTransportQueueName($this->getConfig()->getRouterQueueName());
+        $routerQueue = $this->createTransportQueueName($this->getConfig()->getRouterQueueName(), true);
         $log('Declare router queue: %s', $routerQueue);
         $this->management->declareQueue($routerQueue, [
             'auto_delete' => false,
@@ -169,7 +169,7 @@ class RabbitMqStompDriver extends StompDriver
      */
     protected function doSendToProcessor(InteropProducer $producer, InteropQueue $destination, InteropMessage $transportMessage): void
     {
-        if ($delay = $transportMessage->getProperty('X-Enqueue-Delay')) {
+        if ($delay = $transportMessage->getProperty(Config::DELAY)) {
             $producer->setDeliveryDelay(null);
             $destination = $this->createDelayedTopic($destination);
         }

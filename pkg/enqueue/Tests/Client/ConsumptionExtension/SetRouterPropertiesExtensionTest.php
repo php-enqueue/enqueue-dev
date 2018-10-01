@@ -57,7 +57,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $extension->onPreReceived($context);
 
         $this->assertEquals([
-            'enqueue.processor_name' => 'router-processor-name',
+            'enqueue.processor' => 'router-processor-name',
         ], $message->getProperties());
     }
 
@@ -100,7 +100,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         ;
 
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'non-router-processor');
+        $message->setProperty(Config::PROCESSOR, 'non-router-processor');
 
         $context = new Context($this->createContextMock());
         $context->setInteropMessage($message);
@@ -109,7 +109,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $extension->onPreReceived($context);
 
         $this->assertEquals([
-            'enqueue.processor_name' => 'non-router-processor',
+            'enqueue.processor' => 'non-router-processor',
         ], $message->getProperties());
     }
 

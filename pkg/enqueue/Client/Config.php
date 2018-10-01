@@ -4,21 +4,13 @@ namespace Enqueue\Client;
 
 class Config
 {
-    const PARAMETER_TOPIC_NAME = 'enqueue.topic_name';
-    const PARAMETER_COMMAND_NAME = 'enqueue.command_name';
-    const PARAMETER_PROCESSOR_NAME = 'enqueue.processor_name';
-
-    /**
-     * @deprecated
-     */
-    const PARAMETER_PROCESSOR_QUEUE_NAME = 'enqueue.processor_queue_name';
-
-    const DEFAULT_PROCESSOR_QUEUE_NAME = 'default';
-
-    /**
-     * @deprecated
-     */
-    const COMMAND_TOPIC = '__command__';
+    const TOPIC = 'enqueue.topic';
+    const COMMAND = 'enqueue.command';
+    const PROCESSOR = 'enqueue.processor';
+    const EXPIRE = 'enqueue.expire';
+    const PRIORITY = 'enqueue.priority';
+    const DELAY = 'enqueue.delay';
+    const CONTENT_TYPE = 'enqueue.content_type';
 
     /**
      * @var string
@@ -116,22 +108,6 @@ class Config
     public function getRouterProcessorName(): string
     {
         return $this->routerProcessorName;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function createTransportRouterTopicName(string $name): string
-    {
-        return strtolower(implode('.', array_filter([trim($this->prefix), trim($name)])));
-    }
-
-    /**
-     * @deprecated
-     */
-    public function createTransportQueueName(string $name): string
-    {
-        return strtolower(implode('.', array_filter([trim($this->prefix), trim($this->appName), trim($name)])));
     }
 
     /**

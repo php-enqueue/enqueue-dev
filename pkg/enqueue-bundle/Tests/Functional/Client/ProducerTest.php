@@ -72,8 +72,8 @@ class ProducerTest extends WebTestCase
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
-            'enqueue.processor_name' => 'test_command_subscriber_processor',
-            'enqueue.command_name' => 'theCommand',
+            'enqueue.processor' => 'test_command_subscriber_processor',
+            'enqueue.command' => 'theCommand',
         ], $traces[0]['properties']);
     }
 
@@ -93,8 +93,8 @@ class ProducerTest extends WebTestCase
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
-            'enqueue.processor_name' => 'theExclusiveCommandName',
-            'enqueue.command_name' => 'theExclusiveCommandName',
+            'enqueue.processor' => 'theExclusiveCommandName',
+            'enqueue.command' => 'theExclusiveCommandName',
         ], $traces[0]['properties']);
     }
 
@@ -114,8 +114,8 @@ class ProducerTest extends WebTestCase
         $this->assertCount(1, $traces);
         $this->assertEquals('theMessage', $traces[0]['body']);
         $this->assertEquals([
-            'enqueue.processor_name' => 'test_command_subscriber_processor',
-            'enqueue.command_name' => 'theCommand',
+            'enqueue.processor' => 'test_command_subscriber_processor',
+            'enqueue.command' => 'theCommand',
         ], $traces[0]['properties']);
     }
 

@@ -28,7 +28,7 @@ class SetRouterPropertiesExtension implements ExtensionInterface
     public function onPreReceived(Context $context)
     {
         $message = $context->getInteropMessage();
-        if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
+        if ($message->getProperty(Config::PROCESSOR)) {
             return;
         }
 
@@ -39,7 +39,7 @@ class SetRouterPropertiesExtension implements ExtensionInterface
         }
 
         // RouterProcessor is our default message processor when that header is not set
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $config->getRouterProcessorName());
+        $message->setProperty(Config::PROCESSOR, $config->getRouterProcessorName());
 
         $context->getLogger()->debug(
             '[SetRouterPropertiesExtension] '.

@@ -2,7 +2,6 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
-use Enqueue\Client\Config;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -35,10 +34,10 @@ final class Configuration implements ConfigurationInterface
                 ->booleanNode('traceable_producer')->defaultValue($this->debug)->end()
                 ->scalarNode('prefix')->defaultValue('enqueue')->end()
                 ->scalarNode('app_name')->defaultValue('app')->end()
-                ->scalarNode('router_topic')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
-                ->scalarNode('router_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                ->scalarNode('router_topic')->defaultValue('default')->cannotBeEmpty()->end()
+                ->scalarNode('router_queue')->defaultValue('default')->cannotBeEmpty()->end()
                 ->scalarNode('router_processor')->defaultValue(RouterProcessor::class)->end()
-                ->scalarNode('default_processor_queue')->defaultValue(Config::DEFAULT_PROCESSOR_QUEUE_NAME)->cannotBeEmpty()->end()
+                ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
                 ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
             ->end()->end()
             ->arrayNode('consumption')->addDefaultsIfNotSet()->children()
