@@ -26,7 +26,7 @@ class SqsDriver extends GenericDriver
         };
 
         // setup router
-        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueue());
         $log('Declare router queue: %s', $routerQueue->getQueueName());
         $this->getContext()->declareQueue($routerQueue);
 

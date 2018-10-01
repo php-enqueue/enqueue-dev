@@ -26,7 +26,7 @@ class FsDriver extends GenericDriver
         };
 
         // setup router
-        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueue());
 
         $log('Declare router queue "%s" file: %s', $routerQueue->getQueueName(), $routerQueue->getFileInfo());
         $this->getContext()->declareDestination($routerQueue);

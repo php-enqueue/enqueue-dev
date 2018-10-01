@@ -33,17 +33,17 @@ class SetRouterPropertiesExtension implements ExtensionInterface
         }
 
         $config = $this->driver->getConfig();
-        $queue = $this->driver->createQueue($config->getRouterQueueName());
+        $queue = $this->driver->createQueue($config->getRouterQueue());
         if ($context->getInteropQueue()->getQueueName() != $queue->getQueueName()) {
             return;
         }
 
         // RouterProcessor is our default message processor when that header is not set
-        $message->setProperty(Config::PROCESSOR, $config->getRouterProcessorName());
+        $message->setProperty(Config::PROCESSOR, $config->getRouterProcessor());
 
         $context->getLogger()->debug(
             '[SetRouterPropertiesExtension] '.
-            sprintf('Set router processor "%s"', $config->getRouterProcessorName())
+            sprintf('Set router processor "%s"', $config->getRouterProcessor())
         );
     }
 }

@@ -70,7 +70,7 @@ class AmqpDriver extends GenericDriver
         $log('Declare router exchange: %s', $routerTopic->getTopicName());
         $this->getContext()->declareTopic($routerTopic);
 
-        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueueName());
+        $routerQueue = $this->createQueue($this->getConfig()->getRouterQueue());
         $log('Declare router queue: %s', $routerQueue->getQueueName());
         $this->getContext()->declareQueue($routerQueue);
 
@@ -99,7 +99,7 @@ class AmqpDriver extends GenericDriver
     protected function createRouterTopic(): Destination
     {
         $topic = $this->doCreateTopic(
-            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopic(), true)
         );
         $topic->setType(AmqpTopic::TYPE_FANOUT);
         $topic->addFlag(AmqpTopic::FLAG_DURABLE);

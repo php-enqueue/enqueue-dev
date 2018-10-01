@@ -49,7 +49,7 @@ class ConfigTest extends TestCase
             'aRouterProcessorName'
         );
 
-        $this->assertEquals('theApp', $config->getAppName());
+        $this->assertEquals('theApp', $config->getApp());
     }
 
     /**
@@ -66,7 +66,7 @@ class ConfigTest extends TestCase
             'aRouterProcessorName'
         );
 
-        $this->assertSame('', $config->getAppName());
+        $this->assertSame('', $config->getApp());
     }
 
     public function testShouldReturnRouterProcessorNameSetInConstructor()
@@ -80,7 +80,7 @@ class ConfigTest extends TestCase
             'aRouterProcessorName'
         );
 
-        $this->assertEquals('aRouterProcessorName', $config->getRouterProcessorName());
+        $this->assertEquals('aRouterProcessorName', $config->getRouterProcessor());
     }
 
     public function testShouldReturnRouterTopicNameSetInConstructor()
@@ -94,7 +94,7 @@ class ConfigTest extends TestCase
             'aRouterProcessorName'
         );
 
-        $this->assertEquals('aRouterTopicName', $config->getRouterTopicName());
+        $this->assertEquals('aRouterTopicName', $config->getRouterTopic());
     }
 
     public function testShouldReturnRouterQueueNameSetInConstructor()
@@ -108,7 +108,7 @@ class ConfigTest extends TestCase
             'aRouterProcessorName'
         );
 
-        $this->assertEquals('aRouterQueueName', $config->getRouterQueueName());
+        $this->assertEquals('aRouterQueueName', $config->getRouterQueue());
     }
 
     public function testShouldReturnDefaultQueueNameSetInConstructor()
@@ -122,17 +122,17 @@ class ConfigTest extends TestCase
             'aRouterProcessorName'
         );
 
-        $this->assertEquals('aDefaultQueueName', $config->getDefaultProcessorQueueName());
+        $this->assertEquals('aDefaultQueueName', $config->getDefaultQueue());
     }
 
     public function testShouldCreateDefaultConfig()
     {
         $config = Config::create();
 
-        $this->assertSame('default', $config->getDefaultProcessorQueueName());
-        $this->assertSame('router', $config->getRouterProcessorName());
-        $this->assertSame('default', $config->getRouterQueueName());
-        $this->assertSame('router', $config->getRouterTopicName());
+        $this->assertSame('default', $config->getDefaultQueue());
+        $this->assertSame('router', $config->getRouterProcessor());
+        $this->assertSame('default', $config->getRouterQueue());
+        $this->assertSame('router', $config->getRouterTopic());
     }
 
     /**

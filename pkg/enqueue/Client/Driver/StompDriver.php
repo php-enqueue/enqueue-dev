@@ -61,7 +61,7 @@ class StompDriver extends GenericDriver
     {
         /** @var StompDestination $topic */
         $topic = $this->doCreateTopic(
-            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopicName(), true)
+            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopic(), true)
         );
         $topic->setDurable(true);
         $topic->setAutoDelete(false);
