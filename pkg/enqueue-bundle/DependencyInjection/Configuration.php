@@ -2,7 +2,6 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
-use Enqueue\Client\Config;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
