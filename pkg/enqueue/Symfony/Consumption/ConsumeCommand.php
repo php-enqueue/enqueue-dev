@@ -5,14 +5,16 @@ namespace Enqueue\Symfony\Consumption;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
+use Enqueue\Consumption\QueueConsumerRegistryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
+class ConsumeCommand extends Command implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
     use LimitsExtensionsCommandTrait;
@@ -21,46 +23,48 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
     protected static $defaultName = 'enqueue:transport:consume';
 
     /**
-     * @var QueueConsumerInterface
+     * @var QueueConsumerRegistryInterface
      */
-    protected $consumer;
+    protected $consumerRegistry;
 
     /**
-     * @param QueueConsumerInterface $consumer
+     * [name => QueueConsumerInterface].
+     *
+     * @param QueueConsumerInterface[]
      */
-    public function __construct(QueueConsumerInterface $consumer)
+    public function __construct(QueueConsumerRegistryInterface $consumerRegistry)
     {
         parent::__construct(static::$defaultName);
 
-        $this->consumer = $consumer;
+        $this->consumerRegistry = $consumerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this->configureLimitsExtensions();
         $this->configureQueueConsumerOptions();
 
         $this
+            ->addOption('transport', 't', InputOption::VALUE_OPTIONAL, 'The transport to consume messages from.', 'default')
             ->setDescription('A worker that consumes message from a broker. '.
                 'To use this broker you have to configure queue consumer before adding to the command')
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $this->setQueueConsumerOptions($this->consumer, $input);
+        // QueueConsumer must be pre configured outside of the command!
+        $consumer = $this->consumerRegistry->get($input->getOption('transport'));
+
+        $this->setQueueConsumerOptions($consumer, $input);
 
         $extensions = $this->getLimitsExtensions($input, $output);
         array_unshift($extensions, new LoggerExtension(new ConsoleLogger($output)));
 
         $runtimeExtensions = new ChainExtension($extensions);
 
-        $this->consumer->consume($runtimeExtensions);
+        $consumer->consume($runtimeExtensions);
+
+        return null;
     }
 }

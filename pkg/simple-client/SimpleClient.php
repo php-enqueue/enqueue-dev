@@ -2,7 +2,7 @@
 
 namespace Enqueue\SimpleClient;
 
-use Enqueue\Client\ArrayProcessorRegistry;
+use Enqueue\ArrayProcessorRegistry;
 use Enqueue\Client\ChainExtension as ClientChainExtensions;
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;

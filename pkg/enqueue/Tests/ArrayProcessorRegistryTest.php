@@ -1,9 +1,9 @@
 <?php
 
-namespace Enqueue\Tests\Client;
+namespace Enqueue\Tests;
 
-use Enqueue\Client\ArrayProcessorRegistry;
-use Enqueue\Client\ProcessorRegistryInterface;
+use Enqueue\ArrayProcessorRegistry;
+use Enqueue\ProcessorRegistryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;

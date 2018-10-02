@@ -1,0 +1,288 @@
+<?php
+
+namespace Enqueue\Tests\Symfony\Consumption;
+
+use Enqueue\ArrayProcessorRegistry;
+use Enqueue\Consumption\ArrayQueueConsumerRegistry;
+use Enqueue\Consumption\ChainExtension;
+use Enqueue\Consumption\QueueConsumerInterface;
+use Enqueue\Consumption\QueueConsumerRegistryInterface;
+use Enqueue\Consumption\QueueSubscriberInterface;
+use Enqueue\ProcessorRegistryInterface;
+use Enqueue\Symfony\Consumption\ConfigurableConsumeCommand;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Processor;
+use Interop\Queue\Queue as InteropQueue;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Tester\CommandTester;
+
+class ConfigurableConsumeCommandTest extends TestCase
+{
+    public function testCouldBeConstructedWithRequiredAttributes()
+    {
+        new ConfigurableConsumeCommand(
+            $this->createMock(QueueConsumerRegistryInterface::class),
+            $this->createMock(ProcessorRegistryInterface::class)
+        );
+    }
+
+    public function testShouldHaveCommandName()
+    {
+        $command = new ConfigurableConsumeCommand(
+            $this->createMock(QueueConsumerRegistryInterface::class),
+            $this->createMock(ProcessorRegistryInterface::class)
+        );
+
+        $this->assertEquals('enqueue:transport:consume', $command->getName());
+    }
+
+    public function testShouldHaveExpectedOptions()
+    {
+        $command = new ConfigurableConsumeCommand(
+            $this->createMock(QueueConsumerRegistryInterface::class),
+            $this->createMock(ProcessorRegistryInterface::class)
+        );
+
+        $options = $command->getDefinition()->getOptions();
+
+        $this->assertCount(7, $options);
+        $this->assertArrayHasKey('memory-limit', $options);
+        $this->assertArrayHasKey('message-limit', $options);
+        $this->assertArrayHasKey('time-limit', $options);
+        $this->assertArrayHasKey('idle-timeout', $options);
+        $this->assertArrayHasKey('receive-timeout', $options);
+        $this->assertArrayHasKey('niceness', $options);
+        $this->assertArrayHasKey('transport', $options);
+    }
+
+    public function testShouldHaveExpectedAttributes()
+    {
+        $command = new ConfigurableConsumeCommand(
+            $this->createMock(QueueConsumerRegistryInterface::class),
+            $this->createMock(ProcessorRegistryInterface::class)
+        );
+
+        $arguments = $command->getDefinition()->getArguments();
+
+        $this->assertCount(2, $arguments);
+        $this->assertArrayHasKey('processor', $arguments);
+        $this->assertArrayHasKey('queues', $arguments);
+    }
+
+    public function testThrowIfNeitherQueueOptionNorProcessorImplementsQueueSubscriberInterface()
+    {
+        $processor = $this->createProcessor();
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->never())
+            ->method('bind')
+        ;
+        $consumer
+            ->expects($this->never())
+            ->method('consume')
+        ;
+
+        $registry = new ArrayProcessorRegistry(['aProcessor' => $processor]);
+
+        $command = new ConfigurableConsumeCommand(
+            $this->createMock(QueueConsumerRegistryInterface::class),
+            $registry
+        );
+
+        $tester = new CommandTester($command);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The queue is not provided. The processor must implement "Enqueue\Consumption\QueueSubscriberInterface" interface and it must return not empty array of queues or a queue set using as a second argument.');
+        $tester->execute([
+            'processor' => 'aProcessor',
+        ]);
+    }
+
+    public function testShouldExecuteConsumptionWithExplicitlySetQueue()
+    {
+        $processor = $this->createProcessor();
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->once())
+            ->method('bind')
+            ->with('queue-name', $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->once())
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
+        $consumerRegistry = new ArrayQueueConsumerRegistry(['default' => $consumer]);
+
+        $command = new ConfigurableConsumeCommand(
+            $consumerRegistry,
+            $processorRegistry
+        );
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'processor' => 'processor-service',
+            'queues' => ['queue-name'],
+        ]);
+    }
+
+    public function testShouldExecuteConsumptionWithSeveralCustomQueues()
+    {
+        $processor = $this->createProcessor();
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->at(0))
+            ->method('bind')
+            ->with('queue-name', $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(1))
+            ->method('bind')
+            ->with('another-queue-name', $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(2))
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
+        $consumerRegistry = new ArrayQueueConsumerRegistry(['default' => $consumer]);
+
+        $command = new ConfigurableConsumeCommand(
+            $consumerRegistry,
+            $processorRegistry
+        );
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'processor' => 'processor-service',
+            'queues' => ['queue-name', 'another-queue-name'],
+        ]);
+    }
+
+    public function testShouldExecuteConsumptionWhenProcessorImplementsQueueSubscriberInterface()
+    {
+        $processor = new class() implements Processor, QueueSubscriberInterface {
+            public function process(InteropMessage $message, Context $context)
+            {
+            }
+
+            public static function getSubscribedQueues()
+            {
+                return ['fooSubscribedQueues', 'barSubscribedQueues'];
+            }
+        };
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->at(0))
+            ->method('bind')
+            ->with('fooSubscribedQueues', $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(1))
+            ->method('bind')
+            ->with('barSubscribedQueues', $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(2))
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
+        $consumerRegistry = new ArrayQueueConsumerRegistry(['default' => $consumer]);
+
+        $command = new ConfigurableConsumeCommand(
+            $consumerRegistry,
+            $processorRegistry
+        );
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'processor' => 'processor-service',
+        ]);
+    }
+
+    public function testShouldExecuteConsumptionWithCustomTransportExplicitlySetQueue()
+    {
+        $processor = $this->createProcessor();
+
+        $fooConsumer = $this->createQueueConsumerMock();
+        $fooConsumer
+            ->expects($this->never())
+            ->method('bind')
+        ;
+        $fooConsumer
+            ->expects($this->never())
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $barConsumer = $this->createQueueConsumerMock();
+        $barConsumer
+            ->expects($this->once())
+            ->method('bind')
+            ->with('queue-name', $this->identicalTo($processor))
+        ;
+        $barConsumer
+            ->expects($this->once())
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
+        $consumerRegistry = new ArrayQueueConsumerRegistry(['foo' => $fooConsumer, 'bar' => $barConsumer]);
+
+        $command = new ConfigurableConsumeCommand(
+            $consumerRegistry,
+            $processorRegistry
+        );
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'processor' => 'processor-service',
+            'queues' => ['queue-name'],
+            '--transport' => 'bar',
+        ]);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     */
+    protected function createContextMock()
+    {
+        return $this->createMock(Context::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropQueue
+     */
+    protected function createQueueMock()
+    {
+        return $this->createMock(InteropQueue::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     */
+    protected function createProcessor()
+    {
+        return $this->createMock(Processor::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
+     */
+    protected function createQueueConsumerMock()
+    {
+        return $this->createMock(QueueConsumerInterface::class);
+    }
+}

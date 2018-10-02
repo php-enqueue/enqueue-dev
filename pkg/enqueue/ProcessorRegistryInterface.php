@@ -1,6 +1,8 @@
 <?php
 
-namespace Enqueue\Client;
+declare(strict_types=1);
+
+namespace Enqueue;
 
 use Interop\Queue\Processor;
 

@@ -2,6 +2,7 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\ProcessorRegistryInterface;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Processor;

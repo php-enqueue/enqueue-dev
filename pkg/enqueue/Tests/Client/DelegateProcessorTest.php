@@ -4,8 +4,8 @@ namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
-use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Null\NullMessage;
+use Enqueue\ProcessorRegistryInterface;
 use Interop\Queue\Context;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
@@ -19,10 +19,8 @@ class DelegateProcessorTest extends TestCase
 
     public function testShouldThrowExceptionIfProcessorNameIsNotSet()
     {
-        $this->setExpectedException(
-            \LogicException::class,
-            'Got message without required parameter: "enqueue.processor"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Got message without required parameter: "enqueue.processor"');
 
         $processor = new DelegateProcessor($this->createProcessorRegistryMock());
         $processor->process(new NullMessage(), $this->createContextMock());
