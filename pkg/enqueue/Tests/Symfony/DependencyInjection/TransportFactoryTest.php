@@ -249,7 +249,7 @@ class TransportFactoryTest extends TestCase
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->createConnectionFactory($container, ['dsn' => 'foo://bar/baz']);
+        $serviceId = $transport->build($container, ['dsn' => 'foo://bar/baz']);
 
         $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
 
@@ -272,7 +272,7 @@ class TransportFactoryTest extends TestCase
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->createConnectionFactory($container, ['dsn' => 'foo:', 'factory_class' => 'theFactoryClass']);
+        $serviceId = $transport->build($container, ['dsn' => 'foo:', 'factory_class' => 'theFactoryClass']);
 
         $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
 
@@ -301,7 +301,7 @@ class TransportFactoryTest extends TestCase
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->createConnectionFactory($container, ['dsn' => 'foo:', 'factory_service' => 'theFactoryService']);
+        $serviceId = $transport->build($container, ['dsn' => 'foo:', 'factory_service' => 'theFactoryService']);
 
         $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
 
@@ -324,7 +324,7 @@ class TransportFactoryTest extends TestCase
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->createConnectionFactory($container, ['dsn' => 'foo:', 'connection_factory_class' => 'theFactoryClass']);
+        $serviceId = $transport->build($container, ['dsn' => 'foo:', 'connection_factory_class' => 'theFactoryClass']);
 
         $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
 
@@ -344,7 +344,7 @@ class TransportFactoryTest extends TestCase
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->createContext($container, ['dsn' => 'foo://bar/baz']);
+        $serviceId = $transport->buildContext($container, ['dsn' => 'foo://bar/baz']);
 
         $this->assertEquals('enqueue.transport.default.context', $serviceId);
 

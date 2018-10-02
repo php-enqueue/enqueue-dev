@@ -3,46 +3,50 @@
 namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
-use Enqueue\Consumption\QueueConsumerRegistryInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class ConsumeCommand extends Command implements ContainerAwareInterface
+class ConsumeCommand extends Command
 {
-    use ContainerAwareTrait;
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
+    use ChooseLoggerCommandTrait;
 
     protected static $defaultName = 'enqueue:transport:consume';
 
     /**
-     * @var QueueConsumerRegistryInterface
+     * @var ContainerInterface
      */
-    protected $consumerRegistry;
+    private $container;
+
+    /**
+     * @var string
+     */
+    private $queueConsumerIdPattern;
 
     /**
      * [name => QueueConsumerInterface].
      *
      * @param QueueConsumerInterface[]
      */
-    public function __construct(QueueConsumerRegistryInterface $consumerRegistry)
+    public function __construct(ContainerInterface $container, string $queueConsumerIdPattern = 'enqueue.transport.%s.queue_consumer')
     {
         parent::__construct(static::$defaultName);
 
-        $this->consumerRegistry = $consumerRegistry;
+        $this->container = $container;
+        $this->queueConsumerIdPattern = $queueConsumerIdPattern;
     }
 
     protected function configure(): void
     {
         $this->configureLimitsExtensions();
         $this->configureQueueConsumerOptions();
+        $this->configureLoggerExtension();
 
         $this
             ->addOption('transport', 't', InputOption::VALUE_OPTIONAL, 'The transport to consume messages from.', 'default')
@@ -53,18 +57,30 @@ class ConsumeCommand extends Command implements ContainerAwareInterface
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        // QueueConsumer must be pre configured outside of the command!
-        $consumer = $this->consumerRegistry->get($input->getOption('transport'));
+        $transport = $input->getOption('transport');
+
+        try {
+            // QueueConsumer must be pre configured outside of the command!
+            $consumer = $this->getQueueConsumer($transport);
+        } catch (NotFoundExceptionInterface $e) {
+            throw new \LogicException(sprintf('Transport "%s" is not supported.', $transport), null, $e);
+        }
 
         $this->setQueueConsumerOptions($consumer, $input);
 
         $extensions = $this->getLimitsExtensions($input, $output);
-        array_unshift($extensions, new LoggerExtension(new ConsoleLogger($output)));
 
-        $runtimeExtensions = new ChainExtension($extensions);
+        if ($loggerExtension = $this->getLoggerExtension($input, $output)) {
+            array_unshift($extensions, $loggerExtension);
+        }
 
-        $consumer->consume($runtimeExtensions);
+        $consumer->consume(new ChainExtension($extensions));
 
         return null;
+    }
+
+    private function getQueueConsumer(string $name): QueueConsumerInterface
+    {
+        return $this->container->get(sprintf($this->queueConsumerIdPattern, $name));
     }
 }

@@ -23,8 +23,8 @@ services:
         alias: 'enqueue.transport.default.context'
         public: true
 
-    test_enqueue.client.default.consume_messages_command:
-        alias: 'enqueue.client.default.consume_messages_command'
+    test_enqueue.consume_command:
+        alias: 'enqueue.consume_command'
         public: true
 
     test.message.processor:
@@ -32,6 +32,7 @@ services:
         public: true
         tags:
             - { name: 'enqueue.topic_subscriber', client: 'default' }
+            - { name: 'enqueue.transport.processor', transport: 'default' }
 
     test.message.command_processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestCommandProcessor'

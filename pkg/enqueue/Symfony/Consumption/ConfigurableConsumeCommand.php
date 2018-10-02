@@ -3,46 +3,57 @@
 namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\QueueConsumerRegistryInterface;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Consumption\QueueSubscriberInterface;
 use Enqueue\ProcessorRegistryInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurableConsumeCommand extends Command
 {
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
+    use ChooseLoggerCommandTrait;
 
     protected static $defaultName = 'enqueue:transport:consume';
 
     /**
-     * @var QueueConsumerRegistryInterface
+     * @var ContainerInterface
      */
-    protected $consumerRegistry;
+    private $container;
 
     /**
-     * @var ProcessorRegistryInterface
+     * @var string
      */
-    private $processorRegistry;
+    private $queueConsumerIdPattern;
 
-    public function __construct(QueueConsumerRegistryInterface $consumerRegistry, ProcessorRegistryInterface $processorRegistry)
-    {
+    /**
+     * @var string
+     */
+    private $processorRegistryIdPattern;
+
+    public function __construct(
+        ContainerInterface $container,
+        string $queueConsumerIdPattern = 'enqueue.transport.%s.queue_consumer',
+        string $processorRegistryIdPattern = 'enqueue.transport.%s.processor_registry'
+    ) {
         parent::__construct(static::$defaultName);
 
-        $this->consumerRegistry = $consumerRegistry;
-        $this->processorRegistry = $processorRegistry;
+        $this->container = $container;
+        $this->queueConsumerIdPattern = $queueConsumerIdPattern;
+        $this->processorRegistryIdPattern = $processorRegistryIdPattern;
     }
 
     protected function configure(): void
     {
         $this->configureLimitsExtensions();
         $this->configureQueueConsumerOptions();
+        $this->configureLoggerExtension();
 
         $this
             ->setDescription('A worker that consumes message from a broker. '.
@@ -56,11 +67,17 @@ class ConfigurableConsumeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $consumer = $this->consumerRegistry->get($input->getOption('transport'));
+        $transport = $input->getOption('transport');
+
+        try {
+            $consumer = $this->getQueueConsumer($transport);
+        } catch (NotFoundExceptionInterface $e) {
+            throw new \LogicException(sprintf('Transport "%s" is not supported.', $transport), null, $e);
+        }
 
         $this->setQueueConsumerOptions($consumer, $input);
 
-        $processor = $this->processorRegistry->get($input->getArgument('processor'));
+        $processor = $this->getProcessorRegistry($transport)->get($input->getArgument('processor'));
 
         $queues = $input->getArgument('queues');
         if (empty($queues) && $processor instanceof QueueSubscriberInterface) {
@@ -75,16 +92,27 @@ class ConfigurableConsumeCommand extends Command
         }
 
         $extensions = $this->getLimitsExtensions($input, $output);
-        array_unshift($extensions, new LoggerExtension(new ConsoleLogger($output)));
 
-        $runtimeExtensions = new ChainExtension($extensions);
+        if ($loggerExtension = $this->getLoggerExtension($input, $output)) {
+            array_unshift($extensions, $loggerExtension);
+        }
 
         foreach ($queues as $queue) {
             $consumer->bind($queue, $processor);
         }
 
-        $consumer->consume($runtimeExtensions);
+        $consumer->consume(new ChainExtension($extensions));
 
         return null;
+    }
+
+    private function getQueueConsumer(string $name): QueueConsumerInterface
+    {
+        return $this->container->get(sprintf($this->queueConsumerIdPattern, $name));
+    }
+
+    private function getProcessorRegistry(string $name): ProcessorRegistryInterface
+    {
+        return $this->container->get(sprintf($this->processorRegistryIdPattern, $name));
     }
 }

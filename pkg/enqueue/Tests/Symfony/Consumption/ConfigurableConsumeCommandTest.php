@@ -3,50 +3,40 @@
 namespace Enqueue\Tests\Symfony\Consumption;
 
 use Enqueue\ArrayProcessorRegistry;
-use Enqueue\Consumption\ArrayQueueConsumerRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
-use Enqueue\Consumption\QueueConsumerRegistryInterface;
 use Enqueue\Consumption\QueueSubscriberInterface;
-use Enqueue\ProcessorRegistryInterface;
+use Enqueue\Container\Container;
 use Enqueue\Symfony\Consumption\ConfigurableConsumeCommand;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Processor;
 use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ConfigurableConsumeCommandTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredAttributes()
     {
-        new ConfigurableConsumeCommand(
-            $this->createMock(QueueConsumerRegistryInterface::class),
-            $this->createMock(ProcessorRegistryInterface::class)
-        );
+        new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new ConfigurableConsumeCommand(
-            $this->createMock(QueueConsumerRegistryInterface::class),
-            $this->createMock(ProcessorRegistryInterface::class)
-        );
+        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
 
         $this->assertEquals('enqueue:transport:consume', $command->getName());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new ConfigurableConsumeCommand(
-            $this->createMock(QueueConsumerRegistryInterface::class),
-            $this->createMock(ProcessorRegistryInterface::class)
-        );
+        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(7, $options);
+        $this->assertCount(8, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
@@ -54,14 +44,12 @@ class ConfigurableConsumeCommandTest extends TestCase
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('niceness', $options);
         $this->assertArrayHasKey('transport', $options);
+        $this->assertArrayHasKey('logger', $options);
     }
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new ConfigurableConsumeCommand(
-            $this->createMock(QueueConsumerRegistryInterface::class),
-            $this->createMock(ProcessorRegistryInterface::class)
-        );
+        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
 
         $arguments = $command->getDefinition()->getArguments();
 
@@ -84,12 +72,10 @@ class ConfigurableConsumeCommandTest extends TestCase
             ->method('consume')
         ;
 
-        $registry = new ArrayProcessorRegistry(['aProcessor' => $processor]);
-
-        $command = new ConfigurableConsumeCommand(
-            $this->createMock(QueueConsumerRegistryInterface::class),
-            $registry
-        );
+        $command = new ConfigurableConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $consumer,
+            'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['aProcessor' => $processor]),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -116,18 +102,45 @@ class ConfigurableConsumeCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
-        $consumerRegistry = new ArrayQueueConsumerRegistry(['default' => $consumer]);
-
-        $command = new ConfigurableConsumeCommand(
-            $consumerRegistry,
-            $processorRegistry
-        );
+        $command = new ConfigurableConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $consumer,
+            'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
+        ]));
 
         $tester = new CommandTester($command);
         $tester->execute([
             'processor' => 'processor-service',
             'queues' => ['queue-name'],
+        ]);
+    }
+
+    public function testThrowIfTransportNotDefined()
+    {
+        $processor = $this->createProcessor();
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->never())
+            ->method('bind')
+        ;
+        $consumer
+            ->expects($this->never())
+            ->method('consume')
+        ;
+
+        $command = new ConfigurableConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $consumer,
+            'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
+        ]));
+
+        $tester = new CommandTester($command);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Transport "not-defined" is not supported.');
+        $tester->execute([
+            'processor' => 'processor-service',
+            'queues' => ['queue-name'],
+            '--transport' => 'not-defined',
         ]);
     }
 
@@ -152,13 +165,10 @@ class ConfigurableConsumeCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
-        $consumerRegistry = new ArrayQueueConsumerRegistry(['default' => $consumer]);
-
-        $command = new ConfigurableConsumeCommand(
-            $consumerRegistry,
-            $processorRegistry
-        );
+        $command = new ConfigurableConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $consumer,
+            'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
+        ]));
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -197,13 +207,10 @@ class ConfigurableConsumeCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
-        $consumerRegistry = new ArrayQueueConsumerRegistry(['default' => $consumer]);
-
-        $command = new ConfigurableConsumeCommand(
-            $consumerRegistry,
-            $processorRegistry
-        );
+        $command = new ConfigurableConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $consumer,
+            'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
+        ]));
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -238,13 +245,12 @@ class ConfigurableConsumeCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $processorRegistry = new ArrayProcessorRegistry(['processor-service' => $processor]);
-        $consumerRegistry = new ArrayQueueConsumerRegistry(['foo' => $fooConsumer, 'bar' => $barConsumer]);
-
-        $command = new ConfigurableConsumeCommand(
-            $consumerRegistry,
-            $processorRegistry
-        );
+        $command = new ConfigurableConsumeCommand(new Container([
+            'enqueue.transport.foo.queue_consumer' => $fooConsumer,
+            'enqueue.transport.foo.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
+            'enqueue.transport.bar.queue_consumer' => $barConsumer,
+            'enqueue.transport.bar.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
+        ]));
 
         $tester = new CommandTester($command);
         $tester->execute([

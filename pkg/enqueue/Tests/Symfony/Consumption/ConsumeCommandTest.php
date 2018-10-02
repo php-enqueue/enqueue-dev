@@ -2,36 +2,36 @@
 
 namespace Enqueue\Tests\Symfony\Consumption;
 
-use Enqueue\Consumption\ArrayQueueConsumerRegistry;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
-use Enqueue\Consumption\QueueConsumerRegistryInterface;
+use Enqueue\Container\Container;
 use Enqueue\Symfony\Consumption\ConsumeCommand;
 use Interop\Queue\Context;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ConsumeCommandTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredAttributes()
     {
-        new ConsumeCommand($this->createMock(QueueConsumerRegistryInterface::class));
+        new ConsumeCommand($this->createMock(ContainerInterface::class));
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new ConsumeCommand($this->createMock(QueueConsumerRegistryInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
 
         $this->assertEquals('enqueue:transport:consume', $command->getName());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new ConsumeCommand($this->createMock(QueueConsumerRegistryInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(7, $options);
+        $this->assertCount(8, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
@@ -39,11 +39,12 @@ class ConsumeCommandTest extends TestCase
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('niceness', $options);
         $this->assertArrayHasKey('transport', $options);
+        $this->assertArrayHasKey('logger', $options);
     }
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new ConsumeCommand($this->createMock(QueueConsumerRegistryInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
 
         $arguments = $command->getDefinition()->getArguments();
 
@@ -59,7 +60,9 @@ class ConsumeCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $command = new ConsumeCommand(new ArrayQueueConsumerRegistry(['default' => $consumer]));
+        $command = new ConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $consumer,
+        ]));
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -80,9 +83,9 @@ class ConsumeCommandTest extends TestCase
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
 
-        $command = new ConsumeCommand(new ArrayQueueConsumerRegistry([
-            'default' => $defaultConsumer,
-            'custom' => $customConsumer,
+        $command = new ConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $defaultConsumer,
+            'enqueue.transport.custom.queue_consumer' => $customConsumer,
         ]));
 
         $tester = new CommandTester($command);
@@ -97,14 +100,14 @@ class ConsumeCommandTest extends TestCase
             ->method('consume')
         ;
 
-        $command = new ConsumeCommand(new ArrayQueueConsumerRegistry([
-            'default' => $defaultConsumer,
+        $command = new ConsumeCommand(new Container([
+            'enqueue.transport.default.queue_consumer' => $defaultConsumer,
         ]));
 
         $tester = new CommandTester($command);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('QueueConsumer was not found, name: "not-defined".');
+        $this->expectExceptionMessage('Transport "not-defined" is not supported.');
         $tester->execute(['--transport' => 'not-defined']);
     }
 

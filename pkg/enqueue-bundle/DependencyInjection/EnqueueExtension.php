@@ -7,7 +7,6 @@ use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtensi
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Client\TraceableProducer;
-use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\Job;
 use Enqueue\Symfony\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
@@ -32,8 +31,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $this->setupAutowiringForProcessors($container);
 
         $transportFactory = (new TransportFactory('default'));
-        $transportFactory->createConnectionFactory($container, $config['transport']);
-        $transportFactory->createContext($container, $config['transport']);
+        $transportFactory->build($container, $config['transport']);
 
         if (isset($config['client'])) {
             $loader->load('client.yml');
@@ -80,7 +78,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         }
 
         // todo configure queue consumer
-        $container->getDefinition(QueueConsumer::class)
+        $container->getDefinition('enqueue.transport.default.queue_consumer')
             ->replaceArgument(2, $config['consumption']['idle_timeout'])
             ->replaceArgument(3, $config['consumption']['receive_timeout'])
         ;

@@ -213,39 +213,38 @@ class UseCasesTest extends WebTestCase
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
-//    /**
-//     * @dataProvider provideEnqueueConfigs
-//     */
-//    public function testTransportConsumeMessagesCommandShouldConsumeMessage(array $enqueueConfig)
-//    {
-//        $this->customSetUp($enqueueConfig);
-//
-//        if ($this->getTestQueue() instanceof StompDestination) {
-//            $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
-//                'It happens because of the destination options are different from the one used while creating the dest. Nothing to do about it'
-//            );
-//        }
-//
-//        $expectedBody = __METHOD__.time();
-//
-//        $command = static::$container->get('test_enqueue.client.default.consume_messages_command');
-//        $command->setContainer(static::$container);
-//        $processor = static::$container->get('test.message.processor');
-//
-//        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
-//
-//        $tester = new CommandTester($command);
-//        $tester->execute([
-//            '--message-limit' => 1,
-//            '--time-limit' => '+2sec',
-//            '--receive-timeout' => 1000,
-//            '--queue' => [$this->getTestQueue()->getQueueName()],
-//            'processor-service' => 'test.message.processor',
-//        ]);
-//
-//        $this->assertInstanceOf(Message::class, $processor->message);
-//        $this->assertEquals($expectedBody, $processor->message->getBody());
-//    }
+    /**
+     * @dataProvider provideEnqueueConfigs
+     */
+    public function testTransportConsumeMessagesCommandShouldConsumeMessage(array $enqueueConfig)
+    {
+        $this->customSetUp($enqueueConfig);
+
+        if ($this->getTestQueue() instanceof StompDestination) {
+            $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
+                'It happens because of the destination options are different from the one used while creating the dest. Nothing to do about it'
+            );
+        }
+
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get('test_enqueue.consume_command');
+        $processor = static::$container->get('test.message.processor');
+
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--message-limit' => 1,
+            '--time-limit' => '+2sec',
+            '--receive-timeout' => 1000,
+            'processor' => 'test.message.processor',
+            'queues' => [$this->getTestQueue()->getQueueName()],
+        ]);
+
+        $this->assertInstanceOf(Message::class, $processor->message);
+        $this->assertEquals($expectedBody, $processor->message->getBody());
+    }
 
     /**
      * @return string
