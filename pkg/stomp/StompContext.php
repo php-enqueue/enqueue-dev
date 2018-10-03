@@ -186,7 +186,7 @@ class StompContext implements Context
         throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
-    private function getStomp(): BufferedStompClient
+    public function getStomp(): BufferedStompClient
     {
         if (false == $this->stomp) {
             $stomp = call_user_func($this->stompFactory);
