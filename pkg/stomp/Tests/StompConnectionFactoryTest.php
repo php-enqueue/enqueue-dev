@@ -28,13 +28,4 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertAttributeEquals(null, 'stomp', $context);
         $this->assertInternalType('callable', $this->readAttribute($context, 'stompFactory'));
     }
-
-    public function testShouldGetBufferedStompClient()
-    {
-        $factory = new StompConnectionFactory();
-
-        $context = $factory->createContext();
-
-        $this->assertInstanceOf(BufferedStompClient::class, $context->getStomp());
-    }
 }

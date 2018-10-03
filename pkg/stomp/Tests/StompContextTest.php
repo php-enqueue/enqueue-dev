@@ -213,6 +213,13 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEquals($fooTempQueue->getStompName(), $barTempQueue->getStompName());
     }
 
+    public function testShouldGetBufferedStompClient()
+    {
+        $context = new StompContext($this->createStompClientMock());
+
+        $this->assertInstanceOf(BufferedStompClient::class, $context->getStomp());
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|BufferedStompClient
      */
