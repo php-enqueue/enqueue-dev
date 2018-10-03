@@ -2,7 +2,6 @@
 
 namespace Enqueue\Stomp\Tests;
 
-use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\ClassExtensionTrait;
