@@ -3,8 +3,11 @@
 namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\DriverInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -13,38 +16,49 @@ class SetupBrokerCommand extends Command
     protected static $defaultName = 'enqueue:setup-broker';
 
     /**
-     * @var DriverInterface
+     * @var ContainerInterface
      */
-    private $driver;
+    private $container;
 
     /**
-     * @param DriverInterface $driver
+     * @var string
      */
-    public function __construct(DriverInterface $driver)
+    private $driverIdPattern;
+
+    public function __construct(ContainerInterface $container, string $driverIdPattern = 'enqueue.client.%s.driver')
     {
         parent::__construct(static::$defaultName);
 
-        $this->driver = $driver;
+        $this->container = $container;
+        $this->driverIdPattern = $driverIdPattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setAliases(['enq:sb'])
-            ->setDescription('Creates all required queues')
+            ->setDescription('Setup broker. Configure the broker, creates queues, topics and so on.')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $output->writeln('Setup Broker');
+        $client = $input->getOption('client');
 
-        $this->driver->setupBroker(new ConsoleLogger($output));
+        try {
+            $this->getDriver($client)->setupBroker(new ConsoleLogger($output));
+        } catch (NotFoundExceptionInterface $e) {
+            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), null, $e);
+        }
+
+        $output->writeln('Broker set up');
+
+        return null;
+    }
+
+    private function getDriver(string $client): DriverInterface
+    {
+        return $this->container->get(sprintf($this->driverIdPattern, $client));
     }
 }

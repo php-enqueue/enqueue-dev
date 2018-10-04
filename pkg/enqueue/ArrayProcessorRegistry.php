@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Client;
+namespace Enqueue;
 
 use Interop\Queue\Processor;
 
@@ -16,7 +16,10 @@ class ArrayProcessorRegistry implements ProcessorRegistryInterface
      */
     public function __construct(array $processors = [])
     {
-        $this->processors = $processors;
+        $this->processors = [];
+        array_walk($processors, function (Processor $processor, string $key) {
+            $this->processors[$key] = $processor;
+        });
     }
 
     public function add(string $name, Processor $processor): void

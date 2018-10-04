@@ -1,0 +1,86 @@
+<?php
+
+namespace Enqueue\Symfony\Consumption;
+
+use Enqueue\Consumption\ChainExtension;
+use Enqueue\Consumption\QueueConsumerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class ConsumeCommand extends Command
+{
+    use LimitsExtensionsCommandTrait;
+    use QueueConsumerOptionsCommandTrait;
+    use ChooseLoggerCommandTrait;
+
+    protected static $defaultName = 'enqueue:transport:consume';
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * @var string
+     */
+    private $queueConsumerIdPattern;
+
+    /**
+     * [name => QueueConsumerInterface].
+     *
+     * @param QueueConsumerInterface[]
+     */
+    public function __construct(ContainerInterface $container, string $queueConsumerIdPattern = 'enqueue.transport.%s.queue_consumer')
+    {
+        parent::__construct(static::$defaultName);
+
+        $this->container = $container;
+        $this->queueConsumerIdPattern = $queueConsumerIdPattern;
+    }
+
+    protected function configure(): void
+    {
+        $this->configureLimitsExtensions();
+        $this->configureQueueConsumerOptions();
+        $this->configureLoggerExtension();
+
+        $this
+            ->addOption('transport', 't', InputOption::VALUE_OPTIONAL, 'The transport to consume messages from.', 'default')
+            ->setDescription('A worker that consumes message from a broker. '.
+                'To use this broker you have to configure queue consumer before adding to the command')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    {
+        $transport = $input->getOption('transport');
+
+        try {
+            // QueueConsumer must be pre configured outside of the command!
+            $consumer = $this->getQueueConsumer($transport);
+        } catch (NotFoundExceptionInterface $e) {
+            throw new \LogicException(sprintf('Transport "%s" is not supported.', $transport), null, $e);
+        }
+
+        $this->setQueueConsumerOptions($consumer, $input);
+
+        $extensions = $this->getLimitsExtensions($input, $output);
+
+        if ($loggerExtension = $this->getLoggerExtension($input, $output)) {
+            array_unshift($extensions, $loggerExtension);
+        }
+
+        $consumer->consume(new ChainExtension($extensions));
+
+        return null;
+    }
+
+    private function getQueueConsumer(string $name): QueueConsumerInterface
+    {
+        return $this->container->get(sprintf($this->queueConsumerIdPattern, $name));
+    }
+}

@@ -1,0 +1,83 @@
+<?php
+
+namespace Enqueue\Symfony\Client;
+
+use Enqueue\Client\ProducerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class ProduceCommand extends Command
+{
+    protected static $defaultName = 'enqueue:produce';
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * @var string
+     */
+    private $producerIdPattern;
+
+    public function __construct(ContainerInterface $container, string $producerIdPattern = 'enqueue.client.%s.producer')
+    {
+        parent::__construct(static::$defaultName);
+
+        $this->container = $container;
+        $this->producerIdPattern = $producerIdPattern;
+    }
+
+    protected function configure(): void
+    {
+        $this
+            ->setDescription('Sends an event to the topic')
+            ->addArgument('message', InputArgument::REQUIRED, 'A message')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
+            ->addOption('topic', null, InputOption::VALUE_OPTIONAL, 'The topic to send a message to')
+            ->addOption('command', null, InputOption::VALUE_OPTIONAL, 'The command to send a message to')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    {
+        $topic = $input->getOption('topic');
+        $command = $input->getOption('command');
+        $message = $input->getArgument('message');
+        $client = $input->getOption('client');
+
+        if ($topic && $command) {
+            throw new \LogicException('Either topic or command option should be set, both are set.');
+        }
+
+        try {
+            $producer = $this->getProducer($client);
+        } catch (NotFoundExceptionInterface $e) {
+            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), null, $e);
+        }
+
+        if ($topic) {
+            $producer->sendEvent($topic, $message);
+
+            $output->writeln('An event is sent');
+        } elseif ($command) {
+            $producer->sendCommand($command, $message);
+
+            $output->writeln('A command is sent');
+        } else {
+            throw new \LogicException('Either topic or command option should be set, none is set.');
+        }
+
+        return null;
+    }
+
+    private function getProducer(string $client): ProducerInterface
+    {
+        return $this->container->get(sprintf($this->producerIdPattern, $client));
+    }
+}

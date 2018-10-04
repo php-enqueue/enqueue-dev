@@ -2,9 +2,10 @@
 
 namespace Enqueue\Symfony\Client;
 
-use Enqueue\Client\Config;
+use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Route;
-use Enqueue\Client\RouteCollection;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -17,21 +18,26 @@ final class RoutesCommand extends Command
     protected static $defaultName = 'enqueue:routes';
 
     /**
-     * @var Config
+     * @var ContainerInterface
      */
-    private $config;
+    private $container;
 
     /**
-     * @var RouteCollection
+     * @var string
      */
-    private $routeCollection;
+    private $driverIdPatter;
 
-    public function __construct(Config $config, RouteCollection $routeCollection)
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
+
+    public function __construct(ContainerInterface $container, string $driverIdPatter = 'enqueue.client.%s.driver')
     {
         parent::__construct(static::$defaultName);
 
-        $this->config = $config;
-        $this->routeCollection = $routeCollection;
+        $this->container = $container;
+        $this->driverIdPatter = $driverIdPatter;
     }
 
     protected function configure(): void
@@ -39,12 +45,22 @@ final class RoutesCommand extends Command
         $this
             ->setAliases(['debug:enqueue:routes'])
             ->setDescription('A command lists all registered routes.')
-            ->addOption('show-route-options', null, InputOption::VALUE_NONE, 'Adds ability to hide options.');
+            ->addOption('show-route-options', null, InputOption::VALUE_NONE, 'Adds ability to hide options.')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
+        ;
+
+        $this->driver = null;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $routes = $this->routeCollection->all();
+        try {
+            $this->driver = $this->getDriver($input->getOption('client'));
+        } catch (NotFoundExceptionInterface $e) {
+            throw new \LogicException(sprintf('Client "%s" is not supported.', $input->getOption('client')), null, $e);
+        }
+
+        $routes = $this->driver->getRouteCollection()->all();
         $output->writeln(sprintf('Found %s routes', count($routes)));
         $output->writeln('');
 
@@ -73,7 +89,7 @@ final class RoutesCommand extends Command
                 ]);
             }
 
-            foreach ($this->routeCollection->all() as $route) {
+            foreach ($routes as $route) {
                 if ($route->isTopic()) {
                     continue;
                 }
@@ -119,7 +135,7 @@ final class RoutesCommand extends Command
 
     private function formatQueue(Route $route): string
     {
-        $queue = $route->getQueue() ?: $this->config->getDefaultQueue();
+        $queue = $route->getQueue() ?: $this->driver->getConfig()->getDefaultQueue();
 
         return $route->isPrefixQueue() ? $queue.' (prefixed)' : $queue.' (as is)';
     }
@@ -127,5 +143,10 @@ final class RoutesCommand extends Command
     private function formatOptions(Route $route): string
     {
         return var_export($route->getOptions(), true);
+    }
+
+    private function getDriver(string $client): DriverInterface
+    {
+        return $this->container->get(sprintf($this->driverIdPatter, $client));
     }
 }

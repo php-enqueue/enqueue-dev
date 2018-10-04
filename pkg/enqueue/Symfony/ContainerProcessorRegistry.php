@@ -1,8 +1,8 @@
 <?php
 
-namespace Enqueue\Symfony\Client;
+namespace Enqueue\Symfony;
 
-use Enqueue\Client\ProcessorRegistryInterface;
+use Enqueue\ProcessorRegistryInterface;
 use Interop\Queue\Processor;
 use Psr\Container\ContainerInterface;
 

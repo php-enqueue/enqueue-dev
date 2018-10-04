@@ -9,7 +9,6 @@ use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Client\TraceableProducer;
-use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
@@ -431,14 +430,17 @@ class EnqueueExtensionTest extends TestCase
             'transport' => [
             ],
             'consumption' => [
-                'idle_timeout' => 123,
+                'idle_time' => 123,
                 'receive_timeout' => 456,
             ],
         ]], $container);
 
-        $def = $container->getDefinition(QueueConsumer::class);
-        $this->assertSame(123, $def->getArgument(2));
-        $this->assertSame(456, $def->getArgument(3));
+        $def = $container->getDefinition('enqueue.transport.default.queue_consumer');
+        $this->assertSame('%enqueue.transport.default.idle_time%', $def->getArgument(2));
+        $this->assertSame('%enqueue.transport.default.receive_timeout%', $def->getArgument(3));
+
+        $this->assertSame(123, $container->getParameter('enqueue.transport.default.idle_time'));
+        $this->assertSame(456, $container->getParameter('enqueue.transport.default.receive_timeout'));
 
         $def = $container->getDefinition('enqueue.client.default.queue_consumer');
         $this->assertSame(123, $def->getArgument(2));

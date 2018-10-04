@@ -125,7 +125,7 @@ class UseCasesTest extends WebTestCase
     /**
      * @dataProvider provideEnqueueConfigs
      */
-    public function testProducerSendsMessage(array $enqueueConfig)
+    public function testProducerSendsEventMessage(array $enqueueConfig)
     {
         $this->customSetUp($enqueueConfig);
 
@@ -163,14 +163,77 @@ class UseCasesTest extends WebTestCase
         $this->assertSame($expectedBody, $message->getBody());
     }
 
-    /**
-     * @dataProvider provideEnqueueConfigs
-     */
-    public function testClientConsumeCommandMessagesFromExplicitlySetQueue(array $enqueueConfig)
+    public function testProducerSendsEventMessageViaProduceCommand()
     {
-        $this->customSetUp($enqueueConfig);
+        $this->customSetUp([
+            'transport' => getenv('AMQP_DSN'),
+        ]);
 
-        $command = static::$container->get('test_enqueue.client.default.consume_messages_command');
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get('test_enqueue.client.produce_command');
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'message' => $expectedBody,
+            '--topic' => TestProcessor::TOPIC,
+            '--client' => 'default',
+        ]);
+
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
+
+        $message = $consumer->receive(100);
+        $this->assertInstanceOf(Message::class, $message);
+        $consumer->acknowledge($message);
+
+        $this->assertSame($expectedBody, $message->getBody());
+    }
+
+    public function testProducerSendsCommandMessageViaProduceCommand()
+    {
+        $this->customSetUp([
+            'transport' => getenv('AMQP_DSN'),
+        ]);
+
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get('test_enqueue.client.produce_command');
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'message' => $expectedBody,
+            '--command' => TestCommandProcessor::COMMAND,
+            '--client' => 'default',
+        ]);
+
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
+
+        $message = $consumer->receive(100);
+        $this->assertInstanceOf(Message::class, $message);
+        $consumer->acknowledge($message);
+
+        $this->assertInstanceOf(Message::class, $message);
+        $this->assertSame($expectedBody, $message->getBody());
+    }
+
+    public function testShouldSetupBroker()
+    {
+        $this->customSetUp([
+            'transport' => 'file://'.sys_get_temp_dir(),
+        ]);
+
+        $command = static::$container->get('test_enqueue.client.setup_broker_command');
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+
+        $this->assertSame("Broker set up\n", $tester->getDisplay());
+    }
+
+    public function testClientConsumeCommandMessagesFromExplicitlySetQueue()
+    {
+        $this->customSetUp([
+            'transport' => getenv('AMQP_DSN'),
+        ]);
+
+        $command = static::$container->get('test_enqueue.client.consume_command');
         $processor = static::$container->get('test.message.command_processor');
 
         $expectedBody = __METHOD__.time();
@@ -180,6 +243,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
+            '--receive-timeout' => 100,
             '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
@@ -188,16 +252,15 @@ class UseCasesTest extends WebTestCase
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
-    /**
-     * @dataProvider provideEnqueueConfigs
-     */
-    public function testClientConsumeMessagesFromExplicitlySetQueue(array $enqueueConfig)
+    public function testClientConsumeMessagesFromExplicitlySetQueue()
     {
-        $this->customSetUp($enqueueConfig);
+        $this->customSetUp([
+            'transport' => getenv('AMQP_DSN'),
+        ]);
 
         $expectedBody = __METHOD__.time();
 
-        $command = static::$container->get('test_enqueue.client.default.consume_messages_command');
+        $command = static::$container->get('test_enqueue.client.consume_command');
         $processor = static::$container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
@@ -205,6 +268,7 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
+            '--receive-timeout' => 100,
             '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
@@ -213,39 +277,37 @@ class UseCasesTest extends WebTestCase
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
-//    /**
-//     * @dataProvider provideEnqueueConfigs
-//     */
-//    public function testTransportConsumeMessagesCommandShouldConsumeMessage(array $enqueueConfig)
-//    {
-//        $this->customSetUp($enqueueConfig);
-//
-//        if ($this->getTestQueue() instanceof StompDestination) {
-//            $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
-//                'It happens because of the destination options are different from the one used while creating the dest. Nothing to do about it'
-//            );
-//        }
-//
-//        $expectedBody = __METHOD__.time();
-//
-//        $command = static::$container->get('test_enqueue.client.default.consume_messages_command');
-//        $command->setContainer(static::$container);
-//        $processor = static::$container->get('test.message.processor');
-//
-//        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
-//
-//        $tester = new CommandTester($command);
-//        $tester->execute([
-//            '--message-limit' => 1,
-//            '--time-limit' => '+2sec',
-//            '--receive-timeout' => 1000,
-//            '--queue' => [$this->getTestQueue()->getQueueName()],
-//            'processor-service' => 'test.message.processor',
-//        ]);
-//
-//        $this->assertInstanceOf(Message::class, $processor->message);
-//        $this->assertEquals($expectedBody, $processor->message->getBody());
-//    }
+    public function testTransportConsumeMessagesCommandShouldConsumeMessage()
+    {
+        $this->customSetUp([
+            'transport' => getenv('AMQP_DSN'),
+        ]);
+
+        if ($this->getTestQueue() instanceof StompDestination) {
+            $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
+                'It happens because of the destination options are different from the one used while creating the dest. Nothing to do about it'
+            );
+        }
+
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get('test_enqueue.transport.consume_command');
+        $processor = static::$container->get('test.message.processor');
+
+        $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--message-limit' => 1,
+            '--time-limit' => '+2sec',
+            '--receive-timeout' => 1000,
+            'processor' => 'test.message.processor',
+            'queues' => [$this->getTestQueue()->getQueueName()],
+        ]);
+
+        $this->assertInstanceOf(Message::class, $processor->message);
+        $this->assertEquals($expectedBody, $processor->message->getBody());
+    }
 
     /**
      * @return string

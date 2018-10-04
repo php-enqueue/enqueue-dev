@@ -12,7 +12,7 @@ class RoutesCommandTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $command = static::$container->get('test.enqueue.client.default.routes_command');
+        $command = static::$container->get('test.enqueue.client.routes_command');
 
         $this->assertInstanceOf(RoutesCommand::class, $command);
     }
@@ -20,7 +20,7 @@ class RoutesCommandTest extends WebTestCase
     public function testShouldDisplayRegisteredTopics()
     {
         /** @var RoutesCommand $command */
-        $command = static::$container->get('test.enqueue.client.default.routes_command');
+        $command = static::$container->get('test.enqueue.client.routes_command');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -36,7 +36,7 @@ OUTPUT;
     public function testShouldDisplayCommands()
     {
         /** @var RoutesCommand $command */
-        $command = static::$container->get('test.enqueue.client.default.routes_command');
+        $command = static::$container->get('test.enqueue.client.routes_command');
 
         $tester = new CommandTester($command);
         $tester->execute([]);

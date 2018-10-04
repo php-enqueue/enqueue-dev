@@ -2,7 +2,7 @@
 
 namespace Enqueue\SimpleClient;
 
-use Enqueue\Client\ArrayProcessorRegistry;
+use Enqueue\ArrayProcessorRegistry;
 use Enqueue\Client\ChainExtension as ClientChainExtensions;
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
@@ -289,7 +289,7 @@ final class SimpleClient
             });
 
         $transportNode = $rootNode->children()->arrayNode('transport');
-        (new TransportFactory('default'))->addConfiguration($transportNode);
+        (new TransportFactory('default'))->addTransportConfiguration($transportNode);
 
         $rootNode->children()
             ->arrayNode('client')

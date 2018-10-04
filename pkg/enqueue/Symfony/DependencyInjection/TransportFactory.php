@@ -4,7 +4,13 @@ namespace Enqueue\Symfony\DependencyInjection;
 
 use Enqueue\ConnectionFactoryFactory;
 use Enqueue\ConnectionFactoryFactoryInterface;
+use Enqueue\Consumption\ChainExtension;
+use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Resources;
+use Enqueue\Rpc\RpcClient;
+use Enqueue\Rpc\RpcFactory;
+use Enqueue\Symfony\ContainerProcessorRegistry;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -16,6 +22,8 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class TransportFactory
 {
+    use FormatTransportNameTrait;
+
     /**
      * @var string
      */
@@ -30,7 +38,7 @@ final class TransportFactory
         $this->name = $name;
     }
 
-    public function addConfiguration(ArrayNodeDefinition $builder): void
+    public function addTransportConfiguration(ArrayNodeDefinition $builder): void
     {
         $knownSchemes = array_keys(Resources::getKnownSchemes());
         $availableSchemes = array_keys(Resources::getAvailableSchemes());
@@ -86,11 +94,33 @@ final class TransportFactory
         ;
     }
 
-    public function createConnectionFactory(ContainerBuilder $container, array $config): string
+    public function addQueueConsumerConfiguration(ArrayNodeDefinition $builder): void
     {
-        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
-        $factoryFactoryId = sprintf('enqueue.transport.%s.connection_factory_factory', $this->getName());
+        $builder
+            ->addDefaultsIfNotSet()->children()
+                ->integerNode('idle_time')
+                    ->min(0)
+                    ->defaultValue(0)
+                    ->info('the time in milliseconds queue consumer waits if no message received')
+                ->end()
+                ->integerNode('receive_timeout')
+                    ->min(0)
+                    ->defaultValue(10000)
+                    ->info('the time in milliseconds queue consumer waits for a message (100 ms by default)')
+                ->end()
+        ;
+    }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function buildConnectionFactory(ContainerBuilder $container, array $config): void
+    {
+        $factoryId = $this->format('connection_factory');
+
+        $factoryFactoryId = $this->format('connection_factory_factory');
         $container->register($factoryFactoryId, $config['factory_class'] ?? ConnectionFactoryFactory::class);
 
         $factoryFactoryService = new Reference(
@@ -113,23 +143,85 @@ final class TransportFactory
             ;
         }
 
-        return $factoryId;
+        if ('default' === $this->name) {
+            $container->setAlias(ConnectionFactory::class, $this->format('connection_factory'));
+        }
     }
 
-    public function createContext(ContainerBuilder $container, array $config): string
+    public function buildContext(ContainerBuilder $container, array $config): void
     {
-        $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
-        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
+        $factoryId = $this->format('connection_factory');
+        $this->assertServiceExists($container, $factoryId);
+
+        $contextId = $this->format('context');
 
         $container->register($contextId, Context::class)
             ->setFactory([new Reference($factoryId), 'createContext'])
         ;
 
-        return $contextId;
+        if ('default' === $this->name) {
+            $container->setAlias(Context::class, $this->format('context'));
+        }
     }
 
-    public function getName(): string
+    public function buildQueueConsumer(ContainerBuilder $container, array $config): void
     {
-        return $this->name;
+        $contextId = $this->format('context');
+        $this->assertServiceExists($container, $contextId);
+
+        $container->setParameter($this->format('idle_time'), $config['idle_time'] ?? 0);
+        $container->setParameter($this->format('receive_timeout'), $config['receive_timeout'] ?? 10000);
+
+        $container->register($this->format('consumption_extensions'), ChainExtension::class)
+            ->addArgument([])
+        ;
+
+        $container->register($this->format('queue_consumer'), QueueConsumer::class)
+            ->addArgument(new Reference($contextId))
+            ->addArgument(new Reference($this->format('consumption_extensions')))
+            ->addArgument($this->format('idle_time', true))
+            ->addArgument($this->format('receive_timeout', true))
+        ;
+
+        $container->register($this->format('processor_registry'), ContainerProcessorRegistry::class);
+
+        $locatorId = 'enqueue.locator';
+        if ($container->hasDefinition($locatorId)) {
+            $locator = $container->getDefinition($locatorId);
+            $locator->replaceArgument(0, array_replace($locator->getArgument(0), [
+                $this->format('queue_consumer') => new Reference($this->format('queue_consumer')),
+                $this->format('processor_registry') => new Reference($this->format('processor_registry')),
+            ]));
+        }
+
+        if ('default' === $this->name) {
+            $container->setAlias(QueueConsumerInterface::class, $this->format('queue_consumer'));
+        }
+    }
+
+    public function buildRpcClient(ContainerBuilder $container, array $config): void
+    {
+        $contextId = $this->format('context');
+        $this->assertServiceExists($container, $contextId);
+
+        $container->register($this->format('rpc_factory'), RpcFactory::class)
+            ->addArgument(new Reference($contextId))
+        ;
+
+        $container->register($this->format('rpc_client'), RpcClient::class)
+            ->addArgument(new Reference($contextId))
+            ->addArgument(new Reference($this->format('rpc_factory')))
+        ;
+
+        if ('default' === $this->name) {
+            $container->setAlias(RpcClient::class, $this->format('rpc_client'));
+        }
+    }
+
+    private function assertServiceExists(ContainerBuilder $container, string $serviceId): void
+    {
+        if (false == $container->hasDefinition($serviceId)) {
+            throw new \InvalidArgumentException(sprintf('The service "%s" does not exist.', $serviceId));
+        }
     }
 }

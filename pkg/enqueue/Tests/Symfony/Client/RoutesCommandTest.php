@@ -3,11 +3,14 @@
 namespace Enqueue\Tests\Symfony\Client;
 
 use Enqueue\Client\Config;
+use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
+use Enqueue\Container\Container;
 use Enqueue\Symfony\Client\RoutesCommand;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -27,36 +30,37 @@ class RoutesCommandTest extends TestCase
 
     public function testCouldBeConstructedWithConfigAndRouteCollectionAsArguments()
     {
-        new RoutesCommand(Config::create(), new RouteCollection([]));
+        new RoutesCommand($this->createMock(ContainerInterface::class));
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new RoutesCommand(Config::create(), new RouteCollection([]));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
 
         $this->assertEquals('enqueue:routes', $command->getName());
     }
 
     public function testShouldHaveCommandAliases()
     {
-        $command = new RoutesCommand(Config::create(), new RouteCollection([]));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
 
         $this->assertEquals(['debug:enqueue:routes'], $command->getAliases());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new RoutesCommand(Config::create(), new RouteCollection([]));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
 
         $options = $command->getDefinition()->getOptions();
-        $this->assertCount(1, $options);
+        $this->assertCount(2, $options);
 
         $this->assertArrayHasKey('show-route-options', $options);
+        $this->assertArrayHasKey('client', $options);
     }
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new RoutesCommand(Config::create(), new RouteCollection([]));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
 
         $arguments = $command->getDefinition()->getArguments();
         $this->assertCount(0, $arguments);
@@ -66,7 +70,9 @@ class RoutesCommandTest extends TestCase
     {
         $routeCollection = new RouteCollection([]);
 
-        $command = new RoutesCommand(Config::create(), $routeCollection);
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -81,6 +87,64 @@ OUTPUT;
         $this->assertCommandOutput($expectedOutput, $tester);
     }
 
+    public function testShouldUseFooDriver()
+    {
+        $routeCollection = new RouteCollection([
+            new Route('fooTopic', Route::TOPIC, 'processor'),
+        ]);
+
+        $defaultDriverMock = $this->createMock(DriverInterface::class);
+        $defaultDriverMock
+            ->expects($this->never())
+            ->method('getConfig')
+        ;
+
+        $defaultDriverMock
+            ->expects($this->never())
+            ->method('getRouteCollection')
+        ;
+
+        $fooDriverMock = $this->createDriverStub(Config::create(), $routeCollection);
+
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $defaultDriverMock,
+            'enqueue.client.foo.driver' => $fooDriverMock,
+        ]));
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--client' => 'foo',
+        ]);
+
+        $this->assertContains('Found 1 routes', $tester->getDisplay());
+    }
+
+    public function testThrowIfClientNotFound()
+    {
+        $defaultDriverMock = $this->createMock(DriverInterface::class);
+        $defaultDriverMock
+            ->expects($this->never())
+            ->method('getConfig')
+        ;
+
+        $defaultDriverMock
+            ->expects($this->never())
+            ->method('getRouteCollection')
+        ;
+
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $defaultDriverMock,
+        ]));
+
+        $tester = new CommandTester($command);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Client "foo" is not supported.');
+        $tester->execute([
+            '--client' => 'foo',
+        ]);
+    }
+
     public function testShouldOutputTopicRouteInfo()
     {
         $routeCollection = new RouteCollection([
@@ -88,7 +152,9 @@ OUTPUT;
             new Route('barTopic', Route::TOPIC, 'processor'),
         ]);
 
-        $command = new RoutesCommand(Config::create(), $routeCollection);
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -116,7 +182,9 @@ OUTPUT;
             new Route('barCommand', Route::COMMAND, 'processor', ['foo' => 'fooVal', 'bar' => 'barVal']),
         ]);
 
-        $command = new RoutesCommand(Config::create(), $routeCollection);
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -144,7 +212,9 @@ OUTPUT;
             new Route('barTopic', Route::TOPIC, 'processor', ['queue' => 'bar']),
         ]);
 
-        $command = new RoutesCommand(Config::create(), $routeCollection);
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -173,7 +243,9 @@ OUTPUT;
             new Route('barTopic', Route::TOPIC, 'processor', ['queue' => 'bar', 'prefix_queue' => false]),
         ]);
 
-        $command = new RoutesCommand(Config::create(), $routeCollection);
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -201,7 +273,9 @@ OUTPUT;
             new Route('barTopic', Route::TOPIC, 'processor', ['external' => true]),
         ]);
 
-        $command = new RoutesCommand(Config::create(), $routeCollection);
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -229,7 +303,9 @@ OUTPUT;
             new Route('barTopic', Route::TOPIC, 'processor', ['bar' => 'barVal']),
         ]);
 
-        $command = new RoutesCommand(Config::create(), $routeCollection);
+        $command = new RoutesCommand(new Container([
+            'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
+        ]));
 
         $tester = new CommandTester($command);
 
@@ -252,6 +328,27 @@ Found 2 routes
 OUTPUT;
 
         $this->assertCommandOutput($expectedOutput, $tester);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createDriverStub(Config $config, RouteCollection $routeCollection): DriverInterface
+    {
+        $driverMock = $this->createMock(DriverInterface::class);
+        $driverMock
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $driverMock
+            ->expects($this->any())
+            ->method('getRouteCollection')
+            ->willReturn($routeCollection)
+        ;
+
+        return $driverMock;
     }
 
     private function assertCommandOutput(string $expected, CommandTester $tester): void

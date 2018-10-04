@@ -1,55 +1,49 @@
-parameters:
-  enqueue.queue_consumer.default_idle_time: 0
-  enqueue.queue_consumer.default_receive_timeout: 10000
-
 services:
-    enqueue.consumption.extensions:
-        class: 'Enqueue\Consumption\ChainExtension'
-        public: false
+    enqueue.locator:
+        class: 'Symfony\Component\DependencyInjection\ServiceLocator'
         arguments:
             - []
+        tags: ['container.service_locator']
 
-    Enqueue\Consumption\QueueConsumer:
-        class: 'Enqueue\Consumption\QueueConsumer'
-        public: true
+    enqueue.transport.consume_command:
+        class: 'Enqueue\Symfony\Consumption\ConfigurableConsumeCommand'
         arguments:
-            - '@enqueue.transport.default.context'
-            - '@enqueue.consumption.extensions'
-            - '%enqueue.queue_consumer.default_idle_time%'
-            - '%enqueue.queue_consumer.default_receive_timeout%'
-
-    # Deprecated. To be removed in 0.10.
-    enqueue.consumption.queue_consumer:
-        public: true
-        alias: 'Enqueue\Consumption\QueueConsumer'
-
-    Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand:
-        class: 'Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand'
-        public: true
-        arguments:
-            - '@Enqueue\Consumption\QueueConsumer'
+            - '@enqueue.locator'
+            - 'enqueue.transport.%s.queue_consumer'
+            - 'enqueue.transport.%s.processor_registry'
         tags:
             - { name: 'console.command' }
 
-    # Deprecated. To be removed in 0.10.
-    enqueue.command.consume_messages:
-        public: true
-        alias: 'Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand'
-
-    enqueue.transport.rpc_factory:
-        class: 'Enqueue\Rpc\RpcFactory'
-        public: false
+    enqueue.client.consume_command:
+        class: 'Enqueue\Symfony\Client\ConsumeCommand'
         arguments:
-            - '@enqueue.transport.default.context'
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.queue_consumer'
+            - 'enqueue.client.%s.driver'
+            - 'enqueue.client.%s.delegate_processor'
+        tags:
+            - { name: 'console.command' }
 
-    Enqueue\Rpc\RpcClient:
-        class: 'Enqueue\Rpc\RpcClient'
-        public: true
+    enqueue.client.produce_command:
+        class: 'Enqueue\Symfony\Client\ProduceCommand'
         arguments:
-            - '@enqueue.transport.default.context'
-            - '@enqueue.transport.rpc_factory'
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.producer'
+        tags:
+            - { name: 'console.command' }
 
-    # Deprecated. To be removed in 0.10.
-    enqueue.transport.rpc_client:
-        public: true
-        alias: 'Enqueue\Rpc\RpcClient'
+    enqueue.client.setup_broker_command:
+        class: 'Enqueue\Symfony\Client\SetupBrokerCommand'
+        arguments:
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.driver'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.routes_command:
+        class: 'Enqueue\Symfony\Client\RoutesCommand'
+        arguments:
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.driver'
+        tags:
+            - { name: 'console.command' }

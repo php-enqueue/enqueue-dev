@@ -16,7 +16,7 @@ class QueueConsumerOptionsCommandTraitTest extends TestCase
         $options = $trait->getDefinition()->getOptions();
 
         $this->assertCount(2, $options);
-        $this->assertArrayHasKey('idle-timeout', $options);
+        $this->assertArrayHasKey('idle-time', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
     }
 
@@ -38,7 +38,7 @@ class QueueConsumerOptionsCommandTraitTest extends TestCase
 
         $tester = new CommandTester($trait);
         $tester->execute([
-            '--idle-timeout' => '123.1',
+            '--idle-time' => '123.1',
             '--receive-timeout' => '456.1',
         ]);
     }
