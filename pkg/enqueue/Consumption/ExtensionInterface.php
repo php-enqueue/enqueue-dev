@@ -2,15 +2,15 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\Start;
+
 interface ExtensionInterface
 {
     /**
-     * Executed only once at the very begining of the consumption.
+     * Executed only once at the very beginning of the consumption.
      * At this stage the context does not contain processor, consumer and queue.
-     *
-     * @param Context $context
      */
-    public function onStart(Context $context);
+    public function onStart(Start $context): void;
 
     /**
      * Executed at every new cycle before we asked a broker for a new message.

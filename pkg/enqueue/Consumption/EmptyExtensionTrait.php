@@ -2,12 +2,11 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\Start;
+
 trait EmptyExtensionTrait
 {
-    /**
-     * @param Context $context
-     */
-    public function onStart(Context $context)
+    public function onStart(Start $context): void
     {
     }
 

@@ -2,6 +2,8 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\Start;
+
 class ChainExtension implements ExtensionInterface
 {
     use EmptyExtensionTrait;
@@ -22,10 +24,7 @@ class ChainExtension implements ExtensionInterface
         });
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onStart(Context $context)
+    public function onStart(Start $context): void
     {
         foreach ($this->extensions as $extension) {
             $extension->onStart($context);

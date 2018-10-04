@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
@@ -29,18 +30,14 @@ final class QueueConsumer implements QueueConsumerInterface
     private $staticExtension;
 
     /**
-     * [
-     *   [InteropQueue, Processor],
-     * ].
-     *
-     * @var array
+     * @var BoundProcessor[]
      */
     private $boundProcessors;
 
     /**
      * @var int|float in milliseconds
      */
-    private $idleTimeout;
+    private $idleTime;
 
     /**
      * @var int|float in milliseconds
@@ -63,49 +60,49 @@ final class QueueConsumer implements QueueConsumerInterface
     private $fallbackSubscriptionConsumer;
 
     /**
-     * @param InteropContext                         $interopContext
-     * @param ExtensionInterface|ChainExtension|null $extension
-     * @param int|float                              $idleTimeout    the time in milliseconds queue consumer waits if no message received
-     * @param int|float                              $receiveTimeout the time in milliseconds queue consumer waits for a message (10 ms by default)
+     * @param BoundProcessor[] $boundProcessors
+     * @param int|float        $idleTime        the time in milliseconds queue consumer waits if no message received
+     * @param int|float        $receiveTimeout  the time in milliseconds queue consumer waits for a message (10 ms by default)
      */
     public function __construct(
         InteropContext $interopContext,
         ExtensionInterface $extension = null,
-        float $idleTimeout = 0.,
-        float $receiveTimeout = 10000.
+        array $boundProcessors = [],
+        LoggerInterface $logger = null,
+        int $idleTime = 0,
+        int $receiveTimeout = 10000
     ) {
         $this->interopContext = $interopContext;
-        $this->staticExtension = $extension ?: new ChainExtension([]);
-        $this->idleTimeout = $idleTimeout;
+        $this->idleTime = $idleTime;
         $this->receiveTimeout = $receiveTimeout;
 
+        $this->staticExtension = $extension ?: new ChainExtension([]);
+        $this->logger = $logger ?: new NullLogger();
+
         $this->boundProcessors = [];
-        $this->logger = new NullLogger();
+        array_walk($boundProcessors, function (BoundProcessor $processor) {
+            $this->boundProcessors[] = $processor;
+        });
+
         $this->fallbackSubscriptionConsumer = new FallbackSubscriptionConsumer();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setIdleTimeout(float $timeout): void
+    public function setIdleTime(int $time): void
     {
-        $this->idleTimeout = $timeout;
+        $this->idleTime = $time;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdleTimeout(): float
+    public function getIdleTime(): int
     {
-        return $this->idleTimeout;
+        return $this->idleTime;
     }
 
-    public function setReceiveTimeout(float $timeout): void
+    public function setReceiveTimeout(int $timeout): void
     {
         $this->receiveTimeout = $timeout;
     }
 
-    public function getReceiveTimeout(): float
+    public function getReceiveTimeout(): int
     {
         return $this->receiveTimeout;
     }
@@ -130,49 +127,75 @@ final class QueueConsumer implements QueueConsumerInterface
             throw new LogicException(sprintf('The queue was already bound. Queue: %s', $queue->getQueueName()));
         }
 
-        $this->boundProcessors[$queue->getQueueName()] = [$queue, $processor];
+        $this->boundProcessors[$queue->getQueueName()] = new BoundProcessor($queue, $processor);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function bindCallback($queue, callable $processor): QueueConsumerInterface
     {
         return $this->bind($queue, new CallbackProcessor($processor));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function consume(ExtensionInterface $runtimeExtension = null): void
     {
-        if (empty($this->boundProcessors)) {
-            throw new \LogicException('There is nothing to consume. It is required to bind something before calling consume method.');
-        }
-
-        /** @var Consumer[] $consumers */
-        $consumers = [];
-        /** @var InteropQueue $queue */
-        foreach ($this->boundProcessors as list($queue, $processor)) {
-            $consumers[$queue->getQueueName()] = $this->interopContext->createConsumer($queue);
-        }
+        /*
+         * onStart
+         * onPreSubscribe
+         * onPreConsume
+         * onPostConsume
+         * onReceived
+         * onResult
+         * onPostReceived
+         * onEnd
+         */
 
         $this->extension = $runtimeExtension ?
             new ChainExtension([$this->staticExtension, $runtimeExtension]) :
             $this->staticExtension
         ;
 
-        $context = new Context($this->interopContext);
-        $this->extension->onStart($context);
+        $startTime = (int) (microtime(true) * 1000);
 
-        if ($context->getLogger()) {
-            $this->logger = $context->getLogger();
-        } else {
-            $this->logger = new NullLogger();
-            $context->setLogger($this->logger);
+        $start = new Start(
+            $this->interopContext,
+            $this->logger,
+            $this->boundProcessors,
+            $this->receiveTimeout,
+            $this->idleTime,
+            $startTime
+        );
+
+        $this->extension->onStart($start);
+
+        $this->logger = $start->getLogger();
+        $this->idleTime = $start->getIdleTime();
+        $this->receiveTimeout = $start->getReceiveTimeout();
+        $this->boundProcessors = $start->getBoundProcessors();
+
+        if (empty($this->boundProcessors)) {
+            throw new \LogicException('There is nothing to consume. It is required to bind something before calling consume method.');
         }
+
+        /** @var Consumer[] $consumers */
+        $consumers = [];
+        foreach ($this->boundProcessors as $boundProcessor) {
+            $queue = $boundProcessor->getQueue();
+
+            $consumers[$queue->getQueueName()] = $this->interopContext->createConsumer($queue);
+        }
+
+        // todo remove
+        $context = new Context($this->interopContext);
+        $context->setLogger($this->logger);
+//        $this->extension->onStart($context);
+//
+//        if ($context->getLogger()) {
+//            $this->logger = $context->getLogger();
+//        } else {
+//            $this->logger = new NullLogger();
+//            $context->setLogger($this->logger);
+//        }
 
         $this->logger->info('Start consuming');
 
@@ -185,10 +208,10 @@ final class QueueConsumer implements QueueConsumerInterface
         $callback = function (InteropMessage $message, Consumer $consumer) use (&$context) {
             $currentProcessor = null;
 
-            /** @var InteropQueue $queue */
-            foreach ($this->boundProcessors as list($queue, $processor)) {
+            foreach ($this->boundProcessors as $boundProcessor) {
+                $queue = $boundProcessor->getQueue();
                 if ($queue->getQueueName() === $consumer->getQueue()->getQueueName()) {
-                    $currentProcessor = $processor;
+                    $currentProcessor = $boundProcessor->getProcessor();
                 }
             }
 
@@ -228,7 +251,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
                 $subscriptionConsumer->consume($this->receiveTimeout);
 
-                $this->idleTimeout && usleep($this->idleTimeout * 1000);
+                $this->idleTime && usleep($this->idleTime * 1000);
                 $this->extension->onIdle($context);
 
                 if ($context->isExecutionInterrupted()) {

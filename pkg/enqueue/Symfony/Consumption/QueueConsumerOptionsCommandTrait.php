@@ -26,7 +26,7 @@ trait QueueConsumerOptionsCommandTrait
     protected function setQueueConsumerOptions(QueueConsumerInterface $consumer, InputInterface $input)
     {
         if (null !== $idleTimeout = $input->getOption('idle-time')) {
-            $consumer->setIdleTimeout((float) $idleTimeout);
+            $consumer->setIdleTime((float) $idleTimeout);
         }
 
         if (null !== $receiveTimeout = $input->getOption('receive-timeout')) {
