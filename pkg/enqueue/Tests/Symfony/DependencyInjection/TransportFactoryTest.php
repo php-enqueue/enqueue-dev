@@ -2,8 +2,14 @@
 
 namespace Enqueue\Tests\Symfony\DependencyInjection;
 
+use Enqueue\Consumption\ChainExtension;
+use Enqueue\Consumption\QueueConsumer;
+use Enqueue\Rpc\RpcClient;
+use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -41,7 +47,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
         $config = $processor->process($tb->buildTree(), ['dsn://']);
 
@@ -59,7 +65,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
         $config = $processor->process($tb->buildTree(), ['dsn:']);
 
@@ -72,7 +78,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [null]);
@@ -85,7 +91,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), ['']);
@@ -98,7 +104,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [[]]);
@@ -111,7 +117,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $this->expectException(InvalidConfigurationException::class);
@@ -125,7 +131,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $this->expectException(\LogicException::class);
@@ -143,7 +149,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $this->expectException(\LogicException::class);
@@ -161,7 +167,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $this->expectException(\LogicException::class);
@@ -179,7 +185,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [[
@@ -197,7 +203,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [[
@@ -215,7 +221,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [[
@@ -233,7 +239,7 @@ class TransportFactoryTest extends TestCase
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addConfiguration($rootNode);
+        $transport->addTransportConfiguration($rootNode);
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [['dsn' => 'foo:', 'extraOption' => 'aVal']]);
@@ -243,15 +249,13 @@ class TransportFactoryTest extends TestCase
         );
     }
 
-    public function testShouldCreateConnectionFactoryFromDSN()
+    public function testShouldBuildConnectionFactoryFromDSN()
     {
         $container = new ContainerBuilder();
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->build($container, ['dsn' => 'foo://bar/baz']);
-
-        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+        $transport->buildConnectionFactory($container, ['dsn' => 'foo://bar/baz']);
 
         $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
 
@@ -266,15 +270,13 @@ class TransportFactoryTest extends TestCase
         ;
     }
 
-    public function testShouldCreateConnectionFactoryUsingCustomFactoryClass()
+    public function testShouldBuildConnectionFactoryUsingCustomFactoryClass()
     {
         $container = new ContainerBuilder();
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->build($container, ['dsn' => 'foo:', 'factory_class' => 'theFactoryClass']);
-
-        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+        $transport->buildConnectionFactory($container, ['dsn' => 'foo:', 'factory_class' => 'theFactoryClass']);
 
         $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory_factory'));
         $this->assertSame(
@@ -295,15 +297,13 @@ class TransportFactoryTest extends TestCase
         ;
     }
 
-    public function testShouldCreateConnectionFactoryUsingCustomFactoryService()
+    public function testShouldBuildConnectionFactoryUsingCustomFactoryService()
     {
         $container = new ContainerBuilder();
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->build($container, ['dsn' => 'foo:', 'factory_service' => 'theFactoryService']);
-
-        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+        $transport->buildConnectionFactory($container, ['dsn' => 'foo:', 'factory_service' => 'theFactoryService']);
 
         $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
 
@@ -318,15 +318,13 @@ class TransportFactoryTest extends TestCase
         ;
     }
 
-    public function testShouldCreateConnectionFactoryUsingConnectionFactoryClassWithoutFactory()
+    public function testShouldBuildConnectionFactoryUsingConnectionFactoryClassWithoutFactory()
     {
         $container = new ContainerBuilder();
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->build($container, ['dsn' => 'foo:', 'connection_factory_class' => 'theFactoryClass']);
-
-        $this->assertEquals('enqueue.transport.default.connection_factory', $serviceId);
+        $transport->buildConnectionFactory($container, ['dsn' => 'foo:', 'connection_factory_class' => 'theFactoryClass']);
 
         $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
 
@@ -338,15 +336,14 @@ class TransportFactoryTest extends TestCase
         ;
     }
 
-    public function testShouldCreateContextFromDsn()
+    public function testShouldBuildContext()
     {
         $container = new ContainerBuilder();
+        $container->register('enqueue.transport.default.connection_factory', ConnectionFactory::class);
 
         $transport = new TransportFactory('default');
 
-        $serviceId = $transport->buildContext($container, ['dsn' => 'foo://bar/baz']);
-
-        $this->assertEquals('enqueue.transport.default.context', $serviceId);
+        $transport->buildContext($container, []);
 
         $this->assertNotEmpty($container->getDefinition('enqueue.transport.default.context')->getFactory());
         $this->assertEquals(
@@ -357,5 +354,100 @@ class TransportFactoryTest extends TestCase
             [],
             $container->getDefinition('enqueue.transport.default.context')->getArguments())
         ;
+    }
+
+    public function testThrowIfBuildContextCalledButConnectionFactoryServiceDoesNotExist()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new TransportFactory('default');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The service "enqueue.transport.default.connection_factory" does not exist.');
+        $transport->buildContext($container, []);
+    }
+
+    public function testShouldBuildQueueConsumerWithDefaultOptions()
+    {
+        $container = new ContainerBuilder();
+        $container->register('enqueue.transport.default.context', Context::class);
+
+        $transport = new TransportFactory('default');
+
+        $transport->buildQueueConsumer($container, []);
+
+        $this->assertSame(0, $container->getParameter('enqueue.transport.default.idle_time'));
+        $this->assertSame(10000, $container->getParameter('enqueue.transport.default.receive_timeout'));
+
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.consumption_extensions'));
+        $this->assertSame(ChainExtension::class, $container->getDefinition('enqueue.transport.default.consumption_extensions')->getClass());
+        $this->assertSame([[]], $container->getDefinition('enqueue.transport.default.consumption_extensions')->getArguments());
+
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.queue_consumer'));
+        $this->assertSame(QueueConsumer::class, $container->getDefinition('enqueue.transport.default.queue_consumer')->getClass());
+        $this->assertEquals([
+            new Reference('enqueue.transport.default.context'),
+            new Reference('enqueue.transport.default.consumption_extensions'),
+            '%enqueue.transport.default.idle_time%',
+            '%enqueue.transport.default.receive_timeout%',
+        ], $container->getDefinition('enqueue.transport.default.queue_consumer')->getArguments());
+    }
+
+    public function testShouldBuildQueueConsumerWithCustomOptions()
+    {
+        $container = new ContainerBuilder();
+        $container->register('enqueue.transport.default.context', Context::class);
+
+        $transport = new TransportFactory('default');
+
+        $transport->buildQueueConsumer($container, [
+            'idle_time' => 123,
+            'receive_timeout' => 567,
+        ]);
+
+        $this->assertSame(123, $container->getParameter('enqueue.transport.default.idle_time'));
+        $this->assertSame(567, $container->getParameter('enqueue.transport.default.receive_timeout'));
+    }
+
+    public function testThrowIfBuildQueueConsumerCalledButContextServiceDoesNotExist()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new TransportFactory('default');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The service "enqueue.transport.default.context" does not exist.');
+        $transport->buildQueueConsumer($container, []);
+    }
+
+    public function testShouldBuildRpcClientWithDefaultOptions()
+    {
+        $container = new ContainerBuilder();
+        $container->register('enqueue.transport.default.context', Context::class);
+
+        $transport = new TransportFactory('default');
+
+        $transport->buildRpcClient($container, []);
+
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.rpc_factory'));
+        $this->assertSame(RpcFactory::class, $container->getDefinition('enqueue.transport.default.rpc_factory')->getClass());
+
+        $this->assertTrue($container->hasDefinition('enqueue.transport.default.rpc_client'));
+        $this->assertSame(RpcClient::class, $container->getDefinition('enqueue.transport.default.rpc_client')->getClass());
+        $this->assertEquals([
+            new Reference('enqueue.transport.default.context'),
+            new Reference('enqueue.transport.default.rpc_factory'),
+        ], $container->getDefinition('enqueue.transport.default.rpc_client')->getArguments());
+    }
+
+    public function testThrowIfBuildRpcClientCalledButContextServiceDoesNotExist()
+    {
+        $container = new ContainerBuilder();
+
+        $transport = new TransportFactory('default');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The service "enqueue.transport.default.context" does not exist.');
+        $transport->buildRpcClient($container, []);
     }
 }

@@ -6,7 +6,6 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Container\Container;
 use Enqueue\Symfony\Consumption\ConsumeCommand;
-use Interop\Queue\Context;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -35,7 +34,7 @@ class ConsumeCommandTest extends TestCase
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
-        $this->assertArrayHasKey('idle-timeout', $options);
+        $this->assertArrayHasKey('idle-time', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('niceness', $options);
         $this->assertArrayHasKey('transport', $options);
@@ -109,14 +108,6 @@ class ConsumeCommandTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Transport "not-defined" is not supported.');
         $tester->execute(['--transport' => 'not-defined']);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(Context::class);
     }
 
     /**

@@ -23,8 +23,20 @@ services:
         alias: 'enqueue.transport.default.context'
         public: true
 
-    test_enqueue.consume_command:
-        alias: 'enqueue.consume_command'
+    test_enqueue.transport.consume_command:
+        alias: 'enqueue.transport.consume_command'
+        public: true
+
+    test_enqueue.client.consume_command:
+        alias: 'enqueue.client.consume_command'
+        public: true
+
+    test_enqueue.client.produce_command:
+        alias: 'enqueue.client.produce_command'
+        public: true
+
+    test_enqueue.client.setup_broker_command:
+        alias: 'enqueue.client.setup_broker_command'
         public: true
 
     test.message.processor:

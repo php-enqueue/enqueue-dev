@@ -34,6 +34,18 @@ services:
         alias: 'enqueue.client.default.traceable_producer'
         public: true
 
+    test_enqueue.transport.default.queue_consumer:
+        alias: 'enqueue.transport.default.queue_consumer'
+        public: true
+
+    test_enqueue.client.default.queue_consumer:
+        alias: 'enqueue.client.default.queue_consumer'
+        public: true
+
+    test_enqueue.transport.default.rpc_client:
+        alias: 'enqueue.transport.default.rpc_client'
+        public: true
+
     test_enqueue.client.default.producer:
         alias: 'enqueue.client.default.producer'
         public: true
@@ -50,12 +62,12 @@ services:
         alias: 'enqueue.transport.default.context'
         public: true
 
-    test_enqueue.client.default.consume_messages_command:
-        alias: 'enqueue.client.default.consume_messages_command'
+    test_enqueue.client.consume_command:
+        alias: 'enqueue.client.consume_command'
         public: true
 
-    test.enqueue.client.default.routes_command:
-        alias: 'enqueue.client.default.routes_command'
+    test.enqueue.client.routes_command:
+        alias: 'enqueue.client.routes_command'
         public: true
 
     test_async_listener:

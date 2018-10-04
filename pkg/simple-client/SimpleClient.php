@@ -289,7 +289,7 @@ final class SimpleClient
             });
 
         $transportNode = $rootNode->children()->arrayNode('transport');
-        (new TransportFactory('default'))->addConfiguration($transportNode);
+        (new TransportFactory('default'))->addTransportConfiguration($transportNode);
 
         $rootNode->children()
             ->arrayNode('client')

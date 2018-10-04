@@ -1,5 +1,6 @@
 services:
-    enqueue.client.default.context: 
+services:
+    enqueue.client.default.context:
         class: 'Interop\Queue\Context'
         factory: ['@enqueue.client.default.driver', 'getContext']
 
@@ -48,7 +49,7 @@ services:
             - '@enqueue.client.default.driver'
 
     enqueue.client.default.processor_registry:
-        class: 'Enqueue\Symfony\Client\ContainerProcessorRegistry'
+        class: 'Enqueue\Symfony\ContainerProcessorRegistry'
 
     enqueue.client.default.delegate_processor:
         class: 'Enqueue\Client\DelegateProcessor'
@@ -74,37 +75,6 @@ services:
         class: 'Enqueue\Consumption\ChainExtension'
         arguments:
             - []
-
-    enqueue.client.default.consume_messages_command:
-        class: 'Enqueue\Symfony\Client\ConsumeMessagesCommand'
-        arguments:
-            - '@enqueue.client.default.queue_consumer'
-            - '@enqueue.client.default.delegate_processor'
-            - '@enqueue.client.default.driver'
-        tags:
-            - { name: 'console.command' }
-
-    enqueue.client.default.produce_message_command:
-        class: 'Enqueue\Symfony\Client\ProduceMessageCommand'
-        arguments:
-            - '@enqueue.client.default.producer'
-        tags:
-            - { name: 'console.command' }
-
-    enqueue.client.default.setup_broker_command:
-        class: 'Enqueue\Symfony\Client\SetupBrokerCommand'
-        arguments:
-            - '@enqueue.client.default.driver'
-        tags:
-            - { name: 'console.command' }
-
-    enqueue.client.default.routes_command:
-        class: 'Enqueue\Symfony\Client\RoutesCommand'
-        arguments:
-            - '@enqueue.client.default.config'
-            - '@enqueue.client.default.route_collection'
-        tags:
-            - { name: 'console.command' }
 
     # todo
     enqueue.profiler.message_queue_collector:

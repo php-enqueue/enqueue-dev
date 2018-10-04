@@ -5,12 +5,45 @@ services:
             - []
         tags: ['container.service_locator']
 
-    enqueue.consume_command:
+    enqueue.transport.consume_command:
         class: 'Enqueue\Symfony\Consumption\ConfigurableConsumeCommand'
-        public: true
         arguments:
             - '@enqueue.locator'
             - 'enqueue.transport.%s.queue_consumer'
             - 'enqueue.transport.%s.processor_registry'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.consume_command:
+        class: 'Enqueue\Symfony\Client\ConsumeCommand'
+        arguments:
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.queue_consumer'
+            - 'enqueue.client.%s.driver'
+            - 'enqueue.client.%s.delegate_processor'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.produce_command:
+        class: 'Enqueue\Symfony\Client\ProduceCommand'
+        arguments:
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.producer'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.setup_broker_command:
+        class: 'Enqueue\Symfony\Client\SetupBrokerCommand'
+        arguments:
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.driver'
+        tags:
+            - { name: 'console.command' }
+
+    enqueue.client.routes_command:
+        class: 'Enqueue\Symfony\Client\RoutesCommand'
+        arguments:
+            - '@enqueue.locator'
+            - 'enqueue.client.%s.driver'
         tags:
             - { name: 'console.command' }

@@ -40,7 +40,7 @@ class ConfigurableConsumeCommandTest extends TestCase
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
-        $this->assertArrayHasKey('idle-timeout', $options);
+        $this->assertArrayHasKey('idle-time', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('niceness', $options);
         $this->assertArrayHasKey('transport', $options);
@@ -258,14 +258,6 @@ class ConfigurableConsumeCommandTest extends TestCase
             'queues' => ['queue-name'],
             '--transport' => 'bar',
         ]);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
-     */
-    protected function createContextMock()
-    {
-        return $this->createMock(Context::class);
     }
 
     /**

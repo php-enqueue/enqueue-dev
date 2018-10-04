@@ -28,12 +28,15 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $this->setupAutowiringForProcessors($container);
-
         $transportFactory = (new TransportFactory('default'));
-        $transportFactory->build($container, $config['transport']);
+        $transportFactory->buildConnectionFactory($container, $config['transport']);
+        $transportFactory->buildContext($container, []);
+        $transportFactory->buildQueueConsumer($container, $config['consumption']);
+        $transportFactory->buildRpcClient($container, []);
 
         if (isset($config['client'])) {
+            $this->setupAutowiringForProcessors($container);
+
             $loader->load('client.yml');
             $loader->load('extensions/flush_spool_producer_extension.yml');
             $loader->load('extensions/exclusive_command_extension.yml');
@@ -75,17 +78,20 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                     ->replaceArgument(1, $config['client']['redelivered_delay_time'])
                 ;
             }
-        }
 
-        // todo configure queue consumer
-        $container->getDefinition('enqueue.transport.default.queue_consumer')
-            ->replaceArgument(2, $config['consumption']['idle_timeout'])
-            ->replaceArgument(3, $config['consumption']['receive_timeout'])
-        ;
+            $locatorId = 'enqueue.locator';
+            if ($container->hasDefinition($locatorId)) {
+                $locator = $container->getDefinition($locatorId);
+                $locator->replaceArgument(0, array_replace($locator->getArgument(0), [
+                    'enqueue.client.default.queue_consumer' => new Reference('enqueue.client.default.queue_consumer'),
+                    'enqueue.client.default.driver' => new Reference('enqueue.client.default.driver'),
+                    'enqueue.client.default.delegate_processor' => new Reference('enqueue.client.default.delegate_processor'),
+                    'enqueue.client.default.producer' => new Reference('enqueue.client.default.producer'),
+                ]));
+            }
 
-        if ($container->hasDefinition('enqueue.client.default.queue_consumer')) {
             $container->getDefinition('enqueue.client.default.queue_consumer')
-                ->replaceArgument(2, $config['consumption']['idle_timeout'])
+                ->replaceArgument(2, $config['consumption']['idle_time'])
                 ->replaceArgument(3, $config['consumption']['receive_timeout'])
             ;
         }

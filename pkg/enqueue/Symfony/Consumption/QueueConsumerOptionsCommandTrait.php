@@ -14,7 +14,7 @@ trait QueueConsumerOptionsCommandTrait
     protected function configureQueueConsumerOptions()
     {
         $this
-            ->addOption('idle-timeout', null, InputOption::VALUE_REQUIRED, 'The time in milliseconds queue consumer idle if no message has been received.')
+            ->addOption('idle-time', null, InputOption::VALUE_REQUIRED, 'The time in milliseconds queue consumer idle if no message has been received.')
             ->addOption('receive-timeout', null, InputOption::VALUE_REQUIRED, 'The time in milliseconds queue consumer waits for a message.')
         ;
     }
@@ -25,7 +25,7 @@ trait QueueConsumerOptionsCommandTrait
      */
     protected function setQueueConsumerOptions(QueueConsumerInterface $consumer, InputInterface $input)
     {
-        if (null !== $idleTimeout = $input->getOption('idle-timeout')) {
+        if (null !== $idleTimeout = $input->getOption('idle-time')) {
             $consumer->setIdleTimeout((float) $idleTimeout);
         }
 

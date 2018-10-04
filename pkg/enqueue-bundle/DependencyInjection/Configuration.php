@@ -26,8 +26,13 @@ final class Configuration implements ConfigurationInterface
                 return ['transport' => ['dsn' => 'null:']];
             });
 
+        $transportFactory = new TransportFactory('default');
+
         $transportNode = $rootNode->children()->arrayNode('transport');
-        (new TransportFactory('default'))->addConfiguration($transportNode);
+        $transportFactory->addTransportConfiguration($transportNode);
+
+        $consumptionNode = $rootNode->children()->arrayNode('consumption');
+        $transportFactory->addQueueConsumerConfiguration($consumptionNode);
 
         $rootNode->children()
             ->arrayNode('client')->children()
@@ -39,18 +44,6 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('router_processor')->defaultValue(RouterProcessor::class)->end()
                 ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
                 ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
-            ->end()->end()
-            ->arrayNode('consumption')->addDefaultsIfNotSet()->children()
-                ->integerNode('idle_timeout')
-                    ->min(0)
-                    ->defaultValue(0)
-                    ->info('the time in milliseconds queue consumer waits if no message received')
-                ->end()
-                ->integerNode('receive_timeout')
-                    ->min(0)
-                    ->defaultValue(100)
-                    ->info('the time in milliseconds queue consumer waits for a message (100 ms by default)')
-                ->end()
             ->end()->end()
             ->booleanNode('job')->defaultFalse()->end()
             ->arrayNode('async_events')
