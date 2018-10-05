@@ -2,13 +2,11 @@
 
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Extension\NicenessExtension;
-use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
-use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class NicenessExtensionTest extends TestCase
 {
@@ -28,20 +26,17 @@ class NicenessExtensionTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('proc_nice(): Only a super user may attempt to increase the priority of a process');
 
+        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0, 0);
+
         $extension = new NicenessExtension(-1);
-        $extension->onStart($this->createContext());
+        $extension->onStart($context);
     }
 
     /**
-     * @return Context
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
      */
-    protected function createContext(): Context
+    protected function createContextMock(): InteropContext
     {
-        $context = new Context($this->createMock(InteropContext::class));
-        $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setConsumer($this->createMock(Consumer::class));
-        $context->setProcessor($this->createMock(Processor::class));
-
-        return $context;
+        return $this->createMock(InteropContext::class);
     }
 }

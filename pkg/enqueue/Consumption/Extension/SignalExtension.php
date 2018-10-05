@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\Exception\LogicException;
 use Enqueue\Consumption\ExtensionInterface;
@@ -22,10 +23,7 @@ class SignalExtension implements ExtensionInterface
      */
     protected $logger;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onStart(Context $context)
+    public function onStart(Start $context): void
     {
         if (false == extension_loaded('pcntl')) {
             throw new LogicException('The pcntl extension is required in order to catch signals.');

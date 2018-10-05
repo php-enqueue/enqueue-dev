@@ -5,12 +5,26 @@ namespace Enqueue\Tests\Symfony\Client;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Container\Container;
 use Enqueue\Symfony\Client\ProduceCommand;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ProduceCommandTest extends TestCase
 {
+    use ClassExtensionTrait;
+
+    public function testShouldBeSubClassOfCommand()
+    {
+        $this->assertClassExtends(Command::class, ProduceCommand::class);
+    }
+
+    public function testShouldNotBeFinal()
+    {
+        $this->assertClassNotFinal(ProduceCommand::class);
+    }
+
     public function testCouldBeConstructedWithContainerAsFirstArgument()
     {
         new ProduceCommand($this->createMock(ContainerInterface::class));

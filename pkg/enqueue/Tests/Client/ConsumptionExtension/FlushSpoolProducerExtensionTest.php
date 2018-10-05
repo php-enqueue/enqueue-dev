@@ -5,9 +5,11 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 use Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension;
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class FlushSpoolProducerExtensionTest extends TestCase
 {
@@ -32,7 +34,9 @@ class FlushSpoolProducerExtensionTest extends TestCase
         ;
 
         $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onStart($this->createContextMock());
+        $extension->onStart(
+            new Start($this->createMock(\Interop\Queue\Context::class), new NullLogger(), [], 0, 0, 0)
+        );
     }
 
     public function testShouldDoNothingOnBeforeReceive()

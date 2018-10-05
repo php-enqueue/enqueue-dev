@@ -4,9 +4,11 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class ChainExtensionTest extends TestCase
 {
@@ -24,7 +26,7 @@ class ChainExtensionTest extends TestCase
 
     public function testShouldProxyOnStartToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $context = new Start($this->createMock(\Interop\Queue\Context::class), $this->createLoggerMock(), [], 0, 0, 0);
 
         $fooExtension = $this->createExtension();
         $fooExtension
@@ -174,6 +176,14 @@ class ChainExtensionTest extends TestCase
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
         $extensions->onInterrupted($context);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createLoggerMock(): LoggerInterface
+    {
+        return $this->createMock(LoggerInterface::class);
     }
 
     /**

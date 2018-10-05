@@ -6,12 +6,26 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Container\Container;
 use Enqueue\Symfony\Consumption\ConsumeCommand;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ConsumeCommandTest extends TestCase
 {
+    use ClassExtensionTrait;
+
+    public function testShouldBeSubClassOfCommand()
+    {
+        $this->assertClassExtends(Command::class, ConsumeCommand::class);
+    }
+
+    public function testShouldNotBeFinal()
+    {
+        $this->assertClassNotFinal(ConsumeCommand::class);
+    }
+
     public function testCouldBeConstructedWithRequiredAttributes()
     {
         new ConsumeCommand($this->createMock(ContainerInterface::class));

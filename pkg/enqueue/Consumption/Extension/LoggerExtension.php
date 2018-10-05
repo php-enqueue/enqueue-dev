@@ -3,11 +3,13 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
 use Interop\Queue\Message as InteropMessage;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LoggerExtension implements ExtensionInterface
 {
@@ -26,19 +28,16 @@ class LoggerExtension implements ExtensionInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onStart(Context $context)
+    public function onStart(Start $context): void
     {
-        if ($context->getLogger()) {
+        if ($context->getLogger() && false == $context->getLogger() instanceof NullLogger) {
             $context->getLogger()->debug(sprintf(
                 'Skip setting context\'s logger "%s". Another one "%s" has already been set.',
                 get_class($this->logger),
                 get_class($context->getLogger())
             ));
         } else {
-            $context->setLogger($this->logger);
+            $context->changeLogger($this->logger);
             $this->logger->debug(sprintf('Set context\'s logger "%s"', get_class($this->logger)));
         }
     }

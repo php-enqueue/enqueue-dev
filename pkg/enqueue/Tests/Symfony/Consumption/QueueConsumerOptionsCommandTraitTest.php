@@ -25,21 +25,21 @@ class QueueConsumerOptionsCommandTraitTest extends TestCase
         $consumer = $this->createQueueConsumer();
         $consumer
             ->expects($this->once())
-            ->method('setIdleTimeout')
-            ->with($this->identicalTo(123.1))
+            ->method('setIdleTime')
+            ->with($this->identicalTo(123))
         ;
         $consumer
             ->expects($this->once())
             ->method('setReceiveTimeout')
-            ->with($this->identicalTo(456.1))
+            ->with($this->identicalTo(456))
         ;
 
         $trait = new QueueConsumerOptionsCommand($consumer);
 
         $tester = new CommandTester($trait);
         $tester->execute([
-            '--idle-time' => '123.1',
-            '--receive-timeout' => '456.1',
+            '--idle-time' => '123',
+            '--receive-timeout' => '456',
         ]);
     }
 

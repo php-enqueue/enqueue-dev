@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
@@ -39,7 +40,7 @@ class ReplyExtensionTest extends TestCase
     {
         $extension = new ReplyExtension();
 
-        $extension->onStart(new Context($this->createNeverUsedContextMock()));
+        $extension->onStart(new Start($this->createNeverUsedContextMock(), new NullLogger(), [], 0, 0, 0));
     }
 
     public function testShouldDoNothingOnBeforeReceive()

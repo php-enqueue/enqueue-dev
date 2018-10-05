@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
@@ -12,6 +13,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LoggerExtensionTest extends TestCase
 {
@@ -33,7 +35,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createContextMock());
+        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0, 0);
 
         $extension->onStart($context);
 
@@ -51,7 +53,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createContextMock());
+        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0, 0);
 
         $extension->onStart($context);
     }
@@ -168,8 +170,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createContextMock());
-        $context->setLogger($alreadySetLogger);
+        $context = new Start($this->createContextMock(), $alreadySetLogger, [], 0, 0, 0);
 
         $extension->onStart($context);
     }

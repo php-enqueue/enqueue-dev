@@ -4,7 +4,7 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\ConsumptionExtension\SetupBrokerExtension;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context as InteropContext;
@@ -36,8 +36,7 @@ class SetupBrokerExtensionTest extends TestCase
             ->with($this->identicalTo($logger))
         ;
 
-        $context = new Context($this->createMock(InteropContext::class));
-        $context->setLogger($logger);
+        $context = new Start($this->createMock(InteropContext::class), $logger, [], 0, 0, 0);
 
         $extension = new SetupBrokerExtension($driver);
         $extension->onStart($context);
@@ -54,8 +53,7 @@ class SetupBrokerExtensionTest extends TestCase
             ->with($this->identicalTo($logger))
         ;
 
-        $context = new Context($this->createMock(InteropContext::class));
-        $context->setLogger($logger);
+        $context = new Start($this->createMock(InteropContext::class), $logger, [], 0, 0, 0);
 
         $extension = new SetupBrokerExtension($driver);
         $extension->onStart($context);
