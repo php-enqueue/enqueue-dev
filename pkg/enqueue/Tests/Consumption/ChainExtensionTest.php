@@ -4,6 +4,7 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
@@ -26,7 +27,7 @@ class ChainExtensionTest extends TestCase
 
     public function testShouldProxyOnStartToAllInternalExtensions()
     {
-        $context = new Start($this->createMock(\Interop\Queue\Context::class), $this->createLoggerMock(), [], 0, 0, 0);
+        $context = new Start($this->createInteropContextMock(), $this->createLoggerMock(), [], 0, 0, 0);
 
         $fooExtension = $this->createExtension();
         $fooExtension
@@ -44,6 +45,33 @@ class ChainExtensionTest extends TestCase
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
         $extensions->onStart($context);
+    }
+
+    public function testShouldProxyPreSubscribeToAllInternalExtensions()
+    {
+        $context = new PreSubscribe(
+            $this->createInteropContextMock(),
+            $this->createInteropProcessorMock(),
+            $this->createInteropConsumerMock(),
+            $this->createLoggerMock()
+        );
+
+        $fooExtension = $this->createExtension();
+        $fooExtension
+            ->expects($this->once())
+            ->method('preSubscribe')
+            ->with($this->identicalTo($context))
+        ;
+        $barExtension = $this->createExtension();
+        $barExtension
+            ->expects($this->once())
+            ->method('preSubscribe')
+            ->with($this->identicalTo($context))
+        ;
+
+        $extensions = new ChainExtension([$fooExtension, $barExtension]);
+
+        $extensions->preSubscribe($context);
     }
 
     public function testShouldProxyOnBeforeReceiveToAllInternalExtensions()
@@ -184,6 +212,30 @@ class ChainExtensionTest extends TestCase
     protected function createLoggerMock(): LoggerInterface
     {
         return $this->createMock(LoggerInterface::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropContextMock(): \Interop\Queue\Context
+    {
+        return $this->createMock(\Interop\Queue\Context::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropConsumerMock(): \Interop\Queue\Consumer
+    {
+        return $this->createMock(\Interop\Queue\Consumer::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropProcessorMock(): \Interop\Queue\Processor
+    {
+        return $this->createMock(\Interop\Queue\Processor::class);
     }
 
     /**

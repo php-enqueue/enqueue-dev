@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 
 class ChainExtension implements ExtensionInterface
@@ -31,9 +32,13 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * @param Context $context
-     */
+    public function preSubscribe(PreSubscribe $context): void
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->preSubscribe($context);
+        }
+    }
+
     public function onBeforeReceive(Context $context)
     {
         foreach ($this->extensions as $extension) {
@@ -41,9 +46,6 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * @param Context $context
-     */
     public function onPreReceived(Context $context)
     {
         foreach ($this->extensions as $extension) {
@@ -51,9 +53,6 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * @param Context $context
-     */
     public function onResult(Context $context)
     {
         foreach ($this->extensions as $extension) {
@@ -61,9 +60,6 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * @param Context $context
-     */
     public function onPostReceived(Context $context)
     {
         foreach ($this->extensions as $extension) {
@@ -71,9 +67,6 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * @param Context $context
-     */
     public function onIdle(Context $context)
     {
         foreach ($this->extensions as $extension) {
@@ -81,9 +74,6 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * @param Context $context
-     */
     public function onInterrupted(Context $context)
     {
         foreach ($this->extensions as $extension) {

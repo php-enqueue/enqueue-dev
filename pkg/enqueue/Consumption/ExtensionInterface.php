@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 
 interface ExtensionInterface
@@ -11,6 +12,11 @@ interface ExtensionInterface
      * At this stage the context does not contain processor, consumer and queue.
      */
     public function onStart(Start $context): void;
+
+    /**
+     * The method is called for each BoundProcessor before calling SubscriptionConsumer::subscribe method.
+     */
+    public function preSubscribe(PreSubscribe $context): void;
 
     /**
      * Executed at every new cycle before we asked a broker for a new message.

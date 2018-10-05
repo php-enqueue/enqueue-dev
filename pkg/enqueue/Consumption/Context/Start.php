@@ -58,7 +58,7 @@ final class Start
         $this->executionInterrupted = false;
     }
 
-    public function getInteropContext(): Context
+    public function getContext(): Context
     {
         return $this->context;
     }

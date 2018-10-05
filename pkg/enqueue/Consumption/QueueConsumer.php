@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
@@ -168,6 +169,10 @@ final class QueueConsumer implements QueueConsumerInterface
 
         $this->extension->onStart($start);
 
+        // todo
+        if ($start->isExecutionInterrupted()) {
+        }
+
         $this->logger = $start->getLogger();
         $this->idleTime = $start->getIdleTime();
         $this->receiveTimeout = $start->getReceiveTimeout();
@@ -182,7 +187,16 @@ final class QueueConsumer implements QueueConsumerInterface
         foreach ($this->boundProcessors as $boundProcessor) {
             $queue = $boundProcessor->getQueue();
 
-            $consumers[$queue->getQueueName()] = $this->interopContext->createConsumer($queue);
+            $preSubscribe = new PreSubscribe(
+                $this->interopContext,
+                $boundProcessor->getProcessor(),
+                $this->interopContext->createConsumer($queue),
+                $this->logger
+            );
+
+            $this->extension->preSubscribe($preSubscribe);
+
+            $consumers[$queue->getQueueName()] = $preSubscribe->getConsumer();
         }
 
         // todo remove
