@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
@@ -184,19 +185,10 @@ final class QueueConsumer implements QueueConsumerInterface
 
         /** @var Consumer[] $consumers */
         $consumers = [];
-        foreach ($this->boundProcessors as $boundProcessor) {
+        foreach ($this->boundProcessors as $queueName => $boundProcessor) {
             $queue = $boundProcessor->getQueue();
 
-            $preSubscribe = new PreSubscribe(
-                $this->interopContext,
-                $boundProcessor->getProcessor(),
-                $this->interopContext->createConsumer($queue),
-                $this->logger
-            );
-
-            $this->extension->preSubscribe($preSubscribe);
-
-            $consumers[$queue->getQueueName()] = $preSubscribe->getConsumer();
+            $consumers[$queue->getQueueName()] = $this->interopContext->createConsumer($queue);
         }
 
         // todo remove
@@ -249,17 +241,28 @@ final class QueueConsumer implements QueueConsumerInterface
             return true;
         };
 
-        foreach ($consumers as $consumer) {
+        foreach ($consumers as $queueName => $consumer) {
             /* @var Consumer $consumer */
+
+            $preSubscribe = new PreSubscribe(
+                $this->interopContext,
+                $this->boundProcessors[$queueName]->getProcessor(),
+                $consumer,
+                $this->logger
+            );
+
+            $this->extension->onPreSubscribe($preSubscribe);
 
             $subscriptionConsumer->subscribe($consumer, $callback);
         }
 
+        $cycle = 1;
         while (true) {
             try {
-                $this->extension->onBeforeReceive($context);
+                $preConsume = new PreConsume($this->interopContext, $subscriptionConsumer, $this->logger, $cycle, $this->receiveTimeout, $startTime);
+                $this->extension->onPreConsume($preConsume);
 
-                if ($context->isExecutionInterrupted()) {
+                if ($preConsume->isExecutionInterrupted()) {
                     throw new ConsumptionInterruptedException();
                 }
 
@@ -293,6 +296,8 @@ final class QueueConsumer implements QueueConsumerInterface
 
                 return;
             }
+
+            ++$cycle;
         }
     }
 

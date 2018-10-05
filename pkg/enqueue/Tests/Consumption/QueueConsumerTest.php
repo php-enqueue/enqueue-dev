@@ -6,6 +6,7 @@ use Enqueue\Consumption\BoundProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
@@ -626,7 +627,7 @@ class QueueConsumerTest extends TestCase
         $extension = $this->createExtension();
         $extension
             ->expects($this->once())
-            ->method('preSubscribe')
+            ->method('onPreSubscribe')
             ->with($this->isInstanceOf(PreSubscribe::class))
             ->willReturnCallback(function (PreSubscribe $context) use ($contextStub, $consumerStub, $processorMock) {
                 $this->assertSame($contextStub, $context->getContext());
@@ -655,7 +656,7 @@ class QueueConsumerTest extends TestCase
         $extension = $this->createExtension();
         $extension
             ->expects($this->exactly(3))
-            ->method('preSubscribe')
+            ->method('onPreSubscribe')
             ->with($this->isInstanceOf(PreSubscribe::class))
         ;
 
@@ -702,7 +703,7 @@ class QueueConsumerTest extends TestCase
         $queueConsumer->consume();
     }
 
-    public function testShouldCallOnBeforeReceiveExtensionMethod()
+    public function testShouldCallOnPreConsumeExtensionMethod()
     {
         $consumerStub = $this->createConsumerStub('foo_queue');
 
@@ -715,22 +716,44 @@ class QueueConsumerTest extends TestCase
         $extension = $this->createExtension();
         $extension
             ->expects($this->once())
-            ->method('onBeforeReceive')
-            ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use ($contextStub) {
-                $this->assertSame($contextStub, $context->getInteropContext());
+            ->method('onPreConsume')
+            ->with($this->isInstanceOf(PreConsume::class))
+            ->willReturnCallback(function (PreConsume $context) use ($contextStub) {
+                $this->assertSame($contextStub, $context->getContext());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
-                $this->assertNull($context->getProcessor());
-                $this->assertNull($context->getConsumer());
-                $this->assertNull($context->getInteropMessage());
-                $this->assertNull($context->getException());
-                $this->assertNull($context->getResult());
-                $this->assertNull($context->getInteropQueue());
+                $this->assertInstanceOf(SubscriptionConsumer::class, $context->getSubscriptionConsumer());
+                $this->assertSame(10000, $context->getReceiveTimeout());
+                $this->assertSame(1, $context->getCycle());
+                $this->assertGreaterThan(0, $context->getStartTime());
                 $this->assertFalse($context->isExecutionInterrupted());
             })
         ;
 
         $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
+        $queueConsumer = new QueueConsumer($contextStub, $chainExtensions);
+        $queueConsumer->setFallbackSubscriptionConsumer(new DummySubscriptionConsumer());
+        $queueConsumer->bind($queue, $processorMock);
+
+        $queueConsumer->consume();
+    }
+
+    public function testShouldCallOnPreConsumeExpectedAmountOfTimes()
+    {
+        $consumerStub = $this->createConsumerStub('foo_queue');
+
+        $contextStub = $this->createContextStub($consumerStub);
+
+        $processorMock = $this->createProcessorStub();
+
+        $queue = new NullQueue('foo_queue');
+
+        $extension = $this->createExtension();
+        $extension
+            ->expects($this->exactly(3))
+            ->method('onPreConsume')
+        ;
+
+        $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(3)]);
         $queueConsumer = new QueueConsumer($contextStub, $chainExtensions);
         $queueConsumer->setFallbackSubscriptionConsumer(new DummySubscriptionConsumer());
         $queueConsumer->bind($queue, $processorMock);
@@ -1265,8 +1288,13 @@ class QueueConsumerTest extends TestCase
         ;
         $runtimeExtension
             ->expects($this->once())
-            ->method('onBeforeReceive')
-            ->with($this->isInstanceOf(Context::class))
+            ->method('onPreSubscribe')
+            ->with($this->isInstanceOf(PreSubscribe::class))
+        ;
+        $runtimeExtension
+            ->expects($this->once())
+            ->method('onPreConsume')
+            ->with($this->isInstanceOf(PreConsume::class))
         ;
         $runtimeExtension
             ->expects($this->once())
@@ -1322,9 +1350,17 @@ class QueueConsumerTest extends TestCase
         ;
         $extension
             ->expects($this->atLeastOnce())
-            ->method('onBeforeReceive')
-            ->with($this->isInstanceOf(Context::class))
-            ->willReturnCallback(function (Context $context) use ($expectedLogger) {
+            ->method('onPreSubscribe')
+            ->with($this->isInstanceOf(PreSubscribe::class))
+            ->willReturnCallback(function (PreSubscribe $context) use ($expectedLogger) {
+                $this->assertSame($expectedLogger, $context->getLogger());
+            })
+        ;
+        $extension
+            ->expects($this->atLeastOnce())
+            ->method('onPreConsume')
+            ->with($this->isInstanceOf(PreConsume::class))
+            ->willReturnCallback(function (PreConsume $context) use ($expectedLogger) {
                 $this->assertSame($expectedLogger, $context->getLogger());
             })
         ;

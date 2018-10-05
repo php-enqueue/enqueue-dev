@@ -436,8 +436,8 @@ class EnqueueExtensionTest extends TestCase
         ]], $container);
 
         $def = $container->getDefinition('enqueue.transport.default.queue_consumer');
-        $this->assertSame('%enqueue.transport.default.idle_time%', $def->getArgument(2));
-        $this->assertSame('%enqueue.transport.default.receive_timeout%', $def->getArgument(3));
+        $this->assertSame('%enqueue.transport.default.idle_time%', $def->getArgument(4));
+        $this->assertSame('%enqueue.transport.default.receive_timeout%', $def->getArgument(5));
 
         $this->assertSame(123, $container->getParameter('enqueue.transport.default.idle_time'));
         $this->assertSame(456, $container->getParameter('enqueue.transport.default.receive_timeout'));

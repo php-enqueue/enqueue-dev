@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 
@@ -32,17 +33,17 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    public function preSubscribe(PreSubscribe $context): void
+    public function onPreSubscribe(PreSubscribe $context): void
     {
         foreach ($this->extensions as $extension) {
-            $extension->preSubscribe($context);
+            $extension->onPreSubscribe($context);
         }
     }
 
-    public function onBeforeReceive(Context $context)
+    public function onPreConsume(PreConsume $context): void
     {
         foreach ($this->extensions as $extension) {
-            $extension->onBeforeReceive($context);
+            $extension->onPreConsume($context);
         }
     }
 

@@ -3,8 +3,10 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
+use Psr\Log\LoggerInterface;
 
 class LimitConsumptionTimeExtension implements ExtensionInterface
 {
@@ -23,45 +25,41 @@ class LimitConsumptionTimeExtension implements ExtensionInterface
         $this->timeLimit = $timeLimit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onBeforeReceive(Context $context)
+    public function onPreConsume(PreConsume $context): void
     {
-        $this->checkTime($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->interruptExecution();
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onIdle(Context $context)
     {
-        $this->checkTime($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onPostReceived(Context $context)
     {
-        $this->checkTime($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
     }
 
-    /**
-     * @param Context $context
-     */
-    protected function checkTime(Context $context)
+    protected function shouldBeStopped(LoggerInterface $logger): bool
     {
         $now = new \DateTime();
         if ($now >= $this->timeLimit) {
-            $context->getLogger()->debug(sprintf(
+            $logger->debug(sprintf(
                 '[LimitConsumptionTimeExtension] Execution interrupted as limit time has passed.'.
                 ' now: "%s", time-limit: "%s"',
                 $now->format(DATE_ISO8601),
                 $this->timeLimit->format(DATE_ISO8601)
             ));
 
-            $context->setExecutionInterrupted(true);
+            return true;
         }
+
+        return false;
     }
 }

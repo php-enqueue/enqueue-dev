@@ -5,9 +5,11 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 use Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension;
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -39,7 +41,7 @@ class FlushSpoolProducerExtensionTest extends TestCase
         );
     }
 
-    public function testShouldDoNothingOnBeforeReceive()
+    public function testShouldDoNothingOnPreConsume()
     {
         $producer = $this->createSpoolProducerMock();
         $producer
@@ -47,8 +49,17 @@ class FlushSpoolProducerExtensionTest extends TestCase
             ->method('flush')
         ;
 
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            new NullLogger(),
+            1,
+            2,
+            3
+        );
+
         $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onBeforeReceive($this->createContextMock());
+        $extension->onPreConsume($context);
     }
 
     public function testShouldDoNothingOnPreReceived()
@@ -109,6 +120,22 @@ class FlushSpoolProducerExtensionTest extends TestCase
 
         $extension = new FlushSpoolProducerExtension($producer);
         $extension->onPostReceived($this->createContextMock());
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createInteropContextMock(): \Interop\Queue\Context
+    {
+        return $this->createMock(\Interop\Queue\Context::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createSubscriptionConsumerMock(): SubscriptionConsumer
+    {
+        return $this->createMock(SubscriptionConsumer::class);
     }
 
     /**

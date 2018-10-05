@@ -4,12 +4,15 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class ChainExtensionTest extends TestCase
 {
@@ -47,7 +50,7 @@ class ChainExtensionTest extends TestCase
         $extensions->onStart($context);
     }
 
-    public function testShouldProxyPreSubscribeToAllInternalExtensions()
+    public function testShouldProxyOnPreSubscribeToAllInternalExtensions()
     {
         $context = new PreSubscribe(
             $this->createInteropContextMock(),
@@ -59,41 +62,47 @@ class ChainExtensionTest extends TestCase
         $fooExtension = $this->createExtension();
         $fooExtension
             ->expects($this->once())
-            ->method('preSubscribe')
+            ->method('onPreSubscribe')
             ->with($this->identicalTo($context))
         ;
         $barExtension = $this->createExtension();
         $barExtension
             ->expects($this->once())
-            ->method('preSubscribe')
+            ->method('onPreSubscribe')
             ->with($this->identicalTo($context))
         ;
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
-        $extensions->preSubscribe($context);
+        $extensions->onPreSubscribe($context);
     }
 
-    public function testShouldProxyOnBeforeReceiveToAllInternalExtensions()
+    public function testShouldProxyOnPreConsumeToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            new NullLogger(),
+            1,
+            2,
+            3
+        );
 
         $fooExtension = $this->createExtension();
         $fooExtension
             ->expects($this->once())
-            ->method('onBeforeReceive')
+            ->method('onPreConsume')
             ->with($this->identicalTo($context))
         ;
         $barExtension = $this->createExtension();
         $barExtension
             ->expects($this->once())
-            ->method('onBeforeReceive')
+            ->method('onPreConsume')
             ->with($this->identicalTo($context))
         ;
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
-
-        $extensions->onBeforeReceive($context);
+        $extensions->onPreConsume($context);
     }
 
     public function testShouldProxyOnPreReceiveToAllInternalExtensions()
@@ -252,5 +261,13 @@ class ChainExtensionTest extends TestCase
     protected function createExtension()
     {
         return $this->createMock(ExtensionInterface::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createSubscriptionConsumerMock(): SubscriptionConsumer
+    {
+        return $this->createMock(SubscriptionConsumer::class);
     }
 }

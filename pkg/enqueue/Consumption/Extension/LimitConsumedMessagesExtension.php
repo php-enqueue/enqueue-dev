@@ -3,8 +3,10 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
+use Psr\Log\LoggerInterface;
 
 class LimitConsumedMessagesExtension implements ExtensionInterface
 {
@@ -23,51 +25,41 @@ class LimitConsumedMessagesExtension implements ExtensionInterface
     /**
      * @param int $messageLimit
      */
-    public function __construct($messageLimit)
+    public function __construct(int $messageLimit)
     {
-        if (false == is_int($messageLimit)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Expected message limit is int but got: "%s"',
-                is_object($messageLimit) ? get_class($messageLimit) : gettype($messageLimit)
-            ));
-        }
-
         $this->messageLimit = $messageLimit;
         $this->messageConsumed = 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onBeforeReceive(Context $context)
+    public function onPreConsume(PreConsume $context): void
     {
         // this is added here to handle an edge case. when a user sets zero as limit.
-        $this->checkMessageLimit($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->interruptExecution();
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onPostReceived(Context $context)
     {
         ++$this->messageConsumed;
 
-        $this->checkMessageLimit($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
     }
 
-    /**
-     * @param Context $context
-     */
-    protected function checkMessageLimit(Context $context)
+    protected function shouldBeStopped(LoggerInterface $logger): bool
     {
         if ($this->messageConsumed >= $this->messageLimit) {
-            $context->getLogger()->debug(sprintf(
+            $logger->debug(sprintf(
                 '[LimitConsumedMessagesExtension] Message consumption is interrupted since the message limit reached.'.
                 ' limit: "%s"',
                 $this->messageLimit
             ));
 
-            $context->setExecutionInterrupted(true);
+            return true;
         }
+
+        return false;
     }
 }

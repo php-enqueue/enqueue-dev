@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\ExtensionInterface;
@@ -12,6 +13,7 @@ use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Producer as InteropProducer;
+use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -43,11 +45,18 @@ class ReplyExtensionTest extends TestCase
         $extension->onStart(new Start($this->createNeverUsedContextMock(), new NullLogger(), [], 0, 0, 0));
     }
 
-    public function testShouldDoNothingOnBeforeReceive()
+    public function testShouldDoNothingOnPreConsume()
     {
         $extension = new ReplyExtension();
 
-        $extension->onBeforeReceive(new Context($this->createNeverUsedContextMock()));
+        $extension->onPreConsume(new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            new NullLogger(),
+            1,
+            2,
+            3
+        ));
     }
 
     public function testShouldDoNothingOnInterrupted()
@@ -134,6 +143,22 @@ class ReplyExtensionTest extends TestCase
         $context->setLogger(new NullLogger());
 
         $extension->onPostReceived($context);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropContextMock(): \Interop\Queue\Context
+    {
+        return $this->createMock(\Interop\Queue\Context::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createSubscriptionConsumerMock(): SubscriptionConsumer
+    {
+        return $this->createMock(SubscriptionConsumer::class);
     }
 
     /**

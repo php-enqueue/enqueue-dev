@@ -3,10 +3,12 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Processor;
+use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -17,25 +19,60 @@ class LimitConsumedMessagesExtensionTest extends TestCase
         new LimitConsumedMessagesExtension(12345);
     }
 
-    public function testShouldThrowExceptionIfMessageLimitIsNotInt()
+    public function testOnPreConsumeShouldInterruptWhenLimitIsReached()
     {
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'Expected message limit is int but got: "double"'
+        $logger = $this->createLoggerMock();
+        $logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with('[LimitConsumedMessagesExtension] Message consumption is interrupted since'.
+                ' the message limit reached. limit: "3"')
+        ;
+
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            $logger,
+            1,
+            2,
+            3
         );
 
-        new LimitConsumedMessagesExtension(0.0);
+        // guard
+        $this->assertFalse($context->isExecutionInterrupted());
+
+        // test
+        $extension = new LimitConsumedMessagesExtension(3);
+
+        $extension->onPreConsume($context);
+        $this->assertFalse($context->isExecutionInterrupted());
+
+        $extension->onPostReceived($this->createContext());
+        $extension->onPostReceived($this->createContext());
+        $extension->onPostReceived($this->createContext());
+
+        $extension->onPreConsume($context);
+        $this->assertTrue($context->isExecutionInterrupted());
     }
 
-    public function testOnBeforeReceiveShouldInterruptExecutionIfLimitIsZero()
+    public function testOnPreConsumeShouldInterruptExecutionIfLimitIsZero()
     {
-        $context = $this->createContext();
-        $context->getLogger()
+        $logger = $this->createLoggerMock();
+        $logger
             ->expects($this->once())
             ->method('debug')
             ->with('[LimitConsumedMessagesExtension] Message consumption is interrupted since'.
                 ' the message limit reached. limit: "0"')
         ;
+
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            $logger,
+            1,
+            2,
+            3
+        );
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -44,19 +81,28 @@ class LimitConsumedMessagesExtensionTest extends TestCase
         $extension = new LimitConsumedMessagesExtension(0);
 
         // consume 1
-        $extension->onBeforeReceive($context);
+        $extension->onPreConsume($context);
         $this->assertTrue($context->isExecutionInterrupted());
     }
 
-    public function testOnBeforeReceiveShouldInterruptExecutionIfLimitIsLessThatZero()
+    public function testOnPreConsumeShouldInterruptExecutionIfLimitIsLessThatZero()
     {
-        $context = $this->createContext();
-        $context->getLogger()
+        $logger = $this->createLoggerMock();
+        $logger
             ->expects($this->once())
             ->method('debug')
             ->with('[LimitConsumedMessagesExtension] Message consumption is interrupted since'.
                 ' the message limit reached. limit: "-1"')
         ;
+
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            $logger,
+            1,
+            2,
+            3
+        );
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -65,7 +111,7 @@ class LimitConsumedMessagesExtensionTest extends TestCase
         $extension = new LimitConsumedMessagesExtension(-1);
 
         // consume 1
-        $extension->onBeforeReceive($context);
+        $extension->onPreConsume($context);
         $this->assertTrue($context->isExecutionInterrupted());
     }
 
@@ -95,6 +141,14 @@ class LimitConsumedMessagesExtensionTest extends TestCase
     }
 
     /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropContextMock(): \Interop\Queue\Context
+    {
+        return $this->createMock(\Interop\Queue\Context::class);
+    }
+
+    /**
      * @return Context
      */
     protected function createContext(): Context
@@ -105,5 +159,21 @@ class LimitConsumedMessagesExtensionTest extends TestCase
         $context->setProcessor($this->createMock(Processor::class));
 
         return $context;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createSubscriptionConsumerMock(): SubscriptionConsumer
+    {
+        return $this->createMock(SubscriptionConsumer::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createLoggerMock(): LoggerInterface
+    {
+        return $this->createMock(LoggerInterface::class);
     }
 }

@@ -7,7 +7,7 @@ use Interop\Queue\Context;
 use Interop\Queue\Processor;
 use Psr\Log\LoggerInterface;
 
-class PreSubscribe
+final class PreSubscribe
 {
     /**
      * @var Context

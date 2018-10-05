@@ -3,12 +3,15 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumerMemoryExtension;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Processor;
+use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LimitConsumerMemoryExtensionTest extends TestCase
 {
@@ -62,35 +65,51 @@ class LimitConsumerMemoryExtensionTest extends TestCase
         $this->assertTrue($context->isExecutionInterrupted());
     }
 
-    public function testOnBeforeReceivedShouldInterruptExecutionIfMemoryLimitReached()
+    public function testOnPreConsumeShouldInterruptExecutionIfMemoryLimitReached()
     {
-        $context = $this->createContext();
-        $context->getLogger()
+        $logger = $this->createLoggerMock();
+        $logger
             ->expects($this->once())
             ->method('debug')
             ->with($this->stringContains('[LimitConsumerMemoryExtension] Interrupt execution as memory limit reached.'))
         ;
+
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            $logger,
+            1,
+            2,
+            3
+        );
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumerMemoryExtension(1);
-        $extension->onBeforeReceive($context);
+        $extension->onPreConsume($context);
 
         $this->assertTrue($context->isExecutionInterrupted());
     }
 
-    public function testOnBeforeReceiveShouldNotInterruptExecutionIfMemoryLimitIsNotReached()
+    public function testOnPreConsumeShouldNotInterruptExecutionIfMemoryLimitIsNotReached()
     {
-        $context = $this->createContext();
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            new NullLogger(),
+            1,
+            2,
+            3
+        );
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumerMemoryExtension(PHP_INT_MAX);
-        $extension->onBeforeReceive($context);
+        $extension->onPreConsume($context);
 
         $this->assertFalse($context->isExecutionInterrupted());
     }
@@ -124,6 +143,14 @@ class LimitConsumerMemoryExtensionTest extends TestCase
     }
 
     /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropContextMock(): \Interop\Queue\Context
+    {
+        return $this->createMock(\Interop\Queue\Context::class);
+    }
+
+    /**
      * @return Context
      */
     protected function createContext(): Context
@@ -134,5 +161,21 @@ class LimitConsumerMemoryExtensionTest extends TestCase
         $context->setProcessor($this->createMock(Processor::class));
 
         return $context;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createSubscriptionConsumerMock(): SubscriptionConsumer
+    {
+        return $this->createMock(SubscriptionConsumer::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createLoggerMock(): LoggerInterface
+    {
+        return $this->createMock(LoggerInterface::class);
     }
 }

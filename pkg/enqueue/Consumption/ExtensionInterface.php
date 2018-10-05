@@ -2,30 +2,27 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 
 interface ExtensionInterface
 {
     /**
-     * Executed only once at the very beginning of the consumption.
-     * At this stage the context does not contain processor, consumer and queue.
+     * Executed only once at the very beginning of the QueueConsumer::consume method call.
      */
     public function onStart(Start $context): void;
 
     /**
      * The method is called for each BoundProcessor before calling SubscriptionConsumer::subscribe method.
      */
-    public function preSubscribe(PreSubscribe $context): void;
+    public function onPreSubscribe(PreSubscribe $context): void;
 
     /**
-     * Executed at every new cycle before we asked a broker for a new message.
-     * At this stage the context already contains processor, consumer and queue.
+     * Executed at every new cycle before calling SubscriptionConsumer::consume method.
      * The consumption could be interrupted at this step.
-     *
-     * @param Context $context
      */
-    public function onBeforeReceive(Context $context);
+    public function onPreConsume(PreConsume $context): void;
 
     /**
      * Executed when a new message is received from a broker but before it was passed to processor

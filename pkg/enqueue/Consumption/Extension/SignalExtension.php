@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\Exception\LogicException;
@@ -29,77 +30,47 @@ class SignalExtension implements ExtensionInterface
             throw new LogicException('The pcntl extension is required in order to catch signals.');
         }
 
-        if (function_exists('pcntl_async_signals')) {
-            pcntl_async_signals(true);
-        }
+        pcntl_async_signals(true);
 
         pcntl_signal(SIGTERM, [$this, 'handleSignal']);
         pcntl_signal(SIGQUIT, [$this, 'handleSignal']);
         pcntl_signal(SIGINT, [$this, 'handleSignal']);
 
+        $this->logger = $context->getLogger();
         $this->interruptConsumption = false;
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onBeforeReceive(Context $context)
+    public function onPreConsume(PreConsume $context): void
     {
         $this->logger = $context->getLogger();
 
-        $this->dispatchSignal();
-
-        $this->interruptExecutionIfNeeded($context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPreReceived(Context $context)
-    {
-        $this->interruptExecutionIfNeeded($context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostReceived(Context $context)
-    {
-        $this->dispatchSignal();
-
-        $this->interruptExecutionIfNeeded($context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onIdle(Context $context)
-    {
-        $this->dispatchSignal();
-
-        $this->interruptExecutionIfNeeded($context);
-    }
-
-    /**
-     * @param Context $context
-     */
-    public function interruptExecutionIfNeeded(Context $context)
-    {
-        if (false == $context->isExecutionInterrupted() && $this->interruptConsumption) {
-            if ($this->logger) {
-                $this->logger->debug('[SignalExtension] Interrupt execution');
-            }
-
-            $context->setExecutionInterrupted($this->interruptConsumption);
-
-            $this->interruptConsumption = false;
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->interruptExecution();
         }
     }
 
-    /**
-     * @param int $signal
-     */
-    public function handleSignal($signal)
+    public function onPreReceived(Context $context)
+    {
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
+    }
+
+    public function onPostReceived(Context $context)
+    {
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
+    }
+
+    public function onIdle(Context $context)
+    {
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
+    }
+
+    public function handleSignal(int $signal): void
     {
         if ($this->logger) {
             $this->logger->debug(sprintf('[SignalExtension] Caught signal: %s', $signal));
@@ -120,10 +91,16 @@ class SignalExtension implements ExtensionInterface
         }
     }
 
-    private function dispatchSignal()
+    private function shouldBeStopped(LoggerInterface $logger): bool
     {
-        if (false == function_exists('pcntl_async_signals')) {
-            pcntl_signal_dispatch();
+        if ($this->interruptConsumption) {
+            $logger->debug('[SignalExtension] Interrupt execution');
+
+            $this->interruptConsumption = false;
+
+            return true;
         }
+
+        return false;
     }
 }

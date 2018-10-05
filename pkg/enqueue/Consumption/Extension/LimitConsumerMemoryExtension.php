@@ -3,8 +3,10 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
+use Psr\Log\LoggerInterface;
 
 class LimitConsumerMemoryExtension implements ExtensionInterface
 {
@@ -30,44 +32,40 @@ class LimitConsumerMemoryExtension implements ExtensionInterface
         $this->memoryLimit = $memoryLimit * 1024 * 1024;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onBeforeReceive(Context $context)
+    public function onPreConsume(PreConsume $context): void
     {
-        $this->checkMemory($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->interruptExecution();
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onPostReceived(Context $context)
     {
-        $this->checkMemory($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onIdle(Context $context)
     {
-        $this->checkMemory($context);
+        if ($this->shouldBeStopped($context->getLogger())) {
+            $context->setExecutionInterrupted(true);
+        }
     }
 
-    /**
-     * @param Context $context
-     */
-    protected function checkMemory(Context $context)
+    protected function shouldBeStopped(LoggerInterface $logger): bool
     {
         $memoryUsage = memory_get_usage(true);
         if ($memoryUsage >= $this->memoryLimit) {
-            $context->getLogger()->debug(sprintf(
+            $logger->debug(sprintf(
                 '[LimitConsumerMemoryExtension] Interrupt execution as memory limit reached. limit: "%s", used: "%s"',
                 $this->memoryLimit,
                 $memoryUsage
             ));
 
-            $context->setExecutionInterrupted(true);
+            return true;
         }
+
+        return false;
     }
 }

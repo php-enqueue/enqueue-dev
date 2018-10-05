@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 
@@ -11,11 +12,11 @@ trait EmptyExtensionTrait
     {
     }
 
-    public function preSubscribe(PreSubscribe $preSubscribe): void
+    public function onPreSubscribe(PreSubscribe $preSubscribe): void
     {
     }
 
-    public function onBeforeReceive(Context $context)
+    public function onPreConsume(PreConsume $context): void
     {
     }
 
