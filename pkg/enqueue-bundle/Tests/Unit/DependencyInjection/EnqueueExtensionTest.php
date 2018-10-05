@@ -443,8 +443,8 @@ class EnqueueExtensionTest extends TestCase
         $this->assertSame(456, $container->getParameter('enqueue.transport.default.receive_timeout'));
 
         $def = $container->getDefinition('enqueue.client.default.queue_consumer');
-        $this->assertSame(123, $def->getArgument(2));
-        $this->assertSame(456, $def->getArgument(3));
+        $this->assertSame(123, $def->getArgument(4));
+        $this->assertSame(456, $def->getArgument(5));
     }
 
     public function testShouldLoadProcessAutoconfigureChildDefinition()

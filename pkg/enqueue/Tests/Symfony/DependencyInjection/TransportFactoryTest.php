@@ -388,6 +388,8 @@ class TransportFactoryTest extends TestCase
         $this->assertEquals([
             new Reference('enqueue.transport.default.context'),
             new Reference('enqueue.transport.default.consumption_extensions'),
+            [],
+            null,
             '%enqueue.transport.default.idle_time%',
             '%enqueue.transport.default.receive_timeout%',
         ], $container->getDefinition('enqueue.transport.default.queue_consumer')->getArguments());

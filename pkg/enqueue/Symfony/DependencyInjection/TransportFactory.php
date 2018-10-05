@@ -179,6 +179,8 @@ final class TransportFactory
         $container->register($this->format('queue_consumer'), QueueConsumer::class)
             ->addArgument(new Reference($contextId))
             ->addArgument(new Reference($this->format('consumption_extensions')))
+            ->addArgument([])
+            ->addArgument(null)
             ->addArgument($this->format('idle_time', true))
             ->addArgument($this->format('receive_timeout', true))
         ;

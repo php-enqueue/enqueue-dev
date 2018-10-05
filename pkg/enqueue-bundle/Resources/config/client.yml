@@ -68,6 +68,8 @@ services:
         arguments:
             - '@enqueue.client.default.context'
             - '@enqueue.client.default.consumption_extensions'
+            - []
+            - null
             - ~
             - ~
 
