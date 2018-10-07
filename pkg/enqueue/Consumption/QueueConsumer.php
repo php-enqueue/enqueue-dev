@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
@@ -212,27 +213,54 @@ final class QueueConsumer implements QueueConsumerInterface
         }
 
         $callback = function (InteropMessage $message, Consumer $consumer) use (&$context) {
-            $currentProcessor = null;
-
-            foreach ($this->boundProcessors as $boundProcessor) {
-                $queue = $boundProcessor->getQueue();
-                if ($queue->getQueueName() === $consumer->getQueue()->getQueueName()) {
-                    $currentProcessor = $boundProcessor->getProcessor();
-                }
+            $queue = $consumer->getQueue();
+            if (false == array_key_exists($queue->getQueueName(), $this->boundProcessors)) {
+                throw new \LogicException(sprintf('The processor for the queue "%s" could not be found.', $queue->getQueueName()));
             }
 
-            if (false == $currentProcessor) {
-                throw new \LogicException(sprintf('The processor for the queue "%s" could not be found.', $consumer->getQueue()->getQueueName()));
-            }
+            $processor = $this->boundProcessors[$queue->getQueueName()]->getProcessor();
 
+//            $this->logger->info('Message received from the queue: '.$context->getInteropQueue()->getQueueName());
+//            $this->logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
+//            $this->logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
+//            $this->logger->debug('Payload: {payload}', ['payload' => new VarExport($message->getBody())]);
+
+            // TODO remove
             $context = new Context($this->interopContext);
             $context->setLogger($this->logger);
             $context->setInteropQueue($consumer->getQueue());
             $context->setConsumer($consumer);
-            $context->setProcessor($currentProcessor);
+            $context->setProcessor($processor);
             $context->setInteropMessage($message);
 
-            $this->processMessage($consumer, $currentProcessor, $message, $context);
+            $messageReceived = new MessageReceived($this->interopContext, $consumer, $message, $processor, $this->logger);
+            $this->extension->onMessageReceived($messageReceived);
+            $result = $messageReceived->getResult();
+            $processor = $messageReceived->getProcessor();
+            if (null === $result) {
+                $result = $processor->process($message, $context->getInteropContext());
+                $context->setResult($result);
+            }
+
+            $this->extension->onResult($context);
+
+            switch ($result) {
+                case Result::ACK:
+                    $consumer->acknowledge($message);
+                    break;
+                case Result::REJECT:
+                    $consumer->reject($message, false);
+                    break;
+                case Result::REQUEUE:
+                    $consumer->reject($message, true);
+                    break;
+                default:
+                    throw new \LogicException(sprintf('Status is not supported: %s', $result));
+            }
+
+            $this->logger->info(sprintf('Message processed: %s', $result));
+
+            $this->extension->onPostReceived($context);
 
             if ($context->isExecutionInterrupted()) {
                 throw new ConsumptionInterruptedException();
@@ -351,39 +379,5 @@ final class QueueConsumer implements QueueConsumerInterface
         }
 
         throw $exception;
-    }
-
-    private function processMessage(Consumer $consumer, Processor $processor, InteropMessage $message, Context $context)
-    {
-        $this->logger->info('Message received from the queue: '.$context->getInteropQueue()->getQueueName());
-        $this->logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
-        $this->logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
-        $this->logger->debug('Payload: {payload}', ['payload' => new VarExport($message->getBody())]);
-
-        $this->extension->onPreReceived($context);
-        if (!$context->getResult()) {
-            $result = $processor->process($message, $context->getInteropContext());
-            $context->setResult($result);
-        }
-
-        $this->extension->onResult($context);
-
-        switch ($context->getResult()) {
-            case Result::ACK:
-                $consumer->acknowledge($message);
-                break;
-            case Result::REJECT:
-                $consumer->reject($message, false);
-                break;
-            case Result::REQUEUE:
-                $consumer->reject($message, true);
-                break;
-            default:
-                throw new \LogicException(sprintf('Status is not supported: %s', $context->getResult()));
-        }
-
-        $this->logger->info(sprintf('Message processed: %s', $context->getResult()));
-
-        $this->extension->onPostReceived($context);
     }
 }

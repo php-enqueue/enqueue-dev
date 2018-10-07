@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
@@ -20,7 +21,7 @@ trait EmptyExtensionTrait
     {
     }
 
-    public function onPreReceived(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
     }
 

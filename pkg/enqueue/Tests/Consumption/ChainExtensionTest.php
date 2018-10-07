@@ -4,11 +4,15 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Consumer;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -107,24 +111,30 @@ class ChainExtensionTest extends TestCase
 
     public function testShouldProxyOnPreReceiveToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $context = new MessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
+            $this->createMock(Message::class),
+            $this->createMock(Processor::class),
+            new NullLogger()
+        );
 
         $fooExtension = $this->createExtension();
         $fooExtension
             ->expects($this->once())
-            ->method('onPreReceived')
+            ->method('onMessageReceived')
             ->with($this->identicalTo($context))
         ;
         $barExtension = $this->createExtension();
         $barExtension
             ->expects($this->once())
-            ->method('onPreReceived')
+            ->method('onMessageReceived')
             ->with($this->identicalTo($context))
         ;
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
-        $extensions->onPreReceived($context);
+        $extensions->onMessageReceived($context);
     }
 
     public function testShouldProxyOnResultToAllInternalExtensions()

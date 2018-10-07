@@ -5,13 +5,10 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 use Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension;
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context;
-use Enqueue\Consumption\Context\PreConsume;
-use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 class FlushSpoolProducerExtensionTest extends TestCase
 {
@@ -25,77 +22,6 @@ class FlushSpoolProducerExtensionTest extends TestCase
     public function testCouldBeConstructedWithSpoolProducerAsFirstArgument()
     {
         new FlushSpoolProducerExtension($this->createSpoolProducerMock());
-    }
-
-    public function testShouldDoNothingOnStart()
-    {
-        $producer = $this->createSpoolProducerMock();
-        $producer
-            ->expects(self::never())
-            ->method('flush')
-        ;
-
-        $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onStart(
-            new Start($this->createMock(\Interop\Queue\Context::class), new NullLogger(), [], 0, 0, 0)
-        );
-    }
-
-    public function testShouldDoNothingOnPreConsume()
-    {
-        $producer = $this->createSpoolProducerMock();
-        $producer
-            ->expects(self::never())
-            ->method('flush')
-        ;
-
-        $context = new PreConsume(
-            $this->createInteropContextMock(),
-            $this->createSubscriptionConsumerMock(),
-            new NullLogger(),
-            1,
-            2,
-            3
-        );
-
-        $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onPreConsume($context);
-    }
-
-    public function testShouldDoNothingOnPreReceived()
-    {
-        $producer = $this->createSpoolProducerMock();
-        $producer
-            ->expects(self::never())
-            ->method('flush')
-        ;
-
-        $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onPreReceived($this->createContextMock());
-    }
-
-    public function testShouldDoNothingOnResult()
-    {
-        $producer = $this->createSpoolProducerMock();
-        $producer
-            ->expects(self::never())
-            ->method('flush')
-        ;
-
-        $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onResult($this->createContextMock());
-    }
-
-    public function testShouldDoNothingOnIdle()
-    {
-        $producer = $this->createSpoolProducerMock();
-        $producer
-            ->expects(self::never())
-            ->method('flush')
-        ;
-
-        $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onIdle($this->createContextMock());
     }
 
     public function testShouldFlushSpoolProducerOnInterrupted()

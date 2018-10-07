@@ -3,8 +3,6 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
-use Enqueue\Consumption\Context\PreConsume;
-use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
@@ -29,41 +27,6 @@ class ReplyExtensionTest extends TestCase
     public function testCouldBeConstructedWithoutAnyArguments()
     {
         new ReplyExtension();
-    }
-
-    public function testShouldDoNothingOnPreReceived()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onPreReceived(new Context($this->createNeverUsedContextMock()));
-    }
-
-    public function testShouldDoNothingOnStart()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onStart(new Start($this->createNeverUsedContextMock(), new NullLogger(), [], 0, 0, 0));
-    }
-
-    public function testShouldDoNothingOnPreConsume()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onPreConsume(new PreConsume(
-            $this->createInteropContextMock(),
-            $this->createSubscriptionConsumerMock(),
-            new NullLogger(),
-            1,
-            2,
-            3
-        ));
-    }
-
-    public function testShouldDoNothingOnInterrupted()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onInterrupted(new Context($this->createNeverUsedContextMock()));
     }
 
     public function testShouldDoNothingIfReceivedMessageNotHaveReplyToSet()

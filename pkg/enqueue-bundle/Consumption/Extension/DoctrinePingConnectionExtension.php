@@ -3,7 +3,7 @@
 namespace Enqueue\Bundle\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -25,10 +25,7 @@ class DoctrinePingConnectionExtension implements ExtensionInterface
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPreReceived(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
         /** @var Connection $connection */
         foreach ($this->registry->getConnections() as $connection) {

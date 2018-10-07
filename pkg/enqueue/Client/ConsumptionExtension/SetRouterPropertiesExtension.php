@@ -4,7 +4,7 @@ namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 
@@ -25,16 +25,16 @@ class SetRouterPropertiesExtension implements ExtensionInterface
         $this->driver = $driver;
     }
 
-    public function onPreReceived(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
-        $message = $context->getInteropMessage();
+        $message = $context->getMessage();
         if ($message->getProperty(Config::PROCESSOR)) {
             return;
         }
 
         $config = $this->driver->getConfig();
         $queue = $this->driver->createQueue($config->getRouterQueue());
-        if ($context->getInteropQueue()->getQueueName() != $queue->getQueueName()) {
+        if ($context->getConsumer()->getQueue()->getQueueName() != $queue->getQueueName()) {
             return;
         }
 
