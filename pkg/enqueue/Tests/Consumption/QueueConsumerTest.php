@@ -6,6 +6,7 @@ use Enqueue\Consumption\BoundProcessor;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PostConsume;
@@ -586,6 +587,34 @@ class QueueConsumerTest extends TestCase
         $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
         $queueConsumer = new QueueConsumer($contextStub, $chainExtensions);
         $queueConsumer->setFallbackSubscriptionConsumer($subscriptionConsumerMock);
+        $queueConsumer->bind(new NullQueue('foo_queue'), $processorMock);
+
+        $queueConsumer->consume();
+    }
+
+    public function testShouldCallOnInitLoggerExtensionMethod()
+    {
+        $consumerStub = $this->createConsumerStub('foo_queue');
+
+        $contextStub = $this->createContextStub($consumerStub);
+
+        $processorMock = $this->createProcessorMock();
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $extension = $this->createExtension();
+        $extension
+            ->expects($this->once())
+            ->method('onInitLogger')
+            ->with($this->isInstanceOf(InitLogger::class))
+            ->willReturnCallback(function (InitLogger $context) use ($logger) {
+                $this->assertSame($logger, $context->getLogger());
+            })
+        ;
+
+        $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
+        $queueConsumer = new QueueConsumer($contextStub, $chainExtensions, [], $logger);
+        $queueConsumer->setFallbackSubscriptionConsumer(new DummySubscriptionConsumer());
         $queueConsumer->bind(new NullQueue('foo_queue'), $processorMock);
 
         $queueConsumer->consume();
@@ -1214,6 +1243,11 @@ class QueueConsumerTest extends TestCase
         $runtimeExtension = $this->createExtension();
         $runtimeExtension
             ->expects($this->once())
+            ->method('onInitLogger')
+            ->with($this->isInstanceOf(InitLogger::class))
+        ;
+        $runtimeExtension
+            ->expects($this->once())
             ->method('onStart')
             ->with($this->isInstanceOf(Start::class))
         ;
@@ -1250,7 +1284,7 @@ class QueueConsumerTest extends TestCase
         $queueConsumer->consume(new ChainExtension([$runtimeExtension]));
     }
 
-    public function testShouldChangeLoggerOnStart()
+    public function testShouldChangeLoggerOnInitLogger()
     {
         $expectedMessage = $this->createMessageMock();
 
@@ -1273,10 +1307,18 @@ class QueueConsumerTest extends TestCase
         $extension = $this->createExtension();
         $extension
             ->expects($this->atLeastOnce())
+            ->method('onInitLogger')
+            ->with($this->isInstanceOf(InitLogger::class))
+            ->willReturnCallback(function (InitLogger $context) use ($expectedLogger) {
+                $context->changeLogger($expectedLogger);
+            })
+        ;
+        $extension
+            ->expects($this->atLeastOnce())
             ->method('onStart')
             ->with($this->isInstanceOf(Start::class))
             ->willReturnCallback(function (Start $context) use ($expectedLogger) {
-                $context->changeLogger($expectedLogger);
+                $this->assertSame($expectedLogger, $context->getLogger());
             })
         ;
         $extension

@@ -4,6 +4,7 @@ namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PostConsume;
@@ -34,6 +35,28 @@ class ChainExtensionTest extends TestCase
     public function testCouldBeConstructedWithExtensionsArray()
     {
         new ChainExtension([$this->createExtension(), $this->createExtension()]);
+    }
+
+    public function testShouldProxyOnInitLoggerToAllInternalExtensions()
+    {
+        $context = new InitLogger(new NullLogger());
+
+        $fooExtension = $this->createExtension();
+        $fooExtension
+            ->expects($this->once())
+            ->method('onInitLogger')
+            ->with($this->identicalTo($context))
+        ;
+        $barExtension = $this->createExtension();
+        $barExtension
+            ->expects($this->once())
+            ->method('onInitLogger')
+            ->with($this->identicalTo($context))
+        ;
+
+        $extensions = new ChainExtension([$fooExtension, $barExtension]);
+
+        $extensions->onInitLogger($context);
     }
 
     public function testShouldProxyOnStartToAllInternalExtensions()
