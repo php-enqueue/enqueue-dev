@@ -220,7 +220,7 @@ final class QueueConsumer implements QueueConsumerInterface
                     throw new \LogicException(sprintf('Status is not supported: %s', $result));
             }
 
-            $postMessageReceived = new PostMessageReceived($this->interopContext, $message, $result, $receivedAt, $this->logger);
+            $postMessageReceived = new PostMessageReceived($this->interopContext, $consumer, $message, $result, $receivedAt, $this->logger);
             $extension->onPostMessageReceived($postMessageReceived);
 
             if ($postMessageReceived->isExecutionInterrupted()) {

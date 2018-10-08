@@ -197,6 +197,7 @@ class ChainExtensionTest extends TestCase
     {
         $context = new PostMessageReceived(
             $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             'aResult',
             1,

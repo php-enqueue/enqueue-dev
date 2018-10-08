@@ -9,6 +9,7 @@ use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Producer as InteropProducer;
 use PHPUnit\Framework\TestCase;
@@ -34,6 +35,7 @@ class ReplyExtensionTest extends TestCase
 
         $postReceivedMessage = new PostMessageReceived(
             $this->createNeverUsedContextMock(),
+            $this->createMock(Consumer::class),
             new NullMessage(),
             'aResult',
             1,
@@ -52,6 +54,7 @@ class ReplyExtensionTest extends TestCase
 
         $postReceivedMessage = new PostMessageReceived(
             $this->createNeverUsedContextMock(),
+            $this->createMock(Consumer::class),
             $message,
             'notInstanceOfResult',
             1,
@@ -70,6 +73,7 @@ class ReplyExtensionTest extends TestCase
 
         $postReceivedMessage = new PostMessageReceived(
             $this->createNeverUsedContextMock(),
+            $this->createMock(Consumer::class),
             $message,
             Result::ack(),
             1,
@@ -114,6 +118,7 @@ class ReplyExtensionTest extends TestCase
 
         $postReceivedMessage = new PostMessageReceived(
             $contextMock,
+            $this->createMock(Consumer::class),
             $message,
             Result::reply($replyMessage),
             1,

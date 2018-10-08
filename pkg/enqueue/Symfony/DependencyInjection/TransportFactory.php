@@ -5,6 +5,7 @@ namespace Enqueue\Symfony\DependencyInjection;
 use Enqueue\ConnectionFactoryFactory;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Consumption\ChainExtension;
+use Enqueue\Consumption\Extension\LogExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Resources;
@@ -166,8 +167,13 @@ final class TransportFactory
 
         $container->setParameter($this->format('receive_timeout'), $config['receive_timeout'] ?? 10000);
 
+        $logExtensionId = $this->format('log_extension');
+        $container->register($logExtensionId, LogExtension::class);
+
         $container->register($this->format('consumption_extensions'), ChainExtension::class)
-            ->addArgument([])
+            ->addArgument([
+                new Reference($logExtensionId),
+            ])
         ;
 
         $container->register($this->format('queue_consumer'), QueueConsumer::class)

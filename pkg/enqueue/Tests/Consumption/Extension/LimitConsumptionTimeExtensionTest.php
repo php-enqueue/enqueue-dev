@@ -6,6 +6,7 @@ use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
+use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Interop\Queue\SubscriptionConsumer;
@@ -68,6 +69,7 @@ class LimitConsumptionTimeExtensionTest extends TestCase
     {
         $postReceivedMessage = new PostMessageReceived(
             $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             'aResult',
             1,
@@ -133,6 +135,7 @@ class LimitConsumptionTimeExtensionTest extends TestCase
     {
         $postReceivedMessage = new PostMessageReceived(
             $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             'aResult',
             1,
