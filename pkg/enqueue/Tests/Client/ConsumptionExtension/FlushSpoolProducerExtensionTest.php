@@ -5,10 +5,13 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 use Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension;
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Message;
 use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class FlushSpoolProducerExtensionTest extends TestCase
 {
@@ -44,8 +47,16 @@ class FlushSpoolProducerExtensionTest extends TestCase
             ->method('flush')
         ;
 
+        $context = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            new NullLogger()
+        );
+
         $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onPostReceived($this->createContextMock());
+        $extension->onPostMessageReceived($context);
     }
 
     /**

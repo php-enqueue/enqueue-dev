@@ -6,6 +6,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
@@ -169,24 +170,30 @@ class ChainExtensionTest extends TestCase
 
     public function testShouldProxyOnPostReceiveToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $context = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            new NullLogger()
+        );
 
         $fooExtension = $this->createExtension();
         $fooExtension
             ->expects($this->once())
-            ->method('onPostReceived')
+            ->method('onPostMessageReceived')
             ->with($this->identicalTo($context))
         ;
         $barExtension = $this->createExtension();
         $barExtension
             ->expects($this->once())
-            ->method('onPostReceived')
+            ->method('onPostMessageReceived')
             ->with($this->identicalTo($context))
         ;
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
-        $extensions->onPostReceived($context);
+        $extensions->onPostMessageReceived($context);
     }
 
     public function testShouldProxyOnIdleToAllInternalExtensions()

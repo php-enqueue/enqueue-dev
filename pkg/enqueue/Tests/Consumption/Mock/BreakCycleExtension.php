@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Consumption\Mock;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 
@@ -19,9 +20,13 @@ class BreakCycleExtension implements ExtensionInterface
         $this->limit = $limit;
     }
 
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
-        $this->onIdle($context);
+        if ($this->cycles >= $this->limit) {
+            $context->interruptExecution();
+        } else {
+            ++$this->cycles;
+        }
     }
 
     public function onIdle(Context $context)

@@ -10,7 +10,7 @@ namespace AppBundle\Enqueue;
 
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 
 class CountProcessedMessagesExtension implements ExtensionInterface
 {
@@ -18,10 +18,7 @@ class CountProcessedMessagesExtension implements ExtensionInterface
     
     private $processedMessages = 0;
     
-    /**
-     * {@inheritdoc}  
-     */
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
         $this->processedMessages += 1;
     }

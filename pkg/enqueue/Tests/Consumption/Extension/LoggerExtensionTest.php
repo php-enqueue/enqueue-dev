@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
@@ -11,6 +11,7 @@ use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -72,11 +73,15 @@ class LoggerExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setBody('message body');
 
-        $context = new Context($this->createContextMock());
-        $context->setResult(Result::reject('reason'));
-        $context->setInteropMessage($message);
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createContextMock(),
+            $message,
+            Result::reject('reason'),
+            1,
+            $logger
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldLogRequeueMessageStatus()
@@ -93,11 +98,15 @@ class LoggerExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setBody('message body');
 
-        $context = new Context($this->createContextMock());
-        $context->setResult(Result::requeue('reason'));
-        $context->setInteropMessage($message);
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createContextMock(),
+            $message,
+            Result::requeue('reason'),
+            1,
+            $logger
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldNotLogRequeueMessageStatusIfReasonIsEmpty()
@@ -110,10 +119,15 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createContextMock());
-        $context->setResult(Result::requeue());
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createContextMock(),
+            $this->createMock(Message::class),
+            Result::requeue(),
+            1,
+            $logger
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldLogAckMessageStatus()
@@ -130,11 +144,15 @@ class LoggerExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setBody('message body');
 
-        $context = new Context($this->createContextMock());
-        $context->setResult(Result::ack('reason'));
-        $context->setInteropMessage($message);
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createContextMock(),
+            $message,
+            Result::ack('reason'),
+            1,
+            $logger
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldNotLogAckMessageStatusIfReasonIsEmpty()
@@ -147,10 +165,15 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createContextMock());
-        $context->setResult(Result::ack());
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createContextMock(),
+            $this->createMock(Message::class),
+            Result::ack(),
+            1,
+            $logger
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldNotSetLoggerIfOneHasBeenSetOnStart()

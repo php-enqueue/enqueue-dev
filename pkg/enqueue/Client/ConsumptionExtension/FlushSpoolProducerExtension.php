@@ -4,6 +4,7 @@ namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
 
@@ -24,10 +25,7 @@ class FlushSpoolProducerExtension implements ExtensionInterface
         $this->producer = $producer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
         $this->producer->flush();
     }

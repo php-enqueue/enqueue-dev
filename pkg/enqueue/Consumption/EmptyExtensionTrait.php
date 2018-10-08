@@ -4,6 +4,7 @@ namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\ProcessorException;
@@ -27,15 +28,15 @@ trait EmptyExtensionTrait
     {
     }
 
+    public function onPostMessageReceived(PostMessageReceived $context): void
+    {
+    }
+
     public function onResult(MessageResult $context): void
     {
     }
 
     public function onProcessorException(ProcessorException $context): void
-    {
-    }
-
-    public function onPostReceived(Context $context)
     {
     }
 

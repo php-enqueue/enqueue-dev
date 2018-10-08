@@ -2,17 +2,8 @@
 
 namespace Enqueue\Consumption;
 
-interface ExtensionInterface extends StartExtensionInterface, PreSubscribeExtensionInterface, PreConsumeExtensionInterface, MessageReceivedExtensionInterface, MessageResultExtensionInterface, ProcessorExceptionExtensionInterface
+interface ExtensionInterface extends StartExtensionInterface, PreSubscribeExtensionInterface, PreConsumeExtensionInterface, MessageReceivedExtensionInterface, PostMessageReceivedExtensionInterface, MessageResultExtensionInterface, ProcessorExceptionExtensionInterface
 {
-    /**
-     * Executed when a message is processed by a processor.
-     * The context contains a status, which could not be changed.
-     * The consumption could be interrupted at this step but it exits after the message is processed.
-     *
-     * @param Context $context
-     */
-    public function onPostReceived(Context $context);
-
     /**
      * Called each time at the end of the cycle if nothing was done.
      *

@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
@@ -39,10 +40,10 @@ class LimitConsumptionTimeExtension implements ExtensionInterface
         }
     }
 
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
         if ($this->shouldBeStopped($context->getLogger())) {
-            $context->setExecutionInterrupted(true);
+            $context->interruptExecution();
         }
     }
 

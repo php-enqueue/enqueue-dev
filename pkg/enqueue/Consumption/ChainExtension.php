@@ -4,6 +4,7 @@ namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\ProcessorException;
@@ -71,10 +72,10 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPostReceived($context);
+            $extension->onPostMessageReceived($context);
         }
     }
 

@@ -3,10 +3,12 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumerMemoryExtension;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
@@ -48,21 +50,29 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testOnPostReceivedShouldInterruptExecutionIfMemoryLimitReached()
     {
-        $context = $this->createContext();
-        $context->getLogger()
+        $logger = $this->createLoggerMock();
+        $logger
             ->expects($this->once())
             ->method('debug')
             ->with($this->stringContains('[LimitConsumerMemoryExtension] Interrupt execution as memory limit reached.'))
         ;
 
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            $logger
+        );
+
         // guard
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumerMemoryExtension(1);
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
 
-        $this->assertTrue($context->isExecutionInterrupted());
+        $this->assertTrue($postReceivedMessage->isExecutionInterrupted());
     }
 
     public function testOnPreConsumeShouldInterruptExecutionIfMemoryLimitReached()
@@ -128,18 +138,24 @@ class LimitConsumerMemoryExtensionTest extends TestCase
         $this->assertFalse($context->isExecutionInterrupted());
     }
 
-    public function testOnPostReceivedShouldNotInterruptExecutionIfMemoryLimitIsNotReached()
+    public function testOnPostMessageReceivedShouldNotInterruptExecutionIfMemoryLimitIsNotReached()
     {
-        $context = $this->createContext();
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            new NullLogger()
+        );
 
         // guard
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumerMemoryExtension(PHP_INT_MAX);
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
 
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
     }
 
     /**

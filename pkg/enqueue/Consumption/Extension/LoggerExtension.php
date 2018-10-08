@@ -2,7 +2,7 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\ExtensionInterface;
@@ -42,10 +42,7 @@ class LoggerExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
         if (false == $context->getResult() instanceof Result) {
             return;
@@ -58,13 +55,13 @@ class LoggerExtension implements ExtensionInterface
             case Result::REJECT:
             case Result::REQUEUE:
                 if ($result->getReason()) {
-                    $this->logger->error($result->getReason(), $this->messageToLogContext($context->getInteropMessage()));
+                    $this->logger->error($result->getReason(), $this->messageToLogContext($context->getMessage()));
                 }
 
                 break;
             case Result::ACK:
                 if ($result->getReason()) {
-                    $this->logger->info($result->getReason(), $this->messageToLogContext($context->getInteropMessage()));
+                    $this->logger->info($result->getReason(), $this->messageToLogContext($context->getMessage()));
                 }
 
                 break;

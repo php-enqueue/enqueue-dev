@@ -3,14 +3,17 @@
 namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LimitConsumedMessagesExtensionTest extends TestCase
 {
@@ -47,9 +50,17 @@ class LimitConsumedMessagesExtensionTest extends TestCase
         $extension->onPreConsume($context);
         $this->assertFalse($context->isExecutionInterrupted());
 
-        $extension->onPostReceived($this->createContext());
-        $extension->onPostReceived($this->createContext());
-        $extension->onPostReceived($this->createContext());
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            new NullLogger()
+        );
+
+        $extension->onPostMessageReceived($postReceivedMessage);
+        $extension->onPostMessageReceived($postReceivedMessage);
+        $extension->onPostMessageReceived($postReceivedMessage);
 
         $extension->onPreConsume($context);
         $this->assertTrue($context->isExecutionInterrupted());
@@ -117,27 +128,35 @@ class LimitConsumedMessagesExtensionTest extends TestCase
 
     public function testOnPostReceivedShouldInterruptExecutionIfMessageLimitExceeded()
     {
-        $context = $this->createContext();
-        $context->getLogger()
+        $logger = $this->createLoggerMock();
+        $logger
             ->expects($this->once())
             ->method('debug')
             ->with('[LimitConsumedMessagesExtension] Message consumption is interrupted since'.
                 ' the message limit reached. limit: "2"')
         ;
 
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            $logger
+        );
+
         // guard
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumedMessagesExtension(2);
 
         // consume 1
-        $extension->onPostReceived($context);
-        $this->assertFalse($context->isExecutionInterrupted());
+        $extension->onPostMessageReceived($postReceivedMessage);
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
 
         // consume 2 and exit
-        $extension->onPostReceived($context);
-        $this->assertTrue($context->isExecutionInterrupted());
+        $extension->onPostMessageReceived($postReceivedMessage);
+        $this->assertTrue($postReceivedMessage->isExecutionInterrupted());
     }
 
     /**
