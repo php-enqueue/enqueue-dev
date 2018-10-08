@@ -50,11 +50,10 @@ class ConfigurableConsumeCommandTest extends TestCase
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(8, $options);
+        $this->assertCount(7, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
-        $this->assertArrayHasKey('idle-time', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('niceness', $options);
         $this->assertArrayHasKey('transport', $options);

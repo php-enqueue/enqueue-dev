@@ -11,16 +11,6 @@ interface QueueConsumerInterface
     /**
      * In milliseconds.
      */
-    public function setIdleTime(int $time): void;
-
-    /**
-     * In milliseconds.
-     */
-    public function getIdleTime(): int;
-
-    /**
-     * In milliseconds.
-     */
     public function setReceiveTimeout(int $timeout): void;
 
     /**

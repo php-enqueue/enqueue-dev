@@ -39,7 +39,6 @@ class ConfigurationTest extends TestCase
         $this->assertEquals([
             'transport' => ['dsn' => 'null:'],
             'consumption' => [
-                'idle_time' => 0,
                 'receive_timeout' => 10000,
             ],
             'job' => false,
@@ -66,7 +65,6 @@ class ConfigurationTest extends TestCase
         $this->assertEquals([
             'transport' => ['dsn' => 'null:'],
             'consumption' => [
-                'idle_time' => 0,
                 'receive_timeout' => 10000,
             ],
             'job' => false,
@@ -383,7 +381,6 @@ class ConfigurationTest extends TestCase
 
         $this->assertArraySubset([
             'consumption' => [
-                'idle_time' => 0,
                 'receive_timeout' => 10000,
             ],
         ], $config);
@@ -397,14 +394,12 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration($configuration, [[
             'transport' => [],
             'consumption' => [
-                'idle_time' => 123,
                 'receive_timeout' => 456,
             ],
         ]]);
 
         $this->assertArraySubset([
             'consumption' => [
-                'idle_time' => 123,
                 'receive_timeout' => 456,
             ],
         ], $config);

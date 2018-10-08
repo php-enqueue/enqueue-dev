@@ -31,11 +31,6 @@ final class Start
     /**
      * @var int
      */
-    private $idleTime;
-
-    /**
-     * @var int
-     */
     private $startTime;
 
     /**
@@ -46,13 +41,12 @@ final class Start
     /**
      * @param BoundProcessor[] $processors
      */
-    public function __construct(Context $context, LoggerInterface $logger, array $processors, int $receiveTimeout, int $idleTime, int $startTime)
+    public function __construct(Context $context, LoggerInterface $logger, array $processors, int $receiveTimeout, int $startTime)
     {
         $this->context = $context;
         $this->logger = $logger;
         $this->processors = $processors;
         $this->receiveTimeout = $receiveTimeout;
-        $this->idleTime = $idleTime;
         $this->startTime = $startTime;
 
         $this->executionInterrupted = false;
@@ -87,22 +81,6 @@ final class Start
     public function changeReceiveTimeout(int $timeout): void
     {
         $this->receiveTimeout = $timeout;
-    }
-
-    /**
-     * In milliseconds.
-     */
-    public function getIdleTime(): int
-    {
-        return $this->idleTime;
-    }
-
-    /**
-     * In milliseconds.
-     */
-    public function changeIdleTime(int $time): void
-    {
-        $this->idleTime = $time;
     }
 
     /**

@@ -43,11 +43,6 @@ final class QueueConsumer implements QueueConsumerInterface
     /**
      * @var int|float in milliseconds
      */
-    private $idleTime;
-
-    /**
-     * @var int|float in milliseconds
-     */
     private $receiveTimeout;
 
     /**
@@ -67,7 +62,6 @@ final class QueueConsumer implements QueueConsumerInterface
 
     /**
      * @param BoundProcessor[] $boundProcessors
-     * @param int|float        $idleTime        the time in milliseconds queue consumer waits if no message received
      * @param int|float        $receiveTimeout  the time in milliseconds queue consumer waits for a message (10 ms by default)
      */
     public function __construct(
@@ -75,11 +69,9 @@ final class QueueConsumer implements QueueConsumerInterface
         ExtensionInterface $extension = null,
         array $boundProcessors = [],
         LoggerInterface $logger = null,
-        int $idleTime = 0,
         int $receiveTimeout = 10000
     ) {
         $this->interopContext = $interopContext;
-        $this->idleTime = $idleTime;
         $this->receiveTimeout = $receiveTimeout;
 
         $this->staticExtension = $extension ?: new ChainExtension([]);
@@ -91,16 +83,6 @@ final class QueueConsumer implements QueueConsumerInterface
         });
 
         $this->fallbackSubscriptionConsumer = new FallbackSubscriptionConsumer();
-    }
-
-    public function setIdleTime(int $time): void
-    {
-        $this->idleTime = $time;
-    }
-
-    public function getIdleTime(): int
-    {
-        return $this->idleTime;
     }
 
     public function setReceiveTimeout(int $timeout): void
@@ -169,7 +151,6 @@ final class QueueConsumer implements QueueConsumerInterface
             $this->logger,
             $this->boundProcessors,
             $this->receiveTimeout,
-            $this->idleTime,
             $startTime
         );
 
@@ -180,7 +161,6 @@ final class QueueConsumer implements QueueConsumerInterface
         }
 
         $this->logger = $start->getLogger();
-        $this->idleTime = $start->getIdleTime();
         $this->receiveTimeout = $start->getReceiveTimeout();
         $this->boundProcessors = $start->getBoundProcessors();
 
@@ -320,7 +300,6 @@ final class QueueConsumer implements QueueConsumerInterface
 
                 $subscriptionConsumer->consume($this->receiveTimeout);
 
-                $this->idleTime && usleep($this->idleTime * 1000);
                 $this->extension->onIdle($context);
 
                 if ($context->isExecutionInterrupted()) {

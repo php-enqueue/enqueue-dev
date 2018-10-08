@@ -430,21 +430,17 @@ class EnqueueExtensionTest extends TestCase
             'transport' => [
             ],
             'consumption' => [
-                'idle_time' => 123,
                 'receive_timeout' => 456,
             ],
         ]], $container);
 
         $def = $container->getDefinition('enqueue.transport.default.queue_consumer');
-        $this->assertSame('%enqueue.transport.default.idle_time%', $def->getArgument(4));
-        $this->assertSame('%enqueue.transport.default.receive_timeout%', $def->getArgument(5));
+        $this->assertSame('%enqueue.transport.default.receive_timeout%', $def->getArgument(4));
 
-        $this->assertSame(123, $container->getParameter('enqueue.transport.default.idle_time'));
         $this->assertSame(456, $container->getParameter('enqueue.transport.default.receive_timeout'));
 
         $def = $container->getDefinition('enqueue.client.default.queue_consumer');
-        $this->assertSame(123, $def->getArgument(4));
-        $this->assertSame(456, $def->getArgument(5));
+        $this->assertSame(456, $def->getArgument(4));
     }
 
     public function testShouldLoadProcessAutoconfigureChildDefinition()

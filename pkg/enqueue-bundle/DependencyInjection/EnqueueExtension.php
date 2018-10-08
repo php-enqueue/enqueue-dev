@@ -91,8 +91,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
 
             $container->getDefinition('enqueue.client.default.queue_consumer')
-                ->replaceArgument(4, $config['consumption']['idle_time'])
-                ->replaceArgument(5, $config['consumption']['receive_timeout'])
+                ->replaceArgument(4, $config['consumption']['receive_timeout'])
             ;
         }
 

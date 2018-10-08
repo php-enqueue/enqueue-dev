@@ -35,7 +35,7 @@ class QueueConsumerTest extends TestCase
 {
     public function testCouldBeConstructedWithAllArguments()
     {
-        new QueueConsumer($this->createContextStub(), null, [], null, 0, 0);
+        new QueueConsumer($this->createContextStub(), null, [], null, 0);
     }
 
     public function testCouldBeConstructedWithContextOnly()
@@ -50,7 +50,7 @@ class QueueConsumerTest extends TestCase
 
     public function testShouldSetEmptyArrayToBoundProcessorsPropertyInConstructor()
     {
-        $consumer = new QueueConsumer($this->createContextStub(), null, [], null, 0, 0);
+        $consumer = new QueueConsumer($this->createContextStub(), null, [], null, 0);
 
         $this->assertAttributeSame([], 'boundProcessors', $consumer);
     }
@@ -62,14 +62,14 @@ class QueueConsumerTest extends TestCase
             new BoundProcessor(new NullQueue('bar'), $this->createProcessorMock()),
         ];
 
-        $consumer = new QueueConsumer($this->createContextStub(), null, $boundProcessors, null, 0, 0);
+        $consumer = new QueueConsumer($this->createContextStub(), null, $boundProcessors, null, 0);
 
         $this->assertAttributeSame($boundProcessors, 'boundProcessors', $consumer);
     }
 
     public function testShouldSetNullLoggerIfNoneProvidedInConstructor()
     {
-        $consumer = new QueueConsumer($this->createContextStub(), null, [], null, 0, 0);
+        $consumer = new QueueConsumer($this->createContextStub(), null, [], null, 0);
 
         $this->assertAttributeInstanceOf(NullLogger::class, 'logger', $consumer);
     }
@@ -78,7 +78,7 @@ class QueueConsumerTest extends TestCase
     {
         $expectedLogger = $this->createMock(LoggerInterface::class);
 
-        $consumer = new QueueConsumer($this->createContextStub(), null, [], $expectedLogger, 0, 0);
+        $consumer = new QueueConsumer($this->createContextStub(), null, [], $expectedLogger, 0);
 
         $this->assertAttributeSame($expectedLogger, 'logger', $consumer);
     }
@@ -87,7 +87,7 @@ class QueueConsumerTest extends TestCase
     {
         $expectedContext = $this->createContextStub();
 
-        $consumer = new QueueConsumer($expectedContext, null, [], null, 0, 0);
+        $consumer = new QueueConsumer($expectedContext, null, [], null, 0);
 
         $this->assertSame($expectedContext, $consumer->getContext());
     }
@@ -141,15 +141,6 @@ class QueueConsumerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The argument must be an instance of Interop\Queue\Queue but got stdClass.');
         $consumer->bind(new \stdClass(), $processorMock);
-    }
-
-    public function testCouldSetGetIdleTime()
-    {
-        $consumer = new QueueConsumer($this->createContextStub());
-
-        $consumer->setIdleTime(123456);
-
-        $this->assertSame(123456, $consumer->getIdleTime());
     }
 
     public function testCouldSetGetReceiveTimeout()
@@ -311,7 +302,7 @@ class QueueConsumerTest extends TestCase
             ->method('process')
         ;
 
-        $queueConsumer = new QueueConsumer($contextMock, new BreakCycleExtension(1), [], null, 0, 12345);
+        $queueConsumer = new QueueConsumer($contextMock, new BreakCycleExtension(1), [], null, 12345);
         $queueConsumer->setFallbackSubscriptionConsumer($subscriptionConsumerMock);
         $queueConsumer->bind($expectedQueue, $processorMock);
         $queueConsumer->consume();
