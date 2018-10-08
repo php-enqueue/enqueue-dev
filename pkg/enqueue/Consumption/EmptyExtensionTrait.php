@@ -6,6 +6,7 @@ use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
+use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 
 trait EmptyExtensionTrait
@@ -27,6 +28,10 @@ trait EmptyExtensionTrait
     }
 
     public function onResult(MessageResult $context): void
+    {
+    }
+
+    public function onProcessorException(ProcessorException $context): void
     {
     }
 

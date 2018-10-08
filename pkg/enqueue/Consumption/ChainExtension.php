@@ -6,6 +6,7 @@ use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
+use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 
 class ChainExtension implements ExtensionInterface
@@ -60,6 +61,13 @@ class ChainExtension implements ExtensionInterface
     {
         foreach ($this->extensions as $extension) {
             $extension->onResult($context);
+        }
+    }
+
+    public function onProcessorException(ProcessorException $context): void
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->onProcessorException($context);
         }
     }
 

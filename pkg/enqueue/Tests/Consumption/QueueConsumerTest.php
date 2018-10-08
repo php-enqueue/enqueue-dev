@@ -10,6 +10,7 @@ use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
+use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\ExtensionInterface;
@@ -827,6 +828,99 @@ class QueueConsumerTest extends TestCase
                 $this->assertSame($expectedMessage, $context->getMessage());
                 $this->assertInstanceOf(NullLogger::class, $context->getLogger());
                 $this->assertSame(Result::ACK, $context->getResult());
+            })
+        ;
+
+        $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
+        $queueConsumer = new QueueConsumer($contextStub, $chainExtensions);
+        $queueConsumer->setFallbackSubscriptionConsumer($subscriptionConsumerMock);
+        $queueConsumer->bind(new NullQueue('foo_queue'), $processorMock);
+
+        $queueConsumer->consume();
+    }
+
+    public function testShouldCallOnProcessorExceptionExtensionMethodWithExpectedContext()
+    {
+        $exception = new \LogicException('Exception exception');
+
+        $expectedMessage = $this->createMessageMock();
+
+        $subscriptionConsumerMock = new DummySubscriptionConsumer();
+        $subscriptionConsumerMock->addMessage($expectedMessage, 'foo_queue');
+
+        $consumerStub = $this->createConsumerStub('foo_queue');
+
+        $contextStub = $this->createContextStub($consumerStub);
+
+        $processorMock = $this->createProcessorStub();
+        $processorMock
+            ->expects($this->once())
+            ->method('process')
+            ->willThrowException($exception)
+        ;
+
+        $extension = $this->createExtension();
+        $extension
+            ->expects($this->never())
+            ->method('onResult')
+        ;
+        $extension
+            ->expects($this->once())
+            ->method('onProcessorException')
+            ->with($this->isInstanceOf(ProcessorException::class))
+            ->willReturnCallback(function (ProcessorException $context) use ($contextStub, $expectedMessage, $exception) {
+                $this->assertSame($contextStub, $context->getContext());
+                $this->assertSame($expectedMessage, $context->getMessage());
+                $this->assertSame($exception, $context->getException());
+                $this->assertGreaterThan(1, $context->getReceivedAt());
+                $this->assertInstanceOf(NullLogger::class, $context->getLogger());
+                $this->assertNull($context->getResult());
+            })
+        ;
+
+        $chainExtensions = new ChainExtension([$extension, new BreakCycleExtension(1)]);
+        $queueConsumer = new QueueConsumer($contextStub, $chainExtensions);
+        $queueConsumer->setFallbackSubscriptionConsumer($subscriptionConsumerMock);
+        $queueConsumer->bind(new NullQueue('foo_queue'), $processorMock);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Exception exception');
+        $queueConsumer->consume();
+    }
+
+    public function testShouldContinueConsumptionIfResultSetOnProcessorExceptionExtension()
+    {
+        $result = Result::ack();
+
+        $expectedMessage = $this->createMessageMock();
+
+        $subscriptionConsumerMock = new DummySubscriptionConsumer();
+        $subscriptionConsumerMock->addMessage($expectedMessage, 'foo_queue');
+
+        $consumerStub = $this->createConsumerStub('foo_queue');
+
+        $contextStub = $this->createContextStub($consumerStub);
+
+        $processorMock = $this->createProcessorStub();
+        $processorMock
+            ->expects($this->once())
+            ->method('process')
+            ->willThrowException(new \LogicException())
+        ;
+
+        $extension = $this->createExtension();
+        $extension
+            ->expects($this->once())
+            ->method('onProcessorException')
+            ->willReturnCallback(function (ProcessorException $context) use ($result) {
+                $context->setResult($result);
+            })
+        ;
+        $extension
+            ->expects($this->once())
+            ->method('onResult')
+            ->willReturnCallback(function (MessageResult $context) use ($result) {
+                $this->assertSame($result, $context->getResult());
             })
         ;
 

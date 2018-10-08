@@ -6,6 +6,7 @@ use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
+use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
@@ -241,8 +242,19 @@ final class QueueConsumer implements QueueConsumerInterface
             $result = $messageReceived->getResult();
             $processor = $messageReceived->getProcessor();
             if (null === $result) {
-                $result = $processor->process($message, $context->getInteropContext());
-                $context->setResult($result);
+                try {
+                    $result = $processor->process($message, $context->getInteropContext());
+
+                    $context->setResult($result);
+                } catch (\Exception $e) {
+                    $processorException = new ProcessorException($this->interopContext, $message, $e, $receivedAt, $this->logger);
+                    $this->extension->onProcessorException($processorException);
+
+                    $result = $processorException->getResult();
+                    if (null === $result) {
+                        throw $e;
+                    }
+                }
             }
 
             $messageResult = new MessageResult($this->interopContext, $message, $result, $receivedAt, $this->logger);
