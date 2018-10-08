@@ -4,12 +4,12 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension;
 use Enqueue\Client\SpoolProducer;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\End;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Context;
 use Interop\Queue\Message;
-use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -27,7 +27,7 @@ class FlushSpoolProducerExtensionTest extends TestCase
         new FlushSpoolProducerExtension($this->createSpoolProducerMock());
     }
 
-    public function testShouldFlushSpoolProducerOnInterrupted()
+    public function testShouldFlushSpoolProducerOnEnd()
     {
         $producer = $this->createSpoolProducerMock();
         $producer
@@ -35,8 +35,10 @@ class FlushSpoolProducerExtensionTest extends TestCase
             ->method('flush')
         ;
 
+        $end = new End($this->createInteropContextMock(), 1, 2, new NullLogger());
+
         $extension = new FlushSpoolProducerExtension($producer);
-        $extension->onInterrupted($this->createContextMock());
+        $extension->onEnd($end);
     }
 
     public function testShouldFlushSpoolProducerOnPostReceived()
@@ -62,23 +64,7 @@ class FlushSpoolProducerExtensionTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createInteropContextMock(): \Interop\Queue\Context
-    {
-        return $this->createMock(\Interop\Queue\Context::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createSubscriptionConsumerMock(): SubscriptionConsumer
-    {
-        return $this->createMock(SubscriptionConsumer::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
-     */
-    private function createContextMock()
+    private function createInteropContextMock(): Context
     {
         return $this->createMock(Context::class);
     }

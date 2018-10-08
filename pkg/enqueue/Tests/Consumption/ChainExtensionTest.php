@@ -3,7 +3,7 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\End;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PostConsume;
@@ -14,6 +14,7 @@ use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
+use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use Interop\Queue\SubscriptionConsumer;
@@ -226,26 +227,26 @@ class ChainExtensionTest extends TestCase
         $extensions->onPostConsume($postConsume);
     }
 
-    public function testShouldProxyOnInterruptedToAllInternalExtensions()
+    public function testShouldProxyOnEndToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $context = new End($this->createInteropContextMock(), 1, 2, new NullLogger());
 
         $fooExtension = $this->createExtension();
         $fooExtension
             ->expects($this->once())
-            ->method('onInterrupted')
+            ->method('onEnd')
             ->with($this->identicalTo($context))
         ;
         $barExtension = $this->createExtension();
         $barExtension
             ->expects($this->once())
-            ->method('onInterrupted')
+            ->method('onEnd')
             ->with($this->identicalTo($context))
         ;
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
-        $extensions->onInterrupted($context);
+        $extensions->onEnd($context);
     }
 
     /**
@@ -259,33 +260,25 @@ class ChainExtensionTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createInteropContextMock(): \Interop\Queue\Context
-    {
-        return $this->createMock(\Interop\Queue\Context::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createInteropConsumerMock(): \Interop\Queue\Consumer
-    {
-        return $this->createMock(\Interop\Queue\Consumer::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createInteropProcessorMock(): \Interop\Queue\Processor
-    {
-        return $this->createMock(\Interop\Queue\Processor::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
-     */
-    protected function createContextMock()
+    protected function createInteropContextMock(): Context
     {
         return $this->createMock(Context::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropConsumerMock(): Consumer
+    {
+        return $this->createMock(Consumer::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createInteropProcessorMock(): Processor
+    {
+        return $this->createMock(Processor::class);
     }
 
     /**

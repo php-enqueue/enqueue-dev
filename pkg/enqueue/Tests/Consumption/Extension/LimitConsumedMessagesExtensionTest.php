@@ -2,14 +2,11 @@
 
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
-use Interop\Queue\Consumer;
-use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Context;
 use Interop\Queue\Message;
-use Interop\Queue\Processor;
 use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -162,22 +159,9 @@ class LimitConsumedMessagesExtensionTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createInteropContextMock(): \Interop\Queue\Context
+    protected function createInteropContextMock(): Context
     {
-        return $this->createMock(\Interop\Queue\Context::class);
-    }
-
-    /**
-     * @return Context
-     */
-    protected function createContext(): Context
-    {
-        $context = new Context($this->createMock(InteropContext::class));
-        $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setConsumer($this->createMock(Consumer::class));
-        $context->setProcessor($this->createMock(Processor::class));
-
-        return $context;
+        return $this->createMock(Context::class);
     }
 
     /**

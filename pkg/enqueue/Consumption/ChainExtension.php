@@ -2,6 +2,7 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\End;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PostConsume;
@@ -87,10 +88,10 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    public function onInterrupted(Context $context)
+    public function onEnd(End $context): void
     {
         foreach ($this->extensions as $extension) {
-            $extension->onInterrupted($context);
+            $extension->onEnd($context);
         }
     }
 }
