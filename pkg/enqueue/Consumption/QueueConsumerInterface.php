@@ -9,18 +9,14 @@ use Interop\Queue\Queue as InteropQueue;
 interface QueueConsumerInterface
 {
     /**
-     * Milliseconds.
+     * In milliseconds.
      */
-    public function setIdleTimeout(float $timeout): void;
-
-    public function getIdleTimeout(): float;
+    public function setReceiveTimeout(int $timeout): void;
 
     /**
-     * Milliseconds.
+     * In milliseconds.
      */
-    public function setReceiveTimeout(float $timeout): void;
-
-    public function getReceiveTimeout(): float;
+    public function getReceiveTimeout(): int;
 
     public function getContext(): Context;
 

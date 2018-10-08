@@ -3,14 +3,13 @@
 namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\SpoolProducer;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\PostMessageReceived;
+use Enqueue\Consumption\EndExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 
-class FlushSpoolProducerExtension implements ExtensionInterface
+class FlushSpoolProducerExtension implements PostMessageReceivedExtensionInterface, EndExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var SpoolProducer
      */
@@ -24,15 +23,12 @@ class FlushSpoolProducerExtension implements ExtensionInterface
         $this->producer = $producer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
         $this->producer->flush();
     }
 
-    public function onInterrupted(Context $context)
+    public function onEnd(End $context): void
     {
         $this->producer->flush();
     }

@@ -2,17 +2,17 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Context\PostMessageReceived;
+use Enqueue\Consumption\Context\Start;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Consumption\StartExtensionInterface;
 use Interop\Queue\Message as InteropMessage;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class LoggerExtension implements ExtensionInterface
+class LoggerExtension implements StartExtensionInterface, PostMessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var LoggerInterface
      */
@@ -26,27 +26,21 @@ class LoggerExtension implements ExtensionInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onStart(Context $context)
+    public function onStart(Start $context): void
     {
-        if ($context->getLogger()) {
+        if ($context->getLogger() && false == $context->getLogger() instanceof NullLogger) {
             $context->getLogger()->debug(sprintf(
                 'Skip setting context\'s logger "%s". Another one "%s" has already been set.',
                 get_class($this->logger),
                 get_class($context->getLogger())
             ));
         } else {
-            $context->setLogger($this->logger);
+            $context->changeLogger($this->logger);
             $this->logger->debug(sprintf('Set context\'s logger "%s"', get_class($this->logger)));
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
         if (false == $context->getResult() instanceof Result) {
             return;
@@ -59,13 +53,13 @@ class LoggerExtension implements ExtensionInterface
             case Result::REJECT:
             case Result::REQUEUE:
                 if ($result->getReason()) {
-                    $this->logger->error($result->getReason(), $this->messageToLogContext($context->getInteropMessage()));
+                    $this->logger->error($result->getReason(), $this->messageToLogContext($context->getMessage()));
                 }
 
                 break;
             case Result::ACK:
                 if ($result->getReason()) {
-                    $this->logger->info($result->getReason(), $this->messageToLogContext($context->getInteropMessage()));
+                    $this->logger->info($result->getReason(), $this->messageToLogContext($context->getMessage()));
                 }
 
                 break;

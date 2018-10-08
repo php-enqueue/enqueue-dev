@@ -4,9 +4,10 @@ namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\MessageReceived;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -42,17 +43,19 @@ class DoctrineClearIdentityMapExtensionTest extends TestCase
         ;
 
         $extension = new DoctrineClearIdentityMapExtension($registry);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($context);
     }
 
-    protected function createContext(): Context
+    protected function createContext(): MessageReceived
     {
-        $context = new Context($this->createMock(InteropContext::class));
-        $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setConsumer($this->createMock(Consumer::class));
-        $context->setProcessor($this->createMock(Processor::class));
-
-        return $context;
+        return new MessageReceived(
+            $this->createMock(InteropContext::class),
+            $this->createMock(Consumer::class),
+            $this->createMock(Message::class),
+            $this->createMock(Processor::class),
+            1,
+            $this->createMock(LoggerInterface::class)
+        );
     }
 
     /**

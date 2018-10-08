@@ -33,4 +33,14 @@ trait ClassExtensionTrait
             sprintf('Failed assert that class %s is final.', $actual)
         );
     }
+
+    public function assertClassNotFinal($actual)
+    {
+        $rc = new \ReflectionClass($actual);
+
+        $this->assertFalse(
+            $rc->isFinal(),
+            sprintf('Failed assert that class %s is final.', $actual)
+        );
+    }
 }

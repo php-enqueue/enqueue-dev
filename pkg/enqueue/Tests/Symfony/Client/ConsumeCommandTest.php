@@ -12,12 +12,26 @@ use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Container\Container;
 use Enqueue\Null\NullQueue;
 use Enqueue\Symfony\Client\ConsumeCommand;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ConsumeCommandTest extends TestCase
 {
+    use ClassExtensionTrait;
+
+    public function testShouldBeSubClassOfCommand()
+    {
+        $this->assertClassExtends(Command::class, ConsumeCommand::class);
+    }
+
+    public function testShouldNotBeFinal()
+    {
+        $this->assertClassNotFinal(ConsumeCommand::class);
+    }
+
     public function testCouldBeConstructedWithRequiredAttributes()
     {
         new ConsumeCommand($this->createMock(ContainerInterface::class));
@@ -36,11 +50,10 @@ class ConsumeCommandTest extends TestCase
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(10, $options);
+        $this->assertCount(9, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
-        $this->assertArrayHasKey('idle-time', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('niceness', $options);
         $this->assertArrayHasKey('client', $options);

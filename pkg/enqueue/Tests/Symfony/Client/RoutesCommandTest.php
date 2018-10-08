@@ -23,9 +23,9 @@ class RoutesCommandTest extends TestCase
         $this->assertClassExtends(Command::class, RoutesCommand::class);
     }
 
-    public function testShouldBeFinal()
+    public function testShouldNotBeFinal()
     {
-        $this->assertClassFinal(RoutesCommand::class);
+        $this->assertClassNotFinal(RoutesCommand::class);
     }
 
     public function testCouldBeConstructedWithConfigAndRouteCollectionAsArguments()

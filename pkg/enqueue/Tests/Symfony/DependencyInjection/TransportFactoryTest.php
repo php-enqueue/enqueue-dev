@@ -376,7 +376,6 @@ class TransportFactoryTest extends TestCase
 
         $transport->buildQueueConsumer($container, []);
 
-        $this->assertSame(0, $container->getParameter('enqueue.transport.default.idle_time'));
         $this->assertSame(10000, $container->getParameter('enqueue.transport.default.receive_timeout'));
 
         $this->assertTrue($container->hasDefinition('enqueue.transport.default.consumption_extensions'));
@@ -388,7 +387,8 @@ class TransportFactoryTest extends TestCase
         $this->assertEquals([
             new Reference('enqueue.transport.default.context'),
             new Reference('enqueue.transport.default.consumption_extensions'),
-            '%enqueue.transport.default.idle_time%',
+            [],
+            null,
             '%enqueue.transport.default.receive_timeout%',
         ], $container->getDefinition('enqueue.transport.default.queue_consumer')->getArguments());
     }
@@ -401,11 +401,9 @@ class TransportFactoryTest extends TestCase
         $transport = new TransportFactory('default');
 
         $transport->buildQueueConsumer($container, [
-            'idle_time' => 123,
             'receive_timeout' => 567,
         ]);
 
-        $this->assertSame(123, $container->getParameter('enqueue.transport.default.idle_time'));
         $this->assertSame(567, $container->getParameter('enqueue.transport.default.receive_timeout'));
     }
 

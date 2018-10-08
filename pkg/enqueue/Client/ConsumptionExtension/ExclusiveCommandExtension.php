@@ -5,14 +5,11 @@ namespace Enqueue\Client\ConsumptionExtension;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Route;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait as ConsumptionEmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 
-final class ExclusiveCommandExtension implements ConsumptionExtensionInterface
+final class ExclusiveCommandExtension implements MessageReceivedExtensionInterface
 {
-    use ConsumptionEmptyExtensionTrait;
-
     /**
      * @var DriverInterface
      */
@@ -28,11 +25,9 @@ final class ExclusiveCommandExtension implements ConsumptionExtensionInterface
         $this->driver = $driver;
     }
 
-    public function onPreReceived(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
-        $message = $context->getInteropMessage();
-        $queue = $context->getInteropQueue();
-
+        $message = $context->getMessage();
         if ($message->getProperty(Config::TOPIC)) {
             return;
         }
@@ -47,6 +42,7 @@ final class ExclusiveCommandExtension implements ConsumptionExtensionInterface
             $this->queueToRouteMap = $this->buildMap();
         }
 
+        $queue = $context->getConsumer()->getQueue();
         if (array_key_exists($queue->getQueueName(), $this->queueToRouteMap)) {
             $context->getLogger()->debug('[ExclusiveCommandExtension] This is a exclusive command queue and client\'s properties are not set. Setting them');
 

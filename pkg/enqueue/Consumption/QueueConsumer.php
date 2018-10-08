@@ -2,13 +2,21 @@
 
 namespace Enqueue\Consumption;
 
-use Enqueue\Consumption\Exception\ConsumptionInterruptedException;
+use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostConsume;
+use Enqueue\Consumption\Context\PostMessageReceived;
+use Enqueue\Consumption\Context\PreConsume;
+use Enqueue\Consumption\Context\PreSubscribe;
+use Enqueue\Consumption\Context\ProcessorException;
+use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
 use Enqueue\Consumption\Exception\LogicException;
-use Enqueue\Util\VarExport;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Message;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Processor;
 use Interop\Queue\Queue as InteropQueue;
@@ -29,18 +37,9 @@ final class QueueConsumer implements QueueConsumerInterface
     private $staticExtension;
 
     /**
-     * [
-     *   [InteropQueue, Processor],
-     * ].
-     *
-     * @var array
+     * @var BoundProcessor[]
      */
     private $boundProcessors;
-
-    /**
-     * @var int|float in milliseconds
-     */
-    private $idleTimeout;
 
     /**
      * @var int|float in milliseconds
@@ -63,49 +62,36 @@ final class QueueConsumer implements QueueConsumerInterface
     private $fallbackSubscriptionConsumer;
 
     /**
-     * @param InteropContext                         $interopContext
-     * @param ExtensionInterface|ChainExtension|null $extension
-     * @param int|float                              $idleTimeout    the time in milliseconds queue consumer waits if no message received
-     * @param int|float                              $receiveTimeout the time in milliseconds queue consumer waits for a message (10 ms by default)
+     * @param BoundProcessor[] $boundProcessors
+     * @param int|float        $receiveTimeout  the time in milliseconds queue consumer waits for a message (10 ms by default)
      */
     public function __construct(
         InteropContext $interopContext,
         ExtensionInterface $extension = null,
-        float $idleTimeout = 0.,
-        float $receiveTimeout = 10000.
+        array $boundProcessors = [],
+        LoggerInterface $logger = null,
+        int $receiveTimeout = 10000
     ) {
         $this->interopContext = $interopContext;
-        $this->staticExtension = $extension ?: new ChainExtension([]);
-        $this->idleTimeout = $idleTimeout;
         $this->receiveTimeout = $receiveTimeout;
 
+        $this->staticExtension = $extension ?: new ChainExtension([]);
+        $this->logger = $logger ?: new NullLogger();
+
         $this->boundProcessors = [];
-        $this->logger = new NullLogger();
+        array_walk($boundProcessors, function (BoundProcessor $processor) {
+            $this->boundProcessors[] = $processor;
+        });
+
         $this->fallbackSubscriptionConsumer = new FallbackSubscriptionConsumer();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setIdleTimeout(float $timeout): void
-    {
-        $this->idleTimeout = $timeout;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdleTimeout(): float
-    {
-        return $this->idleTimeout;
-    }
-
-    public function setReceiveTimeout(float $timeout): void
+    public function setReceiveTimeout(int $timeout): void
     {
         $this->receiveTimeout = $timeout;
     }
 
-    public function getReceiveTimeout(): float
+    public function getReceiveTimeout(): int
     {
         return $this->receiveTimeout;
     }
@@ -130,51 +116,56 @@ final class QueueConsumer implements QueueConsumerInterface
             throw new LogicException(sprintf('The queue was already bound. Queue: %s', $queue->getQueueName()));
         }
 
-        $this->boundProcessors[$queue->getQueueName()] = [$queue, $processor];
+        $this->boundProcessors[$queue->getQueueName()] = new BoundProcessor($queue, $processor);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function bindCallback($queue, callable $processor): QueueConsumerInterface
     {
         return $this->bind($queue, new CallbackProcessor($processor));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function consume(ExtensionInterface $runtimeExtension = null): void
     {
+        $this->extension = $runtimeExtension ?
+            new ChainExtension([$this->staticExtension, $runtimeExtension]) :
+            $this->staticExtension
+        ;
+
+        $startTime = (int) (microtime(true) * 1000);
+
+        $start = new Start(
+            $this->interopContext,
+            $this->logger,
+            $this->boundProcessors,
+            $this->receiveTimeout,
+            $startTime
+        );
+
+        $this->extension->onStart($start);
+
+        if ($start->isExecutionInterrupted()) {
+            $this->onEnd($startTime);
+
+            return;
+        }
+
+        $this->logger = $start->getLogger();
+        $this->receiveTimeout = $start->getReceiveTimeout();
+        $this->boundProcessors = $start->getBoundProcessors();
+
         if (empty($this->boundProcessors)) {
             throw new \LogicException('There is nothing to consume. It is required to bind something before calling consume method.');
         }
 
         /** @var Consumer[] $consumers */
         $consumers = [];
-        /** @var InteropQueue $queue */
-        foreach ($this->boundProcessors as list($queue, $processor)) {
+        foreach ($this->boundProcessors as $queueName => $boundProcessor) {
+            $queue = $boundProcessor->getQueue();
+
             $consumers[$queue->getQueueName()] = $this->interopContext->createConsumer($queue);
         }
-
-        $this->extension = $runtimeExtension ?
-            new ChainExtension([$this->staticExtension, $runtimeExtension]) :
-            $this->staticExtension
-        ;
-
-        $context = new Context($this->interopContext);
-        $this->extension->onStart($context);
-
-        if ($context->getLogger()) {
-            $this->logger = $context->getLogger();
-        } else {
-            $this->logger = new NullLogger();
-            $context->setLogger($this->logger);
-        }
-
-        $this->logger->info('Start consuming');
 
         try {
             $subscriptionConsumer = $this->interopContext->createSubscriptionConsumer();
@@ -182,80 +173,105 @@ final class QueueConsumer implements QueueConsumerInterface
             $subscriptionConsumer = $this->fallbackSubscriptionConsumer;
         }
 
-        $callback = function (InteropMessage $message, Consumer $consumer) use (&$context) {
-            $currentProcessor = null;
+        $receivedMessagesCount = 0;
+        $interruptExecution = false;
 
-            /** @var InteropQueue $queue */
-            foreach ($this->boundProcessors as list($queue, $processor)) {
-                if ($queue->getQueueName() === $consumer->getQueue()->getQueueName()) {
-                    $currentProcessor = $processor;
+        $callback = function (InteropMessage $message, Consumer $consumer) use (&$receivedMessagesCount, &$interruptExecution) {
+            ++$receivedMessagesCount;
+
+            $receivedAt = (int) (microtime(true) * 1000);
+            $queue = $consumer->getQueue();
+            if (false == array_key_exists($queue->getQueueName(), $this->boundProcessors)) {
+                throw new \LogicException(sprintf('The processor for the queue "%s" could not be found.', $queue->getQueueName()));
+            }
+
+            $processor = $this->boundProcessors[$queue->getQueueName()]->getProcessor();
+
+            $messageReceived = new MessageReceived($this->interopContext, $consumer, $message, $processor, $receivedAt, $this->logger);
+            $this->extension->onMessageReceived($messageReceived);
+            $result = $messageReceived->getResult();
+            $processor = $messageReceived->getProcessor();
+            if (null === $result) {
+                try {
+                    $result = $processor->process($message, $this->interopContext);
+                } catch (\Exception $e) {
+                    $result = $this->onProcessorException($message, $e, $receivedAt);
                 }
             }
 
-            if (false == $currentProcessor) {
-                throw new \LogicException(sprintf('The processor for the queue "%s" could not be found.', $consumer->getQueue()->getQueueName()));
+            $messageResult = new MessageResult($this->interopContext, $message, $result, $receivedAt, $this->logger);
+            $this->extension->onResult($messageResult);
+            $result = $messageResult->getResult();
+
+            switch ($result) {
+                case Result::ACK:
+                    $consumer->acknowledge($message);
+                    break;
+                case Result::REJECT:
+                    $consumer->reject($message, false);
+                    break;
+                case Result::REQUEUE:
+                    $consumer->reject($message, true);
+                    break;
+                case Result::ALREADY_ACKNOWLEDGED:
+                    break;
+                default:
+                    throw new \LogicException(sprintf('Status is not supported: %s', $result));
             }
 
-            $context = new Context($this->interopContext);
-            $context->setLogger($this->logger);
-            $context->setInteropQueue($consumer->getQueue());
-            $context->setConsumer($consumer);
-            $context->setProcessor($currentProcessor);
-            $context->setInteropMessage($message);
+            $postMessageReceived = new PostMessageReceived($this->interopContext, $message, $result, $receivedAt, $this->logger);
+            $this->extension->onPostMessageReceived($postMessageReceived);
 
-            $this->processMessage($consumer, $currentProcessor, $message, $context);
+            if ($postMessageReceived->isExecutionInterrupted()) {
+                $interruptExecution = true;
 
-            if ($context->isExecutionInterrupted()) {
-                throw new ConsumptionInterruptedException();
+                return false;
             }
 
             return true;
         };
 
-        foreach ($consumers as $consumer) {
+        foreach ($consumers as $queueName => $consumer) {
             /* @var Consumer $consumer */
+
+            $preSubscribe = new PreSubscribe(
+                $this->interopContext,
+                $this->boundProcessors[$queueName]->getProcessor(),
+                $consumer,
+                $this->logger
+            );
+
+            $this->extension->onPreSubscribe($preSubscribe);
 
             $subscriptionConsumer->subscribe($consumer, $callback);
         }
 
+        $cycle = 1;
         while (true) {
-            try {
-                $this->extension->onBeforeReceive($context);
+            $receivedMessagesCount = 0;
+            $interruptExecution = false;
 
-                if ($context->isExecutionInterrupted()) {
-                    throw new ConsumptionInterruptedException();
-                }
+            $preConsume = new PreConsume($this->interopContext, $subscriptionConsumer, $this->logger, $cycle, $this->receiveTimeout, $startTime);
+            $this->extension->onPreConsume($preConsume);
 
-                $subscriptionConsumer->consume($this->receiveTimeout);
-
-                $this->idleTimeout && usleep($this->idleTimeout * 1000);
-                $this->extension->onIdle($context);
-
-                if ($context->isExecutionInterrupted()) {
-                    throw new ConsumptionInterruptedException();
-                }
-            } catch (ConsumptionInterruptedException $e) {
-                $this->logger->info(sprintf('Consuming interrupted'));
-
-                foreach ($consumers as $consumer) {
-                    /* @var Consumer $consumer */
-
-                    $subscriptionConsumer->unsubscribe($consumer);
-                }
-
-                $context->setExecutionInterrupted(true);
-
-                $this->extension->onInterrupted($context);
-
-                return;
-            } catch (\Throwable $exception) {
-                $context->setExecutionInterrupted(true);
-                $context->setException($exception);
-
-                $this->onInterruptionByException($this->extension, $context);
+            if ($preConsume->isExecutionInterrupted()) {
+                $this->onEnd($startTime, $subscriptionConsumer);
 
                 return;
             }
+
+            $subscriptionConsumer->consume($this->receiveTimeout);
+
+            $postConsume = new PostConsume($this->interopContext, $subscriptionConsumer, $receivedMessagesCount, $cycle, $startTime, $this->logger);
+            $this->extension->onPostConsume($postConsume);
+
+            if ($interruptExecution || $postConsume->isExecutionInterrupted()) {
+                $this->onEnd($startTime, $subscriptionConsumer);
+
+                return;
+            }
+
+            ++$cycle;
         }
     }
 
@@ -269,31 +285,36 @@ final class QueueConsumer implements QueueConsumerInterface
         $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
 
-    /**
-     * @param ExtensionInterface $extension
-     * @param Context            $context
-     *
-     * @throws \Exception
-     */
-    private function onInterruptionByException(ExtensionInterface $extension, Context $context)
+    private function onEnd(int $startTime, SubscriptionConsumer $subscriptionConsumer = null): void
     {
-        $this->logger = $context->getLogger();
-        $this->logger->error(sprintf('Consuming interrupted by exception'));
+        $endTime = (int) (microtime(true) * 1000);
 
-        $exception = $context->getException();
+        $this->extension->onEnd(new End($this->interopContext, $startTime, $endTime, $this->logger));
+
+        if ($subscriptionConsumer) {
+            $subscriptionConsumer->unsubscribeAll();
+        }
+    }
+
+    /**
+     * The logic is similar to one in Symfony's ExceptionListener::.
+     *
+     * https://github.com/symfony/symfony/blob/cbe289517470eeea27162fd2d523eb29c95f775f/src/Symfony/Component/HttpKernel/EventListener/ExceptionListener.php#L77
+     */
+    private function onProcessorException(Message $message, \Exception $exception, int $receivedAt)
+    {
+        $processorException = new ProcessorException($this->interopContext, $message, $exception, $receivedAt, $this->logger);
 
         try {
-            $this->extension->onInterrupted($context);
-        } catch (\Exception $e) {
-            // logic is similar to one in Symfony's ExceptionListener::onKernelException
-            $this->logger->error(sprintf(
-                'Exception thrown when handling an exception (%s: %s at %s line %s)',
-                get_class($e),
-                $e->getMessage(),
-                $e->getFile(),
-                $e->getLine()
-            ));
+            $this->extension->onProcessorException($processorException);
 
+            $result = $processorException->getResult();
+            if (null === $result) {
+                throw $exception;
+            }
+
+            return $result;
+        } catch (\Exception $e) {
             $wrapper = $e;
             while ($prev = $wrapper->getPrevious()) {
                 if ($exception === $wrapper = $prev) {
@@ -309,39 +330,5 @@ final class QueueConsumer implements QueueConsumerInterface
         }
 
         throw $exception;
-    }
-
-    private function processMessage(Consumer $consumer, Processor $processor, InteropMessage $message, Context $context)
-    {
-        $this->logger->info('Message received from the queue: '.$context->getInteropQueue()->getQueueName());
-        $this->logger->debug('Headers: {headers}', ['headers' => new VarExport($message->getHeaders())]);
-        $this->logger->debug('Properties: {properties}', ['properties' => new VarExport($message->getProperties())]);
-        $this->logger->debug('Payload: {payload}', ['payload' => new VarExport($message->getBody())]);
-
-        $this->extension->onPreReceived($context);
-        if (!$context->getResult()) {
-            $result = $processor->process($message, $context->getInteropContext());
-            $context->setResult($result);
-        }
-
-        $this->extension->onResult($context);
-
-        switch ($context->getResult()) {
-            case Result::ACK:
-                $consumer->acknowledge($message);
-                break;
-            case Result::REJECT:
-                $consumer->reject($message, false);
-                break;
-            case Result::REQUEUE:
-                $consumer->reject($message, true);
-                break;
-            default:
-                throw new \LogicException(sprintf('Status is not supported: %s', $context->getResult()));
-        }
-
-        $this->logger->info(sprintf('Message processed: %s', $context->getResult()));
-
-        $this->extension->onPostReceived($context);
     }
 }

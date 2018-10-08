@@ -2,14 +2,14 @@
 
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Extension\ReplyExtension;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Context;
 use Interop\Queue\Producer as InteropProducer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -18,9 +18,9 @@ class ReplyExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementPostMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, ReplyExtension::class);
+        $this->assertClassImplements(PostMessageReceivedExtensionInterface::class, ReplyExtension::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
@@ -28,42 +28,19 @@ class ReplyExtensionTest extends TestCase
         new ReplyExtension();
     }
 
-    public function testShouldDoNothingOnPreReceived()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onPreReceived(new Context($this->createNeverUsedContextMock()));
-    }
-
-    public function testShouldDoNothingOnStart()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onStart(new Context($this->createNeverUsedContextMock()));
-    }
-
-    public function testShouldDoNothingOnBeforeReceive()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onBeforeReceive(new Context($this->createNeverUsedContextMock()));
-    }
-
-    public function testShouldDoNothingOnInterrupted()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onInterrupted(new Context($this->createNeverUsedContextMock()));
-    }
-
     public function testShouldDoNothingIfReceivedMessageNotHaveReplyToSet()
     {
         $extension = new ReplyExtension();
 
-        $context = new Context($this->createNeverUsedContextMock());
-        $context->setInteropMessage(new NullMessage());
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createNeverUsedContextMock(),
+            new NullMessage(),
+            'aResult',
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldDoNothingIfContextResultIsNotInstanceOfResult()
@@ -73,11 +50,15 @@ class ReplyExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setReplyTo('aReplyToQueue');
 
-        $context = new Context($this->createNeverUsedContextMock());
-        $context->setInteropMessage($message);
-        $context->setResult('notInstanceOfResult');
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createNeverUsedContextMock(),
+            $message,
+            'notInstanceOfResult',
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldDoNothingIfResultInstanceOfResultButReplyMessageNotSet()
@@ -87,11 +68,15 @@ class ReplyExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setReplyTo('aReplyToQueue');
 
-        $context = new Context($this->createNeverUsedContextMock());
-        $context->setInteropMessage($message);
-        $context->setResult(Result::ack());
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createNeverUsedContextMock(),
+            $message,
+            Result::ack(),
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldSendReplyMessageToReplyQueueOnPostReceived()
@@ -114,8 +99,8 @@ class ReplyExtensionTest extends TestCase
             ->with($replyQueue, $replyMessage)
         ;
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|InteropContext $contextMock */
-        $contextMock = $this->createMock(InteropContext::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Context $contextMock */
+        $contextMock = $this->createMock(Context::class);
         $contextMock
             ->expects($this->once())
             ->method('createQueue')
@@ -127,20 +112,31 @@ class ReplyExtensionTest extends TestCase
             ->willReturn($producerMock)
         ;
 
-        $context = new Context($contextMock);
-        $context->setInteropMessage($message);
-        $context->setResult(Result::reply($replyMessage));
-        $context->setLogger(new NullLogger());
+        $postReceivedMessage = new PostMessageReceived(
+            $contextMock,
+            $message,
+            Result::reply($replyMessage),
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createNeverUsedContextMock(): InteropContext
+    protected function createInteropContextMock(): Context
     {
-        $contextMock = $this->createMock(InteropContext::class);
+        return $this->createMock(Context::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createNeverUsedContextMock(): Context
+    {
+        $contextMock = $this->createMock(Context::class);
         $contextMock
             ->expects($this->never())
             ->method('createProducer')

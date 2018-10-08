@@ -2,15 +2,12 @@
 
 namespace Enqueue\Bundle\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class DoctrineClearIdentityMapExtension implements ExtensionInterface
+class DoctrineClearIdentityMapExtension implements MessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var RegistryInterface
      */
@@ -24,10 +21,7 @@ class DoctrineClearIdentityMapExtension implements ExtensionInterface
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPreReceived(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
         foreach ($this->registry->getManagers() as $name => $manager) {
             $context->getLogger()->debug(sprintf(

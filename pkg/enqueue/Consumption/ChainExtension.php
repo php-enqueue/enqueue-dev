@@ -2,93 +2,179 @@
 
 namespace Enqueue\Consumption;
 
+use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostConsume;
+use Enqueue\Consumption\Context\PostMessageReceived;
+use Enqueue\Consumption\Context\PreConsume;
+use Enqueue\Consumption\Context\PreSubscribe;
+use Enqueue\Consumption\Context\ProcessorException;
+use Enqueue\Consumption\Context\Start;
+
 class ChainExtension implements ExtensionInterface
 {
-    use EmptyExtensionTrait;
-
-    /**
-     * @var ExtensionInterface[]
-     */
-    private $extensions;
+    private $startExtensions;
+    private $preSubscribeExtensions;
+    private $preConsumeExtensions;
+    private $messageReceivedExtensions;
+    private $messageResultExtensions;
+    private $postMessageReceivedExtensions;
+    private $processorExceptionExtensions;
+    private $postConsumeExtensions;
+    private $endExtensions;
 
     /**
      * @param ExtensionInterface[] $extensions
      */
     public function __construct(array $extensions)
     {
-        $this->extensions = [];
-        array_walk($extensions, function (ExtensionInterface $extension) {
-            $this->extensions[] = $extension;
+        $this->startExtensions = [];
+        $this->preSubscribeExtensions = [];
+        $this->preConsumeExtensions = [];
+        $this->messageReceivedExtensions = [];
+        $this->messageResultExtensions = [];
+        $this->postMessageReceivedExtensions = [];
+        $this->processorExceptionExtensions = [];
+        $this->postConsumeExtensions = [];
+        $this->endExtensions = [];
+
+        array_walk($extensions, function ($extension) {
+            if ($extension instanceof ExtensionInterface) {
+                $this->startExtensions[] = $extension;
+                $this->preSubscribeExtensions[] = $extension;
+                $this->preConsumeExtensions[] = $extension;
+                $this->messageReceivedExtensions[] = $extension;
+                $this->messageResultExtensions[] = $extension;
+                $this->postMessageReceivedExtensions[] = $extension;
+                $this->processorExceptionExtensions[] = $extension;
+                $this->postConsumeExtensions[] = $extension;
+                $this->endExtensions[] = $extension;
+
+                return;
+            }
+
+            $extensionValid = false;
+            if ($extension instanceof StartExtensionInterface) {
+                $this->startExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof PreSubscribeExtensionInterface) {
+                $this->preSubscribeExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof PreConsumeExtensionInterface) {
+                $this->preConsumeExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof MessageReceivedExtensionInterface) {
+                $this->messageReceivedExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof MessageResultExtensionInterface) {
+                $this->messageResultExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof ProcessorExceptionExtensionInterface) {
+                $this->processorExceptionExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof PostMessageReceivedExtensionInterface) {
+                $this->postMessageReceivedExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof PostConsumeExtensionInterface) {
+                $this->postConsumeExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof EndExtensionInterface) {
+                $this->endExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if (false == $extensionValid) {
+                throw new \LogicException('Invalid extension given');
+            }
         });
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onStart(Context $context)
+    public function onStart(Start $context): void
     {
-        foreach ($this->extensions as $extension) {
+        foreach ($this->startExtensions as $extension) {
             $extension->onStart($context);
         }
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onBeforeReceive(Context $context)
+    public function onPreSubscribe(PreSubscribe $context): void
     {
-        foreach ($this->extensions as $extension) {
-            $extension->onBeforeReceive($context);
+        foreach ($this->preSubscribeExtensions as $extension) {
+            $extension->onPreSubscribe($context);
         }
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onPreReceived(Context $context)
+    public function onPreConsume(PreConsume $context): void
     {
-        foreach ($this->extensions as $extension) {
-            $extension->onPreReceived($context);
+        foreach ($this->preConsumeExtensions as $extension) {
+            $extension->onPreConsume($context);
         }
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onResult(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
-        foreach ($this->extensions as $extension) {
+        foreach ($this->messageReceivedExtensions as $extension) {
+            $extension->onMessageReceived($context);
+        }
+    }
+
+    public function onResult(MessageResult $context): void
+    {
+        foreach ($this->messageResultExtensions as $extension) {
             $extension->onResult($context);
         }
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onPostReceived(Context $context)
+    public function onProcessorException(ProcessorException $context): void
     {
-        foreach ($this->extensions as $extension) {
-            $extension->onPostReceived($context);
+        foreach ($this->processorExceptionExtensions as $extension) {
+            $extension->onProcessorException($context);
         }
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onIdle(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
-        foreach ($this->extensions as $extension) {
-            $extension->onIdle($context);
+        foreach ($this->postMessageReceivedExtensions as $extension) {
+            $extension->onPostMessageReceived($context);
         }
     }
 
-    /**
-     * @param Context $context
-     */
-    public function onInterrupted(Context $context)
+    public function onPostConsume(PostConsume $context): void
     {
-        foreach ($this->extensions as $extension) {
-            $extension->onInterrupted($context);
+        foreach ($this->postConsumeExtensions as $extension) {
+            $extension->onPostConsume($context);
+        }
+    }
+
+    public function onEnd(End $context): void
+    {
+        foreach ($this->endExtensions as $extension) {
+            $extension->onEnd($context);
         }
     }
 }

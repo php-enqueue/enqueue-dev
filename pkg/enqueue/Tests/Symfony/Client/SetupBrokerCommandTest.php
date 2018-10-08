@@ -5,12 +5,26 @@ namespace Enqueue\Tests\Symfony\Client;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Container\Container;
 use Enqueue\Symfony\Client\SetupBrokerCommand;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class SetupBrokerCommandTest extends TestCase
 {
+    use ClassExtensionTrait;
+
+    public function testShouldBeSubClassOfCommand()
+    {
+        $this->assertClassExtends(Command::class, SetupBrokerCommand::class);
+    }
+
+    public function testShouldNotBeFinal()
+    {
+        $this->assertClassNotFinal(SetupBrokerCommand::class);
+    }
+
     public function testCouldBeConstructedWithContainerAsFirstArgument()
     {
         new SetupBrokerCommand($this->createMock(ContainerInterface::class));

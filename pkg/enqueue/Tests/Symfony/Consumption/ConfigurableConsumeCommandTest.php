@@ -8,16 +8,30 @@ use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Consumption\QueueSubscriberInterface;
 use Enqueue\Container\Container;
 use Enqueue\Symfony\Consumption\ConfigurableConsumeCommand;
+use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Processor;
 use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ConfigurableConsumeCommandTest extends TestCase
 {
+    use ClassExtensionTrait;
+
+    public function testShouldBeSubClassOfCommand()
+    {
+        $this->assertClassExtends(Command::class, ConfigurableConsumeCommand::class);
+    }
+
+    public function testShouldNotBeFinal()
+    {
+        $this->assertClassNotFinal(ConfigurableConsumeCommand::class);
+    }
+
     public function testCouldBeConstructedWithRequiredAttributes()
     {
         new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
@@ -36,11 +50,10 @@ class ConfigurableConsumeCommandTest extends TestCase
 
         $options = $command->getDefinition()->getOptions();
 
-        $this->assertCount(8, $options);
+        $this->assertCount(7, $options);
         $this->assertArrayHasKey('memory-limit', $options);
         $this->assertArrayHasKey('message-limit', $options);
         $this->assertArrayHasKey('time-limit', $options);
-        $this->assertArrayHasKey('idle-time', $options);
         $this->assertArrayHasKey('receive-timeout', $options);
         $this->assertArrayHasKey('niceness', $options);
         $this->assertArrayHasKey('transport', $options);

@@ -7,12 +7,14 @@ use Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
-use Enqueue\Null\NullContext;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -20,9 +22,9 @@ class ExclusiveCommandExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementConsumptionExtensionInterface()
+    public function testShouldImplementMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ConsumptionExtensionInterface::class, ExclusiveCommandExtension::class);
+        $this->assertClassImplements(MessageReceivedExtensionInterface::class, ExclusiveCommandExtension::class);
     }
 
     public function testShouldBeFinal()
@@ -40,23 +42,29 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setProperty(Config::TOPIC, 'aTopic');
 
-        $context = new Context(new NullContext());
-        $context->setInteropMessage($message);
-
         $driver = $this->createDriverStub();
         $driver
             ->expects($this->never())
             ->method('createQueue')
         ;
 
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
+
         $extension = new ExclusiveCommandExtension($driver);
 
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        self::assertNull($context->getResult());
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.topic' => 'aTopic',
+            Config::TOPIC => 'aTopic',
         ], $message->getProperties());
     }
 
@@ -65,8 +73,14 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setProperty(Config::COMMAND, 'aCommand');
 
-        $context = new Context(new NullContext());
-        $context->setInteropMessage($message);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $driver = $this->createDriverStub();
         $driver
@@ -76,12 +90,12 @@ class ExclusiveCommandExtensionTest extends TestCase
 
         $extension = new ExclusiveCommandExtension($driver);
 
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        self::assertNull($context->getResult());
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.command' => 'aCommand',
+            Config::COMMAND => 'aCommand',
         ], $message->getProperties());
     }
 
@@ -90,8 +104,14 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setProperty(Config::PROCESSOR, 'aProcessor');
 
-        $context = new Context(new NullContext());
-        $context->setInteropMessage($message);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $driver = $this->createDriverStub();
         $driver
@@ -101,12 +121,12 @@ class ExclusiveCommandExtensionTest extends TestCase
 
         $extension = new ExclusiveCommandExtension($driver);
 
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        self::assertNull($context->getResult());
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.processor' => 'aProcessor',
+            Config::PROCESSOR => 'aProcessor',
         ], $message->getProperties());
     }
 
@@ -115,15 +135,20 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message = new NullMessage();
         $queue = new NullQueue('aBarQueueName');
 
-        $context = new Context(new NullContext());
-        $context->setInteropMessage($message);
-        $context->setInteropQueue($queue);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub($queue),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $extension = new ExclusiveCommandExtension($this->createDriverStub(new RouteCollection([])));
 
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        self::assertNull($context->getResult());
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([], $message->getProperties());
     }
@@ -133,10 +158,14 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message = new NullMessage();
         $queue = new NullQueue('fooQueue');
 
-        $context = new Context(new NullContext());
-        $context->setInteropMessage($message);
-        $context->setInteropQueue($queue);
-        $context->setLogger(new NullLogger());
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub($queue),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $routeCollection = new RouteCollection([
             new Route('fooCommand', Route::COMMAND, 'theFooProcessor', [
@@ -159,13 +188,13 @@ class ExclusiveCommandExtensionTest extends TestCase
         ;
 
         $extension = new ExclusiveCommandExtension($driver);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        self::assertNull($context->getResult());
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.processor' => 'theFooProcessor',
-            'enqueue.command' => 'fooCommand',
+            Config::PROCESSOR => 'theFooProcessor',
+            Config::COMMAND => 'fooCommand',
         ], $message->getProperties());
     }
 
@@ -174,10 +203,14 @@ class ExclusiveCommandExtensionTest extends TestCase
         $message = new NullMessage();
         $queue = new NullQueue('barQueue');
 
-        $context = new Context(new NullContext());
-        $context->setInteropMessage($message);
-        $context->setInteropQueue($queue);
-        $context->setLogger(new NullLogger());
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub($queue),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $routeCollection = new RouteCollection([
             new Route('fooCommand', Route::COMMAND, 'theFooProcessor', [
@@ -200,9 +233,9 @@ class ExclusiveCommandExtensionTest extends TestCase
         ;
 
         $extension = new ExclusiveCommandExtension($driver);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        self::assertNull($context->getResult());
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([], $message->getProperties());
     }
@@ -220,5 +253,38 @@ class ExclusiveCommandExtensionTest extends TestCase
         ;
 
         return $driver;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createContextMock(): InteropContext
+    {
+        return $this->createMock(InteropContext::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createProcessorMock(): Processor
+    {
+        return $this->createMock(Processor::class);
+    }
+
+    /**
+     * @param mixed $queue
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createConsumerStub($queue): Consumer
+    {
+        $consumerMock = $this->createMock(Consumer::class);
+        $consumerMock
+            ->expects($this->any())
+            ->method('getQueue')
+            ->willReturn($queue)
+        ;
+
+        return $consumerMock;
     }
 }

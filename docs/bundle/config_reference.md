@@ -31,9 +31,6 @@ enqueue:
         redelivered_delay_time: 0
     consumption:
 
-        # the time in milliseconds queue consumer waits if no message received
-        idle_timeout:         0
-
         # the time in milliseconds queue consumer waits for a message (100 ms by default)
         receive_timeout:      100
     job:                  false

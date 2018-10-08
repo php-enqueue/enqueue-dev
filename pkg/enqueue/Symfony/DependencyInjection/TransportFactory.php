@@ -98,11 +98,6 @@ final class TransportFactory
     {
         $builder
             ->addDefaultsIfNotSet()->children()
-                ->integerNode('idle_time')
-                    ->min(0)
-                    ->defaultValue(0)
-                    ->info('the time in milliseconds queue consumer waits if no message received')
-                ->end()
                 ->integerNode('receive_timeout')
                     ->min(0)
                     ->defaultValue(10000)
@@ -169,7 +164,6 @@ final class TransportFactory
         $contextId = $this->format('context');
         $this->assertServiceExists($container, $contextId);
 
-        $container->setParameter($this->format('idle_time'), $config['idle_time'] ?? 0);
         $container->setParameter($this->format('receive_timeout'), $config['receive_timeout'] ?? 10000);
 
         $container->register($this->format('consumption_extensions'), ChainExtension::class)
@@ -179,7 +173,8 @@ final class TransportFactory
         $container->register($this->format('queue_consumer'), QueueConsumer::class)
             ->addArgument(new Reference($contextId))
             ->addArgument(new Reference($this->format('consumption_extensions')))
-            ->addArgument($this->format('idle_time', true))
+            ->addArgument([])
+            ->addArgument(null)
             ->addArgument($this->format('receive_timeout', true))
         ;
 

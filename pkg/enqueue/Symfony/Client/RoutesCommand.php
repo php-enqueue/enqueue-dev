@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class RoutesCommand extends Command
+class RoutesCommand extends Command
 {
     protected static $defaultName = 'enqueue:routes';
 
@@ -149,4 +149,8 @@ final class RoutesCommand extends Command
     {
         return $this->container->get(sprintf($this->driverIdPatter, $client));
     }
+}
+
+function enqueue()
+{
 }

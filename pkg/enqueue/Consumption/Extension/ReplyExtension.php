@@ -2,21 +2,15 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Context\PostMessageReceived;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
 
-class ReplyExtension implements ExtensionInterface
+class ReplyExtension implements PostMessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostReceived(Context $context)
+    public function onPostMessageReceived(PostMessageReceived $context): void
     {
-        $replyTo = $context->getInteropMessage()->getReplyTo();
+        $replyTo = $context->getMessage()->getReplyTo();
         if (false == $replyTo) {
             return;
         }
@@ -31,13 +25,13 @@ class ReplyExtension implements ExtensionInterface
             return;
         }
 
-        $correlationId = $context->getInteropMessage()->getCorrelationId();
+        $correlationId = $context->getMessage()->getCorrelationId();
         $replyMessage = clone $result->getReply();
         $replyMessage->setCorrelationId($correlationId);
 
-        $replyQueue = $context->getInteropContext()->createQueue($replyTo);
+        $replyQueue = $context->getContext()->createQueue($replyTo);
 
         $context->getLogger()->debug(sprintf('[ReplyExtension] Send reply to "%s"', $replyTo));
-        $context->getInteropContext()->createProducer()->send($replyQueue, $replyMessage);
+        $context->getContext()->createProducer()->send($replyQueue, $replyMessage);
     }
 }
