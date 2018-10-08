@@ -37,16 +37,28 @@ final class MessageReceived
     private $logger;
 
     /**
+     * @var int
+     */
+    private $receivedAt;
+
+    /**
      * @var Result|null
      */
     private $result;
 
-    public function __construct(Context $context, Consumer $consumer, Message $message, Processor $processor, LoggerInterface $logger)
-    {
+    public function __construct(
+        Context $context,
+        Consumer $consumer,
+        Message $message,
+        Processor $processor,
+        int $receivedAt,
+        LoggerInterface $logger
+    ) {
         $this->context = $context;
         $this->consumer = $consumer;
         $this->message = $message;
         $this->processor = $processor;
+        $this->receivedAt = $receivedAt;
         $this->logger = $logger;
     }
 
@@ -78,6 +90,11 @@ final class MessageReceived
     public function getLogger(): LoggerInterface
     {
         return $this->logger;
+    }
+
+    public function getReceivedAt(): int
+    {
+        return $this->receivedAt;
     }
 
     public function getResult(): ?Result

@@ -154,6 +154,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             $this->createMock(Processor::class),
+            1,
             $this->createMock(LoggerInterface::class)
         );
     }

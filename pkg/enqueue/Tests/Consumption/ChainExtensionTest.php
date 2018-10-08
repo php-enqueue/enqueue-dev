@@ -5,6 +5,7 @@ namespace Enqueue\Tests\Consumption;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
@@ -116,6 +117,7 @@ class ChainExtensionTest extends TestCase
             $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             $this->createMock(Processor::class),
+            1,
             new NullLogger()
         );
 
@@ -139,7 +141,13 @@ class ChainExtensionTest extends TestCase
 
     public function testShouldProxyOnResultToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $context = new MessageResult(
+            $this->createInteropContextMock(),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            new NullLogger()
+        );
 
         $fooExtension = $this->createExtension();
         $fooExtension

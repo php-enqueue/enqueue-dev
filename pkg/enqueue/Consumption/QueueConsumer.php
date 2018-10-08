@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
@@ -143,13 +144,14 @@ final class QueueConsumer implements QueueConsumerInterface
     public function consume(ExtensionInterface $runtimeExtension = null): void
     {
         /*
-         * onStart
-         * onPreSubscribe
-         * onPreConsume
-         * onPostConsume
-         * onReceived
+         * onStart             +
+         * onPreSubscribe      +
+         * onPreConsume        +
+         * onMessageReceived   +
          * onResult
+         * onProcessorException
          * onPostReceived
+         * onPostConsume
          * onEnd
          */
 
@@ -213,6 +215,7 @@ final class QueueConsumer implements QueueConsumerInterface
         }
 
         $callback = function (InteropMessage $message, Consumer $consumer) use (&$context) {
+            $receivedAt = (int) (microtime(true) * 1000);
             $queue = $consumer->getQueue();
             if (false == array_key_exists($queue->getQueueName(), $this->boundProcessors)) {
                 throw new \LogicException(sprintf('The processor for the queue "%s" could not be found.', $queue->getQueueName()));
@@ -233,7 +236,7 @@ final class QueueConsumer implements QueueConsumerInterface
             $context->setProcessor($processor);
             $context->setInteropMessage($message);
 
-            $messageReceived = new MessageReceived($this->interopContext, $consumer, $message, $processor, $this->logger);
+            $messageReceived = new MessageReceived($this->interopContext, $consumer, $message, $processor, $receivedAt, $this->logger);
             $this->extension->onMessageReceived($messageReceived);
             $result = $messageReceived->getResult();
             $processor = $messageReceived->getProcessor();
@@ -242,7 +245,12 @@ final class QueueConsumer implements QueueConsumerInterface
                 $context->setResult($result);
             }
 
-            $this->extension->onResult($context);
+            $messageResult = new MessageResult($this->interopContext, $message, $result, $receivedAt, $this->logger);
+            $this->extension->onResult($messageResult);
+            $result = $messageResult->getResult();
+
+            //todo
+            $context->setResult($result);
 
             switch ($result) {
                 case Result::ACK:

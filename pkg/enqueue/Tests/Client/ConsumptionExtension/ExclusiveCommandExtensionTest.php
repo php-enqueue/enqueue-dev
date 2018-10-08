@@ -53,6 +53,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             $this->createConsumerStub(null),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -77,6 +78,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             $this->createConsumerStub(null),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -107,6 +109,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             $this->createConsumerStub(null),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -137,6 +140,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             $this->createConsumerStub($queue),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -159,6 +163,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             $this->createConsumerStub($queue),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -203,6 +208,7 @@ class ExclusiveCommandExtensionTest extends TestCase
             $this->createConsumerStub($queue),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 

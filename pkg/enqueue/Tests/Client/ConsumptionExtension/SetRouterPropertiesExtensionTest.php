@@ -55,6 +55,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
             $this->createConsumerStub(new NullQueue('test.router-queue')),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -91,6 +92,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
             $this->createConsumerStub(new NullQueue('test.another-queue')),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -116,6 +118,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
             $this->createConsumerStub(null),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 

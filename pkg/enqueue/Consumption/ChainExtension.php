@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
@@ -55,7 +56,7 @@ class ChainExtension implements ExtensionInterface
         }
     }
 
-    public function onResult(Context $context)
+    public function onResult(MessageResult $context): void
     {
         foreach ($this->extensions as $extension) {
             $extension->onResult($context);

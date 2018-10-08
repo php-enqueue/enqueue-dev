@@ -164,9 +164,9 @@ class Context
      */
     public function setResult($result)
     {
-        if ($this->result) {
-            throw new IllegalContextModificationException('The result modification is not allowed');
-        }
+//        if ($this->result) {
+//            throw new IllegalContextModificationException('The result modification is not allowed');
+//        }
 
         $this->result = $result;
     }

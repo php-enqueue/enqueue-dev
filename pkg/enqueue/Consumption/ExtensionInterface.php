@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\Start;
@@ -33,13 +34,11 @@ interface ExtensionInterface
     public function onMessageReceived(MessageReceived $context): void;
 
     /**
-     * Executed when a message is processed by a processor or a result was set in onPreReceived method.
-     * BUT before the message status was sent to the broker
-     * The consumption could be interrupted at this step but it exits after the message is processed.
-     *
-     * @param Context $context
+     * Executed when a message is processed by a processor or a result was set in onMessageReceived extension method.
+     * BEFORE the message status was sent to the broker
+     * The result could be changed at this point.
      */
-    public function onResult(Context $context);
+    public function onResult(MessageResult $context): void;
 
     /**
      * Executed when a message is processed by a processor.

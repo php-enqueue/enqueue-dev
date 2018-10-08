@@ -144,19 +144,6 @@ class ContextTest extends TestCase
         $this->assertSame($result, $context->getResult());
     }
 
-    public function testThrowOnTryToChangeResultIfAlreadySet()
-    {
-        $result = 'aResult';
-
-        $context = new Context($this->createContext());
-
-        $this->expectException(IllegalContextModificationException::class);
-        $this->expectExceptionMessage('The result modification is not allowed');
-
-        $context->setResult($result);
-        $context->setResult($result);
-    }
-
     public function testShouldAllowGetPreviouslySetExecutionInterrupted()
     {
         $context = new Context($this->createContext());

@@ -69,6 +69,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             $this->createConsumerStub($queue),
             $originMessage,
             $this->createProcessorMock(),
+            1,
             $logger
         );
 
@@ -103,6 +104,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             $this->createConsumerStub(null),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
 
@@ -128,6 +130,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             $this->createConsumerStub(null),
             $message,
             $this->createProcessorMock(),
+            1,
             new NullLogger()
         );
         $messageReceived->setResult(Result::ack());
