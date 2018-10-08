@@ -274,6 +274,8 @@ final class QueueConsumer implements QueueConsumerInterface
                 case Result::REQUEUE:
                     $consumer->reject($message, true);
                     break;
+                case Result::ALREADY_ACKNOWLEDGED:
+                    break;
                 default:
                     throw new \LogicException(sprintf('Status is not supported: %s', $result));
             }

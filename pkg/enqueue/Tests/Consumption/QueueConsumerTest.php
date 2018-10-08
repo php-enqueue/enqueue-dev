@@ -470,6 +470,40 @@ class QueueConsumerTest extends TestCase
         $queueConsumer->consume();
     }
 
+    public function testShouldDoNothingIfProcessorReturnsAlreadyAcknowledged()
+    {
+        $messageMock = $this->createMessageMock();
+
+        $subscriptionConsumerMock = new DummySubscriptionConsumer();
+        $subscriptionConsumerMock->addMessage($messageMock, 'foo_queue');
+
+        $consumerStub = $this->createConsumerStub('foo_queue');
+        $consumerStub
+            ->expects($this->never())
+            ->method('reject')
+        ;
+        $consumerStub
+            ->expects($this->never())
+            ->method('acknowledge')
+        ;
+
+        $contextStub = $this->createContextStub($consumerStub);
+
+        $processorMock = $this->createProcessorMock();
+        $processorMock
+            ->expects($this->once())
+            ->method('process')
+            ->with($this->identicalTo($messageMock))
+            ->willReturn(Result::ALREADY_ACKNOWLEDGED)
+        ;
+
+        $queueConsumer = new QueueConsumer($contextStub, new BreakCycleExtension(1));
+        $queueConsumer->setFallbackSubscriptionConsumer($subscriptionConsumerMock);
+        $queueConsumer->bind(new NullQueue('foo_queue'), $processorMock);
+
+        $queueConsumer->consume();
+    }
+
     public function testShouldRequeueMessageIfProcessorReturnSuchStatus()
     {
         $messageMock = $this->createMessageMock();

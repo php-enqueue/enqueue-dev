@@ -22,6 +22,8 @@ class Result
      */
     const REQUEUE = Processor::REQUEUE;
 
+    const ALREADY_ACKNOWLEDGED = 'enqueue.already_acknowledged';
+
     /**
      * @var string
      */
