@@ -4,7 +4,7 @@ namespace Enqueue\Tests\Consumption\Extension;
 
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Extension\ReplyExtension;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
@@ -18,9 +18,9 @@ class ReplyExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementPostMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, ReplyExtension::class);
+        $this->assertClassImplements(PostMessageReceivedExtensionInterface::class, ReplyExtension::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()

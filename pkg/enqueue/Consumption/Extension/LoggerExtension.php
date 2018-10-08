@@ -4,17 +4,15 @@ namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\Start;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Consumption\StartExtensionInterface;
 use Interop\Queue\Message as InteropMessage;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class LoggerExtension implements ExtensionInterface
+class LoggerExtension implements StartExtensionInterface, PostMessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var LoggerInterface
      */

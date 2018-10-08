@@ -5,14 +5,13 @@ namespace Enqueue\Consumption\Extension;
 use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostConsumeExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
+use Enqueue\Consumption\PreConsumeExtensionInterface;
 use Psr\Log\LoggerInterface;
 
-class LimitConsumptionTimeExtension implements ExtensionInterface
+class LimitConsumptionTimeExtension implements PreConsumeExtensionInterface, PostConsumeExtensionInterface, PostMessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var \DateTime
      */

@@ -5,13 +5,10 @@ namespace Enqueue\Client\ConsumptionExtension;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context\MessageReceived;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 
-class SetRouterPropertiesExtension implements ExtensionInterface
+class SetRouterPropertiesExtension implements MessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var DriverInterface
      */

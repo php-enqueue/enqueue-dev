@@ -6,13 +6,10 @@ use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Route;
 use Enqueue\Consumption\Context\MessageReceived;
-use Enqueue\Consumption\EmptyExtensionTrait as ConsumptionEmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 
-final class ExclusiveCommandExtension implements ConsumptionExtensionInterface
+final class ExclusiveCommandExtension implements MessageReceivedExtensionInterface
 {
-    use ConsumptionEmptyExtensionTrait;
-
     /**
      * @var DriverInterface
      */

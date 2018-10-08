@@ -5,13 +5,11 @@ namespace Enqueue\Client\ConsumptionExtension;
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context\End;
 use Enqueue\Consumption\Context\PostMessageReceived;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\EndExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 
-class FlushSpoolProducerExtension implements ExtensionInterface
+class FlushSpoolProducerExtension implements PostMessageReceivedExtensionInterface, EndExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var SpoolProducer
      */

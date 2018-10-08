@@ -4,14 +4,12 @@ namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
+use Enqueue\Consumption\PreConsumeExtensionInterface;
 use Psr\Log\LoggerInterface;
 
-class LimitConsumedMessagesExtension implements ExtensionInterface
+class LimitConsumedMessagesExtension implements PreConsumeExtensionInterface, PostMessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var int
      */

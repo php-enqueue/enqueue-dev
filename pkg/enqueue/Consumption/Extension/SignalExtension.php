@@ -2,20 +2,19 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\Start;
-use Enqueue\Consumption\EmptyExtensionTrait;
 use Enqueue\Consumption\Exception\LogicException;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostConsumeExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
+use Enqueue\Consumption\PreConsumeExtensionInterface;
+use Enqueue\Consumption\StartExtensionInterface;
 use Psr\Log\LoggerInterface;
 
-class SignalExtension implements ExtensionInterface
+class SignalExtension implements StartExtensionInterface, PreConsumeExtensionInterface, PostMessageReceivedExtensionInterface, PostConsumeExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var bool
      */
@@ -49,10 +48,6 @@ class SignalExtension implements ExtensionInterface
         if ($this->shouldBeStopped($context->getLogger())) {
             $context->interruptExecution();
         }
-    }
-
-    public function onMessageReceived(MessageReceived $context): void
-    {
     }
 
     public function onPostMessageReceived(PostMessageReceived $context): void

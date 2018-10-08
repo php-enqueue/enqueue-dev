@@ -4,13 +4,10 @@ namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context\Start;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\StartExtensionInterface;
 
-class SetupBrokerExtension implements ExtensionInterface
+class SetupBrokerExtension implements StartExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var DriverInterface
      */

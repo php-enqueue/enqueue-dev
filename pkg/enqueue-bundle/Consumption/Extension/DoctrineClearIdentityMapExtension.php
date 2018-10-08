@@ -3,14 +3,11 @@
 namespace Enqueue\Bundle\Consumption\Extension;
 
 use Enqueue\Consumption\Context\MessageReceived;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class DoctrineClearIdentityMapExtension implements ExtensionInterface
+class DoctrineClearIdentityMapExtension implements MessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var RegistryInterface
      */

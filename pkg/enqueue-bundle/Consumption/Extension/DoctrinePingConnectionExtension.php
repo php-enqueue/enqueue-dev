@@ -4,14 +4,11 @@ namespace Enqueue\Bundle\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
 use Enqueue\Consumption\Context\MessageReceived;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class DoctrinePingConnectionExtension implements ExtensionInterface
+class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var RegistryInterface
      */

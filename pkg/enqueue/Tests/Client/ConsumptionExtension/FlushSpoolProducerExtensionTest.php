@@ -6,7 +6,8 @@ use Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension;
 use Enqueue\Client\SpoolProducer;
 use Enqueue\Consumption\Context\End;
 use Enqueue\Consumption\Context\PostMessageReceived;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\EndExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
@@ -17,9 +18,14 @@ class FlushSpoolProducerExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementPostMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, FlushSpoolProducerExtension::class);
+        $this->assertClassImplements(PostMessageReceivedExtensionInterface::class, FlushSpoolProducerExtension::class);
+    }
+
+    public function testShouldImplementEndExtensionInterface()
+    {
+        $this->assertClassImplements(EndExtensionInterface::class, FlushSpoolProducerExtension::class);
     }
 
     public function testCouldBeConstructedWithSpoolProducerAsFirstArgument()

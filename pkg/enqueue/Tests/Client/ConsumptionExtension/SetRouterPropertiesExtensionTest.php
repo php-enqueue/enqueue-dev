@@ -6,7 +6,7 @@ use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\Context\MessageReceived;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
@@ -20,9 +20,9 @@ class SetRouterPropertiesExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, SetRouterPropertiesExtension::class);
+        $this->assertClassImplements(MessageReceivedExtensionInterface::class, SetRouterPropertiesExtension::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()

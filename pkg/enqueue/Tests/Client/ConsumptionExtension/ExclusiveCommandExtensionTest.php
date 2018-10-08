@@ -8,7 +8,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Consumption\Context\MessageReceived;
-use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
@@ -22,9 +22,9 @@ class ExclusiveCommandExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementConsumptionExtensionInterface()
+    public function testShouldImplementMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ConsumptionExtensionInterface::class, ExclusiveCommandExtension::class);
+        $this->assertClassImplements(MessageReceivedExtensionInterface::class, ExclusiveCommandExtension::class);
     }
 
     public function testShouldBeFinal()

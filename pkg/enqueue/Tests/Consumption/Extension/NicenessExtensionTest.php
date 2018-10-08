@@ -26,7 +26,7 @@ class NicenessExtensionTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('proc_nice(): Only a super user may attempt to increase the priority of a process');
 
-        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0, 0);
+        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0);
 
         $extension = new NicenessExtension(-1);
         $extension->onStart($context);

@@ -5,8 +5,9 @@ namespace Enqueue\Tests\Consumption\Extension;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Consumption\StartExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
@@ -20,9 +21,14 @@ class LoggerExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementStartExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, LoggerExtension::class);
+        $this->assertClassImplements(StartExtensionInterface::class, LoggerExtension::class);
+    }
+
+    public function testShouldImplementPostMessageReceivedExtensionInterface()
+    {
+        $this->assertClassImplements(PostMessageReceivedExtensionInterface::class, LoggerExtension::class);
     }
 
     public function testCouldBeConstructedWithLoggerAsFirstArgument()
@@ -36,7 +42,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0, 0);
+        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0);
 
         $extension->onStart($context);
 
@@ -54,7 +60,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0, 0);
+        $context = new Start($this->createContextMock(), new NullLogger(), [], 0, 0);
 
         $extension->onStart($context);
     }
@@ -193,7 +199,7 @@ class LoggerExtensionTest extends TestCase
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Start($this->createContextMock(), $alreadySetLogger, [], 0, 0, 0);
+        $context = new Start($this->createContextMock(), $alreadySetLogger, [], 0, 0);
 
         $extension->onStart($context);
     }

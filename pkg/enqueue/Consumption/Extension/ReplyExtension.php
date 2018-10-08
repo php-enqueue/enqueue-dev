@@ -3,14 +3,11 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context\PostMessageReceived;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
 
-class ReplyExtension implements ExtensionInterface
+class ReplyExtension implements PostMessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     public function onPostMessageReceived(PostMessageReceived $context): void
     {
         $replyTo = $context->getMessage()->getReplyTo();

@@ -8,14 +8,11 @@ Let's first create an extension itself:
 // src/AppBundle/Enqueue;
 namespace AppBundle\Enqueue;
 
-use Enqueue\Consumption\ExtensionInterface;
-use Enqueue\Consumption\EmptyExtensionTrait;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Context\PostMessageReceived;
 
-class CountProcessedMessagesExtension implements ExtensionInterface
+class CountProcessedMessagesExtension implements PostMessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-    
     private $processedMessages = 0;
     
     public function onPostMessageReceived(PostMessageReceived $context): void

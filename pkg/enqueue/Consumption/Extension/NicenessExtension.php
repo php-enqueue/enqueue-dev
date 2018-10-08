@@ -3,13 +3,10 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context\Start;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\StartExtensionInterface;
 
-class NicenessExtension implements ExtensionInterface
+class NicenessExtension implements StartExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var int
      */
