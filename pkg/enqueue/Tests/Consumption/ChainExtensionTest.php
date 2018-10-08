@@ -6,6 +6,7 @@ use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
@@ -36,7 +37,7 @@ class ChainExtensionTest extends TestCase
 
     public function testShouldProxyOnStartToAllInternalExtensions()
     {
-        $context = new Start($this->createInteropContextMock(), $this->createLoggerMock(), [], 0, 0, 0);
+        $context = new Start($this->createInteropContextMock(), $this->createLoggerMock(), [], 0, 0);
 
         $fooExtension = $this->createExtension();
         $fooExtension
@@ -196,26 +197,33 @@ class ChainExtensionTest extends TestCase
         $extensions->onPostMessageReceived($context);
     }
 
-    public function testShouldProxyOnIdleToAllInternalExtensions()
+    public function testShouldProxyOnPostConsumeToAllInternalExtensions()
     {
-        $context = $this->createContextMock();
+        $postConsume = new PostConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            1,
+            1,
+            1,
+            new NullLogger()
+        );
 
         $fooExtension = $this->createExtension();
         $fooExtension
             ->expects($this->once())
-            ->method('onIdle')
-            ->with($this->identicalTo($context))
+            ->method('onPostConsume')
+            ->with($this->identicalTo($postConsume))
         ;
         $barExtension = $this->createExtension();
         $barExtension
             ->expects($this->once())
-            ->method('onIdle')
-            ->with($this->identicalTo($context))
+            ->method('onPostConsume')
+            ->with($this->identicalTo($postConsume))
         ;
 
         $extensions = new ChainExtension([$fooExtension, $barExtension]);
 
-        $extensions->onIdle($context);
+        $extensions->onPostConsume($postConsume);
     }
 
     public function testShouldProxyOnInterruptedToAllInternalExtensions()

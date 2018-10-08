@@ -4,6 +4,7 @@ namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
@@ -196,7 +197,11 @@ final class QueueConsumer implements QueueConsumerInterface
             $subscriptionConsumer = $this->fallbackSubscriptionConsumer;
         }
 
-        $callback = function (InteropMessage $message, Consumer $consumer) use (&$context) {
+        $receivedMessagesCount = 0;
+
+        $callback = function (InteropMessage $message, Consumer $consumer) use (&$context, &$receivedMessagesCount) {
+            ++$receivedMessagesCount;
+
             $receivedAt = (int) (microtime(true) * 1000);
             $queue = $consumer->getQueue();
             if (false == array_key_exists($queue->getQueueName(), $this->boundProcessors)) {
@@ -291,6 +296,8 @@ final class QueueConsumer implements QueueConsumerInterface
         $cycle = 1;
         while (true) {
             try {
+                $receivedMessagesCount = 0;
+
                 $preConsume = new PreConsume($this->interopContext, $subscriptionConsumer, $this->logger, $cycle, $this->receiveTimeout, $startTime);
                 $this->extension->onPreConsume($preConsume);
 
@@ -300,9 +307,10 @@ final class QueueConsumer implements QueueConsumerInterface
 
                 $subscriptionConsumer->consume($this->receiveTimeout);
 
-                $this->extension->onIdle($context);
+                $postConsume = new PostConsume($this->interopContext, $subscriptionConsumer, $receivedMessagesCount, $cycle, $startTime, $this->logger);
+                $this->extension->onPostConsume($postConsume);
 
-                if ($context->isExecutionInterrupted()) {
+                if ($postConsume->isExecutionInterrupted()) {
                     throw new ConsumptionInterruptedException();
                 }
             } catch (ConsumptionInterruptedException $e) {

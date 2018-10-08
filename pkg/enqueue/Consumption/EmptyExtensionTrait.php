@@ -4,6 +4,7 @@ namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
+use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
@@ -40,7 +41,7 @@ trait EmptyExtensionTrait
     {
     }
 
-    public function onIdle(Context $context)
+    public function onPostConsume(PostConsume $context): void
     {
     }
 

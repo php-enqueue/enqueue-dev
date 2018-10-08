@@ -2,8 +2,8 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
 use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\Start;
@@ -62,10 +62,10 @@ class SignalExtension implements ExtensionInterface
         }
     }
 
-    public function onIdle(Context $context)
+    public function onPostConsume(PostConsume $context): void
     {
         if ($this->shouldBeStopped($context->getLogger())) {
-            $context->setExecutionInterrupted(true);
+            $context->interruptExecution();
         }
     }
 
