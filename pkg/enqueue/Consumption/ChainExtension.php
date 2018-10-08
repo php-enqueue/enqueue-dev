@@ -124,7 +124,7 @@ class ChainExtension implements ExtensionInterface
 
     public function onInitLogger(InitLogger $context): void
     {
-        foreach ($this->endExtensions as $extension) {
+        foreach ($this->initLoggerExtensions as $extension) {
             $extension->onInitLogger($context);
         }
     }
