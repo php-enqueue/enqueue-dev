@@ -168,12 +168,12 @@ final class TransportFactory
         $container->setParameter($this->format('receive_timeout'), $config['receive_timeout'] ?? 10000);
 
         $logExtensionId = $this->format('log_extension');
-        $container->register($logExtensionId, LogExtension::class);
+        $container->register($logExtensionId, LogExtension::class)
+            ->addTag('enqueue.transport.consumption_extension', ['transport' => $this->name, 'priority' => -100])
+        ;
 
         $container->register($this->format('consumption_extensions'), ChainExtension::class)
-            ->addArgument([
-                new Reference($logExtensionId),
-            ])
+            ->addArgument([])
         ;
 
         $container->register($this->format('queue_consumer'), QueueConsumer::class)
