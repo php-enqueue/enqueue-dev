@@ -42,6 +42,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             $loader->load('extensions/exclusive_command_extension.yml');
 
             $clientFactory = new ClientFactory('default');
+            $clientFactory->build($container, $config['client']);
             $clientFactory->createDriver($container, $config['transport']);
 
             $configDef = $container->getDefinition('enqueue.client.default.config');

@@ -16,6 +16,7 @@ use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -180,7 +181,7 @@ final class TransportFactory
             ->addArgument(new Reference($contextId))
             ->addArgument(new Reference($this->format('consumption_extensions')))
             ->addArgument([])
-            ->addArgument(null)
+            ->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
             ->addArgument($this->format('receive_timeout', true))
         ;
 
