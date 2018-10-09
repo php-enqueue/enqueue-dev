@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PostConsume;
@@ -15,6 +16,7 @@ use Enqueue\Consumption\Context\Start;
 class ChainExtension implements ExtensionInterface
 {
     private $startExtensions;
+    private $initLoggerExtensions;
     private $preSubscribeExtensions;
     private $preConsumeExtensions;
     private $messageReceivedExtensions;
@@ -24,12 +26,10 @@ class ChainExtension implements ExtensionInterface
     private $postConsumeExtensions;
     private $endExtensions;
 
-    /**
-     * @param ExtensionInterface[] $extensions
-     */
     public function __construct(array $extensions)
     {
         $this->startExtensions = [];
+        $this->initLoggerExtensions = [];
         $this->preSubscribeExtensions = [];
         $this->preConsumeExtensions = [];
         $this->messageReceivedExtensions = [];
@@ -42,6 +42,7 @@ class ChainExtension implements ExtensionInterface
         array_walk($extensions, function ($extension) {
             if ($extension instanceof ExtensionInterface) {
                 $this->startExtensions[] = $extension;
+                $this->initLoggerExtensions[] = $extension;
                 $this->preSubscribeExtensions[] = $extension;
                 $this->preConsumeExtensions[] = $extension;
                 $this->messageReceivedExtensions[] = $extension;
@@ -57,6 +58,12 @@ class ChainExtension implements ExtensionInterface
             $extensionValid = false;
             if ($extension instanceof StartExtensionInterface) {
                 $this->startExtensions[] = $extension;
+
+                $extensionValid = true;
+            }
+
+            if ($extension instanceof InitLoggerExtensionInterface) {
+                $this->initLoggerExtensions[] = $extension;
 
                 $extensionValid = true;
             }
@@ -113,6 +120,13 @@ class ChainExtension implements ExtensionInterface
                 throw new \LogicException('Invalid extension given');
             }
         });
+    }
+
+    public function onInitLogger(InitLogger $context): void
+    {
+        foreach ($this->initLoggerExtensions as $extension) {
+            $extension->onInitLogger($context);
+        }
     }
 
     public function onStart(Start $context): void

@@ -9,6 +9,7 @@ use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\EndExtensionInterface;
 use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
@@ -57,6 +58,7 @@ class FlushSpoolProducerExtensionTest extends TestCase
 
         $context = new PostMessageReceived(
             $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             'aResult',
             1,

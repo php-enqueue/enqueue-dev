@@ -5,6 +5,7 @@ namespace Enqueue\Tests\Consumption\Extension;
 use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumedMessagesExtension;
+use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Interop\Queue\SubscriptionConsumer;
@@ -49,6 +50,7 @@ class LimitConsumedMessagesExtensionTest extends TestCase
 
         $postReceivedMessage = new PostMessageReceived(
             $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             'aResult',
             1,
@@ -135,6 +137,7 @@ class LimitConsumedMessagesExtensionTest extends TestCase
 
         $postReceivedMessage = new PostMessageReceived(
             $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
             $this->createMock(Message::class),
             'aResult',
             1,

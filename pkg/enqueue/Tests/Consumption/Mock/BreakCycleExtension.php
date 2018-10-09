@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Consumption\Mock;
 
 use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PostConsume;
@@ -22,6 +23,10 @@ class BreakCycleExtension implements ExtensionInterface
     public function __construct($limit)
     {
         $this->limit = $limit;
+    }
+
+    public function onInitLogger(InitLogger $context): void
+    {
     }
 
     public function onPostMessageReceived(PostMessageReceived $context): void

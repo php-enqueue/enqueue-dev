@@ -6,6 +6,7 @@ use Enqueue\ArrayProcessorRegistry;
 use Enqueue\Client\ChainExtension as ClientChainExtensions;
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
+use Enqueue\Client\ConsumptionExtension\LogExtension;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverFactory;
@@ -26,6 +27,8 @@ use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Interop\Queue\Processor;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\NodeInterface;
 use Symfony\Component\Config\Definition\Processor as ConfigProcessor;
@@ -56,6 +59,11 @@ final class SimpleClient
      * @var DelegateProcessor
      */
     private $delegateProcessor;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * The config could be a transport DSN (string) or an array, here's an example of a few DSNs:.
@@ -104,9 +112,11 @@ final class SimpleClient
      *
      * @param string|array $config
      */
-    public function __construct($config)
+    public function __construct($config, LoggerInterface $logger = null)
     {
         $this->build(['enqueue' => $config]);
+
+        $this->logger = $logger ?: new NullLogger();
     }
 
     /**
@@ -262,9 +272,10 @@ final class SimpleClient
         }
 
         $consumptionExtensions[] = new SetRouterPropertiesExtension($driver);
+        $consumptionExtensions[] = new LogExtension();
 
         $consumptionChainExtension = new ConsumptionChainExtension($consumptionExtensions);
-        $queueConsumer = new QueueConsumer($driver->getContext(), $consumptionChainExtension);
+        $queueConsumer = new QueueConsumer($driver->getContext(), $consumptionChainExtension, [], $this->logger);
 
         $routerProcessor = new RouterProcessor($driver);
 

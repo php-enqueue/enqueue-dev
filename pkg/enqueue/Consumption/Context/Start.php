@@ -62,11 +62,6 @@ final class Start
         return $this->logger;
     }
 
-    public function changeLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
-    }
-
     /**
      * In milliseconds.
      */

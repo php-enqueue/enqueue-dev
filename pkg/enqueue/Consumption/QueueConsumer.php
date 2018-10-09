@@ -3,6 +3,7 @@
 namespace Enqueue\Consumption;
 
 use Enqueue\Consumption\Context\End;
+use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
 use Enqueue\Consumption\Context\PostConsume;
@@ -32,7 +33,7 @@ final class QueueConsumer implements QueueConsumerInterface
     private $interopContext;
 
     /**
-     * @var ExtensionInterface|ChainExtension
+     * @var ExtensionInterface
      */
     private $staticExtension;
 
@@ -45,11 +46,6 @@ final class QueueConsumer implements QueueConsumerInterface
      * @var int|float in milliseconds
      */
     private $receiveTimeout;
-
-    /**
-     * @var ExtensionInterface|ChainExtension
-     */
-    private $extension;
 
     /**
      * @var LoggerInterface
@@ -128,10 +124,15 @@ final class QueueConsumer implements QueueConsumerInterface
 
     public function consume(ExtensionInterface $runtimeExtension = null): void
     {
-        $this->extension = $runtimeExtension ?
+        $extension = $runtimeExtension ?
             new ChainExtension([$this->staticExtension, $runtimeExtension]) :
             $this->staticExtension
         ;
+
+        $initLogger = new InitLogger($this->logger);
+        $extension->onInitLogger($initLogger);
+
+        $this->logger = $initLogger->getLogger();
 
         $startTime = (int) (microtime(true) * 1000);
 
@@ -143,10 +144,10 @@ final class QueueConsumer implements QueueConsumerInterface
             $startTime
         );
 
-        $this->extension->onStart($start);
+        $extension->onStart($start);
 
         if ($start->isExecutionInterrupted()) {
-            $this->onEnd($startTime);
+            $this->onEnd($extension, $startTime);
 
             return;
         }
@@ -176,7 +177,7 @@ final class QueueConsumer implements QueueConsumerInterface
         $receivedMessagesCount = 0;
         $interruptExecution = false;
 
-        $callback = function (InteropMessage $message, Consumer $consumer) use (&$receivedMessagesCount, &$interruptExecution) {
+        $callback = function (InteropMessage $message, Consumer $consumer) use (&$receivedMessagesCount, &$interruptExecution, $extension) {
             ++$receivedMessagesCount;
 
             $receivedAt = (int) (microtime(true) * 1000);
@@ -188,19 +189,19 @@ final class QueueConsumer implements QueueConsumerInterface
             $processor = $this->boundProcessors[$queue->getQueueName()]->getProcessor();
 
             $messageReceived = new MessageReceived($this->interopContext, $consumer, $message, $processor, $receivedAt, $this->logger);
-            $this->extension->onMessageReceived($messageReceived);
+            $extension->onMessageReceived($messageReceived);
             $result = $messageReceived->getResult();
             $processor = $messageReceived->getProcessor();
             if (null === $result) {
                 try {
                     $result = $processor->process($message, $this->interopContext);
                 } catch (\Exception $e) {
-                    $result = $this->onProcessorException($message, $e, $receivedAt);
+                    $result = $this->onProcessorException($extension, $message, $e, $receivedAt);
                 }
             }
 
             $messageResult = new MessageResult($this->interopContext, $message, $result, $receivedAt, $this->logger);
-            $this->extension->onResult($messageResult);
+            $extension->onResult($messageResult);
             $result = $messageResult->getResult();
 
             switch ($result) {
@@ -219,8 +220,8 @@ final class QueueConsumer implements QueueConsumerInterface
                     throw new \LogicException(sprintf('Status is not supported: %s', $result));
             }
 
-            $postMessageReceived = new PostMessageReceived($this->interopContext, $message, $result, $receivedAt, $this->logger);
-            $this->extension->onPostMessageReceived($postMessageReceived);
+            $postMessageReceived = new PostMessageReceived($this->interopContext, $consumer, $message, $result, $receivedAt, $this->logger);
+            $extension->onPostMessageReceived($postMessageReceived);
 
             if ($postMessageReceived->isExecutionInterrupted()) {
                 $interruptExecution = true;
@@ -241,7 +242,7 @@ final class QueueConsumer implements QueueConsumerInterface
                 $this->logger
             );
 
-            $this->extension->onPreSubscribe($preSubscribe);
+            $extension->onPreSubscribe($preSubscribe);
 
             $subscriptionConsumer->subscribe($consumer, $callback);
         }
@@ -252,10 +253,10 @@ final class QueueConsumer implements QueueConsumerInterface
             $interruptExecution = false;
 
             $preConsume = new PreConsume($this->interopContext, $subscriptionConsumer, $this->logger, $cycle, $this->receiveTimeout, $startTime);
-            $this->extension->onPreConsume($preConsume);
+            $extension->onPreConsume($preConsume);
 
             if ($preConsume->isExecutionInterrupted()) {
-                $this->onEnd($startTime, $subscriptionConsumer);
+                $this->onEnd($extension, $startTime, $subscriptionConsumer);
 
                 return;
             }
@@ -263,10 +264,10 @@ final class QueueConsumer implements QueueConsumerInterface
             $subscriptionConsumer->consume($this->receiveTimeout);
 
             $postConsume = new PostConsume($this->interopContext, $subscriptionConsumer, $receivedMessagesCount, $cycle, $startTime, $this->logger);
-            $this->extension->onPostConsume($postConsume);
+            $extension->onPostConsume($postConsume);
 
             if ($interruptExecution || $postConsume->isExecutionInterrupted()) {
-                $this->onEnd($startTime, $subscriptionConsumer);
+                $this->onEnd($extension, $startTime, $subscriptionConsumer);
 
                 return;
             }
@@ -285,11 +286,11 @@ final class QueueConsumer implements QueueConsumerInterface
         $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
 
-    private function onEnd(int $startTime, SubscriptionConsumer $subscriptionConsumer = null): void
+    private function onEnd(ExtensionInterface $extension, int $startTime, SubscriptionConsumer $subscriptionConsumer = null): void
     {
         $endTime = (int) (microtime(true) * 1000);
 
-        $this->extension->onEnd(new End($this->interopContext, $startTime, $endTime, $this->logger));
+        $extension->onEnd(new End($this->interopContext, $startTime, $endTime, $this->logger));
 
         if ($subscriptionConsumer) {
             $subscriptionConsumer->unsubscribeAll();
@@ -301,12 +302,12 @@ final class QueueConsumer implements QueueConsumerInterface
      *
      * https://github.com/symfony/symfony/blob/cbe289517470eeea27162fd2d523eb29c95f775f/src/Symfony/Component/HttpKernel/EventListener/ExceptionListener.php#L77
      */
-    private function onProcessorException(Message $message, \Exception $exception, int $receivedAt)
+    private function onProcessorException(ExtensionInterface $extension, Message $message, \Exception $exception, int $receivedAt)
     {
         $processorException = new ProcessorException($this->interopContext, $message, $exception, $receivedAt, $this->logger);
 
         try {
-            $this->extension->onProcessorException($processorException);
+            $extension->onProcessorException($processorException);
 
             $result = $processorException->getResult();
             if (null === $result) {
