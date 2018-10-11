@@ -13,7 +13,7 @@ Here's the list of transports supported by Enqueue Client:
 | Redis               | [enqueue/gps](../transport/redis.md)                       | redis:                          |
 | Amazon SQS          | [enqueue/sqs](../transport/sqs.md)                         | sqs:                            |
 | STOMP, RabbitMQ     | [enqueue/stomp](../transport/stomp.md)                     | stomp:                          |
-| Kafka               | [enqueue/stomp](../transport/kafka.md)                     | kafka:                          |
+| Kafka               | [enqueue/rdkafka](../transport/kafka.md)                   | kafka:                          |
 | Null                | [enqueue/null](../transport/null.md)                       | null:                           |
 
 Here's the list of protocols and Client features supported by them 
