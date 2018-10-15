@@ -2,25 +2,40 @@
 
 namespace Enqueue\Redis;
 
+use Enqueue\RedisTools\DelayStrategyAware;
+use Enqueue\RedisTools\DelayStrategyAwareTrait;
+use Interop\Queue\DeliveryDelayNotSupportedException;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProducer;
 
-class RedisProducer implements PsrProducer
+class RedisProducer implements PsrProducer, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
     /**
      * @var Redis
      */
     private $redis;
 
     /**
-     * @param Redis $redis
+     * @var RedisContext
      */
-    public function __construct(Redis $redis)
+    private $context;
+
+    /**
+     * @var int
+     */
+    private $deliveryDelay;
+
+    /**
+     * @param RedisContext $redisContext
+     */
+    public function __construct(RedisContext $redisContext)
     {
-        $this->redis = $redis;
+        $this->redis = $redisContext->getRedis();
+        $this->context = $redisContext;
     }
 
     /**
@@ -34,7 +49,11 @@ class RedisProducer implements PsrProducer
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        $this->redis->lpush($destination->getName(), json_encode($message));
+        if ($this->deliveryDelay) {
+            $this->delayStrategy->delayMessage($this->context, $destination, $message, $this->deliveryDelay);
+        } else {
+            $this->redis->lpush($destination->getName(), json_encode($message));
+        }
     }
 
     /**
@@ -46,7 +65,13 @@ class RedisProducer implements PsrProducer
             return;
         }
 
-        throw new \LogicException('Not implemented');
+        if (null === $this->delayStrategy) {
+            throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
+        }
+
+        $this->deliveryDelay = $deliveryDelay;
+
+        return $this;
     }
 
     /**
@@ -54,7 +79,7 @@ class RedisProducer implements PsrProducer
      */
     public function getDeliveryDelay()
     {
-        return null;
+        return $this->deliveryDelay;
     }
 
     /**
