@@ -2,14 +2,19 @@
 
 namespace Enqueue\Redis;
 
+use Enqueue\RedisTools\DelayStrategy;
+use Enqueue\RedisTools\DelayStrategyAware;
+use Enqueue\RedisTools\DelayStrategyAwareTrait;
 use Interop\Queue\InvalidDestinationException;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrDestination;
 use Interop\Queue\PsrQueue;
 use Interop\Queue\PsrTopic;
 
-class RedisContext implements PsrContext
+class RedisContext implements PsrContext, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
+
     /**
      * @var Redis
      */
@@ -21,6 +26,11 @@ class RedisContext implements PsrContext
     private $redisFactory;
 
     /**
+     * @var DelayStrategy[]
+     */
+    private $delayStrategies = [];
+
+    /**
      * Callable must return instance of Redis once called.
      *
      * @param Redis|callable $redis
@@ -29,7 +39,7 @@ class RedisContext implements PsrContext
     {
         if ($redis instanceof Redis) {
             $this->redis = $redis;
-        } elseif (is_callable($redis)) {
+        } elseif (\is_callable($redis)) {
             $this->redisFactory = $redis;
         } else {
             throw new \InvalidArgumentException(sprintf(
@@ -105,7 +115,10 @@ class RedisContext implements PsrContext
      */
     public function createProducer()
     {
-        return new RedisProducer($this->getRedis());
+        $producer = new RedisProducer($this);
+        $producer->setDelayStrategy($this->delayStrategy);
+
+        return $producer;
     }
 
     /**
@@ -119,7 +132,10 @@ class RedisContext implements PsrContext
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
 
-        return new RedisConsumer($this, $destination);
+        $consumer = new RedisConsumer($this, $destination);
+        $consumer->setDelayStrategy($this->delayStrategy);
+
+        return $consumer;
     }
 
     public function close()
@@ -133,12 +149,12 @@ class RedisContext implements PsrContext
     public function getRedis()
     {
         if (false == $this->redis) {
-            $redis = call_user_func($this->redisFactory);
+            $redis = \call_user_func($this->redisFactory);
             if (false == $redis instanceof Redis) {
                 throw new \LogicException(sprintf(
                     'The factory must return instance of %s. It returned %s',
                     Redis::class,
-                    is_object($redis) ? get_class($redis) : gettype($redis)
+                    \is_object($redis) ? \get_class($redis) : \gettype($redis)
                 ));
             }
 
