@@ -2,12 +2,15 @@
 
 namespace Enqueue\Redis;
 
+use Enqueue\RedisTools\DelayStrategyAware;
+use Enqueue\RedisTools\DelayStrategyAwareTrait;
 use Interop\Queue\InvalidMessageException;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrMessage;
 
-class RedisConsumer implements PsrConsumer
+class RedisConsumer implements PsrConsumer, DelayStrategyAware
 {
+    use DelayStrategyAwareTrait;
     /**
      * @var RedisDestination
      */
@@ -45,6 +48,10 @@ class RedisConsumer implements PsrConsumer
      */
     public function receive($timeout = 0)
     {
+        if (null != $this->delayStrategy) {
+            $this->delayStrategy->processDelayedMessage($this->context, $this->queue);
+        }
+
         $timeout = (int) ($timeout / 1000);
         if (empty($timeout)) {
             //            Caused by
@@ -66,6 +73,10 @@ class RedisConsumer implements PsrConsumer
      */
     public function receiveNoWait()
     {
+        if (null != $this->delayStrategy) {
+            $this->delayStrategy->processDelayedMessage($this->context, $this->queue);
+        }
+
         if ($message = $this->getRedis()->rpop($this->queue->getName())) {
             return RedisMessage::jsonUnserialize($message);
         }
