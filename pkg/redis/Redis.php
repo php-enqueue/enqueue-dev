@@ -35,4 +35,16 @@ interface Redis
      * @param string $key
      */
     public function del($key);
+
+    public function zrangebyscore($key, $min, $max, $offset, $limit, $options = []);
+
+    public function zadd($key, $score, $member);
+
+    public function rpush($key, $value);
+
+    public function lpop($key);
+
+    public function llen($key);
+
+    public function zrem($key, $member);
 }
