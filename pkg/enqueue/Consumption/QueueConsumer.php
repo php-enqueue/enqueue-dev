@@ -274,6 +274,8 @@ final class QueueConsumer implements QueueConsumerInterface
 
             ++$cycle;
         }
+
+        $this->enableSubscriptionConsumer = $enableSubscriptionConsumer;
     }
 
     /**
