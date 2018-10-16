@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.8.38](https://github.com/php-enqueue/enqueue-dev/tree/0.8.38) (2018-10-16)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.37...0.8.38)
+
+- Support rabbitmq-cli-consumer [\#546](https://github.com/php-enqueue/enqueue-dev/issues/546)
+- Add ability to choose transport\context to be used in consume command  [\#312](https://github.com/php-enqueue/enqueue-dev/issues/312)
+
+- \[Symfony\] sendCommand / sendEvent for delayed message have different behaviour [\#523](https://github.com/php-enqueue/enqueue-dev/issues/523)
+- \[bundle\] The bundle  does not work correctly with env parameters set as tag attr. [\#28](https://github.com/php-enqueue/enqueue-dev/issues/28)
+
+- Stomp heartbeat [\#549](https://github.com/php-enqueue/enqueue-dev/issues/549)
+- \[Elastica\]Slow processing [\#537](https://github.com/php-enqueue/enqueue-dev/issues/537)
+- \[consumption\] Some improvements [\#323](https://github.com/php-enqueue/enqueue-dev/issues/323)
+
+- Fixing kafka default configuration [\#562](https://github.com/php-enqueue/enqueue-dev/pull/562) ([adumas37](https://github.com/adumas37))
+- enableSubscriptionConsumer setter [\#541](https://github.com/php-enqueue/enqueue-dev/pull/541) ([ArnaudTarroux](https://github.com/ArnaudTarroux))
+
 ## [0.8.37](https://github.com/php-enqueue/enqueue-dev/tree/0.8.37) (2018-09-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.36...0.8.37)
 
