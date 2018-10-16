@@ -47,7 +47,7 @@ class RdKafkaConnectionFactory implements ConnectionFactory
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
 
-        $this->config = array_replace($this->defaultConfig(), $config);
+        $this->config = array_replace_recursive($this->defaultConfig(), $config);
     }
 
     /**
