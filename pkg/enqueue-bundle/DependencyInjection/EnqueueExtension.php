@@ -28,12 +28,34 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
      */
     private $factories;
 
+    /**
+     * @var array
+     */
+    private $processedConfig;
+
     public function __construct()
     {
         $this->factories = [];
+        $this->processedConfig = [];
 
         $this->addTransportFactory(new DefaultTransportFactory());
         $this->addTransportFactory(new NullTransportFactory());
+    }
+
+    /**
+     * @return array
+     */
+    public function getProcessedConfig()
+    {
+        return $this->processedConfig;
+    }
+
+    /**
+     * @return TransportFactoryInterface[]
+     */
+    public function getTransportFactories()
+    {
+        return $this->factories;
     }
 
     /**
@@ -70,27 +92,17 @@ class EnqueueExtension extends Extension implements PrependExtensionInterface
     public function load(array $configs, ContainerBuilder $container)
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        $this->processedConfig = $config;
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
         $this->setupAutowiringForProcessors($container);
 
-        foreach ($config['transport'] as $name => $transportConfig) {
-            $this->factories[$name]->createConnectionFactory($container, $transportConfig);
-            $this->factories[$name]->createContext($container, $transportConfig);
-        }
-
         if (isset($config['client'])) {
             $loader->load('client.yml');
             $loader->load('extensions/flush_spool_producer_extension.yml');
             $loader->load('extensions/exclusive_command_extension.yml');
-
-            foreach ($config['transport'] as $name => $transportConfig) {
-                if ($this->factories[$name] instanceof DriverFactoryInterface) {
-                    $this->factories[$name]->createDriver($container, $transportConfig);
-                }
-            }
 
             if (isset($config['transport']['default']['alias']) && !isset($config['transport'][$config['transport']['default']['alias']])) {
                 throw new \LogicException(sprintf('Transport is not enabled: %s', $config['transport']['default']['alias']));

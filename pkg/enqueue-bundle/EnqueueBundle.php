@@ -9,6 +9,7 @@ use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventsPass;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncTransformersPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildClientRoutingPass;
+use Enqueue\Bundle\DependencyInjection\Compiler\BuildTransportFactoriesPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildConsumptionExtensionsPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildExclusiveCommandsExtensionPass;
 use Enqueue\Bundle\DependencyInjection\Compiler\BuildProcessorRegistryPass;
@@ -45,6 +46,7 @@ class EnqueueBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new BuildTransportFactoriesPass());
         $container->addCompilerPass(new BuildConsumptionExtensionsPass());
         $container->addCompilerPass(new BuildClientRoutingPass());
         $container->addCompilerPass(new BuildProcessorRegistryPass());

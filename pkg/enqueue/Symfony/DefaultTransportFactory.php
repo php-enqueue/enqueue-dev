@@ -81,9 +81,7 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
         if (isset($config['alias'])) {
             $aliasId = sprintf('enqueue.transport.%s.connection_factory', $config['alias']);
         } else {
-            $dsn = $this->resolveDSN($container, $config['dsn']);
-
-            $aliasId = $this->findFactory($dsn)->createConnectionFactory($container, $config);
+            $aliasId = $this->findFactory($config['dsn'])->createConnectionFactory($container, $config);
         }
 
         $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
@@ -102,13 +100,11 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
         if (isset($config['alias'])) {
             $aliasId = sprintf('enqueue.transport.%s.context', $config['alias']);
         } else {
-            $dsn = $this->resolveDSN($container, $config['dsn']);
-
-            $aliasId = $this->findFactory($dsn)->createContext($container, $config);
+            $aliasId = $this->findFactory($config['dsn'])->createContext($container, $config);
         }
-
+        
         $contextId = sprintf('enqueue.transport.%s.context', $this->getName());
-
+                
         $container->setAlias($contextId, new Alias($aliasId, true));
         $container->setAlias('enqueue.transport.context', new Alias($contextId, true));
 
@@ -123,9 +119,7 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
         if (isset($config['alias'])) {
             $aliasId = sprintf('enqueue.client.%s.driver', $config['alias']);
         } else {
-            $dsn = $this->resolveDSN($container, $config['dsn']);
-
-            $aliasId = $this->findFactory($dsn)->createDriver($container, $config);
+            $aliasId = $this->findFactory($config['dsn'])->createDriver($container, $config);
         }
 
         $driverId = sprintf('enqueue.client.%s.driver', $this->getName());
@@ -142,33 +136,6 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * This is a quick fix to the exception "Incompatible use of dynamic environment variables "ENQUEUE_DSN" found in parameters."
-     * TODO: We'll have to come up with a better solution.
-     *
-     * @param ContainerBuilder $container
-     * @param $dsn
-     *
-     * @return array|false|string
-     */
-    private function resolveDSN(ContainerBuilder $container, $dsn)
-    {
-        if (method_exists($container, 'resolveEnvPlaceholders')) {
-            $dsn = $container->resolveEnvPlaceholders($dsn);
-
-            $matches = [];
-            if (preg_match('/%env\((.*?)\)/', $dsn, $matches)) {
-                if (false === $realDsn = getenv($matches[1])) {
-                    throw new \LogicException(sprintf('The env "%s" var is not defined', $matches[1]));
-                }
-
-                return $realDsn;
-            }
-        }
-
-        return $dsn;
     }
 
     /**
