@@ -9,11 +9,12 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Producer;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbProducerTest extends \PHPUnit_Framework_TestCase
+class MongodbProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 

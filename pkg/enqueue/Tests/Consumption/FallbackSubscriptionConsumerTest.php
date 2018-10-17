@@ -7,8 +7,9 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\TestCase;
 
-class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
+class FallbackSubscriptionConsumerTest extends TestCase
 {
     public function testShouldImplementSubscriptionConsumerInterface()
     {

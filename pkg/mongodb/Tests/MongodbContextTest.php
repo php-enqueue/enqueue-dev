@@ -13,11 +13,12 @@ use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use MongoDB\Client;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbContextTest extends \PHPUnit_Framework_TestCase
+class MongodbContextTest extends TestCase
 {
     use ClassExtensionTrait;
 

@@ -8,8 +8,9 @@ use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\ConnectionFactory;
+use PHPUnit\Framework\TestCase;
 
-class ManagerRegistryConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class ManagerRegistryConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 
