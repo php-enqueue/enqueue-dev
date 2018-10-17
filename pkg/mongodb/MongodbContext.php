@@ -8,7 +8,6 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
-use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
@@ -107,7 +106,7 @@ class MongodbContext implements Context
 
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+        return new MongodbSubscriptionConsumer($this);
     }
 
     /**

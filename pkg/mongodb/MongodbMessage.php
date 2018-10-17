@@ -65,6 +65,22 @@ class MongodbMessage implements Message
         $this->redelivered = false;
     }
 
+    public static function fromArrayDbResult(array $arrayResult): self
+    {
+        $message = new self(
+            $arrayResult['body'],
+            JSON::decode($arrayResult['properties']),
+            JSON::decode($arrayResult['headers'])
+        );
+
+        $message->setId((string) $arrayResult['_id']);
+        $message->setPriority((int) $arrayResult['priority']);
+        $message->setRedelivered((bool) $arrayResult['redelivered']);
+        $message->setPublishedAt((int) $arrayResult['published_at']);
+
+        return $message;
+    }
+
     public function setId(string $id = null): void
     {
         $this->id = $id;

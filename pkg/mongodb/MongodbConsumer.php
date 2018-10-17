@@ -115,7 +115,7 @@ class MongodbConsumer implements Consumer
         }
     }
 
-    protected function receiveMessage(): ?MongodbMessage
+    private function receiveMessage(): ?MongodbMessage
     {
         $now = time();
         $collection = $this->context->getCollection();
@@ -137,23 +137,9 @@ class MongodbConsumer implements Consumer
             return null;
         }
         if (empty($message['time_to_live']) || $message['time_to_live'] > time()) {
-            return $this->convertMessage($message);
+            return MongodbMessage::fromArrayDbResult($message);
         }
 
         return null;
-    }
-
-    protected function convertMessage(array $mongodbMessage): MongodbMessage
-    {
-        $properties = JSON::decode($mongodbMessage['properties']);
-        $headers = JSON::decode($mongodbMessage['headers']);
-
-        $message = $this->context->createMessage($mongodbMessage['body'], $properties, $headers);
-        $message->setId((string) $mongodbMessage['_id']);
-        $message->setPriority((int) $mongodbMessage['priority']);
-        $message->setRedelivered((bool) $mongodbMessage['redelivered']);
-        $message->setPublishedAt((int) $mongodbMessage['published_at']);
-
-        return $message;
     }
 }

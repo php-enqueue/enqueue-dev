@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Test;
 
 use Enqueue\Mongodb\MongodbConnectionFactory;

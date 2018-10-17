@@ -22,7 +22,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
         new RedisConnectionFactory(new \stdClass());
     }
 
-    public function testThrowIfSchemeIsNotAmqp()
+    public function testThrowIfSchemeIsNotRedis()
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The given scheme protocol "http" is not supported. It must be one of "redis", "rediss", "tcp", "tls", "unix"');
