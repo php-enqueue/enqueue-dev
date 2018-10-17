@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalMessage;
@@ -21,6 +23,20 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
     public function testCouldBeConstructedWithOptionalArguments()
     {
         $message = new DbalMessage('theBody', ['barProp' => 'barPropVal'], ['fooHeader' => 'fooHeaderVal']);
+
+        $this->assertSame('theBody', $message->getBody());
+        $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());
+        $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
+    }
+
+    public function testCouldBeCreatedFromArray()
+    {
+        $arrayData = [
+            'body' => 'theBody',
+            'properties' => json_encode(['barProp' => 'barPropVal']),
+            'headers' => json_encode(['fooHeader' => 'fooHeaderVal']),
+        ];
+        $message = DbalMessage::fromArray($arrayData);
 
         $this->assertSame('theBody', $message->getBody());
         $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());

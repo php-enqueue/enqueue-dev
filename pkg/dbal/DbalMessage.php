@@ -67,6 +67,27 @@ class DbalMessage implements Message
         $this->deliveryDelay = null;
     }
 
+    public static function fromArray(array $dbalMessage): self
+    {
+        $dbalMessageObj = new self(
+            $dbalMessage['body'],
+            $dbalMessage['properties'] ? JSON::decode($dbalMessage['properties']) : [],
+            $dbalMessage['headers'] ? JSON::decode($dbalMessage['headers']) : []
+        );
+
+        if (isset($dbalMessage['redelivered'])) {
+            $dbalMessageObj->setRedelivered((bool) $dbalMessage['redelivered']);
+        }
+        if (isset($dbalMessage['priority'])) {
+            $dbalMessageObj->setPriority((int) $dbalMessage['priority']);
+        }
+        if (isset($dbalMessage['published_at'])) {
+            $dbalMessageObj->setPublishedAt((int) $dbalMessage['published_at']);
+        }
+
+        return $dbalMessageObj;
+    }
+
     public function setBody(string $body): void
     {
         $this->body = $body;
