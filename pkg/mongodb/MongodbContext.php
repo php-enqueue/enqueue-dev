@@ -114,7 +114,7 @@ class MongodbContext implements Context
      */
     public function convertMessage(array $mongodbMessage): MongodbMessage
     {
-        $mongodbMessageObj = new MongodbMessage(
+        $mongodbMessageObj = $this->createMessage(
             $mongodbMessage['body'],
             JSON::decode($mongodbMessage['properties']),
             JSON::decode($mongodbMessage['headers'])
