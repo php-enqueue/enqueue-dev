@@ -77,6 +77,8 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 unset($currentQueueNames[$message['queue']]);
             } else {
                 $currentQueueNames = [];
+
+                usleep(200000); // 200ms
             }
 
             if ($timeout && microtime(true) >= $endAt) {
