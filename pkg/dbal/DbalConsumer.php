@@ -142,7 +142,7 @@ class DbalConsumer implements Consumer
             $this->dbal->commit();
 
             if (empty($dbalMessage['time_to_live']) || ($dbalMessage['time_to_live'] / 1000) > microtime(true)) {
-                return $this->convertMessage($dbalMessage);
+                return $this->context->convertMessage($dbalMessage);
             }
 
             return null;
@@ -151,27 +151,6 @@ class DbalConsumer implements Consumer
 
             throw $e;
         }
-    }
-
-    protected function convertMessage(array $dbalMessage): DbalMessage
-    {
-        /** @var DbalMessage $message */
-        $message = $this->context->createMessage();
-
-        $message->setBody($dbalMessage['body']);
-        $message->setPriority((int) $dbalMessage['priority']);
-        $message->setRedelivered((bool) $dbalMessage['redelivered']);
-        $message->setPublishedAt((int) $dbalMessage['published_at']);
-
-        if ($dbalMessage['headers']) {
-            $message->setHeaders(JSON::decode($dbalMessage['headers']));
-        }
-
-        if ($dbalMessage['properties']) {
-            $message->setProperties(JSON::decode($dbalMessage['properties']));
-        }
-
-        return $message;
     }
 
     private function fetchPrioritizedMessage(int $now): ?array

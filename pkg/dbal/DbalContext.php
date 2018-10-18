@@ -11,7 +11,6 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
-use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
@@ -126,7 +125,31 @@ class DbalContext implements Context
 
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+        return new DbalSubscriptionConsumer($this);
+    }
+
+    /**
+     * @internal It must be used here and in the consumer only
+     */
+    public function convertMessage(array $dbalMessage): DbalMessage
+    {
+        $dbalMessageObj = $this->createMessage(
+            $dbalMessage['body'],
+            $dbalMessage['properties'] ? JSON::decode($dbalMessage['properties']) : [],
+            $dbalMessage['headers'] ? JSON::decode($dbalMessage['headers']) : []
+        );
+
+        if (isset($dbalMessage['redelivered'])) {
+            $dbalMessageObj->setRedelivered((bool) $dbalMessage['redelivered']);
+        }
+        if (isset($dbalMessage['priority'])) {
+            $dbalMessageObj->setPriority((int) $dbalMessage['priority']);
+        }
+        if (isset($dbalMessage['published_at'])) {
+            $dbalMessageObj->setPublishedAt((int) $dbalMessage['published_at']);
+        }
+
+        return $dbalMessageObj;
     }
 
     /**

@@ -65,6 +65,21 @@ class DbalContextTest extends TestCase
         $this->assertFalse($message->isRedelivered());
     }
 
+    public function testShouldConvertArrayToDbalMessage()
+    {
+        $arrayData = [
+            'body' => 'theBody',
+            'properties' => json_encode(['barProp' => 'barPropVal']),
+            'headers' => json_encode(['fooHeader' => 'fooHeaderVal']),
+        ];
+        $context = new DbalContext($this->createConnectionMock());
+        $message = $context->convertMessage($arrayData);
+
+        $this->assertSame('theBody', $message->getBody());
+        $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());
+        $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
+    }
+
     public function testShouldCreateTopic()
     {
         $context = new DbalContext($this->createConnectionMock());
