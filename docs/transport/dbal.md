@@ -11,6 +11,7 @@ It creates a table there. Pushes and pops messages to\from that table.
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
 * [Consume message](#consume-message)
+* [Subscription consumer](#subscription-consumer)
 
 ## Installation
 
@@ -101,6 +102,39 @@ $consumer = $psrContext->createConsumer($fooQueue);
 $message = $consumer->receive();
 
 // process a message
+```
+
+## Subscription consumer
+
+```php
+<?php
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrConsumer;
+
+/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalDestination $fooQueue */
+/** @var \Enqueue\Dbal\DbalDestination $barQueue */
+
+$fooConsumer = $psrContext->createConsumer($fooQueue);
+$barConsumer = $psrContext->createConsumer($barQueue);
+
+$subscriptionConsumer = $psrContext->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+$subscriptionConsumer->subscribe($barConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+
+$subscriptionConsumer->consume(2000); // 2 sec
 ```
 
 [back to index](../index.md)

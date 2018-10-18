@@ -227,7 +227,7 @@ use Interop\Queue\PsrConsumer;
 $fooConsumer = $psrContext->createConsumer($fooQueue);
 $barConsumer = $psrContext->createConsumer($barQueue);
 
-$subscriptionConsumer =$psrContext->createSubscriptionConsumer();
+$subscriptionConsumer = $psrContext->createSubscriptionConsumer();
 $subscriptionConsumer->subscribe($fooConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
     // process message
     
