@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Enqueue\Redis;
+namespace Enqueue\Mongodb;
 
 use Interop\Queue\Consumer;
 use Interop\Queue\SubscriptionConsumer;
 
-class RedisSubscriptionConsumer implements SubscriptionConsumer
+class MongodbSubscriptionConsumer implements SubscriptionConsumer
 {
     /**
-     * @var RedisContext
+     * @var MongodbContext
      */
     private $context;
 
     /**
-     * an item contains an array: [RedisConsumer $consumer, callable $callback];.
+     * an item contains an array: [MongodbConsumer $consumer, callable $callback];.
      *
      * @var array
      */
     private $subscribers;
 
     /**
-     * @param RedisContext $context
+     * @param MongodbContext $context
      */
-    public function __construct(RedisContext $context)
+    public function __construct(MongodbContext $context)
     {
         $this->context = $context;
         $this->subscribers = [];
@@ -50,21 +50,34 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
                 $currentQueueNames = $queueNames;
             }
 
-            $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout ?: 5);
+            $result = $this->context->getCollection()->findOneAndDelete(
+                [
+                    'queue' => ['$in' => array_keys($currentQueueNames)],
+                    '$or' => [
+                        ['delayed_until' => ['$exists' => false]],
+                        ['delayed_until' => ['$lte' => time()]],
+                    ],
+                ],
+                [
+                    'sort' => ['priority' => -1, 'published_at' => 1],
+                    'typeMap' => ['root' => 'array', 'document' => 'array'],
+                ]
+            );
+
             if ($result) {
-                $message = RedisMessage::jsonUnserialize($result->getMessage());
-                list($consumer, $callback) = $this->subscribers[$result->getKey()];
+                list($consumer, $callback) = $this->subscribers[$result['queue']];
+
+                $message = $this->context->convertMessage($result);
+
                 if (false === call_user_func($callback, $message, $consumer)) {
                     return;
                 }
 
-                unset($currentQueueNames[$result->getKey()]);
+                unset($currentQueueNames[$result['queue']]);
             } else {
                 $currentQueueNames = [];
 
-                if ($timeout && microtime(true) >= $endAt) {
-                    return;
-                }
+                usleep(200000); // 200ms
             }
 
             if ($timeout && microtime(true) >= $endAt) {
@@ -74,12 +87,12 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     }
 
     /**
-     * @param RedisConsumer $consumer
+     * @param MongodbConsumer $consumer
      */
     public function subscribe(Consumer $consumer, callable $callback): void
     {
-        if (false == $consumer instanceof RedisConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));
+        if (false == $consumer instanceof MongodbConsumer) {
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', MongodbConsumer::class, get_class($consumer)));
         }
 
         $queueName = $consumer->getQueue()->getQueueName();
@@ -95,12 +108,12 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     }
 
     /**
-     * @param RedisConsumer $consumer
+     * @param MongodbConsumer $consumer
      */
     public function unsubscribe(Consumer $consumer): void
     {
-        if (false == $consumer instanceof RedisConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));
+        if (false == $consumer instanceof MongodbConsumer) {
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', MongodbConsumer::class, get_class($consumer)));
         }
 
         $queueName = $consumer->getQueue()->getQueueName();

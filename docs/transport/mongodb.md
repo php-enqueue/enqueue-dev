@@ -10,6 +10,7 @@ Allows to use [MongoDB](https://www.mongodb.com/) as a message queue broker.
 * [Send expiration message](#send-expiration-message)
 * [Send delayed message](#send-delayed-message)
 * [Consume message](#consume-message)
+* [Subscription consumer](#subscription-consumer)
 
 ## Installation
 
@@ -137,6 +138,39 @@ $message = $consumer->receive();
 
 $consumer->acknowledge($message);
 // $consumer->reject($message);
+```
+
+## Subscription consumer
+
+```php
+<?php
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrConsumer;
+
+/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
+/** @var \Enqueue\Mongodb\MongodbDestination $barQueue */
+
+$fooConsumer = $psrContext->createConsumer($fooQueue);
+$barConsumer = $psrContext->createConsumer($barQueue);
+
+$subscriptionConsumer = $psrContext->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+$subscriptionConsumer->subscribe($barConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+
+$subscriptionConsumer->consume(2000); // 2 sec
 ```
 
 [back to index](../index.md)

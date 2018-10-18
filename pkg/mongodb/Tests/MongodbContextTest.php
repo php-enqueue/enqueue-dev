@@ -71,6 +71,32 @@ class MongodbContextTest extends TestCase
         $this->assertFalse($message->isRedelivered());
     }
 
+    public function testShouldConvertFromArrayToMongodbMessage()
+    {
+        $arrayData = [
+            '_id' => 'stringId',
+            'body' => 'theBody',
+            'properties' => json_encode(['barProp' => 'barPropVal']),
+            'headers' => json_encode(['fooHeader' => 'fooHeaderVal']),
+            'priority' => '12',
+            'published_at' => 1525935820,
+            'redelivered' => false,
+        ];
+
+        $context = new MongodbContext($this->createClientMock());
+        $message = $context->convertMessage($arrayData);
+
+        $this->assertInstanceOf(MongodbMessage::class, $message);
+
+        $this->assertEquals('stringId', $message->getId());
+        $this->assertEquals('theBody', $message->getBody());
+        $this->assertEquals(['barProp' => 'barPropVal'], $message->getProperties());
+        $this->assertEquals(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
+        $this->assertEquals(12, $message->getPriority());
+        $this->assertEquals(1525935820, $message->getPublishedAt());
+        $this->assertFalse($message->isRedelivered());
+    }
+
     public function testShouldCreateTopic()
     {
         $context = new MongodbContext($this->createClientMock());
