@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Client\Driver;
 
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\RdKafkaTopic;
-use Interop\Queue\Destination;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -43,15 +44,5 @@ class RdKafkaDriver extends GenericDriver
             $log('Create processor queue: %s', $queue->getQueueName());
             $this->getContext()->createConsumer($queue);
         }
-    }
-
-    /**
-     * @return RdKafkaTopic
-     */
-    protected function createRouterTopic(): Destination
-    {
-        return $this->doCreateTopic(
-            $this->createTransportRouterTopicName($this->getConfig()->getRouterTopic(), true)
-        );
     }
 }
