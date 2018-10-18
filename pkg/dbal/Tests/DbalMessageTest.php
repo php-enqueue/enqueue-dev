@@ -29,20 +29,6 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
     }
 
-    public function testCouldBeCreatedFromArray()
-    {
-        $arrayData = [
-            'body' => 'theBody',
-            'properties' => json_encode(['barProp' => 'barPropVal']),
-            'headers' => json_encode(['fooHeader' => 'fooHeaderVal']),
-        ];
-        $message = DbalMessage::fromArrayDbResult($arrayData);
-
-        $this->assertSame('theBody', $message->getBody());
-        $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());
-        $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
-    }
-
     public function testShouldSetPriorityToNullInConstructor()
     {
         $message = new DbalMessage();

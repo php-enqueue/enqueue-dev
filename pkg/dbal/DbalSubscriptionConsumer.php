@@ -62,7 +62,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             if ($message) {
                 $this->dbal->delete($this->context->getTableName(), ['id' => $message['id']], ['id' => Type::GUID]);
 
-                $dbalMessage = DbalMessage::fromArrayDbResult($message);
+                $dbalMessage = $this->context->convertMessage($message);
 
                 /**
                  * @var DbalConsumer

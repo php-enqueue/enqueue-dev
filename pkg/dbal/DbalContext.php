@@ -129,6 +129,30 @@ class DbalContext implements Context
     }
 
     /**
+     * @internal It must be used here and in the consumer only
+     */
+    public function convertMessage(array $dbalMessage): DbalMessage
+    {
+        $dbalMessageObj = new DbalMessage(
+            $dbalMessage['body'],
+            $dbalMessage['properties'] ? JSON::decode($dbalMessage['properties']) : [],
+            $dbalMessage['headers'] ? JSON::decode($dbalMessage['headers']) : []
+        );
+
+        if (isset($dbalMessage['redelivered'])) {
+            $dbalMessageObj->setRedelivered((bool) $dbalMessage['redelivered']);
+        }
+        if (isset($dbalMessage['priority'])) {
+            $dbalMessageObj->setPriority((int) $dbalMessage['priority']);
+        }
+        if (isset($dbalMessage['published_at'])) {
+            $dbalMessageObj->setPublishedAt((int) $dbalMessage['published_at']);
+        }
+
+        return $dbalMessageObj;
+    }
+
+    /**
      * @param DbalDestination $queue
      */
     public function purgeQueue(Queue $queue): void

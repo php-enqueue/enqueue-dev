@@ -142,7 +142,7 @@ class DbalConsumer implements Consumer
             $this->dbal->commit();
 
             if (empty($dbalMessage['time_to_live']) || ($dbalMessage['time_to_live'] / 1000) > microtime(true)) {
-                return DbalMessage::fromArrayDbResult($dbalMessage);
+                return $this->context->convertMessage($dbalMessage);
             }
 
             return null;
