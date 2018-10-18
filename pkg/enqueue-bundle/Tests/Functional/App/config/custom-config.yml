@@ -19,6 +19,10 @@ services:
         alias: 'enqueue.client.default.driver'
         public: true
 
+    test_enqueue.client.default.producer:
+        alias: 'enqueue.client.default.producer'
+        public: true
+
     test_enqueue.transport.default.context:
         alias: 'enqueue.transport.default.context'
         public: true

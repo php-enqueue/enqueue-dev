@@ -2,15 +2,16 @@
 
 namespace Enqueue\Symfony\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 trait FormatClientNameTrait
 {
     abstract protected function getName(): string;
 
-    private function reference(string $serviceName): Reference
+    private function reference(string $serviceName, $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE): Reference
     {
-        return new Reference($this->format($serviceName));
+        return new Reference($this->format($serviceName), $invalidBehavior);
     }
 
     private function parameter(string $serviceName): string

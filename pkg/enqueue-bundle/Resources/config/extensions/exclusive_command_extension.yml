@@ -1,8 +1,0 @@
-services:
-    enqueue.client.default.exclusive_command_extension:
-        class: 'Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension'
-        public: false
-        arguments:
-            - '@enqueue.client.default.driver'
-        tags:
-            - { name: 'enqueue.consumption_extension', priority: 100, client: 'default' }

@@ -4,6 +4,9 @@ namespace Enqueue\Symfony\DependencyInjection;
 
 use Enqueue\Client\ChainExtension;
 use Enqueue\Client\Config;
+use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
+use Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension;
+use Enqueue\Client\ConsumptionExtension\FlushSpoolProducerExtension;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DelegateProcessor;
 use Enqueue\Client\DriverFactory;
@@ -13,6 +16,7 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Client\SpoolProducer;
+use Enqueue\Client\TraceableProducer;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
@@ -54,7 +58,21 @@ final class ClientFactory
             ->addArgument($this->reference('route_collection'))
         ;
 
-        $container->register($this->format('config'), Config::class);
+        $container->register($this->format('config'), Config::class)
+            ->setArguments([
+                $config['prefix'],
+                $config['app_name'],
+                $config['router_topic'],
+                $config['router_queue'],
+                $config['default_processor_queue'],
+                $config['router_processor'],
+                // @todo should be driver options.
+                $config['transport'],
+            ]);
+
+        $container->setParameter($this->format('router_processor'), $config['router_processor']);
+        $container->setParameter($this->format('router_queue_name'), $config['router_queue']);
+        $container->setParameter($this->format('default_queue_name'), $config['default_processor_queue']);
 
         $container->register($this->format('route_collection'), RouteCollection::class)
             ->addArgument([])
@@ -98,30 +116,58 @@ final class ClientFactory
             ->addArgument($this->reference('context'))
             ->addArgument($this->reference('consumption_extensions'))
             ->addArgument([])
-            ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(null)
-        ;
-
-        $container->register($this->format('queue_consumer'), QueueConsumer::class)
-            ->addArgument($this->reference('context'))
-            ->addArgument($this->reference('consumption_extensions'))
-            ->addArgument([])
-            ->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
+            ->addArgument($this->reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
+            ->addArgument($config['consumption']['receive_timeout'])
         ;
 
         $container->register($this->format('consumption_extensions'), ConsumptionChainExtension::class)
             ->addArgument([])
         ;
 
-        if ('default' === $this->name) {
-            $container->setAlias(ProducerInterface::class, $this->format('producer'))
-                ->setPublic(true)
+        $container->register($this->format('flush_spool_producer_extension'), FlushSpoolProducerExtension::class)
+            ->addArgument($this->reference('spool_producer'))
+            ->addTag('enqueue.consumption.extension', ['priority' => -100, 'client' => $this->name])
+        ;
+
+        $container->register($this->format('exclusive_command_extension'), ExclusiveCommandExtension::class)
+            ->addArgument($this->reference('driver'))
+            ->addTag('enqueue.consumption.extension', ['priority' => 100, 'client' => $this->name])
+        ;
+
+        if ($config['traceable_producer']) {
+            $container->register($this->format('traceable_producer'), TraceableProducer::class)
+                ->setDecoratedService($this->format('producer'))
+                ->addArgument($this->reference('traceable_producer.inner'))
+            ;
+        }
+
+        if ($config['redelivered_delay_time']) {
+            $container->register($this->format('delay_redelivered_message_extension'), DelayRedeliveredMessageExtension::class)
+                ->addArgument($this->reference('driver'))
+                ->addArgument($config['redelivered_delay_time'])
+                ->addTag('enqueue.consumption_extension', ['priority' => 10, 'client' => $this->name])
             ;
 
-            $container->setAlias(SpoolProducer::class, $this->format('spool_producer'))
-                ->setPublic(true)
+            $container->getDefinition('enqueue.client.default.delay_redelivered_message_extension')
+                ->replaceArgument(1, $config['redelivered_delay_time'])
             ;
+        }
+
+        $locatorId = 'enqueue.locator';
+        if ($container->hasDefinition($locatorId)) {
+            $locator = $container->getDefinition($locatorId);
+            $locator->replaceArgument(0, array_replace($locator->getArgument(0), [
+                $this->format('queue_consumer') => $this->reference('queue_consumer'),
+                $this->format('driver') => $this->reference('driver'),
+                $this->format('delegate_processor') => $this->reference('delegate_processor'),
+                $this->format('producer') => $this->reference('producer'),
+            ]));
+        }
+
+        if ('default' === $this->name) {
+            $container->setAlias(ProducerInterface::class, $this->format('producer'));
+
+            $container->setAlias(SpoolProducer::class, $this->format('spool_producer'));
         }
     }
 

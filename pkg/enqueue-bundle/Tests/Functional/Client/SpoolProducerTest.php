@@ -12,7 +12,7 @@ class SpoolProducerTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $producer = static::$container->get('enqueue.client.default.spool_producer');
+        $producer = static::$container->get('test_enqueue.client.default.spool_producer');
 
         $this->assertInstanceOf(SpoolProducer::class, $producer);
     }
