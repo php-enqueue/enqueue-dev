@@ -76,6 +76,8 @@ class MongodbSubscriptionConsumer implements SubscriptionConsumer
                 unset($currentQueueNames[$result['queue']]);
             } else {
                 $currentQueueNames = [];
+
+                usleep(200000); // 200ms
             }
 
             if ($timeout && microtime(true) >= $endAt) {
