@@ -67,7 +67,7 @@ class DbalMessage implements Message
         $this->deliveryDelay = null;
     }
 
-    public static function fromArray(array $dbalMessage): self
+    public static function fromArrayDbResult(array $dbalMessage): self
     {
         $dbalMessageObj = new self(
             $dbalMessage['body'],

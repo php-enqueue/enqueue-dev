@@ -36,7 +36,7 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
             'properties' => json_encode(['barProp' => 'barPropVal']),
             'headers' => json_encode(['fooHeader' => 'fooHeaderVal']),
         ];
-        $message = DbalMessage::fromArray($arrayData);
+        $message = DbalMessage::fromArrayDbResult($arrayData);
 
         $this->assertSame('theBody', $message->getBody());
         $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());
