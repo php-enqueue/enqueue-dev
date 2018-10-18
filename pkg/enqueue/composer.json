@@ -34,7 +34,8 @@
         "enqueue/test": "0.9.x-dev",
         "enqueue/simple-client": "0.9.x-dev",
         "enqueue/mongodb": "0.9.x-dev",
-        "empi89/php-amqp-stubs": "*@dev"
+        "empi89/php-amqp-stubs": "*@dev",
+        "enqueue/dsn": "0.9.x-dev"
     },
     "suggest": {
         "symfony/console": "^2.8|^3|^4 If you want to use li commands",
