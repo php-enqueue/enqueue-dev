@@ -133,7 +133,7 @@ class DbalContext implements Context
      */
     public function convertMessage(array $dbalMessage): DbalMessage
     {
-        $dbalMessageObj = new DbalMessage(
+        $dbalMessageObj = $this->createMessage(
             $dbalMessage['body'],
             $dbalMessage['properties'] ? JSON::decode($dbalMessage['properties']) : [],
             $dbalMessage['headers'] ? JSON::decode($dbalMessage['headers']) : []
