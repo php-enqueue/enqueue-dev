@@ -7,8 +7,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
 use Interop\Queue\Queue;
 use Interop\Queue\Topic;
+use PHPUnit\Framework\TestCase;
 
-class DbalDestinationTest extends \PHPUnit_Framework_TestCase
+class DbalDestinationTest extends TestCase
 {
     use ClassExtensionTrait;
 

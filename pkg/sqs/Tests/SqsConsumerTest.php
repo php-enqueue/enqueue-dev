@@ -13,8 +13,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
+use PHPUnit\Framework\TestCase;
 
-class SqsConsumerTest extends \PHPUnit_Framework_TestCase
+class SqsConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 

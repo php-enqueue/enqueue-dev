@@ -6,11 +6,12 @@ use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\ConnectionFactory;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class MongodbConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 

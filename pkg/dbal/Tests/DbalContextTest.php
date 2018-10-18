@@ -13,8 +13,9 @@ use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use PHPUnit\Framework\TestCase;
 
-class DbalContextTest extends \PHPUnit_Framework_TestCase
+class DbalContextTest extends TestCase
 {
     use ClassExtensionTrait;
 

@@ -11,8 +11,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
+use PHPUnit\Framework\TestCase;
 
-class DbalConsumerTest extends \PHPUnit_Framework_TestCase
+class DbalConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 
