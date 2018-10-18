@@ -110,6 +110,25 @@ class MongodbContext implements Context
     }
 
     /**
+     * @internal It must be used here and in the consumer only
+     */
+    public function convertMessage(array $mongodbMessage): MongodbMessage
+    {
+        $mongodbMessageObj = new MongodbMessage(
+            $mongodbMessage['body'],
+            JSON::decode($mongodbMessage['properties']),
+            JSON::decode($mongodbMessage['headers'])
+        );
+
+        $mongodbMessageObj->setId((string) $mongodbMessage['_id']);
+        $mongodbMessageObj->setPriority((int) $mongodbMessage['priority']);
+        $mongodbMessageObj->setRedelivered((bool) $mongodbMessage['redelivered']);
+        $mongodbMessageObj->setPublishedAt((int) $mongodbMessage['published_at']);
+
+        return $mongodbMessageObj;
+    }
+
+    /**
      * @param MongodbDestination $queue
      */
     public function purgeQueue(Queue $queue): void

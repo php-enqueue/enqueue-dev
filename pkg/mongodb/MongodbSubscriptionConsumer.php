@@ -67,7 +67,7 @@ class MongodbSubscriptionConsumer implements SubscriptionConsumer
             if ($result) {
                 list($consumer, $callback) = $this->subscribers[$result['queue']];
 
-                $message = MongodbMessage::fromArrayDbResult($result);
+                $message = $this->context->convertMessage($result);
 
                 if (false === call_user_func($callback, $message, $consumer)) {
                     return;

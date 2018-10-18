@@ -137,7 +137,7 @@ class MongodbConsumer implements Consumer
             return null;
         }
         if (empty($message['time_to_live']) || $message['time_to_live'] > time()) {
-            return MongodbMessage::fromArrayDbResult($message);
+            return $this->context->convertMessage($message);
         }
 
         return null;
