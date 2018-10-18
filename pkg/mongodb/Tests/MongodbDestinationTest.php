@@ -7,11 +7,12 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
 use Interop\Queue\Queue;
 use Interop\Queue\Topic;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbDestinationTest extends \PHPUnit_Framework_TestCase
+class MongodbDestinationTest extends TestCase
 {
     use ClassExtensionTrait;
 

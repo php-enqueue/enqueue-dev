@@ -11,11 +11,12 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbConsumerTest extends \PHPUnit_Framework_TestCase
+class MongodbConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 

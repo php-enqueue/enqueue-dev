@@ -69,7 +69,7 @@ class ContainerProcessorRegistryTest extends TestCase
         $registry = new ContainerProcessorRegistry($containerMock);
 
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Return value of Enqueue\Symfony\ContainerProcessorRegistry::get() must implement interface Interop\Queue\PsrProcessor, instance of stdClass returned');
+        $this->expectExceptionMessage('Return value of Enqueue\Symfony\ContainerProcessorRegistry::get() must implement interface Interop\Queue\Processor, instance of stdClass returned');
         $registry->get('processor-name');
     }
 

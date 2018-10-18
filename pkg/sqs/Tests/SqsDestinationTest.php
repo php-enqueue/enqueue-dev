@@ -6,8 +6,9 @@ use Enqueue\Sqs\SqsDestination;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Queue;
 use Interop\Queue\Topic;
+use PHPUnit\Framework\TestCase;
 
-class SqsDestinationTest extends \PHPUnit_Framework_TestCase
+class SqsDestinationTest extends TestCase
 {
     use ClassExtensionTrait;
 

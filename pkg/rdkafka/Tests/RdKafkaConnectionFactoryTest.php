@@ -107,5 +107,19 @@ class RdKafkaConnectionFactoryTest extends TestCase
                 ],
             ],
         ];
+
+        yield [
+            [
+                'global' => [
+                    'group.id' => 'group-id',
+                ],
+            ],
+            [
+                'global' => [
+                    'metadata.broker.list' => 'localhost:9092',
+                    'group.id' => 'group-id',
+                ],
+            ],
+        ];
     }
 }

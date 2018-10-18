@@ -16,8 +16,9 @@ use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
+use PHPUnit\Framework\TestCase;
 
-class MongodbDriverTest extends \PHPUnit_Framework_TestCase
+class MongodbDriverTest extends TestCase
 {
     use ClassExtensionTrait;
     use GenericDriverTestsTrait;

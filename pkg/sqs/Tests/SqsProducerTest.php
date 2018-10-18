@@ -13,8 +13,9 @@ use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Producer;
+use PHPUnit\Framework\TestCase;
 
-class SqsProducerTest extends \PHPUnit_Framework_TestCase
+class SqsProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 

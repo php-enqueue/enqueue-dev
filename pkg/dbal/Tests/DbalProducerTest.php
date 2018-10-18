@@ -9,8 +9,9 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Producer;
+use PHPUnit\Framework\TestCase;
 
-class DbalProducerTest extends \PHPUnit_Framework_TestCase
+class DbalProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 
