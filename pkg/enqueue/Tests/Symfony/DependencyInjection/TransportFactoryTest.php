@@ -15,6 +15,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 class TransportFactoryTest extends TestCase
@@ -388,7 +389,7 @@ class TransportFactoryTest extends TestCase
             new Reference('enqueue.transport.default.context'),
             new Reference('enqueue.transport.default.consumption_extensions'),
             [],
-            null,
+            new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE),
             '%enqueue.transport.default.receive_timeout%',
         ], $container->getDefinition('enqueue.transport.default.queue_consumer')->getArguments());
     }

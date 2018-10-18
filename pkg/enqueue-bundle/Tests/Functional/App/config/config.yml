@@ -50,6 +50,10 @@ services:
         alias: 'enqueue.client.default.producer'
         public: true
 
+    test_enqueue.client.default.spool_producer:
+        alias: 'enqueue.client.default.spool_producer'
+        public: true
+
     test_Enqueue\Client\ProducerInterface:
         alias: 'Enqueue\Client\ProducerInterface'
         public: true

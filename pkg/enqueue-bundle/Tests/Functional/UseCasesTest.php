@@ -363,7 +363,7 @@ class UseCasesTest extends WebTestCase
 
     private function getMessageProducer(): ProducerInterface
     {
-        return static::$container->get('enqueue.client.default.producer');
+        return static::$container->get('test_enqueue.client.default.producer');
     }
 
     private function getContext(): Context
