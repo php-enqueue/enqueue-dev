@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.8.39](https://github.com/php-enqueue/enqueue-dev/tree/0.8.39) (2018-10-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.38...0.8.39)
+
+- Consuming with Simple Client and Kafka [\#557](https://github.com/php-enqueue/enqueue-dev/issues/557)
+
+- Merge pull request \#552 from versh23/stomp-public [\#568](https://github.com/php-enqueue/enqueue-dev/pull/568) ([versh23](https://github.com/versh23))
+
 ## [0.8.38](https://github.com/php-enqueue/enqueue-dev/tree/0.8.38) (2018-10-16)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.37...0.8.38)
 
