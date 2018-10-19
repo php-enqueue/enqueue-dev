@@ -189,7 +189,7 @@ class StompContext implements PsrContext
     /**
      * @return BufferedStompClient
      */
-    private function getStomp()
+    public function getStomp()
     {
         if (false == $this->stomp) {
             $stomp = call_user_func($this->stompFactory);
