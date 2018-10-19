@@ -12,7 +12,7 @@ The transport layer or PSR (Enqueue message service) is a Message Oriented Middl
 It is a messaging component that allows applications to create, send, receive, and read messages. 
 It allows the communication between different components of a distributed application to be loosely coupled, reliable, and asynchronous.
 
-PSR is inspired by JMS (Java Message Service). We tried to be as close as possible to [JSR 914](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) specification.
+PSR is inspired by JMS (Java Message Service). We tried to stay as close as possible to the [JSR 914](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) specification.
 For now it supports [AMQP](https://www.rabbitmq.com/tutorials/amqp-concepts.html) and [STOMP](https://stomp.github.io/) message queue protocols.
 You can connect to many modern brokers such as [RabbitMQ](https://www.rabbitmq.com/), [ActiveMQ](http://activemq.apache.org/) and others. 
 
@@ -157,8 +157,8 @@ $queueConsumer->consume();
 ## Client
 
 It provides an easy to use high level abstraction.
-The goal of the component is hide as much as possible low level details so you can concentrate on things that really matters. 
-For example, It configure a broker for you by creating queues, exchanges and bind them.
+The goal of the component is to hide as much as possible low level details so you can concentrate on things that really matter. 
+For example, it configures a broker for you by creating queues, exchanges and bind them.
 It provides easy to use services for producing and processing messages. 
 It supports unified format for setting message expiration, delay, timestamp, correlation id.
 It supports [message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) so different applications can talk to each other.
