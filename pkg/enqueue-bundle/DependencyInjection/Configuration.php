@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
-use Enqueue\Client\RouterProcessor;
+use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -34,17 +34,11 @@ final class Configuration implements ConfigurationInterface
         $consumptionNode = $rootNode->children()->arrayNode('consumption');
         $transportFactory->addQueueConsumerConfiguration($consumptionNode);
 
+        $clientFactory = new ClientFactory('default');
+        $clientNode = $rootNode->children()->arrayNode('client');
+        $clientFactory->addClientConfiguration($clientNode, $this->debug);
+
         $rootNode->children()
-            ->arrayNode('client')->children()
-                ->booleanNode('traceable_producer')->defaultValue($this->debug)->end()
-                ->scalarNode('prefix')->defaultValue('enqueue')->end()
-                ->scalarNode('app_name')->defaultValue('app')->end()
-                ->scalarNode('router_topic')->defaultValue('default')->cannotBeEmpty()->end()
-                ->scalarNode('router_queue')->defaultValue('default')->cannotBeEmpty()->end()
-                ->scalarNode('router_processor')->defaultValue(RouterProcessor::class)->end()
-                ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
-                ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
-            ->end()->end()
             ->booleanNode('job')->defaultFalse()->end()
             ->arrayNode('async_events')
                 ->addDefaultsIfNotSet()

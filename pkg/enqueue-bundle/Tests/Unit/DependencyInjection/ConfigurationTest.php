@@ -3,7 +3,6 @@
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
 use Enqueue\Bundle\DependencyInjection\Configuration;
-use Enqueue\Client\RouterProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -94,7 +93,7 @@ class ConfigurationTest extends TestCase
             'client' => [
                 'prefix' => 'enqueue',
                 'app_name' => 'app',
-                'router_processor' => RouterProcessor::class,
+                'router_processor' => 'enqueue.client.default.router_processor',
                 'router_topic' => 'default',
                 'router_queue' => 'default',
                 'default_processor_queue' => 'default',

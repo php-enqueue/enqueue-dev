@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Symfony\DependencyInjection;
+namespace Enqueue\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\ChainExtension;
 use Enqueue\Client\Config;
@@ -21,7 +21,9 @@ use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\ContainerProcessorRegistry;
+use Enqueue\Symfony\DependencyInjection\FormatClientNameTrait;
 use Interop\Queue\Context;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
@@ -45,6 +47,21 @@ final class ClientFactory
         }
 
         $this->name = $name;
+    }
+
+    public function addClientConfiguration(ArrayNodeDefinition $builder, bool $debug): void
+    {
+        $builder->children()
+            ->booleanNode('traceable_producer')->defaultValue($debug)->end()
+            ->scalarNode('prefix')->defaultValue('enqueue')->end()
+            ->scalarNode('app_name')->defaultValue('app')->end()
+            ->scalarNode('router_topic')->defaultValue('default')->cannotBeEmpty()->end()
+            ->scalarNode('router_queue')->defaultValue('default')->cannotBeEmpty()->end()
+            ->scalarNode('router_processor')->defaultValue($this->format('router_processor'))->end()
+            ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
+            ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
+        ->end()->end()
+        ;
     }
 
     public function build(ContainerBuilder $container, array $config): void
