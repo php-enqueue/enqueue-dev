@@ -33,7 +33,7 @@ final class DriverFactory implements DriverFactoryInterface
         $dsn = new Dsn($dsn);
 
         if ($driverInfo = $this->findDriverInfo($dsn, Resources::getAvailableDrivers())) {
-            $driverClass = $driverInfo['factoryClass'];
+            $driverClass = $driverInfo['driverClass'];
 
             if (RabbitMqDriver::class === $driverClass) {
                 if (false == $factory instanceof AmqpConnectionFactory) {

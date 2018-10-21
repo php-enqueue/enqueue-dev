@@ -25,11 +25,15 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $transportFactory = (new TransportFactory('default'));
-        $transportFactory->buildConnectionFactory($container, $config['transport']);
-        $transportFactory->buildContext($container, []);
-        $transportFactory->buildQueueConsumer($container, $config['consumption']);
-        $transportFactory->buildRpcClient($container, []);
+        foreach ($config['transport'] as $name => $transportConfig) {
+            $transportFactory = (new TransportFactory($name));
+            $transportFactory->buildConnectionFactory($container, $transportConfig);
+            $transportFactory->buildContext($container, []);
+            $transportFactory->buildQueueConsumer($container, $config['consumption']);
+            $transportFactory->buildRpcClient($container, []);
+        }
+
+        $container->setParameter('enqueue.transports', array_keys($config['transport']));
 
         if (isset($config['client'])) {
             $this->setupAutowiringForProcessors($container);
@@ -38,12 +42,12 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
 
             $clientConfig = $config['client'];
             // todo
-            $clientConfig['transport'] = $config['transport'];
+            $clientConfig['transport'] = $config['transport']['default'];
             $clientConfig['consumption'] = $config['consumption'];
 
             $clientFactory = new ClientFactory('default');
             $clientFactory->build($container, $clientConfig);
-            $clientFactory->createDriver($container, $config['transport']);
+            $clientFactory->createDriver($container, $config['transport']['default']);
         }
 
         if ($config['job']) {

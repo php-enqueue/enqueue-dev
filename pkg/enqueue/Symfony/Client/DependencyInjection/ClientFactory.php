@@ -21,7 +21,6 @@ use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\ContainerProcessorRegistry;
-use Enqueue\Symfony\DependencyInjection\FormatClientNameTrait;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

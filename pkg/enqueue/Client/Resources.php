@@ -37,7 +37,7 @@ final class Resources
 
         $availableMap = [];
         foreach ($map as $item) {
-            if (class_exists($item['factoryClass'])) {
+            if (class_exists($item['driverClass'])) {
                 $availableMap[] = $item;
             }
         }
@@ -52,67 +52,67 @@ final class Resources
 
             $map[] = [
                 'schemes' => ['amqp', 'amqps'],
-                'factoryClass' => AmqpDriver::class,
+                'driverClass' => AmqpDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/amqp-bunny'],
             ];
             $map[] = [
                 'schemes' => ['amqp', 'amqps'],
-                'factoryClass' => RabbitMqDriver::class,
+                'driverClass' => RabbitMqDriver::class,
                 'requiredSchemeExtensions' => ['rabbitmq'],
                 'packages' => ['enqueue/enqueue', 'enqueue/amqp-bunny'],
             ];
             $map[] = [
                 'schemes' => ['file'],
-                'factoryClass' => FsDriver::class,
+                'driverClass' => FsDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/fs'],
             ];
             $map[] = [
                 'schemes' => ['null'],
-                'factoryClass' => GenericDriver::class,
+                'driverClass' => GenericDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/null'],
             ];
             $map[] = [
                 'schemes' => ['gps'],
-                'factoryClass' => GpsDriver::class,
+                'driverClass' => GpsDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/gps'],
             ];
             $map[] = [
                 'schemes' => ['redis'],
-                'factoryClass' => RedisDriver::class,
+                'driverClass' => RedisDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/redis'],
             ];
             $map[] = [
                 'schemes' => ['sqs'],
-                'factoryClass' => SqsDriver::class,
+                'driverClass' => SqsDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/sqs'],
             ];
             $map[] = [
                 'schemes' => ['stomp'],
-                'factoryClass' => StompDriver::class,
+                'driverClass' => StompDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/stomp'],
             ];
             $map[] = [
                 'schemes' => ['stomp'],
-                'factoryClass' => RabbitMqStompDriver::class,
+                'driverClass' => RabbitMqStompDriver::class,
                 'requiredSchemeExtensions' => ['rabbitmq'],
                 'packages' => ['enqueue/enqueue', 'enqueue/stomp'],
             ];
             $map[] = [
                 'schemes' => ['kafka', 'rdkafka'],
-                'factoryClass' => RdKafkaDriver::class,
+                'driverClass' => RdKafkaDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/rdkafka'],
             ];
             $map[] = [
                 'schemes' => ['mongodb'],
-                'factoryClass' => MongodbDriver::class,
+                'driverClass' => MongodbDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/mongodb'],
             ];
@@ -132,19 +132,19 @@ final class Resources
                     'sqlite3',
                     'sqlite',
                 ],
-                'factoryClass' => DbalDriver::class,
+                'driverClass' => DbalDriver::class,
                 'requiredSchemeExtensions' => [],
                 'package' => ['enqueue/enqueue', 'enqueue/dbal'],
             ];
             $map[] = [
                 'schemes' => ['gearman'],
-                'factoryClass' => GenericDriver::class,
+                'driverClass' => GenericDriver::class,
                 'requiredSchemeExtensions' => [],
                 'package' => ['enqueue/enqueue', 'enqueue/gearman'],
             ];
             $map[] = [
                 'schemes' => ['beanstalk'],
-                'factoryClass' => GenericDriver::class,
+                'driverClass' => GenericDriver::class,
                 'requiredSchemeExtensions' => [],
                 'package' => ['enqueue/enqueue', 'enqueue/pheanstalk'],
             ];
@@ -173,7 +173,7 @@ final class Resources
         self::getKnownDrivers();
         self::$knownDrivers[] = [
             'schemes' => $schemes,
-            'factoryClass' => $driverClass,
+            'driverClass' => $driverClass,
             'requiredSchemeExtensions' => $requiredExtensions,
             'packages' => $packages,
         ];

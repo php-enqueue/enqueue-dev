@@ -33,8 +33,8 @@ class ResourcesTest extends TestCase
 
         $driverInfo = $availableDrivers[0];
 
-        $this->assertArrayHasKey('factoryClass', $driverInfo);
-        $this->assertSame(AmqpDriver::class, $driverInfo['factoryClass']);
+        $this->assertArrayHasKey('driverClass', $driverInfo);
+        $this->assertSame(AmqpDriver::class, $driverInfo['driverClass']);
 
         $this->assertArrayHasKey('schemes', $driverInfo);
         $this->assertSame(['amqp', 'amqps'], $driverInfo['schemes']);
@@ -55,8 +55,8 @@ class ResourcesTest extends TestCase
 
         $driverInfo = $availableDrivers[1];
 
-        $this->assertArrayHasKey('factoryClass', $driverInfo);
-        $this->assertSame(RabbitMqDriver::class, $driverInfo['factoryClass']);
+        $this->assertArrayHasKey('driverClass', $driverInfo);
+        $this->assertSame(RabbitMqDriver::class, $driverInfo['driverClass']);
 
         $this->assertArrayHasKey('schemes', $driverInfo);
         $this->assertSame(['amqp', 'amqps'], $driverInfo['schemes']);
@@ -77,8 +77,8 @@ class ResourcesTest extends TestCase
 
         $driverInfo = $knownDrivers[0];
 
-        $this->assertArrayHasKey('factoryClass', $driverInfo);
-        $this->assertSame(AmqpDriver::class, $driverInfo['factoryClass']);
+        $this->assertArrayHasKey('driverClass', $driverInfo);
+        $this->assertSame(AmqpDriver::class, $driverInfo['driverClass']);
 
         $this->assertArrayHasKey('schemes', $driverInfo);
         $this->assertSame(['amqp', 'amqps'], $driverInfo['schemes']);
@@ -126,7 +126,7 @@ class ResourcesTest extends TestCase
 
         $driverInfo = end($availableDrivers);
 
-        $this->assertSame('theDriverClass', $driverInfo['factoryClass']);
+        $this->assertSame('theDriverClass', $driverInfo['driverClass']);
     }
 
     public function testShouldAllowGetPreviouslyRegisteredDriver()
@@ -144,8 +144,8 @@ class ResourcesTest extends TestCase
 
         $driverInfo = end($availableDrivers);
 
-        $this->assertArrayHasKey('factoryClass', $driverInfo);
-        $this->assertSame($driverClass, $driverInfo['factoryClass']);
+        $this->assertArrayHasKey('driverClass', $driverInfo);
+        $this->assertSame($driverClass, $driverInfo['driverClass']);
 
         $this->assertArrayHasKey('schemes', $driverInfo);
         $this->assertSame(['fooscheme', 'barscheme'], $driverInfo['schemes']);

@@ -443,6 +443,24 @@ class EnqueueExtensionTest extends TestCase
         $this->assertSame(456, $def->getArgument(4));
     }
 
+    public function testShouldSetPropertyWithAllConfiguredTransports()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+        $extension->load([[
+            'client' => [],
+            'transport' => [
+                'default' => ['dsn' => 'default:'],
+                'foo' => ['dsn' => 'foo:'],
+                'bar' => ['dsn' => 'foo:'],
+            ],
+        ]], $container);
+
+        $this->assertTrue($container->hasParameter('enqueue.transports'));
+        $this->assertEquals(['default', 'foo', 'bar'], $container->getParameter('enqueue.transports'));
+    }
+
     public function testShouldLoadProcessAutoconfigureChildDefinition()
     {
         $container = $this->getContainerBuilder(true);
