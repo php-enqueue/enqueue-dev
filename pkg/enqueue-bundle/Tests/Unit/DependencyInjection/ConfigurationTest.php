@@ -28,6 +28,124 @@ class ConfigurationTest extends TestCase
         new Configuration(true);
     }
 
+    public function testShouldProcessNullAsDefaultNullTransport()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [null]);
+
+        $this->assertConfigEquals([
+            'transport' => [
+                'default' => ['dsn' => 'null:'],
+            ],
+        ], $config);
+    }
+
+    public function testShouldProcessStringAsDefaultDsnTransport()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, ['foo://bar?option=val']);
+
+        $this->assertConfigEquals([
+            'transport' => [
+                'default' => ['dsn' => 'foo://bar?option=val'],
+            ],
+        ], $config);
+    }
+
+    public function testShouldProcessEmptyArrayAsDefaultNullTransport()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, ['foo://bar?option=val']);
+
+        $this->assertConfigEquals([
+            'transport' => [
+                'default' => ['dsn' => 'foo://bar?option=val'],
+            ],
+        ], $config);
+    }
+
+    public function testShouldProcessSingleTransportAsDefault()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => 'foo://bar?option=val',
+        ]]);
+
+        $this->assertConfigEquals([
+            'transport' => [
+                'default' => ['dsn' => 'foo://bar?option=val'],
+            ],
+        ], $config);
+    }
+
+    public function testShouldProcessTransportWithDsnKeyAsDefault()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [
+                'dsn' => 'foo://bar?option=val',
+            ],
+        ]]);
+
+        $this->assertConfigEquals([
+            'transport' => [
+                'default' => ['dsn' => 'foo://bar?option=val'],
+            ],
+        ], $config);
+    }
+
+    public function testShouldProcessSeveralTransports()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'transport' => [
+                'default' => ['dsn' => 'default:'],
+                'foo' => ['dsn' => 'foo:'],
+                'bar' => ['dsn' => 'bar:'],
+            ],
+        ]]);
+
+        $this->assertConfigEquals([
+            'transport' => [
+                'default' => ['dsn' => 'default:'],
+                'foo' => ['dsn' => 'foo:'],
+                'bar' => ['dsn' => 'bar:'],
+            ],
+        ], $config);
+    }
+
+    public function testTransportFactoryShouldValidateEachTransportAccordingToItsRules()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Both options factory_class and factory_service are set. Please choose one.');
+        $processor->processConfiguration($configuration, [
+            [
+                'transport' => [
+                    'default' => [
+                        'factory_class' => 'aClass',
+                        'factory_service' => 'aService',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
     public function testShouldUseDefaultConfigurationIfNothingIsConfiguredAtAll()
     {
         $configuration = new Configuration(true);
@@ -36,33 +154,7 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration($configuration, [[]]);
 
         $this->assertEquals([
-            'transport' => ['dsn' => 'null:'],
-            'consumption' => [
-                'receive_timeout' => 10000,
-            ],
-            'job' => false,
-            'async_events' => ['enabled' => false],
-            'async_commands' => ['enabled' => false],
-            'extensions' => [
-                'doctrine_ping_connection_extension' => false,
-                'doctrine_clear_identity_map_extension' => false,
-                'signal_extension' => function_exists('pcntl_signal_dispatch'),
-                'reply_extension' => true,
-            ],
-        ], $config);
-    }
-
-    public function testShouldUseDefaultTransportIfIfTransportIsConfiguredAtAll()
-    {
-        $configuration = new Configuration(true);
-
-        $processor = new Processor();
-        $config = $processor->processConfiguration($configuration, [[
-            'transport' => null,
-        ]]);
-
-        $this->assertEquals([
-            'transport' => ['dsn' => 'null:'],
+            'transport' => ['default' => ['dsn' => 'null:']],
             'consumption' => [
                 'receive_timeout' => 10000,
             ],
@@ -88,8 +180,7 @@ class ConfigurationTest extends TestCase
             'client' => null,
         ]]);
 
-        $this->assertArraySubset([
-            'transport' => ['dsn' => 'null:'],
+        $this->assertConfigEquals([
             'client' => [
                 'prefix' => 'enqueue',
                 'app_name' => 'app',
@@ -402,5 +493,10 @@ class ConfigurationTest extends TestCase
                 'receive_timeout' => 456,
             ],
         ], $config);
+    }
+
+    private function assertConfigEquals(array $expected, array $actual): void
+    {
+        $this->assertArraySubset($expected, $actual, false, var_export($actual, true));
     }
 }

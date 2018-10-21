@@ -4,6 +4,7 @@ namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -22,14 +23,58 @@ final class Configuration implements ConfigurationInterface
         $rootNode = $tb->root('enqueue');
         $rootNode
             ->beforeNormalization()
-            ->ifEmpty()->then(function () {
-                return ['transport' => ['dsn' => 'null:']];
-            });
+            ->always(function ($value) {
+                if (empty($value)) {
+                    return [
+                        'transport' => [
+                            'default' => [
+                                'dsn' => 'null:',
+                            ],
+                        ],
+                    ];
+                }
+
+                if (is_string($value)) {
+                    return [
+                        'transport' => [
+                            'default' => [
+                                'dsn' => $value,
+                            ],
+                        ],
+                    ];
+                }
+
+                return $value;
+            })
+        ;
 
         $transportFactory = new TransportFactory('default');
 
+        /** @var ArrayNodeDefinition $transportNode */
         $transportNode = $rootNode->children()->arrayNode('transport');
-        $transportFactory->addTransportConfiguration($transportNode);
+        $transportNode
+            ->beforeNormalization()
+            ->always(function ($value) {
+                if (empty($value)) {
+                    return ['default' => ['dsn' => 'null:']];
+                }
+                if (is_string($value)) {
+                    return ['default' => ['dsn' => $value]];
+                }
+
+                if (is_array($value) && array_key_exists('dsn', $value)) {
+                    return ['default' => $value];
+                }
+
+                return $value;
+            });
+        $transportPrototypeNode = $transportNode
+            ->requiresAtLeastOneElement()
+            ->useAttributeAsKey('key')
+            ->prototype('array')
+        ;
+
+        $transportFactory->addTransportConfiguration($transportPrototypeNode);
 
         $consumptionNode = $rootNode->children()->arrayNode('consumption');
         $transportFactory->addQueueConsumerConfiguration($consumptionNode);
