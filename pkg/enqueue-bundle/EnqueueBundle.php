@@ -23,8 +23,8 @@ class EnqueueBundle extends Bundle
     public function build(ContainerBuilder $container): void
     {
         //transport passes
-        $container->addCompilerPass(new BuildConsumptionExtensionsPass('default'));
-        $container->addCompilerPass(new BuildProcessorRegistryPass('default'));
+        $container->addCompilerPass(new BuildConsumptionExtensionsPass());
+        $container->addCompilerPass(new BuildProcessorRegistryPass());
 
         //client passes
         $container->addCompilerPass(new BuildClientConsumptionExtensionsPass('default'));
