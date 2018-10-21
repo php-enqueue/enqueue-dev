@@ -7,7 +7,7 @@ use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtensi
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\JobQueue\Job;
-use Enqueue\Symfony\DependencyInjection\ClientFactory;
+use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;

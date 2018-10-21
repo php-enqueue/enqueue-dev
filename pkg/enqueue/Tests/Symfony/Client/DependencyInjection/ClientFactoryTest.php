@@ -1,8 +1,8 @@
 <?php
 
-namespace Enqueue\Tests\Symfony\DependencyInjection;
+namespace Enqueue\Tests\Symfony\Client\DependencyInjection;
 
-use Enqueue\Symfony\DependencyInjection\ClientFactory;
+use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
