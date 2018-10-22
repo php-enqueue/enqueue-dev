@@ -19,9 +19,9 @@ use Thruway\Peer\Client;
 class WampContext implements Context
 {
     /**
-     * @var Client
+     * @var Client[]
      */
-    private $client;
+    private $clients;
 
     /**
      * @var callable
@@ -86,33 +86,34 @@ class WampContext implements Context
 
     public function close(): void
     {
-        if (null === $this->client) {
-            return;
-        }
-
-        if (null === $this->client->getSession()) {
-            return;
-        }
-
-        $this->client->setAttemptRetry(false);
-        $this->client->getSession()->close();
-    }
-
-    public function getClient(): Client
-    {
-        if (false == $this->client) {
-            $client = call_user_func($this->clientFactory);
-            if (false == $client instanceof Client) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of "%s". But it returns %s',
-                    Client::class,
-                    is_object($client) ? get_class($client) : gettype($client)
-                ));
+        foreach ($this->clients as $client) {
+            if (null === $client) {
+                return;
             }
 
-            $this->client = $client;
+            if (null === $client->getSession()) {
+                return;
+            }
+
+            $client->setAttemptRetry(false);
+            $client->getSession()->close();
+        }
+    }
+
+    public function getNewClient(): Client
+    {
+        $client = call_user_func($this->clientFactory);
+
+        if (false == $client instanceof Client) {
+            throw new \LogicException(sprintf(
+                'The factory must return instance of "%s". But it returns %s',
+                Client::class,
+                is_object($client) ? get_class($client) : gettype($client)
+            ));
         }
 
-        return $this->client;
+        $this->clients[] = $client;
+
+        return $client;
     }
 }

@@ -50,6 +50,11 @@ class WampConsumer implements Consumer
         return $this->queue;
     }
 
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
     public function receive(int $timeout = 0): ?Message
     {
         $init = false;
@@ -59,7 +64,7 @@ class WampConsumer implements Consumer
         if (null === $this->client) {
             $init = true;
 
-            $this->client = $this->context->getClient();
+            $this->client = $this->context->getNewClient();
             $this->client->setAttemptRetry(true);
             $this->client->on('open', function (ClientSession $session) {
 
@@ -80,7 +85,10 @@ class WampConsumer implements Consumer
         }
 
         if ($timeout > 0) {
-            $this->timer = $this->client->getLoop()->addTimer($timeout / 1000, function () {
+            $timeout = $timeout / 1000;
+            $timeout = $timeout >= 0.1 ? $timeout : 0.1;
+
+            $this->timer = $this->client->getLoop()->addTimer($timeout, function () {
                 $this->client->emit('do-stop');
             });
         }

@@ -65,7 +65,7 @@ class WampProducer implements Producer
         if (null === $this->client) {
             $init = true;
 
-            $this->client = $this->context->getClient();
+            $this->client = $this->context->getNewClient();
             $this->client->setAttemptRetry(true);
             $this->client->on('open', function (ClientSession $session) {
                 $this->session = $session;
