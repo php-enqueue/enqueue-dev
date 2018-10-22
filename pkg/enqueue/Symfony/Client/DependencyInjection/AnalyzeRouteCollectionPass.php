@@ -8,31 +8,35 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class AnalyzeRouteCollectionPass implements CompilerPassInterface
 {
-    /**
-     * @var string
-     */
-    private $name;
+    use FormatClientNameTrait;
 
-    public function __construct(string $clientName)
-    {
-        if (empty($clientName)) {
-            throw new \InvalidArgumentException('The name could not be empty.');
-        }
-
-        $this->name = $clientName;
-    }
+    protected $name;
 
     public function process(ContainerBuilder $container): void
     {
-        $routeCollectionId = sprintf('enqueue.client.%s.route_collection', $this->name);
-        if (false == $container->hasDefinition($routeCollectionId)) {
-            return;
+        if (false == $container->hasParameter('enqueue.clients')) {
+            throw new \LogicException('The "enqueue.clients" parameter must be set.');
         }
 
-        $collection = RouteCollection::fromArray($container->getDefinition($routeCollectionId)->getArgument(0));
+        $names = $container->getParameter('enqueue.clients');
 
-        $this->exclusiveCommandsCouldNotBeRunOnDefaultQueue($collection);
-        $this->exclusiveCommandProcessorMustBeSingleOnGivenQueue($collection);
+        foreach ($names as $name) {
+            $this->name = $name;
+            $routeCollectionId = $this->format('route_collection');
+            if (false == $container->hasDefinition($routeCollectionId)) {
+                throw new \LogicException(sprintf('Service "%s" not found', $routeCollectionId));
+            }
+
+            $collection = RouteCollection::fromArray($container->getDefinition($routeCollectionId)->getArgument(0));
+
+            $this->exclusiveCommandsCouldNotBeRunOnDefaultQueue($collection);
+            $this->exclusiveCommandProcessorMustBeSingleOnGivenQueue($collection);
+        }
+    }
+
+    protected function getName(): string
+    {
+        return $this->name;
     }
 
     private function exclusiveCommandsCouldNotBeRunOnDefaultQueue(RouteCollection $collection)

@@ -182,7 +182,7 @@ final class TransportFactory
             ->addArgument(new Reference($this->format('consumption_extensions')))
             ->addArgument([])
             ->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
-            ->addArgument($this->format('receive_timeout', true))
+            ->addArgument($this->parameter('receive_timeout'))
         ;
 
         $container->register($this->format('processor_registry'), ContainerProcessorRegistry::class);
