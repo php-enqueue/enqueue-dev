@@ -114,7 +114,7 @@ class WampConsumer implements Consumer
      */
     public function acknowledge(Message $message): void
     {
-        // do nothing. redis transport always works in auto ack mode
+        // do nothing. wamp transport always works in auto ack mode
     }
 
     /**
@@ -126,7 +126,7 @@ class WampConsumer implements Consumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, WampMessage::class);
 
-        // do nothing on reject. redis transport always works in auto ack mode
+        // do nothing on reject. wamp transport always works in auto ack mode
 
         if ($requeue) {
             $this->context->createProducer()->send($this->queue, $message);
