@@ -94,11 +94,17 @@ class RedisConnectionFactory implements ConnectionFactory
     private function createRedis(): Redis
     {
         if (false == $this->redis) {
-            if (in_array('predis', $this->config['scheme_extensions'], true)) {
-                $this->redis = new PRedis($this->config);
-            } elseif (in_array('phpredis', $this->config['scheme_extensions'], true)) {
+            if (in_array('phpredis', $this->config['scheme_extensions'], true)) {
+                if (false == class_exists(\Redis::class)) {
+                    throw new \LogicException('You must install the redis extension to use phpredis');
+                }
+
                 $this->redis = new PhpRedis($this->config);
             } else {
+                if (false == class_exists(\Predis\Client::class)) {
+                    throw new \LogicException('The package "predis/predis" must be installed. Please run "composer req predis/predis:^1.1" to install it');
+                }
+
                 $this->redis = new PRedis($this->config);
             }
 
