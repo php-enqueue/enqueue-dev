@@ -102,7 +102,7 @@ class RedisConnectionFactory implements ConnectionFactory
                 $this->redis = new PhpRedis($this->config);
             } else {
                 if (false == class_exists(\Predis\Client::class)) {
-                    throw new \LogicException('The package Predis must be installed');
+                    throw new \LogicException('The package "predis/predis" must be installed. Please run "composer req predis/predis:^1.1" to install it');
                 }
 
                 $this->redis = new PRedis($this->config);
