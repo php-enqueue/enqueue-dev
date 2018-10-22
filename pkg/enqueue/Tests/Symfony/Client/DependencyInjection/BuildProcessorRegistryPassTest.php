@@ -6,6 +6,7 @@ use Enqueue\Client\Route;
 use Enqueue\Symfony\Client\DependencyInjection\BuildProcessorRegistryPass;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -25,70 +26,70 @@ class BuildProcessorRegistryPassTest extends TestCase
         $this->assertClassFinal(BuildProcessorRegistryPass::class);
     }
 
-    public function testCouldBeConstructedWithName()
+    public function testCouldBeConstructedWithoutArguments()
     {
-        $pass = new BuildProcessorRegistryPass('aName');
-
-        $this->assertAttributeSame('aName', 'name', $pass);
+        new BuildProcessorRegistryPass();
     }
 
-    public function testThrowIfNameEmptyOnConstruct()
+    public function testThrowIfEnqueueClientsParameterNotSet()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The name could not be empty.');
-        new BuildProcessorRegistryPass('');
+        $pass = new BuildProcessorRegistryPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The "enqueue.clients" parameter must be set.');
+        $pass->process(new ContainerBuilder());
     }
 
-    public function testShouldDoNothingIfRouteCollectionServiceIsNotRegistered()
+    public function testThrowsIfNoProcessorRegistryServiceFoundForConfiguredTransport()
     {
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['foo', 'bar']);
 
-        //guard
-        $this->assertFalse($container->hasDefinition('enqueue.client.aName.route_collection'));
+        $pass = new BuildProcessorRegistryPass();
 
-        $pass = new BuildProcessorRegistryPass('aName');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Service "enqueue.client.foo.processor_registry" not found');
         $pass->process($container);
     }
 
-    public function testShouldDoNothingIfProcessorRegistryCollectionServiceIsNotRegistered()
+    public function testThrowsIfNoRouteCollectionServiceFoundForConfiguredTransport()
     {
         $container = new ContainerBuilder();
-        $container->register('enqueue.client.aName.route_collection');
+        $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->register('enqueue.client.foo.processor_registry');
 
-        //guard
-        $this->assertFalse($container->hasDefinition('enqueue.client.aName.processor_registry'));
+        $pass = new BuildProcessorRegistryPass();
 
-        $pass = new BuildProcessorRegistryPass('aName');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Service "enqueue.client.foo.route_collection" not found');
         $pass->process($container);
     }
 
-    public function testShouldDoNothingIfRouterProcessorServiceIsNotRegistered()
+    public function testThrowsIfNoRouteProcessorServiceFoundForConfiguredTransport()
     {
         $container = new ContainerBuilder();
-        $container->register('enqueue.client.aName.route_collection');
-        $container->register('enqueue.client.aName.processor_registry')
-            ->addArgument([])
-        ;
+        $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->register('enqueue.client.foo.processor_registry');
+        $container->register('enqueue.client.foo.route_collection');
 
-        //guard
-        $this->assertFalse($container->hasDefinition('enqueue.client.aName.router_processor'));
+        $pass = new BuildProcessorRegistryPass();
 
-        $pass = new BuildProcessorRegistryPass('aName');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Service "enqueue.client.foo.router_processor" not found');
         $pass->process($container);
-
-        $this->assertSame([], $container->getDefinition('enqueue.client.aName.processor_registry')->getArgument(0));
     }
 
     public function testThrowIfProcessorServiceIdOptionNotSet()
     {
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['aName']);
         $container->register('enqueue.client.aName.route_collection')->addArgument([
             (new Route('aCommand', Route::COMMAND, 'aProcessor'))->toArray(),
         ]);
         $container->register('enqueue.client.aName.processor_registry')->addArgument([]);
         $container->register('enqueue.client.aName.router_processor');
 
-        $pass = new BuildProcessorRegistryPass('aName');
+        $pass = new BuildProcessorRegistryPass();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The route option "processor_service_id" is required');
@@ -101,6 +102,7 @@ class BuildProcessorRegistryPassTest extends TestCase
         $registry->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['aName']);
         $container->register('enqueue.client.aName.route_collection')->addArgument([
             (new Route(
                 'aCommand',
@@ -118,10 +120,37 @@ class BuildProcessorRegistryPassTest extends TestCase
         $container->setDefinition('enqueue.client.aName.processor_registry', $registry);
         $container->register('enqueue.client.aName.router_processor');
 
-        $pass = new BuildProcessorRegistryPass('aName');
+        $pass = new BuildProcessorRegistryPass();
         $pass->process($container);
 
-        $this->assertInstanceOf(Reference::class, $registry->getArgument(0));
-        $this->assertRegExp('/service_locator\..*?\.enqueue\.client\.aName\.processor_registry/', (string) $registry->getArgument(0));
+        $this->assertLocatorServices($container, $registry->getArgument(0), [
+            '%enqueue.client.aName.router_processor%' => 'enqueue.client.aName.router_processor',
+            'aBarProcessor' => 'aBarServiceId',
+            'aFooProcessor' => 'aFooServiceId',
+        ]);
+    }
+
+    private function assertLocatorServices(ContainerBuilder $container, $locatorId, array $locatorServices)
+    {
+        $this->assertInstanceOf(Reference::class, $locatorId);
+        $locatorId = (string) $locatorId;
+
+        $this->assertTrue($container->hasDefinition($locatorId));
+        $this->assertRegExp('/service_locator\..*?\.enqueue\./', $locatorId);
+
+        $match = [];
+        if (false == preg_match('/(service_locator\..*?)\.enqueue\./', $locatorId, $match)) {
+            $this->fail('preg_match should not failed');
+        }
+
+        $this->assertTrue($container->hasDefinition($match[1]));
+        $locator = $container->getDefinition($match[1]);
+
+        $this->assertContainsOnly(ServiceClosureArgument::class, $locator->getArgument(0));
+        $actualServices = array_map(function (ServiceClosureArgument $value) {
+            return (string) $value->getValues()[0];
+        }, $locator->getArgument(0));
+
+        $this->assertEquals($locatorServices, $actualServices);
     }
 }
