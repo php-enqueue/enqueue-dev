@@ -57,4 +57,9 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
         $registry = $container->getDefinition($processorRegistryId);
         $registry->setArgument(0, ServiceLocatorTagPass::register($container, $map, $processorRegistryId));
     }
+
+    private function getName(): string
+    {
+        return $this->name;
+    }
 }

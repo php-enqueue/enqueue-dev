@@ -25,24 +25,30 @@ class BuildProcessorRoutesPassTest extends TestCase
         $this->assertClassFinal(BuildProcessorRoutesPass::class);
     }
 
-    public function testCouldBeConstructedWithName()
+    public function testCouldBeConstructedWithoutArguments()
     {
-        $pass = new BuildProcessorRoutesPass('aName');
-
-        $this->assertAttributeSame('aName', 'name', $pass);
+        new BuildProcessorRoutesPass();
     }
 
-    public function testThrowIfNameEmptyOnConstruct()
+    public function testThrowIfEnqueueClientsParameterNotSet()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The name could not be empty.');
-        new BuildProcessorRoutesPass('');
-    }
+        $pass = new BuildProcessorRoutesPass();
 
-    public function testShouldDoNothingIfRouteCollectionServiceIsNotRegistered()
-    {
-        $pass = new BuildProcessorRoutesPass('aName');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The "enqueue.clients" parameter must be set.');
         $pass->process(new ContainerBuilder());
+    }
+
+    public function testThrowsIfNoRouteCollectionServiceFoundForConfiguredTransport()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['foo', 'bar']);
+
+        $pass = new BuildProcessorRoutesPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Service "enqueue.client.foo.route_collection" not found');
+        $pass->process($container);
     }
 
     public function testThrowIfBothTopicAndCommandAttributesAreSet()
@@ -51,12 +57,13 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['topic' => 'foo', 'command' => 'bar'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Either "topic" or "command" tag attribute must be set on service "aFooProcessor". Both are set.');
@@ -69,12 +76,13 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', [])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Either "topic" or "command" tag attribute must be set on service "aFooProcessor". None is set.');
@@ -87,6 +95,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['foo']);
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['client' => 'foo', 'topic' => 'foo'])
@@ -95,7 +104,7 @@ class BuildProcessorRoutesPassTest extends TestCase
             ->addTag('enqueue.processor', ['client' => 'bar', 'command' => 'foo'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('foo');
+        $pass = new BuildProcessorRoutesPass();
 
         $pass->process($container);
 
@@ -109,6 +118,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['topic' => 'foo'])
@@ -117,7 +127,7 @@ class BuildProcessorRoutesPassTest extends TestCase
             ->addTag('enqueue.processor', ['client' => 'bar', 'command' => 'foo'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
 
         $pass->process($container);
 
@@ -131,6 +141,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['client' => 'all', 'topic' => 'foo'])
@@ -139,7 +150,7 @@ class BuildProcessorRoutesPassTest extends TestCase
             ->addTag('enqueue.processor', ['client' => 'bar', 'command' => 'foo'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
 
         $pass->process($container);
 
@@ -153,12 +164,13 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['topic' => 'aTopic'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
@@ -183,12 +195,13 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['command' => 'aCommand'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
@@ -213,12 +226,13 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['command' => 'aCommand', 'processor' => 'customProcessorName'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
@@ -246,12 +260,13 @@ class BuildProcessorRoutesPassTest extends TestCase
         ]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['command' => 'fooCommand'])
         ;
 
-        $pass = new BuildProcessorRoutesPass('default');
+        $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $routeCollection->getArgument(0));
