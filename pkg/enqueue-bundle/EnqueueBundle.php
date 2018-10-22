@@ -33,7 +33,7 @@ class EnqueueBundle extends Bundle
         $container->addCompilerPass(new BuildClientCommandSubscriberRoutesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
         $container->addCompilerPass(new BuildClientProcessorRoutesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
         $container->addCompilerPass(new AnalyzeRouteCollectionPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 30);
-        $container->addCompilerPass(new BuildClientProcessorRegistryPass('default'));
+        $container->addCompilerPass(new BuildClientProcessorRegistryPass());
 
         if (class_exists(AsyncEventDispatcherExtension::class)) {
             $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
