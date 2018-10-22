@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.8.40](https://github.com/php-enqueue/enqueue-dev/tree/0.8.40) (2018-10-22)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.39...0.8.40)
+
+- \[redis\] support for delay [\#553](https://github.com/php-enqueue/enqueue-dev/issues/553)
+
 ## [0.8.39](https://github.com/php-enqueue/enqueue-dev/tree/0.8.39) (2018-10-19)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.38...0.8.39)
 
