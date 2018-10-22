@@ -245,4 +245,38 @@ class BuildConsumptionExtensionsPassTest extends TestCase
             'aOloloExtension' => 'aOloloServiceIdAddedPreviously',
         ], $extensions->getArgument(0));
     }
+
+    public function testShouldRegisterProcessorWithMatchedNameToCorrespondingRegistries()
+    {
+        $fooExtensions = new Definition();
+        $fooExtensions->addArgument([]);
+
+        $barExtensions = new Definition();
+        $barExtensions->addArgument([]);
+
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.transports', ['foo', 'bar']);
+        $container->setDefinition('enqueue.transport.foo.consumption_extensions', $fooExtensions);
+        $container->setDefinition('enqueue.transport.bar.consumption_extensions', $barExtensions);
+
+        $container->register('aFooExtension', ExtensionInterface::class)
+            ->addTag('enqueue.transport.consumption_extension', ['transport' => 'foo'])
+        ;
+        $container->register('aBarExtension', ExtensionInterface::class)
+            ->addTag('enqueue.transport.consumption_extension', ['transport' => 'bar'])
+        ;
+
+        $pass = new BuildConsumptionExtensionsPass();
+        $pass->process($container);
+
+        $this->assertInternalType('array', $fooExtensions->getArgument(0));
+        $this->assertEquals([
+            new Reference('aFooExtension'),
+        ], $fooExtensions->getArgument(0));
+
+        $this->assertInternalType('array', $barExtensions->getArgument(0));
+        $this->assertEquals([
+            new Reference('aBarExtension'),
+        ], $barExtensions->getArgument(0));
+    }
 }

@@ -36,6 +36,8 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $container->setParameter('enqueue.transports', array_keys($config['transport']));
 
         if (isset($config['client'])) {
+            $container->setParameter('enqueue.clients', ['default']);
+
             $this->setupAutowiringForProcessors($container);
 
             $loader->load('client.yml');

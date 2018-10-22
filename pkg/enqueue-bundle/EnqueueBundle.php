@@ -27,8 +27,8 @@ class EnqueueBundle extends Bundle
         $container->addCompilerPass(new BuildProcessorRegistryPass());
 
         //client passes
-        $container->addCompilerPass(new BuildClientConsumptionExtensionsPass('default'));
-        $container->addCompilerPass(new BuildClientExtensionsPass('default'));
+        $container->addCompilerPass(new BuildClientConsumptionExtensionsPass());
+        $container->addCompilerPass(new BuildClientExtensionsPass());
         $container->addCompilerPass(new BuildClientTopicSubscriberRoutesPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
         $container->addCompilerPass(new BuildClientCommandSubscriberRoutesPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
         $container->addCompilerPass(new BuildClientProcessorRoutesPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
