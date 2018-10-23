@@ -63,10 +63,8 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
                     $session->subscribe($queue, function ($args) use ($subscriber) {
                         $message = $this->context->getSerializer()->toMessage($args[0]);
 
-                        /**
-                         * @var WampConsumer $consumer
-                         * @var callable     $callback
-                         */
+                        /** @var WampConsumer $consumer */
+                        /** @var callable $callback */
                         list($consumer, $callback) = $subscriber;
 
                         if (false === call_user_func($callback, $message, $consumer)) {
