@@ -61,7 +61,7 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
             $this->client->on('open', function (ClientSession $session) {
 
                 foreach ($this->subscribers as $queue => $subscriber) {
-                    $session->subscribe($queue, function ($args) use ($subscriber, $session) {
+                    $session->subscribe($queue, function ($args) use ($subscriber) {
                         $message = $this->context->getSerializer()->toMessage($args[0]);
 
                         /**

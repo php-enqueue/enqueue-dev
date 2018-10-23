@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Wamp\Tests;
+namespace Enqueue\Wamp\Tests\Spec;
 
 use Enqueue\Wamp\JsonSerializer;
 use Enqueue\Wamp\Serializer;

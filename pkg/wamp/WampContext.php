@@ -31,19 +31,9 @@ class WampContext implements Context
      */
     private $clientFactory;
 
-    public function __construct($client)
+    public function __construct(callable $clientFactory)
     {
-        if ($client instanceof Client) {
-            $this->client = $client;
-        } elseif (is_callable($client)) {
-            $this->clientFactory = $client;
-        } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The $client argument must be either %s or callable that returns %s once called.',
-                Client::class,
-                Client::class
-            ));
-        }
+        $this->clientFactory = $clientFactory;
 
         $this->setSerializer(new JsonSerializer());
     }
@@ -93,10 +83,6 @@ class WampContext implements Context
     public function close(): void
     {
         foreach ($this->clients as $client) {
-            if (null === $client) {
-                return;
-            }
-
             if (null === $client->getSession()) {
                 return;
             }
