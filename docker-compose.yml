@@ -115,7 +115,7 @@ services:
       - './:/app'
     entrypoint:
         - '/usr/bin/php'
-        - 'vendor/voryx/thruway/Examples/SimpleWsRouter.php'
+        - 'docker/thruway/WsRouter.php'
 
   localstack:
     image: 'localstack/localstack:latest'
