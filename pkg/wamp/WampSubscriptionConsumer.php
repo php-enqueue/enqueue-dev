@@ -59,14 +59,13 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
             $this->client = $this->context->getNewClient();
             $this->client->setAttemptRetry(true);
             $this->client->on('open', function (ClientSession $session) {
-
                 foreach ($this->subscribers as $queue => $subscriber) {
                     $session->subscribe($queue, function ($args) use ($subscriber) {
                         $message = $this->context->getSerializer()->toMessage($args[0]);
 
                         /**
                          * @var WampConsumer $consumer
-                         * @var callable $callback
+                         * @var callable     $callback
                          */
                         list($consumer, $callback) = $subscriber;
 

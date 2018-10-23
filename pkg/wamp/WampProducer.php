@@ -51,7 +51,7 @@ class WampProducer implements Producer
      * {@inheritdoc}
      *
      * @param WampDestination $destination
-     * @param WampMessage $message
+     * @param WampMessage     $message
      */
     public function send(Destination $destination, Message $message): void
     {
@@ -86,7 +86,6 @@ class WampProducer implements Producer
             });
 
             $this->client->on('do-send', function (WampDestination $destination, WampMessage $message) {
-
                 $onFinish = function () {
                     $this->client->emit('do-stop');
                 };
@@ -111,25 +110,6 @@ class WampProducer implements Producer
         }
 
         $this->client->getLoop()->run();
-    }
-
-    private function doSendMessageIfPossible()
-    {
-        if (null === $this->session) {
-            return;
-        }
-
-        if (null === $this->message) {
-            return;
-        }
-
-        $message = $this->message;
-        $destination = $this->destination;
-
-        $this->message = null;
-        $this->destination = null;
-
-        $this->client->emit('do-send', [$destination, $message]);
     }
 
     /**
@@ -187,5 +167,24 @@ class WampProducer implements Producer
     public function getTimeToLive(): ?int
     {
         return null;
+    }
+
+    private function doSendMessageIfPossible()
+    {
+        if (null === $this->session) {
+            return;
+        }
+
+        if (null === $this->message) {
+            return;
+        }
+
+        $message = $this->message;
+        $destination = $this->destination;
+
+        $this->message = null;
+        $this->destination = null;
+
+        $this->client->emit('do-send', [$destination, $message]);
     }
 }

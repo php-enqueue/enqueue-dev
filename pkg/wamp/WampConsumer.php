@@ -67,7 +67,6 @@ class WampConsumer implements Consumer
             $this->client = $this->context->getNewClient();
             $this->client->setAttemptRetry(true);
             $this->client->on('open', function (ClientSession $session) {
-
                 $session->subscribe($this->queue->getQueueName(), function ($args) {
                     $this->message = $this->context->getSerializer()->toMessage($args[0]);
 

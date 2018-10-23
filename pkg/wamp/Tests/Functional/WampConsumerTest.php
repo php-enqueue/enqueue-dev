@@ -35,7 +35,7 @@ class WampConsumerTest extends TestCase
         $consumer->getClient()->getLoop()->futureTick(function () use ($producer, $topic, $message) {
             $producer->send($topic, $message);
         });
-        
+
         $receivedMessage = $consumer->receive(100);
 
         $this->assertInstanceOf(WampMessage::class, $receivedMessage);

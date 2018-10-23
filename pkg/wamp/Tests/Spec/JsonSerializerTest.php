@@ -2,9 +2,9 @@
 
 namespace Enqueue\Wamp\Tests\Spec;
 
+use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Wamp\JsonSerializer;
 use Enqueue\Wamp\Serializer;
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Wamp\WampMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -40,7 +40,7 @@ class JsonSerializerTest extends TestCase
     {
         $serializer = new JsonSerializer();
 
-        $resource = fopen(__FILE__, 'r');
+        $resource = fopen(__FILE__, 'rb');
 
         //guard
         $this->assertInternalType('resource', $resource);
