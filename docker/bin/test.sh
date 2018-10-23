@@ -37,6 +37,7 @@ waitForService beanstalkd 11300 50
 waitForService gearmand 4730 50
 waitForService kafka 9092 50
 waitForService mongo 27017 50
+waitForService thruway 9090 50
 waitForService localstack 4576 50
 
 php docker/bin/refresh-mysql-database.php
