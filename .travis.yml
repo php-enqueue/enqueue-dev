@@ -42,6 +42,7 @@ cache:
 
 before_install:
     - echo "extension = mongodb.so" >> $HOME/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - echo "extension = redis.so" >> $HOME/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 install:
     - rm $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini;
