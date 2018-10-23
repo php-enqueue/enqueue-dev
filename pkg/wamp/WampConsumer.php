@@ -99,7 +99,12 @@ class WampConsumer implements Consumer
 
         $this->client->getLoop()->run();
 
-        return $this->message ?: null;
+        $message = $this->message;
+
+        $this->timer = null;
+        $this->message = null;
+
+        return $message;
     }
 
     public function receiveNoWait(): ?Message

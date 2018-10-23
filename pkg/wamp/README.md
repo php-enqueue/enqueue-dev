@@ -1,4 +1,4 @@
-# Web Application Messaging Protocol Transport
+# Web Application Messaging Protocol (WAMP) Transport
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
 [![Build Status](https://travis-ci.org/php-enqueue/wamp.png?branch=master)](https://travis-ci.org/php-enqueue/wamp)
