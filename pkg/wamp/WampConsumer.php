@@ -8,7 +8,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
-use React\EventLoop\Timer\Timer;
+use React\EventLoop\TimerInterface;
 use Thruway\ClientSession;
 use Thruway\Peer\Client;
 
@@ -35,7 +35,7 @@ class WampConsumer implements Consumer
     private $message;
 
     /**
-     * @var Timer
+     * @var TimerInterface
      */
     private $timer;
 
@@ -69,7 +69,7 @@ class WampConsumer implements Consumer
             $this->client->on('open', function (ClientSession $session) {
 
                 $session->subscribe($this->queue->getQueueName(), function ($args) {
-                    $this->message = WampMessage::jsonUnserialize($args[0]);
+                    $this->message = $this->context->getSerializer()->toMessage($args[0]);
 
                     $this->client->emit('do-stop');
                 });

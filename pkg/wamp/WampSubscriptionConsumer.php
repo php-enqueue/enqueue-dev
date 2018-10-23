@@ -6,7 +6,7 @@ namespace Enqueue\Wamp;
 
 use Interop\Queue\Consumer;
 use Interop\Queue\SubscriptionConsumer;
-use React\EventLoop\Timer\Timer;
+use React\EventLoop\TimerInterface;
 use Thruway\ClientSession;
 use Thruway\Peer\Client;
 
@@ -30,13 +30,10 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
     private $client;
 
     /**
-     * @var Timer
+     * @var TimerInterface
      */
     private $timer;
 
-    /**
-     * @param WampContext $context
-     */
     public function __construct(WampContext $context)
     {
         $this->context = $context;
@@ -65,7 +62,7 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
 
                 foreach ($this->subscribers as $queue => $subscriber) {
                     $session->subscribe($queue, function ($args) use ($subscriber, $session) {
-                        $message = WampMessage::jsonUnserialize($args[0]);
+                        $message = $this->context->getSerializer()->toMessage($args[0]);
 
                         /**
                          * @var WampConsumer $consumer

@@ -8,6 +8,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
@@ -18,6 +19,8 @@ use Thruway\Peer\Client;
 
 class WampContext implements Context
 {
+    use SerializerAwareTrait;
+
     /**
      * @var Client[]
      */
@@ -41,6 +44,8 @@ class WampContext implements Context
                 Client::class
             ));
         }
+
+        $this->setSerializer(new JsonSerializer());
     }
 
     public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
@@ -82,6 +87,7 @@ class WampContext implements Context
 
     public function purgeQueue(Queue $queue): void
     {
+        throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     public function close(): void

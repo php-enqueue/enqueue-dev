@@ -91,7 +91,9 @@ class WampProducer implements Producer
                     $this->client->emit('do-stop');
                 };
 
-                $this->session->publish($destination->getTopicName(), [json_encode($message->jsonSerialize())], [], ['acknowledge' => true])
+                $payload = $this->context->getSerializer()->toString($message);
+
+                $this->session->publish($destination->getTopicName(), [$payload], [], ['acknowledge' => true])
                     ->then($onFinish, $onFinish);
             });
 
