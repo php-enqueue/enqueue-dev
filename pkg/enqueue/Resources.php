@@ -165,7 +165,7 @@ final class Resources
                 'package' => 'enqueue/mongodb',
             ];
             $map[WampConnectionFactory::class] = [
-                'schemes' => ['wamp'],
+                'schemes' => ['wamp', 'ws'],
                 'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/wamp',
             ];

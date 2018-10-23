@@ -8,6 +8,7 @@ It uses internally Thruway PHP library [voryx/thruway](https://github.com/voryx/
 * [Start the WAMP router](#start-the-wamp-router)
 * [Create context](#create-context)
 * [Consume message](#consume-message)
+* [Subscription consumer](#subscription-consumer)
 * [Send message to topic](#send-message-to-topic)
 
 ## Installation
@@ -56,6 +57,35 @@ while (true) {
         // process a message
     }
 }
+```
+
+## Subscription consumer
+
+```php
+<?php
+use Interop\Queue\Message;
+use Interop\Queue\Consumer;
+
+/** @var \Enqueue\Wamp\WampContext $context */
+/** @var \Enqueue\Wamp\WampDestination $fooQueue */
+/** @var \Enqueue\Wamp\WampDestination $barQueue */
+
+$fooConsumer = $context->createConsumer($fooQueue);
+$barConsumer = $context->createConsumer($barQueue);
+
+$subscriptionConsumer = $context->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
+    // process message
+    
+    return true;
+});
+$subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
+    // process message
+    
+    return true;
+});
+
+$subscriptionConsumer->consume(2000); // 2 sec
 ```
 
 ## Send message to topic
