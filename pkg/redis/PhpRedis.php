@@ -19,6 +19,10 @@ class PhpRedis implements Redis
      */
     public function __construct(array $config)
     {
+        if (false == class_exists(\Redis::class)) {
+            throw new \LogicException('You must install the redis extension to use phpredis');
+        }
+
         $this->config = $config;
     }
 
