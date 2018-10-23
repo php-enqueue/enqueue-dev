@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalConsumer;
@@ -50,6 +52,16 @@ class DbalConsumerTest extends TestCase
         $consumer->setPollingInterval(123456);
 
         $this->assertEquals(123456, $consumer->getPollingInterval());
+    }
+
+    public function testCouldSetAndGetRedeliveryDelay()
+    {
+        $destination = new DbalDestination('queue');
+
+        $consumer = new DbalConsumer($this->createContextMock(), $destination);
+        $consumer->setRedeliveryDelay(123456);
+
+        $this->assertEquals(123456, $consumer->getRedeliveryDelay());
     }
 
     public function testRejectShouldThrowIfInstanceOfMessageIsInvalid()

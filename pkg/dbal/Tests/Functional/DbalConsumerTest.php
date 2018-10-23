@@ -49,6 +49,7 @@ class DbalConsumerTest extends TestCase
 
         $producer = $context->createProducer();
 
+        /** @var DbalMessage $message */
         $message = $context->createMessage($expectedBody);
         $message->setPublishedAt($time);
         $producer->send($queue, $message);
@@ -61,7 +62,7 @@ class DbalConsumerTest extends TestCase
         $this->assertSame($time, $message->getPublishedAt());
     }
 
-    public function testShouldOrderMessagesWithSamePriorityByPublishedAtDate()
+    public function testShouldOrderMessagesWithSamePriorityByPublishedAtDateee()
     {
         $context = $this->context;
         $queue = $context->createQueue(__METHOD__);
@@ -79,6 +80,7 @@ class DbalConsumerTest extends TestCase
 
         $producer = $context->createProducer();
 
+        /** @var DbalMessage $message */
         $message = $context->createMessage($expectedPriority5Body);
         $message->setPriority(5);
         $message->setPublishedAt($time);

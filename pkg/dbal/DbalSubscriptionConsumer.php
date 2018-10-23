@@ -7,6 +7,7 @@ namespace Enqueue\Dbal;
 use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Consumer;
 use Interop\Queue\SubscriptionConsumer;
+use Ramsey\Uuid\Uuid;
 
 class DbalSubscriptionConsumer implements SubscriptionConsumer
 {
@@ -28,6 +29,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     private $dbal;
 
     /**
+     * Default 20 minutes in milliseconds.
+     *
+     * @var int
+     */
+    private $redeliveryDelay;
+
+    /**
      * @param DbalContext $context
      */
     public function __construct(DbalContext $context)
@@ -35,6 +43,16 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $this->context = $context;
         $this->dbal = $this->context->getDbalConnection();
         $this->subscribers = [];
+
+        $this->redeliveryDelay = 1200000;
+    }
+
+    /**
+     * Get interval between retry failed messages in milliseconds.
+     */
+    public function getRedeliveryDelay(): int
+    {
+        return $this->redeliveryDelay;
     }
 
     public function consume(int $timeout = 0): void
@@ -43,8 +61,10 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             throw new \LogicException('No subscribers');
         }
 
-        $timeout = (int) ceil($timeout / 1000);
-        $endAt = time() + $timeout;
+        $now = time();
+        $timeout /= 1000;
+        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
+        $deliveryId = (string) Uuid::uuid1();
 
         $queueNames = [];
         foreach (array_keys($this->subscribers) as $queueName) {
@@ -57,10 +77,30 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 $currentQueueNames = $queueNames;
             }
 
-            $message = $this->fetchPrioritizedMessage($currentQueueNames) ?: $this->fetchMessage($currentQueueNames);
+            $message = $this->fetchMessage($currentQueueNames);
 
             if ($message) {
-                $this->dbal->delete($this->context->getTableName(), ['id' => $message['id']], ['id' => Type::GUID]);
+                // mark message as delivered to consumer
+                $this->dbal->createQueryBuilder()
+                    ->update($this->context->getTableName())
+                    ->set('delivery_id', ':deliveryId')
+                    ->set('redeliver_after', ':redeliverAfter')
+                    ->andWhere('id = :id')
+                    ->setParameter('id', $message['id'], Type::GUID)
+                    ->setParameter('deliveryId', $deliveryId, Type::STRING)
+                    ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
+                    ->execute()
+                ;
+
+                $message = $this->dbal->createQueryBuilder()
+                    ->select('*')
+                    ->from($this->context->getTableName())
+                    ->andWhere('delivery_id = :deliveryId')
+                    ->setParameter('deliveryId', $deliveryId, Type::STRING)
+                    ->setMaxResults(1)
+                    ->execute()
+                    ->fetch()
+                ;
 
                 $dbalMessage = $this->context->convertMessage($message);
 
@@ -81,7 +121,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 usleep(200000); // 200ms
             }
 
-            if ($timeout && microtime(true) >= $endAt) {
+            if ($timeout && microtime(true) >= $now + $timeout) {
                 return;
             }
         }
@@ -137,61 +177,20 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
 
     private function fetchMessage(array $queues): ?array
     {
-        $query = $this->dbal->createQueryBuilder();
-        $query
+        $result = $this->dbal->createQueryBuilder()
             ->select('*')
             ->from($this->context->getTableName())
+            ->andWhere('delivery_id IS NULL')
             ->andWhere('queue IN (:queues)')
-            ->andWhere('priority IS NULL')
-            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-            ->addOrderBy('published_at', 'asc')
-            ->setMaxResults(1)
-        ;
-
-        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
-
-        $result = $this->dbal->executeQuery(
-            $sql,
-            [
-                'queues' => array_keys($queues),
-                'delayedUntil' => time(),
-            ],
-            [
-                'queues' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
-                'delayedUntil' => \Doctrine\DBAL\ParameterType::INTEGER,
-            ]
-        )->fetch();
-
-        return $result ?: null;
-    }
-
-    private function fetchPrioritizedMessage(array $queues): ?array
-    {
-        $query = $this->dbal->createQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->context->getTableName())
-            ->andWhere('queue IN (:queues)')
-            ->andWhere('priority IS NOT NULL')
-            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-            ->addOrderBy('published_at', 'asc')
+            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
             ->addOrderBy('priority', 'desc')
+            ->addOrderBy('published_at', 'asc')
+            ->setParameter('queues', array_keys($queues), \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
+            ->setParameter('delayedUntil', time(), \Doctrine\DBAL\ParameterType::INTEGER)
             ->setMaxResults(1)
+            ->execute()
+            ->fetch()
         ;
-
-        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
-
-        $result = $this->dbal->executeQuery(
-            $sql,
-            [
-                'queues' => array_keys($queues),
-                'delayedUntil' => time(),
-            ],
-            [
-                'queues' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
-                'delayedUntil' => \Doctrine\DBAL\ParameterType::INTEGER,
-            ]
-        )->fetch();
 
         return $result ?: null;
     }
