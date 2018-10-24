@@ -10,6 +10,7 @@
     - [Kafka](transport/kafka.md)
     - [Stomp](transport/stomp.md)
     - [Redis](transport/redis.md)
+    - [Wamp](transport/wamp.md)
     - [Doctrine DBAL](transport/dbal.md)
     - [Filesystem](transport/filesystem.md)
     - [Null](transport/null.md)

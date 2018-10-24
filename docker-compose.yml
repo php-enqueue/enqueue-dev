@@ -14,6 +14,7 @@ services:
       - google-pubsub
       - rabbitmqssl
       - mongo
+      - thruway
       - localstack
     volumes:
       - './:/mqdev'
@@ -30,6 +31,7 @@ services:
       - PHPREDIS_DSN=redis+phpredis://redis
       - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
       - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4576&version=latest
+      - WAMP_DSN=wamp://thruway:9090
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - AWS_SQS_KEY=key
@@ -103,6 +105,17 @@ services:
       image: mongo:3.7
       ports:
         - "27017:27017"
+
+  thruway:
+    image: formapro/nginx-php-fpm:latest-all-exts
+    ports:
+      - '9090:9090'
+    working_dir: '/app'
+    volumes:
+      - './:/app'
+    entrypoint:
+        - '/usr/bin/php'
+        - 'docker/thruway/WsRouter.php'
 
   localstack:
     image: 'localstack/localstack:latest'
