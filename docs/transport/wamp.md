@@ -34,10 +34,12 @@ use Enqueue\Wamp\WampConnectionFactory;
 
 $connectionFactory = new WampConnectionFactory();
 
-$context = $connectionFactory->createContext();
+// same as above
+$connectionFactory = new WampConnectionFactory('wamp:');
+$connectionFactory = new WampConnectionFactory('ws:');
+$connectionFactory = new WampConnectionFactory('wamp://127.0.0.1:9090');
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$context = (new \Enqueue\ConnectionFactoryFactory())->create('wamp:')->createContext();
+$context = $connectionFactory->createContext();
 ```
 
 ## Consume message:
