@@ -91,8 +91,6 @@ class SqsDriverTest extends TestCase
         $transportMessage->setTimestamp(1000);
         $transportMessage->setReplyTo('theReplyTo');
         $transportMessage->setCorrelationId('theCorrelationId');
-        $transportMessage->setReplyTo('theReplyTo');
-        $transportMessage->setCorrelationId('theCorrelationId');
 
         $driver = new SqsDriver(
             $this->createPsrContextMock(),
@@ -120,9 +118,15 @@ class SqsDriverTest extends TestCase
         $this->assertSame(1000, $clientMessage->getTimestamp());
         $this->assertSame('theReplyTo', $clientMessage->getReplyTo());
         $this->assertSame('theCorrelationId', $clientMessage->getCorrelationId());
+        $this->assertNull($clientMessage->getDelay());
 
         $this->assertNull($clientMessage->getExpire());
         $this->assertSame(MessagePriority::NORMAL, $clientMessage->getPriority());
+
+        // Test delay
+        $transportMessage->setDelaySeconds(100);
+        $clientMessage = $driver->createClientMessage($transportMessage);
+        $this->assertSame(100, $clientMessage->getDelay());
     }
 
     public function testShouldConvertClientMessageToTransportMessage()
@@ -141,7 +145,7 @@ class SqsDriverTest extends TestCase
 
         $context = $this->createPsrContextMock();
         $context
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('createMessage')
             ->willReturn(new SqsMessage())
         ;
@@ -171,6 +175,12 @@ class SqsDriverTest extends TestCase
         $this->assertSame(1000, $transportMessage->getTimestamp());
         $this->assertSame('theReplyTo', $transportMessage->getReplyTo());
         $this->assertSame('theCorrelationId', $transportMessage->getCorrelationId());
+        $this->assertSame(0, $transportMessage->getDelaySeconds());
+
+        // Test delay
+        $clientMessage->setDelay(100);
+        $transportMessage = $driver->createTransportMessage($clientMessage);
+        $this->assertSame(100, $transportMessage->getDelaySeconds());
     }
 
     public function testShouldSendMessageToRouterQueue()
