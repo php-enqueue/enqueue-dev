@@ -24,6 +24,7 @@ use Interop\Amqp\AmqpConnectionFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use function Enqueue\dsn_to_connection_factory;
 
 class DefaultTransportFactory implements TransportFactoryInterface, DriverFactoryInterface
@@ -161,7 +162,11 @@ class DefaultTransportFactory implements TransportFactoryInterface, DriverFactor
             $matches = [];
             if (preg_match('/%env\((.*?)\)/', $dsn, $matches)) {
                 if (false === $realDsn = getenv($matches[1])) {
-                    throw new \LogicException(sprintf('The env "%s" var is not defined', $matches[1]));
+                    try {
+                        $realDsn = $container->getParameter($matches[1]);
+                    } catch (InvalidArgumentException $exception) {
+                        throw new \LogicException(sprintf('The env "%s" var is not defined', $matches[1]), $exception);
+                    }
                 }
 
                 return $realDsn;
