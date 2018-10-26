@@ -78,7 +78,7 @@ class RedisContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, RedisDestination::class);
 
-        $this->getRedis()->del($queue->getName());
+        $this->deleteDestination($queue);
     }
 
     /**
@@ -88,7 +88,7 @@ class RedisContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($topic, RedisDestination::class);
 
-        $this->getRedis()->del($topic->getName());
+        $this->deleteDestination($topic);
     }
 
     public function createTemporaryQueue(): Queue
@@ -129,7 +129,7 @@ class RedisContext implements Context
      */
     public function purgeQueue(Queue $queue): void
     {
-        $this->getRedis()->del($queue->getName());
+        $this->deleteDestination($queue);
     }
 
     public function close(): void
@@ -153,5 +153,12 @@ class RedisContext implements Context
         }
 
         return $this->redis;
+    }
+
+    private function deleteDestination(RedisDestination $destination): void
+    {
+        $this->getRedis()->del($destination->getName());
+        $this->getRedis()->del($destination->getName().':delayed');
+        $this->getRedis()->del($destination->getName().':reserved');
     }
 }

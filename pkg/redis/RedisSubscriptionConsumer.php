@@ -22,12 +22,33 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     private $subscribers;
 
     /**
+     * @var int
+     */
+    private $retryDelay;
+
+    /**
      * @param RedisContext $context
      */
     public function __construct(RedisContext $context)
     {
         $this->context = $context;
         $this->subscribers = [];
+    }
+
+    /**
+     * @return int
+     */
+    public function getRetryDelay(): ?int
+    {
+        return $this->retryDelay;
+    }
+
+    /**
+     * @param int $retryDelay
+     */
+    public function setRetryDelay(int $retryDelay): void
+    {
+        $this->retryDelay = $retryDelay;
     }
 
     public function consume(int $timeout = 0): void
@@ -39,30 +60,23 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         $timeout = (int) ceil($timeout / 1000);
         $endAt = time() + $timeout;
 
-        $queueNames = [];
-        foreach (array_keys($this->subscribers) as $queueName) {
-            $queueNames[$queueName] = $queueName;
+        $queues = [];
+        /** @var Consumer $consumer */
+        foreach ($this->subscribers as list($consumer)) {
+            $queues[] = $consumer->getQueue();
         }
 
-        $currentQueueNames = [];
+        $queueConsumer = new RedisQueueConsumer($this->context->getRedis(), $queues);
+
+        if ($this->retryDelay) {
+            $queueConsumer->setRetryDelay($this->retryDelay);
+        }
+
         while (true) {
-            if (empty($currentQueueNames)) {
-                $currentQueueNames = $queueNames;
-            }
+            if ($message = $queueConsumer->receiveMessage($timeout ?: 5)) {
+                list($consumer, $callback) = $this->subscribers[$message->getKey()];
 
-            $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout ?: 5);
-            if ($result) {
-                $message = RedisMessage::jsonUnserialize($result->getMessage());
-                list($consumer, $callback) = $this->subscribers[$result->getKey()];
                 if (false === call_user_func($callback, $message, $consumer)) {
-                    return;
-                }
-
-                unset($currentQueueNames[$result->getKey()]);
-            } else {
-                $currentQueueNames = [];
-
-                if ($timeout && microtime(true) >= $endAt) {
                     return;
                 }
             }

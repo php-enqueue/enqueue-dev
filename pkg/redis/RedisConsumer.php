@@ -21,10 +21,40 @@ class RedisConsumer implements Consumer
      */
     private $context;
 
+    /**
+     * @var int
+     */
+    private $retryDelay;
+
+    /**
+     * @var RedisQueueConsumer
+     */
+    private $queueConsumer;
+
     public function __construct(RedisContext $context, RedisDestination $queue)
     {
         $this->context = $context;
         $this->queue = $queue;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRetryDelay(): ?int
+    {
+        return $this->retryDelay;
+    }
+
+    /**
+     * @param int $retryDelay
+     */
+    public function setRetryDelay(int $retryDelay): void
+    {
+        $this->retryDelay = $retryDelay;
+
+        if ($this->queueConsumer) {
+            $this->queueConsumer->setRetryDelay($this->retryDelay);
+        }
     }
 
     /**
@@ -40,8 +70,9 @@ class RedisConsumer implements Consumer
      */
     public function receive(int $timeout = 0): ?Message
     {
-        $timeout = (int) ($timeout / 1000);
-        if (empty($timeout)) {
+        $timeout = (int) ceil($timeout / 1000);
+
+        if ($timeout <= 0) {
             while (true) {
                 if ($message = $this->receive(5000)) {
                     return $message;
@@ -49,11 +80,9 @@ class RedisConsumer implements Consumer
             }
         }
 
-        if ($result = $this->getRedis()->brpop([$this->queue->getName()], $timeout)) {
-            return RedisMessage::jsonUnserialize($result->getMessage());
-        }
+        $this->initQueueConsumer();
 
-        return null;
+        return $this->queueConsumer->receiveMessage($timeout);
     }
 
     /**
@@ -61,11 +90,9 @@ class RedisConsumer implements Consumer
      */
     public function receiveNoWait(): ?Message
     {
-        if ($result = $this->getRedis()->rpop($this->queue->getName())) {
-            return RedisMessage::jsonUnserialize($result->getMessage());
-        }
+        $this->initQueueConsumer();
 
-        return null;
+        return $this->queueConsumer->receiveMessageNoWait($this->queue);
     }
 
     /**
@@ -73,7 +100,7 @@ class RedisConsumer implements Consumer
      */
     public function acknowledge(Message $message): void
     {
-        // do nothing. redis transport always works in auto ack mode
+        $this->getRedis()->zrem($this->queue->getName().':reserved', $message->getReservedKey());
     }
 
     /**
@@ -83,15 +110,33 @@ class RedisConsumer implements Consumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        // do nothing on reject. redis transport always works in auto ack mode
+        $this->acknowledge($message);
 
         if ($requeue) {
-            $this->context->createProducer()->send($this->queue, $message);
+            $message = RedisMessage::jsonUnserialize($message->getReservedKey());
+            $message->setHeader('attempts', 0);
+
+            if ($message->getTimeToLive()) {
+                $message->setHeader('expires_at', time() + $message->getTimeToLive());
+            }
+
+            $this->getRedis()->lpush($this->queue->getName(), json_encode($message));
         }
     }
 
     private function getRedis(): Redis
     {
         return $this->context->getRedis();
+    }
+
+    private function initQueueConsumer(): void
+    {
+        if (null === $this->queueConsumer) {
+            $this->queueConsumer = new RedisQueueConsumer($this->getRedis(), [$this->queue]);
+
+            if ($this->retryDelay) {
+                $this->queueConsumer->setRetryDelay($this->retryDelay);
+            }
+        }
     }
 }

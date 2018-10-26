@@ -28,6 +28,16 @@ class RedisMessage implements Message, \JsonSerializable
      */
     private $redelivered;
 
+    /**
+     * @var string
+     */
+    private $reservedKey;
+
+    /**
+     * @var string
+     */
+    private $key;
+
     public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
@@ -137,6 +147,75 @@ class RedisMessage implements Message, \JsonSerializable
     public function getReplyTo(): ?string
     {
         return $this->getHeader('reply_to');
+    }
+
+    /**
+     * @return int
+     */
+    public function getAttempts(): int
+    {
+        return (int) $this->getHeader('attempts', 0);
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimeToLive(): ?int
+    {
+        return $this->getHeader('time_to_live');
+    }
+
+    /**
+     * Set time to live in milliseconds.
+     */
+    public function setTimeToLive(int $timeToLive = null): void
+    {
+        $this->setHeader('time_to_live', $timeToLive);
+    }
+
+    public function getDeliveryDelay(): ?int
+    {
+        return $this->getHeader('delivery_delay');
+    }
+
+    /**
+     * Set delay in milliseconds.
+     */
+    public function setDeliveryDelay(int $deliveryDelay = null): void
+    {
+        $this->setHeader('delivery_delay', $deliveryDelay);
+    }
+
+    /**
+     * @return string
+     */
+    public function getReservedKey(): ?string
+    {
+        return $this->reservedKey;
+    }
+
+    /**
+     * @param string $reservedKey
+     */
+    public function setReservedKey(string $reservedKey)
+    {
+        $this->reservedKey = $reservedKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey(): ?string
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function setKey(string $key)
+    {
+        $this->key = $key;
     }
 
     public function jsonSerialize(): array
