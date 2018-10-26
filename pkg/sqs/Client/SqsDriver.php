@@ -134,6 +134,7 @@ class SqsDriver implements DriverInterface
         $transportMessage->setTimestamp($message->getTimestamp());
         $transportMessage->setReplyTo($message->getReplyTo());
         $transportMessage->setCorrelationId($message->getCorrelationId());
+        $transportMessage->setDelaySeconds($message->getDelay());
 
         return $transportMessage;
     }
@@ -157,6 +158,7 @@ class SqsDriver implements DriverInterface
         $clientMessage->setPriority(MessagePriority::NORMAL);
         $clientMessage->setReplyTo($message->getReplyTo());
         $clientMessage->setCorrelationId($message->getCorrelationId());
+        $clientMessage->setDelay($message->getDelaySeconds() ?: null);
 
         return $clientMessage;
     }
