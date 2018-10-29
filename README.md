@@ -3,6 +3,8 @@
 <p align="center">
   <a href="https://gitter.im/php-enqueue/Lobby"><img src="https://badges.gitter.im/php-enqueue/Lobby.svg" alt="Enqueue Chat"></a>
   <a href="https://travis-ci.org/php-enqueue/enqueue-dev"><img src="https://travis-ci.org/php-enqueue/enqueue-dev.png?branch=master" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/enqueue/enqueue/stats"><img src="https://poser.pugx.org/enqueue/enqueue/d/total.png?branch=master" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/enqueue/enqueue"><img src="https://poser.pugx.org/enqueue/enqueue/version.png" alt="Latest Stable Version"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
 </p>
 
