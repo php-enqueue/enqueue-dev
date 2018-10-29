@@ -6,7 +6,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
-use function GuzzleHttp\Psr7\str;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Impl\ConsumerPollingTrait;
@@ -118,7 +117,7 @@ class DbalConsumer implements Consumer
 
             $this->dbal->commit();
 
-            if ($message->isRedelivered() || empty($dbalMessage['time_to_live']) || $dbalMessage['time_to_live'] > time()) {
+            if ($dbalMessage['redelivered'] || empty($dbalMessage['time_to_live']) || $dbalMessage['time_to_live'] > time()) {
                 return $this->context->convertMessage($dbalMessage);
             }
 
