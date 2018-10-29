@@ -102,6 +102,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         $this->subscribers[$queueName] = [$consumer, $callback];
+        $this->queueNames = null;
     }
 
     /**
@@ -124,11 +125,13 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         unset($this->subscribers[$queueName]);
+        $this->queueNames = null;
     }
 
     public function unsubscribeAll(): void
     {
         $this->subscribers = [];
+        $this->queueNames = null;
     }
 
     private function getContext(): RedisContext

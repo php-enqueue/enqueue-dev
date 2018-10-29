@@ -35,12 +35,14 @@ trait RedisConsumerHelperTrait
         while ($thisTimeout > 0) {
             $this->migrateExpiredMessages($this->queueNames);
 
-            if ($result = $this->getContext()->getRedis()->brpop($this->queueNames, $thisTimeout)) {
-                $this->pushQueueNameBack($result->getKey());
+            if (false == $result = $this->getContext()->getRedis()->brpop($this->queueNames, $thisTimeout)) {
+                return null;
+            }
 
-                if ($message = $this->processResult($result, $redeliveryDelay)) {
-                    return $message;
-                }
+            $this->pushQueueNameBack($result->getKey());
+
+            if ($message = $this->processResult($result, $redeliveryDelay)) {
+                return $message;
             }
 
             $thisTimeout -= time() - $startAt;
