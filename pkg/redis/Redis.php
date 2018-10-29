@@ -8,8 +8,8 @@ interface Redis
 {
     /**
      * @param string $script
-     * @param array $keys
-     * @param array $args
+     * @param array  $keys
+     * @param array  $args
      *
      * @throws ServerException
      *
@@ -20,7 +20,7 @@ interface Redis
     /**
      * @param string $key
      * @param string $value
-     * @param float $score
+     * @param float  $score
      *
      * @throws ServerException
      *

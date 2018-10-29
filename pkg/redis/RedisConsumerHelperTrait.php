@@ -11,7 +11,7 @@ trait RedisConsumerHelperTrait
      */
     protected $queueNames;
 
-    abstract function getContext(): RedisContext;
+    abstract protected function getContext(): RedisContext;
 
     /**
      * @param RedisDestination[] $queues

@@ -2,10 +2,10 @@
 
 namespace Enqueue\Redis\Tests\Spec;
 
-use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Redis\JsonSerializer;
-use Enqueue\Redis\Serializer;
 use Enqueue\Redis\RedisMessage;
+use Enqueue\Redis\Serializer;
+use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
