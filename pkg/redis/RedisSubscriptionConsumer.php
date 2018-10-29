@@ -9,6 +9,8 @@ use Interop\Queue\SubscriptionConsumer;
 
 class RedisSubscriptionConsumer implements SubscriptionConsumer
 {
+    use RedisConsumerHelperTrait;
+
     /**
      * @var RedisContext
      */
@@ -24,7 +26,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     /**
      * @var int
      */
-    private $retryDelay;
+    private $redeliveryDelay = 300;
 
     /**
      * @param RedisContext $context
@@ -38,17 +40,17 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     /**
      * @return int
      */
-    public function getRetryDelay(): ?int
+    public function getRedeliveryDelay(): ?int
     {
-        return $this->retryDelay;
+        return $this->redeliveryDelay;
     }
 
     /**
-     * @param int $retryDelay
+     * @param int $delay
      */
-    public function setRetryDelay(int $retryDelay): void
+    public function setRedeliveryDelay(int $delay): void
     {
-        $this->retryDelay = $retryDelay;
+        $this->redeliveryDelay = $delay;
     }
 
     public function consume(int $timeout = 0): void
@@ -66,14 +68,8 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
             $queues[] = $consumer->getQueue();
         }
 
-        $queueConsumer = new RedisQueueConsumer($this->context->getRedis(), $queues);
-
-        if ($this->retryDelay) {
-            $queueConsumer->setRetryDelay($this->retryDelay);
-        }
-
         while (true) {
-            if ($message = $queueConsumer->receiveMessage($timeout ?: 5)) {
+            if ($message = $this->receiveMessage($queues, $timeout ?: 5, $this->redeliveryDelay)) {
                 list($consumer, $callback) = $this->subscribers[$message->getKey()];
 
                 if (false === call_user_func($callback, $message, $consumer)) {
@@ -133,5 +129,10 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     public function unsubscribeAll(): void
     {
         $this->subscribers = [];
+    }
+
+    private function getContext(): RedisContext
+    {
+        return $this->context;
     }
 }

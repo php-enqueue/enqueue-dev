@@ -54,7 +54,19 @@ class RedisProducerTest extends TestCase
         $redisMock
             ->expects($this->once())
             ->method('lpush')
-            ->with('aDestination', '{"body":"","properties":[],"headers":[]}')
+            ->willReturnCallback(function (string $key, string $value) {
+                $this->assertSame('aDestination', $key);
+
+                $message = json_decode($value, true);
+
+                $this->assertArrayHasKey('body', $message);
+                $this->assertArrayHasKey('properties', $message);
+                $this->assertArrayHasKey('headers', $message);
+                $this->assertNotEmpty($message['headers']['message_id']);
+                $this->assertSame(0, $message['headers']['attempts']);
+
+                return true;
+            })
         ;
 
         $producer = new RedisProducer($redisMock);

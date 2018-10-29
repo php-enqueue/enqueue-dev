@@ -6,7 +6,7 @@ namespace Enqueue\Redis;
 
 use Interop\Queue\Message;
 
-class RedisMessage implements Message, \JsonSerializable
+class RedisMessage implements Message
 {
     /**
      * @var string
@@ -213,31 +213,8 @@ class RedisMessage implements Message, \JsonSerializable
     /**
      * @param string $key
      */
-    public function setKey(string $key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'body' => $this->getBody(),
-            'properties' => $this->getProperties(),
-            'headers' => $this->getHeaders(),
-        ];
-    }
-
-    public static function jsonUnserialize(string $json): self
-    {
-        $data = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
-        }
-
-        return new self($data['body'], $data['properties'], $data['headers']);
     }
 }

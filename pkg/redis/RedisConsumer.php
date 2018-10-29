@@ -11,6 +11,8 @@ use Interop\Queue\Queue;
 
 class RedisConsumer implements Consumer
 {
+    use RedisConsumerHelperTrait;
+
     /**
      * @var RedisDestination
      */
@@ -24,12 +26,7 @@ class RedisConsumer implements Consumer
     /**
      * @var int
      */
-    private $retryDelay;
-
-    /**
-     * @var RedisQueueConsumer
-     */
-    private $queueConsumer;
+    private $redeliveryDelay = 300;
 
     public function __construct(RedisContext $context, RedisDestination $queue)
     {
@@ -40,21 +37,17 @@ class RedisConsumer implements Consumer
     /**
      * @return int
      */
-    public function getRetryDelay(): ?int
+    public function getRedeliveryDelay(): ?int
     {
-        return $this->retryDelay;
+        return $this->redeliveryDelay;
     }
 
     /**
-     * @param int $retryDelay
+     * @param int $delay
      */
-    public function setRetryDelay(int $retryDelay): void
+    public function setRedeliveryDelay(int $delay): void
     {
-        $this->retryDelay = $retryDelay;
-
-        if ($this->queueConsumer) {
-            $this->queueConsumer->setRetryDelay($this->retryDelay);
-        }
+        $this->redeliveryDelay = $delay;
     }
 
     /**
@@ -80,9 +73,7 @@ class RedisConsumer implements Consumer
             }
         }
 
-        $this->initQueueConsumer();
-
-        return $this->queueConsumer->receiveMessage($timeout);
+        return $this->receiveMessage([$this->queue], $timeout, $this->redeliveryDelay);
     }
 
     /**
@@ -90,9 +81,7 @@ class RedisConsumer implements Consumer
      */
     public function receiveNoWait(): ?Message
     {
-        $this->initQueueConsumer();
-
-        return $this->queueConsumer->receiveMessageNoWait($this->queue);
+        return $this->receiveMessageNoWait($this->queue, $this->redeliveryDelay);
     }
 
     /**
@@ -113,30 +102,26 @@ class RedisConsumer implements Consumer
         $this->acknowledge($message);
 
         if ($requeue) {
-            $message = RedisMessage::jsonUnserialize($message->getReservedKey());
+            $message = $this->getContext()->getSerializer()->toMessage($message->getReservedKey());
             $message->setHeader('attempts', 0);
 
             if ($message->getTimeToLive()) {
                 $message->setHeader('expires_at', time() + $message->getTimeToLive());
             }
 
-            $this->getRedis()->lpush($this->queue->getName(), json_encode($message));
+            $payload = $this->getContext()->getSerializer()->toString($message);
+
+            $this->getRedis()->lpush($this->queue->getName(), $payload);
         }
+    }
+
+    private function getContext(): RedisContext
+    {
+        return $this->context;
     }
 
     private function getRedis(): Redis
     {
         return $this->context->getRedis();
-    }
-
-    private function initQueueConsumer(): void
-    {
-        if (null === $this->queueConsumer) {
-            $this->queueConsumer = new RedisQueueConsumer($this->getRedis(), [$this->queue]);
-
-            if ($this->retryDelay) {
-                $this->queueConsumer->setRetryDelay($this->retryDelay);
-            }
-        }
     }
 }

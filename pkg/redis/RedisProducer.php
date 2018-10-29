@@ -14,9 +14,9 @@ use Interop\Queue\Producer;
 class RedisProducer implements Producer
 {
     /**
-     * @var Redis
+     * @var RedisContext
      */
-    private $redis;
+    private $context;
 
     /**
      * @var int|null
@@ -29,11 +29,11 @@ class RedisProducer implements Producer
     private $deliveryDelay;
 
     /**
-     * @param Redis $redis
+     * @param RedisContext $context
      */
-    public function __construct(Redis $redis)
+    public function __construct(RedisContext $context)
     {
-        $this->redis = $redis;
+        $this->context = $context;
     }
 
     /**
@@ -60,11 +60,13 @@ class RedisProducer implements Producer
             $message->setHeader('expires_at', time() + $message->getTimeToLive());
         }
 
+        $payload = $this->context->getSerializer()->toString($message);
+
         if ($message->getDeliveryDelay()) {
             $deliveryAt = time() + $message->getDeliveryDelay();
-            $this->redis->zadd($destination->getName().':delayed', json_encode($message), $deliveryAt);
+            $this->context->getRedis()->zadd($destination->getName().':delayed', $payload, $deliveryAt);
         } else {
-            $this->redis->lpush($destination->getName(), json_encode($message));
+            $this->context->getRedis()->lpush($destination->getName(), $payload);
         }
     }
 

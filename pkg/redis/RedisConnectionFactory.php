@@ -38,6 +38,8 @@ class RedisConnectionFactory implements ConnectionFactory
      *  'read_write_timeout' => Timeout (expressed in seconds) used when performing read or write operations on the underlying network resource after which an exception is thrown.
      *  'predis_options' => An array of predis specific options.
      *  'ssl' => could be any of http://fi2.php.net/manual/en/context.ssl.php#refsect1-context.ssl-options
+     *  'redelivery_delay' => Default 300 sec. Returns back message into the queue if message was not acknowledged or rejected after this delay.
+     *                        It could happen if consumer has failed with fatal error or even if message processing is slow and takes more than this time.
      * ].
      *
      * or
@@ -85,10 +87,10 @@ class RedisConnectionFactory implements ConnectionFactory
         if ($this->config['lazy']) {
             return new RedisContext(function () {
                 return $this->createRedis();
-            });
+            }, $this->config['redelivery_delay']);
         }
 
-        return new RedisContext($this->createRedis());
+        return new RedisContext($this->createRedis(), $this->config['redelivery_delay']);
     }
 
     private function createRedis(): Redis
@@ -158,6 +160,7 @@ class RedisConnectionFactory implements ConnectionFactory
             'read_write_timeout' => null,
             'predis_options' => null,
             'ssl' => null,
+            'redelivery_delay' => 300,
         ];
     }
 }

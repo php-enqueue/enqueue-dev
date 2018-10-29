@@ -61,7 +61,10 @@ trait CommonUseCasesTrait
 
         $this->assertEquals(__METHOD__, $message->getBody());
         $this->assertEquals(['FooProperty' => 'FooVal'], $message->getProperties());
-        $this->assertEquals(['BarHeader' => 'BarVal'], $message->getHeaders());
+        $this->assertCount(3, $message->getHeaders());
+        $this->assertSame(1, $message->getHeader('attempts'));
+        $this->assertSame('BarVal', $message->getHeader('BarHeader'));
+        $this->assertNotEmpty('BarVal', $message->getHeader('message_id'));
     }
 
     public function testProduceAndReceiveOneMessageSentDirectlyToTopic()
@@ -99,7 +102,7 @@ trait CommonUseCasesTrait
         $actualMessage = $consumer->receive(0);
 
         $this->assertInstanceOf(RedisMessage::class, $actualMessage);
-        $consumer->acknowledge($message);
+        $consumer->acknowledge($actualMessage);
 
         $this->assertEquals(__METHOD__, $message->getBody());
     }
