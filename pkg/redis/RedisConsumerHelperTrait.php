@@ -68,7 +68,7 @@ trait RedisConsumerHelperTrait
 
         $now = time();
 
-        if ($expiresAt = $message->getHeader('expires_at')) {
+        if (0 === $message->getAttempts() && $expiresAt = $message->getHeader('expires_at')) {
             if ($now > $expiresAt) {
                 return null;
             }
