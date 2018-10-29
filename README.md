@@ -1,10 +1,25 @@
+<p align="center"><img width="700" src="https://github.com/php-enqueue/logos/blob/master/Enqueue%20logo.png" alt="Enqueue logo" /></p>
+
+<p align="center">
+  <a href="https://gitter.im/php-enqueue/Lobby"><img src="https://badges.gitter.im/php-enqueue/Lobby.svg" alt="Enqueue Chat"></a>
+  <a href="https://travis-ci.org/php-enqueue/enqueue-dev"><img src="https://travis-ci.org/php-enqueue/enqueue-dev.png?branch=master" alt="Build Status"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+</p>
+
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor on Patreon](https://www.patreon.com/makasim).
+- [Hire us](http://forma-pro.com/)
+
+---
+
+## Introduction
+
 **Enqueue** is production ready, battle-tested messaging solution for PHP. Provides a common way for programs to create, send, read messages. 
 
 This is a main development repository. It provides a friendly environment for productive development and testing of all Enqueue related features&packages.
-
-[![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://travis-ci.org/php-enqueue/enqueue-dev.png?branch=master)](https://travis-ci.org/php-enqueue/enqueue-dev)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 Features:
 
