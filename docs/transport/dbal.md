@@ -2,14 +2,14 @@
 
 The transport uses [Doctrine DBAL](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/) library and SQL like server as a broker. 
 It creates a table there. Pushes and pops messages to\from that table. 
- 
-**Limitations** It works only in auto ack mode hence If consumer crashes the message is lost.  
 
 * [Installation](#installation)
 * [Init database](#init-database)
 * [Create context](#create-context)
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
+* [Send expiration message](#send-expiration-message)
+* [Send delayed message](#send-delayed-message)
 * [Consume message](#consume-message)
 * [Subscription consumer](#subscription-consumer)
 
@@ -90,6 +90,38 @@ $message = $psrContext->createMessage('Hello world!');
 $psrContext->createProducer()->send($fooQueue, $message);
 ```
 
+## Send expiration message
+
+```php
+<?php
+/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalDestination $fooQueue */
+
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setTimeToLive(60000) // 60 sec
+    // 
+    ->send($fooQueue, $message)
+;
+```
+
+## Send delayed message
+
+```php
+<?php
+/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalDestination $fooQueue */
+
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setDeliveryDelay(5000) // 5 sec
+    // 
+    ->send($fooQueue, $message)
+;
+````
+
 ## Consume message:
 
 ```php
@@ -102,6 +134,9 @@ $consumer = $psrContext->createConsumer($fooQueue);
 $message = $consumer->receive();
 
 // process a message
+
+$consumer->acknowledge($message);
+//$consumer->reject($message);
 ```
 
 ## Subscription consumer
