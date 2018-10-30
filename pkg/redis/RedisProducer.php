@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Redis;
 
-use Enqueue\Util\UUID;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
+use Ramsey\Uuid\Uuid;
 
 class RedisProducer implements Producer
 {
@@ -45,7 +45,7 @@ class RedisProducer implements Producer
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        $message->setMessageId(UUID::generate());
+        $message->setMessageId(Uuid::uuid4()->toString());
         $message->setHeader('attempts', 0);
 
         if (null !== $this->timeToLive && null === $message->getTimeToLive()) {
