@@ -144,8 +144,12 @@ class DbalConsumer implements Consumer
         $this->deleteMessage($message->getDeliveryId());
     }
 
-    private function deleteMessage(?string $deliveryId): void
+    private function deleteMessage(string $deliveryId): void
     {
+        if (empty($deliveryId)) {
+            throw new \LogicException(sprintf('Expected record was removed but it is not. Delivery id: "%s"', $deliveryId));
+        }
+
         $this->getConnection()->delete(
             $this->getContext()->getTableName(),
             ['delivery_id' => $deliveryId],
