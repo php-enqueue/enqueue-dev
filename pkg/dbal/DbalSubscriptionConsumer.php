@@ -81,6 +81,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $now = time();
         $timeout /= 1000;
         $deliveryId = (string) Uuid::uuid1();
+        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
         $queueNames = [];
         foreach (array_keys($this->subscribers) as $queueName) {
@@ -93,13 +94,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 $currentQueueNames = $queueNames;
             }
 
-            $message = $this->fetchMessage($currentQueueNames);
-
-            if ($message) {
-                $this->markMessageAsDeliveredToConsumer($message, $deliveryId);
-
-                $message = $this->getMessageByDeliveryId($deliveryId);
-
+            if ($message = $this->fetchMessage($currentQueueNames, $deliveryId, $redeliveryDelay)) {
                 $dbalMessage = $this->getContext()->convertMessage($message);
 
                 /**

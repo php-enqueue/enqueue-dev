@@ -240,7 +240,6 @@ class DbalContext implements Context
         $table->addIndex(['priority', 'published_at']);
         $table->addIndex(['redeliver_after']);
         $table->addUniqueIndex(['delivery_id']);
-        $table->addIndex(['delivery_id']);
 
         $sm->createTable($table);
     }

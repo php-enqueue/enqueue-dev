@@ -13,55 +13,61 @@ trait DbalConsumerHelperTrait
 
     abstract public function getConnection(): Connection;
 
-    protected function fetchMessage(array $queues): ?array
+    protected function fetchMessage(array $queues, string $deliveryId, int $redeliveryDelay): ?array
     {
-        $now = time();
+        try {
+            $now = time();
 
-        $result = $this->getConnection()->createQueryBuilder()
-            ->select('*')
-            ->from($this->getContext()->getTableName())
-            ->andWhere('delivery_id IS NULL')
-            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
-            ->andWhere('queue IN (:queues)')
-            ->addOrderBy('priority', 'desc')
-            ->addOrderBy('published_at', 'asc')
-            ->setParameter('delayedUntil', $now, \Doctrine\DBAL\ParameterType::INTEGER)
-            ->setParameter('queues', array_values($queues), \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
-            ->setMaxResults(1)
-            ->execute()
-            ->fetch()
-        ;
+            $this->getConnection()->beginTransaction();
 
-        return $result ?: null;
-    }
+            $message = $this->getConnection()->createQueryBuilder()
+                ->select('*')
+                ->from($this->getContext()->getTableName())
+                ->andWhere('delivery_id IS NULL')
+                ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
+                ->andWhere('queue IN (:queues)')
+                ->addOrderBy('priority', 'desc')
+                ->addOrderBy('published_at', 'asc')
+                ->setParameter('delayedUntil', $now, \Doctrine\DBAL\ParameterType::INTEGER)
+                ->setParameter('queues', array_values($queues), \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch()
+            ;
 
-    protected function markMessageAsDeliveredToConsumer(array $message, string $deliveryId): void
-    {
-        $now = time();
-        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
+            if (!$message) {
+                $this->getConnection()->commit();
 
-        $this->getConnection()->createQueryBuilder()
-            ->andWhere('id = :id')
-            ->update($this->getContext()->getTableName())
-            ->set('delivery_id', ':deliveryId')
-            ->set('redeliver_after', ':redeliverAfter')
-            ->setParameter('id', $message['id'], Type::GUID)
-            ->setParameter('deliveryId', $deliveryId, Type::STRING)
-            ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
-            ->execute()
-        ;
-    }
+                return null;
+            }
 
-    protected function getMessageByDeliveryId(string $deliveryId): array
-    {
-        return $this->getConnection()->createQueryBuilder()
-            ->select('*')
-            ->from($this->getContext()->getTableName())
-            ->andWhere('delivery_id = :deliveryId')
-            ->setParameter('deliveryId', $deliveryId, Type::STRING)
-            ->setMaxResults(1)
-            ->execute()
-            ->fetch()
-        ;
+            // mark message as delivered to consumer
+            $this->getConnection()->createQueryBuilder()
+                ->andWhere('id = :id')
+                ->update($this->getContext()->getTableName())
+                ->set('delivery_id', ':deliveryId')
+                ->set('redeliver_after', ':redeliverAfter')
+                ->setParameter('id', $message['id'], Type::GUID)
+                ->setParameter('deliveryId', $deliveryId, Type::STRING)
+                ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
+                ->execute();
+
+            $this->getConnection()->commit();
+
+            $deliveredMessage = $this->getConnection()->createQueryBuilder()
+                ->select('*')
+                ->from($this->getContext()->getTableName())
+                ->andWhere('delivery_id = :deliveryId')
+                ->setParameter('deliveryId', $deliveryId, Type::STRING)
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
+
+            return $deliveredMessage ?: null;
+        } catch (\Exception $e) {
+            $this->getConnection()->rollBack();
+
+            throw $e;
+        }
     }
 }

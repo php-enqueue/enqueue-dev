@@ -87,37 +87,19 @@ class DbalConsumer implements Consumer
 
     public function receiveNoWait(): ?Message
     {
+        $deliveryId = (string) Uuid::uuid1();
+        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
+
         $this->redeliverMessages();
 
-        $this->getConnection()->beginTransaction();
-        try {
-            $deliveryId = (string) Uuid::uuid1();
-
-            // get top message from the queue
-            $message = $this->fetchMessage([$this->queue->getQueueName()]);
-
-            if (null == $message) {
-                $this->getConnection()->commit();
-
-                return null;
+        // get top message from the queue
+        if ($message = $this->fetchMessage([$this->queue->getQueueName()], $deliveryId, $redeliveryDelay)) {
+            if ($message['redelivered'] || empty($message['time_to_live']) || $message['time_to_live'] > time()) {
+                return $this->getContext()->convertMessage($message);
             }
-
-            $this->markMessageAsDeliveredToConsumer($message, $deliveryId);
-
-            $dbalMessage = $this->getMessageByDeliveryId($deliveryId);
-
-            $this->getConnection()->commit();
-
-            if ($dbalMessage['redelivered'] || empty($dbalMessage['time_to_live']) || $dbalMessage['time_to_live'] > time()) {
-                return $this->getContext()->convertMessage($dbalMessage);
-            }
-
-            return null;
-        } catch (\Exception $e) {
-            $this->dbal->rollBack();
-
-            throw $e;
         }
+
+        return null;
     }
 
     /**
