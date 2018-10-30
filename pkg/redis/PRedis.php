@@ -53,6 +53,34 @@ class PRedis implements Redis
         }
     }
 
+    public function eval(string $script, array $keys = [], array $args = [])
+    {
+        try {
+            // mixed eval($script, $numkeys, $keyOrArg1 = null, $keyOrArgN = null)
+            return call_user_func_array([$this->redis, 'eval'], array_merge([$script, count($keys)], $keys, $args));
+        } catch (PRedisServerException $e) {
+            throw new ServerException('eval command has failed', null, $e);
+        }
+    }
+
+    public function zadd(string $key, string $value, float $score): int
+    {
+        try {
+            return $this->redis->zadd($key, [$value => $score]);
+        } catch (PRedisServerException $e) {
+            throw new ServerException('zadd command has failed', null, $e);
+        }
+    }
+
+    public function zrem(string $key, string $value): int
+    {
+        try {
+            return $this->redis->zrem($key, [$value]);
+        } catch (PRedisServerException $e) {
+            throw new ServerException('zrem command has failed', null, $e);
+        }
+    }
+
     public function lpush(string $key, string $value): int
     {
         try {

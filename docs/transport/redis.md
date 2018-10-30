@@ -5,12 +5,12 @@ It creates a collection (a queue or topic) there. Pushes messages to the tail of
 The transport works with [phpredis](https://github.com/phpredis/phpredis) php extension or [predis](https://github.com/nrk/predis) library. 
 Make sure you installed either of them 
  
-**Limitations** It works only in auto ack mode hence If consumer crashes the message is lost.  
-
 * [Installation](#installation)
 * [Create context](#create-context)
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
+* [Send expiration message](#send-expiration-message)
+* [Send delayed message](#send-delayed-message)
 * [Consume message](#consume-message)
 * [Delete queue (purge messages)](#delete-queue-purge-messages)
 * [Delete topic (purge messages)](#delete-topic-purge-messages)
@@ -56,7 +56,7 @@ $factory = new RedisConnectionFactory([
 ]);
 
 // same as above but given as DSN string
-$factory = new RedisConnectionFactory('redis://example.com:1000?vendor=phpredis');
+$factory = new RedisConnectionFactory('redis+phpredis://example.com:1000');
 
 $psrContext = $factory->createContext();
 
@@ -68,7 +68,7 @@ $redis = new \Enqueue\Redis\PhpRedis([ /** redis connection options */ ]);
 $redis->connect();
 
 // Secure\TLS connection. Works only with predis library. Note second "S" in scheme.
-$factory = new RedisConnectionFactory('rediss://user:pass@host/0?vendor=predis'); 
+$factory = new RedisConnectionFactory('rediss+predis://user:pass@host/0'); 
 
 $factory = new RedisConnectionFactory($redis);
 ```
@@ -82,7 +82,7 @@ use Enqueue\Redis\RedisConnectionFactory;
 $connectionFactory = new RedisConnectionFactory([
     'host' => 'localhost',
     'port' => 6379,
-    'vendor' => 'predis',
+    'scheme_extensions' => 'predis',
 ]);
 
 $psrContext = $connectionFactory->createContext();
@@ -102,7 +102,7 @@ $options = [];
 
 $redis = new PRedis(new \PRedis\Client($config, $options));
 
-$factory = new RedisConnectionFactory(['vendor' => 'custom', 'redis' => $redis]);
+$factory = new RedisConnectionFactory($redis);
 ```
 
 ## Send message to topic
@@ -129,6 +129,38 @@ $message = $psrContext->createMessage('Hello world!');
 $psrContext->createProducer()->send($fooQueue, $message);
 ```
 
+## Send expiration message
+
+```php
+<?php
+/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisDestination $fooQueue */
+
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setTimeToLive(60000) // 60 sec
+    //    
+    ->send($fooQueue, $message)
+;
+```
+
+## Send delayed message
+
+```php
+<?php
+/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisDestination $fooQueue */
+
+$message = $psrContext->createMessage('Hello world!');
+
+$psrContext->createProducer()
+    ->setDeliveryDelay(5000) // 5 sec
+    
+    ->send($fooQueue, $message)
+;
+````
+
 ## Consume message:
 
 ```php
@@ -141,6 +173,9 @@ $consumer = $psrContext->createConsumer($fooQueue);
 $message = $consumer->receive();
 
 // process a message
+
+$consumer->acknowledge($message);
+//$consumer->reject($message);
 ```
 
 ## Delete queue (purge messages):

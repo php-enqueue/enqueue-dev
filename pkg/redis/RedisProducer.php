@@ -9,20 +9,31 @@ use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
+use Ramsey\Uuid\Uuid;
 
 class RedisProducer implements Producer
 {
     /**
-     * @var Redis
+     * @var RedisContext
      */
-    private $redis;
+    private $context;
 
     /**
-     * @param Redis $redis
+     * @var int|null
      */
-    public function __construct(Redis $redis)
+    private $timeToLive;
+
+    /**
+     * @var int
+     */
+    private $deliveryDelay;
+
+    /**
+     * @param RedisContext $context
+     */
+    public function __construct(RedisContext $context)
     {
-        $this->redis = $redis;
+        $this->context = $context;
     }
 
     /**
@@ -34,24 +45,44 @@ class RedisProducer implements Producer
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        $this->redis->lpush($destination->getName(), json_encode($message));
+        $message->setMessageId(Uuid::uuid4()->toString());
+        $message->setHeader('attempts', 0);
+
+        if (null !== $this->timeToLive && null === $message->getTimeToLive()) {
+            $message->setTimeToLive($this->timeToLive);
+        }
+
+        if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
+            $message->setDeliveryDelay($this->deliveryDelay);
+        }
+
+        if ($message->getTimeToLive()) {
+            $message->setHeader('expires_at', time() + $message->getTimeToLive());
+        }
+
+        $payload = $this->context->getSerializer()->toString($message);
+
+        if ($message->getDeliveryDelay()) {
+            $deliveryAt = time() + $message->getDeliveryDelay();
+            $this->context->getRedis()->zadd($destination->getName().':delayed', $payload, $deliveryAt);
+        } else {
+            $this->context->getRedis()->lpush($destination->getName(), $payload);
+        }
     }
 
     /**
-     * @return RedisProducer
+     * @return self
      */
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
-        if (null === $deliveryDelay) {
-            return $this;
-        }
+        $this->deliveryDelay = $deliveryDelay;
 
-        throw new \LogicException('Not implemented');
+        return $this;
     }
 
     public function getDeliveryDelay(): ?int
     {
-        return null;
+        return $this->deliveryDelay;
     }
 
     /**
@@ -72,19 +103,17 @@ class RedisProducer implements Producer
     }
 
     /**
-     * @return RedisProducer
+     * @return self
      */
     public function setTimeToLive(int $timeToLive = null): Producer
     {
-        if (null === $timeToLive) {
-            return $this;
-        }
+        $this->timeToLive = $timeToLive;
 
-        throw new \LogicException('Not implemented');
+        return $this;
     }
 
     public function getTimeToLive(): ?int
     {
-        return null;
+        return $this->timeToLive;
     }
 }

@@ -17,6 +17,8 @@ use Interop\Queue\Topic;
 
 class RedisContext implements Context
 {
+    use SerializerAwareTrait;
+
     /**
      * @var Redis
      */
@@ -28,11 +30,17 @@ class RedisContext implements Context
     private $redisFactory;
 
     /**
+     * @var int
+     */
+    private $redeliveryDelay = 300;
+
+    /**
      * Callable must return instance of Redis once called.
      *
      * @param Redis|callable $redis
+     * @param int            $redeliveryDelay
      */
-    public function __construct($redis)
+    public function __construct($redis, int $redeliveryDelay)
     {
         if ($redis instanceof Redis) {
             $this->redis = $redis;
@@ -45,6 +53,9 @@ class RedisContext implements Context
                 Redis::class
             ));
         }
+
+        $this->redeliveryDelay = $redeliveryDelay;
+        $this->setSerializer(new JsonSerializer());
     }
 
     /**
@@ -78,7 +89,7 @@ class RedisContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($queue, RedisDestination::class);
 
-        $this->getRedis()->del($queue->getName());
+        $this->deleteDestination($queue);
     }
 
     /**
@@ -88,7 +99,7 @@ class RedisContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($topic, RedisDestination::class);
 
-        $this->getRedis()->del($topic->getName());
+        $this->deleteDestination($topic);
     }
 
     public function createTemporaryQueue(): Queue
@@ -101,7 +112,7 @@ class RedisContext implements Context
      */
     public function createProducer(): Producer
     {
-        return new RedisProducer($this->getRedis());
+        return new RedisProducer($this);
     }
 
     /**
@@ -113,7 +124,10 @@ class RedisContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
 
-        return new RedisConsumer($this, $destination);
+        $consumer = new RedisConsumer($this, $destination);
+        $consumer->setRedeliveryDelay($this->redeliveryDelay);
+
+        return $consumer;
     }
 
     /**
@@ -121,7 +135,10 @@ class RedisContext implements Context
      */
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        return new RedisSubscriptionConsumer($this);
+        $consumer = new RedisSubscriptionConsumer($this);
+        $consumer->setRedeliveryDelay($this->redeliveryDelay);
+
+        return $consumer;
     }
 
     /**
@@ -129,7 +146,7 @@ class RedisContext implements Context
      */
     public function purgeQueue(Queue $queue): void
     {
-        $this->getRedis()->del($queue->getName());
+        $this->deleteDestination($queue);
     }
 
     public function close(): void
@@ -153,5 +170,12 @@ class RedisContext implements Context
         }
 
         return $this->redis;
+    }
+
+    private function deleteDestination(RedisDestination $destination): void
+    {
+        $this->getRedis()->del($destination->getName());
+        $this->getRedis()->del($destination->getName().':delayed');
+        $this->getRedis()->del($destination->getName().':reserved');
     }
 }

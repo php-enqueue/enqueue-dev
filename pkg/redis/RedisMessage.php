@@ -6,7 +6,7 @@ namespace Enqueue\Redis;
 
 use Interop\Queue\Message;
 
-class RedisMessage implements Message, \JsonSerializable
+class RedisMessage implements Message
 {
     /**
      * @var string
@@ -27,6 +27,16 @@ class RedisMessage implements Message, \JsonSerializable
      * @var bool
      */
     private $redelivered;
+
+    /**
+     * @var string
+     */
+    private $reservedKey;
+
+    /**
+     * @var string
+     */
+    private $key;
 
     public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
@@ -139,26 +149,72 @@ class RedisMessage implements Message, \JsonSerializable
         return $this->getHeader('reply_to');
     }
 
-    public function jsonSerialize(): array
+    /**
+     * @return int
+     */
+    public function getAttempts(): int
     {
-        return [
-            'body' => $this->getBody(),
-            'properties' => $this->getProperties(),
-            'headers' => $this->getHeaders(),
-        ];
+        return (int) $this->getHeader('attempts', 0);
     }
 
-    public static function jsonUnserialize(string $json): self
+    /**
+     * @return int
+     */
+    public function getTimeToLive(): ?int
     {
-        $data = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
-        }
+        return $this->getHeader('time_to_live');
+    }
 
-        return new self($data['body'], $data['properties'], $data['headers']);
+    /**
+     * Set time to live in milliseconds.
+     */
+    public function setTimeToLive(int $timeToLive = null): void
+    {
+        $this->setHeader('time_to_live', $timeToLive);
+    }
+
+    public function getDeliveryDelay(): ?int
+    {
+        return $this->getHeader('delivery_delay');
+    }
+
+    /**
+     * Set delay in milliseconds.
+     */
+    public function setDeliveryDelay(int $deliveryDelay = null): void
+    {
+        $this->setHeader('delivery_delay', $deliveryDelay);
+    }
+
+    /**
+     * @return string
+     */
+    public function getReservedKey(): ?string
+    {
+        return $this->reservedKey;
+    }
+
+    /**
+     * @param string $reservedKey
+     */
+    public function setReservedKey(string $reservedKey)
+    {
+        $this->reservedKey = $reservedKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey(): ?string
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function setKey(string $key): void
+    {
+        $this->key = $key;
     }
 }

@@ -90,6 +90,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'read_write_timeout' => null,
                 'predis_options' => null,
                 'ssl' => null,
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -110,6 +111,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'read_write_timeout' => null,
                 'predis_options' => null,
                 'ssl' => null,
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -130,6 +132,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'read_write_timeout' => null,
                 'predis_options' => null,
                 'ssl' => null,
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -151,6 +154,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'foo' => 'bar',
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -172,6 +176,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'foo' => 'bar',
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -193,6 +198,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'foo' => 'bar',
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -215,6 +221,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'foo' => 'bar',
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -237,6 +244,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'foo' => 'bar',
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -259,6 +267,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'foo' => 'bar',
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -280,6 +289,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'foo' => 'bar',
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -301,6 +311,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'read_write_timeout' => null,
                 'predis_options' => null,
                 'ssl' => null,
+                'redelivery_delay' => 300,
             ],
         ];
 
@@ -326,6 +337,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                     'cafile' => 'private.pem',
                     'verify_peer' => '1',
                 ],
+                'redelivery_delay' => 300,
             ],
         ];
     }
