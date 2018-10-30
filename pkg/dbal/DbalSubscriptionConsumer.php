@@ -7,7 +7,6 @@ namespace Enqueue\Dbal;
 use Doctrine\DBAL\Connection;
 use Interop\Queue\Consumer;
 use Interop\Queue\SubscriptionConsumer;
-use Ramsey\Uuid\Uuid;
 
 class DbalSubscriptionConsumer implements SubscriptionConsumer
 {
@@ -49,27 +48,19 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $this->redeliveryDelay = 1200000;
     }
 
-    public function getContext(): DbalContext
-    {
-        return $this->context;
-    }
-
-    public function getConnection(): Connection
-    {
-        return $this->dbal;
-    }
-
     /**
-     * Get interval between retry failed messages in milliseconds.
+     * Get interval between retrying failed messages in milliseconds.
      */
     public function getRedeliveryDelay(): int
     {
         return $this->redeliveryDelay;
     }
 
-    public function setRedeliveryDelay(int $redeliveryDelay): void
+    public function setRedeliveryDelay(int $redeliveryDelay): self
     {
         $this->redeliveryDelay = $redeliveryDelay;
+
+        return $this;
     }
 
     public function consume(int $timeout = 0): void
@@ -78,15 +69,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             throw new \LogicException('No subscribers');
         }
 
-        $now = time();
-        $timeout /= 1000;
-        $deliveryId = (string) Uuid::uuid1();
-        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
-
         $queueNames = [];
         foreach (array_keys($this->subscribers) as $queueName) {
             $queueNames[$queueName] = $queueName;
         }
+
+        $timeout /= 1000;
+        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
         $currentQueueNames = [];
         while (true) {
@@ -94,7 +83,10 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 $currentQueueNames = $queueNames;
             }
 
-            if ($message = $this->fetchMessage($currentQueueNames, $deliveryId, $redeliveryDelay)) {
+            $now = time();
+            $this->redeliverMessages();
+
+            if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {
                 $dbalMessage = $this->getContext()->convertMessage($message);
 
                 /**
@@ -166,5 +158,15 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     public function unsubscribeAll(): void
     {
         $this->subscribers = [];
+    }
+
+    protected function getContext(): DbalContext
+    {
+        return $this->context;
+    }
+
+    protected function getConnection(): Connection
+    {
+        return $this->dbal;
     }
 }

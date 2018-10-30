@@ -7,20 +7,22 @@ namespace Enqueue\Dbal;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Type;
+use Ramsey\Uuid\Uuid;
 
 trait DbalConsumerHelperTrait
 {
-    abstract public function getContext(): DbalContext;
+    abstract protected function getContext(): DbalContext;
 
-    abstract public function getConnection(): Connection;
+    abstract protected function getConnection(): Connection;
 
-    protected function fetchMessage(array $queues, string $deliveryId, int $redeliveryDelay): ?array
+    protected function fetchMessage(array $queues, int $redeliveryDelay): ?array
     {
+        $now = time();
+        $deliveryId = (string) Uuid::uuid1();
+
+        $this->getConnection()->beginTransaction();
+
         try {
-            $now = time();
-
-            $this->getConnection()->beginTransaction();
-
             $query = $this->getConnection()->createQueryBuilder()
                 ->select('*')
                 ->from($this->getContext()->getTableName())
@@ -74,5 +76,20 @@ trait DbalConsumerHelperTrait
 
             throw $e;
         }
+    }
+
+    protected function redeliverMessages(): void
+    {
+        $this->getConnection()->createQueryBuilder()
+            ->update($this->getContext()->getTableName())
+            ->set('delivery_id', ':deliveryId')
+            ->set('redelivered', ':redelivered')
+            ->andWhere('delivery_id IS NOT NULL')
+            ->andWhere('redeliver_after < :now')
+            ->setParameter(':now', (int) time(), Type::BIGINT)
+            ->setParameter('deliveryId', null, Type::STRING)
+            ->setParameter('redelivered', true, Type::BOOLEAN)
+            ->execute()
+        ;
     }
 }

@@ -11,7 +11,6 @@ use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Impl\ConsumerPollingTrait;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
-use Ramsey\Uuid\Uuid;
 
 class DbalConsumer implements Consumer
 {
@@ -49,16 +48,6 @@ class DbalConsumer implements Consumer
         $this->redeliveryDelay = 1200000;
     }
 
-    public function getContext(): DbalContext
-    {
-        return $this->context;
-    }
-
-    public function getConnection(): Connection
-    {
-        return $this->dbal;
-    }
-
     /**
      * Get interval between retry failed messages in milliseconds.
      */
@@ -68,7 +57,7 @@ class DbalConsumer implements Consumer
     }
 
     /**
-     * Interval between retry failed messages in seconds.
+     * Get interval between retrying failed messages in milliseconds.
      */
     public function setRedeliveryDelay(int $redeliveryDelay): self
     {
@@ -87,13 +76,12 @@ class DbalConsumer implements Consumer
 
     public function receiveNoWait(): ?Message
     {
-        $deliveryId = (string) Uuid::uuid1();
         $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
         $this->redeliverMessages();
 
         // get top message from the queue
-        if ($message = $this->fetchMessage([$this->queue->getQueueName()], $deliveryId, $redeliveryDelay)) {
+        if ($message = $this->fetchMessage([$this->queue->getQueueName()], $redeliveryDelay)) {
             if ($message['redelivered'] || empty($message['time_to_live']) || $message['time_to_live'] > time()) {
                 return $this->getContext()->convertMessage($message);
             }
@@ -107,6 +95,8 @@ class DbalConsumer implements Consumer
      */
     public function acknowledge(Message $message): void
     {
+        InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
+
         $this->deleteMessage($message->getDeliveryId());
     }
 
@@ -126,6 +116,16 @@ class DbalConsumer implements Consumer
         $this->deleteMessage($message->getDeliveryId());
     }
 
+    protected function getContext(): DbalContext
+    {
+        return $this->context;
+    }
+
+    protected function getConnection(): Connection
+    {
+        return $this->dbal;
+    }
+
     private function deleteMessage(string $deliveryId): void
     {
         if (empty($deliveryId)) {
@@ -137,20 +137,5 @@ class DbalConsumer implements Consumer
             ['delivery_id' => $deliveryId],
             ['delivery_id' => Type::STRING]
         );
-    }
-
-    private function redeliverMessages(): void
-    {
-        $this->getConnection()->createQueryBuilder()
-            ->update($this->getContext()->getTableName())
-            ->set('delivery_id', ':deliveryId')
-            ->set('redelivered', ':redelivered')
-            ->andWhere('delivery_id IS NOT NULL')
-            ->andWhere('redeliver_after < :now')
-            ->setParameter(':now', (int) time(), Type::BIGINT)
-            ->setParameter('deliveryId', null, Type::STRING)
-            ->setParameter('redelivered', true, Type::BOOLEAN)
-            ->execute()
-        ;
     }
 }

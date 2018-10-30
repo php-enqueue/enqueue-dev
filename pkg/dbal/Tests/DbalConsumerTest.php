@@ -40,6 +40,19 @@ class DbalConsumerTest extends TestCase
         $this->assertSame($destination, $consumer->getQueue());
     }
 
+    public function testAcknowledgeShouldThrowIfInstanceOfMessageIsInvalid()
+    {
+        $this->expectException(InvalidMessageException::class);
+        $this->expectExceptionMessage(
+            'The message must be an instance of '.
+            'Enqueue\Dbal\DbalMessage '.
+            'but it is Enqueue\Dbal\Tests\InvalidMessage.'
+        );
+
+        $consumer = new DbalConsumer($this->createContextMock(), new DbalDestination('queue'));
+        $consumer->acknowledge(new InvalidMessage());
+    }
+
     public function testShouldDeleteMessageOnAcknowledge()
     {
         $queue = new DbalDestination('queue');
