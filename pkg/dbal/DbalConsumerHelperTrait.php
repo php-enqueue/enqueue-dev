@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Type;
 
 trait DbalConsumerHelperTrait
@@ -20,7 +21,7 @@ trait DbalConsumerHelperTrait
 
             $this->getConnection()->beginTransaction();
 
-            $message = $this->getConnection()->createQueryBuilder()
+            $query = $this->getConnection()->createQueryBuilder()
                 ->select('*')
                 ->from($this->getContext()->getTableName())
                 ->andWhere('delivery_id IS NULL')
@@ -28,12 +29,14 @@ trait DbalConsumerHelperTrait
                 ->andWhere('queue IN (:queues)')
                 ->addOrderBy('priority', 'desc')
                 ->addOrderBy('published_at', 'asc')
-                ->setParameter('delayedUntil', $now, \Doctrine\DBAL\ParameterType::INTEGER)
-                ->setParameter('queues', array_values($queues), \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
-                ->setMaxResults(1)
-                ->execute()
-                ->fetch()
-            ;
+                ->setMaxResults(1);
+
+            // select for update
+            $message = $this->getConnection()->executeQuery(
+                $query->getSQL().' '.$this->getConnection()->getDatabasePlatform()->getWriteLockSQL(),
+                ['delayedUntil' => $now, 'queues' => array_values($queues)],
+                ['delayedUntil' => ParameterType::INTEGER, 'queues' => Connection::PARAM_STR_ARRAY]
+            )->fetch();
 
             if (!$message) {
                 $this->getConnection()->commit();
@@ -50,7 +53,8 @@ trait DbalConsumerHelperTrait
                 ->setParameter('id', $message['id'], Type::GUID)
                 ->setParameter('deliveryId', $deliveryId, Type::STRING)
                 ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
-                ->execute();
+                ->execute()
+            ;
 
             $this->getConnection()->commit();
 
@@ -61,7 +65,8 @@ trait DbalConsumerHelperTrait
                 ->setParameter('deliveryId', $deliveryId, Type::STRING)
                 ->setMaxResults(1)
                 ->execute()
-                ->fetch();
+                ->fetch()
+            ;
 
             return $deliveredMessage ?: null;
         } catch (\Exception $e) {
