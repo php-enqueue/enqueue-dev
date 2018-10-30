@@ -129,7 +129,13 @@ class DbalContext implements Context
 
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        return new DbalSubscriptionConsumer($this);
+        $consumer = new DbalSubscriptionConsumer($this);
+
+        if (isset($this->config['redelivery_delay'])) {
+            $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
+        }
+
+        return $consumer;
     }
 
     /**

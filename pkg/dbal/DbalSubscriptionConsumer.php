@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Connection;
 use Interop\Queue\Consumer;
 use Interop\Queue\SubscriptionConsumer;
 use Ramsey\Uuid\Uuid;
 
 class DbalSubscriptionConsumer implements SubscriptionConsumer
 {
+    use DbalConsumerHelperTrait;
+
     /**
      * @var DbalContext
      */
@@ -47,12 +49,27 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $this->redeliveryDelay = 1200000;
     }
 
+    public function getContext(): DbalContext
+    {
+        return $this->context;
+    }
+
+    public function getConnection(): Connection
+    {
+        return $this->dbal;
+    }
+
     /**
      * Get interval between retry failed messages in milliseconds.
      */
     public function getRedeliveryDelay(): int
     {
         return $this->redeliveryDelay;
+    }
+
+    public function setRedeliveryDelay(int $redeliveryDelay): void
+    {
+        $this->redeliveryDelay = $redeliveryDelay;
     }
 
     public function consume(int $timeout = 0): void
@@ -63,7 +80,6 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
 
         $now = time();
         $timeout /= 1000;
-        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
         $deliveryId = (string) Uuid::uuid1();
 
         $queueNames = [];
@@ -80,29 +96,11 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             $message = $this->fetchMessage($currentQueueNames);
 
             if ($message) {
-                // mark message as delivered to consumer
-                $this->dbal->createQueryBuilder()
-                    ->update($this->context->getTableName())
-                    ->set('delivery_id', ':deliveryId')
-                    ->set('redeliver_after', ':redeliverAfter')
-                    ->andWhere('id = :id')
-                    ->setParameter('id', $message['id'], Type::GUID)
-                    ->setParameter('deliveryId', $deliveryId, Type::STRING)
-                    ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
-                    ->execute()
-                ;
+                $this->markMessageAsDeliveredToConsumer($message, $deliveryId);
 
-                $message = $this->dbal->createQueryBuilder()
-                    ->select('*')
-                    ->from($this->context->getTableName())
-                    ->andWhere('delivery_id = :deliveryId')
-                    ->setParameter('deliveryId', $deliveryId, Type::STRING)
-                    ->setMaxResults(1)
-                    ->execute()
-                    ->fetch()
-                ;
+                $message = $this->getMessageByDeliveryId($deliveryId);
 
-                $dbalMessage = $this->context->convertMessage($message);
+                $dbalMessage = $this->getContext()->convertMessage($message);
 
                 /**
                  * @var DbalConsumer
@@ -173,25 +171,5 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     public function unsubscribeAll(): void
     {
         $this->subscribers = [];
-    }
-
-    private function fetchMessage(array $queues): ?array
-    {
-        $result = $this->dbal->createQueryBuilder()
-            ->select('*')
-            ->from($this->context->getTableName())
-            ->andWhere('delivery_id IS NULL')
-            ->andWhere('queue IN (:queues)')
-            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
-            ->addOrderBy('priority', 'desc')
-            ->addOrderBy('published_at', 'asc')
-            ->setParameter('queues', array_keys($queues), \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
-            ->setParameter('delayedUntil', time(), \Doctrine\DBAL\ParameterType::INTEGER)
-            ->setMaxResults(1)
-            ->execute()
-            ->fetch()
-        ;
-
-        return $result ?: null;
     }
 }
