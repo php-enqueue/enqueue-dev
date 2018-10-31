@@ -84,6 +84,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             }
 
             $now = time();
+            $this->removeExpiredMessages();
             $this->redeliverMessages();
 
             if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {

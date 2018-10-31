@@ -169,7 +169,7 @@ class DbalConsumerTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($queue), $this->identicalTo($message))
+            ->with($this->identicalTo($queue), $this->isInstanceOf($message))
         ;
 
         $context = $this->createContextMock();

@@ -92,4 +92,15 @@ trait DbalConsumerHelperTrait
             ->execute()
         ;
     }
+
+    protected function removeExpiredMessages(): void
+    {
+        $this->getConnection()->createQueryBuilder()
+            ->delete($this->getContext()->getTableName())
+            ->andWhere('(time_to_live IS NOT NULL) AND (time_to_live < :now)')
+            ->setParameter(':now', (int) time(), Type::BIGINT)
+            ->setParameter('redelivered', false, Type::BOOLEAN)
+            ->execute()
+        ;
+    }
 }

@@ -78,6 +78,7 @@ class DbalConsumer implements Consumer
     {
         $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
+        $this->removeExpiredMessages();
         $this->redeliverMessages();
 
         // get top message from the queue
@@ -108,6 +109,9 @@ class DbalConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
         if ($requeue) {
+            $message = clone $message;
+            $message->setRedelivered(false);
+
             $this->getContext()->createProducer()->send($this->queue, $message);
 
             return;
