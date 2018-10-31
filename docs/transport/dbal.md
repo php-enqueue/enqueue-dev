@@ -32,7 +32,7 @@ $factory = new DbalConnectionFactory('mysql://user:pass@localhost:3306/mqdev');
 // connects to localhost
 $factory = new DbalConnectionFactory('mysql:');
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 ```
 
 * With existing connection:
@@ -48,10 +48,10 @@ $factory = new ManagerRegistryConnectionFactory($registry, [
     'connection_name' => 'default',
 ]);
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('mysql:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('mysql:')->createContext();
 ```
 
 ## Init database
@@ -61,43 +61,43 @@ Please pay attention to that the database has to be created manually.
 
 ```php
 <?php
-/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalContext $context */
 
-$psrContext->createDataBaseTable();
+$context->createDataBaseTable();
 ```
 
 ## Send message to topic
 
 ```php
 <?php
-/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalContext $context */
 
-$fooTopic = $psrContext->createTopic('aTopic');
-$message = $psrContext->createMessage('Hello world!');
+$fooTopic = $context->createTopic('aTopic');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('aQueue');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Consume message:
 
 ```php
 <?php
-/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$consumer = $psrContext->createConsumer($fooQueue);
+$fooQueue = $context->createQueue('aQueue');
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive();
 
@@ -108,25 +108,25 @@ $message = $consumer->receive();
 
 ```php
 <?php
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\Message;
+use Interop\Queue\Consumer;
 
-/** @var \Enqueue\Dbal\DbalContext $psrContext */
+/** @var \Enqueue\Dbal\DbalContext $context */
 /** @var \Enqueue\Dbal\DbalDestination $fooQueue */
 /** @var \Enqueue\Dbal\DbalDestination $barQueue */
 
-$fooConsumer = $psrContext->createConsumer($fooQueue);
-$barConsumer = $psrContext->createConsumer($barQueue);
+$fooConsumer = $context->createConsumer($fooQueue);
+$barConsumer = $context->createConsumer($barQueue);
 
-$subscriptionConsumer = $psrContext->createSubscriptionConsumer();
-$subscriptionConsumer->subscribe($fooConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+$subscriptionConsumer = $context->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
     // process message
     
     $consumer->acknowledge($message);
     
     return true;
 });
-$subscriptionConsumer->subscribe($barConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+$subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
     // process message
     
     $consumer->acknowledge($message);

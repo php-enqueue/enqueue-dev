@@ -12,7 +12,7 @@ enqueue:
         # The broker DSN. These schemes are supported: "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", to use these "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb" you have to install a package.
         dsn:                  ~ # Required
 
-        # The connection factory class should implement "Interop\Queue\PsrConnectionFactory" interface
+        # The connection factory class should implement "Interop\Queue\ConnectionFactory" interface
         connection_factory_class: ~
 
         # The factory class should implement "Enqueue\ConnectionFactoryFactoryInterface" interface

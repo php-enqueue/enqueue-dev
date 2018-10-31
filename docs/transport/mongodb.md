@@ -40,47 +40,47 @@ $factory = new MongodbConnectionFactory([
     'polling_interval' => '1000',
 ]);
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('mongodb:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('mongodb:')->createContext();
 ```
 
 ## Send message to topic 
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooTopic */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Send priority message
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setPriority(5) // the higher priority the sooner a message gets to a consumer
     //    
     ->send($fooQueue, $message)
@@ -91,12 +91,12 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setTimeToLive(60000) // 60 sec
     //    
     ->send($fooQueue, $message)
@@ -109,14 +109,14 @@ $psrContext->createProducer()
 <?php
 use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
 // make sure you run "composer require enqueue/amqp-tools".
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setDeliveryDelay(5000) // 5 sec
     
     ->send($fooQueue, $message)
@@ -127,10 +127,10 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
-$consumer = $psrContext->createConsumer($fooQueue);
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive();
 
@@ -144,25 +144,25 @@ $consumer->acknowledge($message);
 
 ```php
 <?php
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\Message;
+use Interop\Queue\Consumer;
 
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 /** @var \Enqueue\Mongodb\MongodbDestination $barQueue */
 
-$fooConsumer = $psrContext->createConsumer($fooQueue);
-$barConsumer = $psrContext->createConsumer($barQueue);
+$fooConsumer = $context->createConsumer($fooQueue);
+$barConsumer = $context->createConsumer($barQueue);
 
-$subscriptionConsumer = $psrContext->createSubscriptionConsumer();
-$subscriptionConsumer->subscribe($fooConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+$subscriptionConsumer = $context->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
     // process message
     
     $consumer->acknowledge($message);
     
     return true;
 });
-$subscriptionConsumer->subscribe($barConsumer, function(PsrMessage $message, PsrConsumer $consumer) {
+$subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
     // process message
     
     $consumer->acknowledge($message);

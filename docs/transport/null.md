@@ -21,7 +21,7 @@ use Enqueue\Null\NullConnectionFactory;
 
 $connectionFactory = new NullConnectionFactory();
 
-$psrContext = $connectionFactory->createContext();
+$context = $connectionFactory->createContext();
 ```
 
 [back to index](../index.md)

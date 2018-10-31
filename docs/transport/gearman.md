@@ -37,44 +37,44 @@ $factory = new GearmanConnectionFactory([
     'port' => 5555
 ]);
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('gearman:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('gearman:')->createContext();
 ```
 
 ## Send message to topic
 
 ```php
 <?php
-/** @var \Enqueue\Gearman\GearmanContext $psrContext */
+/** @var \Enqueue\Gearman\GearmanContext $context */
 
-$fooTopic = $psrContext->createTopic('aTopic');
-$message = $psrContext->createMessage('Hello world!');
+$fooTopic = $context->createTopic('aTopic');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Gearman\GearmanContext $psrContext */
+/** @var \Enqueue\Gearman\GearmanContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('aQueue');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Consume message:
 
 ```php
 <?php
-/** @var \Enqueue\Gearman\GearmanContext $psrContext */
+/** @var \Enqueue\Gearman\GearmanContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$consumer = $psrContext->createConsumer($fooQueue);
+$fooQueue = $context->createQueue('aQueue');
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive(2000); // wait for 2 seconds
 

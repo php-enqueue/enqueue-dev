@@ -12,17 +12,17 @@ It shows how you can run unique job using job queue (The configuration is descri
 
 ```php
 <?php 
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
 use Enqueue\JobQueue\JobRunner;
 
-class UniqueJobProcessor implements PsrProcessor 
+class UniqueJobProcessor implements Processor 
 {
     /** @var JobRunner */
     private $jobRunner;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $result = $this->jobRunner->runUnique($message->getMessageId(), 'aJobName', function () {
             // do your job, there is no any other processes executing same job,

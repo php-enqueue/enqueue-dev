@@ -39,18 +39,18 @@ the consumer may look like this:
 <?php
 
 use Enqueue\Consumption\QueueConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
 require_once __DIR__.'/vendor/autoload.php';
 
 $context = (new \Enqueue\Fs\FsConnectionFactory('file://'.__DIR__.'/queue'))->createContext();
 
 $consumer = new QueueConsumer($context);
-$consumer->bindCallback('log', function(PsrMessage $message) {
+$consumer->bindCallback('log', function(Message $message) {
     echo $message->getBody().PHP_EOL;
 
-    return PsrProcessor::ACK;
+    return Processor::ACK;
 });
 
 $consumer->consume();
