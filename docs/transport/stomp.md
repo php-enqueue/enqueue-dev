@@ -37,47 +37,47 @@ $factory = new StompConnectionFactory([
 // same as above but given as DSN string
 $factory = new StompConnectionFactory('stomp://example.com:1000?login=theLogin');
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('stomp:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('stomp:')->createContext();
 ```
 
 ## Send message to topic 
 
 ```php
 <?php
-/** @var \Enqueue\Stomp\StompContext $psrContext */
+/** @var \Enqueue\Stomp\StompContext $context */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$fooTopic = $psrContext->createTopic('foo');
+$fooTopic = $context->createTopic('foo');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Stomp\StompContext $psrContext */
+/** @var \Enqueue\Stomp\StompContext $context */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Consume message:
 
 ```php
 <?php
-/** @var \Enqueue\Stomp\StompContext $psrContext */
+/** @var \Enqueue\Stomp\StompContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$consumer = $psrContext->createConsumer($fooQueue);
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive();
 

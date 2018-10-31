@@ -43,47 +43,47 @@ $connectionFactory = new RdKafkaConnectionFactory([
     ],
 ]);
 
-$psrContext = $connectionFactory->createContext();
+$context = $connectionFactory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('kafka:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('kafka:')->createContext();
 ```
 
 ## Send message to topic 
 
 ```php
 <?php
-/** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
+/** @var \Enqueue\RdKafka\RdKafkaContext $context */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$fooTopic = $psrContext->createTopic('foo');
+$fooTopic = $context->createTopic('foo');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
+/** @var \Enqueue\RdKafka\RdKafkaContext $context */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Consume message:
 
 ```php
 <?php
-/** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
+/** @var \Enqueue\RdKafka\RdKafkaContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$consumer = $psrContext->createConsumer($fooQueue);
+$consumer = $context->createConsumer($fooQueue);
 
 // Enable async commit to gain better performance. 
 //$consumer->setCommitAsync(true);
@@ -114,9 +114,9 @@ class FooSerializer implements Serializer
     public function toString(RdKafkaMessage $message) {}
 }
 
-/** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
+/** @var \Enqueue\RdKafka\RdKafkaContext $context */
 
-$psrContext->setSerializer(new FooSerializer());
+$context->setSerializer(new FooSerializer());
 ```
 
 ## Change offset
@@ -126,11 +126,11 @@ There is an ability to change the current offset.
 
 ```php
 <?php
-/** @var \Enqueue\RdKafka\RdKafkaContext $psrContext */
+/** @var \Enqueue\RdKafka\RdKafkaContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$consumer = $psrContext->createConsumer($fooQueue);
+$consumer = $context->createConsumer($fooQueue);
 $consumer->setOffset(123);
 
 $message = $consumer->receive(2000);
