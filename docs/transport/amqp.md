@@ -100,7 +100,7 @@ $fooQueue = $context->createQueue('foo');
 $fooQueue->addFlag(AmqpQueue::FLAG_DURABLE);
 $context->declareQueue($fooQueue);
 
-// to remove topic use delete queue method
+// to remove queue use delete queue method
 //$context->deleteQueue($fooQueue);
 ```
 
