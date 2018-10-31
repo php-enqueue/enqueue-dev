@@ -87,6 +87,9 @@ class DbalProducer implements Producer
             'properties' => JSON::encode($message->getProperties()),
             'priority' => $message->getPriority(),
             'queue' => $destination->getQueueName(),
+            'redelivered' => false,
+            'delivery_id' => null,
+            'redeliver_after' => null,
         ];
 
         $delay = $message->getDeliveryDelay();
@@ -132,6 +135,9 @@ class DbalProducer implements Producer
                 'queue' => Type::STRING,
                 'time_to_live' => Type::INTEGER,
                 'delayed_until' => Type::INTEGER,
+                'redelivered' => Type::BOOLEAN,
+                'delivery_id' => Type::STRING,
+                'redeliver_after' => Type::BIGINT,
             ]);
         } catch (\Exception $e) {
             throw new Exception('The transport fails to send the message due to some internal error.', null, $e);
