@@ -13,7 +13,7 @@
         >
 
     <testsuites>
-        <testsuite name="Enqueue Metrics">
+        <testsuite name="Enqueue Monitoring">
             <directory>./Tests</directory>
         </testsuite>
     </testsuites>

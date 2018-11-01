@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Metric;
+namespace Enqueue\Monitoring;
 
 use Enqueue\Consumption\Context\End;
 use Enqueue\Consumption\Context\InitLogger;
@@ -14,10 +14,9 @@ use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
-use Interop\Queue\Consumer;
 use Ramsey\Uuid\Uuid;
 
-class MetricsExtension implements ExtensionInterface
+class MonitoringExtension implements ExtensionInterface
 {
     /**
      * @var EventStorage

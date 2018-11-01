@@ -1,9 +1,9 @@
-# Enqueue Metrics
+# Enqueue Monitoring
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://travis-ci.org/php-enqueue/metric.png?branch=master)](https://travis-ci.org/php-enqueue/metric)
-[![Total Downloads](https://poser.pugx.org/enqueue/metric/d/total.png)](https://packagist.org/packages/enqueue/metric)
-[![Latest Stable Version](https://poser.pugx.org/enqueue/metric/version.png)](https://packagist.org/packages/enqueue/metric)
+[![Build Status](https://travis-ci.org/php-enqueue/monitoring.png?branch=master)](https://travis-ci.org/php-enqueue/monitoring)
+[![Total Downloads](https://poser.pugx.org/enqueue/monitoring/d/total.png)](https://packagist.org/packages/enqueue/monitoring)
+[![Latest Stable Version](https://poser.pugx.org/enqueue/monitoring/version.png)](https://packagist.org/packages/enqueue/monitoring)
 
 ## Resources
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Enqueue\Metric;
+namespace Enqueue\Monitoring;
 
-class ConsumerStats extends Event
+class ConsumerStopped extends Event
 {
     /**
      * @var string[]
@@ -37,14 +37,34 @@ class ConsumerStats extends Event
     protected $requeued;
 
     /**
-     * @var int
+     * @var string
      */
-    protected $memoryUsage;
+    protected $errorClass;
 
     /**
-     * @var float
+     * @var string
      */
-    protected $systemLoad;
+    protected $errorMessage;
+
+    /**
+     * @var int
+     */
+    protected $errorCode;
+
+    /**
+     * @var string
+     */
+    protected $errorFile;
+
+    /**
+     * @var int
+     */
+    protected $errorLine;
+
+    /**
+     * @var string
+     */
+    protected $trance;
 
     public function __construct(
         string $consumerId,
@@ -55,8 +75,12 @@ class ConsumerStats extends Event
         int $acknowledged,
         int $rejected,
         int $requeued,
-        int $memoryUsage,
-        float $systemLoad
+        string $errorClass = null,
+        string $errorMessage = null,
+        int $errorCode = null,
+        string $errorFile = null,
+        int $errorLine = null,
+        string $trace = null
     ) {
         parent::__construct($consumerId, $timestampMs);
 
@@ -67,8 +91,12 @@ class ConsumerStats extends Event
         $this->rejected = $rejected;
         $this->requeued = $requeued;
 
-        $this->memoryUsage = $memoryUsage;
-        $this->systemLoad = $systemLoad;
+        $this->errorClass = $errorClass;
+        $this->errorMessage = $errorMessage;
+        $this->errorCode = $errorCode;
+        $this->errorFile = $errorFile;
+        $this->errorLine = $errorLine;
+        $this->trance = $trace;
     }
 
     public function getQueues(): array
@@ -101,13 +129,33 @@ class ConsumerStats extends Event
         return $this->requeued;
     }
 
-    public function getMemoryUsage(): int
+    public function getErrorClass(): ?string
     {
-        return $this->memoryUsage;
+        return $this->errorClass;
     }
 
-    public function getSystemLoad(): float
+    public function getErrorMessage(): ?string
     {
-        return $this->systemLoad;
+        return $this->errorMessage;
+    }
+
+    public function getErrorCode(): ?int
+    {
+        return $this->errorCode;
+    }
+
+    public function getErrorFile(): ?string
+    {
+        return $this->errorFile;
+    }
+
+    public function getErrorLine(): ?int
+    {
+        return $this->errorLine;
+    }
+
+    public function getTrance(): ?string
+    {
+        return $this->trance;
     }
 }

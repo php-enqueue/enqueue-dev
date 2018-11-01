@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Enqueue\Metric;
+namespace Enqueue\Monitoring;
 
 class Event
 {

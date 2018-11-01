@@ -1,8 +1,8 @@
 {
-    "name": "enqueue/metric",
+    "name": "enqueue/monitoring",
     "type": "library",
-    "description": "Enqueue Metrics",
-    "keywords": ["messaging", "queue", "metric", "grafana"],
+    "description": "Enqueue Monitoring",
+    "keywords": ["messaging", "queue", "monitoring", "grafana"],
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
     "require": {
@@ -22,7 +22,7 @@
         "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
     },
     "autoload": {
-        "psr-4": { "Enqueue\\Metric\\": "" },
+        "psr-4": { "Enqueue\\Monitoring\\": "" },
         "exclude-from-classmap": [
             "/Tests/"
         ]

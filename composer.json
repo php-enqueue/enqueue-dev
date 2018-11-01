@@ -79,7 +79,7 @@
       "Enqueue\\Test\\": "pkg/test/",
       "Enqueue\\Dsn\\": "pkg/dsn/",
       "Enqueue\\Wamp\\": "pkg/wamp/",
-      "Enqueue\\Metric\\": "pkg/metric/",
+      "Enqueue\\Monitoring\\": "pkg/monitoring/",
       "Enqueue\\": "pkg/enqueue/"
     },
     "exclude-from-classmap": [

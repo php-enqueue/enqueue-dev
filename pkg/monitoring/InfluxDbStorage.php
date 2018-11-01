@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Metric;
+namespace Enqueue\Monitoring;
 
 use InfluxDB\Client;
 use InfluxDB\Database;
