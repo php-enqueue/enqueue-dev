@@ -94,6 +94,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
                         'verify_peer' => $this->config->isSslVerify(),
                         'verify_peer_name' => $this->config->isSslVerify(),
                         'passphrase' => $this->getConfig()->getSslPassPhrase(),
+                        'ciphers' => $this->config->getOption('ciphers', ''),
                     ], function ($value) { return '' !== $value; });
 
                     $con = new AMQPSSLConnection(
