@@ -4,17 +4,47 @@ declare(strict_types=1);
 
 namespace Enqueue\Monitoring;
 
-class ConsumerStats extends Event
+class ConsumerStats implements Stats
 {
     /**
-     * @var string[]
+     * @var string
      */
-    protected $queues;
+    protected $consumerId;
+
+    /**
+     * @var int
+     */
+    protected $timestampMs;
 
     /**
      * @var int
      */
     protected $startedAtMs;
+
+    /**
+     * @var int
+     */
+    protected $finishedAtMs;
+
+    /**
+     * @var bool
+     */
+    protected $started;
+
+    /**
+     * @var bool
+     */
+    protected $finished;
+
+    /**
+     * @var bool
+     */
+    protected $failed;
+
+    /**
+     * @var string[]
+     */
+    protected $queues;
 
     /**
      * @var int
@@ -46,19 +76,66 @@ class ConsumerStats extends Event
      */
     protected $systemLoad;
 
+    /**
+     * @var string
+     */
+    protected $errorClass;
+
+    /**
+     * @var string
+     */
+    protected $errorMessage;
+
+    /**
+     * @var int
+     */
+    protected $errorCode;
+
+    /**
+     * @var string
+     */
+    protected $errorFile;
+
+    /**
+     * @var int
+     */
+    protected $errorLine;
+
+    /**
+     * @var string
+     */
+    protected $trance;
+
     public function __construct(
         string $consumerId,
         int $timestampMs,
-        array $queues,
         int $startedAtMs,
+        ?int $finishedAtMs,
+        bool $started,
+        bool $finished,
+        bool $failed,
+        array $queues,
         int $received,
         int $acknowledged,
         int $rejected,
         int $requeued,
         int $memoryUsage,
-        float $systemLoad
+        float $systemLoad,
+        string $errorClass = null,
+        string $errorMessage = null,
+        int $errorCode = null,
+        string $errorFile = null,
+        int $errorLine = null,
+        string $trace = null
     ) {
-        parent::__construct($consumerId, $timestampMs);
+        $this->consumerId = $consumerId;
+        $this->timestampMs = $timestampMs;
+        $this->startedAtMs = $startedAtMs;
+        $this->finishedAtMs = $finishedAtMs;
+
+        $this->started = $started;
+        $this->finished = $finished;
+        $this->failed = $failed;
 
         $this->queues = $queues;
         $this->startedAtMs = $startedAtMs;
@@ -69,16 +146,53 @@ class ConsumerStats extends Event
 
         $this->memoryUsage = $memoryUsage;
         $this->systemLoad = $systemLoad;
+
+        $this->errorClass = $errorClass;
+        $this->errorMessage = $errorMessage;
+        $this->errorCode = $errorCode;
+        $this->errorFile = $errorFile;
+        $this->errorLine = $errorLine;
+        $this->trance = $trace;
     }
 
-    public function getQueues(): array
+    public function getConsumerId(): string
     {
-        return $this->queues;
+        return $this->consumerId;
+    }
+
+    public function getTimestampMs(): int
+    {
+        return $this->timestampMs;
     }
 
     public function getStartedAtMs(): int
     {
         return $this->startedAtMs;
+    }
+
+    public function getFinishedAtMs(): ?int
+    {
+        return $this->finishedAtMs;
+    }
+
+    public function isStarted(): bool
+    {
+        return $this->started;
+    }
+
+    public function isFinished(): bool
+    {
+        return $this->finished;
+    }
+
+    public function isFailed(): bool
+    {
+        return $this->failed;
+    }
+
+    public function getQueues(): array
+    {
+        return $this->queues;
     }
 
     public function getReceived(): int
@@ -109,5 +223,35 @@ class ConsumerStats extends Event
     public function getSystemLoad(): float
     {
         return $this->systemLoad;
+    }
+
+    public function getErrorClass(): ?string
+    {
+        return $this->errorClass;
+    }
+
+    public function getErrorMessage(): ?string
+    {
+        return $this->errorMessage;
+    }
+
+    public function getErrorCode(): ?int
+    {
+        return $this->errorCode;
+    }
+
+    public function getErrorFile(): ?string
+    {
+        return $this->errorFile;
+    }
+
+    public function getErrorLine(): ?int
+    {
+        return $this->errorLine;
+    }
+
+    public function getTrance(): ?string
+    {
+        return $this->trance;
     }
 }

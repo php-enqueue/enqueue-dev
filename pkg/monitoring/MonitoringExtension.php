@@ -19,7 +19,7 @@ use Ramsey\Uuid\Uuid;
 class MonitoringExtension implements ExtensionInterface
 {
     /**
-     * @var EventStorage
+     * @var StatsStorage
      */
     private $storage;
 
@@ -68,7 +68,7 @@ class MonitoringExtension implements ExtensionInterface
      */
     private $lastStatsAt;
 
-    public function __construct(EventStorage $storage)
+    public function __construct(StatsStorage $storage)
     {
         $this->storage = $storage;
         $this->updateStatsPeriod = 60;
@@ -96,64 +96,64 @@ class MonitoringExtension implements ExtensionInterface
 
     public function onPreConsume(PreConsume $context): void
     {
-        $time = time();
-
         // send started only once
+        $isStarted = false;
         if (0 === $this->startedAtMs) {
+            $isStarted = true;
             $this->startedAtMs = $context->getStartTime();
-
-            $event = new ConsumerStarted(
-                $this->consumerId,
-                $this->startedAtMs,
-                $this->queues
-            );
-
-            $this->storage->onConsumerStarted($event);
         }
 
         // send stats event only once per period
+        $time = time();
         if (($time - $this->lastStatsAt) > $this->updateStatsPeriod) {
             $this->lastStatsAt = $time;
 
-            $memoryUsage = memory_get_usage(true);
-            $systemLoad = sys_getloadavg()[0];
-
             $event = new ConsumerStats(
                 $this->consumerId,
-                (int) (microtime(true) * 1000),
-                $this->queues,
+                $this->getNowMs(),
                 $this->startedAtMs,
+                null,
+                $isStarted,
+                false,
+                false,
+                $this->queues,
                 $this->received,
                 $this->acknowledged,
                 $this->rejected,
                 $this->requeued,
-                $memoryUsage,
-                $systemLoad
+                $this->getMemoryUsage(),
+                $this->getSystemLoad()
             );
 
-            $this->storage->onConsumerStats($event);
+            $this->storage->pushConsumerStats($event);
         }
     }
 
     public function onEnd(End $context): void
     {
-        $event = new ConsumerStopped(
+        $event = new ConsumerStats(
             $this->consumerId,
+            $this->getNowMs(),
+            $this->startedAtMs,
             $context->getEndTime(),
+            false,
+            true,
+            false,
             $this->queues,
-            $context->getStartTime(),
             $this->received,
             $this->acknowledged,
             $this->rejected,
-            $this->requeued
+            $this->requeued,
+            $this->getMemoryUsage(),
+            $this->getSystemLoad()
         );
 
-        $this->storage->onConsumerStopped($event);
+        $this->storage->pushConsumerStats($event);
     }
 
     public function onProcessorException(ProcessorException $context): void
     {
-        $timeMs = (int) (microtime(true) * 1000);
+        $timeMs = $this->getNowMs();
 
         $event = new MessageStats(
             $this->consumerId,
@@ -165,20 +165,26 @@ class MonitoringExtension implements ExtensionInterface
             MessageStats::STATUS_FAILED
         );
 
-        $this->storage->onMessageStats($event);
+        $this->storage->pushMessageStats($event);
 
         // priority of this extension must be the lowest and
         // if result is null we emit consumer stopped event here
         if (null === $context->getResult()) {
-            $event = new ConsumerStopped(
+            $event = new ConsumerStats(
                 $this->consumerId,
                 $timeMs,
-                $this->queues,
                 $this->startedAtMs,
+                $timeMs,
+                false,
+                true,
+                true,
+                $this->queues,
                 $this->received,
                 $this->acknowledged,
                 $this->rejected,
                 $this->requeued,
+                $this->getMemoryUsage(),
+                $this->getSystemLoad(),
                 get_class($context->getException()),
                 $context->getException()->getMessage(),
                 $context->getException()->getCode(),
@@ -187,7 +193,7 @@ class MonitoringExtension implements ExtensionInterface
                 $context->getException()->getTraceAsString()
             );
 
-            $this->storage->onConsumerStopped($event);
+            $this->storage->pushConsumerStats($event);
         }
     }
 
@@ -198,7 +204,7 @@ class MonitoringExtension implements ExtensionInterface
 
     public function onResult(MessageResult $context): void
     {
-        $timeMs = (int) (microtime(true) * 1000);
+        $timeMs = $this->getNowMs();
 
         switch ($context->getResult()) {
             case Result::ACK:
@@ -228,7 +234,32 @@ class MonitoringExtension implements ExtensionInterface
             $status
         );
 
-        $this->storage->onMessageStats($event);
+        $this->storage->pushMessageStats($event);
+
+        // send stats event only once per period
+        $time = time();
+        if (($time - $this->lastStatsAt) > $this->updateStatsPeriod) {
+            $this->lastStatsAt = $time;
+
+            $event = new ConsumerStats(
+                $this->consumerId,
+                $timeMs,
+                $this->startedAtMs,
+                null,
+                false,
+                false,
+                false,
+                $this->queues,
+                $this->received,
+                $this->acknowledged,
+                $this->rejected,
+                $this->requeued,
+                $this->getMemoryUsage(),
+                $this->getSystemLoad()
+            );
+
+            $this->storage->pushConsumerStats($event);
+        }
     }
 
     public function onPostConsume(PostConsume $context): void
@@ -244,5 +275,20 @@ class MonitoringExtension implements ExtensionInterface
     public function onInitLogger(InitLogger $context): void
     {
 
+    }
+
+    private function getNowMs(): int
+    {
+        return (int) (microtime(true) * 1000);
+    }
+
+    private function getMemoryUsage(): int
+    {
+        return memory_get_usage(true);
+    }
+
+    private function getSystemLoad(): float
+    {
+        return sys_getloadavg()[0];
     }
 }

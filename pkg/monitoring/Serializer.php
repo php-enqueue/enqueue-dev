@@ -6,5 +6,5 @@ namespace Enqueue\Monitoring;
 
 interface Serializer
 {
-    public function toString(Event $event): string;
+    public function toString(Stats $stats): string;
 }

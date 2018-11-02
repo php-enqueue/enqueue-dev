@@ -6,9 +6,9 @@ namespace Enqueue\Monitoring;
 
 class JsonSerializer implements Serializer
 {
-    public function toString(Event $event): string
+    public function toString(Stats $stats): string
     {
-        $rfClass = new \ReflectionClass($event);
+        $rfClass = new \ReflectionClass($stats);
 
         $data = [
             'event' => $rfClass->getShortName(),
@@ -16,7 +16,7 @@ class JsonSerializer implements Serializer
 
         foreach ($rfClass->getProperties() as $rfProperty) {
             $rfProperty->setAccessible(true);
-            $data[$rfProperty->getName()] = $rfProperty->getValue($event);
+            $data[$rfProperty->getName()] = $rfProperty->getValue($stats);
             $rfProperty->setAccessible(false);
         }
 

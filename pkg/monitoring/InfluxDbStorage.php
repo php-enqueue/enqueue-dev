@@ -6,7 +6,7 @@ use InfluxDB\Client;
 use InfluxDB\Database;
 use InfluxDB\Point;
 
-class InfluxDbStorage implements EventStorage
+class InfluxDbStorage implements StatsStorage
 {
     /**
      * @var Client
@@ -43,22 +43,12 @@ class InfluxDbStorage implements EventStorage
         $this->serializer = new JsonSerializer();
     }
 
-    public function onConsumerStarted(ConsumerStarted $event)
+    public function pushConsumerStats(ConsumerStats $event)
     {
 //        echo $this->serializer->toString($event).PHP_EOL;
     }
 
-    public function onConsumerStopped(ConsumerStopped $event)
-    {
-//        echo $this->serializer->toString($event).PHP_EOL;
-    }
-
-    public function onConsumerStats(ConsumerStats $event)
-    {
-//        echo $this->serializer->toString($event).PHP_EOL;
-    }
-
-    public function onMessageStats(MessageStats $event)
+    public function pushMessageStats(MessageStats $event)
     {
         $tags = [
             'queue' => $event->getQueue(),

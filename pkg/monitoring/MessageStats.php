@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Monitoring;
 
-class MessageStats extends Event
+class MessageStats implements Stats
 {
     const STATUS_ACK = 'acknowledged';
     const STATUS_REJECTED = 'rejected';
@@ -14,27 +14,37 @@ class MessageStats extends Event
     /**
      * @var string
      */
-    private $queue;
-
-    /**
-     * @var array
-     */
-    private $headers;
-
-    /**
-     * @var array
-     */
-    private $properties;
-
-    /**
-     * @var string
-     */
-    private $status;
+    protected $consumerId;
 
     /**
      * @var int
      */
-    private $receivedAtMs;
+    protected $timestampMs;
+
+    /**
+     * @var int
+     */
+    protected $receivedAtMs;
+
+    /**
+     * @var string
+     */
+    protected $queue;
+
+    /**
+     * @var array
+     */
+    protected $headers;
+
+    /**
+     * @var array
+     */
+    protected $properties;
+
+    /**
+     * @var string
+     */
+    protected $status;
 
     public function __construct(
         string $consumerId,
@@ -45,52 +55,47 @@ class MessageStats extends Event
         array $properties,
         string $status
     ) {
-        parent::__construct($consumerId, $timestampMs);
-
-        $this->queue = $queue;
+        $this->consumerId = $consumerId;
+        $this->timestampMs = $timestampMs;
         $this->receivedAtMs = $receivedAtMs;
+        $this->queue = $queue;
         $this->headers = $headers;
         $this->properties = $properties;
         $this->status = $status;
     }
 
-    /**
-     * @return string
-     */
+    public function getConsumerId(): string
+    {
+        return $this->consumerId;
+    }
+
+    public function getTimestampMs(): int
+    {
+        return $this->timestampMs;
+    }
+
+    public function getReceivedAtMs(): int
+    {
+        return $this->receivedAtMs;
+    }
+
     public function getQueue(): string
     {
         return $this->queue;
     }
 
-    /**
-     * @return array
-     */
     public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * @return array
-     */
     public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): string
     {
         return $this->status;
-    }
-
-    /**
-     * @return int
-     */
-    public function getReceivedAtMs(): int
-    {
-        return $this->receivedAtMs;
     }
 }
