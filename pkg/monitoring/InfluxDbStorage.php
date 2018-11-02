@@ -24,11 +24,14 @@ class InfluxDbStorage implements StatsStorage
     private $measurMessages;
 
     /**
+     * @var string
+     */
+    private $measurConsumers;
+
+    /**
      * @var Database
      */
     private $database;
-
-    private $serializer;
 
     /**
      * @param Client $client
@@ -38,14 +41,41 @@ class InfluxDbStorage implements StatsStorage
     {
         $this->client = $client;
         $this->dbName = $dbName;
-        $this->measurMessages = 'msg';
-
-        $this->serializer = new JsonSerializer();
+        $this->measurMessages = 'messages';
+        $this->measurConsumers = 'consumers';
     }
 
     public function pushConsumerStats(ConsumerStats $event): void
     {
-//        echo $this->serializer->toString($event).PHP_EOL;
+        $points = [];
+
+        foreach ($event->getQueues() as $queue) {
+            $tags = [
+                'queue' => $queue,
+                'consumerId' => $event->getConsumerId(),
+            ];
+
+            $values = [
+                'startedAtMs' => $event->getStartedAtMs(),
+                'started' => $event->isStarted(),
+                'finished' => $event->isFinished(),
+                'failed' => $event->isFailed(),
+                'received' => $event->getReceived(),
+                'acknowledged' => $event->getAcknowledged(),
+                'rejected' => $event->getRejected(),
+                'requeued' => $event->getRequeued(),
+                'memoryUsage' => $event->getMemoryUsage(),
+                'systemLoad' => $event->getSystemLoad(),
+            ];
+
+            if ($event->getFinishedAtMs()) {
+                $values['finishedAtMs'] = $event->getFinishedAtMs();
+            }
+
+            $points[] = new Point($this->measurConsumers, null, $tags, $values, $event->getTimestampMs());
+        }
+
+        $this->getDb()->writePoints($points, Database::PRECISION_MILLISECONDS);
     }
 
     public function pushMessageStats(MessageStats $event): void
