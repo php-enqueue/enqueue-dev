@@ -50,7 +50,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->once())
@@ -94,6 +94,8 @@ class RdKafkaConsumerTest extends TestCase
             $this->createSerializerMock()
         );
 
+        $consumer->setOffset(12345);
+
         $consumer->receive(1000);
         $consumer->receive(1000);
         $consumer->receive(1000);
@@ -109,7 +111,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->any())
@@ -139,7 +141,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->any())
@@ -174,7 +176,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
             ->expects($this->once())
-            ->method('assign')
+            ->method('subscribe')
         ;
         $kafkaConsumer
             ->expects($this->once())
