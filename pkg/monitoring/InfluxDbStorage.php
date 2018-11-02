@@ -43,12 +43,12 @@ class InfluxDbStorage implements StatsStorage
         $this->serializer = new JsonSerializer();
     }
 
-    public function pushConsumerStats(ConsumerStats $event)
+    public function pushConsumerStats(ConsumerStats $event): void
     {
 //        echo $this->serializer->toString($event).PHP_EOL;
     }
 
-    public function pushMessageStats(MessageStats $event)
+    public function pushMessageStats(MessageStats $event): void
     {
         $tags = [
             'queue' => $event->getQueue(),

@@ -6,7 +6,7 @@ namespace Enqueue\Monitoring;
 
 interface StatsStorage
 {
-    public function pushConsumerStats(ConsumerStats $event);
+    public function pushConsumerStats(ConsumerStats $event): void;
 
-    public function pushMessageStats(MessageStats $event);
+    public function pushMessageStats(MessageStats $event): void;
 }
