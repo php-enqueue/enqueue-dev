@@ -96,26 +96,43 @@ class ConsumeCommand extends Command
 
         $this->setQueueConsumerOptions($consumer, $input);
 
-        $clientQueueNames = $input->getArgument('client-queue-names');
-        if (empty($clientQueueNames)) {
-            $clientQueueNames[$driver->getConfig()->getDefaultQueue()] = true;
-            $clientQueueNames[$driver->getConfig()->getRouterQueue()] = true;
-
-            foreach ($driver->getRouteCollection()->all() as $route) {
-                if ($route->getQueue()) {
-                    $clientQueueNames[$route->getQueue()] = true;
-                }
+        $allQueues[$driver->getConfig()->getDefaultQueue()] = true;
+        $allQueues[$driver->getConfig()->getRouterQueue()] = true;
+        foreach ($driver->getRouteCollection()->all() as $route) {
+            if (false == $route->getQueue()) {
+                continue;
+            }
+            if ($route->isProcessorExternal()) {
+                continue;
             }
 
-            foreach ($input->getOption('skip') as $skipClientQueueName) {
-                unset($clientQueueNames[$skipClientQueueName]);
-            }
-
-            $clientQueueNames = array_keys($clientQueueNames);
+            $allQueues[$route->getQueue()] = $route->isPrefixQueue();
         }
 
-        foreach ($clientQueueNames as $clientQueueName) {
-            $queue = $driver->createQueue($clientQueueName);
+        $selectedQueues = $input->getArgument('client-queue-names');
+        if (empty($selectedQueues)) {
+            $queues = $allQueues;
+        } else {
+            $queues = [];
+            foreach ($selectedQueues as $queue) {
+                if (false == array_key_exists($queue, $allQueues)) {
+                    throw new \LogicException(sprintf(
+                        'There is no such queue "%s". Available are "%s"',
+                        $queue,
+                        implode('", "', array_keys($allQueues))
+                    ));
+                }
+
+                $queues[$queue] = $allQueues[$queue];
+            }
+        }
+
+        foreach ($input->getOption('skip') as $skipQueue) {
+            unset($queues[$skipQueue]);
+        }
+
+        foreach ($queues as $queue => $prefix) {
+            $queue = $driver->createQueue($queue, $prefix);
             $consumer->bind($queue, $processor);
         }
 

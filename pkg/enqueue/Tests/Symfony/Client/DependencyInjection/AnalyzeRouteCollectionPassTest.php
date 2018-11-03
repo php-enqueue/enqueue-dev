@@ -123,7 +123,7 @@ class AnalyzeRouteCollectionPassTest extends TestCase
         $pass->process($container);
     }
 
-    public function testShouldNotThrowIfTwoExclusiveCommandProcessorsWorkOnQueueWithSameNameButOnePrefixed()
+    public function testThrowIfThereAreTwoQueuesWithSameNameAndOneNotPrefixed()
     {
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['aName']);
@@ -132,19 +132,41 @@ class AnalyzeRouteCollectionPassTest extends TestCase
                 'aFooCommand',
                 Route::COMMAND,
                 'aFooProcessor',
-                ['exclusive' => true, 'queue' => 'aQueue', 'prefix_queue' => false]
+                ['queue' => 'foo', 'prefix_queue' => false]
             ))->toArray(),
 
             (new Route(
                 'aBarCommand',
                 Route::COMMAND,
                 'aBarProcessor',
-                ['exclusive' => true, 'queue' => 'aQueue', 'prefix_queue' => true]
+                ['queue' => 'foo', 'prefix_queue' => true]
             ))->toArray(),
         ]);
 
         $pass = new AnalyzeRouteCollectionPass();
 
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('There are prefixed and not prefixed queue with the same name "foo". This is not allowed.');
+        $pass->process($container);
+    }
+
+    public function testThrowIfDefaultQueueNotPrefixed()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['aName']);
+        $container->register('enqueue.client.aName.route_collection')->addArgument([
+            (new Route(
+                'aFooCommand',
+                Route::COMMAND,
+                'aFooProcessor',
+                ['queue' => null, 'prefix_queue' => false]
+            ))->toArray(),
+        ]);
+
+        $pass = new AnalyzeRouteCollectionPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The default queue must be prefixed.');
         $pass->process($container);
     }
 }
