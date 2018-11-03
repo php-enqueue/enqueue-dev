@@ -134,6 +134,33 @@ class DsnTest extends TestCase
         $dsn->getInt('aName');
     }
 
+    public function testThrowIfQueryParameterNotOctalButString()
+    {
+        $dsn = new Dsn('foo:?aName=notInt');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
+        $dsn->getOctal('aName');
+    }
+
+    public function testThrowIfQueryParameterNotOctalButDecimal()
+    {
+        $dsn = new Dsn('foo:?aName=123');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
+        $dsn->getOctal('aName');
+    }
+
+    public function testThrowIfQueryParameterInvalidOctal()
+    {
+        $dsn = new Dsn('foo:?aName=0128');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
+        $dsn->getOctal('aName');
+    }
+
     /**
      * @dataProvider provideFloatQueryParameters
      */

@@ -172,7 +172,7 @@ class Dsn
             return $default;
         }
 
-        if (false == preg_match('/^[\+\-]?[0-9]*$/', $value)) {
+        if (false == preg_match('/^0[\+\-]?[0-7]*$/', $value)) {
             throw InvalidQueryParameterTypeException::create($name, 'integer');
         }
 
