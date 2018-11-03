@@ -35,10 +35,10 @@ $connectionFactory = new FsConnectionFactory('file:');
 $connectionFactory = new FsConnectionFactory('/path/to/queue/dir');
 
 // same as above
-$connectionFactory = new FsConnectionFactory('file://path/to/queue/dir');
+$connectionFactory = new FsConnectionFactory('file:///path/to/queue/dir');
 
 // with options
-$connectionFactory = new FsConnectionFactory('file://path/to/queue/dir?pre_fetch_count=1');
+$connectionFactory = new FsConnectionFactory('file:///path/to/queue/dir?pre_fetch_count=1');
 
 // as an array
 $connectionFactory = new FsConnectionFactory([

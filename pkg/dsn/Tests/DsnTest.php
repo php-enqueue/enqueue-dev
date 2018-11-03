@@ -107,6 +107,16 @@ class DsnTest extends TestCase
         $this->assertSame($expected, $dsn->getInt('aName'));
     }
 
+    /**
+     * @dataProvider provideOctalQueryParameters
+     */
+    public function testShouldParseQueryParameterAsOctalInt(string $parameter, int $expected)
+    {
+        $dsn = new Dsn('foo:?aName='.$parameter);
+
+        $this->assertSame($expected, $dsn->getOctal('aName'));
+    }
+
     public function testShouldReturnDefaultIntIfNotSet()
     {
         $dsn = new Dsn('foo:');
@@ -122,6 +132,33 @@ class DsnTest extends TestCase
         $this->expectException(InvalidQueryParameterTypeException::class);
         $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
         $dsn->getInt('aName');
+    }
+
+    public function testThrowIfQueryParameterNotOctalButString()
+    {
+        $dsn = new Dsn('foo:?aName=notInt');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
+        $dsn->getOctal('aName');
+    }
+
+    public function testThrowIfQueryParameterNotOctalButDecimal()
+    {
+        $dsn = new Dsn('foo:?aName=123');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
+        $dsn->getOctal('aName');
+    }
+
+    public function testThrowIfQueryParameterInvalidOctal()
+    {
+        $dsn = new Dsn('foo:?aName=0128');
+
+        $this->expectException(InvalidQueryParameterTypeException::class);
+        $this->expectExceptionMessage('The query parameter "aName" has invalid type. It must be "integer"');
+        $dsn->getOctal('aName');
     }
 
     /**
@@ -204,6 +241,13 @@ class DsnTest extends TestCase
         yield ['+123', 123];
 
         yield ['-123', -123];
+
+        yield ['010', 10];
+    }
+
+    public static function provideOctalQueryParameters()
+    {
+        yield ['010', 8];
     }
 
     public static function provideFloatQueryParameters()

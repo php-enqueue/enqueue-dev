@@ -21,10 +21,10 @@ class FsConnectionFactoryConfigTest extends TestCase
         new FsConnectionFactory(new \stdClass());
     }
 
-    public function testThrowIfSchemeIsNotAmqp()
+    public function testThrowIfSchemeIsNotFileScheme()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "file:');
+        $this->expectExceptionMessage('The given scheme protocol "http" is not supported. It must be one of "file"');
 
         new FsConnectionFactory('http://example.com');
     }
@@ -32,9 +32,19 @@ class FsConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN path ":@/". The path must start with "/"');
+        $this->expectExceptionMessage('The DSN is invalid.');
 
-        new FsConnectionFactory('file://:@/');
+        new FsConnectionFactory('foo');
+    }
+
+    public function testThrowIfArrayConfigGivenWithEmptyPath()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The path option must be set.');
+
+        new FsConnectionFactory([
+            'path' => null,
+        ]);
     }
 
     /**
