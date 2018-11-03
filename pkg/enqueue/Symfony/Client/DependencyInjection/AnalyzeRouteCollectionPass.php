@@ -31,6 +31,8 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
 
             $this->exclusiveCommandsCouldNotBeRunOnDefaultQueue($collection);
             $this->exclusiveCommandProcessorMustBeSingleOnGivenQueue($collection);
+            $this->customQueueNamesUnique($collection);
+            $this->defaultQueueMustBePrefixed($collection);
         }
     }
 
@@ -39,7 +41,7 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
         return $this->name;
     }
 
-    private function exclusiveCommandsCouldNotBeRunOnDefaultQueue(RouteCollection $collection)
+    private function exclusiveCommandsCouldNotBeRunOnDefaultQueue(RouteCollection $collection): void
     {
         foreach ($collection->all() as $route) {
             if ($route->isCommand() && $route->isProcessorExclusive() && false == $route->getQueue()) {
@@ -52,7 +54,7 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
         }
     }
 
-    private function exclusiveCommandProcessorMustBeSingleOnGivenQueue(RouteCollection $collection)
+    private function exclusiveCommandProcessorMustBeSingleOnGivenQueue(RouteCollection $collection): void
     {
         $prefixedQueues = [];
         $queues = [];
@@ -88,6 +90,40 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
                 }
 
                 $queues[$route->getQueue()] = $route->getProcessor();
+            }
+        }
+    }
+
+    private function defaultQueueMustBePrefixed(RouteCollection $collection): void
+    {
+        foreach ($collection->all() as $route) {
+            if (false == $route->getQueue() && false == $route->isPrefixQueue()) {
+                throw new \LogicException('The default queue must be prefixed.');
+            }
+        }
+    }
+
+    private function customQueueNamesUnique(RouteCollection $collection): void
+    {
+        $prefixedQueues = [];
+        $notPrefixedQueues = [];
+
+        foreach ($collection->all() as $route) {
+            //default queue
+            $queueName = $route->getQueue();
+            if (false == $queueName) {
+                return;
+            }
+
+            $route->isPrefixQueue() ?
+                $prefixedQueues[$queueName] = $queueName :
+                $notPrefixedQueues[$queueName] = $queueName
+            ;
+        }
+
+        foreach ($notPrefixedQueues as $queueName) {
+            if (array_key_exists($queueName, $prefixedQueues)) {
+                throw new \LogicException(sprintf('There are prefixed and not prefixed queue with the same name "%s". This is not allowed.', $queueName));
             }
         }
     }

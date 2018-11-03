@@ -96,7 +96,7 @@ class ConsumeCommandTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with('default', true)
             ->willReturn($queue)
         ;
 
@@ -153,7 +153,7 @@ class ConsumeCommandTest extends TestCase
         $fooDriver
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with('default', true)
             ->willReturn($queue)
         ;
 
@@ -235,7 +235,7 @@ class ConsumeCommandTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('createQueue')
-            ->with('default')
+            ->with('default', true)
             ->willReturn($queue)
         ;
 
@@ -264,13 +264,13 @@ class ConsumeCommandTest extends TestCase
         $driver
             ->expects($this->at(3))
             ->method('createQueue')
-            ->with('default')
+            ->with('default', true)
             ->willReturn($defaultQueue)
         ;
         $driver
             ->expects($this->at(4))
             ->method('createQueue')
-            ->with('custom')
+            ->with('custom', true)
             ->willReturn($customQueue)
         ;
 
@@ -307,6 +307,7 @@ class ConsumeCommandTest extends TestCase
 
         $routeCollection = new RouteCollection([
             new Route('topic', Route::TOPIC, 'processor', ['queue' => 'custom']),
+            new Route('topic', Route::TOPIC, 'processor', ['queue' => 'non-default-queue']),
         ]);
 
         $processor = $this->createDelegateProcessorMock();
@@ -315,7 +316,7 @@ class ConsumeCommandTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('createQueue')
-            ->with('non-default-queue')
+            ->with('non-default-queue', true)
             ->willReturn($queue)
         ;
 
@@ -343,6 +344,48 @@ class ConsumeCommandTest extends TestCase
         ]);
     }
 
+    public function testShouldBindNotPrefixedQueue()
+    {
+        $queue = new NullQueue('');
+
+        $routeCollection = new RouteCollection([
+            new Route('topic', Route::TOPIC, 'processor', ['queue' => 'non-prefixed-queue', 'prefix_queue' => false]),
+        ]);
+
+        $processor = $this->createDelegateProcessorMock();
+
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with('non-prefixed-queue', false)
+            ->willReturn($queue)
+        ;
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->once())
+            ->method('bind')
+            ->with($this->identicalTo($queue), $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->once())
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $command = new ConsumeCommand(new Container([
+            'enqueue.client.default.queue_consumer' => $consumer,
+            'enqueue.client.default.driver' => $driver,
+            'enqueue.client.default.delegate_processor' => $processor,
+        ]));
+
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'client-queue-names' => ['non-prefixed-queue'],
+        ]);
+    }
+
     public function testShouldBindQueuesOnlyOnce()
     {
         $defaultQueue = new NullQueue('');
@@ -360,12 +403,12 @@ class ConsumeCommandTest extends TestCase
         $driver
             ->expects($this->at(3))
             ->method('createQueue')
-            ->with('default')
+            ->with('default', true)
             ->willReturn($defaultQueue)
         ;
         $driver
             ->expects($this->at(4))
-            ->method('createQueue')
+            ->method('createQueue', true)
             ->with('custom')
             ->willReturn($customQueue)
         ;
@@ -383,6 +426,47 @@ class ConsumeCommandTest extends TestCase
         ;
         $consumer
             ->expects($this->at(2))
+            ->method('consume')
+            ->with($this->isInstanceOf(ChainExtension::class))
+        ;
+
+        $command = new ConsumeCommand(new Container([
+            'enqueue.client.default.queue_consumer' => $consumer,
+            'enqueue.client.default.driver' => $driver,
+            'enqueue.client.default.delegate_processor' => $processor,
+        ]));
+
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+    }
+
+    public function testShouldNotBindExternalRoutes()
+    {
+        $defaultQueue = new NullQueue('');
+
+        $routeCollection = new RouteCollection([
+            new Route('barTopic', Route::TOPIC, 'processor', ['queue' => null]),
+            new Route('fooTopic', Route::TOPIC, 'processor', ['queue' => 'external_queue', 'external' => true]),
+        ]);
+
+        $processor = $this->createDelegateProcessorMock();
+
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->exactly(1))
+            ->method('createQueue')
+            ->with('default', true)
+            ->willReturn($defaultQueue)
+        ;
+
+        $consumer = $this->createQueueConsumerMock();
+        $consumer
+            ->expects($this->exactly(1))
+            ->method('bind')
+            ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
+        ;
+        $consumer
+            ->expects($this->at(1))
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -423,19 +507,19 @@ class ConsumeCommandTest extends TestCase
         $driver = $this->createDriverStub($routeCollection);
         $driver
             ->expects($this->at(3))
-            ->method('createQueue')
+            ->method('createQueue', true)
             ->with('default')
             ->willReturn($queue)
         ;
         $driver
             ->expects($this->at(4))
-            ->method('createQueue')
+            ->method('createQueue', true)
             ->with('fooQueue')
             ->willReturn($queue)
         ;
         $driver
             ->expects($this->at(5))
-            ->method('createQueue')
+            ->method('createQueue', true)
             ->with('ololoQueue')
             ->willReturn($queue)
         ;
