@@ -11,6 +11,10 @@ use Ramsey\Uuid\Uuid;
 
 trait DbalConsumerHelperTrait
 {
+    private $redeliverMessagesLastExecutedAt;
+
+    private $removeExpiredMessagesLastExecutedAt;
+
     abstract protected function getContext(): DbalContext;
 
     abstract protected function getConnection(): Connection;
@@ -20,66 +24,72 @@ trait DbalConsumerHelperTrait
         $now = time();
         $deliveryId = (string) Uuid::uuid1();
 
-        $this->getConnection()->beginTransaction();
+        $endAt = microtime(true) + 0.2; // add 200ms
 
-        try {
-            $query = $this->getConnection()->createQueryBuilder()
-                ->select('*')
-                ->from($this->getContext()->getTableName())
-                ->andWhere('delivery_id IS NULL')
-                ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
-                ->andWhere('queue IN (:queues)')
-                ->addOrderBy('priority', 'desc')
-                ->addOrderBy('published_at', 'asc')
-                ->setMaxResults(1);
+        $select = $this->getConnection()->createQueryBuilder()
+            ->select('id')
+            ->from($this->getContext()->getTableName())
+            ->andWhere('delivery_id IS NULL')
+            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
+            ->andWhere('queue IN (:queues)')
+            ->addOrderBy('priority', 'desc')
+            ->addOrderBy('published_at', 'asc')
+            ->setParameter('delayedUntil', $now, ParameterType::INTEGER)
+            ->setParameter('queues', array_values($queues), Connection::PARAM_STR_ARRAY)
+            ->setMaxResults(1);
 
-            // select for update
-            $message = $this->getConnection()->executeQuery(
-                $query->getSQL().' '.$this->getConnection()->getDatabasePlatform()->getWriteLockSQL(),
-                ['delayedUntil' => $now, 'queues' => array_values($queues)],
-                ['delayedUntil' => ParameterType::INTEGER, 'queues' => Connection::PARAM_STR_ARRAY]
-            )->fetch();
+        $update = $this->getConnection()->createQueryBuilder()
+            ->update($this->getContext()->getTableName())
+            ->set('delivery_id', ':deliveryId')
+            ->set('redeliver_after', ':redeliverAfter')
+            ->andWhere('id = :messageId')
+            ->andWhere('delivery_id IS NULL')
+            ->setParameter('deliveryId', $deliveryId, Type::STRING)
+            ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
+        ;
 
-            if (!$message) {
-                $this->getConnection()->commit();
-
+        while (microtime() < $endAt) {
+            $result = $select->execute()->fetch();
+            if (empty($result)) {
                 return null;
             }
 
-            // mark message as delivered to consumer
-            $this->getConnection()->createQueryBuilder()
-                ->andWhere('id = :id')
-                ->update($this->getContext()->getTableName())
-                ->set('delivery_id', ':deliveryId')
-                ->set('redeliver_after', ':redeliverAfter')
-                ->setParameter('id', $message['id'], Type::GUID)
-                ->setParameter('deliveryId', $deliveryId, Type::STRING)
-                ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
-                ->execute()
+            $update
+                ->setParameter('messageId', $result['id'], Type::GUID)
             ;
 
-            $this->getConnection()->commit();
+            if ($update->execute()) {
+                $deliveredMessage = $this->getConnection()->createQueryBuilder()
+                    ->select('*')
+                    ->from($this->getContext()->getTableName())
+                    ->andWhere('delivery_id = :deliveryId')
+                    ->setParameter('deliveryId', $deliveryId, Type::STRING)
+                    ->setMaxResults(1)
+                    ->execute()
+                    ->fetch()
+                ;
 
-            $deliveredMessage = $this->getConnection()->createQueryBuilder()
-                ->select('*')
-                ->from($this->getContext()->getTableName())
-                ->andWhere('delivery_id = :deliveryId')
-                ->setParameter('deliveryId', $deliveryId, Type::STRING)
-                ->setMaxResults(1)
-                ->execute()
-                ->fetch()
-            ;
+                if (false == $deliveredMessage) {
+                    throw new \LogicException('There must be a message at all times at this stage but there is no a message.');
+                }
 
-            return $deliveredMessage ?: null;
-        } catch (\Exception $e) {
-            $this->getConnection()->rollBack();
-
-            throw $e;
+                return $deliveredMessage;
+            }
         }
+
+        return null;
     }
 
     protected function redeliverMessages(): void
     {
+        if (null === $this->redeliverMessagesLastExecutedAt) {
+            $this->redeliverMessagesLastExecutedAt = microtime(true);
+        }
+
+        if ((microtime(true) - $this->redeliverMessagesLastExecutedAt) < 1) {
+            return;
+        }
+
         $this->getConnection()->createQueryBuilder()
             ->update($this->getContext()->getTableName())
             ->set('delivery_id', ':deliveryId')
@@ -91,10 +101,20 @@ trait DbalConsumerHelperTrait
             ->setParameter('redelivered', true, Type::BOOLEAN)
             ->execute()
         ;
+
+        $this->redeliverMessagesLastExecutedAt = microtime(true);
     }
 
     protected function removeExpiredMessages(): void
     {
+        if (null === $this->removeExpiredMessagesLastExecutedAt) {
+            $this->removeExpiredMessagesLastExecutedAt = microtime(true);
+        }
+
+        if ((microtime(true) - $this->removeExpiredMessagesLastExecutedAt) < 1) {
+            return;
+        }
+
         $this->getConnection()->createQueryBuilder()
             ->delete($this->getContext()->getTableName())
             ->andWhere('(time_to_live IS NOT NULL) AND (time_to_live < :now)')
@@ -102,5 +122,7 @@ trait DbalConsumerHelperTrait
             ->setParameter('redelivered', false, Type::BOOLEAN)
             ->execute()
         ;
+
+        $this->removeExpiredMessagesLastExecutedAt = microtime(true);
     }
 }
