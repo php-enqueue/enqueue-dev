@@ -165,6 +165,20 @@ class Dsn
         return (int) $value;
     }
 
+    public function getOctal(string $name, int $default = null): ?int
+    {
+        $value = $this->getQueryParameter($name);
+        if (null === $value) {
+            return $default;
+        }
+
+        if (false == preg_match('/^[\+\-]?[0-9]*$/', $value)) {
+            throw InvalidQueryParameterTypeException::create($name, 'integer');
+        }
+
+        return intval($value, 8);
+    }
+
     public function getFloat(string $name, float $default = null): ?float
     {
         $value = $this->getQueryParameter($name);

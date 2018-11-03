@@ -107,6 +107,16 @@ class DsnTest extends TestCase
         $this->assertSame($expected, $dsn->getInt('aName'));
     }
 
+    /**
+     * @dataProvider provideOctalQueryParameters
+     */
+    public function testShouldParseQueryParameterAsOctalInt(string $parameter, int $expected)
+    {
+        $dsn = new Dsn('foo:?aName='.$parameter);
+
+        $this->assertSame($expected, $dsn->getOctal('aName'));
+    }
+
     public function testShouldReturnDefaultIntIfNotSet()
     {
         $dsn = new Dsn('foo:');
@@ -204,6 +214,13 @@ class DsnTest extends TestCase
         yield ['+123', 123];
 
         yield ['-123', -123];
+
+        yield ['010', 10];
+    }
+
+    public static function provideOctalQueryParameters()
+    {
+        yield ['010', 8];
     }
 
     public static function provideFloatQueryParameters()
