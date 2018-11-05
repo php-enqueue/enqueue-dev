@@ -10,6 +10,11 @@ use Interop\Queue\Processor;
 final class RouterProcessor implements Processor
 {
     /**
+     * compatibility with 0.8x
+     */
+    private const COMMAND_TOPIC_08X = '__command__';
+
+    /**
      * @var DriverInterface
      */
     private $driver;
@@ -21,6 +26,17 @@ final class RouterProcessor implements Processor
 
     public function process(InteropMessage $message, Context $context): Result
     {
+        // compatibility with 0.8x
+        if (self::COMMAND_TOPIC_08X === $message->getProperty(Config::TOPIC)) {
+            $clientMessage = $this->driver->createClientMessage($message);
+            $clientMessage->setProperty(Config::TOPIC, null);
+
+            $this->driver->sendToProcessor($clientMessage);
+
+            return Result::ack('Legacy 0.8x message routed to processor');
+        }
+        // compatibility with 0.8x
+
         if ($message->getProperty(Config::COMMAND)) {
             return Result::reject(sprintf(
                 'Unexpected command "%s" got. Command must not go to the router.',
