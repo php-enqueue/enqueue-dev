@@ -9,6 +9,12 @@ use Enqueue\Util\UUID;
 class Producer implements ProducerInterface
 {
     /**
+     * compatibility with 0.9x.
+     */
+    const TOPIC_09X = 'enqueue.topic';
+    const COMMAND_09X = 'enqueue.command';
+
+    /**
      * @var DriverInterface
      */
     protected $driver;
@@ -54,6 +60,7 @@ class Producer implements ProducerInterface
         $this->prepareBody($message);
 
         $message->setProperty(Config::PARAMETER_TOPIC_NAME, $topic);
+        $message->setProperty(self::TOPIC_09X, $topic);
 
         if (!$message->getMessageId()) {
             $message->setMessageId(UUID::generate());
@@ -119,6 +126,7 @@ class Producer implements ProducerInterface
 
         $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
         $message->setProperty(Config::PARAMETER_COMMAND_NAME, $command);
+        $message->setProperty(self::COMMAND_09X, $command);
         $message->setScope(Message::SCOPE_APP);
 
         $this->sendEvent(Config::COMMAND_TOPIC, $message);

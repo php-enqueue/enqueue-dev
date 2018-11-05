@@ -2,7 +2,6 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
-use Enqueue\Bundle\Events\AsyncListener;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\TraceableProducer;
@@ -15,14 +14,11 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class AsyncListenerTest extends WebTestCase
 {
-    public function setUp()
+    protected function tearDown()
     {
-        parent::setUp();
+        parent::tearDown();
 
-        /** @var AsyncListener $asyncListener */
-        $asyncListener = static::$container->get('enqueue.events.async_listener');
-
-        $asyncListener->resetSyncMode();
+        static::$container = null;
     }
 
     public function testShouldNotCallRealListenerIfMarkedAsAsync()

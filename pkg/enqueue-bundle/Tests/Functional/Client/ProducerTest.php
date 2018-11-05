@@ -25,9 +25,9 @@ class ProducerTest extends WebTestCase
 
     public function tearDown()
     {
-        parent::tearDown();
-
         static::$container->get(Producer::class)->clearTraces();
+
+        parent::tearDown();
     }
 
     public function testCouldBeGetFromContainerAsService()
@@ -93,6 +93,9 @@ class ProducerTest extends WebTestCase
             'enqueue.processor_name' => RouterProcessor::class,
             'enqueue.command_name' => 'theCommand',
             'enqueue.processor_queue_name' => 'default',
+            // compatibility with 0.9x
+            'enqueue.command' => 'theCommand',
+            'enqueue.topic' => '__command__',
         ], $traces[0]['properties']);
     }
 
@@ -116,6 +119,9 @@ class ProducerTest extends WebTestCase
             'enqueue.processor_name' => 'theExclusiveCommandName',
             'enqueue.command_name' => 'theExclusiveCommandName',
             'enqueue.processor_queue_name' => 'the_exclusive_command_queue',
+            // compatibility with 0.9x
+            'enqueue.command' => 'theExclusiveCommandName',
+            'enqueue.topic' => '__command__',
         ], $traces[0]['properties']);
     }
 
@@ -139,6 +145,9 @@ class ProducerTest extends WebTestCase
             'enqueue.processor_name' => RouterProcessor::class,
             'enqueue.command_name' => 'theCommand',
             'enqueue.processor_queue_name' => 'default',
+            // compatibility with 0.9x
+            'enqueue.command' => 'theCommand',
+            'enqueue.topic' => '__command__',
         ], $traces[0]['properties']);
     }
 
