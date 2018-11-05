@@ -35,6 +35,8 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var TestAsyncListener $listener */
         $listener = static::$container->get('test_async_subscriber');
 
+        var_dump($listener->calls);
+
         $this->assertEmpty($listener->calls);
     }
 

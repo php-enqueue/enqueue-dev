@@ -54,6 +54,8 @@ class AsyncListenerTest extends WebTestCase
 
         $this->assertCount(1, $traces);
 
+        var_dump($traces);
+
         $this->assertEquals('symfony_events', $traces[0]['command']);
         $this->assertEquals('{"subject":"theSubject","arguments":{"fooArg":"fooVal"}}', $traces[0]['body']);
     }
