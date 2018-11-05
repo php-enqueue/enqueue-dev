@@ -23,6 +23,8 @@ class AsyncListenerTest extends WebTestCase
         $asyncListener = static::$container->get('enqueue.events.async_listener');
 
         $asyncListener->resetSyncMode();
+        static::$container->get('test_async_subscriber')->calls = [];
+        static::$container->get('test_async_listener')->calls = [];
     }
 
     public function testShouldNotCallRealListenerIfMarkedAsAsync()
@@ -53,8 +55,6 @@ class AsyncListenerTest extends WebTestCase
         $traces = $producer->getCommandTraces('symfony_events');
 
         $this->assertCount(1, $traces);
-
-        var_dump($traces);
 
         $this->assertEquals('symfony_events', $traces[0]['command']);
         $this->assertEquals('{"subject":"theSubject","arguments":{"fooArg":"fooVal"}}', $traces[0]['body']);

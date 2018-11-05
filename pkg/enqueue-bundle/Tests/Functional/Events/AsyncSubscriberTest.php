@@ -23,6 +23,8 @@ class AsyncSubscriberTest extends WebTestCase
         $asyncListener = static::$container->get('enqueue.events.async_listener');
 
         $asyncListener->resetSyncMode();
+        static::$container->get('test_async_subscriber')->calls = [];
+        static::$container->get('test_async_listener')->calls = [];
     }
 
     public function testShouldNotCallRealSubscriberIfMarkedAsAsync()
@@ -34,8 +36,6 @@ class AsyncSubscriberTest extends WebTestCase
 
         /** @var TestAsyncListener $listener */
         $listener = static::$container->get('test_async_subscriber');
-
-        var_dump($listener->calls);
 
         $this->assertEmpty($listener->calls);
     }
