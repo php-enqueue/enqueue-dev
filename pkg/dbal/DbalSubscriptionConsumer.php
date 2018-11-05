@@ -75,6 +75,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         }
 
         $timeout /= 1000;
+        $now = time();
         $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
         $currentQueueNames = [];
@@ -83,7 +84,6 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 $currentQueueNames = $queueNames;
             }
 
-            $now = time();
             $this->removeExpiredMessages();
             $this->redeliverMessages();
 

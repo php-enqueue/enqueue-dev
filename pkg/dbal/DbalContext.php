@@ -17,6 +17,7 @@ use Interop\Queue\Producer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
 use Interop\Queue\Topic;
+use Ramsey\Uuid\Uuid;
 
 class DbalContext implements Context
 {
@@ -160,7 +161,7 @@ class DbalContext implements Context
             $dbalMessageObj->setPublishedAt((int) $dbalMessage['published_at']);
         }
         if (isset($dbalMessage['delivery_id'])) {
-            $dbalMessageObj->setDeliveryId((string) $dbalMessage['delivery_id']);
+            $dbalMessageObj->setDeliveryId(Uuid::fromBytes($dbalMessage['delivery_id'])->toString());
         }
         if (isset($dbalMessage['redeliver_after'])) {
             $dbalMessageObj->setRedeliverAfter((int) $dbalMessage['redeliver_after']);
@@ -229,20 +230,13 @@ class DbalContext implements Context
         $table->addColumn('priority', Type::SMALLINT, ['notnull' => false]);
         $table->addColumn('delayed_until', Type::BIGINT, ['notnull' => false]);
         $table->addColumn('time_to_live', Type::BIGINT, ['notnull' => false]);
-        $table->addColumn('delivery_id', Type::STRING, ['notnull' => false]);
+        $table->addColumn('delivery_id', Type::BINARY, ['length' => 16, 'fixed' => true, 'notnull' => false]);
         $table->addColumn('redeliver_after', Type::BIGINT, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['delivery_id']);
+        $table->addIndex(['priority', 'published_at', 'queue', 'delivery_id', 'delayed_until', 'id']);
 
-        // try to select a message index
-        $table->addIndex(['delivery_id, delayed_until, queue']);
-        $table->addIndex(['priority', 'published_at']);
-
-        // redeliver failed messages
-        $table->addIndex(['delivery_id', 'redeliver_after']);
-
-        // remove expired messages
+        $table->addIndex(['redeliver_after', 'delivery_id']);
         $table->addIndex(['time_to_live', 'delivery_id']);
 
         $sm->createTable($table);

@@ -11,6 +11,7 @@ use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Impl\ConsumerPollingTrait;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
+use Ramsey\Uuid\Uuid;
 
 class DbalConsumer implements Consumer
 {
@@ -138,8 +139,8 @@ class DbalConsumer implements Consumer
 
         $this->getConnection()->delete(
             $this->getContext()->getTableName(),
-            ['delivery_id' => $deliveryId],
-            ['delivery_id' => Type::STRING]
+            ['delivery_id' => Uuid::fromString($deliveryId)->getBytes()],
+            ['delivery_id' => Type::BINARY]
         );
     }
 }
