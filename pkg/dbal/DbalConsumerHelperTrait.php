@@ -84,9 +84,7 @@ trait DbalConsumerHelperTrait
     {
         if (null === $this->redeliverMessagesLastExecutedAt) {
             $this->redeliverMessagesLastExecutedAt = microtime(true);
-        }
-
-        if ((microtime(true) - $this->redeliverMessagesLastExecutedAt) < 1) {
+        } elseif ((microtime(true) - $this->redeliverMessagesLastExecutedAt) < 1) {
             return;
         }
 
@@ -109,15 +107,14 @@ trait DbalConsumerHelperTrait
     {
         if (null === $this->removeExpiredMessagesLastExecutedAt) {
             $this->removeExpiredMessagesLastExecutedAt = microtime(true);
-        }
-
-        if ((microtime(true) - $this->removeExpiredMessagesLastExecutedAt) < 1) {
+        } elseif ((microtime(true) - $this->removeExpiredMessagesLastExecutedAt) < 1) {
             return;
         }
 
         $this->getConnection()->createQueryBuilder()
             ->delete($this->getContext()->getTableName())
             ->andWhere('(time_to_live IS NOT NULL) AND (time_to_live < :now)')
+            ->andWhere('(redelivered = false OR delivery_id IS NULL)')
             ->setParameter(':now', (int) time(), Type::BIGINT)
             ->setParameter('redelivered', false, Type::BOOLEAN)
             ->execute()
