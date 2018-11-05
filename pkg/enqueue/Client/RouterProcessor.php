@@ -10,7 +10,7 @@ use Interop\Queue\Processor;
 final class RouterProcessor implements Processor
 {
     /**
-     * compatibility with 0.8x
+     * compatibility with 0.8x.
      */
     private const COMMAND_TOPIC_08X = '__command__';
 
