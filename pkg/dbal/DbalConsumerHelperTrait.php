@@ -48,7 +48,7 @@ trait DbalConsumerHelperTrait
             ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
         ;
 
-        while (microtime() < $endAt) {
+        while (microtime(true) < $endAt) {
             $result = $select->execute()->fetch();
             if (empty($result)) {
                 return null;
@@ -116,7 +116,6 @@ trait DbalConsumerHelperTrait
             ->andWhere('(time_to_live IS NOT NULL) AND (time_to_live < :now)')
             ->andWhere('(redelivered = false OR delivery_id IS NULL)')
             ->setParameter(':now', (int) time(), Type::BIGINT)
-            ->setParameter('redelivered', false, Type::BOOLEAN)
             ->execute()
         ;
 
