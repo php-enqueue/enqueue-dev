@@ -44,6 +44,7 @@ class ProducerTest extends TestCase
 
         $expectedProperties = [
             'enqueue.topic_name' => 'topic',
+            'enqueue.topic' => 'topic',
         ];
 
         self::assertEquals($expectedProperties, $message->getProperties());
