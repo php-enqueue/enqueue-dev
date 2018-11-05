@@ -85,7 +85,7 @@ class DbalProducer implements Producer
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
-            'priority' => $message->getPriority(),
+            'priority' => -1 * $message->getPriority(),
             'queue' => $destination->getQueueName(),
             'redelivered' => false,
             'delivery_id' => null,

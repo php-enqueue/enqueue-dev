@@ -154,7 +154,7 @@ class DbalContext implements Context
             $dbalMessageObj->setRedelivered((bool) $dbalMessage['redelivered']);
         }
         if (isset($dbalMessage['priority'])) {
-            $dbalMessageObj->setPriority((int) $dbalMessage['priority']);
+            $dbalMessageObj->setPriority((int) (-1 * $dbalMessage['priority']));
         }
         if (isset($dbalMessage['published_at'])) {
             $dbalMessageObj->setPublishedAt((int) $dbalMessage['published_at']);
@@ -233,13 +233,17 @@ class DbalContext implements Context
         $table->addColumn('redeliver_after', Type::BIGINT, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['published_at']);
-        $table->addIndex(['queue']);
-        $table->addIndex(['priority']);
-        $table->addIndex(['delayed_until']);
-        $table->addIndex(['priority', 'published_at']);
-        $table->addIndex(['redeliver_after']);
         $table->addUniqueIndex(['delivery_id']);
+
+        // try to select a message index
+        $table->addIndex(['delivery_id, delayed_until, queue']);
+        $table->addIndex(['priority', 'published_at']);
+
+        // redeliver failed messages
+        $table->addIndex(['delivery_id', 'redeliver_after']);
+
+        // remove expired messages
+        $table->addIndex(['time_to_live', 'delivery_id']);
 
         $sm->createTable($table);
     }

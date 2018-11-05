@@ -32,7 +32,7 @@ trait DbalConsumerHelperTrait
             ->andWhere('delivery_id IS NULL')
             ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
             ->andWhere('queue IN (:queues)')
-            ->addOrderBy('priority', 'desc')
+            ->addOrderBy('priority', 'asc')
             ->addOrderBy('published_at', 'asc')
             ->setParameter('delayedUntil', $now, ParameterType::INTEGER)
             ->setParameter('queues', array_values($queues), Connection::PARAM_STR_ARRAY)
