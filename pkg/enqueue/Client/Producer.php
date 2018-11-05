@@ -9,7 +9,7 @@ use Enqueue\Util\UUID;
 class Producer implements ProducerInterface
 {
     /**
-     * compatibility with 0.9x
+     * compatibility with 0.9x.
      */
     const TOPIC_09X = 'enqueue.topic';
     const COMMAND_09X = 'enqueue.command';
