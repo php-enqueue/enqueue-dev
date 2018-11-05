@@ -15,6 +15,11 @@
         "phpunit/phpunit": "~5.4.0",
         "enqueue/test": "0.9.x-dev"
     },
+    "suggest": {
+        "thruway/client": "Client for Thruway and the WAMP (Web Application Messaging Protocol).",
+        "thruway/pawl-transport": "Pawl WebSocket Transport for Thruway Client",
+        "influxdb/influxdb-php": "A PHP Client for InfluxDB, a time series database"
+    },
     "support": {
         "email": "opensource@forma-pro.com",
         "issues": "https://github.com/php-enqueue/enqueue-dev/issues",

@@ -58,6 +58,10 @@ class WampStorage implements StatsStorage
      */
     public function __construct($config = 'wamp:')
     {
+        if (false == class_exists(Client::class) || false == class_exists(PawlTransportProvider::class)) {
+            throw new \LogicException('Seems client libraries are not installed. Please install "thruway/client" and "thruway/pawl-transport"');
+        }
+
         if (empty($config)) {
             $config = $this->parseDsn('wamp:');
         } elseif (is_string($config)) {
