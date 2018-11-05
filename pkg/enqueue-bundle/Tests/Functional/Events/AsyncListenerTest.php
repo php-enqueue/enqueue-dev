@@ -2,7 +2,6 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
-use Enqueue\Bundle\Events\AsyncListener;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\TraceableProducer;
