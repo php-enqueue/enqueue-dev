@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Monitoring;
 
-class MessageStats implements Stats
+class ConsumedMessageStats implements Stats
 {
     const STATUS_ACK = 'acknowledged';
     const STATUS_REJECTED = 'rejected';

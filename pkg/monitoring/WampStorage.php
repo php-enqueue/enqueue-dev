@@ -87,14 +87,19 @@ class WampStorage implements StatsStorage
         $this->serialiser = new JsonSerializer();
     }
 
-    public function pushConsumerStats(ConsumerStats $event): void
+    public function pushConsumerStats(ConsumerStats $stats): void
     {
-        $this->push($event);
+        $this->push($stats);
     }
 
-    public function pushMessageStats(MessageStats $event): void
+    public function pushConsumedMessageStats(ConsumedMessageStats $stats): void
     {
-        $this->push($event);
+        $this->push($stats);
+    }
+
+    public function pushSentMessageStats(SentMessageStats $stats): void
+    {
+        $this->push($stats);
     }
 
     private function push(Stats $stats)

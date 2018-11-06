@@ -14,6 +14,7 @@ use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 class MonitoringExtension implements ExtensionInterface
@@ -125,7 +126,9 @@ class MonitoringExtension implements ExtensionInterface
                 $this->getSystemLoad()
             );
 
-            $this->storage->pushConsumerStats($event);
+            $this->safeCall(function () use ($event) {
+                $this->storage->pushConsumerStats($event);
+            }, $context->getLogger());
         }
     }
 
@@ -148,24 +151,28 @@ class MonitoringExtension implements ExtensionInterface
             $this->getSystemLoad()
         );
 
-        $this->storage->pushConsumerStats($event);
+        $this->safeCall(function () use ($event) {
+            $this->storage->pushConsumerStats($event);
+        }, $context->getLogger());
     }
 
     public function onProcessorException(ProcessorException $context): void
     {
         $timeMs = $this->getNowMs();
 
-        $event = new MessageStats(
+        $event = new ConsumedMessageStats(
             $this->consumerId,
             $timeMs,
             $context->getReceivedAt(),
             $context->getConsumer()->getQueue()->getQueueName(),
             $context->getMessage()->getHeaders(),
             $context->getMessage()->getProperties(),
-            MessageStats::STATUS_FAILED
+            ConsumedMessageStats::STATUS_FAILED
         );
 
-        $this->storage->pushMessageStats($event);
+        $this->safeCall(function () use ($event) {
+            $this->storage->pushConsumedMessageStats($event);
+        }, $context->getLogger());
 
         // priority of this extension must be the lowest and
         // if result is null we emit consumer stopped event here
@@ -193,7 +200,9 @@ class MonitoringExtension implements ExtensionInterface
                 $context->getException()->getTraceAsString()
             );
 
-            $this->storage->pushConsumerStats($event);
+            $this->safeCall(function () use ($event) {
+                $this->storage->pushConsumerStats($event);
+            }, $context->getLogger());
         }
     }
 
@@ -210,21 +219,21 @@ class MonitoringExtension implements ExtensionInterface
             case Result::ACK:
             case Result::ALREADY_ACKNOWLEDGED:
                 $this->acknowledged++;
-                $status = MessageStats::STATUS_ACK;
+                $status = ConsumedMessageStats::STATUS_ACK;
                 break;
             case Result::REJECT:
                 $this->rejected++;
-                $status = MessageStats::STATUS_REJECTED;
+                $status = ConsumedMessageStats::STATUS_REJECTED;
                 break;
             case Result::REQUEUE:
                 $this->requeued++;
-                $status = MessageStats::STATUS_REQUEUED;
+                $status = ConsumedMessageStats::STATUS_REQUEUED;
                 break;
             default:
                 throw new \LogicException();
         }
 
-        $event =  new MessageStats(
+        $event =  new ConsumedMessageStats(
             $this->consumerId,
             $timeMs,
             $context->getReceivedAt(),
@@ -234,7 +243,9 @@ class MonitoringExtension implements ExtensionInterface
             $status
         );
 
-        $this->storage->pushMessageStats($event);
+        $this->safeCall(function () use ($event) {
+            $this->storage->pushConsumedMessageStats($event);
+        }, $context->getLogger());
 
         // send stats event only once per period
         $time = time();
@@ -258,7 +269,9 @@ class MonitoringExtension implements ExtensionInterface
                 $this->getSystemLoad()
             );
 
-            $this->storage->pushConsumerStats($event);
+            $this->safeCall(function () use ($event) {
+                $this->storage->pushConsumerStats($event);
+            }, $context->getLogger());
         }
     }
 
@@ -290,5 +303,16 @@ class MonitoringExtension implements ExtensionInterface
     private function getSystemLoad(): float
     {
         return sys_getloadavg()[0];
+    }
+
+    private function safeCall(callable $fun, LoggerInterface $logger)
+    {
+        try {
+            return call_user_func($fun);
+        } catch (\Throwable $e) {
+            $logger->error(sprintf('[MonitoringExtension] Push to storage failed: %s', $e->getMessage()));
+        }
+
+        return null;
     }
 }
