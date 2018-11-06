@@ -53,13 +53,13 @@ To consume messages you have to define a processor class first:
 
 namespace Acme\Module\Helper\Async;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class Foo implements PsrProcessor
+class Foo implements Processor
 {
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         // do job
         // $message->getBody() -> 'payload'

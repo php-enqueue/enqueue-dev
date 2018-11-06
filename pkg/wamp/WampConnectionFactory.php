@@ -21,7 +21,6 @@ class WampConnectionFactory implements ConnectionFactory
      * The config could be an array, string DSN or null. In case of null it will attempt to connect to Ratchet localhost.
      *
      * $config = [
-     *   'lazy'                => true,
      *   'dsn'                 => 'wamp://127.0.0.1:9090',
      *   'host'                => '127.0.0.1',
      *   'port'                => '9090',
@@ -50,7 +49,6 @@ class WampConnectionFactory implements ConnectionFactory
         }
 
         $config = array_replace([
-            'lazy' => true,
             'host' => '127.0.0.1',
             'port' => '9090',
             'max_retries' => 15,
@@ -64,13 +62,9 @@ class WampConnectionFactory implements ConnectionFactory
 
     public function createContext(): Context
     {
-        if ($this->config['lazy']) {
-            return new WampContext(function () {
-                return $this->establishConnection();
-            });
-        }
-
-        return new WampContext($this->establishConnection());
+        return new WampContext(function () {
+            return $this->establishConnection();
+        });
     }
 
     private function establishConnection(): Client

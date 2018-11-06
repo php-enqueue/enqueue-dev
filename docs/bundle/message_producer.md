@@ -10,7 +10,7 @@ Transport gives you the access to all transport specific features so you can tun
 
 /** @var Symfony\Component\DependencyInjection\ContainerInterface $container */
 
-/** @var Interop\Queue\PsrContext $context */
+/** @var Interop\Queue\Context $context */
 $context = $container->get('enqueue.transport.context');
 
 $context->createProducer()->send(

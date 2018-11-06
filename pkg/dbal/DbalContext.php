@@ -116,6 +116,10 @@ class DbalContext implements Context
             $consumer->setPollingInterval($this->config['polling_interval']);
         }
 
+        if (isset($this->config['redelivery_delay'])) {
+            $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
+        }
+
         return $consumer;
     }
 
@@ -125,7 +129,13 @@ class DbalContext implements Context
 
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        return new DbalSubscriptionConsumer($this);
+        $consumer = new DbalSubscriptionConsumer($this);
+
+        if (isset($this->config['redelivery_delay'])) {
+            $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
+        }
+
+        return $consumer;
     }
 
     /**
@@ -133,6 +143,7 @@ class DbalContext implements Context
      */
     public function convertMessage(array $dbalMessage): DbalMessage
     {
+        /** @var DbalMessage $dbalMessageObj */
         $dbalMessageObj = $this->createMessage(
             $dbalMessage['body'],
             $dbalMessage['properties'] ? JSON::decode($dbalMessage['properties']) : [],
@@ -147,6 +158,12 @@ class DbalContext implements Context
         }
         if (isset($dbalMessage['published_at'])) {
             $dbalMessageObj->setPublishedAt((int) $dbalMessage['published_at']);
+        }
+        if (isset($dbalMessage['delivery_id'])) {
+            $dbalMessageObj->setDeliveryId((string) $dbalMessage['delivery_id']);
+        }
+        if (isset($dbalMessage['redeliver_after'])) {
+            $dbalMessageObj->setRedeliverAfter((int) $dbalMessage['redeliver_after']);
         }
 
         return $dbalMessageObj;
@@ -212,6 +229,8 @@ class DbalContext implements Context
         $table->addColumn('priority', Type::SMALLINT, ['notnull' => false]);
         $table->addColumn('delayed_until', Type::BIGINT, ['notnull' => false]);
         $table->addColumn('time_to_live', Type::BIGINT, ['notnull' => false]);
+        $table->addColumn('delivery_id', Type::STRING, ['notnull' => false]);
+        $table->addColumn('redeliver_after', Type::BIGINT, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['published_at']);
@@ -219,6 +238,8 @@ class DbalContext implements Context
         $table->addIndex(['priority']);
         $table->addIndex(['delayed_until']);
         $table->addIndex(['priority', 'published_at']);
+        $table->addIndex(['redeliver_after']);
+        $table->addUniqueIndex(['delivery_id']);
 
         $sm->createTable($table);
     }

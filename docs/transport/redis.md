@@ -58,10 +58,10 @@ $factory = new RedisConnectionFactory([
 // same as above but given as DSN string
 $factory = new RedisConnectionFactory('redis+phpredis://example.com:1000');
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('redis:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('redis:')->createContext();
 
 // pass redis instance directly
 $redis = new \Enqueue\Redis\PhpRedis([ /** redis connection options */ ]);
@@ -85,7 +85,7 @@ $connectionFactory = new RedisConnectionFactory([
     'scheme_extensions' => 'predis',
 ]);
 
-$psrContext = $connectionFactory->createContext();
+$context = $connectionFactory->createContext();
 ```
 
 * With custom redis instance:
@@ -109,36 +109,36 @@ $factory = new RedisConnectionFactory($redis);
 
 ```php
 <?php
-/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisContext $context */
 
-$fooTopic = $psrContext->createTopic('aTopic');
-$message = $psrContext->createMessage('Hello world!');
+$fooTopic = $context->createTopic('aTopic');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('aQueue');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Send expiration message
 
 ```php
 <?php
-/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisContext $context */
 /** @var \Enqueue\Redis\RedisDestination $fooQueue */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setTimeToLive(60000) // 60 sec
     //    
     ->send($fooQueue, $message)
@@ -149,12 +149,12 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisContext $context */
 /** @var \Enqueue\Redis\RedisDestination $fooQueue */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setDeliveryDelay(5000) // 5 sec
     
     ->send($fooQueue, $message)
@@ -165,10 +165,10 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$consumer = $psrContext->createConsumer($fooQueue);
+$fooQueue = $context->createQueue('aQueue');
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive();
 
@@ -182,22 +182,22 @@ $consumer->acknowledge($message);
 
 ```php
 <?php
-/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
+$fooQueue = $context->createQueue('aQueue');
 
-$psrContext->deleteQueue($fooQueue);
+$context->deleteQueue($fooQueue);
 ```
 
 ## Delete topic (purge messages):
 
 ```php
 <?php
-/** @var \Enqueue\Redis\RedisContext $psrContext */
+/** @var \Enqueue\Redis\RedisContext $context */
 
-$fooTopic = $psrContext->createTopic('aTopic');
+$fooTopic = $context->createTopic('aTopic');
 
-$psrContext->deleteTopic($fooTopic);
+$context->deleteTopic($fooTopic);
 ```
 
 ## Connect Heroku Redis

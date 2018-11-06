@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal\Tests;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Type;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
@@ -36,10 +40,53 @@ class DbalConsumerTest extends TestCase
         $this->assertSame($destination, $consumer->getQueue());
     }
 
-    public function testCouldCallAcknowledgedMethod()
+    public function testAcknowledgeShouldThrowIfInstanceOfMessageIsInvalid()
     {
+        $this->expectException(InvalidMessageException::class);
+        $this->expectExceptionMessage(
+            'The message must be an instance of '.
+            'Enqueue\Dbal\DbalMessage '.
+            'but it is Enqueue\Dbal\Tests\InvalidMessage.'
+        );
+
         $consumer = new DbalConsumer($this->createContextMock(), new DbalDestination('queue'));
-        $consumer->acknowledge(new DbalMessage());
+        $consumer->acknowledge(new InvalidMessage());
+    }
+
+    public function testShouldDeleteMessageOnAcknowledge()
+    {
+        $queue = new DbalDestination('queue');
+
+        $message = new DbalMessage();
+        $message->setBody('theBody');
+        $message->setDeliveryId('foo-delivery-id');
+
+        $dbal = $this->createConectionMock();
+        $dbal
+            ->expects($this->once())
+            ->method('delete')
+            ->with(
+                'some-table-name',
+                ['delivery_id' => $message->getDeliveryId()],
+                ['delivery_id' => Type::STRING]
+            )
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getDbalConnection')
+            ->will($this->returnValue($dbal))
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getTableName')
+            ->will($this->returnValue('some-table-name'))
+        ;
+
+        $consumer = new DbalConsumer($context, $queue);
+
+        $consumer->acknowledge($message);
     }
 
     public function testCouldSetAndGetPollingInterval()
@@ -50,6 +97,16 @@ class DbalConsumerTest extends TestCase
         $consumer->setPollingInterval(123456);
 
         $this->assertEquals(123456, $consumer->getPollingInterval());
+    }
+
+    public function testCouldSetAndGetRedeliveryDelay()
+    {
+        $destination = new DbalDestination('queue');
+
+        $consumer = new DbalConsumer($this->createContextMock(), $destination);
+        $consumer->setRedeliveryDelay(123456);
+
+        $this->assertEquals(123456, $consumer->getRedeliveryDelay());
     }
 
     public function testRejectShouldThrowIfInstanceOfMessageIsInvalid()
@@ -65,17 +122,35 @@ class DbalConsumerTest extends TestCase
         $consumer->reject(new InvalidMessage());
     }
 
-    public function testShouldDoNothingOnReject()
+    public function testShouldDeleteMessageFromQueueOnReject()
     {
         $queue = new DbalDestination('queue');
 
         $message = new DbalMessage();
         $message->setBody('theBody');
+        $message->setDeliveryId('foo-delivery-id');
+
+        $dbal = $this->createConectionMock();
+        $dbal
+            ->expects($this->once())
+            ->method('delete')
+            ->with(
+                'some-table-name',
+                ['delivery_id' => $message->getDeliveryId()],
+                ['delivery_id' => Type::STRING]
+            )
+        ;
 
         $context = $this->createContextMock();
         $context
-            ->expects($this->never())
-            ->method('createProducer')
+            ->expects($this->once())
+            ->method('getDbalConnection')
+            ->will($this->returnValue($dbal))
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getTableName')
+            ->will($this->returnValue('some-table-name'))
         ;
 
         $consumer = new DbalConsumer($context, $queue);
@@ -94,7 +169,7 @@ class DbalConsumerTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($queue), $this->identicalTo($message))
+            ->with($this->identicalTo($queue), $this->isInstanceOf($message))
         ;
 
         $context = $this->createContextMock();
@@ -123,6 +198,14 @@ class DbalConsumerTest extends TestCase
     private function createContextMock()
     {
         return $this->createMock(DbalContext::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|DbalContext
+     */
+    private function createConectionMock()
+    {
+        return $this->createMock(Connection::class);
     }
 }
 

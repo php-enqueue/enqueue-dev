@@ -68,14 +68,14 @@ Register processor:
 ```php
 <?php
 use Enqueue\SimpleClient\SimpleClient;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
 $app->resolving(SimpleClient::class, function (SimpleClient $client, $app) {
-    $client->bindTopic('enqueue_test', function(PsrMessage $message) {
+    $client->bindTopic('enqueue_test', function(Message $message) {
         // do stuff here
 
-        return PsrProcessor::ACK;
+        return Processor::ACK;
     });
 
     return $client;

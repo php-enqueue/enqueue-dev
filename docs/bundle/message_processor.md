@@ -36,9 +36,9 @@ It is handy to subscribe on event messages. It allows to keep subscription login
 namespace AppBundle\Async;
 
 use Enqueue\Client\TopicSubscriberInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 
-class SayHelloProcessor implements PsrProcessor, TopicSubscriberInterface
+class SayHelloProcessor implements Processor, TopicSubscriberInterface
 {
     public static function getSubscribedTopics()
     {
@@ -52,9 +52,9 @@ On the topic subscriber you can also define queue and processor name:
 ```php
 <?php
 use Enqueue\Client\TopicSubscriberInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 
-class SayHelloProcessor implements PsrProcessor, TopicSubscriberInterface
+class SayHelloProcessor implements Processor, TopicSubscriberInterface
 {
     public static function getSubscribedTopics()
     {
@@ -89,9 +89,9 @@ If you send a message using ProducerV2::sendCommand('aCommandName') method it wi
 namespace AppBundle\Async;
 
 use Enqueue\Client\CommandSubscriberInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 
-class SayHelloProcessor implements PsrProcessor, CommandSubscriberInterface
+class SayHelloProcessor implements Processor, CommandSubscriberInterface
 {
     public static function getSubscribedCommand()
     {
@@ -105,9 +105,9 @@ On the command subscriber you can also define additional settings such as queue 
 ```php
 <?php
 use Enqueue\Client\CommandSubscriberInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 
-class SayHelloProcessor implements PsrProcessor, CommandSubscriberInterface
+class SayHelloProcessor implements Processor, CommandSubscriberInterface
 {
     public static function getSubscribedCommand()
     {
@@ -124,9 +124,9 @@ In the container you can just add the tag `enqueue.client.message_processor` and
 ```php
 <?php
 use Enqueue\Client\CommandSubscriberInterface;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 
-class SayHelloProcessor implements PsrProcessor, CommandSubscriberInterface
+class SayHelloProcessor implements Processor, CommandSubscriberInterface
 {
     public static function getSubscribedCommand()
     {

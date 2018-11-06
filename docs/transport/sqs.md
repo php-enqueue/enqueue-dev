@@ -32,14 +32,14 @@ $factory = new SqsConnectionFactory([
 // same as above but given as DSN string. You may need to url encode secret if it contains special char (like +)
 $factory = new SqsConnectionFactory('sqs:?key=aKey&secret=aSecret&region=aRegion');
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
 // using a pre-configured client
 $client = new Aws\Sqs\SqsClient([ /* ... */ ]);
 $factory = new SqsConnectionFactory($client);
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('sqs:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('sqs:')->createContext();
 ```
 
 ## Declare queue.
@@ -48,37 +48,37 @@ Declare queue operation creates a queue on a broker side.
  
 ```php
 <?php
-/** @var \Enqueue\Sqs\SqsContext $psrContext */
+/** @var \Enqueue\Sqs\SqsContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
-$psrContext->declareQueue($fooQueue);
+$fooQueue = $context->createQueue('foo');
+$context->declareQueue($fooQueue);
 
 // to remove queue use deleteQueue method
-//$psrContext->deleteQueue($fooQueue);
+//$context->deleteQueue($fooQueue);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Sqs\SqsContext $psrContext */
+/** @var \Enqueue\Sqs\SqsContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('foo');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Send delay message
 
 ```php
 <?php
-/** @var \Enqueue\Sqs\SqsContext $psrContext */
+/** @var \Enqueue\Sqs\SqsContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('foo');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setDeliveryDelay(60000) // 60 sec
     
     ->send($fooQueue, $message)
@@ -89,10 +89,10 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Sqs\SqsContext $psrContext */
+/** @var \Enqueue\Sqs\SqsContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
-$consumer = $psrContext->createConsumer($fooQueue);
+$fooQueue = $context->createQueue('foo');
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive();
 
@@ -106,11 +106,11 @@ $consumer->acknowledge($message);
 
 ```php
 <?php
-/** @var \Enqueue\Sqs\SqsContext $psrContext */
+/** @var \Enqueue\Sqs\SqsContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$psrContext->purgeQueue($fooQueue);
+$context->purgeQueue($fooQueue);
 ```
 
 [back to index](../index.md)

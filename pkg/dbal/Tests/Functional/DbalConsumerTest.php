@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal\Tests\Functional;
 
 use Enqueue\Dbal\DbalContext;
@@ -100,5 +102,53 @@ class DbalConsumerTest extends TestCase
         $this->assertInstanceOf(DbalMessage::class, $message);
         $consumer->acknowledge($message);
         $this->assertSame($expectedPriority5Body, $message->getBody());
+    }
+
+    public function testShouldDeleteExpiredMessage()
+    {
+        $context = $this->context;
+        $queue = $context->createQueue(__METHOD__);
+
+        $consumer = $context->createConsumer($queue);
+
+        // guard
+        $this->assertNull($consumer->receiveNoWait());
+
+        $producer = $context->createProducer();
+
+        $this->context->getDbalConnection()->insert(
+            $this->context->getTableName(), [
+            'id' => 'id',
+            'human_id' => 'id',
+            'published_at' => '123',
+            'body' => 'expiredMessage',
+            'headers' => json_encode([]),
+            'properties' => json_encode([]),
+            'queue' => __METHOD__,
+            'redelivered' => 0,
+            'time_to_live' => time() - 10000,
+        ]);
+
+        $message = $context->createMessage('notExpiredMessage');
+        $message->setRedelivered(false);
+        $producer->send($queue, $message);
+
+        $this->assertSame('2', $this->getQuerySize());
+
+        $message = $consumer->receive(8000);
+
+        $this->assertSame('1', $this->getQuerySize());
+
+        $consumer->acknowledge($message);
+
+        $this->assertSame('0', $this->getQuerySize());
+    }
+
+    private function getQuerySize(): string
+    {
+        return $this->context->getDbalConnection()
+            ->executeQuery('SELECT count(*) FROM '.$this->context->getTableName())
+            ->fetchColumn(0)
+        ;
     }
 }

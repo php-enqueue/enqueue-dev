@@ -84,15 +84,15 @@ $replyMessage->getBody();
 ```php
 <?php
 
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
 /** @var \Enqueue\SimpleClient\SimpleClient $client */
 
-$client->bindTopic('a_bar_topic', function(PsrMessage $psrMessage) {
+$client->bindTopic('a_bar_topic', function(Message $psrMessage) {
     // processing logic here
     
-    return PsrProcessor::ACK;
+    return Processor::ACK;
 });
 
 $client->consume();

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Connection;
 use Interop\Queue\Consumer;
 use Interop\Queue\SubscriptionConsumer;
 
 class DbalSubscriptionConsumer implements SubscriptionConsumer
 {
+    use DbalConsumerHelperTrait;
+
     /**
      * @var DbalContext
      */
@@ -28,6 +30,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     private $dbal;
 
     /**
+     * Default 20 minutes in milliseconds.
+     *
+     * @var int
+     */
+    private $redeliveryDelay;
+
+    /**
      * @param DbalContext $context
      */
     public function __construct(DbalContext $context)
@@ -35,6 +44,23 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $this->context = $context;
         $this->dbal = $this->context->getDbalConnection();
         $this->subscribers = [];
+
+        $this->redeliveryDelay = 1200000;
+    }
+
+    /**
+     * Get interval between retrying failed messages in milliseconds.
+     */
+    public function getRedeliveryDelay(): int
+    {
+        return $this->redeliveryDelay;
+    }
+
+    public function setRedeliveryDelay(int $redeliveryDelay): self
+    {
+        $this->redeliveryDelay = $redeliveryDelay;
+
+        return $this;
     }
 
     public function consume(int $timeout = 0): void
@@ -43,13 +69,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             throw new \LogicException('No subscribers');
         }
 
-        $timeout = (int) ceil($timeout / 1000);
-        $endAt = time() + $timeout;
-
         $queueNames = [];
         foreach (array_keys($this->subscribers) as $queueName) {
             $queueNames[$queueName] = $queueName;
         }
+
+        $timeout /= 1000;
+        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
         $currentQueueNames = [];
         while (true) {
@@ -57,12 +83,12 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 $currentQueueNames = $queueNames;
             }
 
-            $message = $this->fetchPrioritizedMessage($currentQueueNames) ?: $this->fetchMessage($currentQueueNames);
+            $now = time();
+            $this->removeExpiredMessages();
+            $this->redeliverMessages();
 
-            if ($message) {
-                $this->dbal->delete($this->context->getTableName(), ['id' => $message['id']], ['id' => Type::GUID]);
-
-                $dbalMessage = $this->context->convertMessage($message);
+            if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {
+                $dbalMessage = $this->getContext()->convertMessage($message);
 
                 /**
                  * @var DbalConsumer
@@ -81,7 +107,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 usleep(200000); // 200ms
             }
 
-            if ($timeout && microtime(true) >= $endAt) {
+            if ($timeout && microtime(true) >= $now + $timeout) {
                 return;
             }
         }
@@ -135,64 +161,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $this->subscribers = [];
     }
 
-    private function fetchMessage(array $queues): ?array
+    protected function getContext(): DbalContext
     {
-        $query = $this->dbal->createQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->context->getTableName())
-            ->andWhere('queue IN (:queues)')
-            ->andWhere('priority IS NULL')
-            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-            ->addOrderBy('published_at', 'asc')
-            ->setMaxResults(1)
-        ;
-
-        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
-
-        $result = $this->dbal->executeQuery(
-            $sql,
-            [
-                'queues' => array_keys($queues),
-                'delayedUntil' => time(),
-            ],
-            [
-                'queues' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
-                'delayedUntil' => \Doctrine\DBAL\ParameterType::INTEGER,
-            ]
-        )->fetch();
-
-        return $result ?: null;
+        return $this->context;
     }
 
-    private function fetchPrioritizedMessage(array $queues): ?array
+    protected function getConnection(): Connection
     {
-        $query = $this->dbal->createQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->context->getTableName())
-            ->andWhere('queue IN (:queues)')
-            ->andWhere('priority IS NOT NULL')
-            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-            ->addOrderBy('published_at', 'asc')
-            ->addOrderBy('priority', 'desc')
-            ->setMaxResults(1)
-        ;
-
-        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
-
-        $result = $this->dbal->executeQuery(
-            $sql,
-            [
-                'queues' => array_keys($queues),
-                'delayedUntil' => time(),
-            ],
-            [
-                'queues' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
-                'delayedUntil' => \Doctrine\DBAL\ParameterType::INTEGER,
-            ]
-        )->fetch();
-
-        return $result ?: null;
+        return $this->dbal;
     }
 }

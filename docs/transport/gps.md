@@ -30,10 +30,10 @@ $connectionFactory = new GpsConnectionFactory();
 // save as above 
 $connectionFactory = new GpsConnectionFactory('gps:');
 
-$psrContext = $connectionFactory->createContext();
+$context = $connectionFactory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('gps:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('gps:')->createContext();
 ```
 
 ## Send message to topic
@@ -44,14 +44,14 @@ Google allows messages to be sent only to topic.
 
 ```php
 <?php
-/** @var \Enqueue\Gps\GpsContext $psrContext */
+/** @var \Enqueue\Gps\GpsContext $context */
 
-$fooTopic = $psrContext->createTopic('foo');
-$message = $psrContext->createMessage('Hello world!');
+$fooTopic = $context->createTopic('foo');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->declareTopic($fooTopic);
+$context->declareTopic($fooTopic);
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Consume message:
@@ -61,14 +61,14 @@ Google does not allow consuming message from the topic directly.
 
 ```php
 <?php
-/** @var \Enqueue\Gps\GpsContext $psrContext */
+/** @var \Enqueue\Gps\GpsContext $context */
 
-$fooTopic = $psrContext->createTopic('foo');
-$fooQueue = $psrContext->createQueue('foo');
+$fooTopic = $context->createTopic('foo');
+$fooQueue = $context->createQueue('foo');
 
-$psrContext->subscribe($fooTopic, $fooQueue);
+$context->subscribe($fooTopic, $fooQueue);
 
-$consumer = $psrContext->createConsumer($fooQueue);
+$consumer = $context->createConsumer($fooQueue);
 $message = $consumer->receive();
 
 // process a message

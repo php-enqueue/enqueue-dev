@@ -87,7 +87,7 @@ namespace AcmeBundle\Listener;
 
 use Enqueue\Client\Message;
 use Enqueue\Consumption\Result;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message as QueueMessage;
 use Enqueue\Util\JSON;
 use Symfony\Component\EventDispatcher\Event;
 use Enqueue\AsyncEventDispatcher\EventTransformer;
@@ -132,7 +132,7 @@ class FooEventTransformer implements EventTransformer
     /**
      * {@inheritdoc}
      */
-    public function toEvent($eventName, PsrMessage $message)
+    public function toEvent($eventName, QueueMessage $message)
     {
         $data = JSON::decode($message->getBody());
         
