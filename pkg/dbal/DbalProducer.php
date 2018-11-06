@@ -71,7 +71,7 @@ class DbalProducer implements Producer
         }
 
         $body = $message->getBody();
-        $uuid = Uuid::uuid1();
+        $uuid = Uuid::uuid4();
 
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :

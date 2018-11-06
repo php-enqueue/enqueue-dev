@@ -56,7 +56,7 @@ class DbalConsumerTest extends TestCase
 
     public function testShouldDeleteMessageOnAcknowledge()
     {
-        $deliveryId = Uuid::uuid1();
+        $deliveryId = Uuid::uuid4();
 
         $queue = new DbalDestination('queue');
 
@@ -127,7 +127,7 @@ class DbalConsumerTest extends TestCase
 
     public function testShouldDeleteMessageFromQueueOnReject()
     {
-        $deliveryId = Uuid::uuid1();
+        $deliveryId = Uuid::uuid4();
 
         $queue = new DbalDestination('queue');
 
