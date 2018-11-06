@@ -208,7 +208,7 @@ class MonitoringExtension implements ExtensionInterface
 
     public function onMessageReceived(MessageReceived $context): void
     {
-        $this->received++;
+        ++$this->received;
     }
 
     public function onResult(MessageResult $context): void
@@ -233,7 +233,7 @@ class MonitoringExtension implements ExtensionInterface
                 throw new \LogicException();
         }
 
-        $event =  new ConsumedMessageStats(
+        $event = new ConsumedMessageStats(
             $this->consumerId,
             $timeMs,
             $context->getReceivedAt(),
@@ -277,17 +277,14 @@ class MonitoringExtension implements ExtensionInterface
 
     public function onPostConsume(PostConsume $context): void
     {
-
     }
 
     public function onPostMessageReceived(PostMessageReceived $context): void
     {
-
     }
 
     public function onInitLogger(InitLogger $context): void
     {
-
     }
 
     private function getNowMs(): int
