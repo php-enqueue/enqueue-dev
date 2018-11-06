@@ -125,3 +125,16 @@ services:
       HOSTNAME_EXTERNAL: 'localstack'
       SERVICES: 'sqs'
 
+  influxdb:
+    image: 'influxdb:latest'
+
+  chronograf:
+    image: 'chronograf:latest'
+    entrypoint: 'chronograf --influxdb-url=http://influxdb:8086'
+    ports:
+      - '8888:8888'
+
+  grafana:
+    image: 'grafana/grafana:latest'
+    ports:
+      - '3000:3000'
