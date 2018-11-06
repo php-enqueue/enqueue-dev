@@ -142,32 +142,38 @@ class DbalContext implements Context
     /**
      * @internal It must be used here and in the consumer only
      */
-    public function convertMessage(array $dbalMessage): DbalMessage
+    public function convertMessage(array $arrayMessage): DbalMessage
     {
-        /** @var DbalMessage $dbalMessageObj */
-        $dbalMessageObj = $this->createMessage(
-            $dbalMessage['body'],
-            $dbalMessage['properties'] ? JSON::decode($dbalMessage['properties']) : [],
-            $dbalMessage['headers'] ? JSON::decode($dbalMessage['headers']) : []
+        /** @var DbalMessage $message */
+        $message = $this->createMessage(
+            $arrayMessage['body'],
+            $arrayMessage['properties'] ? JSON::decode($arrayMessage['properties']) : [],
+            $arrayMessage['headers'] ? JSON::decode($arrayMessage['headers']) : []
         );
 
-        if (isset($dbalMessage['redelivered'])) {
-            $dbalMessageObj->setRedelivered((bool) $dbalMessage['redelivered']);
+        if (isset($arrayMessage['id'])) {
+            $message->setMessageId(Uuid::fromBytes($arrayMessage['id'])->toString());
         }
-        if (isset($dbalMessage['priority'])) {
-            $dbalMessageObj->setPriority((int) (-1 * $dbalMessage['priority']));
+        if (isset($arrayMessage['queue'])) {
+            $message->setQueue($arrayMessage['queue']);
         }
-        if (isset($dbalMessage['published_at'])) {
-            $dbalMessageObj->setPublishedAt((int) $dbalMessage['published_at']);
+        if (isset($arrayMessage['redelivered'])) {
+            $message->setRedelivered((bool) $arrayMessage['redelivered']);
         }
-        if (isset($dbalMessage['delivery_id'])) {
-            $dbalMessageObj->setDeliveryId(Uuid::fromBytes($dbalMessage['delivery_id'])->toString());
+        if (isset($arrayMessage['priority'])) {
+            $message->setPriority((int) (-1 * $arrayMessage['priority']));
         }
-        if (isset($dbalMessage['redeliver_after'])) {
-            $dbalMessageObj->setRedeliverAfter((int) $dbalMessage['redeliver_after']);
+        if (isset($arrayMessage['published_at'])) {
+            $message->setPublishedAt((int) $arrayMessage['published_at']);
+        }
+        if (isset($arrayMessage['delivery_id'])) {
+            $message->setDeliveryId(Uuid::fromBytes($arrayMessage['delivery_id'])->toString());
+        }
+        if (isset($arrayMessage['redeliver_after'])) {
+            $message->setRedeliverAfter((int) $arrayMessage['redeliver_after']);
         }
 
-        return $dbalMessageObj;
+        return $message;
     }
 
     /**
@@ -219,8 +225,7 @@ class DbalContext implements Context
 
         $table = new Table($this->getTableName());
 
-        $table->addColumn('id', Type::BINARY, ['length' => 16, 'fixed' => true]);
-        $table->addColumn('human_id', Type::STRING, ['length' => 36]);
+        $table->addColumn('id', Type::GUID, ['length' => 16, 'fixed' => true]);
         $table->addColumn('published_at', Type::BIGINT);
         $table->addColumn('body', Type::TEXT, ['notnull' => false]);
         $table->addColumn('headers', Type::TEXT, ['notnull' => false]);
@@ -230,7 +235,7 @@ class DbalContext implements Context
         $table->addColumn('priority', Type::SMALLINT, ['notnull' => false]);
         $table->addColumn('delayed_until', Type::BIGINT, ['notnull' => false]);
         $table->addColumn('time_to_live', Type::BIGINT, ['notnull' => false]);
-        $table->addColumn('delivery_id', Type::BINARY, ['length' => 16, 'fixed' => true, 'notnull' => false]);
+        $table->addColumn('delivery_id', Type::GUID, ['length' => 16, 'fixed' => true, 'notnull' => false]);
         $table->addColumn('redeliver_after', Type::BIGINT, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);

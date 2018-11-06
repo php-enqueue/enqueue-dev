@@ -43,7 +43,7 @@ class DbalConsumerTest extends TestCase
         $consumer = $context->createConsumer($queue);
 
         // guard
-        $this->assertNull($consumer->receiveNoWait());
+        $this->assertSame(0, $this->getQuerySize());
 
         $time = (int) (microtime(true) * 10000);
 
@@ -51,11 +51,12 @@ class DbalConsumerTest extends TestCase
 
         $producer = $context->createProducer();
 
+        /** @var DbalMessage $message */
         $message = $context->createMessage($expectedBody);
         $message->setPublishedAt($time);
         $producer->send($queue, $message);
 
-        $message = $consumer->receive(8000); // 8 sec
+        $message = $consumer->receive(100); // 100ms
 
         $this->assertInstanceOf(DbalMessage::class, $message);
         $consumer->acknowledge($message);
@@ -71,7 +72,7 @@ class DbalConsumerTest extends TestCase
         $consumer = $context->createConsumer($queue);
 
         // guard
-        $this->assertNull($consumer->receiveNoWait());
+        $this->assertSame(0, $this->getQuerySize());
 
         $time = (int) (microtime(true) * 10000);
         $olderTime = $time - 10000;
@@ -97,7 +98,7 @@ class DbalConsumerTest extends TestCase
         $consumer->acknowledge($message);
         $this->assertSame($expectedPriority5BodyOlderTime, $message->getBody());
 
-        $message = $consumer->receive(8000); // 8 sec
+        $message = $consumer->receive(100); // 8 sec
 
         $this->assertInstanceOf(DbalMessage::class, $message);
         $consumer->acknowledge($message);
@@ -109,17 +110,14 @@ class DbalConsumerTest extends TestCase
         $context = $this->context;
         $queue = $context->createQueue(__METHOD__);
 
-        $consumer = $context->createConsumer($queue);
-
         // guard
-        $this->assertNull($consumer->receiveNoWait());
+        $this->assertSame(0, $this->getQuerySize());
 
         $producer = $context->createProducer();
 
         $this->context->getDbalConnection()->insert(
             $this->context->getTableName(), [
             'id' => 'id',
-            'human_id' => 'id',
             'published_at' => '123',
             'body' => 'expiredMessage',
             'headers' => json_encode([]),
@@ -133,20 +131,22 @@ class DbalConsumerTest extends TestCase
         $message->setRedelivered(false);
         $producer->send($queue, $message);
 
-        $this->assertSame('2', $this->getQuerySize());
+        $this->assertSame(2, $this->getQuerySize());
 
-        $message = $consumer->receive(8000);
+        // we need a new consumer to workaround redeliver
+        $consumer = $context->createConsumer($queue);
+        $message = $consumer->receive(100);
 
-        $this->assertSame('1', $this->getQuerySize());
+        $this->assertSame(1, $this->getQuerySize());
 
         $consumer->acknowledge($message);
 
-        $this->assertSame('0', $this->getQuerySize());
+        $this->assertSame(0, $this->getQuerySize());
     }
 
-    private function getQuerySize(): string
+    private function getQuerySize(): int
     {
-        return $this->context->getDbalConnection()
+        return (int) $this->context->getDbalConnection()
             ->executeQuery('SELECT count(*) FROM '.$this->context->getTableName())
             ->fetchColumn(0)
         ;

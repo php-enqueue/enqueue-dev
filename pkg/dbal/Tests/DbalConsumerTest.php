@@ -16,6 +16,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
 class DbalConsumerTest extends TestCase
 {
@@ -55,11 +56,13 @@ class DbalConsumerTest extends TestCase
 
     public function testShouldDeleteMessageOnAcknowledge()
     {
+        $deliveryId = Uuid::uuid1();
+
         $queue = new DbalDestination('queue');
 
         $message = new DbalMessage();
         $message->setBody('theBody');
-        $message->setDeliveryId('foo-delivery-id');
+        $message->setDeliveryId($deliveryId->toString());
 
         $dbal = $this->createConectionMock();
         $dbal
@@ -67,8 +70,8 @@ class DbalConsumerTest extends TestCase
             ->method('delete')
             ->with(
                 'some-table-name',
-                ['delivery_id' => $message->getDeliveryId()],
-                ['delivery_id' => Type::STRING]
+                ['delivery_id' => $deliveryId->getBytes()],
+                ['delivery_id' => Type::GUID]
             )
         ;
 
@@ -124,11 +127,13 @@ class DbalConsumerTest extends TestCase
 
     public function testShouldDeleteMessageFromQueueOnReject()
     {
+        $deliveryId = Uuid::uuid1();
+
         $queue = new DbalDestination('queue');
 
         $message = new DbalMessage();
         $message->setBody('theBody');
-        $message->setDeliveryId('foo-delivery-id');
+        $message->setDeliveryId($deliveryId->toString());
 
         $dbal = $this->createConectionMock();
         $dbal
@@ -136,8 +141,8 @@ class DbalConsumerTest extends TestCase
             ->method('delete')
             ->with(
                 'some-table-name',
-                ['delivery_id' => $message->getDeliveryId()],
-                ['delivery_id' => Type::STRING]
+                ['delivery_id' => $deliveryId->getBytes()],
+                ['delivery_id' => Type::GUID]
             )
         ;
 

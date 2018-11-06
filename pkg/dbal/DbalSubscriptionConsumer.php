@@ -88,19 +88,17 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             $this->redeliverMessages();
 
             if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {
-                $dbalMessage = $this->getContext()->convertMessage($message);
-
                 /**
                  * @var DbalConsumer
                  * @var callable     $callback
                  */
-                list($consumer, $callback) = $this->subscribers[$message['queue']];
+                list($consumer, $callback) = $this->subscribers[$message->getQueue()];
 
-                if (false === call_user_func($callback, $dbalMessage, $consumer)) {
+                if (false === call_user_func($callback, $message, $consumer)) {
                     return;
                 }
 
-                unset($currentQueueNames[$message['queue']]);
+                unset($currentQueueNames[$message->getQueue()]);
             } else {
                 $currentQueueNames = [];
 

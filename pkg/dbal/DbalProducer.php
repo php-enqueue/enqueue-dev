@@ -80,7 +80,6 @@ class DbalProducer implements Producer
 
         $dbalMessage = [
             'id' => $this->uuidCodec->encodeBinary($uuid),
-            'human_id' => $uuid->toString(),
             'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
