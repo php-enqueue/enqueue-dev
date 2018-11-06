@@ -12,6 +12,11 @@ class SentMessageStats implements Stats
     protected $timestampMs;
 
     /**
+     * @var string
+     */
+    protected $queue;
+
+    /**
      * @var array
      */
     protected $headers;
@@ -23,10 +28,12 @@ class SentMessageStats implements Stats
 
     public function __construct(
         int $timestampMs,
+        string $queue,
         array $headers,
         array $properties
     ) {
         $this->timestampMs = $timestampMs;
+        $this->queue = $queue;
         $this->headers = $headers;
         $this->properties = $properties;
     }
@@ -34,6 +41,11 @@ class SentMessageStats implements Stats
     public function getTimestampMs(): int
     {
         return $this->timestampMs;
+    }
+
+    public function getQueue(): string
+    {
+        return $this->queue;
     }
 
     public function getHeaders(): array

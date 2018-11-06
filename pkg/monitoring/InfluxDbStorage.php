@@ -139,7 +139,10 @@ class InfluxDbStorage implements StatsStorage
 
     public function pushSentMessageStats(SentMessageStats $stats): void
     {
-        $tags = [];
+        $tags = [
+            'queue' => $stats->getQueue(),
+        ];
+
         $properties = $stats->getProperties();
 
         if (false === empty($properties[Config::TOPIC])) {
