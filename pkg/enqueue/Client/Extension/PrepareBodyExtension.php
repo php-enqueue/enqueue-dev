@@ -2,16 +2,14 @@
 
 namespace Enqueue\Client\Extension;
 
-use Enqueue\Client\EmptyExtensionTrait;
-use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\PreSend;
+use Enqueue\Client\PreSendCommandExtensionInterface;
+use Enqueue\Client\PreSendEventExtensionInterface;
 use Enqueue\Util\JSON;
 
-class PrepareBodyExtension implements ExtensionInterface
+class PrepareBodyExtension implements PreSendEventExtensionInterface, PreSendCommandExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     public function onPreSendEvent(PreSend $context): void
     {
         $this->prepareBody($context->getMessage());
