@@ -11,6 +11,8 @@ use Enqueue\Client\PostSend;
 use Enqueue\Client\PreSend;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
 use PHPUnit\Framework\TestCase;
 
 class ChainExtensionTest extends TestCase
@@ -27,13 +29,6 @@ class ChainExtensionTest extends TestCase
         $this->assertClassFinal(ChainExtension::class);
     }
 
-    public function testShouldInitEmptyExtensionsArrayOnConstruct()
-    {
-        $extension = new ChainExtension([]);
-
-        $this->assertAttributeSame([], 'extensions', $extension);
-    }
-
     public function testCouldBeConstructedWithExtensionsArray()
     {
         new ChainExtension([$this->createExtension(), $this->createExtension()]);
@@ -41,8 +36,8 @@ class ChainExtensionTest extends TestCase
 
     public function testThrowIfArrayContainsNotExtension()
     {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 1 passed to');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Invalid extension given');
 
         new ChainExtension([$this->createExtension(), new \stdClass()]);
     }
@@ -132,7 +127,9 @@ class ChainExtensionTest extends TestCase
         $postSend = new PostSend(
             new Message(),
             $this->createMock(ProducerInterface::class),
-            $this->createMock(DriverInterface::class)
+            $this->createMock(DriverInterface::class),
+            $this->createMock(Destination::class),
+            $this->createMock(TransportMessage::class)
         );
 
         $fooExtension = $this->createExtension();

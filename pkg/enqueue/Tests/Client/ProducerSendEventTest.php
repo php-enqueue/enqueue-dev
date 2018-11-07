@@ -2,9 +2,11 @@
 
 namespace Enqueue\Tests\Client;
 
+use Enqueue\Client\ChainExtension;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\DriverPreSend;
+use Enqueue\Client\DriverSendResult;
 use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
@@ -13,6 +15,8 @@ use Enqueue\Client\PreSend;
 use Enqueue\Client\Producer;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Tests\Mocks\CustomPrepareBodyClientExtension;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
 use PHPUnit\Framework\TestCase;
 
 class ProducerSendEventTest extends TestCase
@@ -26,6 +30,7 @@ class ProducerSendEventTest extends TestCase
             ->expects($this->once())
             ->method('sendToRouter')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
         $driver
             ->expects($this->never())
@@ -48,6 +53,12 @@ class ProducerSendEventTest extends TestCase
         $message->setProperty(Config::TOPIC, 'topicShouldBeOverwritten');
 
         $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToRouter')
+            ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
+        ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
         $producer->sendEvent('expectedTopic', $message);
@@ -68,6 +79,7 @@ class ProducerSendEventTest extends TestCase
             ->expects($this->once())
             ->method('sendToRouter')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -86,6 +98,7 @@ class ProducerSendEventTest extends TestCase
             ->expects($this->once())
             ->method('sendToRouter')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -103,6 +116,7 @@ class ProducerSendEventTest extends TestCase
             ->expects($this->once())
             ->method('sendToRouter')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -121,6 +135,7 @@ class ProducerSendEventTest extends TestCase
             ->expects($this->once())
             ->method('sendToRouter')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -138,6 +153,7 @@ class ProducerSendEventTest extends TestCase
             ->expects($this->once())
             ->method('sendToRouter')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -156,6 +172,7 @@ class ProducerSendEventTest extends TestCase
             ->expects($this->once())
             ->method('sendToRouter')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -172,6 +189,8 @@ class ProducerSendEventTest extends TestCase
             ->method('sendToRouter')
             ->willReturnCallback(function (Message $message) {
                 $this->assertSame('{"foo":"fooVal"}', $message->getBody());
+
+                return $this->createDriverSendResult();
             })
         ;
 
@@ -187,10 +206,12 @@ class ProducerSendEventTest extends TestCase
             ->method('sendToRouter')
             ->willReturnCallback(function (Message $message) {
                 $this->assertSame('theEventBodySerializedByCustomExtension', $message->getBody());
+
+                return $this->createDriverSendResult();
             })
         ;
 
-        $producer = new Producer($driver, $this->createRpcFactoryMock(), new CustomPrepareBodyClientExtension());
+        $producer = new Producer($driver, $this->createRpcFactoryMock(), new ChainExtension([new CustomPrepareBodyClientExtension()]));
         $producer->sendEvent('topic', ['foo' => 'fooVal']);
     }
 
@@ -236,6 +257,8 @@ class ProducerSendEventTest extends TestCase
 
                 // null means a driver sends a message to router processor.
                 self::assertNull($message->getProperty(Config::PROCESSOR));
+
+                return $this->createDriverSendResult();
             })
         ;
 
@@ -295,6 +318,7 @@ class ProducerSendEventTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToRouter')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -332,6 +356,7 @@ class ProducerSendEventTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -369,6 +394,7 @@ class ProducerSendEventTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToRouter')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -400,6 +426,7 @@ class ProducerSendEventTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -431,6 +458,7 @@ class ProducerSendEventTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToRouter')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -462,6 +490,7 @@ class ProducerSendEventTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -513,5 +542,13 @@ class ProducerSendEventTest extends TestCase
         ;
 
         return $driverMock;
+    }
+
+    private function createDriverSendResult(): DriverSendResult
+    {
+        return new DriverSendResult(
+            $this->createMock(Destination::class),
+            $this->createMock(TransportMessage::class)
+        );
     }
 }

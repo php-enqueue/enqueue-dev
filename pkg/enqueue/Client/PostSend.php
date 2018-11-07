@@ -2,6 +2,9 @@
 
 namespace Enqueue\Client;
 
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
+
 final class PostSend
 {
     private $message;
@@ -10,11 +13,22 @@ final class PostSend
 
     private $driver;
 
-    public function __construct(Message $message, ProducerInterface $producer, DriverInterface $driver)
-    {
+    private $transportDestination;
+
+    private $transportMessage;
+
+    public function __construct(
+        Message $message,
+        ProducerInterface $producer,
+        DriverInterface $driver,
+        Destination $transportDestination,
+        TransportMessage $transportMessage
+    ) {
         $this->message = $message;
         $this->producer = $producer;
         $this->driver = $driver;
+        $this->transportDestination = $transportDestination;
+        $this->transportMessage = $transportMessage;
     }
 
     public function getMessage(): Message
@@ -30,6 +44,16 @@ final class PostSend
     public function getDriver(): DriverInterface
     {
         return $this->driver;
+    }
+
+    public function getTransportDestination(): Destination
+    {
+        return $this->transportDestination;
+    }
+
+    public function getTransportMessage(): TransportMessage
+    {
+        return $this->transportMessage;
     }
 
     public function isEvent(): bool

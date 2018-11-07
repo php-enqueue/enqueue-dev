@@ -1,23 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Monitoring;
 
 use Enqueue\Consumption\Context\End;
-use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Context\MessageResult;
-use Enqueue\Consumption\Context\PostConsume;
-use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\EndExtensionInterface;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
+use Enqueue\Consumption\MessageResultExtensionInterface;
+use Enqueue\Consumption\PreConsumeExtensionInterface;
+use Enqueue\Consumption\PreSubscribeExtensionInterface;
+use Enqueue\Consumption\ProcessorExceptionExtensionInterface;
 use Enqueue\Consumption\Result;
+use Enqueue\Consumption\StartExtensionInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
-class MonitoringExtension implements ExtensionInterface
+class ConsumerMonitoringExtension implements StartExtensionInterface, PreSubscribeExtensionInterface, PreConsumeExtensionInterface, EndExtensionInterface, ProcessorExceptionExtensionInterface, MessageReceivedExtensionInterface, MessageResultExtensionInterface
 {
     /**
      * @var StatsStorage
@@ -165,9 +170,18 @@ class MonitoringExtension implements ExtensionInterface
             $timeMs,
             $context->getReceivedAt(),
             $context->getConsumer()->getQueue()->getQueueName(),
+            $context->getMessage()->getMessageId(),
+            $context->getMessage()->getCorrelationId(),
             $context->getMessage()->getHeaders(),
             $context->getMessage()->getProperties(),
-            ConsumedMessageStats::STATUS_FAILED
+            $context->getMessage()->isRedelivered(),
+            ConsumedMessageStats::STATUS_FAILED,
+            get_class($context->getException()),
+            $context->getException()->getMessage(),
+            $context->getException()->getCode(),
+            $context->getException()->getFile(),
+            $context->getException()->getLine(),
+            $context->getException()->getTraceAsString()
         );
 
         $this->safeCall(function () use ($event) {
@@ -238,8 +252,11 @@ class MonitoringExtension implements ExtensionInterface
             $timeMs,
             $context->getReceivedAt(),
             $context->getConsumer()->getQueue()->getQueueName(),
+            $context->getMessage()->getMessageId(),
+            $context->getMessage()->getCorrelationId(),
             $context->getMessage()->getHeaders(),
             $context->getMessage()->getProperties(),
+            $context->getMessage()->isRedelivered(),
             $status
         );
 
@@ -275,18 +292,6 @@ class MonitoringExtension implements ExtensionInterface
         }
     }
 
-    public function onPostConsume(PostConsume $context): void
-    {
-    }
-
-    public function onPostMessageReceived(PostMessageReceived $context): void
-    {
-    }
-
-    public function onInitLogger(InitLogger $context): void
-    {
-    }
-
     private function getNowMs(): int
     {
         return (int) (microtime(true) * 1000);
@@ -307,7 +312,7 @@ class MonitoringExtension implements ExtensionInterface
         try {
             return call_user_func($fun);
         } catch (\Throwable $e) {
-            $logger->error(sprintf('[MonitoringExtension] Push to storage failed: %s', $e->getMessage()));
+            $logger->error(sprintf('[ConsumerMonitoringExtension] Push to storage failed: %s', $e->getMessage()));
         }
 
         return null;

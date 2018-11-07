@@ -2,14 +2,12 @@
 
 namespace Enqueue\Tests\Mocks;
 
-use Enqueue\Client\EmptyExtensionTrait;
-use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\PreSend;
+use Enqueue\Client\PreSendCommandExtensionInterface;
+use Enqueue\Client\PreSendEventExtensionInterface;
 
-class CustomPrepareBodyClientExtension implements ExtensionInterface
+class CustomPrepareBodyClientExtension implements PreSendEventExtensionInterface, PreSendCommandExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     public function onPreSendCommand(PreSend $context): void
     {
         $context->getMessage()->setBody('theCommandBodySerializedByCustomExtension');
