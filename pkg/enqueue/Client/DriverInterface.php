@@ -15,9 +15,9 @@ interface DriverInterface
 
     public function createClientMessage(InteropMessage $message): Message;
 
-    public function sendToRouter(Message $message): void;
+    public function sendToRouter(Message $message): DriverSendResult;
 
-    public function sendToProcessor(Message $message): void;
+    public function sendToProcessor(Message $message): DriverSendResult;
 
     public function createQueue(string $queueName, bool $prefix = true): InteropQueue;
 

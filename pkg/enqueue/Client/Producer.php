@@ -118,13 +118,13 @@ final class Producer implements ProducerInterface
         $this->extension->onDriverPreSend(new DriverPreSend($message, $this, $this->driver));
 
         if (Message::SCOPE_MESSAGE_BUS == $message->getScope()) {
-            $this->driver->sendToRouter($message);
+            $result = $this->driver->sendToRouter($message);
         } elseif (Message::SCOPE_APP == $message->getScope()) {
-            $this->driver->sendToProcessor($message);
+            $result = $this->driver->sendToProcessor($message);
         } else {
             throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));
         }
 
-        $this->extension->onPostSend(new PostSend($message, $this, $this->driver));
+        $this->extension->onPostSend(new PostSend($message, $this, $this->driver, $result->getTransportDestination(), $result->getTransportMessage()));
     }
 }
