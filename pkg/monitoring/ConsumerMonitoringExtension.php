@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Monitoring;
 
 use Enqueue\Consumption\Context\End;
@@ -20,7 +22,7 @@ use Enqueue\Consumption\StartExtensionInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
-class MonitoringExtension implements StartExtensionInterface, PreSubscribeExtensionInterface, PreConsumeExtensionInterface, EndExtensionInterface, ProcessorExceptionExtensionInterface, MessageReceivedExtensionInterface, MessageResultExtensionInterface
+class ConsumerMonitoringExtension implements StartExtensionInterface, PreSubscribeExtensionInterface, PreConsumeExtensionInterface, EndExtensionInterface, ProcessorExceptionExtensionInterface, MessageReceivedExtensionInterface, MessageResultExtensionInterface
 {
     /**
      * @var StatsStorage
@@ -310,7 +312,7 @@ class MonitoringExtension implements StartExtensionInterface, PreSubscribeExtens
         try {
             return call_user_func($fun);
         } catch (\Throwable $e) {
-            $logger->error(sprintf('[MonitoringExtension] Push to storage failed: %s', $e->getMessage()));
+            $logger->error(sprintf('[ConsumerMonitoringExtension] Push to storage failed: %s', $e->getMessage()));
         }
 
         return null;
