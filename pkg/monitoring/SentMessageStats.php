@@ -24,7 +24,12 @@ class SentMessageStats implements Stats
     /**
      * @var string
      */
-    protected $queue;
+    protected $destination;
+
+    /**
+     * @var bool
+     */
+    protected $isTopic;
 
     /**
      * @var array
@@ -38,14 +43,16 @@ class SentMessageStats implements Stats
 
     public function __construct(
         int $timestampMs,
-        string $queue,
+        string $destination,
+        bool $isTopic,
         ?string $messageId,
         ?string $correlationId,
         array $headers,
         array $properties
     ) {
         $this->timestampMs = $timestampMs;
-        $this->queue = $queue;
+        $this->destination = $destination;
+        $this->isTopic = $isTopic;
         $this->messageId = $messageId;
         $this->correlationId = $correlationId;
         $this->headers = $headers;
@@ -57,9 +64,14 @@ class SentMessageStats implements Stats
         return $this->timestampMs;
     }
 
-    public function getQueue(): string
+    public function getDestination(): string
     {
-        return $this->queue;
+        return $this->destination;
+    }
+
+    public function isTopic(): bool
+    {
+        return $this->isTopic;
     }
 
     public function getMessageId(): ?string

@@ -39,6 +39,7 @@ class ClientMonitoringExtension implements PostSendExtensionInterface
         $stats = new SentMessageStats(
             $timestampMs,
             $destination,
+            $context->getTransportDestination() instanceof Topic,
             $context->getTransportMessage()->getMessageId(),
             $context->getTransportMessage()->getCorrelationId(),
             $context->getTransportMessage()->getHeaders(),
