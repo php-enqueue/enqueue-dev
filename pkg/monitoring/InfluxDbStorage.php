@@ -122,6 +122,7 @@ class InfluxDbStorage implements StatsStorage
         $values = [
             'receivedAt' => $stats->getReceivedAtMs(),
             'processedAt' => $stats->getTimestampMs(),
+            'redelivered' => $stats->isRedelivered(),
         ];
 
         if (ConsumedMessageStats::STATUS_FAILED === $stats->getStatus()) {
