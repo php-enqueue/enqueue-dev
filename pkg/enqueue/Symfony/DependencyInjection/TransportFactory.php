@@ -154,6 +154,7 @@ final class TransportFactory
 
         $container->register($contextId, Context::class)
             ->setFactory([new Reference($factoryId), 'createContext'])
+            ->setPublic(true)
         ;
 
         if ('default' === $this->name) {
