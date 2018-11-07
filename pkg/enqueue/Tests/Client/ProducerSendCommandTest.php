@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client;
 
+use Enqueue\Client\ChainExtension;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\DriverPreSend;
@@ -304,7 +305,7 @@ class ProducerSendCommandTest extends TestCase
             })
         ;
 
-        $producer = new Producer($driver, $this->createRpcFactoryMock(), new CustomPrepareBodyClientExtension());
+        $producer = new Producer($driver, $this->createRpcFactoryMock(), new ChainExtension([new CustomPrepareBodyClientExtension()]));
         $producer->sendCommand('command', ['foo' => 'fooVal']);
     }
 
