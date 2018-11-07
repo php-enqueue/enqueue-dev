@@ -19,6 +19,8 @@ There are several integration:
 
 We are working on a JS\WAMP based real-time UI tool, for more information please [contact us](opensource@forma-pro.com).
 
+![Grafana Monitoring](images/grafana_monitoring.jpg)
+
 * [Installation](#installation)
 * [Track sent messages](#track-sent-messages)
 * [Track consumed message](#track-consumed-message)
