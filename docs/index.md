@@ -62,6 +62,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
     - [AMQP Interop driver](yii/amqp_driver.md)
 * [EnqueueElasticaBundle. Overview](elastica-bundle/overview.md)
 * [DSN Parser](dsn.md)
+* [Monitoring](monitoring.md)
 * [Use cases](#use-cases)
     - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
     - [Monolog. Send messages to message queue](monolog/send-messages-to-mq.md)

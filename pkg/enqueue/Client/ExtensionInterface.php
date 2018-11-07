@@ -2,13 +2,6 @@
 
 namespace Enqueue\Client;
 
-interface ExtensionInterface
+interface ExtensionInterface extends PreSendEventExtensionInterface, PreSendCommandExtensionInterface, DriverPreSendExtensionInterface, PostSendExtensionInterface
 {
-    public function onPreSendEvent(PreSend $context): void;
-
-    public function onPreSendCommand(PreSend $context): void;
-
-    public function onDriverPreSend(DriverPreSend $context): void;
-
-    public function onPostSend(PostSend $context): void;
 }

@@ -14,6 +14,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 * [Remote Procedure Call (RPC)](#remote-procedure-call-rpc)
 * [Client](#client)
 * [Cli commands](#cli-commands)
+* [Monitoring](#monitoring)
 
 ## Transport
 
@@ -280,5 +281,9 @@ and starts the consumption from the console:
 ```bash
 $ app.php consume
 ```
+
+## Monitoring
+
+There is a tool that can track sent\consumed messages as well as consumer performance. Read more [here](monitoring.md)
 
 [back to index](index.md)

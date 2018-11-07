@@ -8,6 +8,8 @@ use Enqueue\Client\Message;
 use Enqueue\Client\PostSend;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
 use PHPUnit\Framework\TestCase;
 
 class PostSendTest extends TestCase
@@ -24,7 +26,9 @@ class PostSendTest extends TestCase
         new PostSend(
             new Message(),
             $this->createProducerMock(),
-            $this->createDriverMock()
+            $this->createDriverMock(),
+            $this->createDestinationMock(),
+            $this->createTransportMessageMock()
         );
     }
 
@@ -33,16 +37,22 @@ class PostSendTest extends TestCase
         $expectedMessage = new Message();
         $expectedProducer = $this->createProducerMock();
         $expectedDriver = $this->createDriverMock();
+        $expectedDestination = $this->createDestinationMock();
+        $expectedTransportMessage = $this->createTransportMessageMock();
 
         $context = new PostSend(
             $expectedMessage,
             $expectedProducer,
-            $expectedDriver
+            $expectedDriver,
+            $expectedDestination,
+            $expectedTransportMessage
         );
 
         $this->assertSame($expectedMessage, $context->getMessage());
         $this->assertSame($expectedProducer, $context->getProducer());
         $this->assertSame($expectedDriver, $context->getDriver());
+        $this->assertSame($expectedDestination, $context->getTransportDestination());
+        $this->assertSame($expectedTransportMessage, $context->getTransportMessage());
     }
 
     public function testShouldAllowGetCommand()
@@ -53,7 +63,9 @@ class PostSendTest extends TestCase
         $context = new PostSend(
             $message,
             $this->createProducerMock(),
-            $this->createDriverMock()
+            $this->createDriverMock(),
+            $this->createDestinationMock(),
+            $this->createTransportMessageMock()
         );
 
         $this->assertFalse($context->isEvent());
@@ -68,7 +80,9 @@ class PostSendTest extends TestCase
         $context = new PostSend(
             $message,
             $this->createProducerMock(),
-            $this->createDriverMock()
+            $this->createDriverMock(),
+            $this->createDestinationMock(),
+            $this->createTransportMessageMock()
         );
 
         $this->assertTrue($context->isEvent());
@@ -89,5 +103,21 @@ class PostSendTest extends TestCase
     private function createProducerMock(): ProducerInterface
     {
         return $this->createMock(ProducerInterface::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Destination
+     */
+    private function createDestinationMock(): Destination
+    {
+        return $this->createMock(Destination::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|TransportMessage
+     */
+    private function createTransportMessageMock(): TransportMessage
+    {
+        return $this->createMock(TransportMessage::class);
     }
 }
