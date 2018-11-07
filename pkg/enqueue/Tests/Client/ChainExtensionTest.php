@@ -11,6 +11,8 @@ use Enqueue\Client\PostSend;
 use Enqueue\Client\PreSend;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
 use PHPUnit\Framework\TestCase;
 
 class ChainExtensionTest extends TestCase
@@ -132,7 +134,9 @@ class ChainExtensionTest extends TestCase
         $postSend = new PostSend(
             new Message(),
             $this->createMock(ProducerInterface::class),
-            $this->createMock(DriverInterface::class)
+            $this->createMock(DriverInterface::class),
+            $this->createMock(Destination::class),
+            $this->createMock(TransportMessage::class)
         );
 
         $fooExtension = $this->createExtension();

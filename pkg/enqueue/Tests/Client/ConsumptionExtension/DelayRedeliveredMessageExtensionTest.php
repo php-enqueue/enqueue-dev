@@ -4,6 +4,7 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\DriverSendResult;
 use Enqueue\Client\Message;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Result;
@@ -11,6 +12,8 @@ use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -41,6 +44,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             ->expects(self::once())
             ->method('sendToProcessor')
             ->with(self::isInstanceOf(Message::class))
+            ->willReturn($this->createDriverSendResult())
         ;
         $driver
             ->expects(self::once())
@@ -186,5 +190,13 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
     private function createLoggerMock(): LoggerInterface
     {
         return $this->createMock(LoggerInterface::class);
+    }
+
+    private function createDriverSendResult(): DriverSendResult
+    {
+        return new DriverSendResult(
+            $this->createMock(Destination::class),
+            $this->createMock(TransportMessage::class)
+        );
     }
 }
