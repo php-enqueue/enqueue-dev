@@ -156,6 +156,8 @@ final class TransportFactory
             ->setFactory([new Reference($factoryId), 'createContext'])
         ;
 
+        $this->addServiceToLocator($container, 'context');
+
         if ('default' === $this->name) {
             $container->setAlias(Context::class, $this->format('context'));
         }
@@ -187,14 +189,8 @@ final class TransportFactory
 
         $container->register($this->format('processor_registry'), ContainerProcessorRegistry::class);
 
-        $locatorId = 'enqueue.locator';
-        if ($container->hasDefinition($locatorId)) {
-            $locator = $container->getDefinition($locatorId);
-            $locator->replaceArgument(0, array_replace($locator->getArgument(0), [
-                $this->format('queue_consumer') => new Reference($this->format('queue_consumer')),
-                $this->format('processor_registry') => new Reference($this->format('processor_registry')),
-            ]));
-        }
+        $this->addServiceToLocator($container, 'queue_consumer');
+        $this->addServiceToLocator($container, 'processor_registry');
 
         if ('default' === $this->name) {
             $container->setAlias(QueueConsumerInterface::class, $this->format('queue_consumer'));
@@ -224,6 +220,20 @@ final class TransportFactory
     {
         if (false == $container->hasDefinition($serviceId)) {
             throw new \InvalidArgumentException(sprintf('The service "%s" does not exist.', $serviceId));
+        }
+    }
+
+    private function addServiceToLocator(ContainerBuilder $container, string $serviceName): void
+    {
+        $locatorId = 'enqueue.locator';
+
+        if ($container->hasDefinition($locatorId)) {
+            $locator = $container->getDefinition($locatorId);
+
+            $map = $locator->getArgument(0);
+            $map[$this->format($serviceName)] = $this->reference($serviceName);
+
+            $locator->replaceArgument(0, $map);
         }
     }
 }
