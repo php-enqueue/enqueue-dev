@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 ## Documentation.
 
 * [Quick tour](quick_tour.md)
@@ -53,6 +62,7 @@
     - [AMQP Interop driver](yii/amqp_driver.md)
 * [EnqueueElasticaBundle. Overview](elastica-bundle/overview.md)
 * [DSN Parser](dsn.md)
+* [Monitoring](monitoring.md)
 * [Use cases](#use-cases)
     - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
     - [Monolog. Send messages to message queue](monolog/send-messages-to-mq.md)

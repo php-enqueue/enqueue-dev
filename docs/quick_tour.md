@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Quick tour
  
 * [Transport](#transport)
@@ -5,6 +14,7 @@
 * [Remote Procedure Call (RPC)](#remote-procedure-call-rpc)
 * [Client](#client)
 * [Cli commands](#cli-commands)
+* [Monitoring](#monitoring)
 
 ## Transport
 
@@ -271,5 +281,9 @@ and starts the consumption from the console:
 ```bash
 $ app.php consume
 ```
+
+## Monitoring
+
+There is a tool that can track sent\consumed messages as well as consumer performance. Read more [here](monitoring.md)
 
 [back to index](index.md)

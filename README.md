@@ -12,7 +12,7 @@
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
 
-- [Become a sponsor on Patreon](https://www.patreon.com/makasim).
+- [Become a sponsor on Patreon](https://www.patreon.com/makasim)
 - [Become our client](http://forma-pro.com/)
 
 ---
@@ -98,6 +98,7 @@ Features:
 * [Yii2. Amqp driver](docs/yii/amqp_driver.md)
 * [Message bus](docs/quick_tour.md#client) support.
 * [RPC over MQ](docs/quick_tour.md#remote-procedure-call-rpc) support.
+* [Monitoring](monitoring.md)
 * Temporary queues support.
 * Well designed, decoupled and reusable components.
 * Carefully tested (unit & functional).
