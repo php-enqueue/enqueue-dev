@@ -9,6 +9,14 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Enqueue Monitoring
 
+Queue Monitoring tool. Track sent, consumed messages. Consumers performances. 
+
+* Could be used with any message queue library.
+* Could be intergrated to any PHP framework
+* Could send stats to any analytical platform
+* Supports Grafana and WAMP out of the box.
+* Provides integration for Enqueue 
+
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
 [![Build Status](https://travis-ci.org/php-enqueue/monitoring.png?branch=master)](https://travis-ci.org/php-enqueue/monitoring)
 [![Total Downloads](https://poser.pugx.org/enqueue/monitoring/d/total.png)](https://packagist.org/packages/enqueue/monitoring)
