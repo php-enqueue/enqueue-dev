@@ -25,13 +25,13 @@ final class FallbackSubscriptionConsumer implements SubscriptionConsumer
         $this->subscribers = [];
     }
 
-    public function consume(int $timeout = 0): void
+    public function consume(int $timeoutMs = 0): void
     {
-        if (empty($this->subscribers)) {
+        if (!$subscriberCount = \count($this->subscribers)) {
             throw new \LogicException('No subscribers');
         }
 
-        $timeout /= 1000;
+        $timeout = $timeoutMs / 1000;
         $endAt = microtime(true) + $timeout;
 
         while (true) {
@@ -41,13 +41,13 @@ final class FallbackSubscriptionConsumer implements SubscriptionConsumer
              * @var callable $processor
              */
             foreach ($this->subscribers as $queueName => list($consumer, $callback)) {
-                $message = $consumer->receiveNoWait();
+                $message = 1 === $subscriberCount ? $consumer->receive($timeoutMs) : $consumer->receiveNoWait();
 
                 if ($message) {
                     if (false === call_user_func($callback, $message, $consumer)) {
                         return;
                     }
-                } else {
+                } elseif (1 !== $subscriberCount) {
                     if ($timeout && microtime(true) >= $endAt) {
                         return;
                     }
