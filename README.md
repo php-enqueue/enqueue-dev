@@ -30,19 +30,19 @@ Features:
 * Adopts [queue interoperable](https://github.com/queue-interop/queue-interop) interfaces (inspired by [Java JMS](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html)).
 * Battle-tested. Used in production.
 * Supported  transports 
-    * [AMQP(s)](docs/transport/amqp.md) based on [PHP AMQP extension](https://github.com/pdezwart/php-amqp). 
+    * [AMQP(s)](docs/transport/amqp.md) based on [PHP AMQP extension](https://github.com/pdezwart/php-amqp)
 [![Build Status](https://travis-ci.org/php-enqueue/amqp-ext.png?branch=master)](https://travis-ci.org/php-enqueue/amqp-ext)
 [![Total Downloads](https://poser.pugx.org/enqueue/amqp-ext/d/total.png)](https://packagist.org/packages/enqueue/amqp-ext/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/amqp-ext/version.png)](https://packagist.org/packages/enqueue/amqp-ext)
-    * [AMQP](docs/transport/amqp_bunny.md) based on [bunny](https://github.com/jakubkulhan/bunny). 
+    * [AMQP](docs/transport/amqp_bunny.md) based on [bunny](https://github.com/jakubkulhan/bunny)
 [![Build Status](https://travis-ci.org/php-enqueue/amqp-bunny.png?branch=master)](https://travis-ci.org/php-enqueue/amqp-bunny)
 [![Total Downloads](https://poser.pugx.org/enqueue/amqp-bunny/d/total.png)](https://packagist.org/packages/enqueue/amqp-bunny/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/amqp-bunny/version.png)](https://packagist.org/packages/enqueue/amqp-bunny)
-    * [AMQP(s)](docs/transport/amqp_lib.md) based on [php-amqplib](https://github.com/php-amqplib/php-amqplib). 
+    * [AMQP(s)](docs/transport/amqp_lib.md) based on [php-amqplib](https://github.com/php-amqplib/php-amqplib)
 [![Build Status](https://travis-ci.org/php-enqueue/amqp-lib.png?branch=master)](https://travis-ci.org/php-enqueue/amqp-lib)
 [![Total Downloads](https://poser.pugx.org/enqueue/amqp-lib/d/total.png)](https://packagist.org/packages/enqueue/amqp-lib/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/amqp-lib/version.png)](https://packagist.org/packages/enqueue/amqp-lib)
-    * [Beanstalk](docs/transport/pheanstalk.md).
+    * [Beanstalk](docs/transport/pheanstalk.md)
 [![Build Status](https://travis-ci.org/php-enqueue/pheanstalk.png?branch=master)](https://travis-ci.org/php-enqueue/pheanstalk)
 [![Total Downloads](https://poser.pugx.org/enqueue/pheanstalk/d/total.png)](https://packagist.org/packages/enqueue/pheanstalk/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/pheanstalk/version.png)](https://packagist.org/packages/enqueue/pheanstalk)
@@ -86,7 +86,7 @@ Features:
 [![Build Status](https://travis-ci.org/php-enqueue/wamp.png?branch=master)](https://travis-ci.org/php-enqueue/wamp)
 [![Total Downloads](https://poser.pugx.org/enqueue/wamp/d/total.png)](https://packagist.org/packages/enqueue/wamp/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/wamp/version.png)](https://packagist.org/packages/enqueue/wamp)
-    * [Null](docs/transport/null.md).
+    * [Null](docs/transport/null.md)
 [![Build Status](https://travis-ci.org/php-enqueue/null.png?branch=master)](https://travis-ci.org/php-enqueue/null)
 [![Total Downloads](https://poser.pugx.org/enqueue/null/d/total.png)](https://packagist.org/packages/enqueue/null/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/null/version.png)](https://packagist.org/packages/enqueue/null)
