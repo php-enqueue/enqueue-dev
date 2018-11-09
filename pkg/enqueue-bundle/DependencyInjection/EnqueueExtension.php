@@ -25,33 +25,60 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        foreach ($config['transport'] as $name => $transportConfig) {
+        // find default configuration
+        $defaultName = null;
+        foreach ($config as $name => $configs) {
+            // set first as default
+            if (null === $defaultName) {
+                $defaultName = $name;
+            }
+
+            // or with name 'default'
+            if ('default' === $name) {
+                $defaultName = $name;
+            }
+        }
+
+        $transportNames = [];
+        $clientNames = [];
+        foreach ($config as $name => $configs) {
+            // transport & consumption
+            $transportNames[] = $name;
+
             $transportFactory = (new TransportFactory($name));
-            $transportFactory->buildConnectionFactory($container, $transportConfig);
+            $transportFactory->buildConnectionFactory($container, $config['transport']);
             $transportFactory->buildContext($container, []);
             $transportFactory->buildQueueConsumer($container, $config['consumption']);
             $transportFactory->buildRpcClient($container, []);
+
+            // client
+            if (isset($configs['client'])) {
+                $clientNames[] = $name;
+
+                $clientConfig = $config['client'];
+                // todo
+                $clientConfig['transport'] = $config['transport'];
+                $clientConfig['consumption'] = $config['consumption'];
+
+                $clientFactory = new ClientFactory($name);
+                $clientFactory->build($container, $clientConfig, $defaultName === $name);
+                $clientFactory->createDriver($container, $config['transport']);
+                $clientFactory->createFlushSpoolProducerListener($container);
+            }
         }
 
-        $container->setParameter('enqueue.transports', array_keys($config['transport']));
+        $container->setParameter('enqueue.transports', $transportNames);
+        $container->setParameter('enqueue.clients', $clientNames);
 
-        if (isset($config['client'])) {
-            $container->setParameter('enqueue.clients', ['default']);
-
-            $this->setupAutowiringForProcessors($container);
-
-            $loader->load('client.yml');
-
-            $clientConfig = $config['client'];
-            // todo
-            $clientConfig['transport'] = $config['transport']['default'];
-            $clientConfig['consumption'] = $config['consumption'];
-
-            $clientFactory = new ClientFactory('default');
-            $clientFactory->build($container, $clientConfig);
-            $clientFactory->createDriver($container, $config['transport']['default']);
+        if ($clientNames) {
+            $this->setupAutowiringForProcessors($container, $clientNames);
         }
 
+        // @todo register MessageQueueCollector
+
+        return;
+
+        //
         if ($config['job']) {
             if (!class_exists(Job::class)) {
                 throw new \LogicException('Seems "enqueue/job-queue" is not installed. Please fix this issue.');
@@ -145,14 +172,19 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         }
     }
 
-    private function setupAutowiringForProcessors(ContainerBuilder $container)
+    private function setupAutowiringForProcessors(ContainerBuilder $container, array $clientNames)
     {
-        $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
+        $topicSubscriber = $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
             ->setPublic(true)
-            ->addTag('enqueue.topic_subscriber', ['client' => 'default']);
+        ;
 
-        $container->registerForAutoconfiguration(CommandSubscriberInterface::class)
+        $commandSubscriber = $container->registerForAutoconfiguration(CommandSubscriberInterface::class)
             ->setPublic(true)
-            ->addTag('enqueue.command_subscriber', ['client' => 'default']);
+        ;
+
+        foreach ($clientNames as $clientName) {
+            $topicSubscriber->addTag('enqueue.topic_subscriber', ['client' => $clientName]);
+            $commandSubscriber->addTag('enqueue.command_subscriber', ['client' => $clientName]);
+        }
     }
 }

@@ -35,7 +35,7 @@ class GenericStatsStorageFactoryTest extends TestCase
     public function testShouldThrowIfStorageIsNotSupported()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unsupported stats storage: "unsupported:"');
+        $this->expectExceptionMessage('A given scheme "unsupported" is not supported.');
 
         (new GenericStatsStorageFactory())->create('unsupported:');
     }

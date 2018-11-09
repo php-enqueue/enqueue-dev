@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
+use Enqueue\Monitoring\Symfony\DependencyInjection\MonitoringFactory;
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -26,8 +27,8 @@ final class Configuration implements ConfigurationInterface
             ->always(function ($value) {
                 if (empty($value)) {
                     return [
-                        'transport' => [
-                            'default' => [
+                        'default' => [
+                            'transport' => [
                                 'dsn' => 'null:',
                             ],
                         ],
@@ -36,8 +37,8 @@ final class Configuration implements ConfigurationInterface
 
                 if (is_string($value)) {
                     return [
-                        'transport' => [
-                            'default' => [
+                        'default' => [
+                            'transport' => [
                                 'dsn' => $value,
                             ],
                         ],
@@ -50,57 +51,82 @@ final class Configuration implements ConfigurationInterface
 
         $transportFactory = new TransportFactory('default');
 
-        /** @var ArrayNodeDefinition $transportNode */
-        $transportNode = $rootNode->children()->arrayNode('transport');
-        $transportNode
-            ->beforeNormalization()
-            ->always(function ($value) {
-                if (empty($value)) {
-                    return ['default' => ['dsn' => 'null:']];
-                }
-                if (is_string($value)) {
-                    return ['default' => ['dsn' => $value]];
-                }
+        $transportConfig = $transportFactory->getConfiguration('transport');
+        $transportConfig->isRequired();
 
-                if (is_array($value) && array_key_exists('dsn', $value)) {
-                    return ['default' => $value];
-                }
+        $consumerConfig = $transportFactory->getQueueConsumerConfiguration('consumption');
 
-                return $value;
-            });
-        $transportPrototypeNode = $transportNode
+        $clientConfig = (new ClientFactory('default'))->getConfiguration('client', $this->debug);
+
+        $monitoringConfig = (new MonitoringFactory('default'))->getConfiguration('monitoring');
+
+        $rootNode
             ->requiresAtLeastOneElement()
             ->useAttributeAsKey('key')
-            ->prototype('array')
+            ->arrayPrototype()
+                ->children()
+                    ->append($transportConfig)
+                    ->append($consumerConfig)
+                    ->append($clientConfig)
+                    ->append($monitoringConfig)
+                ->end()
+            ->end()
         ;
 
-        $transportFactory->addTransportConfiguration($transportPrototypeNode);
 
-        $consumptionNode = $rootNode->children()->arrayNode('consumption');
-        $transportFactory->addQueueConsumerConfiguration($consumptionNode);
-
-        $clientFactory = new ClientFactory('default');
-        $clientNode = $rootNode->children()->arrayNode('client');
-        $clientFactory->addClientConfiguration($clientNode, $this->debug);
-
-        $rootNode->children()
-            ->booleanNode('job')->defaultFalse()->end()
-            ->arrayNode('async_events')
-                ->addDefaultsIfNotSet()
-                ->canBeEnabled()
-            ->end()
-            ->arrayNode('async_commands')
-                ->addDefaultsIfNotSet()
-                ->canBeEnabled()
-            ->end()
-            ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
-                ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
-                ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
-                ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
-                ->booleanNode('reply_extension')->defaultTrue()->end()
-            ->end()->end()
-        ;
-
+//        $transportFactory = new TransportFactory('default');
+//
+//        /** @var ArrayNodeDefinition $transportNode */
+//        $transportNode = $rootNode->children()->arrayNode('transport');
+//        $transportNode
+//            ->beforeNormalization()
+//            ->always(function ($value) {
+//                if (empty($value)) {
+//                    return ['default' => ['dsn' => 'null:']];
+//                }
+//                if (is_string($value)) {
+//                    return ['default' => ['dsn' => $value]];
+//                }
+//
+//                if (is_array($value) && array_key_exists('dsn', $value)) {
+//                    return ['default' => $value];
+//                }
+//
+//                return $value;
+//            });
+//        $transportPrototypeNode = $transportNode
+//            ->requiresAtLeastOneElement()
+//            ->useAttributeAsKey('key')
+//            ->prototype('array')
+//        ;
+//
+//        $transportFactory->addTransportConfiguration($transportPrototypeNode);
+//
+//        $consumptionNode = $rootNode->children()->arrayNode('consumption');
+//        $transportFactory->addQueueConsumerConfiguration($consumptionNode);
+//
+//        $clientFactory = new ClientFactory('default');
+//        $clientNode = $rootNode->children()->arrayNode('client');
+//        $clientFactory->addClientConfiguration($clientNode, $this->debug);
+//
+//        $rootNode->children()
+//            ->booleanNode('job')->defaultFalse()->end()
+//            ->arrayNode('async_events')
+//                ->addDefaultsIfNotSet()
+//                ->canBeEnabled()
+//            ->end()
+//            ->arrayNode('async_commands')
+//                ->addDefaultsIfNotSet()
+//                ->canBeEnabled()
+//            ->end()
+//            ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
+//                ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
+//                ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
+//                ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
+//                ->booleanNode('reply_extension')->defaultTrue()->end()
+//            ->end()->end()
+//        ;
+//
         return $tb;
     }
 }

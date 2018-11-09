@@ -20,9 +20,11 @@ use Enqueue\Client\TraceableProducer;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
+use Enqueue\Symfony\Client\FlushSpoolProducerListener;
 use Enqueue\Symfony\ContainerProcessorRegistry;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
@@ -48,22 +50,26 @@ final class ClientFactory
         $this->name = $name;
     }
 
-    public function addClientConfiguration(ArrayNodeDefinition $builder, bool $debug): void
+    public function getConfiguration(string $name, bool $debug): NodeDefinition
     {
+        $builder = new ArrayNodeDefinition($name);
+
         $builder->children()
             ->booleanNode('traceable_producer')->defaultValue($debug)->end()
             ->scalarNode('prefix')->defaultValue('enqueue')->end()
             ->scalarNode('app_name')->defaultValue('app')->end()
             ->scalarNode('router_topic')->defaultValue('default')->cannotBeEmpty()->end()
             ->scalarNode('router_queue')->defaultValue('default')->cannotBeEmpty()->end()
-            ->scalarNode('router_processor')->defaultValue($this->format('router_processor'))->end()
+            ->scalarNode('router_processor')->defaultNull()->end()
             ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
             ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
         ->end()->end()
         ;
+
+        return $builder;
     }
 
-    public function build(ContainerBuilder $container, array $config): void
+    public function build(ContainerBuilder $container, array $config, bool $default = false): void
     {
         $container->register($this->format('context'), Context::class)
             ->setFactory([$this->reference('driver'), 'getContext'])
@@ -81,7 +87,7 @@ final class ClientFactory
                 $config['router_topic'],
                 $config['router_queue'],
                 $config['default_processor_queue'],
-                $config['router_processor'],
+                isset($config['router_processor']) ? $config['router_processor'] : $this->format('router_processor'),
                 // @todo should be driver options.
                 $config['transport'],
             ]);
@@ -180,9 +186,8 @@ final class ClientFactory
             ]));
         }
 
-        if ('default' === $this->name) {
+        if ($default) {
             $container->setAlias(ProducerInterface::class, $this->format('producer'));
-
             $container->setAlias(SpoolProducer::class, $this->format('spool_producer'));
         }
     }
@@ -201,6 +206,14 @@ final class ClientFactory
         ;
 
         return $driverId;
+    }
+
+    public function createFlushSpoolProducerListener(ContainerBuilder $container): void
+    {
+        $container->register($this->format('flush_spool_producer_listener'), FlushSpoolProducerListener::class)
+            ->addArgument($this->reference('spool_producer'))
+            ->addTag('kernel.event_subscriber')
+        ;
     }
 
     public function getName(): string

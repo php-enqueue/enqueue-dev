@@ -15,6 +15,7 @@ use Enqueue\Symfony\ContainerProcessorRegistry;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
@@ -40,11 +41,12 @@ final class TransportFactory
         $this->name = $name;
     }
 
-    public function addTransportConfiguration(ArrayNodeDefinition $builder): void
+    public function getConfiguration(string $name): NodeDefinition
     {
         $knownSchemes = array_keys(Resources::getKnownSchemes());
         $availableSchemes = array_keys(Resources::getAvailableSchemes());
 
+        $builder = new ArrayNodeDefinition($name);
         $builder
             ->info('The transport option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at connection factory constructor docblock.')
             ->beforeNormalization()
@@ -94,10 +96,14 @@ final class TransportFactory
             ->end()
         ->end()
         ;
+
+        return $builder;
     }
 
-    public function addQueueConsumerConfiguration(ArrayNodeDefinition $builder): void
+    public function getQueueConsumerConfiguration(string $name): ArrayNodeDefinition
     {
+        $builder = new ArrayNodeDefinition($name);
+
         $builder
             ->addDefaultsIfNotSet()->children()
                 ->integerNode('receive_timeout')
@@ -106,6 +112,8 @@ final class TransportFactory
                     ->info('the time in milliseconds queue consumer waits for a message (100 ms by default)')
                 ->end()
         ;
+
+        return $builder;
     }
 
     public function getName(): string

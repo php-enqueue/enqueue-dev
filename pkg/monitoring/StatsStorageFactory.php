@@ -6,5 +6,5 @@ namespace Enqueue\Monitoring;
 
 interface StatsStorageFactory
 {
-    public function create(string $dsn): StatsStorage;
+    public function create($config): StatsStorage;
 }
