@@ -1,9 +1,0 @@
-services:
-    enqueue.consumption.doctrine_clear_identity_map_extension:
-        class: 'Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension'
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: 'enqueue.consumption_extension', client: 'all' }
-            - { name: 'enqueue.transport.consumption_extension', transport: 'all' }
-

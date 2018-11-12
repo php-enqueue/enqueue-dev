@@ -2,11 +2,13 @@
 
 namespace Enqueue\Monitoring\Symfony\DependencyInjection;
 
+use Enqueue\Monitoring\ClientMonitoringExtension;
+use Enqueue\Monitoring\ConsumerMonitoringExtension;
 use Enqueue\Monitoring\GenericStatsStorageFactory;
 use Enqueue\Monitoring\Resources;
 use Enqueue\Monitoring\StatsStorage;
 use Enqueue\Monitoring\StatsStorageFactory;
-use Enqueue\Symfony\DependencyInjection\FormatTransportNameTrait;
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -16,12 +18,10 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class MonitoringFactory
 {
-    use FormatTransportNameTrait;
-
     /**
-     * @var string
+     * @var DiUtils
      */
-    private $name;
+    private $diUtils;
 
     public function __construct(string $name)
     {
@@ -29,7 +29,7 @@ final class MonitoringFactory
             throw new \InvalidArgumentException('The name could not be empty.');
         }
 
-        $this->name = $name;
+        $this->diUtils = DiUtils::create('monitoring', $name);
     }
 
     public function getConfiguration(string $name): ArrayNodeDefinition
@@ -74,15 +74,10 @@ final class MonitoringFactory
         return $builder;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
     public function buildStorage(ContainerBuilder $container, array $config): void
     {
-        $storageId = $this->format('storage');
-        $storageFactoryId = $this->format('storage.factory');
+        $storageId = $this->diUtils->format('storage');
+        $storageFactoryId = $this->diUtils->format('storage.factory');
 
         if (isset($config['storage_factory_service'])) {
             $container->setAlias($storageFactoryId, $config['storage_factory_service']);
@@ -97,6 +92,24 @@ final class MonitoringFactory
         $container->register($storageId, StatsStorage::class)
             ->setFactory([new Reference($storageFactoryId), 'create'])
             ->addArgument($config)
+        ;
+    }
+
+    public function buildClientExtension(ContainerBuilder $container, array $config): void
+    {
+        $container->register($this->diUtils->format('client_extension'), ClientMonitoringExtension::class)
+            ->addArgument($this->diUtils->reference('storage'))
+            ->addArgument(new Reference('logger'))
+            ->addTag('enqueue.client_extension', ['client' => $this->diUtils->getConfigName()])
+        ;
+    }
+
+    public function buildConsumerExtension(ContainerBuilder $container, array $config): void
+    {
+        $container->register($this->diUtils->format('consumer_extension'), ConsumerMonitoringExtension::class)
+            ->addArgument($this->diUtils->reference('storage'))
+            ->addTag('enqueue.consumption_extension', ['client' => $this->diUtils->getConfigName()])
+            ->addTag('enqueue.transport.consumption_extension', ['transport' => $this->diUtils->getConfigName()])
         ;
     }
 }

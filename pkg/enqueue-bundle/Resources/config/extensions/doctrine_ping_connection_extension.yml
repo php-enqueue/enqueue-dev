@@ -1,8 +1,0 @@
-services:
-    enqueue.consumption.doctrine_ping_connection_extension:
-        class: 'Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension'
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: 'enqueue.consumption_extension', client: 'all' }
-            - { name: 'enqueue.transport.consumption_extension', transport: 'all' }

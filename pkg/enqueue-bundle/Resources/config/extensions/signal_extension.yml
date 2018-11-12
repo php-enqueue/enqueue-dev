@@ -1,6 +1,0 @@
-services:
-    enqueue.consumption.signal_extension:
-        class: 'Enqueue\Consumption\Extension\SignalExtension'
-        tags:
-            - { name: 'enqueue.consumption_extension', client: 'all' }
-            - { name: 'enqueue.transport.consumption_extension', transport: 'all' }
