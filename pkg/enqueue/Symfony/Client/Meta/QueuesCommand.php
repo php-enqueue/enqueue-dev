@@ -47,7 +47,7 @@ class QueuesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $table = new Table($output);
-        $table->setHeaders(['Client Name', 'Transport Name', 'processors']);
+        $table->setHeaders(['Client Name', 'Transport Name', 'Processors']);
 
         $count = 0;
         $firstRow = true;
