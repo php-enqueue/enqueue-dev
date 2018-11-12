@@ -87,10 +87,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $container->setParameter('enqueue.transports', $transportNames);
         $container->setParameter('enqueue.clients', $clientNames);
 
-        if ($clientNames) {
-            $this->setupAutowiringForProcessors($container, $clientNames);
-        }
-
+        $this->setupAutowiringForProcessors($config, $container);
         $this->loadAsyncCommands($config, $container);
 
         // extensions
@@ -169,8 +166,19 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         }
     }
 
-    private function setupAutowiringForProcessors(ContainerBuilder $container, array $clientNames)
+    private function setupAutowiringForProcessors(array $config, ContainerBuilder $container)
     {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if (isset($modules['client'])) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
         $topicSubscriber = $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
             ->setPublic(true)
         ;
@@ -179,9 +187,9 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             ->setPublic(true)
         ;
 
-        foreach ($clientNames as $clientName) {
-            $topicSubscriber->addTag('enqueue.topic_subscriber', ['client' => $clientName]);
-            $commandSubscriber->addTag('enqueue.command_subscriber', ['client' => $clientName]);
+        foreach ($configNames as $configName) {
+            $topicSubscriber->addTag('enqueue.topic_subscriber', ['client' => $configName]);
+            $commandSubscriber->addTag('enqueue.command_subscriber', ['client' => $configName]);
         }
     }
 
