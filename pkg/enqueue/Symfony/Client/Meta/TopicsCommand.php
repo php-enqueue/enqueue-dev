@@ -47,7 +47,7 @@ class TopicsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $table = new Table($output);
-        $table->setHeaders(['Topic', 'Description', 'processors']);
+        $table->setHeaders(['Topic', 'Description', 'Processors']);
 
         $count = 0;
         $firstRow = true;
