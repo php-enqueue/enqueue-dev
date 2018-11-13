@@ -48,26 +48,15 @@ final class Configuration implements ConfigurationInterface
             })
         ;
 
-        $transportFactory = new TransportFactory('default');
-
-        $transportConfig = $transportFactory->getConfiguration('transport');
-        $transportConfig->isRequired();
-
-        $consumerConfig = $transportFactory->getQueueConsumerConfiguration('consumption');
-
-        $clientConfig = (new ClientFactory('default'))->getConfiguration('client', $this->debug);
-
-        $monitoringConfig = (new MonitoringFactory('default'))->getConfiguration('monitoring');
-
         $rootNode
             ->requiresAtLeastOneElement()
             ->useAttributeAsKey('key')
             ->arrayPrototype()
                 ->children()
-                    ->append($transportConfig)
-                    ->append($consumerConfig)
-                    ->append($clientConfig)
-                    ->append($monitoringConfig)
+                    ->append(TransportFactory::getConfiguration())
+                    ->append(TransportFactory::getQueueConsumerConfiguration())
+                    ->append(ClientFactory::getConfiguration($this->debug))
+                    ->append(MonitoringFactory::getConfiguration())
                     ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                         ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
                         ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()

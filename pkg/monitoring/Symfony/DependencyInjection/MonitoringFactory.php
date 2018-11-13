@@ -32,7 +32,7 @@ final class MonitoringFactory
         $this->diUtils = DiUtils::create('monitoring', $name);
     }
 
-    public function getConfiguration(string $name): ArrayNodeDefinition
+    public static function getConfiguration(string $name = 'monitoring'): ArrayNodeDefinition
     {
         $builder = new ArrayNodeDefinition($name);
 

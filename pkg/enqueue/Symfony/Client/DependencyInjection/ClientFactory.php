@@ -50,7 +50,7 @@ final class ClientFactory
         $this->name = $name;
     }
 
-    public function getConfiguration(string $name, bool $debug): NodeDefinition
+    public static function getConfiguration(bool $debug, string $name = 'client'): NodeDefinition
     {
         $builder = new ArrayNodeDefinition($name);
 

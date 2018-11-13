@@ -41,7 +41,7 @@ final class TransportFactory
         $this->name = $name;
     }
 
-    public function getConfiguration(string $name): NodeDefinition
+    public static function getConfiguration(string $name = 'transport'): NodeDefinition
     {
         $knownSchemes = array_keys(Resources::getKnownSchemes());
         $availableSchemes = array_keys(Resources::getAvailableSchemes());
@@ -74,6 +74,7 @@ final class TransportFactory
                     throw new \LogicException(sprintf('The value must be array, null or string. Got "%s"', gettype($v)));
                 })
         ->end()
+        ->isRequired()
         ->ignoreExtraKeys(false)
         ->children()
             ->scalarNode('dsn')
@@ -100,7 +101,7 @@ final class TransportFactory
         return $builder;
     }
 
-    public function getQueueConsumerConfiguration(string $name): ArrayNodeDefinition
+    public static function getQueueConsumerConfiguration(string $name = 'consumption'): ArrayNodeDefinition
     {
         $builder = new ArrayNodeDefinition($name);
 
