@@ -299,8 +299,7 @@ final class SimpleClient
                 return ['transport' => ['dsn' => 'null:']];
             });
 
-        $transportNode = $rootNode->children()->arrayNode('transport');
-        (new TransportFactory('default'))->addTransportConfiguration($transportNode);
+        $rootNode->children()->append(TransportFactory::getConfiguration());
 
         $rootNode->children()
             ->arrayNode('client')
