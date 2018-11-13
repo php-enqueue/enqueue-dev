@@ -80,6 +80,11 @@ final class ClientFactory
             ->addArgument($this->reference('route_collection'))
         ;
 
+        $routerProcessor = empty($config['router_processor'])
+            ? $this->format('router_processor')
+            : $config['router_processor']
+        ;
+
         $container->register($this->format('config'), Config::class)
             ->setArguments([
                 $config['prefix'],
@@ -87,12 +92,12 @@ final class ClientFactory
                 $config['router_topic'],
                 $config['router_queue'],
                 $config['default_processor_queue'],
-                isset($config['router_processor']) ? $config['router_processor'] : $this->format('router_processor'),
+                $routerProcessor,
                 // @todo should be driver options.
                 $config['transport'],
             ]);
 
-        $container->setParameter($this->format('router_processor'), $config['router_processor']);
+        $container->setParameter($this->format('router_processor'), $routerProcessor);
         $container->setParameter($this->format('router_queue_name'), $config['router_queue']);
         $container->setParameter($this->format('default_queue_name'), $config['default_processor_queue']);
 
