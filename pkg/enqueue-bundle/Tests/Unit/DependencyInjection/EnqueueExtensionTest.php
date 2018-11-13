@@ -122,7 +122,7 @@ class EnqueueExtensionTest extends TestCase
                 'client' => [
                     'traceable_producer' => false,
                 ],
-                'transport' => 'null:',    
+                'transport' => 'null:',
             ],
         ]], $container);
 
@@ -139,7 +139,7 @@ class EnqueueExtensionTest extends TestCase
         $extension->load([[
             'default' => [
                 'transport' => 'null:',
-                'client' => null,    
+                'client' => null,
             ],
         ]], $container);
 
@@ -371,7 +371,6 @@ class EnqueueExtensionTest extends TestCase
                     'signal_extension' => true,
                 ],
             ],
-
         ]], $container);
 
         self::assertTrue($container->hasDefinition('enqueue.consumption.signal_extension'));
@@ -540,7 +539,7 @@ class EnqueueExtensionTest extends TestCase
             'default' => [
                 'client' => [],
                 'transport' => [],
-            ]
+            ],
         ]], $container);
 
         $autoconfigured = $container->getAutoconfiguredInstanceof();

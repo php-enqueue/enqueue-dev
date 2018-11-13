@@ -140,7 +140,7 @@ class ConfigurationTest extends TestCase
                     'signal_extension' => function_exists('pcntl_signal_dispatch'),
                     'reply_extension' => true,
                 ],
-            ]
+            ],
         ], $config);
     }
 
@@ -168,7 +168,7 @@ class ConfigurationTest extends TestCase
                     'traceable_producer' => true,
                     'redelivered_delay_time' => 0,
                 ],
-            ]
+            ],
         ], $config);
     }
 
@@ -186,7 +186,7 @@ class ConfigurationTest extends TestCase
                 'client' => [
                     'router_topic' => '',
                 ],
-            ]
+            ],
         ]]);
     }
 
@@ -205,7 +205,6 @@ class ConfigurationTest extends TestCase
                     'router_queue' => '',
                 ],
             ],
-
         ]]);
     }
 
@@ -268,11 +267,11 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration($configuration, [[]]);
 
         $this->assertArraySubset([
-            'default' =>  [
+            'default' => [
                 'extensions' => [
                     'doctrine_ping_connection_extension' => false,
                 ],
-            ]
+            ],
         ], $config);
     }
 
@@ -282,20 +281,20 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'default' =>  [
+            'default' => [
                 'transport' => null,
                 'extensions' => [
                     'doctrine_ping_connection_extension' => true,
                 ],
-            ]
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'default' =>  [
+            'default' => [
                 'extensions' => [
                     'doctrine_ping_connection_extension' => true,
                 ],
-            ]
+            ],
         ], $config);
     }
 
@@ -307,7 +306,7 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration($configuration, [[]]);
 
         $this->assertArraySubset([
-            'default' =>  [
+            'default' => [
                 'extensions' => [
                     'doctrine_clear_identity_map_extension' => false,
                 ],
@@ -485,7 +484,7 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration($configuration, [[
             'default' => [
                 'transport' => [],
-            ]
+            ],
         ]]);
 
         $this->assertArraySubset([

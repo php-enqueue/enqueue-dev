@@ -2,7 +2,6 @@
 
 namespace Enqueue\Monitoring;
 
-
 final class Resources
 {
     /**

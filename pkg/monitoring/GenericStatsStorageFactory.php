@@ -28,11 +28,7 @@ class GenericStatsStorageFactory implements StatsStorageFactory
             return new $storageClass(1 === count($config) ? $config['dsn'] : $config);
         }
 
-        throw new \LogicException(sprintf(
-            'A given scheme "%s" is not supported.',
-            $dsn->getScheme(),
-            Resources::class
-        ));
+        throw new \LogicException(sprintf('A given scheme "%s" is not supported.', $dsn->getScheme()));
     }
 
     private function findStorageClass(Dsn $dsn, array $factories): ?string
