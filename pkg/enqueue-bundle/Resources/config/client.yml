@@ -1,8 +1,0 @@
-services:
-    # todo
-    enqueue.profiler.message_queue_collector:
-        class: 'Enqueue\Bundle\Profiler\MessageQueueCollector'
-        arguments:
-            - '@enqueue.client.default.producer'
-        tags:
-            - { name: 'data_collector', template: '@Enqueue/Profiler/panel.html.twig', id: 'enqueue.message_queue' }

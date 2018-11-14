@@ -6,6 +6,7 @@ use Enqueue\AsyncCommand\DependencyInjection\AsyncCommandExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
+use Enqueue\Bundle\Profiler\MessageQueueCollector;
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Consumption\Extension\ReplyExtension;
@@ -14,6 +15,7 @@ use Enqueue\JobQueue\Job;
 use Enqueue\Monitoring\Symfony\DependencyInjection\MonitoringFactory;
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -87,6 +89,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $container->setParameter('enqueue.transports', $transportNames);
         $container->setParameter('enqueue.clients', $clientNames);
 
+        $this->loadMessageQueueCollector($config, $container);
         $this->setupAutowiringForProcessors($config, $container);
         $this->loadAsyncCommands($config, $container);
 
@@ -95,8 +98,6 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $this->loadDoctrineClearIdentityMapExtension($config, $container);
         $this->loadSignalExtension($config, $container);
         $this->loadReplyExtension($config, $container);
-
-        // @todo register MessageQueueCollector
 
 //        if ($config['job']) {
 //            if (!class_exists(Job::class)) {
@@ -300,5 +301,29 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
 
         $extension = new AsyncCommandExtension();
         $extension->load(['clients' => $configNames], $container);
+    }
+
+    private function loadMessageQueueCollector(array $config, ContainerBuilder $container)
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if (isset($modules['client'])) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
+        $service = $container->register('enqueue.profiler.message_queue_collector', MessageQueueCollector::class);
+        $service->addTag('data_collector', [
+            'template' => '@Enqueue/Profiler/panel.html.twig',
+            'id' => 'enqueue.message_queue'
+        ]);
+
+        foreach ($configNames as $configName) {
+            $service->addMethodCall('addProducer', [$configName, DiUtils::create('client', $configName)->reference('producer')]);
+        }
     }
 }
