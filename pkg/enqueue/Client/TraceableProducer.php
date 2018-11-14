@@ -85,6 +85,7 @@ final class TraceableProducer implements ProducerInterface
             'timestamp' => null,
             'contentType' => null,
             'messageId' => null,
+            'sentAt' => (new \DateTime())->format('Y-m-d H:i:s.u'),
         ];
 
         if ($message instanceof Message) {

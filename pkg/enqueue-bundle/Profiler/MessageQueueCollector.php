@@ -36,6 +36,16 @@ class MessageQueueCollector extends DataCollector
         }
     }
 
+    public function getCount(): int
+    {
+        $count = 0;
+        foreach ($this->data as $name => $messages) {
+            $count += count($messages);
+        }
+
+        return $count;
+    }
+
     /**
      * @return array
      */

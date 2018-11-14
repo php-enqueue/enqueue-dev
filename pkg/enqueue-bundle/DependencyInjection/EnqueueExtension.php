@@ -286,7 +286,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
     {
         $configNames = [];
         foreach ($config as $name => $modules) {
-            if ($modules['async_commands']['enabled']) {
+            if (false === empty($modules['async_commands']['enabled'])) {
                 $configNames[] = $name;
             }
         }

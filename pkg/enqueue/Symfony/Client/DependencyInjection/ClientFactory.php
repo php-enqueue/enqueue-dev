@@ -107,6 +107,7 @@ final class ClientFactory
         ;
 
         $container->register($this->format('producer'), Producer::class)
+            ->setPublic(true)
             ->addArgument($this->reference('driver'))
             ->addArgument($this->reference('rpc_factory'))
             ->addArgument($this->reference('client_extensions'))
