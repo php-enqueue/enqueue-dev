@@ -58,7 +58,7 @@ class MessageQueueCollectorTest extends TestCase
 
         $collector->collect(new Request(), new Response());
 
-        $this->assertEquals(
+        $this->assertArraySubset(
             [
                 'foo' => [
                     [

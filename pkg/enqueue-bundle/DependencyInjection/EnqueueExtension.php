@@ -86,11 +86,25 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
         }
 
+        $defaultClient = null;
+        if (in_array($defaultName, $clientNames, true)) {
+            $defaultClient = $defaultName;
+        }
+
         $container->setParameter('enqueue.transports', $transportNames);
         $container->setParameter('enqueue.clients', $clientNames);
 
+        $container->setParameter('enqueue.default_transport', $defaultName);
+
+        if ($defaultClient) {
+            $container->setParameter('enqueue.default_client', $defaultClient);
+        }
+
+        if ($defaultClient) {
+            $this->setupAutowiringForDefaultClientsProcessors($container, $defaultClient);
+        }
+
         $this->loadMessageQueueCollector($config, $container);
-        $this->setupAutowiringForProcessors($config, $container);
         $this->loadAsyncCommands($config, $container);
 
         // extensions
@@ -167,31 +181,18 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         }
     }
 
-    private function setupAutowiringForProcessors(array $config, ContainerBuilder $container)
+    private function setupAutowiringForDefaultClientsProcessors(ContainerBuilder $container, string $defaultClient)
     {
-        $configNames = [];
-        foreach ($config as $name => $modules) {
-            if (isset($modules['client'])) {
-                $configNames[] = $name;
-            }
-        }
-
-        if (false == $configNames) {
-            return;
-        }
-
-        $topicSubscriber = $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
+        $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
             ->setPublic(true)
+            ->addTag('enqueue.topic_subscriber', ['client' => $defaultClient])
         ;
 
-        $commandSubscriber = $container->registerForAutoconfiguration(CommandSubscriberInterface::class)
+        $container->registerForAutoconfiguration(CommandSubscriberInterface::class)
             ->setPublic(true)
+            ->addTag('enqueue.command_subscriber', ['client' => $defaultClient])
         ;
 
-        foreach ($configNames as $configName) {
-            $topicSubscriber->addTag('enqueue.topic_subscriber', ['client' => $configName]);
-            $commandSubscriber->addTag('enqueue.command_subscriber', ['client' => $configName]);
-        }
     }
 
     private function loadDoctrinePingConnectionExtension(array $config, ContainerBuilder $container): void
