@@ -14,35 +14,49 @@ You can get this info by running `./bin/console config:dump-reference enqueue` c
 ```yaml
 # Default configuration for extension with alias: "enqueue"
 enqueue:
-    # Configuration name
-    default: 
+
+    # Prototype
+    key:
+
         # The transport option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at connection factory constructor docblock.
-        transport:
-    
-            # The broker DSN. These schemes are supported: "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", to use these "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb" you have to install a package.
+        transport:            # Required
+
+            # The MQ broker DSN. These schemes are supported: "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", "wamp", "ws", to use these "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", "wamp", "ws" you have to install a package.
             dsn:                  ~ # Required
-    
+
             # The connection factory class should implement "Interop\Queue\ConnectionFactory" interface
             connection_factory_class: ~
-    
+
             # The factory class should implement "Enqueue\ConnectionFactoryFactoryInterface" interface
             factory_service:      ~
-    
+
             # The factory service should be a class that implements "Enqueue\ConnectionFactoryFactoryInterface" interface
             factory_class:        ~
+        consumption:
+
+            # the time in milliseconds queue consumer waits for a message (100 ms by default)
+            receive_timeout:      10000
         client:
             traceable_producer:   true
             prefix:               enqueue
             app_name:             app
             router_topic:         default
             router_queue:         default
-            router_processor:     Enqueue\Client\RouterProcessor
+            router_processor:     null
             default_processor_queue: default
             redelivered_delay_time: 0
-        consumption:
-    
-            # the time in milliseconds queue consumer waits for a message (100 ms by default)
-            receive_timeout:      100
+
+        # The "monitoring" option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at stats storage constructor doc block.
+        monitoring:
+
+            # The stats storage DSN. These schemes are supported: "wamp", "ws", "influxdb".
+            dsn:                  ~ # Required
+
+            # The factory class should implement "Enqueue\Monitoring\StatsStorageFactory" interface
+            storage_factory_service: ~
+
+            # The factory service should be a class that implements "Enqueue\Monitoring\StatsStorageFactory" interface
+            storage_factory_class: ~
         job:                      false
         async_commands:
             enabled:              false

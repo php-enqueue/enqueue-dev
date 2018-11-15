@@ -72,8 +72,13 @@ $producer->sendEvent('aTopic', $message);
 ## Priority 
 
 You can set a priority If you want a message to be processed quicker than other messages in the queue.
-Client defines five priority constants: `MessagePriority::VERY_LOW`, `MessagePriority::LOW`, `MessagePriority::NORMAL`, `MessagePriority::HIGH`, `MessagePriority::VERY_HIGH`.
-The `MessagePriority::NORMAL` is default priority.
+Client defines five priority constants:
+
+* `MessagePriority::VERY_LOW`
+* `MessagePriority::LOW`
+* `MessagePriority::NORMAL` (**default**)
+* `MessagePriority::HIGH`
+* `MessagePriority::VERY_HIGH`
 
 ```php
 <?php

@@ -89,3 +89,4 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 * [Spool Swiftmailer emails to real message queue.](https://blog.forma-pro.com/spool-swiftmailer-emails-to-real-message-queue-9ecb8b53b5de)
 * [Yii PHP Framework has adopted AMQP Interop.](https://blog.forma-pro.com/yii-php-framework-has-adopted-amqp-interop-85ab47c9869f)
 * [(En)queue Symfony console commands](http://tech.yappa.be/enqueue-symfony-console-commands)
+* [From RabbitMq to PhpEnqueue via Symfony Messenger](https://medium.com/@stefanoalletti_40357/from-rabbitmq-to-phpenqueue-via-symfony-messenger-b8260d0e506c)
