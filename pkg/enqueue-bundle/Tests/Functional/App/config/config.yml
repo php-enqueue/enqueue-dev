@@ -26,8 +26,8 @@ enqueue:
         transport: 'null:'
         client:
             traceable_producer: true
-        async_commands: true
         job: true
+        async_events: true
         async_commands: true
 
 services:
