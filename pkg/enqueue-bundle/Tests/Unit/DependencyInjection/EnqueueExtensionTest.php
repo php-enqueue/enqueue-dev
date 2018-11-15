@@ -41,7 +41,11 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
 
-        $extension->load([[]], $container);
+        $extension->load([[
+            'default' => [
+                'transport' => null,
+            ],
+        ]], $container);
 
         self::assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
         self::assertNotEmpty($container->getDefinition('enqueue.transport.default.connection_factory')->getFactory());
@@ -53,7 +57,11 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
 
-        $extension->load([[]], $container);
+        $extension->load([[
+            'default' => [
+                'transport' => null,
+            ],
+        ]], $container);
 
         self::assertTrue($container->hasDefinition('enqueue.transport.default.context'));
         self::assertNotEmpty($container->getDefinition('enqueue.transport.default.context')->getFactory());
