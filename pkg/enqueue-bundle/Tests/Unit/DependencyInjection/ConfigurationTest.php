@@ -171,7 +171,9 @@ class ConfigurationTest extends TestCase
 
         $this->assertArraySubset([
             'default' => [
-                'job' => false,
+                'job' => [
+                    'enabled' => false,
+                ],
             ],
         ], $config);
     }
