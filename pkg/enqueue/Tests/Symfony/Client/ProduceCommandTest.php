@@ -27,19 +27,19 @@ class ProduceCommandTest extends TestCase
 
     public function testCouldBeConstructedWithContainerAsFirstArgument()
     {
-        new ProduceCommand($this->createMock(ContainerInterface::class));
+        new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new ProduceCommand($this->createMock(ContainerInterface::class));
+        $command = new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals('enqueue:produce', $command->getName());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new ProduceCommand($this->createMock(ContainerInterface::class));
+        $command = new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
 
         $options = $command->getDefinition()->getOptions();
         $this->assertCount(3, $options);
@@ -50,7 +50,7 @@ class ProduceCommandTest extends TestCase
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new ProduceCommand($this->createMock(ContainerInterface::class));
+        $command = new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
 
         $arguments = $command->getDefinition()->getArguments();
         $this->assertCount(1, $arguments);
@@ -72,7 +72,7 @@ class ProduceCommandTest extends TestCase
 
         $command = new ProduceCommand(new Container([
             'enqueue.client.default.producer' => $producerMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -97,7 +97,7 @@ class ProduceCommandTest extends TestCase
 
         $command = new ProduceCommand(new Container([
             'enqueue.client.default.producer' => $producerMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -125,7 +125,7 @@ class ProduceCommandTest extends TestCase
 
         $command = new ProduceCommand(new Container([
             'enqueue.client.default.producer' => $producerMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -149,7 +149,7 @@ class ProduceCommandTest extends TestCase
 
         $command = new ProduceCommand(new Container([
             'enqueue.client.default.producer' => $producerMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -184,7 +184,7 @@ class ProduceCommandTest extends TestCase
         $command = new ProduceCommand(new Container([
             'enqueue.client.default.producer' => $defaultProducerMock,
             'enqueue.client.foo.producer' => $fooProducerMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -220,7 +220,7 @@ class ProduceCommandTest extends TestCase
         $command = new ProduceCommand(new Container([
             'enqueue.client.default.producer' => $defaultProducerMock,
             'enqueue.client.foo.producer' => $fooProducerMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -244,7 +244,7 @@ class ProduceCommandTest extends TestCase
 
         $command = new ProduceCommand(new Container([
             'enqueue.client.default.producer' => $defaultProducerMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 

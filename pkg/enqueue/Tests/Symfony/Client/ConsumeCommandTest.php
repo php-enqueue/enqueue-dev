@@ -34,19 +34,19 @@ class ConsumeCommandTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredAttributes()
     {
-        new ConsumeCommand($this->createMock(ContainerInterface::class));
+        new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals('enqueue:consume', $command->getName());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $options = $command->getDefinition()->getOptions();
 
@@ -64,7 +64,7 @@ class ConsumeCommandTest extends TestCase
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $arguments = $command->getDefinition()->getArguments();
 
@@ -104,7 +104,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -164,7 +164,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.foo.queue_consumer' => $fooConsumer,
             'enqueue.client.foo.driver' => $fooDriver,
             'enqueue.client.foo.delegate_processor' => $fooProcessor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -198,7 +198,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -243,7 +243,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -295,7 +295,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -336,7 +336,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -378,7 +378,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -434,7 +434,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -475,7 +475,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -528,7 +528,7 @@ class ConsumeCommandTest extends TestCase
             'enqueue.client.default.queue_consumer' => $consumer,
             'enqueue.client.default.driver' => $driver,
             'enqueue.client.default.delegate_processor' => $processor,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([

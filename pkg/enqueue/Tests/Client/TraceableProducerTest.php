@@ -45,7 +45,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendEvent('aFooTopic', 'aFooBody');
 
-        $this->assertSame([
+        $this->assertArraySubset([
             [
                 'topic' => 'aFooTopic',
                 'command' => null,
@@ -60,6 +60,8 @@ class TraceableProducerTest extends TestCase
                 'messageId' => null,
             ],
         ], $producer->getTraces());
+
+        $this->assertArrayHasKey('sentAt', $producer->getTraces()[0]);
     }
 
     public function testShouldCollectInfoIfArrayGivenAsEventMessage()
@@ -68,7 +70,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendEvent('aFooTopic', ['foo' => 'fooVal', 'bar' => 'barVal']);
 
-        $this->assertSame([
+        $this->assertArraySubset([
             [
                 'topic' => 'aFooTopic',
                 'command' => null,
@@ -83,6 +85,8 @@ class TraceableProducerTest extends TestCase
                 'messageId' => null,
             ],
         ], $producer->getTraces());
+
+        $this->assertArrayHasKey('sentAt', $producer->getTraces()[0]);
     }
 
     public function testShouldCollectInfoIfEventMessageObjectGivenAsMessage()
@@ -102,7 +106,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendEvent('aFooTopic', $message);
 
-        $this->assertSame([
+        $this->assertArraySubset([
             [
                 'topic' => 'aFooTopic',
                 'command' => null,
@@ -117,6 +121,8 @@ class TraceableProducerTest extends TestCase
                 'messageId' => 'theMessageId',
             ],
         ], $producer->getTraces());
+
+        $this->assertArrayHasKey('sentAt', $producer->getTraces()[0]);
     }
 
     public function testShouldNotStoreAnythingIfInternalEventMessageProducerThrowsException()
@@ -162,7 +168,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendCommand('aFooCommand', 'aFooBody');
 
-        $this->assertSame([
+        $this->assertArraySubset([
             [
                 'topic' => null,
                 'command' => 'aFooCommand',
@@ -177,6 +183,8 @@ class TraceableProducerTest extends TestCase
                 'messageId' => null,
             ],
         ], $producer->getTraces());
+
+        $this->assertArrayHasKey('sentAt', $producer->getTraces()[0]);
     }
 
     public function testShouldCollectInfoIfArrayGivenAsCommandMessage()
@@ -185,7 +193,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendCommand('aFooCommand', ['foo' => 'fooVal', 'bar' => 'barVal']);
 
-        $this->assertSame([
+        $this->assertArraySubset([
             [
                 'topic' => null,
                 'command' => 'aFooCommand',
@@ -200,6 +208,8 @@ class TraceableProducerTest extends TestCase
                 'messageId' => null,
             ],
         ], $producer->getTraces());
+
+        $this->assertArrayHasKey('sentAt', $producer->getTraces()[0]);
     }
 
     public function testShouldCollectInfoIfCommandMessageObjectGivenAsMessage()
@@ -219,7 +229,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendCommand('aFooCommand', $message);
 
-        $this->assertSame([
+        $this->assertArraySubset([
             [
                 'topic' => null,
                 'command' => 'aFooCommand',
@@ -234,6 +244,8 @@ class TraceableProducerTest extends TestCase
                 'messageId' => 'theMessageId',
             ],
         ], $producer->getTraces());
+
+        $this->assertArrayHasKey('sentAt', $producer->getTraces()[0]);
     }
 
     public function testShouldNotStoreAnythingIfInternalCommandMessageProducerThrowsException()

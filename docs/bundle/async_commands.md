@@ -21,7 +21,8 @@ $ composer require enqueue/async-command:0.9.x-dev
 # config/packages/enqueue_async_commands.yaml
 
 enqueue:
-   async_commands: true
+    default:
+        async_commands: true
 ```
 
 ## Usage

@@ -15,14 +15,11 @@ class MessageQueueCollector extends DataCollector
     /**
      * @var ProducerInterface
      */
-    private $producer;
+    private $producers;
 
-    /**
-     * @param ProducerInterface $producer
-     */
-    public function __construct(ProducerInterface $producer)
+    public function addProducer(string $name, ProducerInterface $producer): void
     {
-        $this->producer = $producer;
+        $this->producers[$name] = $producer;
     }
 
     /**
@@ -30,13 +27,23 @@ class MessageQueueCollector extends DataCollector
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        $this->data = [
-            'sent_messages' => [],
-        ];
+        $this->data = [];
 
-        if ($this->producer instanceof TraceableProducer) {
-            $this->data['sent_messages'] = $this->producer->getTraces();
+        foreach ($this->producers as $name => $producer) {
+            if ($producer instanceof TraceableProducer) {
+                $this->data[$name] = $producer->getTraces();
+            }
         }
+    }
+
+    public function getCount(): int
+    {
+        $count = 0;
+        foreach ($this->data as $name => $messages) {
+            $count += count($messages);
+        }
+
+        return $count;
     }
 
     /**
@@ -44,7 +51,7 @@ class MessageQueueCollector extends DataCollector
      */
     public function getSentMessages()
     {
-        return $this->data['sent_messages'];
+        return $this->data;
     }
 
     /**

@@ -27,8 +27,9 @@ Here's how you can configure it.
 # app/config/config_test.yml
 
 enqueue:
-    transport: 'null:'
-    client: ~
+    default:
+        transport: 'null:'
+        client: ~
 ```
 
 ## Traceable message producer
@@ -40,8 +41,9 @@ There is a solution for that. You have to enable traceable message producer in t
 # app/config/config_test.yml
 
 enqueue:
-    client:
-        traceable_producer: true
+    default:
+        client:
+            traceable_producer: true
 ```
 
 If you did so, you can use its methods `getTraces`, `getTopicTraces` or `clearTraces`. Here's an example:

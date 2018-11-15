@@ -4,16 +4,24 @@ namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\AsyncCommand\DependencyInjection\AsyncCommandExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
+use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
+use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
+use Enqueue\Bundle\Profiler\MessageQueueCollector;
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\TopicSubscriberInterface;
+use Enqueue\Consumption\Extension\ReplyExtension;
+use Enqueue\Consumption\Extension\SignalExtension;
 use Enqueue\JobQueue\Job;
+use Enqueue\Monitoring\Symfony\DependencyInjection\MonitoringFactory;
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 final class EnqueueExtension extends Extension implements PrependExtensionInterface
@@ -25,76 +33,104 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        foreach ($config['transport'] as $name => $transportConfig) {
+        // find default configuration
+        $defaultName = null;
+        foreach ($config as $name => $configs) {
+            // set first as default
+            if (null === $defaultName) {
+                $defaultName = $name;
+            }
+
+            // or with name 'default'
+            if ('default' === $name) {
+                $defaultName = $name;
+            }
+        }
+
+        $transportNames = [];
+        $clientNames = [];
+        foreach ($config as $name => $configs) {
+            // transport & consumption
+            $transportNames[] = $name;
+
             $transportFactory = (new TransportFactory($name));
-            $transportFactory->buildConnectionFactory($container, $transportConfig);
+            $transportFactory->buildConnectionFactory($container, $configs['transport']);
             $transportFactory->buildContext($container, []);
-            $transportFactory->buildQueueConsumer($container, $config['consumption']);
+            $transportFactory->buildQueueConsumer($container, $configs['consumption']);
             $transportFactory->buildRpcClient($container, []);
-        }
 
-        $container->setParameter('enqueue.transports', array_keys($config['transport']));
+            // client
+            if (isset($configs['client'])) {
+                $clientNames[] = $name;
 
-        if (isset($config['client'])) {
-            $container->setParameter('enqueue.clients', ['default']);
+                $clientConfig = $configs['client'];
+                // todo
+                $clientConfig['transport'] = $configs['transport'];
+                $clientConfig['consumption'] = $configs['consumption'];
 
-            $this->setupAutowiringForProcessors($container);
-
-            $loader->load('client.yml');
-
-            $clientConfig = $config['client'];
-            // todo
-            $clientConfig['transport'] = $config['transport']['default'];
-            $clientConfig['consumption'] = $config['consumption'];
-
-            $clientFactory = new ClientFactory('default');
-            $clientFactory->build($container, $clientConfig);
-            $clientFactory->createDriver($container, $config['transport']['default']);
-        }
-
-        if ($config['job']) {
-            if (!class_exists(Job::class)) {
-                throw new \LogicException('Seems "enqueue/job-queue" is not installed. Please fix this issue.');
+                $clientFactory = new ClientFactory($name);
+                $clientFactory->build($container, $clientConfig, $defaultName === $name);
+                $clientFactory->createDriver($container, $configs['transport']);
+                $clientFactory->createFlushSpoolProducerListener($container);
             }
 
-            $loader->load('job.yml');
-        }
+            // monitoring
+            if (isset($configs['monitoring'])) {
+                $monitoringFactory = new MonitoringFactory($name);
+                $monitoringFactory->buildStorage($container, $configs['monitoring']);
+                $monitoringFactory->buildConsumerExtension($container, $configs['monitoring']);
 
-        if ($config['async_events']['enabled']) {
-            if (false == class_exists(AsyncEventDispatcherExtension::class)) {
-                throw new \LogicException('The "enqueue/async-event-dispatcher" package has to be installed.');
+                if (isset($configs['client'])) {
+                    $monitoringFactory->buildClientExtension($container, $configs['monitoring']);
+                }
             }
-
-            $extension = new AsyncEventDispatcherExtension();
-            $extension->load([[
-                'context_service' => 'enqueue.transport.default.context',
-            ]], $container);
         }
 
-        if ($config['async_commands']['enabled']) {
-            if (false == class_exists(AsyncCommandExtension::class)) {
-                throw new \LogicException('The "enqueue/async-command" package has to be installed.');
-            }
-
-            $extension = new AsyncCommandExtension();
-            $extension->load([[]], $container);
+        $defaultClient = null;
+        if (in_array($defaultName, $clientNames, true)) {
+            $defaultClient = $defaultName;
         }
 
-        if ($config['extensions']['doctrine_ping_connection_extension']) {
-            $loader->load('extensions/doctrine_ping_connection_extension.yml');
+        $container->setParameter('enqueue.transports', $transportNames);
+        $container->setParameter('enqueue.clients', $clientNames);
+
+        $container->setParameter('enqueue.default_transport', $defaultName);
+
+        if ($defaultClient) {
+            $container->setParameter('enqueue.default_client', $defaultClient);
         }
 
-        if ($config['extensions']['doctrine_clear_identity_map_extension']) {
-            $loader->load('extensions/doctrine_clear_identity_map_extension.yml');
+        if ($defaultClient) {
+            $this->setupAutowiringForDefaultClientsProcessors($container, $defaultClient);
         }
 
-        if ($config['extensions']['signal_extension']) {
-            $loader->load('extensions/signal_extension.yml');
-        }
+        $this->loadMessageQueueCollector($config, $container);
+        $this->loadAsyncCommands($config, $container);
 
-        if ($config['extensions']['reply_extension']) {
-            $loader->load('extensions/reply_extension.yml');
-        }
+        // extensions
+        $this->loadDoctrinePingConnectionExtension($config, $container);
+        $this->loadDoctrineClearIdentityMapExtension($config, $container);
+        $this->loadSignalExtension($config, $container);
+        $this->loadReplyExtension($config, $container);
+
+//        if ($config['job']) {
+//            if (!class_exists(Job::class)) {
+//                throw new \LogicException('Seems "enqueue/job-queue" is not installed. Please fix this issue.');
+//            }
+//
+//            $loader->load('job.yml');
+//        }
+//
+//        if ($config['async_events']['enabled']) {
+//            if (false == class_exists(AsyncEventDispatcherExtension::class)) {
+//                throw new \LogicException('The "enqueue/async-event-dispatcher" package has to be installed.');
+//            }
+//
+//            $extension = new AsyncEventDispatcherExtension();
+//            $extension->load([[
+//                'context_service' => 'enqueue.transport.default.context',
+//            ]], $container);
+//        }
     }
 
     public function getConfiguration(array $config, ContainerBuilder $container): Configuration
@@ -145,14 +181,149 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         }
     }
 
-    private function setupAutowiringForProcessors(ContainerBuilder $container)
+    private function setupAutowiringForDefaultClientsProcessors(ContainerBuilder $container, string $defaultClient)
     {
         $container->registerForAutoconfiguration(TopicSubscriberInterface::class)
             ->setPublic(true)
-            ->addTag('enqueue.topic_subscriber', ['client' => 'default']);
+            ->addTag('enqueue.topic_subscriber', ['client' => $defaultClient])
+        ;
 
         $container->registerForAutoconfiguration(CommandSubscriberInterface::class)
             ->setPublic(true)
-            ->addTag('enqueue.command_subscriber', ['client' => 'default']);
+            ->addTag('enqueue.command_subscriber', ['client' => $defaultClient])
+        ;
+    }
+
+    private function loadDoctrinePingConnectionExtension(array $config, ContainerBuilder $container): void
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if ($modules['extensions']['doctrine_ping_connection_extension']) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
+        $extension = $container->register('enqueue.consumption.doctrine_ping_connection_extension', DoctrinePingConnectionExtension::class)
+            ->addArgument(new Reference('doctrine'))
+        ;
+
+        foreach ($configNames as $name) {
+            $extension->addTag('enqueue.consumption_extension', ['client' => $name]);
+            $extension->addTag('enqueue.transport.consumption_extension', ['transport' => $name]);
+        }
+    }
+
+    private function loadDoctrineClearIdentityMapExtension(array $config, ContainerBuilder $container): void
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if ($modules['extensions']['doctrine_clear_identity_map_extension']) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
+        $extension = $container->register('enqueue.consumption.doctrine_clear_identity_map_extension', DoctrineClearIdentityMapExtension::class)
+            ->addArgument(new Reference('doctrine'))
+        ;
+
+        foreach ($configNames as $name) {
+            $extension->addTag('enqueue.consumption_extension', ['client' => $name]);
+            $extension->addTag('enqueue.transport.consumption_extension', ['transport' => $name]);
+        }
+    }
+
+    private function loadSignalExtension(array $config, ContainerBuilder $container): void
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if ($modules['extensions']['signal_extension']) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
+        $extension = $container->register('enqueue.consumption.signal_extension', SignalExtension::class);
+
+        foreach ($configNames as $name) {
+            $extension->addTag('enqueue.consumption_extension', ['client' => $name]);
+            $extension->addTag('enqueue.transport.consumption_extension', ['transport' => $name]);
+        }
+    }
+
+    private function loadReplyExtension(array $config, ContainerBuilder $container): void
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if ($modules['extensions']['reply_extension']) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
+        $extension = $container->register('enqueue.consumption.reply_extension', ReplyExtension::class);
+
+        foreach ($configNames as $name) {
+            $extension->addTag('enqueue.consumption_extension', ['client' => $name]);
+            $extension->addTag('enqueue.transport.consumption_extension', ['transport' => $name]);
+        }
+    }
+
+    private function loadAsyncCommands(array $config, ContainerBuilder $container): void
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if (false === empty($modules['async_commands']['enabled'])) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
+        if (false == class_exists(AsyncCommandExtension::class)) {
+            throw new \LogicException('The "enqueue/async-command" package has to be installed.');
+        }
+
+        $extension = new AsyncCommandExtension();
+        $extension->load(['clients' => $configNames], $container);
+    }
+
+    private function loadMessageQueueCollector(array $config, ContainerBuilder $container)
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if (isset($modules['client'])) {
+                $configNames[] = $name;
+            }
+        }
+
+        if (false == $configNames) {
+            return;
+        }
+
+        $service = $container->register('enqueue.profiler.message_queue_collector', MessageQueueCollector::class);
+        $service->addTag('data_collector', [
+            'template' => '@Enqueue/Profiler/panel.html.twig',
+            'id' => 'enqueue.message_queue',
+        ]);
+
+        foreach ($configNames as $configName) {
+            $service->addMethodCall('addProducer', [$configName, DiUtils::create('client', $configName)->reference('producer')]);
+        }
     }
 }

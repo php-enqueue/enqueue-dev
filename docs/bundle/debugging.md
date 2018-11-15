@@ -21,8 +21,9 @@ To enable profiler
 # app/config/config_dev.yml
 
 enqueue:
-    client:
-        traceable_producer: true
+    default:
+        client:
+            traceable_producer: true
 ```
 
 Now suppose you have this code in an action:

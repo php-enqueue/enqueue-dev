@@ -30,26 +30,26 @@ class RoutesCommandTest extends TestCase
 
     public function testCouldBeConstructedWithConfigAndRouteCollectionAsArguments()
     {
-        new RoutesCommand($this->createMock(ContainerInterface::class));
+        new RoutesCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals('enqueue:routes', $command->getName());
     }
 
     public function testShouldHaveCommandAliases()
     {
-        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals(['debug:enqueue:routes'], $command->getAliases());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class), 'default');
 
         $options = $command->getDefinition()->getOptions();
         $this->assertCount(2, $options);
@@ -60,7 +60,7 @@ class RoutesCommandTest extends TestCase
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new RoutesCommand($this->createMock(ContainerInterface::class));
+        $command = new RoutesCommand($this->createMock(ContainerInterface::class), 'default');
 
         $arguments = $command->getDefinition()->getArguments();
         $this->assertCount(0, $arguments);
@@ -72,7 +72,7 @@ class RoutesCommandTest extends TestCase
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -109,7 +109,7 @@ OUTPUT;
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $defaultDriverMock,
             'enqueue.client.foo.driver' => $fooDriverMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -134,7 +134,7 @@ OUTPUT;
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $defaultDriverMock,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -154,7 +154,7 @@ OUTPUT;
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -184,7 +184,7 @@ OUTPUT;
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -214,7 +214,7 @@ OUTPUT;
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -245,7 +245,7 @@ OUTPUT;
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -275,7 +275,7 @@ OUTPUT;
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -305,7 +305,7 @@ OUTPUT;
 
         $command = new RoutesCommand(new Container([
             'enqueue.client.default.driver' => $this->createDriverStub(Config::create(), $routeCollection),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 

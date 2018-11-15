@@ -28,19 +28,19 @@ class ConsumeCommandTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredAttributes()
     {
-        new ConsumeCommand($this->createMock(ContainerInterface::class));
+        new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals('enqueue:transport:consume', $command->getName());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $options = $command->getDefinition()->getOptions();
 
@@ -56,7 +56,7 @@ class ConsumeCommandTest extends TestCase
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new ConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $arguments = $command->getDefinition()->getArguments();
 
@@ -74,7 +74,7 @@ class ConsumeCommandTest extends TestCase
 
         $command = new ConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $consumer,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -98,7 +98,7 @@ class ConsumeCommandTest extends TestCase
         $command = new ConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $defaultConsumer,
             'enqueue.transport.custom.queue_consumer' => $customConsumer,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute(['--transport' => 'custom']);
@@ -114,7 +114,7 @@ class ConsumeCommandTest extends TestCase
 
         $command = new ConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $defaultConsumer,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
