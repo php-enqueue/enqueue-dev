@@ -16,6 +16,7 @@ use Enqueue\Monitoring\Symfony\DependencyInjection\MonitoringFactory;
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Enqueue\Symfony\DiUtils;
+use Interop\Queue\Context;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -35,7 +36,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
 
         // find default configuration
         $defaultName = null;
-        foreach ($config as $name => $configs) {
+        foreach ($config as $name => $modules) {
             // set first as default
             if (null === $defaultName) {
                 $defaultName = $name;
@@ -49,45 +50,45 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
 
         $transportNames = [];
         $clientNames = [];
-        foreach ($config as $name => $configs) {
+        foreach ($config as $name => $modules) {
             // transport & consumption
             $transportNames[] = $name;
 
             $transportFactory = (new TransportFactory($name, $defaultName === $name));
-            $transportFactory->buildConnectionFactory($container, $configs['transport']);
+            $transportFactory->buildConnectionFactory($container, $modules['transport']);
             $transportFactory->buildContext($container, []);
-            $transportFactory->buildQueueConsumer($container, $configs['consumption']);
+            $transportFactory->buildQueueConsumer($container, $modules['consumption']);
             $transportFactory->buildRpcClient($container, []);
 
             // client
-            if (isset($configs['client'])) {
+            if (isset($modules['client'])) {
                 $clientNames[] = $name;
 
-                $clientConfig = $configs['client'];
+                $clientConfig = $modules['client'];
                 // todo
-                $clientConfig['transport'] = $configs['transport'];
-                $clientConfig['consumption'] = $configs['consumption'];
+                $clientConfig['transport'] = $modules['transport'];
+                $clientConfig['consumption'] = $modules['consumption'];
 
                 $clientFactory = new ClientFactory($name, $defaultName === $name);
                 $clientFactory->build($container, $clientConfig);
-                $clientFactory->createDriver($container, $configs['transport']);
+                $clientFactory->createDriver($container, $modules['transport']);
                 $clientFactory->createFlushSpoolProducerListener($container);
             }
 
             // monitoring
-            if (isset($configs['monitoring'])) {
+            if (isset($modules['monitoring'])) {
                 $monitoringFactory = new MonitoringFactory($name);
-                $monitoringFactory->buildStorage($container, $configs['monitoring']);
-                $monitoringFactory->buildConsumerExtension($container, $configs['monitoring']);
+                $monitoringFactory->buildStorage($container, $modules['monitoring']);
+                $monitoringFactory->buildConsumerExtension($container, $modules['monitoring']);
 
-                if (isset($configs['client'])) {
-                    $monitoringFactory->buildClientExtension($container, $configs['monitoring']);
+                if (isset($modules['client'])) {
+                    $monitoringFactory->buildClientExtension($container, $modules['monitoring']);
                 }
             }
 
             // job-queue
-            if (false == empty($configs['job']['enabled'])) {
-                if (false === isset($configs['client'])) {
+            if (false == empty($modules['job']['enabled'])) {
+                if (false === isset($modules['client'])) {
                     throw new \LogicException('Client is required for job-queue.');
                 }
 
@@ -99,14 +100,14 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
 
             // async events
-            if (false == empty($config['async_events']['enabled'])) {
+            if (false == empty($modules['async_events']['enabled'])) {
                 if ($name !== $defaultName) {
                     throw new \LogicException('Async events supports only default configuration.');
                 }
 
                 $extension = new AsyncEventDispatcherExtension();
                 $extension->load([[
-                    'context_service' => 'enqueue.transport.default.context',
+                    'context_service' => Context::class,
                 ]], $container);
             }
         }
