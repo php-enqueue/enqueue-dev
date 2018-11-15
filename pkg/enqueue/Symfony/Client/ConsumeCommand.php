@@ -37,6 +37,11 @@ class ConsumeCommand extends Command
     /**
      * @var string
      */
+    private $defaultClient;
+
+    /**
+     * @var string
+     */
     private $queueConsumerIdPattern;
 
     /**
@@ -51,16 +56,18 @@ class ConsumeCommand extends Command
 
     public function __construct(
         ContainerInterface $container,
+        string $defaultClient,
         string $queueConsumerIdPattern = 'enqueue.client.%s.queue_consumer',
         string $driverIdPattern = 'enqueue.client.%s.driver',
         string $processorIdPatter = 'enqueue.client.%s.delegate_processor'
     ) {
-        parent::__construct(self::$defaultName);
-
         $this->container = $container;
+        $this->defaultClient = $defaultClient;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
         $this->driverIdPattern = $driverIdPattern;
         $this->processorIdPattern = $processorIdPatter;
+
+        parent::__construct(self::$defaultName);
     }
 
     protected function configure(): void
@@ -77,7 +84,7 @@ class ConsumeCommand extends Command
                 'It select an appropriate message processor based on a message headers')
             ->addArgument('client-queue-names', InputArgument::IS_ARRAY, 'Queues to consume messages from')
             ->addOption('skip', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Queues to skip consumption of messages from', [])
-            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', $this->defaultClient)
         ;
     }
 

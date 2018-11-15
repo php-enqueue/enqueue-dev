@@ -23,14 +23,20 @@ class SetupBrokerCommand extends Command
     /**
      * @var string
      */
+    private $defaultClient;
+
+    /**
+     * @var string
+     */
     private $driverIdPattern;
 
-    public function __construct(ContainerInterface $container, string $driverIdPattern = 'enqueue.client.%s.driver')
+    public function __construct(ContainerInterface $container, string $defaultClient, string $driverIdPattern = 'enqueue.client.%s.driver')
     {
-        parent::__construct(static::$defaultName);
-
         $this->container = $container;
+        $this->defaultClient = $defaultClient;
         $this->driverIdPattern = $driverIdPattern;
+
+        parent::__construct(static::$defaultName);
     }
 
     protected function configure(): void
@@ -38,7 +44,7 @@ class SetupBrokerCommand extends Command
         $this
             ->setAliases(['enq:sb'])
             ->setDescription('Setup broker. Configure the broker, creates queues, topics and so on.')
-            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', $this->defaultClient)
         ;
     }
 

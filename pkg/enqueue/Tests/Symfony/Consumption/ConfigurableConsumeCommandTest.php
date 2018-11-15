@@ -34,19 +34,19 @@ class ConfigurableConsumeCommandTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredAttributes()
     {
-        new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
+        new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals('enqueue:transport:consume', $command->getName());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $options = $command->getDefinition()->getOptions();
 
@@ -62,7 +62,7 @@ class ConfigurableConsumeCommandTest extends TestCase
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class));
+        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class), 'default');
 
         $arguments = $command->getDefinition()->getArguments();
 
@@ -88,7 +88,7 @@ class ConfigurableConsumeCommandTest extends TestCase
         $command = new ConfigurableConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $consumer,
             'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['aProcessor' => $processor]),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -118,7 +118,7 @@ class ConfigurableConsumeCommandTest extends TestCase
         $command = new ConfigurableConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $consumer,
             'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -144,7 +144,7 @@ class ConfigurableConsumeCommandTest extends TestCase
         $command = new ConfigurableConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $consumer,
             'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 
@@ -181,7 +181,7 @@ class ConfigurableConsumeCommandTest extends TestCase
         $command = new ConfigurableConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $consumer,
             'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -223,7 +223,7 @@ class ConfigurableConsumeCommandTest extends TestCase
         $command = new ConfigurableConsumeCommand(new Container([
             'enqueue.transport.default.queue_consumer' => $consumer,
             'enqueue.transport.default.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -263,7 +263,7 @@ class ConfigurableConsumeCommandTest extends TestCase
             'enqueue.transport.foo.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
             'enqueue.transport.bar.queue_consumer' => $barConsumer,
             'enqueue.transport.bar.processor_registry' => new ArrayProcessorRegistry(['processor-service' => $processor]),
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([

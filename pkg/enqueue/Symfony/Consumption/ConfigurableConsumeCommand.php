@@ -30,6 +30,11 @@ class ConfigurableConsumeCommand extends Command
     /**
      * @var string
      */
+    private $defaultTransport;
+
+    /**
+     * @var string
+     */
     private $queueConsumerIdPattern;
 
     /**
@@ -39,14 +44,16 @@ class ConfigurableConsumeCommand extends Command
 
     public function __construct(
         ContainerInterface $container,
+        string $defaultTransport,
         string $queueConsumerIdPattern = 'enqueue.transport.%s.queue_consumer',
         string $processorRegistryIdPattern = 'enqueue.transport.%s.processor_registry'
     ) {
-        parent::__construct(static::$defaultName);
-
         $this->container = $container;
+        $this->defaultTransport = $defaultTransport;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
         $this->processorRegistryIdPattern = $processorRegistryIdPattern;
+
+        parent::__construct(static::$defaultName);
     }
 
     protected function configure(): void
@@ -61,7 +68,7 @@ class ConfigurableConsumeCommand extends Command
                 'and a message processor service')
             ->addArgument('processor', InputArgument::REQUIRED, 'A message processor.')
             ->addArgument('queues', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'A queue to consume from', [])
-            ->addOption('transport', 't', InputOption::VALUE_OPTIONAL, 'The transport to consume messages from.', 'default')
+            ->addOption('transport', 't', InputOption::VALUE_OPTIONAL, 'The transport to consume messages from.', $this->defaultTransport)
         ;
     }
 

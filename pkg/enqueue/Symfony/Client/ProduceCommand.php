@@ -23,14 +23,20 @@ class ProduceCommand extends Command
     /**
      * @var string
      */
+    private $defaultClient;
+
+    /**
+     * @var string
+     */
     private $producerIdPattern;
 
-    public function __construct(ContainerInterface $container, string $producerIdPattern = 'enqueue.client.%s.producer')
+    public function __construct(ContainerInterface $container, string $defaultClient, string $producerIdPattern = 'enqueue.client.%s.producer')
     {
-        parent::__construct(static::$defaultName);
-
         $this->container = $container;
+        $this->defaultClient = $defaultClient;
         $this->producerIdPattern = $producerIdPattern;
+
+        parent::__construct(static::$defaultName);
     }
 
     protected function configure(): void
@@ -38,7 +44,7 @@ class ProduceCommand extends Command
         $this
             ->setDescription('Sends an event to the topic')
             ->addArgument('message', InputArgument::REQUIRED, 'A message')
-            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', $this->defaultClient)
             ->addOption('topic', null, InputOption::VALUE_OPTIONAL, 'The topic to send a message to')
             ->addOption('command', null, InputOption::VALUE_OPTIONAL, 'The command to send a message to')
         ;

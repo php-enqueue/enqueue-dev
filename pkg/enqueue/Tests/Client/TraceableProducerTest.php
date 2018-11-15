@@ -60,7 +60,7 @@ class TraceableProducerTest extends TestCase
                 'messageId' => null,
             ],
         ], $producer->getTraces());
-        
+
         $this->assertArrayHasKey('sentAt', $producer->getTraces()[0]);
     }
 

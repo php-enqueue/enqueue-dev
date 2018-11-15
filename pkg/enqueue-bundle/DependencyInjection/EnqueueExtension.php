@@ -320,7 +320,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $service = $container->register('enqueue.profiler.message_queue_collector', MessageQueueCollector::class);
         $service->addTag('data_collector', [
             'template' => '@Enqueue/Profiler/panel.html.twig',
-            'id' => 'enqueue.message_queue'
+            'id' => 'enqueue.message_queue',
         ]);
 
         foreach ($configNames as $configName) {
