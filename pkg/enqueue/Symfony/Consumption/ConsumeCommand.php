@@ -27,19 +27,20 @@ class ConsumeCommand extends Command
     /**
      * @var string
      */
-    private $queueConsumerIdPattern;
+    private $defaultTransport;
 
     /**
-     * [name => QueueConsumerInterface].
-     *
-     * @param QueueConsumerInterface[]
+     * @var string
      */
-    public function __construct(ContainerInterface $container, string $queueConsumerIdPattern = 'enqueue.transport.%s.queue_consumer')
-    {
-        parent::__construct(static::$defaultName);
+    private $queueConsumerIdPattern;
 
+    public function __construct(ContainerInterface $container, string $defaultTransport, string $queueConsumerIdPattern = 'enqueue.transport.%s.queue_consumer')
+    {
         $this->container = $container;
+        $this->defaultTransport = $defaultTransport;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
+
+        parent::__construct(static::$defaultName);
     }
 
     protected function configure(): void
@@ -49,7 +50,7 @@ class ConsumeCommand extends Command
         $this->configureLoggerExtension();
 
         $this
-            ->addOption('transport', 't', InputOption::VALUE_OPTIONAL, 'The transport to consume messages from.', 'default')
+            ->addOption('transport', 't', InputOption::VALUE_OPTIONAL, 'The transport to consume messages from.', $this->defaultTransport)
             ->setDescription('A worker that consumes message from a broker. '.
                 'To use this broker you have to configure queue consumer before adding to the command')
         ;
