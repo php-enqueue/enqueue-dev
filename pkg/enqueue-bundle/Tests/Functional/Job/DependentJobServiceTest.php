@@ -12,8 +12,6 @@ class DependentJobServiceTest extends WebTestCase
 {
     public function testCouldBeConstructedByContainer()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
-
         $instance = static::$container->get(DependentJobService::class);
 
         $this->assertInstanceOf(DependentJobService::class, $instance);

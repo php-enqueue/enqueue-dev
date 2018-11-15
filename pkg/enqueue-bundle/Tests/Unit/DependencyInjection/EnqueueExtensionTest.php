@@ -255,31 +255,49 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldLoadJobServicesIfEnabled()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
-
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'job' => true,
+            'default' => [
+                'transport' => [],
+                'client' => null,
+                'job' => true,
+            ],
         ]], $container);
 
         self::assertTrue($container->hasDefinition(JobRunner::class));
     }
 
-    public function testShouldNotLoadJobServicesIfDisabled()
+    public function testShouldThrowExceptionIfClientIsNotEnabledOnJobLoad()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Client is required for job-queue.');
 
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'job' => false,
+            'default' => [
+                'transport' => [],
+                'job' => true,
+            ],
+        ]], $container);
+    }
+
+    public function testShouldNotLoadJobServicesIfDisabled()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'default' => [
+                'transport' => [],
+                'job' => false,
+            ],
         ]], $container);
 
         self::assertFalse($container->hasDefinition(JobRunner::class));

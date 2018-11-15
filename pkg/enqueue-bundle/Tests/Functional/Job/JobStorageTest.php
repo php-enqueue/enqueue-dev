@@ -12,8 +12,6 @@ class JobStorageTest extends WebTestCase
 {
     public function testCouldGetJobStorageAsServiceFromContainer()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
-
         $instance = static::$container->get(JobStorage::class);
 
         $this->assertInstanceOf(JobStorage::class, $instance);

@@ -160,34 +160,38 @@ class ConfigurationTest extends TestCase
 
     public function testJobShouldBeDisabledByDefault()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'job' => false,
+            'default' => [
+                'job' => false,
+            ],
         ], $config);
     }
 
     public function testCouldEnableJob()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'job' => true,
+            'default' => [
+                'transport' => [],
+                'job' => true,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'job' => true,
+            'default' => [
+                'job' => true,
+            ],
         ], $config);
     }
 

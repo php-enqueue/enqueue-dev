@@ -20,7 +20,7 @@ services:
         public: true
         arguments:
             - '@Enqueue\JobQueue\Doctrine\JobStorage'
-            - '@enqueue.client.default.producer'
+            - '@Enqueue\Client\ProducerInterface'
 
     # Deprecated. To be removed in 0.10.
     enqueue.job.processor:
@@ -55,7 +55,7 @@ services:
         arguments:
             - '@Enqueue\JobQueue\Doctrine\JobStorage'
             - '@Enqueue\JobQueue\CalculateRootJobStatusService'
-            - '@enqueue.client.default.producer'
+            - '@Enqueue\Client\ProducerInterface'
             - '@logger'
         tags:
             - { name: 'enqueue.command_subscriber', client: 'default' }
@@ -70,7 +70,7 @@ services:
         public: true
         arguments:
             - '@Enqueue\JobQueue\Doctrine\JobStorage'
-            - '@enqueue.client.default.producer'
+            - '@Enqueue\Client\ProducerInterface'
             - '@logger'
         tags:
             - { name: 'enqueue.topic_subscriber', client: 'default' }

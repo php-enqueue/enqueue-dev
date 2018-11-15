@@ -3,6 +3,7 @@
 namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\AsyncCommand\RunCommandProcessor;
+use Enqueue\JobQueue\Job;
 use Enqueue\Monitoring\Symfony\DependencyInjection\MonitoringFactory;
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
@@ -35,6 +36,7 @@ final class Configuration implements ConfigurationInterface
                     ->append(ClientFactory::getConfiguration($this->debug))
                     ->append($this->getMonitoringConfiguration())
                     ->append($this->getAsyncCommandsConfiguration())
+                    ->append($this->getJobConfiguration())
                     ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                         ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
                         ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
@@ -46,7 +48,6 @@ final class Configuration implements ConfigurationInterface
         ;
 
 //        $rootNode->children()
-//            ->booleanNode('job')->defaultFalse()->end()
 //            ->arrayNode('async_events')
 //                ->addDefaultsIfNotSet()
 //                ->canBeEnabled()
@@ -72,6 +73,18 @@ final class Configuration implements ConfigurationInterface
         }
 
         return (new ArrayNodeDefinition('async_commands'))
+            ->addDefaultsIfNotSet()
+            ->canBeEnabled()
+        ;
+    }
+
+    private function getJobConfiguration(): ArrayNodeDefinition
+    {
+        if (false === class_exists(Job::class)) {
+            return MissingComponentFactory::getConfiguration('job', ['enqueue/job-queue']);
+        }
+
+        return (new ArrayNodeDefinition('job'))
             ->addDefaultsIfNotSet()
             ->canBeEnabled()
         ;

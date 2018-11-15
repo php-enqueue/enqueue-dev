@@ -84,6 +84,19 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                     $monitoringFactory->buildClientExtension($container, $configs['monitoring']);
                 }
             }
+
+            // job-queue
+            if (false == empty($configs['job']['enabled'])) {
+                if (false === isset($configs['client'])) {
+                    throw new \LogicException('Client is required for job-queue.');
+                }
+
+                if ($name !== $defaultName) {
+                    throw new \LogicException('Job-queue supports only default configuration.');
+                }
+
+                $loader->load('job.yml');
+            }
         }
 
         $defaultClient = null;
@@ -113,14 +126,6 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $this->loadSignalExtension($config, $container);
         $this->loadReplyExtension($config, $container);
 
-//        if ($config['job']) {
-//            if (!class_exists(Job::class)) {
-//                throw new \LogicException('Seems "enqueue/job-queue" is not installed. Please fix this issue.');
-//            }
-//
-//            $loader->load('job.yml');
-//        }
-//
 //        if ($config['async_events']['enabled']) {
 //            if (false == class_exists(AsyncEventDispatcherExtension::class)) {
 //                throw new \LogicException('The "enqueue/async-event-dispatcher" package has to be installed.');

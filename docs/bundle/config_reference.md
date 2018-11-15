@@ -43,6 +43,7 @@ enqueue:
     
             # the time in milliseconds queue consumer waits for a message (100 ms by default)
             receive_timeout:      100
+        job:                      false
         async_commands:
             enabled:              false
         extensions:
