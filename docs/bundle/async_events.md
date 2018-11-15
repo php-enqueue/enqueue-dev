@@ -31,10 +31,11 @@ If you already [installed the bundle](quick_tour.md#install), then enable `async
 # app/config/config.yml
 
 enqueue:
-   async_events:
-      enabled: true
-      # if you'd like to send send messages onTerminate use spool_producer (it further reduces response time):
-      # spool_producer: true
+    default:
+        async_events:
+            enabled: true
+            # if you'd like to send send messages onTerminate use spool_producer (it further reduces response time):
+            # spool_producer: true
 ```
 
 ## Usage

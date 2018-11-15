@@ -57,8 +57,9 @@ First, you have to configure a transport layer and set one to be default.
 # app/config/config.yml
 
 enqueue:
-    transport: "amqp:"
-    client: ~
+    default:
+        transport: "amqp:"
+        client: ~
 ```
 
 Once you configured everything you can start producing messages:

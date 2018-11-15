@@ -57,9 +57,10 @@ class AppKernel extends Kernel
 # app/config/config.yml
 
 enqueue:
-    # plus basic bundle configuration
-    
-    job: true
+    default:
+        # plus basic bundle configuration
+        
+        job: true
 
 doctrine:
     # plus basic bundle configuration
