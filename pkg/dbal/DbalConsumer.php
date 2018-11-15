@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Impl\ConsumerPollingTrait;
@@ -81,14 +80,7 @@ class DbalConsumer implements Consumer
         $this->removeExpiredMessages();
         $this->redeliverMessages();
 
-        // get top message from the queue
-        if ($message = $this->fetchMessage([$this->queue->getQueueName()], $redeliveryDelay)) {
-            if ($message['redelivered'] || empty($message['time_to_live']) || $message['time_to_live'] > time()) {
-                return $this->getContext()->convertMessage($message);
-            }
-        }
-
-        return null;
+        return $this->fetchMessage([$this->queue->getQueueName()], $redeliveryDelay);
     }
 
     /**
@@ -128,18 +120,5 @@ class DbalConsumer implements Consumer
     protected function getConnection(): Connection
     {
         return $this->dbal;
-    }
-
-    private function deleteMessage(string $deliveryId): void
-    {
-        if (empty($deliveryId)) {
-            throw new \LogicException(sprintf('Expected record was removed but it is not. Delivery id: "%s"', $deliveryId));
-        }
-
-        $this->getConnection()->delete(
-            $this->getContext()->getTableName(),
-            ['delivery_id' => $deliveryId],
-            ['delivery_id' => Type::STRING]
-        );
     }
 }

@@ -11,96 +11,137 @@ use Ramsey\Uuid\Uuid;
 
 trait DbalConsumerHelperTrait
 {
+    private $redeliverMessagesLastExecutedAt;
+
+    private $removeExpiredMessagesLastExecutedAt;
+
     abstract protected function getContext(): DbalContext;
 
     abstract protected function getConnection(): Connection;
 
-    protected function fetchMessage(array $queues, int $redeliveryDelay): ?array
+    protected function fetchMessage(array $queues, int $redeliveryDelay): ?DbalMessage
     {
+        if (empty($queues)) {
+            throw new \LogicException('Queues must not be empty.');
+        }
+
         $now = time();
-        $deliveryId = (string) Uuid::uuid1();
+        $deliveryId = Uuid::uuid4();
 
-        $this->getConnection()->beginTransaction();
+        $endAt = microtime(true) + 0.2; // add 200ms
 
-        try {
-            $query = $this->getConnection()->createQueryBuilder()
-                ->select('*')
-                ->from($this->getContext()->getTableName())
-                ->andWhere('delivery_id IS NULL')
-                ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
-                ->andWhere('queue IN (:queues)')
-                ->addOrderBy('priority', 'desc')
-                ->addOrderBy('published_at', 'asc')
-                ->setMaxResults(1);
+        $select = $this->getConnection()->createQueryBuilder()
+            ->select('id')
+            ->from($this->getContext()->getTableName())
+            ->andWhere('queue IN (:queues)')
+            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
+            ->andWhere('delivery_id IS NULL')
+            ->addOrderBy('priority', 'asc')
+            ->addOrderBy('published_at', 'asc')
+            ->setParameter('queues', $queues, Connection::PARAM_STR_ARRAY)
+            ->setParameter('delayedUntil', $now, ParameterType::INTEGER)
+            ->setMaxResults(1);
 
-            // select for update
-            $message = $this->getConnection()->executeQuery(
-                $query->getSQL().' '.$this->getConnection()->getDatabasePlatform()->getWriteLockSQL(),
-                ['delayedUntil' => $now, 'queues' => array_values($queues)],
-                ['delayedUntil' => ParameterType::INTEGER, 'queues' => Connection::PARAM_STR_ARRAY]
-            )->fetch();
+        $update = $this->getConnection()->createQueryBuilder()
+            ->update($this->getContext()->getTableName())
+            ->set('delivery_id', ':deliveryId')
+            ->set('redeliver_after', ':redeliverAfter')
+            ->andWhere('id = :messageId')
+            ->andWhere('delivery_id IS NULL')
+            ->setParameter('deliveryId', $deliveryId->getBytes(), Type::GUID)
+            ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
+        ;
 
-            if (!$message) {
-                $this->getConnection()->commit();
-
+        while (microtime(true) < $endAt) {
+            $result = $select->execute()->fetch();
+            if (empty($result)) {
                 return null;
             }
 
-            // mark message as delivered to consumer
-            $this->getConnection()->createQueryBuilder()
-                ->andWhere('id = :id')
-                ->update($this->getContext()->getTableName())
-                ->set('delivery_id', ':deliveryId')
-                ->set('redeliver_after', ':redeliverAfter')
-                ->setParameter('id', $message['id'], Type::GUID)
-                ->setParameter('deliveryId', $deliveryId, Type::STRING)
-                ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
-                ->execute()
+            $update
+                ->setParameter('messageId', $result['id'], Type::GUID)
             ;
 
-            $this->getConnection()->commit();
+            if ($update->execute()) {
+                $deliveredMessage = $this->getConnection()->createQueryBuilder()
+                    ->select('*')
+                    ->from($this->getContext()->getTableName())
+                    ->andWhere('delivery_id = :deliveryId')
+                    ->setParameter('deliveryId', $deliveryId->getBytes(), Type::GUID)
+                    ->setMaxResults(1)
+                    ->execute()
+                    ->fetch()
+                ;
 
-            $deliveredMessage = $this->getConnection()->createQueryBuilder()
-                ->select('*')
-                ->from($this->getContext()->getTableName())
-                ->andWhere('delivery_id = :deliveryId')
-                ->setParameter('deliveryId', $deliveryId, Type::STRING)
-                ->setMaxResults(1)
-                ->execute()
-                ->fetch()
-            ;
+                if (false == $deliveredMessage) {
+                    throw new \LogicException('There must be a message at all times at this stage but there is no a message.');
+                }
 
-            return $deliveredMessage ?: null;
-        } catch (\Exception $e) {
-            $this->getConnection()->rollBack();
-
-            throw $e;
+                if ($deliveredMessage['redelivered'] || empty($deliveredMessage['time_to_live']) || $deliveredMessage['time_to_live'] > time()) {
+                    return $this->getContext()->convertMessage($deliveredMessage);
+                }
+            }
         }
+
+        return null;
     }
 
     protected function redeliverMessages(): void
     {
-        $this->getConnection()->createQueryBuilder()
+        if (null === $this->redeliverMessagesLastExecutedAt) {
+            $this->redeliverMessagesLastExecutedAt = microtime(true);
+        } elseif ((microtime(true) - $this->redeliverMessagesLastExecutedAt) < 1) {
+            return;
+        }
+
+        $update = $this->getConnection()->createQueryBuilder()
             ->update($this->getContext()->getTableName())
             ->set('delivery_id', ':deliveryId')
             ->set('redelivered', ':redelivered')
-            ->andWhere('delivery_id IS NOT NULL')
             ->andWhere('redeliver_after < :now')
-            ->setParameter(':now', (int) time(), Type::BIGINT)
-            ->setParameter('deliveryId', null, Type::STRING)
+            ->andWhere('delivery_id IS NOT NULL')
+            ->setParameter(':now', time(), Type::BIGINT)
+            ->setParameter('deliveryId', null, Type::GUID)
             ->setParameter('redelivered', true, Type::BOOLEAN)
-            ->execute()
         ;
+
+        $update->execute();
+
+        $this->redeliverMessagesLastExecutedAt = microtime(true);
     }
 
     protected function removeExpiredMessages(): void
     {
-        $this->getConnection()->createQueryBuilder()
+        if (null === $this->removeExpiredMessagesLastExecutedAt) {
+            $this->removeExpiredMessagesLastExecutedAt = microtime(true);
+        } elseif ((microtime(true) - $this->removeExpiredMessagesLastExecutedAt) < 1) {
+            return;
+        }
+
+        $delete = $this->getConnection()->createQueryBuilder()
             ->delete($this->getContext()->getTableName())
             ->andWhere('(time_to_live IS NOT NULL) AND (time_to_live < :now)')
-            ->setParameter(':now', (int) time(), Type::BIGINT)
-            ->setParameter('redelivered', false, Type::BOOLEAN)
-            ->execute()
+            ->andWhere('delivery_id IS NULL')
+            ->andWhere('redelivered = false')
+
+            ->setParameter(':now', time(), Type::BIGINT)
         ;
+
+        $delete->execute();
+
+        $this->removeExpiredMessagesLastExecutedAt = microtime(true);
+    }
+
+    private function deleteMessage(string $deliveryId): void
+    {
+        if (empty($deliveryId)) {
+            throw new \LogicException(sprintf('Expected record was removed but it is not. Delivery id: "%s"', $deliveryId));
+        }
+
+        $this->getConnection()->delete(
+            $this->getContext()->getTableName(),
+            ['delivery_id' => Uuid::fromString($deliveryId)->getBytes()],
+            ['delivery_id' => Type::GUID]
+        );
     }
 }

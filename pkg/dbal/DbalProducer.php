@@ -71,7 +71,7 @@ class DbalProducer implements Producer
         }
 
         $body = $message->getBody();
-        $uuid = Uuid::uuid1();
+        $uuid = Uuid::uuid4();
 
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
@@ -80,12 +80,11 @@ class DbalProducer implements Producer
 
         $dbalMessage = [
             'id' => $this->uuidCodec->encodeBinary($uuid),
-            'human_id' => $uuid->toString(),
             'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
-            'priority' => $message->getPriority(),
+            'priority' => -1 * $message->getPriority(),
             'queue' => $destination->getQueueName(),
             'redelivered' => false,
             'delivery_id' => null,
