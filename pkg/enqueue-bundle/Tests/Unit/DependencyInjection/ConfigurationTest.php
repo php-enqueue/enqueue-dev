@@ -373,8 +373,6 @@ class ConfigurationTest extends TestCase
 
     public function testShouldDisableAsyncEventsByDefault()
     {
-        $this->markTestSkipped('Configuration for async_events is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();
@@ -391,8 +389,6 @@ class ConfigurationTest extends TestCase
 
     public function testShouldAllowEnableAsyncEvents()
     {
-        $this->markTestSkipped('Configuration for async_events is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();

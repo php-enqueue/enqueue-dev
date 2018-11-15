@@ -3,6 +3,7 @@
 namespace Enqueue\Bundle\DependencyInjection;
 
 use Enqueue\AsyncCommand\RunCommandProcessor;
+use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\JobQueue\Job;
 use Enqueue\Monitoring\Symfony\DependencyInjection\MonitoringFactory;
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
@@ -37,6 +38,7 @@ final class Configuration implements ConfigurationInterface
                     ->append($this->getMonitoringConfiguration())
                     ->append($this->getAsyncCommandsConfiguration())
                     ->append($this->getJobConfiguration())
+                    ->append($this->getAsyncEventsConfiguration())
                     ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                         ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
                         ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
@@ -46,13 +48,6 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
-
-//        $rootNode->children()
-//            ->arrayNode('async_events')
-//                ->addDefaultsIfNotSet()
-//                ->canBeEnabled()
-//            ->end()
-//        ;
 
         return $tb;
     }
@@ -82,6 +77,18 @@ final class Configuration implements ConfigurationInterface
     {
         if (false === class_exists(Job::class)) {
             return MissingComponentFactory::getConfiguration('job', ['enqueue/job-queue']);
+        }
+
+        return (new ArrayNodeDefinition('job'))
+            ->addDefaultsIfNotSet()
+            ->canBeEnabled()
+        ;
+    }
+
+    private function getAsyncEventsConfiguration(): ArrayNodeDefinition
+    {
+        if (false == class_exists(AsyncEventDispatcherExtension::class)) {
+            return MissingComponentFactory::getConfiguration('async_events', ['enqueue/async-event-dispatcher']);
         }
 
         return (new ArrayNodeDefinition('job'))

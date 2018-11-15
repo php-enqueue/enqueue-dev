@@ -28,7 +28,7 @@ enqueue:
             traceable_producer: true
         async_commands: true
         job: true
-#    async_commands: true
+        async_commands: true
 
 services:
     test_enqueue.client.default.traceable_producer:

@@ -18,8 +18,6 @@ class AsyncListenerTest extends WebTestCase
 {
     public function setUp()
     {
-        $this->markTestSkipped('Configuration for async_events is not yet ready');
-
         parent::setUp();
 
         /** @var AsyncListener $asyncListener */

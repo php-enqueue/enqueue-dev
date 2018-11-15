@@ -53,7 +53,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             // transport & consumption
             $transportNames[] = $name;
 
-            $transportFactory = (new TransportFactory($name));
+            $transportFactory = (new TransportFactory($name, $defaultName === $name));
             $transportFactory->buildConnectionFactory($container, $configs['transport']);
             $transportFactory->buildContext($container, []);
             $transportFactory->buildQueueConsumer($container, $configs['consumption']);
@@ -68,8 +68,8 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                 $clientConfig['transport'] = $configs['transport'];
                 $clientConfig['consumption'] = $configs['consumption'];
 
-                $clientFactory = new ClientFactory($name);
-                $clientFactory->build($container, $clientConfig, $defaultName === $name);
+                $clientFactory = new ClientFactory($name, $defaultName === $name);
+                $clientFactory->build($container, $clientConfig);
                 $clientFactory->createDriver($container, $configs['transport']);
                 $clientFactory->createFlushSpoolProducerListener($container);
             }
@@ -96,6 +96,18 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                 }
 
                 $loader->load('job.yml');
+            }
+
+            // async events
+            if (false == empty($config['async_events']['enabled'])) {
+                if ($name !== $defaultName) {
+                    throw new \LogicException('Async events supports only default configuration.');
+                }
+
+                $extension = new AsyncEventDispatcherExtension();
+                $extension->load([[
+                    'context_service' => 'enqueue.transport.default.context',
+                ]], $container);
             }
         }
 
@@ -125,17 +137,6 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $this->loadDoctrineClearIdentityMapExtension($config, $container);
         $this->loadSignalExtension($config, $container);
         $this->loadReplyExtension($config, $container);
-
-//        if ($config['async_events']['enabled']) {
-//            if (false == class_exists(AsyncEventDispatcherExtension::class)) {
-//                throw new \LogicException('The "enqueue/async-event-dispatcher" package has to be installed.');
-//            }
-//
-//            $extension = new AsyncEventDispatcherExtension();
-//            $extension->load([[
-//                'context_service' => 'enqueue.transport.default.context',
-//            ]], $container);
-//        }
     }
 
     public function getConfiguration(array $config, ContainerBuilder $container): Configuration
