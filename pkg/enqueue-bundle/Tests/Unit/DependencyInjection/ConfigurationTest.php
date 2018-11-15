@@ -199,7 +199,7 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration($configuration, [[
             'default' => [
                 'transport' => null,
-            ]
+            ],
         ]]);
 
         $this->assertArraySubset([
@@ -242,7 +242,7 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration($configuration, [[
             'default' => [
                 'transport' => null,
-            ]
+            ],
         ]]);
 
         $this->assertArraySubset([
