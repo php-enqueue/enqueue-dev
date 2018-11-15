@@ -9,8 +9,8 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Monitoring.
 
-Enqueue provides a tool for monitoring your queues. 
-With it, you can control how many messages were sent, how many processed successful or failed.
+Enqueue provides a tool for monitoring message queues. 
+With it, you can control how many messages were sent, how many processed successfuly or failed.
 How many consumers are working, their up time, processed messages stats, memory usage and system load. 
 The tool could be integrated with virtually any analytics and monitoring platform.
 There are several integration:  
@@ -20,6 +20,8 @@ There are several integration:
 We are working on a JS\WAMP based real-time UI tool, for more information please [contact us](opensource@forma-pro.com).
 
 ![Grafana Monitoring](images/grafana_monitoring.jpg)
+
+[contact us](opensource@forma-pro.com) if need a Grafana template such as on the picture. 
 
 * [Installation](#installation)
 * [Track sent messages](#track-sent-messages)
@@ -267,30 +269,17 @@ There are available options:
 You have to register some services in order to incorporate monitoring facilities into your Symfony application. 
 
 ```yaml
-services:
-  Enqueue\Monitoring\GenericStatsStorageFactory: ~
+# config/packages/enqueue.yaml
 
-  Enqueue\Monitoring\StatsStorage:
-    factory: ['@Enqueue\Monitoring\GenericStatsStorageFactory', 'create']
-    arguments: ['influxdb://127.0.0.1:8086?db=foo']
+enqueue:
+  default:
+    transport: 'amqp://guest:guest@bar:5672/%2f'
+    monitoring: 'influxdb://127.0.0.1:8086?db=foo'
 
-  Enqueue\Monitoring\ConsumerMonitoringExtension:
-    arguments: 
-      - '@Enqueue\Monitoring\StatsStorage'
-    tags:
-      # if you want to monitor transport consumer
-      - { name: 'enqueue.transport.consumption_extension', transport: 'default' }
-    
-      # if you want to monitor client consumer 
-      - { name: 'enqueue.consumption_extension', client: 'default' }
-
-  # if you want to monitor sent messages
-  Enqueue\Monitoring\ClientMonitoringExtension:
-    arguments: 
-      - '@Enqueue\Monitoring\StatsStorage'
-      - '@logger'
-    tags:  
-      - { name: 'enqueue.client_extension', client: 'default' }  
+  another:
+    transport: 'amqp://guest:guest@foo:5672/%2f'
+    monitoring: 'wamp://127.0.0.1:9090?topic=stats'
+    client: ~
 ```
 
 [back to index](index.md) 
