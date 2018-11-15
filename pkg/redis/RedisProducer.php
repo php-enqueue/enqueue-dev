@@ -7,6 +7,7 @@ namespace Enqueue\Redis;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
 use Ramsey\Uuid\Uuid;
@@ -94,7 +95,7 @@ class RedisProducer implements Producer
             return $this;
         }
 
-        throw new \LogicException('Not implemented');
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
     public function getPriority(): ?int
