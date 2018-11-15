@@ -192,7 +192,6 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             ->setPublic(true)
             ->addTag('enqueue.command_subscriber', ['client' => $defaultClient])
         ;
-
     }
 
     private function loadDoctrinePingConnectionExtension(array $config, ContainerBuilder $container): void
