@@ -26,16 +26,13 @@ class RoutesCommandTest extends WebTestCase
         $tester->execute([]);
 
         $expected = <<<'OUTPUT'
-| topic   | theTopic                | default (prefixed)                     | test_topic_subscriber_processor                         | (hidden) |
+| topic   | theTopic                                            | default (prefixed)                     | test_topic_subscriber_processor                         | (hidden) |
 OUTPUT;
 
         $this->assertSame(0, $tester->getStatusCode());
         $this->assertContains($expected, $tester->getDisplay());
     }
 
-    /**
-     * @group testit
-     */
     public function testShouldDisplayCommands()
     {
         /** @var RoutesCommand $command */
@@ -45,7 +42,7 @@ OUTPUT;
         $tester->execute([]);
 
         $expected = <<<'OUTPUT'
-| command | theCommand              | default (prefixed)                     | test_command_subscriber_processor                       | (hidden) |
+| command | theCommand                                          | default (prefixed)                     | test_command_subscriber_processor                       | (hidden) |
 OUTPUT;
 
         $this->assertSame(0, $tester->getStatusCode());

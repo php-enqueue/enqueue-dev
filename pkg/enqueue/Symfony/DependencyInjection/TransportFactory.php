@@ -32,13 +32,19 @@ final class TransportFactory
      */
     private $name;
 
-    public function __construct(string $name)
+    /**
+     * @var bool
+     */
+    private $default;
+
+    public function __construct(string $name, bool $default = false)
     {
         if (empty($name)) {
             throw new \InvalidArgumentException('The name could not be empty.');
         }
 
         $this->name = $name;
+        $this->default = $default;
     }
 
     public static function getConfiguration(string $name = 'transport'): NodeDefinition
@@ -149,7 +155,7 @@ final class TransportFactory
             ;
         }
 
-        if ('default' === $this->name) {
+        if ($this->default) {
             $container->setAlias(ConnectionFactory::class, $this->format('connection_factory'));
         }
     }
@@ -167,7 +173,7 @@ final class TransportFactory
 
         $this->addServiceToLocator($container, 'context');
 
-        if ('default' === $this->name) {
+        if ($this->default) {
             $container->setAlias(Context::class, $this->format('context'));
         }
     }
@@ -201,7 +207,7 @@ final class TransportFactory
         $this->addServiceToLocator($container, 'queue_consumer');
         $this->addServiceToLocator($container, 'processor_registry');
 
-        if ('default' === $this->name) {
+        if ($this->default) {
             $container->setAlias(QueueConsumerInterface::class, $this->format('queue_consumer'));
         }
     }
@@ -220,7 +226,7 @@ final class TransportFactory
             ->addArgument(new Reference($this->format('rpc_factory')))
         ;
 
-        if ('default' === $this->name) {
+        if ($this->default) {
             $container->setAlias(RpcClient::class, $this->format('rpc_client'));
         }
     }

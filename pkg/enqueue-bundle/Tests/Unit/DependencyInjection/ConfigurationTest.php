@@ -160,34 +160,40 @@ class ConfigurationTest extends TestCase
 
     public function testJobShouldBeDisabledByDefault()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'job' => false,
+            'default' => [
+                'job' => [
+                    'enabled' => false,
+                ],
+            ],
         ], $config);
     }
 
     public function testCouldEnableJob()
     {
-        $this->markTestSkipped('Configuration for jobs is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'job' => true,
+            'default' => [
+                'transport' => [],
+                'job' => true,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'job' => true,
+            'default' => [
+                'job' => true,
+            ],
         ], $config);
     }
 
@@ -367,51 +373,59 @@ class ConfigurationTest extends TestCase
 
     public function testShouldDisableAsyncEventsByDefault()
     {
-        $this->markTestSkipped('Configuration for async_events is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => false,
+            'default' => [
+                'async_events' => [
+                    'enabled' => false,
+                ],
             ],
         ], $config);
     }
 
     public function testShouldAllowEnableAsyncEvents()
     {
-        $this->markTestSkipped('Configuration for async_events is not yet ready');
-
         $configuration = new Configuration(true);
 
         $processor = new Processor();
 
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'async_events' => true,
+            'default' => [
+                'transport' => [],
+                'async_events' => true,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ], $config);
 
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'transport' => [],
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ], $config);
     }

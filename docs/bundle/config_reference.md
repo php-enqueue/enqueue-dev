@@ -57,6 +57,7 @@ enqueue:
 
             # The factory service should be a class that implements "Enqueue\Monitoring\StatsStorageFactory" interface
             storage_factory_class: ~
+        job:                      false
         async_commands:
             enabled:              false
         extensions:

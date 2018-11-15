@@ -41,13 +41,19 @@ final class ClientFactory
      */
     private $name;
 
-    public function __construct(string $name)
+    /**
+     * @var bool
+     */
+    private $default;
+
+    public function __construct(string $name, bool $default = false)
     {
         if (empty($name)) {
             throw new \InvalidArgumentException('The name could not be empty.');
         }
 
         $this->name = $name;
+        $this->default = $default;
     }
 
     public static function getConfiguration(bool $debug, string $name = 'client'): NodeDefinition
@@ -69,7 +75,7 @@ final class ClientFactory
         return $builder;
     }
 
-    public function build(ContainerBuilder $container, array $config, bool $default = false): void
+    public function build(ContainerBuilder $container, array $config): void
     {
         $container->register($this->format('context'), Context::class)
             ->setFactory([$this->reference('driver'), 'getContext'])
@@ -176,7 +182,7 @@ final class ClientFactory
                 ->addTag('enqueue.consumption_extension', ['priority' => 10, 'client' => $this->name])
             ;
 
-            $container->getDefinition('enqueue.client.default.delay_redelivered_message_extension')
+            $container->getDefinition($this->format('delay_redelivered_message_extension'))
                 ->replaceArgument(1, $config['redelivered_delay_time'])
             ;
         }
@@ -192,7 +198,7 @@ final class ClientFactory
             ]));
         }
 
-        if ($default) {
+        if ($this->default) {
             $container->setAlias(ProducerInterface::class, $this->format('producer'));
             $container->setAlias(SpoolProducer::class, $this->format('spool_producer'));
         }
