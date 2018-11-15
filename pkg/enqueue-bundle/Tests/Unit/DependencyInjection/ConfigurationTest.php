@@ -377,12 +377,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => false,
+            'default' => [
+                'async_events' => [
+                    'enabled' => false,
+                ],
             ],
         ], $config);
     }
@@ -394,26 +398,34 @@ class ConfigurationTest extends TestCase
         $processor = new Processor();
 
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'async_events' => true,
+            'default' => [
+                'transport' => [],
+                'async_events' => true,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ], $config);
 
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'transport' => [],
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ], $config);
     }

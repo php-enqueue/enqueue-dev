@@ -91,7 +91,7 @@ final class Configuration implements ConfigurationInterface
             return MissingComponentFactory::getConfiguration('async_events', ['enqueue/async-event-dispatcher']);
         }
 
-        return (new ArrayNodeDefinition('job'))
+        return (new ArrayNodeDefinition('async_events'))
             ->addDefaultsIfNotSet()
             ->canBeEnabled()
         ;
