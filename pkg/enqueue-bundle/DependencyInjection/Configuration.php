@@ -24,32 +24,6 @@ final class Configuration implements ConfigurationInterface
     {
         $tb = new TreeBuilder();
         $rootNode = $tb->root('enqueue');
-        $rootNode
-            ->beforeNormalization()
-            ->always(function ($value) {
-                if (empty($value)) {
-                    return [
-                        'default' => [
-                            'transport' => [
-                                'dsn' => 'null:',
-                            ],
-                        ],
-                    ];
-                }
-
-                if (is_string($value)) {
-                    return [
-                        'default' => [
-                            'transport' => [
-                                'dsn' => $value,
-                            ],
-                        ],
-                    ];
-                }
-
-                return $value;
-            })
-        ;
 
         $rootNode
             ->requiresAtLeastOneElement()
