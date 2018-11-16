@@ -2,16 +2,13 @@
 
 namespace Enqueue\Symfony\DependencyInjection;
 
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 final class BuildConsumptionExtensionsPass implements CompilerPassInterface
 {
-    use FormatTransportNameTrait;
-
-    protected $name;
-
     public function process(ContainerBuilder $container): void
     {
         if (false == $container->hasParameter('enqueue.transports')) {
@@ -19,11 +16,12 @@ final class BuildConsumptionExtensionsPass implements CompilerPassInterface
         }
 
         $names = $container->getParameter('enqueue.transports');
+        $defaultName = $container->getParameter('enqueue.default_transport');
 
         foreach ($names as $name) {
-            $this->name = $name;
+            $diUtils = DiUtils::create(TransportFactory::MODULE, $name);
 
-            $extensionsId = $this->format('consumption_extensions');
+            $extensionsId = $diUtils->format('consumption_extensions');
             if (false == $container->hasDefinition($extensionsId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $extensionsId));
             }
@@ -33,9 +31,9 @@ final class BuildConsumptionExtensionsPass implements CompilerPassInterface
             $groupByPriority = [];
             foreach ($tags as $serviceId => $tagAttributes) {
                 foreach ($tagAttributes as $tagAttribute) {
-                    $transport = $tagAttribute['transport'] ?? 'default';
+                    $transport = $tagAttribute['transport'] ?? $defaultName;
 
-                    if ($transport !== $this->name && 'all' !== $transport) {
+                    if ($transport !== $name && 'all' !== $transport) {
                         continue;
                     }
 
@@ -58,10 +56,5 @@ final class BuildConsumptionExtensionsPass implements CompilerPassInterface
                 $flatExtensions
             ));
         }
-    }
-
-    protected function getName(): string
-    {
-        return $this->name;
     }
 }

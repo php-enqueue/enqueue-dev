@@ -43,7 +43,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
 
             // or with name 'default'
-            if ('default' === $name) {
+            if (DiUtils::DEFAULT_CONFIG === $name) {
                 $defaultName = $name;
             }
         }
