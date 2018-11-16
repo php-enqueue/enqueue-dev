@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Uuid;
@@ -54,34 +54,36 @@ trait DbalConsumerHelperTrait
         ;
 
         while (microtime(true) < $endAt) {
-            $result = $select->execute()->fetch();
-            if (empty($result)) {
-                return null;
-            }
-
-            $update
-                ->setParameter('messageId', $result['id'], Type::GUID)
-            ;
-
-            if ($update->execute()) {
-                $deliveredMessage = $this->getConnection()->createQueryBuilder()
-                    ->select('*')
-                    ->from($this->getContext()->getTableName())
-                    ->andWhere('delivery_id = :deliveryId')
-                    ->setParameter('deliveryId', $deliveryId->getBytes(), Type::GUID)
-                    ->setMaxResults(1)
-                    ->execute()
-                    ->fetch()
-                ;
-
-                // the message has been removed by a 3rd party, such as truncate operation.
-                if (false == $deliveredMessage) {
-                    continue;
+            try {
+                $result = $select->execute()->fetch();
+                if (empty($result)) {
+                    return null;
                 }
 
-                if ($deliveredMessage['redelivered'] || empty($deliveredMessage['time_to_live']) || $deliveredMessage['time_to_live'] > time()) {
-                    return $this->getContext()->convertMessage($deliveredMessage);
+                $update
+                    ->setParameter('messageId', $result['id'], Type::GUID);
+
+                if ($update->execute()) {
+                    $deliveredMessage = $this->getConnection()->createQueryBuilder()
+                        ->select('*')
+                        ->from($this->getContext()->getTableName())
+                        ->andWhere('delivery_id = :deliveryId')
+                        ->setParameter('deliveryId', $deliveryId->getBytes(), Type::GUID)
+                        ->setMaxResults(1)
+                        ->execute()
+                        ->fetch();
+
+                    // the message has been removed by a 3rd party, such as truncate operation.
+                    if (false === $deliveredMessage) {
+                        continue;
+                    }
+
+                    if ($deliveredMessage['redelivered'] || empty($deliveredMessage['time_to_live']) || $deliveredMessage['time_to_live'] > time()) {
+                        return $this->getContext()->convertMessage($deliveredMessage);
+                    }
                 }
+            } catch (RetryableException $e) {
+                // maybe next time we'll get more luck
             }
         }
 
@@ -111,7 +113,7 @@ trait DbalConsumerHelperTrait
             $update->execute();
 
             $this->redeliverMessagesLastExecutedAt = microtime(true);
-        } catch (DeadlockException $e) {
+        } catch (RetryableException $e) {
             // maybe next time we'll get more luck
         }
     }
@@ -135,7 +137,7 @@ trait DbalConsumerHelperTrait
 
         try {
             $delete->execute();
-        } catch (DeadlockException $e) {
+        } catch (RetryableException $e) {
             // maybe next time we'll get more luck
         }
 
