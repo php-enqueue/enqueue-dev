@@ -66,6 +66,41 @@ final class BuildCommandSubscriberRoutesPass implements CompilerPassInterface
                         throw new \LogicException('Command subscriber configuration is invalid. Should be an array or string.');
                     }
 
+                    // 0.8 command subscriber
+                    if (isset($commands['processorName'])) {
+                        @trigger_error('The command subscriber 0.8 syntax is deprecated since Enqueue 0.9.', E_USER_DEPRECATED);
+
+                        $source = $commands['processorName'];
+                        $processor = $params['processorName'] ?? $serviceId;
+
+                        $options = $commands;
+                        unset(
+                            $options['processorName'],
+                            $options['queueName'],
+                            $options['queueNameHardcoded'],
+                            $options['exclusive'],
+                            $options['topic'],
+                            $options['source'],
+                            $options['source_type'],
+                            $options['processor'],
+                            $options['options']
+                        );
+
+                        $options['processor_service_id'] = $serviceId;
+
+                        if (isset($commands['queueName'])) {
+                            $options['queue'] = $commands['queueName'];
+                        }
+
+                        if (isset($commands['queueNameHardcoded']) && $commands['queueNameHardcoded']) {
+                            $options['prefix_queue'] = false;
+                        }
+
+                        $routeCollection->add(new Route($source, Route::COMMAND, $processor, $options));
+
+                        continue;
+                    }
+
                     if (isset($commands['command'])) {
                         $commands = [$commands];
                     }

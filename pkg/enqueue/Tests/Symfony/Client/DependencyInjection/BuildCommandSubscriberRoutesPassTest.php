@@ -398,6 +398,48 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         );
     }
 
+    public function testShouldRegister08CommandProcessor()
+    {
+        $routeCollection = new Definition(RouteCollection::class);
+        $routeCollection->addArgument([]);
+
+        $processor = $this->createCommandSubscriberProcessor([
+            'processorName' => 'fooCommand',
+            'queueName' => 'a_client_queue_name',
+            'queueNameHardcoded' => true,
+            'exclusive' => true,
+            'anOption' => 'aFooVal',
+        ]);
+
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
+        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->register('aFooProcessor', get_class($processor))
+            ->addTag('enqueue.command_subscriber')
+        ;
+
+        $pass = new BuildCommandSubscriberRoutesPass();
+        $pass->process($container);
+
+        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertCount(1, $routeCollection->getArgument(0));
+
+        $this->assertEquals(
+            [
+                [
+                    'source' => 'fooCommand',
+                    'source_type' => 'enqueue.client.command_route',
+                    'processor' => 'aFooProcessor',
+                    'processor_service_id' => 'aFooProcessor',
+                    'anOption' => 'aFooVal',
+                    'queue' => 'a_client_queue_name',
+                    'prefix_queue' => false,
+                ],
+            ],
+            $routeCollection->getArgument(0)
+        );
+    }
+
     private function createCommandSubscriberProcessor($commandSubscriberReturns = ['aCommand'])
     {
         $processor = new class() implements Processor, CommandSubscriberInterface {

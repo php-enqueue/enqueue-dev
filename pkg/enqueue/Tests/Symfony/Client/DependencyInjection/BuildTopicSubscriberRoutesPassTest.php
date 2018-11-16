@@ -358,6 +358,52 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         );
     }
 
+    public function testShouldRegister08TopicSubscriber()
+    {
+        $routeCollection = new Definition(RouteCollection::class);
+        $routeCollection->addArgument([]);
+
+        $processor = $this->createTopicSubscriberProcessor([
+            'fooTopic' => ['processorName' => 'aCustomFooProcessorName', 'queueName' => 'fooQueue', 'queueNameHardcoded' => true, 'anOption' => 'aFooVal'],
+            'barTopic' => ['processorName' => 'aCustomBarProcessorName', 'anOption' => 'aBarVal'],
+        ]);
+
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['default']);
+        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->register('aFooProcessor', get_class($processor))
+            ->addTag('enqueue.topic_subscriber')
+        ;
+
+        $pass = new BuildTopicSubscriberRoutesPass();
+        $pass->process($container);
+
+        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertCount(2, $routeCollection->getArgument(0));
+
+        $this->assertEquals(
+            [
+                [
+                    'source' => 'fooTopic',
+                    'source_type' => 'enqueue.client.topic_route',
+                    'processor' => 'aCustomFooProcessorName',
+                    'processor_service_id' => 'aFooProcessor',
+                    'anOption' => 'aFooVal',
+                    'queue' => 'fooQueue',
+                    'prefix_queue' => false,
+                ],
+                [
+                    'source' => 'barTopic',
+                    'source_type' => 'enqueue.client.topic_route',
+                    'processor' => 'aCustomBarProcessorName',
+                    'processor_service_id' => 'aFooProcessor',
+                    'anOption' => 'aBarVal',
+                ],
+            ],
+            $routeCollection->getArgument(0)
+        );
+    }
+
     private function createTopicSubscriberProcessor($topicSubscriberReturns = ['aTopic'])
     {
         $processor = new class() implements Processor, TopicSubscriberInterface {
