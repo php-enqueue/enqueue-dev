@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Uuid;
@@ -73,8 +74,9 @@ trait DbalConsumerHelperTrait
                     ->fetch()
                 ;
 
+                // the message has been removed by a 3rd party, such as truncate operation.
                 if (false == $deliveredMessage) {
-                    throw new \LogicException('There must be a message at all times at this stage but there is no a message.');
+                    continue;
                 }
 
                 if ($deliveredMessage['redelivered'] || empty($deliveredMessage['time_to_live']) || $deliveredMessage['time_to_live'] > time()) {
@@ -105,9 +107,13 @@ trait DbalConsumerHelperTrait
             ->setParameter('redelivered', true, Type::BOOLEAN)
         ;
 
-        $update->execute();
+        try {
+            $update->execute();
 
-        $this->redeliverMessagesLastExecutedAt = microtime(true);
+            $this->redeliverMessagesLastExecutedAt = microtime(true);
+        } catch (DeadlockException $e) {
+            // maybe next time we'll get more luck
+        }
     }
 
     protected function removeExpiredMessages(): void
@@ -127,7 +133,11 @@ trait DbalConsumerHelperTrait
             ->setParameter(':now', time(), Type::BIGINT)
         ;
 
-        $delete->execute();
+        try {
+            $delete->execute();
+        } catch (DeadlockException $e) {
+            // maybe next time we'll get more luck
+        }
 
         $this->removeExpiredMessagesLastExecutedAt = microtime(true);
     }
