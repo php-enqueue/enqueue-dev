@@ -3,15 +3,12 @@
 namespace Enqueue\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\RouteCollection;
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class AnalyzeRouteCollectionPass implements CompilerPassInterface
 {
-    use FormatClientNameTrait;
-
-    protected $name;
-
     public function process(ContainerBuilder $container): void
     {
         if (false == $container->hasParameter('enqueue.clients')) {
@@ -21,8 +18,9 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
         $names = $container->getParameter('enqueue.clients');
 
         foreach ($names as $name) {
-            $this->name = $name;
-            $routeCollectionId = $this->format('route_collection');
+            $diUtils = DiUtils::create(ClientFactory::MODULE, $name);
+
+            $routeCollectionId = $diUtils->format('route_collection');
             if (false == $container->hasDefinition($routeCollectionId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $routeCollectionId));
             }
@@ -34,11 +32,6 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
             $this->customQueueNamesUnique($collection);
             $this->defaultQueueMustBePrefixed($collection);
         }
-    }
-
-    protected function getName(): string
-    {
-        return $this->name;
     }
 
     private function exclusiveCommandsCouldNotBeRunOnDefaultQueue(RouteCollection $collection): void

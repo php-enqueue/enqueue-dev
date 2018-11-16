@@ -3,6 +3,7 @@
 namespace Enqueue\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\RouteCollection;
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -10,10 +11,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class BuildProcessorRegistryPass implements CompilerPassInterface
 {
-    use FormatClientNameTrait;
-
-    protected $name;
-
     public function process(ContainerBuilder $container): void
     {
         if (false == $container->hasParameter('enqueue.clients')) {
@@ -23,19 +20,19 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
         $names = $container->getParameter('enqueue.clients');
 
         foreach ($names as $name) {
-            $this->name = $name;
+            $diUtils = DiUtils::create(ClientFactory::MODULE, $name);
 
-            $processorRegistryId = $this->format('processor_registry');
+            $processorRegistryId = $diUtils->format('processor_registry');
             if (false == $container->hasDefinition($processorRegistryId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $processorRegistryId));
             }
 
-            $routeCollectionId = $this->format('route_collection');
+            $routeCollectionId = $diUtils->format('route_collection');
             if (false == $container->hasDefinition($routeCollectionId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $routeCollectionId));
             }
 
-            $routerProcessorId = $this->format('router_processor');
+            $routerProcessorId = $diUtils->format('router_processor');
             if (false == $container->hasDefinition($routerProcessorId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $routerProcessorId));
             }
@@ -51,15 +48,10 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
                 $map[$route->getProcessor()] = new Reference($processorServiceId);
             }
 
-            $map[$this->parameter('router_processor')] = new Reference($routerProcessorId);
+            $map[$diUtils->parameter('router_processor')] = new Reference($routerProcessorId);
 
             $registry = $container->getDefinition($processorRegistryId);
             $registry->setArgument(0, ServiceLocatorTagPass::register($container, $map, $processorRegistryId));
         }
-    }
-
-    private function getName(): string
-    {
-        return $this->name;
     }
 }

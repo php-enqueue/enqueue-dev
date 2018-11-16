@@ -5,15 +5,12 @@ namespace Enqueue\Symfony\Client\DependencyInjection;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Client\TopicSubscriberInterface;
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
 {
-    use FormatClientNameTrait;
-
-    protected $name;
-
     public function process(ContainerBuilder $container): void
     {
         if (false == $container->hasParameter('enqueue.clients')) {
@@ -21,10 +18,11 @@ final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
         }
 
         $names = $container->getParameter('enqueue.clients');
+        $defaultName = $container->getParameter('enqueue.default_client');
 
         foreach ($names as $name) {
-            $this->name = $name;
-            $routeCollectionId = $this->format('route_collection');
+            $diUtils = DiUtils::create(ClientFactory::MODULE, $name);
+            $routeCollectionId = $diUtils->format('route_collection');
             if (false == $container->hasDefinition($routeCollectionId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $routeCollectionId));
             }
@@ -47,9 +45,9 @@ final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
                 }
 
                 foreach ($tagAttributes as $tagAttribute) {
-                    $client = $tagAttribute['client'] ?? 'default';
+                    $client = $tagAttribute['client'] ?? $defaultName;
 
-                    if ($client !== $this->name && 'all' !== $client) {
+                    if ($client !== $name && 'all' !== $client) {
                         continue;
                     }
 
@@ -98,10 +96,5 @@ final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
                 $rawRoutes
             ));
         }
-    }
-
-    protected function getName(): string
-    {
-        return $this->name;
     }
 }

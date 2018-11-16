@@ -18,6 +18,8 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class MonitoringFactory
 {
+    public const MODULE = 'monitoring';
+
     /**
      * @var DiUtils
      */
@@ -29,7 +31,7 @@ final class MonitoringFactory
             throw new \InvalidArgumentException('The name could not be empty.');
         }
 
-        $this->diUtils = DiUtils::create('monitoring', $name);
+        $this->diUtils = DiUtils::create(self::MODULE, $name);
     }
 
     public static function getConfiguration(string $name = 'monitoring'): ArrayNodeDefinition

@@ -44,6 +44,7 @@ class BuildProcessorRegistryPassTest extends TestCase
     {
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.transports', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_transport', 'baz');
 
         $pass = new BuildProcessorRegistryPass();
 
@@ -59,6 +60,7 @@ class BuildProcessorRegistryPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
         $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', ['transport' => 'foo'])
@@ -88,6 +90,7 @@ class BuildProcessorRegistryPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.transports', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_transport', 'foo');
         $container->setDefinition('enqueue.transport.foo.processor_registry', $fooRegistry);
         $container->setDefinition('enqueue.transport.bar.processor_registry', $barRegistry);
         $container->register('aFooProcessor', 'aProcessorClass')
@@ -118,8 +121,9 @@ class BuildProcessorRegistryPassTest extends TestCase
         $registry->addArgument(null);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.transports', ['default']);
-        $container->setDefinition('enqueue.transport.default.processor_registry', $registry);
+        $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
+        $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', [])
         ;
@@ -144,8 +148,9 @@ class BuildProcessorRegistryPassTest extends TestCase
         $registry->addArgument(null);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.transports', ['default']);
-        $container->setDefinition('enqueue.transport.default.processor_registry', $registry);
+        $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
+        $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', ['transport' => 'all'])
         ;
@@ -170,8 +175,9 @@ class BuildProcessorRegistryPassTest extends TestCase
         $registry->addArgument(null);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.transports', ['default']);
-        $container->setDefinition('enqueue.transport.default.processor_registry', $registry);
+        $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
+        $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', ['processor' => 'customProcessorName'])
         ;

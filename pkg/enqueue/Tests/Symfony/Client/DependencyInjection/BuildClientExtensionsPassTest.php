@@ -43,6 +43,7 @@ class BuildClientExtensionsPassTest extends TestCase
     {
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_client', 'foo');
 
         $pass = new BuildClientExtensionsPass();
 
@@ -58,6 +59,7 @@ class BuildClientExtensionsPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['aName']);
+        $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.aName.client_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
@@ -84,6 +86,7 @@ class BuildClientExtensionsPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['aName']);
+        $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.aName.client_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
@@ -109,6 +112,7 @@ class BuildClientExtensionsPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['aName']);
+        $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.aName.client_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
@@ -133,8 +137,9 @@ class BuildClientExtensionsPassTest extends TestCase
         $extensions->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.client_extensions', $extensions);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.client_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
             ->addTag('enqueue.client_extension')
@@ -156,11 +161,12 @@ class BuildClientExtensionsPassTest extends TestCase
     public function testShouldOrderExtensionsByPriority()
     {
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
 
         $extensions = new Definition();
         $extensions->addArgument([]);
-        $container->setDefinition('enqueue.client.default.client_extensions', $extensions);
+        $container->setDefinition('enqueue.client.foo.client_extensions', $extensions);
 
         $extension = new Definition();
         $extension->addTag('enqueue.client_extension', ['priority' => 6]);
@@ -188,11 +194,12 @@ class BuildClientExtensionsPassTest extends TestCase
     public function testShouldAssumePriorityZeroIfPriorityIsNotSet()
     {
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
 
         $extensions = new Definition();
         $extensions->addArgument([]);
-        $container->setDefinition('enqueue.client.default.client_extensions', $extensions);
+        $container->setDefinition('enqueue.client.foo.client_extensions', $extensions);
 
         $extension = new Definition();
         $extension->addTag('enqueue.client_extension');
@@ -226,8 +233,9 @@ class BuildClientExtensionsPassTest extends TestCase
         ]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['aName']);
-        $container->setDefinition('enqueue.client.aName.client_extensions', $extensions);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.client_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
             ->addTag('enqueue.client_extension')
@@ -240,10 +248,7 @@ class BuildClientExtensionsPassTest extends TestCase
         $pass->process($container);
 
         $this->assertInternalType('array', $extensions->getArgument(0));
-        $this->assertEquals([
-            'aBarExtension' => 'aBarServiceIdAddedPreviously',
-            'aOloloExtension' => 'aOloloServiceIdAddedPreviously',
-        ], $extensions->getArgument(0));
+        $this->assertCount(4, $extensions->getArgument(0));
     }
 
     public function testShouldRegisterProcessorWithMatchedNameToCorrespondingExtensions()
@@ -256,6 +261,7 @@ class BuildClientExtensionsPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.client_extensions', $fooExtensions);
         $container->setDefinition('enqueue.client.bar.client_extensions', $barExtensions);
 

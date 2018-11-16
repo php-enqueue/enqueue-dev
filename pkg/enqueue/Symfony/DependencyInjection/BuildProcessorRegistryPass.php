@@ -2,6 +2,7 @@
 
 namespace Enqueue\Symfony\DependencyInjection;
 
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -9,10 +10,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class BuildProcessorRegistryPass implements CompilerPassInterface
 {
-    use FormatTransportNameTrait;
-
-    protected $name;
-
     public function process(ContainerBuilder $container): void
     {
         if (false == $container->hasParameter('enqueue.transports')) {
@@ -20,11 +17,12 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
         }
 
         $names = $container->getParameter('enqueue.transports');
+        $defaultName = $container->getParameter('enqueue.default_transport');
 
         foreach ($names as $name) {
-            $this->name = $name;
+            $diUtils = DiUtils::create(TransportFactory::MODULE, $name);
 
-            $processorRegistryId = $this->format('processor_registry');
+            $processorRegistryId = $diUtils->format('processor_registry');
             if (false == $container->hasDefinition($processorRegistryId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $processorRegistryId));
             }
@@ -33,9 +31,9 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
             $map = [];
             foreach ($container->findTaggedServiceIds($tag) as $serviceId => $tagAttributes) {
                 foreach ($tagAttributes as $tagAttribute) {
-                    $transport = $tagAttribute['transport'] ?? 'default';
+                    $transport = $tagAttribute['transport'] ?? $defaultName;
 
-                    if ($transport !== $this->name && 'all' !== $transport) {
+                    if ($transport !== $name && 'all' !== $transport) {
                         continue;
                     }
 
@@ -48,10 +46,5 @@ final class BuildProcessorRegistryPass implements CompilerPassInterface
             $registry = $container->getDefinition($processorRegistryId);
             $registry->setArgument(0, ServiceLocatorTagPass::register($container, $map, $processorRegistryId));
         }
-    }
-
-    protected function getName(): string
-    {
-        return $this->name;
     }
 }

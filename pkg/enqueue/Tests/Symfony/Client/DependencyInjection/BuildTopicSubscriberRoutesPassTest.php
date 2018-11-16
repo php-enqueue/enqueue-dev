@@ -47,6 +47,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
     {
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_client', 'baz');
 
         $pass = new BuildTopicSubscriberRoutesPass();
 
@@ -58,8 +59,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
     public function testThrowIfTaggedProcessorIsBuiltByFactory()
     {
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['aName']);
-        $container->register('enqueue.client.aName.route_collection', RouteCollection::class)
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->register('enqueue.client.foo.route_collection', RouteCollection::class)
             ->addArgument([])
         ;
         $container->register('aProcessor', Processor::class)
@@ -81,6 +83,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'bar');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($this->createTopicSubscriberProcessor()))
             ->addTag('enqueue.topic_subscriber', ['client' => 'foo'])
@@ -103,8 +106,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($this->createTopicSubscriberProcessor()))
             ->addTag('enqueue.topic_subscriber')
         ;
@@ -126,8 +130,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($this->createTopicSubscriberProcessor()))
             ->addTag('enqueue.topic_subscriber', ['client' => 'all'])
         ;
@@ -151,8 +156,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $processor = $this->createTopicSubscriberProcessor('fooTopic');
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
             ->addTag('enqueue.topic_subscriber')
         ;
@@ -184,8 +190,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $processor = $this->createTopicSubscriberProcessor(null);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
             ->addTag('enqueue.topic_subscriber')
         ;
@@ -205,8 +212,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $processor = $this->createTopicSubscriberProcessor(['fooTopic', 'barTopic']);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
             ->addTag('enqueue.topic_subscriber')
         ;
@@ -247,8 +255,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         ]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
             ->addTag('enqueue.topic_subscriber')
         ;
@@ -288,8 +297,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $processor = $this->createTopicSubscriberProcessor(['fooBar', true]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
             ->addTag('enqueue.topic_subscriber')
         ;
@@ -312,8 +322,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $processor = $this->createTopicSubscriberProcessor(['fooTopic']);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', get_class($processor))
             ->addTag('enqueue.topic_subscriber')
         ;

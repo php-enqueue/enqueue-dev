@@ -22,6 +22,8 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\Client\FlushSpoolProducerListener;
 use Enqueue\Symfony\ContainerProcessorRegistry;
+use Enqueue\Symfony\DependencyInjection\TransportFactory;
+use Enqueue\Symfony\DiUtils;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -34,17 +36,17 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class ClientFactory
 {
-    use FormatClientNameTrait;
-
-    /**
-     * @var string
-     */
-    private $name;
+    public const MODULE = 'client';
 
     /**
      * @var bool
      */
     private $default;
+
+    /**
+     * @var DiUtils
+     */
+    private $diUtils;
 
     public function __construct(string $name, bool $default = false)
     {
@@ -52,8 +54,8 @@ final class ClientFactory
             throw new \InvalidArgumentException('The name could not be empty.');
         }
 
-        $this->name = $name;
         $this->default = $default;
+        $this->diUtils = DiUtils::create(self::MODULE, $name);
     }
 
     public static function getConfiguration(bool $debug, string $name = 'client'): NodeDefinition
@@ -77,21 +79,21 @@ final class ClientFactory
 
     public function build(ContainerBuilder $container, array $config): void
     {
-        $container->register($this->format('context'), Context::class)
-            ->setFactory([$this->reference('driver'), 'getContext'])
+        $container->register($this->diUtils->format('context'), Context::class)
+            ->setFactory([$this->diUtils->reference('driver'), 'getContext'])
         ;
 
-        $container->register($this->format('driver_factory'), DriverFactory::class)
-            ->addArgument($this->reference('config'))
-            ->addArgument($this->reference('route_collection'))
+        $container->register($this->diUtils->format('driver_factory'), DriverFactory::class)
+            ->addArgument($this->diUtils->reference('config'))
+            ->addArgument($this->diUtils->reference('route_collection'))
         ;
 
         $routerProcessor = empty($config['router_processor'])
-            ? $this->format('router_processor')
+            ? $this->diUtils->format('router_processor')
             : $config['router_processor']
         ;
 
-        $container->register($this->format('config'), Config::class)
+        $container->register($this->diUtils->format('config'), Config::class)
             ->setArguments([
                 $config['prefix'],
                 $config['app_name'],
@@ -103,86 +105,86 @@ final class ClientFactory
                 $config['transport'],
             ]);
 
-        $container->setParameter($this->format('router_processor'), $routerProcessor);
-        $container->setParameter($this->format('router_queue_name'), $config['router_queue']);
-        $container->setParameter($this->format('default_queue_name'), $config['default_processor_queue']);
+        $container->setParameter($this->diUtils->format('router_processor'), $routerProcessor);
+        $container->setParameter($this->diUtils->format('router_queue_name'), $config['router_queue']);
+        $container->setParameter($this->diUtils->format('default_queue_name'), $config['default_processor_queue']);
 
-        $container->register($this->format('route_collection'), RouteCollection::class)
+        $container->register($this->diUtils->format('route_collection'), RouteCollection::class)
             ->addArgument([])
             ->setFactory([RouteCollection::class, 'fromArray'])
         ;
 
-        $container->register($this->format('producer'), Producer::class)
+        $container->register($this->diUtils->format('producer'), Producer::class)
             ->setPublic(true)
-            ->addArgument($this->reference('driver'))
-            ->addArgument($this->reference('rpc_factory'))
-            ->addArgument($this->reference('client_extensions'))
+            ->addArgument($this->diUtils->reference('driver'))
+            ->addArgument($this->diUtils->reference('rpc_factory'))
+            ->addArgument($this->diUtils->reference('client_extensions'))
         ;
 
-        $container->register($this->format('spool_producer'), SpoolProducer::class)
-            ->addArgument($this->reference('producer'))
+        $container->register($this->diUtils->format('spool_producer'), SpoolProducer::class)
+            ->addArgument($this->diUtils->reference('producer'))
         ;
 
-        $container->register($this->format('client_extensions'), ChainExtension::class)
+        $container->register($this->diUtils->format('client_extensions'), ChainExtension::class)
             ->addArgument([])
         ;
 
-        $container->register($this->format('rpc_factory'), RpcFactory::class)
-            ->addArgument($this->reference('context'))
+        $container->register($this->diUtils->format('rpc_factory'), RpcFactory::class)
+            ->addArgument($this->diUtils->reference('context'))
         ;
 
-        $container->register($this->format('router_processor'), RouterProcessor::class)
-            ->addArgument($this->reference('driver'))
+        $container->register($this->diUtils->format('router_processor'), RouterProcessor::class)
+            ->addArgument($this->diUtils->reference('driver'))
         ;
 
-        $container->register($this->format('processor_registry'), ContainerProcessorRegistry::class);
+        $container->register($this->diUtils->format('processor_registry'), ContainerProcessorRegistry::class);
 
-        $container->register($this->format('delegate_processor'), DelegateProcessor::class)
-            ->addArgument($this->reference('processor_registry'))
+        $container->register($this->diUtils->format('delegate_processor'), DelegateProcessor::class)
+            ->addArgument($this->diUtils->reference('processor_registry'))
         ;
 
-        $container->register($this->format('set_router_properties_extension'), SetRouterPropertiesExtension::class)
-            ->addArgument($this->reference('driver'))
-            ->addTag('enqueue.consumption_extension', ['priority' => 100, 'client' => $this->name])
+        $container->register($this->diUtils->format('set_router_properties_extension'), SetRouterPropertiesExtension::class)
+            ->addArgument($this->diUtils->reference('driver'))
+            ->addTag('enqueue.consumption_extension', ['priority' => 100, 'client' => $this->diUtils->getConfigName()])
         ;
 
-        $container->register($this->format('queue_consumer'), QueueConsumer::class)
-            ->addArgument($this->reference('context'))
-            ->addArgument($this->reference('consumption_extensions'))
+        $container->register($this->diUtils->format('queue_consumer'), QueueConsumer::class)
+            ->addArgument($this->diUtils->reference('context'))
+            ->addArgument($this->diUtils->reference('consumption_extensions'))
             ->addArgument([])
-            ->addArgument($this->reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
+            ->addArgument($this->diUtils->reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
             ->addArgument($config['consumption']['receive_timeout'])
         ;
 
-        $container->register($this->format('consumption_extensions'), ConsumptionChainExtension::class)
+        $container->register($this->diUtils->format('consumption_extensions'), ConsumptionChainExtension::class)
             ->addArgument([])
         ;
 
-        $container->register($this->format('flush_spool_producer_extension'), FlushSpoolProducerExtension::class)
-            ->addArgument($this->reference('spool_producer'))
-            ->addTag('enqueue.consumption.extension', ['priority' => -100, 'client' => $this->name])
+        $container->register($this->diUtils->format('flush_spool_producer_extension'), FlushSpoolProducerExtension::class)
+            ->addArgument($this->diUtils->reference('spool_producer'))
+            ->addTag('enqueue.consumption.extension', ['priority' => -100, 'client' => $this->diUtils->getConfigName()])
         ;
 
-        $container->register($this->format('exclusive_command_extension'), ExclusiveCommandExtension::class)
-            ->addArgument($this->reference('driver'))
-            ->addTag('enqueue.consumption.extension', ['priority' => 100, 'client' => $this->name])
+        $container->register($this->diUtils->format('exclusive_command_extension'), ExclusiveCommandExtension::class)
+            ->addArgument($this->diUtils->reference('driver'))
+            ->addTag('enqueue.consumption.extension', ['priority' => 100, 'client' => $this->diUtils->getConfigName()])
         ;
 
         if ($config['traceable_producer']) {
-            $container->register($this->format('traceable_producer'), TraceableProducer::class)
-                ->setDecoratedService($this->format('producer'))
-                ->addArgument($this->reference('traceable_producer.inner'))
+            $container->register($this->diUtils->format('traceable_producer'), TraceableProducer::class)
+                ->setDecoratedService($this->diUtils->format('producer'))
+                ->addArgument($this->diUtils->reference('traceable_producer.inner'))
             ;
         }
 
         if ($config['redelivered_delay_time']) {
-            $container->register($this->format('delay_redelivered_message_extension'), DelayRedeliveredMessageExtension::class)
-                ->addArgument($this->reference('driver'))
+            $container->register($this->diUtils->format('delay_redelivered_message_extension'), DelayRedeliveredMessageExtension::class)
+                ->addArgument($this->diUtils->reference('driver'))
                 ->addArgument($config['redelivered_delay_time'])
-                ->addTag('enqueue.consumption_extension', ['priority' => 10, 'client' => $this->name])
+                ->addTag('enqueue.consumption_extension', ['priority' => 10, 'client' => $this->diUtils->getConfigName()])
             ;
 
-            $container->getDefinition($this->format('delay_redelivered_message_extension'))
+            $container->getDefinition($this->diUtils->format('delay_redelivered_message_extension'))
                 ->replaceArgument(1, $config['redelivered_delay_time'])
             ;
         }
@@ -191,24 +193,29 @@ final class ClientFactory
         if ($container->hasDefinition($locatorId)) {
             $locator = $container->getDefinition($locatorId);
             $locator->replaceArgument(0, array_replace($locator->getArgument(0), [
-                $this->format('queue_consumer') => $this->reference('queue_consumer'),
-                $this->format('driver') => $this->reference('driver'),
-                $this->format('delegate_processor') => $this->reference('delegate_processor'),
-                $this->format('producer') => $this->reference('producer'),
+                $this->diUtils->format('queue_consumer') => $this->diUtils->reference('queue_consumer'),
+                $this->diUtils->format('driver') => $this->diUtils->reference('driver'),
+                $this->diUtils->format('delegate_processor') => $this->diUtils->reference('delegate_processor'),
+                $this->diUtils->format('producer') => $this->diUtils->reference('producer'),
             ]));
         }
 
         if ($this->default) {
-            $container->setAlias(ProducerInterface::class, $this->format('producer'));
-            $container->setAlias(SpoolProducer::class, $this->format('spool_producer'));
+            $container->setAlias(ProducerInterface::class, $this->diUtils->format('producer'));
+            $container->setAlias(SpoolProducer::class, $this->diUtils->format('spool_producer'));
+
+            if (DiUtils::DEFAULT_CONFIG !== $this->diUtils->getConfigName()) {
+                $container->setAlias($this->diUtils->formatDefault('producer'), $this->diUtils->format('producer'));
+                $container->setAlias($this->diUtils->formatDefault('spool_producer'), $this->diUtils->format('spool_producer'));
+            }
         }
     }
 
     public function createDriver(ContainerBuilder $container, array $config): string
     {
-        $factoryId = sprintf('enqueue.transport.%s.connection_factory', $this->getName());
-        $driverId = sprintf('enqueue.client.%s.driver', $this->getName());
-        $driverFactoryId = sprintf('enqueue.client.%s.driver_factory', $this->getName());
+        $factoryId = DiUtils::create(TransportFactory::MODULE, $this->diUtils->getConfigName())->format('connection_factory');
+        $driverId = $this->diUtils->format('driver');
+        $driverFactoryId = $this->diUtils->format('driver_factory');
 
         $container->register($driverId, DriverInterface::class)
             ->setFactory([new Reference($driverFactoryId), 'create'])
@@ -217,19 +224,22 @@ final class ClientFactory
             ->addArgument($config)
         ;
 
+        if ($this->default) {
+            $container->setAlias(DriverInterface::class, $driverId);
+
+            if (DiUtils::DEFAULT_CONFIG !== $this->diUtils->getConfigName()) {
+                $container->setAlias($this->diUtils->formatDefault('driver'), $driverId);
+            }
+        }
+
         return $driverId;
     }
 
     public function createFlushSpoolProducerListener(ContainerBuilder $container): void
     {
-        $container->register($this->format('flush_spool_producer_listener'), FlushSpoolProducerListener::class)
-            ->addArgument($this->reference('spool_producer'))
+        $container->register($this->diUtils->format('flush_spool_producer_listener'), FlushSpoolProducerListener::class)
+            ->addArgument($this->diUtils->reference('spool_producer'))
             ->addTag('kernel.event_subscriber')
         ;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 }

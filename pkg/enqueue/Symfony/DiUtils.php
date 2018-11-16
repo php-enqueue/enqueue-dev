@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class DiUtils
 {
+    public const DEFAULT_CONFIG = 'default';
+
     /**
      * @var string
      */
@@ -43,6 +45,11 @@ class DiUtils
         return new Reference($this->format($serviceName), $invalidBehavior);
     }
 
+    public function referenceDefault(string $serviceName, $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE): Reference
+    {
+        return new Reference($this->formatDefault($serviceName), $invalidBehavior);
+    }
+
     public function parameter(string $serviceName): string
     {
         $fullName = $this->format($serviceName);
@@ -50,8 +57,25 @@ class DiUtils
         return "%$fullName%";
     }
 
+    public function parameterDefault(string $serviceName): string
+    {
+        $fullName = $this->formatDefault($serviceName);
+
+        return "%$fullName%";
+    }
+
     public function format(string $serviceName): string
     {
-        return sprintf('enqueue.%s.%s.%s', $this->moduleName, $this->configName, $serviceName);
+        return $this->doFormat($this->moduleName, $this->configName, $serviceName);
+    }
+
+    public function formatDefault(string $serviceName): string
+    {
+        return $this->doFormat($this->moduleName, self::DEFAULT_CONFIG, $serviceName);
+    }
+
+    private function doFormat(string $moduleName, string $configName, string $serviceName): string
+    {
+        return sprintf('enqueue.%s.%s.%s', $moduleName, $configName, $serviceName);
     }
 }

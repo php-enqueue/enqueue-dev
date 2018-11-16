@@ -2,16 +2,13 @@
 
 namespace Enqueue\Symfony\Client\DependencyInjection;
 
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 final class BuildClientExtensionsPass implements CompilerPassInterface
 {
-    use FormatClientNameTrait;
-
-    protected $name;
-
     public function process(ContainerBuilder $container): void
     {
         if (false == $container->hasParameter('enqueue.clients')) {
@@ -19,10 +16,12 @@ final class BuildClientExtensionsPass implements CompilerPassInterface
         }
 
         $names = $container->getParameter('enqueue.clients');
+        $defaultName = $container->getParameter('enqueue.default_client');
 
         foreach ($names as $name) {
-            $this->name = $name;
-            $extensionsId = $this->format('client_extensions');
+            $diUtils = DiUtils::create(ClientFactory::MODULE, $name);
+
+            $extensionsId = $diUtils->format('client_extensions');
             if (false == $container->hasDefinition($extensionsId)) {
                 throw new \LogicException(sprintf('Service "%s" not found', $extensionsId));
             }
@@ -35,9 +34,9 @@ final class BuildClientExtensionsPass implements CompilerPassInterface
             $groupByPriority = [];
             foreach ($tags as $serviceId => $tagAttributes) {
                 foreach ($tagAttributes as $tagAttribute) {
-                    $client = $tagAttribute['client'] ?? 'default';
+                    $client = $tagAttribute['client'] ?? $defaultName;
 
-                    if ($client !== $this->name && 'all' !== $client) {
+                    if ($client !== $name && 'all' !== $client) {
                         continue;
                     }
 
@@ -60,10 +59,5 @@ final class BuildClientExtensionsPass implements CompilerPassInterface
                 $flatExtensions
             ));
         }
-    }
-
-    protected function getName(): string
-    {
-        return $this->name;
     }
 }

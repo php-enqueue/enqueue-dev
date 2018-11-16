@@ -17,13 +17,6 @@ class ClientFactoryTest extends TestCase
         $this->assertClassFinal(ClientFactory::class);
     }
 
-    public function testShouldAllowGetNameSetInConstructor()
-    {
-        $transport = new ClientFactory('aName');
-
-        $this->assertEquals('aName', $transport->getName());
-    }
-
     public function testThrowIfEmptyNameGivenOnConstruction()
     {
         $this->expectException(\InvalidArgumentException::class);
