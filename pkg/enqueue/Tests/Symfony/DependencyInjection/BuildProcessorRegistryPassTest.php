@@ -46,7 +46,6 @@ class BuildProcessorRegistryPassTest extends TestCase
         $container->setParameter('enqueue.transports', ['foo', 'bar']);
         $container->setParameter('enqueue.default_transport', 'baz');
 
-
         $pass = new BuildProcessorRegistryPass();
 
         $this->expectException(\LogicException::class);
