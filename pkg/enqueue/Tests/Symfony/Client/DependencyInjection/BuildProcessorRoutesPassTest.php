@@ -43,6 +43,7 @@ class BuildProcessorRoutesPassTest extends TestCase
     {
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_client', 'baz');
 
         $pass = new BuildProcessorRoutesPass();
 
@@ -57,8 +58,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['topic' => 'foo', 'command' => 'bar'])
         ;
@@ -76,8 +78,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', [])
         ;
@@ -96,6 +99,7 @@ class BuildProcessorRoutesPassTest extends TestCase
 
         $container = new ContainerBuilder();
         $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'bar');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['client' => 'foo', 'topic' => 'foo'])
@@ -118,8 +122,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['topic' => 'foo'])
         ;
@@ -141,8 +146,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['client' => 'all', 'topic' => 'foo'])
         ;
@@ -164,8 +170,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['topic' => 'aTopic'])
         ;
@@ -195,8 +202,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['command' => 'aCommand'])
         ;
@@ -226,8 +234,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $routeCollection->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['command' => 'aCommand', 'processor' => 'customProcessorName'])
         ;
@@ -260,8 +269,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         ]);
 
         $container = new ContainerBuilder();
-        $container->setParameter('enqueue.clients', ['default']);
-        $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.processor', ['command' => 'fooCommand'])
         ;

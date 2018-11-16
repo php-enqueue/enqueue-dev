@@ -27,13 +27,6 @@ class TransportFactoryTest extends TestCase
         $this->assertClassFinal(TransportFactory::class);
     }
 
-    public function testShouldAllowGetNameSetInConstructor()
-    {
-        $transport = new TransportFactory('aName');
-
-        $this->assertEquals('aName', $transport->getName());
-    }
-
     public function testThrowIfEmptyNameGivenOnConstruction()
     {
         $this->expectException(\InvalidArgumentException::class);
