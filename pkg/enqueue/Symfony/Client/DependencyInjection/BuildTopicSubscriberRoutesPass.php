@@ -69,6 +69,37 @@ final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
                     foreach ($topics as $key => $params) {
                         if (is_string($params)) {
                             $routeCollection->add(new Route($params, Route::TOPIC, $serviceId, ['processor_service_id' => $serviceId]));
+
+                        // 0.8 topic subscriber
+                        } elseif (is_array($params) && is_string($key)) {
+                            @trigger_error('The topic subscriber 0.8 syntax is deprecated since Enqueue 0.9.', E_USER_DEPRECATED);
+
+                            $source = $key;
+                            $processor = $params['processorName'] ?? $serviceId;
+
+                            $options = $params;
+                            unset(
+                                $options['processorName'],
+                                $options['queueName'],
+                                $options['queueNameHardcoded'],
+                                $options['topic'],
+                                $options['source'],
+                                $options['source_type'],
+                                $options['processor'],
+                                $options['options']
+                            );
+
+                            $options['processor_service_id'] = $serviceId;
+
+                            if (isset($params['queueName'])) {
+                                $options['queue'] = $params['queueName'];
+                            }
+
+                            if (isset($params['queueNameHardcoded']) && $params['queueNameHardcoded']) {
+                                $options['prefix_queue'] = false;
+                            }
+
+                            $routeCollection->add(new Route($source, Route::TOPIC, $processor, $options));
                         } elseif (is_array($params)) {
                             $source = $params['topic'] ?? null;
                             $processor = $params['processor'] ?? $serviceId;
