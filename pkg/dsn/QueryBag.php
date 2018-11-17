@@ -86,10 +86,10 @@ class QueryBag
         throw InvalidQueryParameterTypeException::create($name, 'bool');
     }
 
-    public function getArray(string $name, bool $default = null): ?self
+    public function getArray(string $name, array $default = []): self
     {
         if (false == array_key_exists($name, $this->query)) {
-            return $default;
+            return new self($default);
         }
 
         $value = $this->query[$name];

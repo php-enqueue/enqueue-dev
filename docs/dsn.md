@@ -91,13 +91,14 @@ Get typed query params:
 <?php
 use Enqueue\Dsn\Dsn;
 
-$dsn = Dsn::parseFirst('sqs:?decimal=12&octal=0666&float=1.2&bool=1&array[0]=val');
+$dsn = Dsn::parseFirst('sqs:?decimal=12&octal=0666&float=1.2&bool=1&array[0]=val&array[1]=123');
 
 $dsn->getDecimal('decimal'); // 12
 $dsn->getOctal('decimal'); // 0666
 $dsn->getFloat('float'); // 1.2
 $dsn->getBool('bool'); // true
 $dsn->getArray('array')->getString(0); // val
+$dsn->getArray('array')->getDecimal(1); // 123
 $dsn->getArray('array')->toArray(); // [val]
 ```
 

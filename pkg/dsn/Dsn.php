@@ -175,7 +175,7 @@ class Dsn
         return $this->queryBag->getBool($name, $default);
     }
 
-    public function getArray(string $name, bool $default = null): QueryBag
+    public function getArray(string $name, array $default = []): QueryBag
     {
         return $this->queryBag->getArray($name, $default);
     }
