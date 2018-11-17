@@ -97,7 +97,7 @@ class StompConnectionFactory implements ConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         if ('stomp' !== $dsn->getSchemeProtocol()) {
             throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "stomp:".', $dsn));
@@ -109,8 +109,8 @@ class StompConnectionFactory implements ConnectionFactory
             'login' => $dsn->getUser(),
             'password' => $dsn->getPassword(),
             'vhost' => null !== $dsn->getPath() ? ltrim($dsn->getPath(), '/') : null,
-            'buffer_size' => $dsn->getInt('buffer_size'),
-            'connection_timeout' => $dsn->getInt('connection_timeout'),
+            'buffer_size' => $dsn->getDecimal('buffer_size'),
+            'connection_timeout' => $dsn->getDecimal('connection_timeout'),
             'sync' => $dsn->getBool('sync'),
             'lazy' => $dsn->getBool('lazy'),
             'ssl_on' => $dsn->getBool('ssl_on'),

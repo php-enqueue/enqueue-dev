@@ -85,7 +85,7 @@ class GpsConnectionFactory implements ConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         if ('gps' !== $dsn->getSchemeProtocol()) {
             throw new \LogicException(sprintf(
@@ -94,14 +94,14 @@ class GpsConnectionFactory implements ConnectionFactory
             ));
         }
 
-        $emulatorHost = $dsn->getQueryParameter('emulatorHost');
+        $emulatorHost = $dsn->getString('emulatorHost');
         $hasEmulator = $emulatorHost ? true : null;
 
         return array_filter(array_replace($dsn->getQuery(), [
-            'projectId' => $dsn->getQueryParameter('projectId'),
-            'keyFilePath' => $dsn->getQueryParameter('keyFilePath'),
-            'retries' => $dsn->getInt('retries'),
-            'scopes' => $dsn->getQueryParameter('scopes'),
+            'projectId' => $dsn->getString('projectId'),
+            'keyFilePath' => $dsn->getString('keyFilePath'),
+            'retries' => $dsn->getDecimal('retries'),
+            'scopes' => $dsn->getString('scopes'),
             'emulatorHost' => $emulatorHost,
             'hasEmulator' => $hasEmulator,
             'lazy' => $dsn->getBool('lazy'),

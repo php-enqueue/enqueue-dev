@@ -182,7 +182,7 @@ class InfluxDbStorage implements StatsStorage
 
     private function parseDsn(string $dsn): array
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         if (false === in_array($dsn->getSchemeProtocol(), ['influxdb'], true)) {
             throw new \LogicException(sprintf(
@@ -196,10 +196,10 @@ class InfluxDbStorage implements StatsStorage
             'port' => $dsn->getPort(),
             'user' => $dsn->getUser(),
             'password' => $dsn->getPassword(),
-            'db' => $dsn->getQueryParameter('db'),
-            'measurementSentMessages' => $dsn->getQueryParameter('measurementSentMessages'),
-            'measurementConsumedMessages' => $dsn->getQueryParameter('measurementConsumedMessages'),
-            'measurementConsumers' => $dsn->getQueryParameter('measurementConsumers'),
+            'db' => $dsn->getString('db'),
+            'measurementSentMessages' => $dsn->getString('measurementSentMessages'),
+            'measurementConsumedMessages' => $dsn->getString('measurementConsumedMessages'),
+            'measurementConsumers' => $dsn->getString('measurementConsumers'),
         ]), function ($value) { return null !== $value; });
     }
 }

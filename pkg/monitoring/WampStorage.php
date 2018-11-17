@@ -192,7 +192,7 @@ class WampStorage implements StatsStorage
 
     private function parseDsn(string $dsn): array
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         if (false === in_array($dsn->getSchemeProtocol(), ['wamp', 'ws'], true)) {
             throw new \LogicException(sprintf(
@@ -204,10 +204,10 @@ class WampStorage implements StatsStorage
         return array_filter(array_replace($dsn->getQuery(), [
             'host' => $dsn->getHost(),
             'port' => $dsn->getPort(),
-            'topic' => $dsn->getQueryParameter('topic'),
-            'max_retries' => $dsn->getInt('max_retries'),
+            'topic' => $dsn->getString('topic'),
+            'max_retries' => $dsn->getDecimal('max_retries'),
             'initial_retry_delay' => $dsn->getFloat('initial_retry_delay'),
-            'max_retry_delay' => $dsn->getInt('max_retry_delay'),
+            'max_retry_delay' => $dsn->getDecimal('max_retry_delay'),
             'retry_delay_growth' => $dsn->getFloat('retry_delay_growth'),
         ]), function ($value) { return null !== $value; });
     }

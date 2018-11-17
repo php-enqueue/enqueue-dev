@@ -21,7 +21,7 @@ final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterfac
             throw new \InvalidArgumentException('The config must have dsn key set.');
         }
 
-        $dsn = new Dsn($config['dsn']);
+        $dsn = Dsn::parseFirst($config['dsn']);
 
         if ($factoryClass = $this->findFactoryClass($dsn, Resources::getAvailableConnections())) {
             return new $factoryClass(1 === count($config) ? $config['dsn'] : $config);

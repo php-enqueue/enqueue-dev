@@ -110,7 +110,7 @@ class RedisConnectionFactory implements ConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         $supportedSchemes = ['redis', 'rediss', 'tcp', 'tls', 'unix'];
         if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
@@ -121,7 +121,7 @@ class RedisConnectionFactory implements ConnectionFactory
             ));
         }
 
-        $database = $dsn->getInt('database');
+        $database = $dsn->getDecimal('database');
 
         // try use path as database name if not set.
         if (null === $database && 'unix' !== $dsn->getSchemeProtocol() && null !== $dsn->getPath()) {
