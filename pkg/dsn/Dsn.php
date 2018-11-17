@@ -250,7 +250,9 @@ class Dsn
             list($hostsPorts) = explode('#', $dsnWithoutUserPassword, 2);
             list($hostsPorts) = explode('?', $hostsPorts, 2);
             list($hostsPorts) = explode('/', $hostsPorts, 2);
-        } else {
+        }
+
+        if (empty($hostsPorts)) {
             return [
                 new self(
                     $scheme,

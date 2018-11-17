@@ -100,7 +100,7 @@ class StompConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('stomp' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "stomp:".', $dsn));
+            throw new \LogicException(sprintf('The given DSN is not supported. Must start with "stomp:".'));
         }
 
         return array_filter(array_replace($dsn->getQuery(), [

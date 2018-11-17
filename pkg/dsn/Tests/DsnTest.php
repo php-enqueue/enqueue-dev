@@ -180,6 +180,16 @@ class DsnTest extends TestCase
         $this->assertSame($expected, $dsn->getFloat('aName'));
     }
 
+    public function testShouldParseDSNWithoutAuthorityPart()
+    {
+        $dsn = Dsn::parseFirst('foo:///foo');
+
+        $this->assertNull($dsn->getUser());
+        $this->assertNull($dsn->getPassword());
+        $this->assertNull($dsn->getHost());
+        $this->assertNull($dsn->getPort());
+    }
+
     public function testShouldReturnDefaultFloatIfNotSet()
     {
         $dsn = Dsn::parseFirst('foo:');
