@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Quick tour
  
 * [Transport](#transport)
@@ -5,6 +14,7 @@
 * [Remote Procedure Call (RPC)](#remote-procedure-call-rpc)
 * [Client](#client)
 * [Cli commands](#cli-commands)
+* [Monitoring](#monitoring)
 
 ## Transport
 
@@ -12,7 +22,7 @@ The transport layer or PSR (Enqueue message service) is a Message Oriented Middl
 It is a messaging component that allows applications to create, send, receive, and read messages. 
 It allows the communication between different components of a distributed application to be loosely coupled, reliable, and asynchronous.
 
-PSR is inspired by JMS (Java Message Service). We tried to be as close as possible to [JSR 914](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) specification.
+PSR is inspired by JMS (Java Message Service). We tried to stay as close as possible to the [JSR 914](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) specification.
 For now it supports [AMQP](https://www.rabbitmq.com/tutorials/amqp-concepts.html) and [STOMP](https://stomp.github.io/) message queue protocols.
 You can connect to many modern brokers such as [RabbitMQ](https://www.rabbitmq.com/), [ActiveMQ](http://activemq.apache.org/) and others. 
 
@@ -20,32 +30,32 @@ Produce a message:
 
 ```php
 <?php
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 
-/** @var PsrConnectionFactory $connectionFactory **/
-$psrContext = $connectionFactory->createContext();
+/** @var ConnectionFactory $connectionFactory **/
+$context = $connectionFactory->createContext();
 
-$destination = $psrContext->createQueue('foo');
+$destination = $context->createQueue('foo');
 //$destination = $context->createTopic('foo');
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($destination, $message);
+$context->createProducer()->send($destination, $message);
 ```
 
 Consume a message:
 
 ```php
 <?php
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 
-/** @var PsrConnectionFactory $connectionFactory **/
-$psrContext = $connectionFactory->createContext();
+/** @var ConnectionFactory $connectionFactory **/
+$context = $connectionFactory->createContext();
 
-$destination = $psrContext->createQueue('foo');
+$destination = $context->createQueue('foo');
 //$destination = $context->createTopic('foo');
 
-$consumer = $psrContext->createConsumer($destination);
+$consumer = $context->createConsumer($destination);
 
 $message = $consumer->receive();
 
@@ -64,24 +74,24 @@ The `consume` method starts the consumption process which last as long as it is 
 
 ```php
 <?php
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
+use Interop\Queue\Context;
 use Enqueue\Consumption\QueueConsumer;
 
-/** @var PsrContext $psrContext */
+/** @var Context $context */
 
-$queueConsumer = new QueueConsumer($psrContext);
+$queueConsumer = new QueueConsumer($context);
 
-$queueConsumer->bind('foo_queue', function(PsrMessage $message) {
+$queueConsumer->bindCallback('foo_queue', function(Message $message) {
     // process message
     
-    return PsrProcessor::ACK;
+    return Processor::ACK;
 });
-$queueConsumer->bind('bar_queue', function(PsrMessage $message) {
+$queueConsumer->bindCallback('bar_queue', function(Message $message) {
     // process message
     
-    return PsrProcessor::ACK;
+    return Processor::ACK;
 });
 
 $queueConsumer->consume();
@@ -99,9 +109,9 @@ use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\SignalExtension;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
 
-/** @var \Interop\Queue\PsrContext $psrContext */
+/** @var \Interop\Queue\Context $context */
 
-$queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
+$queueConsumer = new QueueConsumer($context, new ChainExtension([
     new SignalExtension(),
     new LimitConsumptionTimeExtension(new \DateTime('now + 60 sec')),
 ]));
@@ -116,12 +126,12 @@ You can do several calls asynchronously. This is how you can send a RPC message 
 <?php
 use Enqueue\Rpc\RpcClient;
 
-/** @var \Interop\Queue\PsrContext $psrContext */
+/** @var \Interop\Queue\Context $context */
 
-$queue = $psrContext->createQueue('foo');
-$message = $psrContext->createMessage('Hi there!');
+$queue = $context->createQueue('foo');
+$message = $context->createMessage('Hi there!');
 
-$rpcClient = new RpcClient($psrContext);
+$rpcClient = new RpcClient($context);
 
 $promise = $rpcClient->callAsync($queue, $message, 1);
 $replyMessage = $promise->receive();
@@ -132,20 +142,20 @@ It simplifies a server side of RPC.
 
 ```php
 <?php
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 
-/** @var \Interop\Queue\PsrContext $psrContext */
+/** @var \Interop\Queue\Context $context */
 
-$queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
+$queueConsumer = new QueueConsumer($context, new ChainExtension([
     new ReplyExtension()
 ]));
 
-$queueConsumer->bind('foo', function(PsrMessage $message, PsrContext $context) {
+$queueConsumer->bindCallback('foo', function(Message $message, Context $context) {
     $replyMessage = $context->createMessage('Hello');
     
     return Result::reply($replyMessage);
@@ -157,8 +167,8 @@ $queueConsumer->consume();
 ## Client
 
 It provides an easy to use high level abstraction.
-The goal of the component is hide as much as possible low level details so you can concentrate on things that really matters. 
-For example, It configure a broker for you by creating queues, exchanges and bind them.
+The goal of the component is to hide as much as possible low level details so you can concentrate on things that really matter. 
+For example, it configures a broker for you by creating queues, exchanges and bind them.
 It provides easy to use services for producing and processing messages. 
 It supports unified format for setting message expiration, delay, timestamp, correlation id.
 It supports [message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) so different applications can talk to each other.
@@ -168,23 +178,22 @@ Here's an example of how you can send and consume **event messages**.
 ```php
 <?php
 use Enqueue\SimpleClient\SimpleClient;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
 // composer require enqueue/amqp-ext
 $client = new SimpleClient('amqp:');
 
 // composer require enqueue/fs
 $client = new SimpleClient('file://foo/bar');
-
-$client->setupBroker();
-
-$client->sendEvent('a_foo_topic', 'message');
-
-$client->bind('a_foo_topic', 'fooProcessor', function(PsrMessage $message) {
+$client->bindTopic('a_foo_topic', function(Message $message) {
     echo $message->getBody().PHP_EOL;
     
     // your event processor logic here
 });
+
+$client->setupBroker();
+
+$client->sendEvent('a_foo_topic', 'message');
 
 // this is a blocking call, it'll consume message until it is interrupted 
 $client->consume();
@@ -195,8 +204,8 @@ and **command messages**:
 ```php
 <?php
 use Enqueue\SimpleClient\SimpleClient;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 use Enqueue\Client\Config;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
@@ -207,17 +216,17 @@ $client = new SimpleClient('amqp:');
 // composer require enqueue/fs
 //$client = new SimpleClient('file://foo/bar');
 
-$client->setupBroker();
-
-$client->bind(Config::COMMAND_TOPIC, 'bar_command', function(PsrMessage $message) {
+$client->bindCommand('bar_command', function(Message $message) {
     // your bar command processor logic here
 });
 
-$client->bind(Config::COMMAND_TOPIC, 'baz_reply_command', function(PsrMessage $message, PsrContext $context) {
+$client->bindCommand('baz_reply_command', function(Message $message, Context $context) {
     // your baz reply command processor logic here
     
     return Result::reply($context->createMessage('theReplyBody'));
 });
+
+$client->setupBroker();
 
 // It is sent to one consumer.  
 $client->sendCommand('bar_command', 'aMessageData');
@@ -249,13 +258,13 @@ Let's see how you can use consumption one:
 // app.php
 
 use Symfony\Component\Console\Application;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
 
 /** @var QueueConsumer $queueConsumer */
 
-$queueConsumer->bind('a_queue', function(PsrMessage $message) {
+$queueConsumer->bindCallback('a_queue', function(Message $message) {
     // process message    
 });
 
@@ -272,5 +281,9 @@ and starts the consumption from the console:
 ```bash
 $ app.php consume
 ```
+
+## Monitoring
+
+There is a tool that can track sent\consumed messages as well as consumer performance. Read more [here](monitoring.md)
 
 [back to index](index.md)

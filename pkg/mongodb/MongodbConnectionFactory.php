@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 use MongoDB\Client;
 
-class MongodbConnectionFactory implements PsrConnectionFactory
+class MongodbConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -48,14 +51,17 @@ class MongodbConnectionFactory implements PsrConnectionFactory
         $this->config = $config;
     }
 
-    public function createContext()
+    /**
+     * @return MongodbContext
+     */
+    public function createContext(): Context
     {
         $client = new Client($this->config['dsn']);
 
         return new MongodbContext($client, $this->config);
     }
 
-    public static function parseDsn($dsn)
+    public static function parseDsn(string $dsn): array
     {
         $parsedUrl = parse_url($dsn);
         if (false === $parsedUrl) {

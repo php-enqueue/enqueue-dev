@@ -1,61 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Destination;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class NullConsumer implements PsrConsumer
+class NullConsumer implements Consumer
 {
     /**
-     * @var PsrDestination
+     * @var Destination
      */
     private $queue;
 
-    /**
-     * @param PsrDestination $queue
-     */
-    public function __construct(PsrDestination $queue)
+    public function __construct(Destination $queue)
     {
         $this->queue = $queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueue()
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?Message
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?Message
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(Message $message): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(Message $message, bool $requeue = false): void
     {
     }
 }

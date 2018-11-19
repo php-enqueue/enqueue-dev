@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpTools;
 
 trait DelayStrategyAwareTrait
@@ -9,12 +11,7 @@ trait DelayStrategyAwareTrait
      */
     protected $delayStrategy;
 
-    /**
-     * @param DelayStrategy|null $delayStrategy
-     *
-     * @return self
-     */
-    public function setDelayStrategy(DelayStrategy $delayStrategy = null)
+    public function setDelayStrategy(DelayStrategy $delayStrategy = null): DelayStrategyAware
     {
         $this->delayStrategy = $delayStrategy;
 

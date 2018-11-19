@@ -1,18 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 
-class NullContext implements PsrContext
+class NullContext implements Context
 {
     /**
-     * {@inheritdoc}
-     *
      * @return NullMessage
      */
-    public function createMessage($body = null, array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         $message = new NullMessage();
         $message->setBody($body);
@@ -23,55 +29,58 @@ class NullContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return NullQueue
      */
-    public function createQueue($name)
+    public function createQueue(string $name): Queue
     {
         return new NullQueue($name);
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullQueue
      */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): Queue
     {
         return $this->createQueue(uniqid('', true));
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return NullTopic
      */
-    public function createTopic($name)
+    public function createTopic(string $name): Topic
     {
         return new NullTopic($name);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return NullConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(Destination $destination): Consumer
     {
         return new NullConsumer($destination);
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullProducer
      */
-    public function createProducer()
+    public function createProducer(): Producer
     {
         return new NullProducer();
     }
 
     /**
-     * {@inheritdoc}
+     * @return NullSubscriptionConsumer
      */
-    public function close()
+    public function createSubscriptionConsumer(): SubscriptionConsumer
+    {
+        return new NullSubscriptionConsumer();
+    }
+
+    public function purgeQueue(Queue $queue): void
+    {
+    }
+
+    public function close(): void
     {
     }
 }

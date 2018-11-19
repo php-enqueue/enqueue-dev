@@ -2,18 +2,18 @@
 
 namespace Enqueue\Redis\Tests\Functional;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class StubProcessor implements PsrProcessor
+class StubProcessor implements Processor
 {
     public $result = self::ACK;
 
-    /** @var PsrMessage */
+    /** @var Message */
     public $lastProcessedMessage;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $this->lastProcessedMessage = $message;
 

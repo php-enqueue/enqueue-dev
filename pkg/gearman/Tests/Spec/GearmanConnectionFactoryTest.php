@@ -4,9 +4,9 @@ namespace Enqueue\Gearman\Tests\Spec;
 
 use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Gearman\Tests\SkipIfGearmanExtensionIsNotInstalledTrait;
-use Interop\Queue\Spec\PsrConnectionFactorySpec;
+use Interop\Queue\Spec\ConnectionFactorySpec;
 
-class GearmanConnectionFactoryTest extends PsrConnectionFactorySpec
+class GearmanConnectionFactoryTest extends ConnectionFactorySpec
 {
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 

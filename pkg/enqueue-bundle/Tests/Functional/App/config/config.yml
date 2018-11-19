@@ -15,33 +15,66 @@ framework:
     router:          { resource: '%kernel.root_dir%/config/routing.yml' }
     default_locale:  '%locale%'
 
-monolog:
-    handlers:
-        main:
-            type: 'null'
-            level: 'error'
-
 doctrine:
     dbal:
-        driver:   "%db.driver%"
-        host:     "%db.host%"
-        port:     "%db.port%"
-        dbname:   "%db.name%"
-        user:     "%db.user%"
-        password: "%db.password%"
+        url:   "%env(DOCTRINE_DSN)%"
+        driver: pdo_mysql
         charset:  UTF8
 
 enqueue:
-    transport:
-        default: 'null'
-        'null': ~
-    client:
-        traceable_producer: true
-    job: true
-    async_events: true
-
+    default:
+        transport: 'null:'
+        client:
+            traceable_producer: true
+        job: true
+        async_events: true
+        async_commands: true
 
 services:
+    test_enqueue.client.default.traceable_producer:
+        alias: 'enqueue.client.default.traceable_producer'
+        public: true
+
+    test_enqueue.transport.default.queue_consumer:
+        alias: 'enqueue.transport.default.queue_consumer'
+        public: true
+
+    test_enqueue.client.default.queue_consumer:
+        alias: 'enqueue.client.default.queue_consumer'
+        public: true
+
+    test_enqueue.transport.default.rpc_client:
+        alias: 'enqueue.transport.default.rpc_client'
+        public: true
+
+    test_enqueue.client.default.producer:
+        alias: 'enqueue.client.default.producer'
+        public: true
+
+    test_enqueue.client.default.spool_producer:
+        alias: 'enqueue.client.default.spool_producer'
+        public: true
+
+    test_Enqueue\Client\ProducerInterface:
+        alias: 'Enqueue\Client\ProducerInterface'
+        public: true
+
+    test_enqueue.client.default.driver:
+        alias: 'enqueue.client.default.driver'
+        public: true
+
+    test_enqueue.transport.default.context:
+        alias: 'enqueue.transport.default.context'
+        public: true
+
+    test_enqueue.client.consume_command:
+        alias: 'enqueue.client.consume_command'
+        public: true
+
+    test.enqueue.client.routes_command:
+        alias: 'enqueue.client.routes_command'
+        public: true
+
     test_async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncListener'
         public: true
@@ -52,13 +85,19 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestCommandSubscriberProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.command_subscriber', client: 'default' }
+
+    test_topic_subscriber_processor:
+        class: 'Enqueue\Bundle\Tests\Functional\App\TestTopicSubscriberProcessor'
+        public: true
+        tags:
+            - { name: 'enqueue.topic_subscriber', client: 'default' }
 
     test_exclusive_command_subscriber_processor:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestExclusiveCommandSubscriberProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.command_subscriber', client: 'default' }
 
     test_async_subscriber:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber'
@@ -79,4 +118,4 @@ services:
     enqueue.events.async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\AsyncListener'
         public: true
-        arguments: ['@Enqueue\Client\Producer', '@enqueue.events.registry']
+        arguments: ['@enqueue.client.default.producer', '@enqueue.events.registry']

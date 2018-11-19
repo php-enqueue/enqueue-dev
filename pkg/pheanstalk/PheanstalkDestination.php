@@ -1,46 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class PheanstalkDestination implements PsrQueue, PsrTopic
+class PheanstalkDestination implements Queue, Topic
 {
     /**
      * @var string
      */
     private $destinationName;
 
-    /**
-     * @param string $destinationName
-     */
-    public function __construct($destinationName)
+    public function __construct(string $destinationName)
     {
         $this->destinationName = $destinationName;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->destinationName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
-        return $this->getName();
+        return $this->destinationName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
-        return $this->getName();
+        return $this->destinationName;
     }
 }

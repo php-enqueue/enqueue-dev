@@ -1,99 +1,120 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Ramsey\Uuid\Uuid;
 
-class RedisProducer implements PsrProducer
+class RedisProducer implements Producer
 {
     /**
-     * @var Redis
+     * @var RedisContext
      */
-    private $redis;
+    private $context;
 
     /**
-     * @param Redis $redis
+     * @var int|null
      */
-    public function __construct(Redis $redis)
+    private $timeToLive;
+
+    /**
+     * @var int
+     */
+    private $deliveryDelay;
+
+    /**
+     * @param RedisContext $context
+     */
+    public function __construct(RedisContext $context)
     {
-        $this->redis = $redis;
+        $this->context = $context;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisDestination $destination
      * @param RedisMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        $this->redis->lpush($destination->getName(), json_encode($message));
-    }
+        $message->setMessageId(Uuid::uuid4()->toString());
+        $message->setHeader('attempts', 0);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeliveryDelay($deliveryDelay)
-    {
-        if (null === $deliveryDelay) {
-            return;
+        if (null !== $this->timeToLive && null === $message->getTimeToLive()) {
+            $message->setTimeToLive($this->timeToLive);
         }
 
-        throw new \LogicException('Not implemented');
+        if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
+            $message->setDeliveryDelay($this->deliveryDelay);
+        }
+
+        if ($message->getTimeToLive()) {
+            $message->setHeader('expires_at', time() + $message->getTimeToLive());
+        }
+
+        $payload = $this->context->getSerializer()->toString($message);
+
+        if ($message->getDeliveryDelay()) {
+            $deliveryAt = time() + $message->getDeliveryDelay();
+            $this->context->getRedis()->zadd($destination->getName().':delayed', $payload, $deliveryAt);
+        } else {
+            $this->context->getRedis()->lpush($destination->getName(), $payload);
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function getDeliveryDelay()
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
-        return null;
+        $this->deliveryDelay = $deliveryDelay;
+
+        return $this;
+    }
+
+    public function getDeliveryDelay(): ?int
+    {
+        return $this->deliveryDelay;
     }
 
     /**
-     * {@inheritdoc}
+     * @return RedisProducer
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
-        throw new \LogicException('Not implemented');
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
-        if (null === $timeToLive) {
-            return;
-        }
+        $this->timeToLive = $timeToLive;
 
-        throw new \LogicException('Not implemented');
+        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
-        return null;
+        return $this->timeToLive;
     }
 }

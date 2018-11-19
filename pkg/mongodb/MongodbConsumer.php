@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class MongodbConsumer implements PsrConsumer
+class MongodbConsumer implements Consumer
 {
     /**
      * @var MongodbContext
@@ -21,54 +24,44 @@ class MongodbConsumer implements PsrConsumer
     /**
      * @var int microseconds
      */
-    private $pollingInterval = 1000000;
+    private $pollingInterval;
 
-    /**
-     * @param MongodbContext     $context
-     * @param MongodbDestination $queue
-     */
     public function __construct(MongodbContext $context, MongodbDestination $queue)
     {
         $this->context = $context;
         $this->queue = $queue;
+
+        $this->pollingInterval = 1000;
     }
 
     /**
      * Set polling interval in milliseconds.
-     *
-     * @param int $msec
      */
-    public function setPollingInterval($msec)
+    public function setPollingInterval(int $msec): void
     {
-        $this->pollingInterval = $msec * 1000;
+        $this->pollingInterval = $msec;
     }
 
     /**
      * Get polling interval in milliseconds.
-     *
-     * @return int
      */
-    public function getPollingInterval()
+    public function getPollingInterval(): int
     {
-        return (int) $this->pollingInterval / 1000;
+        return $this->pollingInterval;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return MongodbDestination
      */
-    public function getQueue()
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return MongodbMessage|null
+     * @return MongodbMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?Message
     {
         $timeout /= 1000;
         $startAt = microtime(true);
@@ -81,43 +74,37 @@ class MongodbConsumer implements PsrConsumer
             }
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
 
-            usleep($this->pollingInterval);
+            usleep($this->pollingInterval * 1000);
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
+                return null;
             }
         }
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return MongodbMessage|null
+     * @return MongodbMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?Message
     {
         return $this->receiveMessage();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MongodbMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(Message $message): void
     {
         // does nothing
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MongodbMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
 
@@ -128,10 +115,7 @@ class MongodbConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @return MongodbMessage|null
-     */
-    protected function receiveMessage()
+    private function receiveMessage(): ?MongodbMessage
     {
         $now = time();
         $collection = $this->context->getCollection();
@@ -153,26 +137,9 @@ class MongodbConsumer implements PsrConsumer
             return null;
         }
         if (empty($message['time_to_live']) || $message['time_to_live'] > time()) {
-            return $this->convertMessage($message);
+            return $this->context->convertMessage($message);
         }
-    }
 
-    /**
-     * @param array $dbalMessage
-     *
-     * @return MongodbMessage
-     */
-    protected function convertMessage(array $mongodbMessage)
-    {
-        $properties = JSON::decode($mongodbMessage['properties']);
-        $headers = JSON::decode($mongodbMessage['headers']);
-
-        $message = $this->context->createMessage($mongodbMessage['body'], $properties, $headers);
-        $message->setId((string) $mongodbMessage['_id']);
-        $message->setPriority((int) $mongodbMessage['priority']);
-        $message->setRedelivered((bool) $mongodbMessage['redelivered']);
-        $message->setPublishedAt((int) $mongodbMessage['published_at']);
-
-        return $message;
+        return null;
     }
 }

@@ -2,14 +2,11 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Context\Start;
+use Enqueue\Consumption\StartExtensionInterface;
 
-class NicenessExtension implements ExtensionInterface
+class NicenessExtension implements StartExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var int
      */
@@ -32,10 +29,7 @@ class NicenessExtension implements ExtensionInterface
         $this->niceness = $niceness;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onStart(Context $context)
+    public function onStart(Start $context): void
     {
         if (0 !== $this->niceness) {
             $changed = @proc_nice($this->niceness);

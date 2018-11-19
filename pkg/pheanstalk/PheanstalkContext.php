@@ -1,92 +1,100 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkContext implements PsrContext
+class PheanstalkContext implements Context
 {
     /**
      * @var Pheanstalk
      */
     private $pheanstalk;
 
-    /**
-     * @param Pheanstalk $pheanstalk
-     */
     public function __construct(Pheanstalk $pheanstalk)
     {
         $this->pheanstalk = $pheanstalk;
     }
 
     /**
-     * {@inheritdoc}
+     * @return PheanstalkMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new PheanstalkMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
+     * @return PheanstalkDestination
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): Topic
     {
         return new PheanstalkDestination($topicName);
     }
 
     /**
-     * {@inheritdoc}
+     * @return PheanstalkDestination
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): Queue
     {
         return new PheanstalkDestination($queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): Queue
     {
-        throw new \LogicException('Not implemented');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return PheanstalkProducer
      */
-    public function createProducer()
+    public function createProducer(): Producer
     {
         return new PheanstalkProducer($this->pheanstalk);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param PheanstalkDestination $destination
      *
      * @return PheanstalkConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, PheanstalkDestination::class);
 
         return new PheanstalkConsumer($destination, $this->pheanstalk);
     }
 
-    public function close()
+    public function close(): void
     {
         $this->pheanstalk->getConnection()->disconnect();
     }
 
-    /**
-     * @return Pheanstalk
-     */
-    public function getPheanstalk()
+    public function createSubscriptionConsumer(): SubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function purgeQueue(Queue $queue): void
+    {
+        throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function getPheanstalk(): Pheanstalk
     {
         return $this->pheanstalk;
     }

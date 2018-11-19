@@ -1,15 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Impl\ConsumerPollingTrait;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class DbalConsumer implements PsrConsumer
+class DbalConsumer implements Consumer
 {
+    use ConsumerPollingTrait,
+        DbalConsumerHelperTrait;
+
     /**
      * @var DbalContext
      */
@@ -26,242 +32,93 @@ class DbalConsumer implements PsrConsumer
     private $queue;
 
     /**
-     * @var int microseconds
+     * Default 20 minutes in milliseconds.
+     *
+     * @var int
      */
-    private $pollingInterval = 1000000;
+    private $redeliveryDelay;
 
-    /**
-     * @param DbalContext     $context
-     * @param DbalDestination $queue
-     */
     public function __construct(DbalContext $context, DbalDestination $queue)
     {
         $this->context = $context;
         $this->queue = $queue;
         $this->dbal = $this->context->getDbalConnection();
+
+        $this->redeliveryDelay = 1200000;
     }
 
     /**
-     * Set polling interval in milliseconds.
-     *
-     * @param int $msec
+     * Get interval between retry failed messages in milliseconds.
      */
-    public function setPollingInterval($msec)
+    public function getRedeliveryDelay(): int
     {
-        $this->pollingInterval = $msec * 1000;
+        return $this->redeliveryDelay;
     }
 
     /**
-     * Get polling interval in milliseconds.
-     *
-     * @return int
+     * Get interval between retrying failed messages in milliseconds.
      */
-    public function getPollingInterval()
+    public function setRedeliveryDelay(int $redeliveryDelay): self
     {
-        return (int) $this->pollingInterval / 1000;
+        $this->redeliveryDelay = $redeliveryDelay;
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return DbalDestination
      */
-    public function getQueue()
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return DbalMessage|null
-     */
-    public function receive($timeout = 0)
+    public function receiveNoWait(): ?Message
     {
-        $timeout /= 1000;
-        $startAt = microtime(true);
+        $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
-        while (true) {
-            $message = $this->receiveMessage();
+        $this->removeExpiredMessages();
+        $this->redeliverMessages();
 
-            if ($message) {
-                return $message;
-            }
-
-            if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
-            }
-
-            usleep($this->pollingInterval);
-
-            if ($timeout && (microtime(true) - $startAt) >= $timeout) {
-                return;
-            }
-        }
+        return $this->fetchMessage([$this->queue->getQueueName()], $redeliveryDelay);
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return DbalMessage|null
-     */
-    public function receiveNoWait()
-    {
-        return $this->receiveMessage();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
      * @param DbalMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(Message $message): void
     {
-        // does nothing
+        InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
+
+        $this->deleteMessage($message->getDeliveryId());
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param DbalMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
         if ($requeue) {
-            $this->context->createProducer()->send($this->queue, $message);
+            $message = clone $message;
+            $message->setRedelivered(false);
+
+            $this->getContext()->createProducer()->send($this->queue, $message);
 
             return;
         }
+
+        $this->deleteMessage($message->getDeliveryId());
     }
 
-    /**
-     * @return DbalMessage|null
-     */
-    protected function receiveMessage()
+    protected function getContext(): DbalContext
     {
-        $this->dbal->beginTransaction();
-        try {
-            $now = time();
-
-            $dbalMessage = $this->fetchPrioritizedMessage($now) ?: $dbalMessage = $this->fetchMessage($now);
-            if (false == $dbalMessage) {
-                $this->dbal->commit();
-
-                return;
-            }
-
-            // remove message
-            $affectedRows = $this->dbal->delete($this->context->getTableName(), ['id' => $dbalMessage['id']], [
-                'id' => Type::GUID,
-            ]);
-
-            if (1 !== $affectedRows) {
-                throw new \LogicException(sprintf('Expected record was removed but it is not. id: "%s"', $dbalMessage['id']));
-            }
-
-            $this->dbal->commit();
-
-            if (empty($dbalMessage['time_to_live']) || $dbalMessage['time_to_live'] > time()) {
-                return $this->convertMessage($dbalMessage);
-            }
-        } catch (\Exception $e) {
-            $this->dbal->rollBack();
-
-            throw $e;
-        }
+        return $this->context;
     }
 
-    /**
-     * @param array $dbalMessage
-     *
-     * @return DbalMessage
-     */
-    protected function convertMessage(array $dbalMessage)
+    protected function getConnection(): Connection
     {
-        $message = $this->context->createMessage();
-
-        $message->setBody($dbalMessage['body']);
-        $message->setPriority((int) $dbalMessage['priority']);
-        $message->setRedelivered((bool) $dbalMessage['redelivered']);
-        $message->setPublishedAt((int) $dbalMessage['published_at']);
-
-        if ($dbalMessage['headers']) {
-            $message->setHeaders(JSON::decode($dbalMessage['headers']));
-        }
-
-        if ($dbalMessage['properties']) {
-            $message->setProperties(JSON::decode($dbalMessage['properties']));
-        }
-
-        return $message;
-    }
-
-    /**
-     * @param int $now
-     *
-     * @return array|null
-     */
-    private function fetchPrioritizedMessage($now)
-    {
-        $query = $this->dbal->createQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->context->getTableName())
-            ->andWhere('queue = :queue')
-            ->andWhere('priority IS NOT NULL')
-            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-            ->addOrderBy('priority', 'desc')
-            ->addOrderBy('published_at', 'asc')
-            ->setMaxResults(1)
-        ;
-
-        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
-
-        return $this->dbal->executeQuery(
-            $sql,
-            [
-                'queue' => $this->queue->getQueueName(),
-                'delayedUntil' => $now,
-            ],
-            [
-                'queue' => Type::STRING,
-                'delayedUntil' => Type::INTEGER,
-            ]
-        )->fetch();
-    }
-
-    /**
-     * @param int $now
-     *
-     * @return array|null
-     */
-    private function fetchMessage($now)
-    {
-        $query = $this->dbal->createQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->context->getTableName())
-            ->andWhere('queue = :queue')
-            ->andWhere('priority IS NULL')
-            ->andWhere('(delayed_until IS NULL OR delayed_until <= :delayedUntil)')
-            ->addOrderBy('published_at', 'asc')
-            ->setMaxResults(1)
-        ;
-
-        $sql = $query->getSQL().' '.$this->dbal->getDatabasePlatform()->getWriteLockSQL();
-
-        return $this->dbal->executeQuery(
-            $sql,
-            [
-                'queue' => $this->queue->getQueueName(),
-                'delayedUntil' => $now,
-            ],
-            [
-                'queue' => Type::STRING,
-                'delayedUntil' => Type::INTEGER,
-            ]
-        )->fetch();
+        return $this->dbal;
     }
 }

@@ -19,12 +19,8 @@ use Enqueue\Dbal\DbalConnectionFactory;
 
 $config = [
     'connection' => [
-        'dbname' => getenv('DOCTRINE_DB_NAME'),
-        'user' => getenv('DOCTRINE_USER'),
-        'password' => getenv('DOCTRINE_PASSWORD'),
-        'host' => getenv('DOCTRINE_HOST'),
-        'port' => getenv('DOCTRINE_PORT'),
-        'driver' => getenv('DOCTRINE_DRIVER'),
+        'url' => getenv('DOCTRINE_DSN'),
+        'driver' => 'pdo_mysql',
     ],
 ];
 

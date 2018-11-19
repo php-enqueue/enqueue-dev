@@ -21,59 +21,110 @@ class MessageQueueCollectorTest extends TestCase
         $this->assertClassExtends(DataCollector::class, MessageQueueCollector::class);
     }
 
-    public function testCouldBeConstructedWithMessageProducerAsFirstArgument()
+    public function testCouldBeConstructedWithEmptyConstructor()
     {
-        new MessageQueueCollector($this->createProducerMock());
+        new MessageQueueCollector();
     }
 
     public function testShouldReturnExpectedName()
     {
-        $collector = new MessageQueueCollector($this->createProducerMock());
+        $collector = new MessageQueueCollector();
 
         $this->assertEquals('enqueue.message_queue', $collector->getName());
     }
 
     public function testShouldReturnEmptySentMessageArrayIfNotTraceableProducer()
     {
-        $collector = new MessageQueueCollector($this->createProducerMock());
+        $collector = new MessageQueueCollector();
+        $collector->addProducer('default', $this->createProducerMock());
 
         $collector->collect(new Request(), new Response());
 
         $this->assertSame([], $collector->getSentMessages());
     }
 
-    public function testShouldReturnSentMessageArrayTakenFromTraceableProducer()
+    public function testShouldReturnSentMessageArrayTakenFromTraceableProducers()
     {
-        $producerMock = $this->createTraceableProducerMock();
-        $producerMock
-            ->expects($this->once())
-            ->method('getTraces')
-            ->willReturn([['foo'], ['bar']]);
+        $producer1 = new TraceableProducer($this->createProducerMock());
+        $producer1->sendEvent('fooTopic1', 'fooMessage');
+        $producer1->sendCommand('barCommand1', 'barMessage');
 
-        $collector = new MessageQueueCollector($producerMock);
+        $producer2 = new TraceableProducer($this->createProducerMock());
+        $producer2->sendEvent('fooTopic2', 'fooMessage');
+
+        $collector = new MessageQueueCollector();
+        $collector->addProducer('foo', $producer1);
+        $collector->addProducer('bar', $producer2);
 
         $collector->collect(new Request(), new Response());
 
-        $this->assertSame([['foo'], ['bar']], $collector->getSentMessages());
+        $this->assertArraySubset(
+            [
+                'foo' => [
+                    [
+                        'topic' => 'fooTopic1',
+                        'command' => null,
+                        'body' => 'fooMessage',
+                        'headers' => [],
+                        'properties' => [],
+                        'priority' => null,
+                        'expire' => null,
+                        'delay' => null,
+                        'timestamp' => null,
+                        'contentType' => null,
+                        'messageId' => null,
+                    ],
+                    [
+                        'topic' => null,
+                        'command' => 'barCommand1',
+                        'body' => 'barMessage',
+                        'headers' => [],
+                        'properties' => [],
+                        'priority' => null,
+                        'expire' => null,
+                        'delay' => null,
+                        'timestamp' => null,
+                        'contentType' => null,
+                        'messageId' => null,
+                    ],
+                ],
+                'bar' => [
+                    [
+                        'topic' => 'fooTopic2',
+                        'command' => null,
+                        'body' => 'fooMessage',
+                        'headers' => [],
+                        'properties' => [],
+                        'priority' => null,
+                        'expire' => null,
+                        'delay' => null,
+                        'timestamp' => null,
+                        'contentType' => null,
+                        'messageId' => null,
+                    ],
+                ],
+            ],
+            $collector->getSentMessages()
+        );
     }
 
     public function testShouldPrettyPrintKnownPriority()
     {
-        $collector = new MessageQueueCollector($this->createProducerMock());
+        $collector = new MessageQueueCollector();
 
         $this->assertEquals('normal', $collector->prettyPrintPriority(MessagePriority::NORMAL));
     }
 
     public function testShouldPrettyPrintUnknownPriority()
     {
-        $collector = new MessageQueueCollector($this->createProducerMock());
+        $collector = new MessageQueueCollector();
 
         $this->assertEquals('unknownPriority', $collector->prettyPrintPriority('unknownPriority'));
     }
 
     public function testShouldEnsureStringKeepStringSame()
     {
-        $collector = new MessageQueueCollector($this->createProducerMock());
+        $collector = new MessageQueueCollector();
 
         $this->assertEquals('foo', $collector->ensureString('foo'));
         $this->assertEquals('bar baz', $collector->ensureString('bar baz'));
@@ -81,7 +132,7 @@ class MessageQueueCollectorTest extends TestCase
 
     public function testShouldEnsureStringEncodeArrayToJson()
     {
-        $collector = new MessageQueueCollector($this->createProducerMock());
+        $collector = new MessageQueueCollector();
 
         $this->assertEquals('["foo","bar"]', $collector->ensureString(['foo', 'bar']));
     }

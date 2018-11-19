@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpBunny;
 
 use Enqueue\AmqpTools\ConnectionConfig;
 use Enqueue\AmqpTools\DelayStrategyAware;
 use Enqueue\AmqpTools\DelayStrategyAwareTrait;
+use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 use Interop\Amqp\AmqpConnectionFactory as InteropAmqpConnectionFactory;
+use Interop\Queue\Context;
 
 class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrategyAware
 {
@@ -24,34 +28,25 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     /**
      * @see \Enqueue\AmqpTools\ConnectionConfig for possible config formats and values
      *
-     * In addition this factory accepts next options:
-     *   receive_method - Could be either basic_get or basic_consume
-     *
      * @param array|string|null $config
      */
     public function __construct($config = 'amqp:')
     {
         $this->config = (new ConnectionConfig($config))
             ->addSupportedScheme('amqp+bunny')
-            ->addDefaultOption('receive_method', 'basic_get')
             ->addDefaultOption('tcp_nodelay', null)
             ->parse()
         ;
 
-        $supportedMethods = ['basic_get', 'basic_consume'];
-        if (false == in_array($this->config->getOption('receive_method'), $supportedMethods, true)) {
-            throw new \LogicException(sprintf(
-                'Invalid "receive_method" option value "%s". It could be only "%s"',
-                $this->config->getOption('receive_method'),
-                implode('", "', $supportedMethods)
-            ));
+        if (in_array('rabbitmq', $this->config->getSchemeExtensions(), true)) {
+            $this->setDelayStrategy(new RabbitMqDlxDelayStrategy());
         }
     }
 
     /**
      * @return AmqpContext
      */
-    public function createContext()
+    public function createContext(): Context
     {
         if ($this->config->isLazy()) {
             $context = new AmqpContext(function () {
@@ -72,18 +67,12 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
         return $context;
     }
 
-    /**
-     * @return ConnectionConfig
-     */
-    public function getConfig()
+    public function getConfig(): ConnectionConfig
     {
         return $this->config;
     }
 
-    /**
-     * @return BunnyClient
-     */
-    private function establishConnection()
+    private function establishConnection(): BunnyClient
     {
         if ($this->config->isSslOn()) {
             throw new \LogicException('The bunny library does not support SSL connections');

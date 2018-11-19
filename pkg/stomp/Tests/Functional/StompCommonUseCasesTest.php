@@ -41,7 +41,7 @@ class StompCommonUseCasesTest extends \PHPUnit\Framework\TestCase
         $startAt = microtime(true);
 
         $consumer = $this->stompContext->createConsumer($queue);
-        $message = $consumer->receive(2);
+        $message = $consumer->receive(2000);
 
         $endAt = microtime(true);
 
@@ -85,7 +85,7 @@ class StompCommonUseCasesTest extends \PHPUnit\Framework\TestCase
         $producer->send($queue, $message);
 
         $consumer = $this->stompContext->createConsumer($queue);
-        $message = $consumer->receive(1);
+        $message = $consumer->receive(1000);
 
         $this->assertInstanceOf(StompMessage::class, $message);
         $consumer->acknowledge($message);

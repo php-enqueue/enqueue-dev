@@ -2,13 +2,14 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
+use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AsyncProcessor implements PsrProcessor
+class AsyncProcessor implements Processor, CommandSubscriberInterface
 {
     /**
      * @var Registry
@@ -16,23 +17,18 @@ class AsyncProcessor implements PsrProcessor
     private $registry;
 
     /**
-     * @var AsyncEventDispatcher|OldAsyncEventDispatcher
+     * @var AsyncEventDispatcher
      */
     private $dispatcher;
 
-    /**
-     * @param Registry                 $registry
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(Registry $registry, EventDispatcherInterface $dispatcher)
     {
         $this->registry = $registry;
 
-        if (false == ($dispatcher instanceof AsyncEventDispatcher || $dispatcher instanceof OldAsyncEventDispatcher)) {
+        if (false == $dispatcher instanceof AsyncEventDispatcher) {
             throw new \InvalidArgumentException(sprintf(
-                'The dispatcher argument must be either instance of "%s" or "%s" but got "%s"',
+                'The dispatcher argument must be instance of "%s" but got "%s"',
                 AsyncEventDispatcher::class,
-                OldAsyncEventDispatcher::class,
                 get_class($dispatcher)
             ));
         }
@@ -40,10 +36,7 @@ class AsyncProcessor implements PsrProcessor
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         if (false == $eventName = $message->getProperty('event_name')) {
             return Result::reject('The message is missing "event_name" property');
@@ -57,5 +50,10 @@ class AsyncProcessor implements PsrProcessor
         $this->dispatcher->dispatchAsyncListenersOnly($eventName, $event);
 
         return self::ACK;
+    }
+
+    public static function getSubscribedCommand()
+    {
+        return Commands::DISPATCH_ASYNC_EVENTS;
     }
 }

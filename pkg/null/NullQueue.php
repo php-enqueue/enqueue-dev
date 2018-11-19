@@ -1,28 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue;
 
-class NullQueue implements PsrQueue
+class NullQueue implements Queue
 {
     /**
      * @var string
      */
     private $name;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->name;
     }

@@ -8,21 +8,23 @@ use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Mongodb\MongodbProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use MongoDB\Client;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbContextTest extends \PHPUnit_Framework_TestCase
+class MongodbContextTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementContextInterface()
     {
-        $this->assertClassImplements(PsrContext::class, MongodbContext::class);
+        $this->assertClassImplements(Context::class, MongodbContext::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -66,6 +68,32 @@ class MongodbContextTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['pkey' => 'pval'], $message->getProperties());
         $this->assertEquals(['hkey' => 'hval'], $message->getHeaders());
         $this->assertNull($message->getPriority());
+        $this->assertFalse($message->isRedelivered());
+    }
+
+    public function testShouldConvertFromArrayToMongodbMessage()
+    {
+        $arrayData = [
+            '_id' => 'stringId',
+            'body' => 'theBody',
+            'properties' => json_encode(['barProp' => 'barPropVal']),
+            'headers' => json_encode(['fooHeader' => 'fooHeaderVal']),
+            'priority' => '12',
+            'published_at' => 1525935820,
+            'redelivered' => false,
+        ];
+
+        $context = new MongodbContext($this->createClientMock());
+        $message = $context->convertMessage($arrayData);
+
+        $this->assertInstanceOf(MongodbMessage::class, $message);
+
+        $this->assertEquals('stringId', $message->getId());
+        $this->assertEquals('theBody', $message->getBody());
+        $this->assertEquals(['barProp' => 'barPropVal'], $message->getProperties());
+        $this->assertEquals(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
+        $this->assertEquals(12, $message->getPriority());
+        $this->assertEquals(1525935820, $message->getPublishedAt());
         $this->assertFalse($message->isRedelivered());
     }
 
@@ -145,12 +173,11 @@ class MongodbContextTest extends \PHPUnit_Framework_TestCase
         ], $context->getConfig());
     }
 
-    public function testShouldThrowBadMethodCallExceptionOncreateTemporaryQueueCall()
+    public function testShouldThrowNotSupportedOnCreateTemporaryQueueCall()
     {
         $context = new MongodbContext($this->createClientMock());
 
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Mongodb transport does not support temporary queues');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
 
         $context->createTemporaryQueue();
     }
@@ -164,6 +191,6 @@ class MongodbContextTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class NotSupportedDestination2 implements PsrDestination
+class NotSupportedDestination2 implements Destination
 {
 }

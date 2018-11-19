@@ -205,18 +205,12 @@ class Message
         $this->delay = $delay;
     }
 
-    /**
-     * @param string $scope
-     */
-    public function setScope($scope)
+    public function setScope(string $scope): void
     {
         $this->scope = $scope;
     }
 
-    /**
-     * @return string
-     */
-    public function getScope()
+    public function getScope(): string
     {
         return $this->scope;
     }

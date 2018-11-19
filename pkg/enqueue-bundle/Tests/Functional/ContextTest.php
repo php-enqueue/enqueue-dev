@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional;
 
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 
 /**
  * @group functional
@@ -11,8 +11,8 @@ class ContextTest extends WebTestCase
 {
     public function testCouldBeGetFromContainerAsService()
     {
-        $connection = static::$container->get('enqueue.transport.context');
+        $connection = static::$container->get('test_enqueue.transport.default.context');
 
-        $this->assertInstanceOf(PsrContext::class, $connection);
+        $this->assertInstanceOf(Context::class, $connection);
     }
 }

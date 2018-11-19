@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpTools;
 
 class SignalSocketHelper
@@ -19,9 +21,9 @@ class SignalSocketHelper
         $this->handlers = [];
     }
 
-    public function beforeSocket()
+    public function beforeSocket(): void
     {
-        // PHP 7.1 and higher
+        // PHP 7.1 and pcntl ext installed higher
         if (false == function_exists('pcntl_signal_get_handler')) {
             return;
         }
@@ -51,7 +53,7 @@ class SignalSocketHelper
         }
     }
 
-    public function afterSocket()
+    public function afterSocket(): void
     {
         // PHP 7.1 and higher
         if (false == function_exists('pcntl_signal_get_handler')) {
@@ -74,7 +76,7 @@ class SignalSocketHelper
     /**
      * @return bool
      */
-    public function wasThereSignal()
+    public function wasThereSignal(): bool
     {
         return (bool) $this->wasThereSignal;
     }

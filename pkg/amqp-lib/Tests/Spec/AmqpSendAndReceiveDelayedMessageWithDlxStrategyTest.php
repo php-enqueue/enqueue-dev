@@ -5,7 +5,7 @@ namespace Enqueue\AmqpLib\Tests\Spec;
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 use Enqueue\AmqpLib\AmqpContext;
 use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
 /**
@@ -29,7 +29,7 @@ class AmqpSendAndReceiveDelayedMessageWithDlxStrategyTest extends SendAndReceive
      *
      * {@inheritdoc}
      */
-    protected function createQueue(PsrContext $context, $queueName)
+    protected function createQueue(Context $context, $queueName)
     {
         $queue = parent::createQueue($context, $queueName);
 

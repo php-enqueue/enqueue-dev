@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Client. Supported brokers
 
 Here's the list of transports supported by Enqueue Client:
@@ -13,7 +22,7 @@ Here's the list of transports supported by Enqueue Client:
 | Redis               | [enqueue/gps](../transport/redis.md)                       | redis:                          |
 | Amazon SQS          | [enqueue/sqs](../transport/sqs.md)                         | sqs:                            |
 | STOMP, RabbitMQ     | [enqueue/stomp](../transport/stomp.md)                     | stomp:                          |
-| Kafka               | [enqueue/stomp](../transport/kafka.md)                     | kafka:                          |
+| Kafka               | [enqueue/rdkafka](../transport/kafka.md)                   | kafka:                          |
 | Null                | [enqueue/null](../transport/null.md)                       | null:                           |
 
 Here's the list of protocols and Client features supported by them 

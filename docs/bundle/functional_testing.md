@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Functional testing
 
 In this chapter we give some advices on how to test message queue related logic.
@@ -18,10 +27,9 @@ Here's how you can configure it.
 # app/config/config_test.yml
 
 enqueue:
-    transport:
-        default: 'null'
-        'null': ~
-    client: ~
+    default:
+        transport: 'null:'
+        client: ~
 ```
 
 ## Traceable message producer
@@ -33,8 +41,9 @@ There is a solution for that. You have to enable traceable message producer in t
 # app/config/config_test.yml
 
 enqueue:
-    client:
-        traceable_producer: true
+    default:
+        client:
+            traceable_producer: true
 ```
 
 If you did so, you can use its methods `getTraces`, `getTopicTraces` or `clearTraces`. Here's an example:

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkMessage implements PsrMessage, \JsonSerializable
+class PheanstalkMessage implements Message, \JsonSerializable
 {
     /**
      * @var string
@@ -33,12 +35,7 @@ class PheanstalkMessage implements PsrMessage, \JsonSerializable
      */
     private $job;
 
-    /**
-     * @param string $body
-     * @param array  $properties
-     * @param array  $headers
-     */
-    public function __construct($body = '', array $properties = [], array $headers = [])
+    public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -46,220 +43,139 @@ class PheanstalkMessage implements PsrMessage, \JsonSerializable
         $this->redelivered = false;
     }
 
-    /**
-     * @param string $body
-     */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * @param array $properties
-     */
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
         $this->properties = $properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
         $this->properties[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
         return array_key_exists($name, $this->properties) ? $this->properties[$name] : $default;
     }
 
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
         $this->headers[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
         return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
-    /**
-     * @return bool
-     */
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
         return $this->redelivered;
     }
 
-    /**
-     * @param bool $redelivered
-     */
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
         $this->redelivered = $redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
         $this->setHeader('correlation_id', (string) $correlationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
         return $this->getHeader('correlation_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
         $this->setHeader('message_id', (string) $messageId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
         return $this->getHeader('message_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         $value = $this->getHeader('timestamp');
 
         return null === $value ? null : (int) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
 
-    /**
-     * @param string|null $replyTo
-     */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
         return $this->getHeader('reply_to');
     }
 
-    /**
-     * @param int $time
-     */
-    public function setTimeToRun($time)
+    public function setTimeToRun(int $time)
     {
         $this->setHeader('ttr', $time);
     }
 
-    /**
-     * @return int
-     */
-    public function getTimeToRun()
+    public function getTimeToRun(): int
     {
         return $this->getHeader('ttr', Pheanstalk::DEFAULT_TTR);
     }
 
-    /**
-     * @param int $priority
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority): void
     {
         $this->setHeader('priority', $priority);
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->getHeader('priority', Pheanstalk::DEFAULT_PRIORITY);
     }
 
-    /**
-     * @param int $delay
-     */
-    public function setDelay($delay)
+    public function setDelay(int $delay): void
     {
         $this->setHeader('delay', $delay);
     }
 
-    /**
-     * @return int
-     */
-    public function getDelay()
+    public function getDelay(): int
     {
         return $this->getHeader('delay', Pheanstalk::DEFAULT_DELAY);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'body' => $this->getBody(),
@@ -268,12 +184,7 @@ class PheanstalkMessage implements PsrMessage, \JsonSerializable
         ];
     }
 
-    /**
-     * @param string $json
-     *
-     * @return self
-     */
-    public static function jsonUnserialize($json)
+    public static function jsonUnserialize(string $json): self
     {
         $data = json_decode($json, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
@@ -287,18 +198,12 @@ class PheanstalkMessage implements PsrMessage, \JsonSerializable
         return new self($data['body'], $data['properties'], $data['headers']);
     }
 
-    /**
-     * @return Job
-     */
-    public function getJob()
+    public function getJob(): ?Job
     {
         return $this->job;
     }
 
-    /**
-     * @param Job $job
-     */
-    public function setJob(Job $job)
+    public function setJob(Job $job = null): void
     {
         $this->job = $job;
     }

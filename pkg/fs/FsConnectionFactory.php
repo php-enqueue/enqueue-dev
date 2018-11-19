@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Fs;
 
-use Interop\Queue\PsrConnectionFactory;
+use Enqueue\Dsn\Dsn;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class FsConnectionFactory implements PsrConnectionFactory
+class FsConnectionFactory implements ConnectionFactory
 {
     /**
      * @var string
@@ -24,31 +28,37 @@ class FsConnectionFactory implements PsrConnectionFactory
      * or
      *
      * file: - create queue files in tmp dir.
-     * file://home/foo/enqueue
-     * file://home/foo/enqueue?pre_fetch_count=20&chmod=0777
+     * file:///home/foo/enqueue
+     * file:///home/foo/enqueue?pre_fetch_count=20&chmod=0777
      *
      * @param array|string|null $config
      */
     public function __construct($config = 'file:')
     {
         if (empty($config) || 'file:' === $config) {
-            $config = ['path' => sys_get_temp_dir().'/enqueue'];
+            $config = $this->parseDsn('file://'.sys_get_temp_dir().'/enqueue');
         } elseif (is_string($config)) {
-            $config = $this->parseDsn($config);
+            if ('/' === $config[0]) {
+                $config = $this->parseDsn('file://'.$config);
+            } else {
+                $config = $this->parseDsn($config);
+            }
         } elseif (is_array($config)) {
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
+
+        if (empty($this->config['path'])) {
+            throw new \LogicException('The path option must be set.');
+        }
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return FsContext
      */
-    public function createContext()
+    public function createContext(): Context
     {
         return new FsContext(
             $this->config['path'],
@@ -58,49 +68,28 @@ class FsConnectionFactory implements PsrConnectionFactory
         );
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
-        if ($dsn && '/' === $dsn[0]) {
-            return ['path' => $dsn];
+        $dsn = new Dsn($dsn);
+
+        $supportedSchemes = ['file'];
+        if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
+            throw new \LogicException(sprintf(
+                'The given scheme protocol "%s" is not supported. It must be one of "%s"',
+                $dsn->getSchemeProtocol(),
+                implode('", "', $supportedSchemes)
+            ));
         }
 
-        if (false === strpos($dsn, 'file:')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "file:".', $dsn));
-        }
-
-        $dsn = substr($dsn, 7);
-
-        $path = parse_url($dsn, PHP_URL_PATH);
-        $query = parse_url($dsn, PHP_URL_QUERY);
-
-        if ('/' != $path[0]) {
-            throw new \LogicException(sprintf('Failed to parse DSN path "%s". The path must start with "/"', $path));
-        }
-
-        if ($query) {
-            $config = [];
-            parse_str($query, $config);
-        }
-
-        if (isset($config['pre_fetch_count'])) {
-            $config['pre_fetch_count'] = (int) $config['pre_fetch_count'];
-        }
-
-        if (isset($config['chmod'])) {
-            $config['chmod'] = intval($config['chmod'], 8);
-        }
-
-        $config['path'] = $path;
-
-        return $config;
+        return array_filter(array_replace($dsn->getQuery(), [
+            'path' => $dsn->getPath(),
+            'pre_fetch_count' => $dsn->getInt('pre_fetch_count'),
+            'chmod' => $dsn->getOctal('chmod'),
+            'polling_interval' => $dsn->getInt('polling_interval'),
+        ]), function ($value) { return null !== $value; });
     }
 
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'path' => null,

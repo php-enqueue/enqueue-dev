@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpTools;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -7,10 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 trait DelayStrategyTransportFactoryTrait
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function registerDelayStrategy(ContainerBuilder $container, array $config, $factoryId, $factoryName)
+    public function registerDelayStrategy(ContainerBuilder $container, array $config, string $factoryId, string $factoryName): void
     {
         if ($config['delay_strategy']) {
             $factory = $container->getDefinition($factoryId);

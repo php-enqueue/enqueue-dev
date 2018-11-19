@@ -24,7 +24,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotSupported()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN schema "http" is not supported. There are supported schemes: "db2", "ibm_db2", "mssql", "pdo_sqlsrv", "mysql", "mysql2", "pdo_mysql", "pgsql", "postgres", "postgresql", "pdo_pgsql", "sqlite", "sqlite3", "pdo_sqlite"');
+        $this->expectExceptionMessage('The given DSN schema "http" is not supported. There are supported schemes: "db2", "ibm-db2", "mssql", "sqlsrv+pdo", "mysql", "mysql2", "mysql+pdo", "pgsql", "postgres", "pgsql+pdo", "sqlite", "sqlite3", "sqlite+pdo".');
 
         new DbalConnectionFactory('http://example.com');
     }
@@ -32,7 +32,7 @@ class DbalConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Schema is empty');
+        $this->expectExceptionMessage('The DSN is invalid. It does not have scheme separator ":".');
 
         new DbalConnectionFactory('invalidDSN');
     }
@@ -47,7 +47,8 @@ class DbalConnectionFactoryConfigTest extends TestCase
     {
         $factory = new DbalConnectionFactory($config);
 
-        $this->assertAttributeEquals($expectedConfig, 'config', $factory);
+        $actualConfig = $this->readAttribute($factory, 'config');
+        $this->assertSame($expectedConfig, $actualConfig);
     }
 
     public static function provideConfigs()
@@ -55,76 +56,111 @@ class DbalConnectionFactoryConfigTest extends TestCase
         yield [
             null,
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             'mysql:',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
-            'pdo_mysql:',
+            'mysql+pdo:',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'pdo_mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             'pgsql:',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'pgsql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             'mysql://user:pass@host:10000/db',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://user:pass@host:10000/db',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
-            'pdo_mysql://user:pass@host:10001/db',
+            'mysql+pdo://user:pass@host:10001/db',
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'pdo_mysql://user:pass@host:10001/db',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
             [],
             [
-                'lazy' => true,
                 'connection' => [
                     'url' => 'mysql://root@localhost',
                 ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
             ],
         ];
 
         yield [
-            ['table_name' => 'a_queue_table', 'connection' => ['foo' => 'fooVal', 'bar' => 'barVal']],
-            ['table_name' => 'a_queue_table', 'connection' => ['foo' => 'fooVal', 'bar' => 'barVal']],
+            [
+                'connection' => ['foo' => 'fooVal', 'bar' => 'barVal'],
+                'table_name' => 'a_queue_table',
+            ],
+            [
+                'connection' => ['foo' => 'fooVal', 'bar' => 'barVal'],
+                'table_name' => 'a_queue_table',
+                'polling_interval' => 1000,
+                'lazy' => true,
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'mysql+pdo://user:pass@host:10001/db', 'foo' => 'fooVal'],
+            [
+                'connection' => [
+                    'url' => 'pdo_mysql://user:pass@host:10001/db',
+                ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
+                'foo' => 'fooVal',
+            ],
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Enqueue\Test;
 
+use Enqueue\Dsn\Dsn;
+
 trait RabbitManagementExtensionTrait
 {
     /**
@@ -9,15 +11,12 @@ trait RabbitManagementExtensionTrait
      */
     private function removeQueue($queueName)
     {
-        $rabbitmqHost = getenv('RABBITMQ_HOST');
-        $rabbitmqUser = getenv('RABBITMQ_USER');
-        $rabbitmqPassword = getenv('RABBITMQ_PASSWORD');
-        $rabbitmqVhost = getenv('RABBITMQ_VHOST');
+        $dsn = new Dsn(getenv('RABBITMQ_AMQP_DSN'));
 
         $url = sprintf(
             'http://%s:15672/api/queues/%s/%s',
-            $rabbitmqHost,
-            urlencode($rabbitmqVhost),
+            $dsn->getHost(),
+            urlencode(ltrim($dsn->getPath(), '/')),
             $queueName
         );
 
@@ -26,7 +25,7 @@ trait RabbitManagementExtensionTrait
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $rabbitmqUser.':'.$rabbitmqPassword);
+        curl_setopt($ch, CURLOPT_USERPWD, $dsn->getUser().':'.$dsn->getPassword());
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type' => 'application/json',
         ]);
@@ -46,15 +45,12 @@ trait RabbitManagementExtensionTrait
      */
     private function removeExchange($exchangeName)
     {
-        $rabbitmqHost = getenv('RABBITMQ_HOST');
-        $rabbitmqUser = getenv('RABBITMQ_USER');
-        $rabbitmqPassword = getenv('RABBITMQ_PASSWORD');
-        $rabbitmqVhost = getenv('RABBITMQ_VHOST');
+        $dsn = new Dsn(getenv('RABBITMQ_AMQP_DSN'));
 
         $url = sprintf(
             'http://%s:15672/api/exchanges/%s/%s',
-            $rabbitmqHost,
-            urlencode($rabbitmqVhost),
+            $dsn->getHost(),
+            urlencode(ltrim($dsn->getPath(), '/')),
             $exchangeName
         );
 
@@ -63,7 +59,7 @@ trait RabbitManagementExtensionTrait
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $rabbitmqUser.':'.$rabbitmqPassword);
+        curl_setopt($ch, CURLOPT_USERPWD, $dsn->getUser().':'.$dsn->getPassword());
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type' => 'application/json',
         ]);

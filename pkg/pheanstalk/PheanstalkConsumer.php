@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkConsumer implements PsrConsumer
+class PheanstalkConsumer implements Consumer
 {
     /**
      * @var PheanstalkDestination
@@ -20,10 +23,6 @@ class PheanstalkConsumer implements PsrConsumer
      */
     private $pheanstalk;
 
-    /**
-     * @param PheanstalkDestination $destination
-     * @param Pheanstalk            $pheanstalk
-     */
     public function __construct(PheanstalkDestination $destination, Pheanstalk $pheanstalk)
     {
         $this->destination = $destination;
@@ -31,21 +30,17 @@ class PheanstalkConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return PheanstalkDestination
      */
-    public function getQueue()
+    public function getQueue(): Queue
     {
         return $this->destination;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return PheanstalkMessage|null
+     * @return PheanstalkMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?Message
     {
         if (0 === $timeout) {
             while (true) {
@@ -58,26 +53,26 @@ class PheanstalkConsumer implements PsrConsumer
                 return $this->convertJobToMessage($job);
             }
         }
+
+        return null;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return PheanstalkMessage|null
+     * @return PheanstalkMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?Message
     {
         if ($job = $this->pheanstalk->reserveFromTube($this->destination->getName(), 0)) {
             return $this->convertJobToMessage($job);
         }
+
+        return null;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param PheanstalkMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(Message $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, PheanstalkMessage::class);
 
@@ -89,11 +84,9 @@ class PheanstalkConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param PheanstalkMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(Message $message, bool $requeue = false): void
     {
         $this->acknowledge($message);
 
@@ -102,12 +95,7 @@ class PheanstalkConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @param Job $job
-     *
-     * @return PheanstalkMessage
-     */
-    private function convertJobToMessage(Job $job)
+    private function convertJobToMessage(Job $job): PheanstalkMessage
     {
         $stats = $this->pheanstalk->statsJob($job);
 

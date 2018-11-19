@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Mongodb;
 
-use Interop\Queue\Exception;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\Exception;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 
-class MongodbProducer implements PsrProducer
+class MongodbProducer implements Producer
 {
     /**
      * @var int|null
@@ -17,12 +19,12 @@ class MongodbProducer implements PsrProducer
     private $priority;
 
     /**
-     * @var int|float|null
+     * @var int|null
      */
     private $deliveryDelay;
 
     /**
-     * @var int|float|null
+     * @var int|null
      */
     private $timeToLive;
 
@@ -31,23 +33,16 @@ class MongodbProducer implements PsrProducer
      */
     private $context;
 
-    /**
-     * @param MongodbContext $context
-     */
     public function __construct(MongodbContext $context)
     {
         $this->context = $context;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MongodbDestination $destination
      * @param MongodbMessage     $message
-     *
-     * @throws Exception
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, MongodbDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
@@ -63,14 +58,6 @@ class MongodbProducer implements PsrProducer
         }
 
         $body = $message->getBody();
-        if (is_scalar($body) || null === $body) {
-            $body = (string) $body;
-        } else {
-            throw new InvalidMessageException(sprintf(
-                'The message body must be a scalar or null. Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
-            ));
-        }
 
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
@@ -128,53 +115,46 @@ class MongodbProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         $this->priority = $priority;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
+
+        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }

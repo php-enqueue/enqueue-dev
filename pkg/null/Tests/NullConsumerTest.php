@@ -6,7 +6,7 @@ use Enqueue\Null\NullConsumer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConsumer;
+use Interop\Queue\Consumer;
 use PHPUnit\Framework\TestCase;
 
 class NullConsumerTest extends TestCase
@@ -15,7 +15,7 @@ class NullConsumerTest extends TestCase
 
     public function testShouldImplementMessageConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, NullConsumer::class);
+        $this->assertClassImplements(Consumer::class, NullConsumer::class);
     }
 
     public function testCouldBeConstructedWithQueueAsArgument()

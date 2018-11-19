@@ -4,8 +4,8 @@ namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
 class StompDestinationTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,8 +13,8 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementsTopicAndQueueInterfaces()
     {
-        $this->assertClassImplements(PsrTopic::class, StompDestination::class);
-        $this->assertClassImplements(PsrQueue::class, StompDestination::class);
+        $this->assertClassImplements(Topic::class, StompDestination::class);
+        $this->assertClassImplements(Queue::class, StompDestination::class);
     }
 
     public function testShouldReturnDestinationStringWithRoutingKey()
@@ -45,21 +45,11 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
     public function testShouldThrowLogicExceptionIfNameIsNotSet()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Destination type or name is not set');
+        $this->expectExceptionMessage('Destination name is not set');
 
         $destination = new StompDestination();
         $destination->setType(StompDestination::TYPE_QUEUE);
-
-        $destination->getQueueName();
-    }
-
-    public function testShouldThrowLogicExceptionIfTypeIsNotSet()
-    {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Destination type or name is not set');
-
-        $destination = new StompDestination();
-        $destination->setStompName('name');
+        $destination->setStompName('');
 
         $destination->getQueueName();
     }

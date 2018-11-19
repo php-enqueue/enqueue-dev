@@ -4,12 +4,13 @@ namespace Enqueue\Client;
 
 class Config
 {
-    const PARAMETER_TOPIC_NAME = 'enqueue.topic_name';
-    const PARAMETER_COMMAND_NAME = 'enqueue.command_name';
-    const PARAMETER_PROCESSOR_NAME = 'enqueue.processor_name';
-    const PARAMETER_PROCESSOR_QUEUE_NAME = 'enqueue.processor_queue_name';
-    const DEFAULT_PROCESSOR_QUEUE_NAME = 'default';
-    const COMMAND_TOPIC = '__command__';
+    const TOPIC = 'enqueue.topic';
+    const COMMAND = 'enqueue.command';
+    const PROCESSOR = 'enqueue.processor';
+    const EXPIRE = 'enqueue.expire';
+    const PRIORITY = 'enqueue.priority';
+    const DELAY = 'enqueue.delay';
+    const CONTENT_TYPE = 'enqueue.content_type';
 
     /**
      * @var string
@@ -19,143 +20,129 @@ class Config
     /**
      * @var string
      */
-    private $appName;
+    private $separator;
 
     /**
      * @var string
      */
-    private $routerTopicName;
+    private $app;
 
     /**
      * @var string
      */
-    private $routerQueueName;
+    private $routerTopic;
 
     /**
      * @var string
      */
-    private $defaultProcessorQueueName;
+    private $routerQueue;
 
     /**
      * @var string
      */
-    private $routerProcessorName;
+    private $defaultQueue;
+
+    /**
+     * @var string
+     */
+    private $routerProcessor;
 
     /**
      * @var array
      */
     private $transportConfig;
 
-    /**
-     * @param string $prefix
-     * @param string $appName
-     * @param string $routerTopicName
-     * @param string $routerQueueName
-     * @param string $defaultProcessorQueueName
-     * @param string $routerProcessorName
-     * @param array  $transportConfig
-     */
-    public function __construct($prefix, $appName, $routerTopicName, $routerQueueName, $defaultProcessorQueueName, $routerProcessorName, array $transportConfig = [])
+    public function __construct(string $prefix, string $app, string $routerTopic, string $routerQueue, string $defaultQueue, string $routerProcessor, array $transportConfig = [])
     {
-        $this->prefix = $prefix;
-        $this->appName = $appName;
-        $this->routerTopicName = $routerTopicName;
-        $this->routerQueueName = $routerQueueName;
-        $this->defaultProcessorQueueName = $defaultProcessorQueueName;
-        $this->routerProcessorName = $routerProcessorName;
+        $this->prefix = trim($prefix);
+        $this->app = trim($app);
+
+        $this->routerTopic = trim($routerTopic);
+        if (empty($this->routerTopic)) {
+            throw new \InvalidArgumentException('Router topic is empty.');
+        }
+
+        $this->routerQueue = trim($routerQueue);
+        if (empty($this->routerQueue)) {
+            throw new \InvalidArgumentException('Router queue is empty.');
+        }
+
+        $this->defaultQueue = trim($defaultQueue);
+        if (empty($this->defaultQueue)) {
+            throw new \InvalidArgumentException('Default processor queue name is empty.');
+        }
+
+        $this->routerProcessor = trim($routerProcessor);
+        if (empty($this->routerProcessor)) {
+            throw new \InvalidArgumentException('Router processor name is empty.');
+        }
+
         $this->transportConfig = $transportConfig;
+
+        $this->separator = '.';
     }
 
-    /**
-     * @return string
-     */
-    public function getRouterTopicName()
+    public function getPrefix(): string
     {
-        return $this->routerTopicName;
+        return $this->prefix;
     }
 
-    /**
-     * @return string
-     */
-    public function getRouterQueueName()
+    public function getSeparator(): string
     {
-        return $this->routerQueueName;
+        return $this->separator;
     }
 
-    /**
-     * @return string
-     */
-    public function getDefaultProcessorQueueName()
+    public function getApp(): string
     {
-        return $this->defaultProcessorQueueName;
+        return $this->app;
     }
 
-    /**
-     * @return string
-     */
-    public function getRouterProcessorName()
+    public function getRouterTopic(): string
     {
-        return $this->routerProcessorName;
+        return $this->routerTopic;
+    }
+
+    public function getRouterQueue(): string
+    {
+        return $this->routerQueue;
+    }
+
+    public function getDefaultQueue(): string
+    {
+        return $this->defaultQueue;
+    }
+
+    public function getRouterProcessor(): string
+    {
+        return $this->routerProcessor;
     }
 
     /**
-     * @param string $name
+     * @deprecated
      *
-     * @return string
+     * @param null|mixed $default
      */
-    public function createTransportRouterTopicName($name)
-    {
-        return strtolower(implode('.', array_filter([trim($this->prefix), trim($name)])));
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    public function createTransportQueueName($name)
-    {
-        return strtolower(implode('.', array_filter([trim($this->prefix), trim($this->appName), trim($name)])));
-    }
-
-    /**
-     * @param string     $name
-     * @param mixed|null $default
-     *
-     * @return array
-     */
-    public function getTransportOption($name, $default = null)
+    public function getTransportOption(string $name, $default = null)
     {
         return array_key_exists($name, $this->transportConfig) ? $this->transportConfig[$name] : $default;
     }
 
-    /**
-     * @param string|null $prefix
-     * @param string|null $appName
-     * @param string|null $routerTopicName
-     * @param string|null $routerQueueName
-     * @param string|null $defaultProcessorQueueName
-     * @param string|null $routerProcessorName
-     * @param array       $transportConfig
-     *
-     * @return static
-     */
     public static function create(
-        $prefix = null,
-        $appName = null,
-        $routerTopicName = null,
-        $routerQueueName = null,
-        $defaultProcessorQueueName = null,
-        $routerProcessorName = null,
+        string $prefix = null,
+        string $app = null,
+        string $routerTopic = null,
+        string $routerQueue = null,
+        string $defaultQueue = null,
+        string $routerProcessor = null,
         array $transportConfig = []
-    ) {
+    ): self {
         return new static(
             $prefix ?: '',
-            $appName ?: '',
-            $routerTopicName ?: 'router',
-            $routerQueueName ?: 'default',
-            $defaultProcessorQueueName ?: 'default',
-            $routerProcessorName ?: 'router',
+            $app ?: '',
+            $routerTopic ?: 'router',
+            $routerQueue ?: 'default',
+            $defaultQueue ?: 'default',
+            $routerProcessor ?: 'router',
             $transportConfig
         );
     }

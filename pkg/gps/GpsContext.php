@@ -1,14 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gps;
 
 use Google\Cloud\Core\Exception\ConflictException;
 use Google\Cloud\PubSub\PubSubClient;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 
-class GpsContext implements PsrContext
+class GpsContext implements Context
 {
     /**
      * @var PubSubClient
@@ -50,66 +61,69 @@ class GpsContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
+     * @return GpsMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new GpsMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
+     * @return GpsTopic
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): Topic
     {
         return new GpsTopic($topicName);
     }
 
     /**
-     * {@inheritdoc}
+     * @return GpsQueue
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): Queue
     {
         return new GpsQueue($queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): Queue
     {
-        throw new \LogicException('Not implemented');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
+     * @return GpsProducer
      */
-    public function createProducer()
+    public function createProducer(): Producer
     {
         return new GpsProducer($this);
     }
 
     /**
-     * {@inheritdoc}
+     * @param GpsQueue|GpsTopic $destination
+     *
+     * @return GpsConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GpsQueue::class);
 
         return new GpsConsumer($this, $destination);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
     }
 
-    /**
-     * @param GpsTopic $topic
-     */
-    public function declareTopic(GpsTopic $topic)
+    public function createSubscriptionConsumer(): SubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function purgeQueue(Queue $queue): void
+    {
+        throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function declareTopic(GpsTopic $topic): void
     {
         try {
             $this->getClient()->createTopic($topic->getTopicName());
@@ -117,11 +131,7 @@ class GpsContext implements PsrContext
         }
     }
 
-    /**
-     * @param GpsTopic $topic
-     * @param GpsQueue $queue
-     */
-    public function subscribe(GpsTopic $topic, GpsQueue $queue)
+    public function subscribe(GpsTopic $topic, GpsQueue $queue): void
     {
         $this->declareTopic($topic);
 
@@ -133,10 +143,7 @@ class GpsContext implements PsrContext
         }
     }
 
-    /**
-     * @return PubSubClient
-     */
-    public function getClient()
+    public function getClient(): PubSubClient
     {
         if (false == $this->client) {
             $client = call_user_func($this->clientFactory);

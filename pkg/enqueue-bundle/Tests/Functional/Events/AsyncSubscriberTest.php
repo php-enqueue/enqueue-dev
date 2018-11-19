@@ -2,7 +2,9 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
-use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
+use Enqueue\AsyncEventDispatcher\AsyncListener;
+use Enqueue\AsyncEventDispatcher\Commands;
+use Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber;
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\TraceableProducer;
 use Symfony\Component\EventDispatcher\Event;
@@ -18,7 +20,16 @@ class AsyncSubscriberTest extends WebTestCase
     {
         parent::tearDown();
 
-        static::$container = null;
+//<<<<<<< HEAD
+//        static::$container = null;
+//=======
+        /** @var AsyncListener $asyncListener */
+        $asyncListener = static::$container->get('enqueue.events.async_listener');
+
+        $asyncListener->resetSyncMode();
+        static::$container->get('test_async_subscriber')->calls = [];
+        static::$container->get('test_async_listener')->calls = [];
+//>>>>>>> origin/master
     }
 
     public function testShouldNotCallRealSubscriberIfMarkedAsAsync()
@@ -28,7 +39,7 @@ class AsyncSubscriberTest extends WebTestCase
 
         $dispatcher->dispatch('test_async_subscriber', new GenericEvent('aSubject'));
 
-        /** @var TestAsyncListener $listener */
+        /** @var TestAsyncSubscriber $listener */
         $listener = static::$container->get('test_async_subscriber');
 
         $this->assertEmpty($listener->calls);
@@ -44,13 +55,13 @@ class AsyncSubscriberTest extends WebTestCase
         $dispatcher->dispatch('test_async_subscriber', $event);
 
         /** @var TraceableProducer $producer */
-        $producer = static::$container->get('enqueue.producer');
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
-        $traces = $producer->getCommandTraces('symfony_events');
+        $traces = $producer->getCommandTraces(Commands::DISPATCH_ASYNC_EVENTS);
 
         $this->assertCount(1, $traces);
 
-        $this->assertEquals('symfony_events', $traces[0]['command']);
+        $this->assertEquals(Commands::DISPATCH_ASYNC_EVENTS, $traces[0]['command']);
         $this->assertEquals('{"subject":"theSubject","arguments":{"fooArg":"fooVal"}}', $traces[0]['body']);
     }
 
@@ -64,9 +75,9 @@ class AsyncSubscriberTest extends WebTestCase
         $dispatcher->dispatch('test_async_subscriber', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
 
         /** @var TraceableProducer $producer */
-        $producer = static::$container->get('enqueue.producer');
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
-        $traces = $producer->getCommandTraces('symfony_events');
+        $traces = $producer->getCommandTraces(Commands::DISPATCH_ASYNC_EVENTS);
 
         $this->assertCount(3, $traces);
     }
@@ -76,16 +87,17 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = static::$container->get('event_dispatcher');
 
-        $dispatcher->addListener('foo', function (Event $event, $eventName, EventDispatcherInterface $dispatcher) {
+        $eventName = 'anEvent'.uniqid();
+        $dispatcher->addListener($eventName, function (Event $event, $eventName, EventDispatcherInterface $dispatcher) {
             $dispatcher->dispatch('test_async_subscriber', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
         });
 
-        $dispatcher->dispatch('foo');
+        $dispatcher->dispatch($eventName);
 
         /** @var TraceableProducer $producer */
-        $producer = static::$container->get('enqueue.producer');
+        $producer = static::$container->get('test_enqueue.client.default.producer');
 
-        $traces = $producer->getCommandTraces('symfony_events');
+        $traces = $producer->getCommandTraces(Commands::DISPATCH_ASYNC_EVENTS);
 
         $this->assertCount(1, $traces);
     }

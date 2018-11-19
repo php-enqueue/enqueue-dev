@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpTools;
+
+use Enqueue\Dsn\Dsn;
 
 /**
  * The config could be an array, string DSN or null. In case of null it will attempt to connect to localhost with default credentials.
@@ -32,6 +36,8 @@ namespace Enqueue\AmqpTools;
  * 4. amqp://user:pass@host:10000/vhost?lazy=true&persisted=false&read_timeout=2
  * 5. amqp+foo: - the scheme driver could be used. (make sure you added it to the list of supported schemes)
  * 6. amqps: - secure connection to localhost
+ * 7. amqp+tls: - secure connection
+ * 8. amqp+rabbitmq: - if you connect to RabbitMQ server
  *
  * @see https://www.rabbitmq.com/uri-spec.html
  */
@@ -56,6 +62,11 @@ class ConnectionConfig
      * @var string[]
      */
     private $supportedSchemes;
+
+    /**
+     * @var array
+     */
+    private $schemeExtensions = [];
 
     /**
      * @param array|string|null $config
@@ -87,17 +98,16 @@ class ConnectionConfig
             'ssl_key' => '',
             'ssl_passphrase' => '',
         ];
+        $this->schemeExtensions = [];
 
         $this->addSupportedScheme('amqp');
         $this->addSupportedScheme('amqps');
     }
 
     /**
-     * @param string $schema
-     *
-     * @return self
+     * @param string[] $extensions
      */
-    public function addSupportedScheme($schema)
+    public function addSupportedScheme(string $schema): self
     {
         $this->supportedSchemes[] = $schema;
         $this->supportedSchemes = array_unique($this->supportedSchemes);
@@ -165,6 +175,14 @@ class ConnectionConfig
         $this->config = $config;
 
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSchemeExtensions(): array
+    {
+        return $this->schemeExtensions;
     }
 
     /**
@@ -361,45 +379,49 @@ class ConnectionConfig
      */
     private function parseDsn($dsn)
     {
-        if (false === parse_url($dsn)) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        $dsn = new Dsn($dsn);
+
+        $supportedSchemes = $this->supportedSchemes;
+        if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
+            throw new \LogicException(sprintf(
+                'The given scheme protocol "%s" is not supported. It must be one of "%s".',
+                $dsn->getSchemeProtocol(),
+                implode('", "', $supportedSchemes)
+            ));
         }
 
-        $config = [];
-
-        $scheme = parse_url($dsn, PHP_URL_SCHEME);
-        if (false == in_array($scheme, $this->supportedSchemes, true)) {
-            throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be one of "%s" only.', $scheme, implode('", "', $this->supportedSchemes)));
+        $sslOn = false;
+        if ('amqps' === $dsn->getSchemeProtocol() || in_array('tls', $dsn->getSchemeExtensions(), true)) {
+            $sslOn = true;
         }
 
-        if ($host = parse_url($dsn, PHP_URL_HOST)) {
-            $config['host'] = $host;
-        }
-        if ($port = parse_url($dsn, PHP_URL_PORT)) {
-            $config['port'] = $port;
-        }
-        if ($user = parse_url($dsn, PHP_URL_USER)) {
-            $config['user'] = $user;
-        }
-        if ($pass = parse_url($dsn, PHP_URL_PASS)) {
-            $config['pass'] = $pass;
-        }
+        $this->schemeExtensions = $dsn->getSchemeExtensions();
 
-        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
-            $queryConfig = [];
-            parse_str($query, $queryConfig);
+        $config = array_filter(array_replace($dsn->getQuery(), [
+            'host' => $dsn->getHost(),
+            'port' => $dsn->getPort(),
+            'user' => $dsn->getUser(),
+            'pass' => $dsn->getPassword(),
+            'vhost' => null !== $dsn->getPath() ? ltrim($dsn->getPath(), '/') : null,
+            'read_timeout' => $dsn->getFloat('read_timeout'),
+            'write_timeout' => $dsn->getFloat('write_timeout'),
+            'connection_timeout' => $dsn->getFloat('connection_timeout'),
+            'heartbeat' => $dsn->getFloat('heartbeat'),
+            'persisted' => $dsn->getBool('persisted'),
+            'lazy' => $dsn->getBool('lazy'),
+            'qos_global' => $dsn->getBool('qos_global'),
+            'qos_prefetch_size' => $dsn->getInt('qos_prefetch_size'),
+            'qos_prefetch_count' => $dsn->getInt('qos_prefetch_count'),
+            'ssl_on' => $sslOn,
+            'ssl_verify' => $dsn->getBool('ssl_verify'),
+            'ssl_cacert' => $dsn->getQueryParameter('ssl_cacert'),
+            'ssl_cert' => $dsn->getQueryParameter('ssl_cert'),
+            'ssl_key' => $dsn->getQueryParameter('ssl_key'),
+            'ssl_passphrase' => $dsn->getQueryParameter('ssl_passphrase'),
+        ]), function ($value) { return null !== $value; });
 
-            $config = array_replace($queryConfig, $config);
-        }
-
-        if ($path = parse_url($dsn, PHP_URL_PATH)) {
-            $config['vhost'] = ltrim($path, '/');
-        }
-
-        if (0 === strpos($scheme, 'amqps')) {
-            $config['ssl_on'] = true;
-        }
-
-        return array_map('urldecode', $config);
+        return array_map(function ($value) {
+            return is_string($value) ? rawurldecode($value) : $value;
+        }, $config);
     }
 }

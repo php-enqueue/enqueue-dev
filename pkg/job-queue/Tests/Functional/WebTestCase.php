@@ -16,7 +16,7 @@ abstract class WebTestCase extends BaseWebTestCase
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected static $container;
 
     protected function setUp()
     {
@@ -25,7 +25,10 @@ abstract class WebTestCase extends BaseWebTestCase
         static::$class = null;
 
         $this->client = static::createClient();
-        $this->container = static::$kernel->getContainer();
+
+        if (false == static::$container) {
+            static::$container = static::$kernel->getContainer();
+        }
 
         $this->startTransaction();
     }
@@ -50,7 +53,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected function startTransaction()
     {
         /** @var $em \Doctrine\ORM\EntityManager */
-        foreach ($this->container->get('doctrine')->getManagers() as $em) {
+        foreach (static::$container->get('doctrine')->getManagers() as $em) {
             $em->clear();
             $em->getConnection()->beginTransaction();
         }
@@ -61,12 +64,12 @@ abstract class WebTestCase extends BaseWebTestCase
         //the error can be thrown during setUp
         //It would be caught by phpunit and tearDown called.
         //In this case we could not rollback since container may not exist.
-        if (false == $this->container) {
+        if (false == static::$container) {
             return;
         }
 
         /** @var $em \Doctrine\ORM\EntityManager */
-        foreach ($this->container->get('doctrine')->getManagers() as $em) {
+        foreach (static::$container->get('doctrine')->getManagers() as $em) {
             $connection = $em->getConnection();
 
             while ($connection->isTransactionActive()) {

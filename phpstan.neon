@@ -1,11 +1,13 @@
 parameters:
 	excludes_analyse:
+		- docs
+		- bin
+		- docker
+		- var
+		- pkg/amqp-lib/tutorial
+		- pkg/enqueue-bundle/Tests/Functional/App/AsyncListener.php
 		- pkg/enqueue/Util/UUID.php
-		- pkg/enqueue-bundle/Tests/Functional/App
 		- pkg/job-queue/Test/JobRunner.php
 		- pkg/job-queue/Tests/Functional/app/AppKernel.php
-		- pkg/redis/PhpRedis.php
-		- pkg/redis/RedisConnectionFactory.php
-		- pkg/gearman
-		- pkg/amqp-ext/AmqpConsumer.php
-		- pkg/amqp-ext/AmqpContext.php
+		- pkg/rdkafka/RdKafkaConsumer.php
+

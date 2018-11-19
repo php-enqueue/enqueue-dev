@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # EnqueueBundle. Quick tour.
 
 The [EnqueueBundle](https://github.com/php-enqueue/enqueue-bundle) integrates enqueue library.
@@ -48,9 +57,9 @@ First, you have to configure a transport layer and set one to be default.
 # app/config/config.yml
 
 enqueue:
-    transport:
-        default: "amqp:"
-    client: ~
+    default:
+        transport: "amqp:"
+        client: ~
 ```
 
 Once you configured everything you can start producing messages:
@@ -74,14 +83,14 @@ To consume messages you have to first create a message processor:
 
 ```php
 <?php
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
 use Enqueue\Client\TopicSubscriberInterface;
 
-class FooProcessor implements PsrProcessor, TopicSubscriberInterface
+class FooProcessor implements Processor, TopicSubscriberInterface
 {
-    public function process(PsrMessage $message, PsrContext $session)
+    public function process(Message $message, Context $session)
     {
         echo $message->getBody();
 

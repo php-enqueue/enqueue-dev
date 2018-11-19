@@ -12,13 +12,34 @@ interface CommandSubscriberInterface
      * or
      *
      * [
-     *   'processorName' => 'aCommandName',
-     *   'queueName' => 'a_client_queue_name',
-     *   'queueNameHardcoded' => true,
+     *   'command' => 'aSubscribedCommand',
+     *   'processor' => 'aProcessorName',
+     *   'queue' => 'a_client_queue_name',
+     *   'prefix_queue' => true,
      *   'exclusive' => true,
      * ]
      *
-     * queueName, exclusive and queueNameHardcoded are optional.
+     * or
+     *
+     * [
+     *   [
+     *     'command' => 'aSubscribedCommand',
+     *     'processor' => 'aProcessorName',
+     *     'queue' => 'a_client_queue_name',
+     *     'prefix_queue' => true,
+     *     'exclusive' => true,
+     *   ],
+     *   [
+     *     'command' => 'aSubscribedCommand',
+     *     'processor' => 'aProcessorName',
+     *     'queue' => 'a_client_queue_name',
+     *     'prefix_queue' => true,
+     *     'exclusive' => true,
+     *   ]
+     * ]
+     *
+     * queue, processor, prefix_queue, and exclusive are optional.
+     * It is possible to pass other options, they could be accessible on a route instance through options.
      *
      * Note: If you set queueNameHardcoded to true then the queueName is used as is and therefor the driver is not used to create a transport queue name.
      *

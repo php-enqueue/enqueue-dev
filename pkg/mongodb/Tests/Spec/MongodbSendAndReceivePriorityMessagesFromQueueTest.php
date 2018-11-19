@@ -5,7 +5,7 @@ namespace Enqueue\Mongodb\Tests\Spec;
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Test\MongodbExtensionTrait;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Interop\Queue\Spec\SendAndReceivePriorityMessagesFromQueueSpec;
 
 /**
@@ -26,7 +26,7 @@ class MongodbSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceiveP
     }
 
     /**
-     * @return PsrContext
+     * @return Context
      */
     protected function createContext()
     {
@@ -40,7 +40,7 @@ class MongodbSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceiveP
      *
      * @return MongodbMessage
      */
-    protected function createMessage(PsrContext $context, $body)
+    protected function createMessage(Context $context, $body)
     {
         /** @var MongodbMessage $message */
         $message = parent::createMessage($context, $body);

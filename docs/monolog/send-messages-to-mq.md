@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Enqueue Monolog Handlers 
 
 The package provides handlers for [Monolog](https://github.com/Seldaek/monolog). 
@@ -39,18 +48,18 @@ the consumer may look like this:
 <?php
 
 use Enqueue\Consumption\QueueConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
 require_once __DIR__.'/vendor/autoload.php';
 
 $context = (new \Enqueue\Fs\FsConnectionFactory('file://'.__DIR__.'/queue'))->createContext();
 
 $consumer = new QueueConsumer($context);
-$consumer->bind('log', function(PsrMessage $message) {
+$consumer->bindCallback('log', function(Message $message) {
     echo $message->getBody().PHP_EOL;
 
-    return PsrProcessor::ACK;
+    return Processor::ACK;
 });
 
 $consumer->consume();

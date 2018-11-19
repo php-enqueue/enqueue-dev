@@ -4,27 +4,17 @@ namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Bundle\DependencyInjection\EnqueueExtension;
-use Enqueue\Bundle\Tests\Unit\Mocks\FooTransportFactory;
-use Enqueue\Bundle\Tests\Unit\Mocks\TransportFactoryWithoutDriverFactory;
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TopicSubscriberInterface;
 use Enqueue\Client\TraceableProducer;
-use Enqueue\Consumption\QueueConsumer;
 use Enqueue\JobQueue\JobRunner;
-use Enqueue\Null\NullContext;
-use Enqueue\Null\Symfony\NullTransportFactory;
-use Enqueue\Symfony\DefaultTransportFactory;
-use Enqueue\Symfony\MissingTransportFactory;
-use Enqueue\Symfony\TransportFactoryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\HttpKernel\Kernel;
 
 class EnqueueExtensionTest extends TestCase
 {
@@ -35,141 +25,63 @@ class EnqueueExtensionTest extends TestCase
         self::assertClassExtends(Extension::class, EnqueueExtension::class);
     }
 
+    public function testShouldBeFinal()
+    {
+        self::assertClassFinal(EnqueueExtension::class);
+    }
+
     public function testCouldBeConstructedWithoutAnyArguments()
     {
         new EnqueueExtension();
     }
 
-    public function testShouldRegisterDefaultAndNullTransportFactoriesInConstructor()
-    {
-        $extension = new EnqueueExtension();
-
-        /** @var TransportFactoryInterface[] $factories */
-        $factories = $this->readAttribute($extension, 'factories');
-
-        $this->assertInternalType('array', $factories);
-        $this->assertCount(2, $factories);
-
-        $this->assertArrayHasKey('default', $factories);
-        $this->assertInstanceOf(DefaultTransportFactory::class, $factories['default']);
-        $this->assertEquals('default', $factories['default']->getName());
-
-        $this->assertArrayHasKey('null', $factories);
-        $this->assertInstanceOf(NullTransportFactory::class, $factories['null']);
-        $this->assertEquals('null', $factories['null']->getName());
-    }
-
-    public function testThrowIfTransportFactoryNameEmpty()
-    {
-        $extension = new EnqueueExtension();
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Transport factory name cannot be empty');
-
-        $extension->addTransportFactory(new FooTransportFactory(null));
-    }
-
-    public function testThrowIfTransportFactoryWithSameNameAlreadyAdded()
-    {
-        $extension = new EnqueueExtension();
-
-        $extension->addTransportFactory(new FooTransportFactory('foo'));
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Transport factory with such name already added. Name foo');
-
-        $extension->addTransportFactory(new FooTransportFactory('foo'));
-    }
-
-    public function testShouldEnabledNullTransportAndSetItAsDefault()
+    public function testShouldRegisterConnectionFactory()
     {
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [
-                'default' => 'null',
-                'null' => true,
+            'default' => [
+                'transport' => null,
             ],
         ]], $container);
 
-        self::assertTrue($container->hasAlias('enqueue.transport.default.context'));
-        self::assertEquals('enqueue.transport.null.context', (string) $container->getAlias('enqueue.transport.default.context'));
-
-        self::assertTrue($container->hasDefinition('enqueue.transport.null.context'));
-        $context = $container->getDefinition('enqueue.transport.null.context');
-        self::assertEquals(NullContext::class, $context->getClass());
+        self::assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
+        self::assertNotEmpty($container->getDefinition('enqueue.transport.default.connection_factory')->getFactory());
     }
 
-    public function testShouldUseNullTransportAsDefaultWhenExplicitlyConfigured()
+    public function testShouldRegisterContext()
     {
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [
-                'default' => 'null',
-                'null' => true,
+            'default' => [
+                'transport' => null,
             ],
         ]], $container);
 
-        self::assertEquals(
-            'enqueue.transport.default.context',
-            (string) $container->getAlias('enqueue.transport.context')
-        );
-        self::assertEquals(
-            'enqueue.transport.null.context',
-            (string) $container->getAlias('enqueue.transport.default.context')
-        );
+        self::assertTrue($container->hasDefinition('enqueue.transport.default.context'));
+        self::assertNotEmpty($container->getDefinition('enqueue.transport.default.context')->getFactory());
     }
 
-    public function testShouldConfigureFooTransport()
+    public function testShouldRegisterClientDriver()
     {
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'transport' => [
-                'default' => 'foo',
-                'foo' => ['foo_param' => 'aParam'],
+            'default' => [
+                'transport' => null,
+                'client' => true,
             ],
         ]], $container);
 
-        self::assertTrue($container->hasDefinition('foo.connection_factory'));
-        self::assertTrue($container->hasDefinition('foo.context'));
-        self::assertFalse($container->hasDefinition('foo.driver'));
-
-        $context = $container->getDefinition('foo.context');
-        self::assertEquals(\stdClass::class, $context->getClass());
-        self::assertEquals([['foo_param' => 'aParam']], $context->getArguments());
-    }
-
-    public function testShouldUseFooTransportAsDefault()
-    {
-        $container = $this->getContainerBuilder(true);
-
-        $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
-
-        $extension->load([[
-            'transport' => [
-                'default' => 'foo',
-                'foo' => ['foo_param' => 'aParam'],
-            ],
-        ]], $container);
-
-        self::assertEquals(
-            'enqueue.transport.default.context',
-            (string) $container->getAlias('enqueue.transport.context')
-        );
-        self::assertEquals(
-            'enqueue.transport.foo.context',
-            (string) $container->getAlias('enqueue.transport.default.context')
-        );
+        self::assertTrue($container->hasDefinition('enqueue.client.default.driver'));
+        self::assertNotEmpty($container->getDefinition('enqueue.client.default.driver')->getFactory());
     }
 
     public function testShouldLoadClientServicesWhenEnabled()
@@ -177,42 +89,17 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'client' => null,
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
-                ],
+            'default' => [
+                'client' => null,
+                'transport' => 'null:',
             ],
         ]], $container);
 
-        self::assertTrue($container->hasDefinition('foo.driver'));
-        self::assertTrue($container->hasDefinition('enqueue.client.config'));
-        self::assertTrue($container->hasDefinition(Producer::class));
+        self::assertTrue($container->hasDefinition('enqueue.client.default.driver'));
+        self::assertTrue($container->hasDefinition('enqueue.client.default.config'));
         self::assertTrue($container->hasAlias(ProducerInterface::class));
-    }
-
-    public function testShouldNotCreateDriverIfFactoryDoesNotImplementDriverFactoryInterface()
-    {
-        $container = $this->getContainerBuilder(true);
-
-        $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new TransportFactoryWithoutDriverFactory());
-
-        $extension->load([[
-            'client' => null,
-            'transport' => [
-                'default' => 'without_driver',
-                'without_driver' => [],
-            ],
-        ]], $container);
-
-        self::assertTrue($container->hasDefinition('without_driver.context'));
-        self::assertTrue($container->hasDefinition('without_driver.connection_factory'));
-        self::assertFalse($container->hasDefinition('without_driver.driver'));
     }
 
     public function testShouldUseProducerByDefault()
@@ -220,19 +107,15 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(false);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'client' => null,
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
-                ],
+            'default' => [
+                'client' => null,
+                'transport' => 'null',
             ],
         ]], $container);
 
-        $producer = $container->getDefinition(Producer::class);
+        $producer = $container->getDefinition('enqueue.client.default.producer');
         self::assertEquals(Producer::class, $producer->getClass());
     }
 
@@ -241,21 +124,17 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(false);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'client' => [
-                'traceable_producer' => false,
-            ],
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
+            'default' => [
+                'client' => [
+                    'traceable_producer' => false,
                 ],
+                'transport' => 'null:',
             ],
         ]], $container);
 
-        $producer = $container->getDefinition(Producer::class);
+        $producer = $container->getDefinition('enqueue.client.default.producer');
         self::assertEquals(Producer::class, $producer->getClass());
     }
 
@@ -264,32 +143,24 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
-                ],
+            'default' => [
+                'transport' => 'null:',
+                'client' => null,
             ],
-            'client' => null,
         ]], $container);
 
-        $producer = $container->getDefinition(TraceableProducer::class);
+        $producer = $container->getDefinition('enqueue.client.default.traceable_producer');
         self::assertEquals(TraceableProducer::class, $producer->getClass());
         self::assertEquals(
-            [Producer::class, null, 0],
+            ['enqueue.client.default.producer', null, 0],
             $producer->getDecoratedService()
         );
 
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
 
-        $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
-        if (30300 > Kernel::VERSION_ID) {
-            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
-            $innerServiceName = strtolower($innerServiceName);
-        }
+        $innerServiceName = 'enqueue.client.default.traceable_producer.inner';
 
         self::assertEquals(
             $innerServiceName,
@@ -302,18 +173,14 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(false);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
-                ],
+            'default' => [
+                'transport' => 'null:',
             ],
         ]], $container);
 
-        $this->assertFalse($container->hasDefinition(TraceableProducer::class));
+        $this->assertFalse($container->hasDefinition('enqueue.client.default.traceable_producer'));
     }
 
     public function testShouldUseTraceableMessageProducerIfDebugDisabledButTraceableProducerOptionSetToTrueExplicitly()
@@ -321,34 +188,26 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(false);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'client' => [
-                'traceable_producer' => true,
-            ],
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
+            'default' => [
+                'client' => [
+                    'traceable_producer' => true,
                 ],
+                'transport' => 'null:',
             ],
         ]], $container);
 
-        $producer = $container->getDefinition(TraceableProducer::class);
+        $producer = $container->getDefinition('enqueue.client.default.traceable_producer');
         self::assertEquals(TraceableProducer::class, $producer->getClass());
         self::assertEquals(
-            [Producer::class, null, 0],
+            ['enqueue.client.default.producer', null, 0],
             $producer->getDecoratedService()
         );
 
         self::assertInstanceOf(Reference::class, $producer->getArgument(0));
 
-        $innerServiceName = sprintf('%s.inner', TraceableProducer::class);
-        if (30300 > Kernel::VERSION_ID) {
-            // Symfony 3.2 and below make service identifiers lowercase, so we do the same.
-            $innerServiceName = strtolower($innerServiceName);
-        }
+        $innerServiceName = 'enqueue.client.default.traceable_producer.inner';
 
         self::assertEquals(
             $innerServiceName,
@@ -361,21 +220,17 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
+            'default' => [
+                'transport' => 'null:',
+                'client' => [
+                    'redelivered_delay_time' => 12345,
                 ],
-            ],
-            'client' => [
-                'redelivered_delay_time' => 12345,
             ],
         ]], $container);
 
-        $extension = $container->getDefinition('enqueue.client.delay_redelivered_message_extension');
+        $extension = $container->getDefinition('enqueue.client.default.delay_redelivered_message_extension');
 
         self::assertEquals(12345, $extension->getArgument(1));
     }
@@ -385,21 +240,17 @@ class EnqueueExtensionTest extends TestCase
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new FooTransportFactory());
 
         $extension->load([[
-            'transport' => [
-                'default' => 'foo',
-                'foo' => [
-                    'foo_param' => true,
+            'default' => [
+                'transport' => 'null:',
+                'client' => [
+                    'redelivered_delay_time' => 0,
                 ],
-            ],
-            'client' => [
-                'redelivered_delay_time' => 0,
             ],
         ]], $container);
 
-        $this->assertFalse($container->hasDefinition('enqueue.client.delay_redelivered_message_extension'));
+        $this->assertFalse($container->hasDefinition('enqueue.client.default.delay_redelivered_message_extension'));
     }
 
     public function testShouldLoadJobServicesIfEnabled()
@@ -409,11 +260,31 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'job' => true,
+            'default' => [
+                'transport' => [],
+                'client' => null,
+                'job' => true,
+            ],
         ]], $container);
 
         self::assertTrue($container->hasDefinition(JobRunner::class));
+    }
+
+    public function testShouldThrowExceptionIfClientIsNotEnabledOnJobLoad()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Client is required for job-queue.');
+
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'default' => [
+                'transport' => [],
+                'job' => true,
+            ],
+        ]], $container);
     }
 
     public function testShouldNotLoadJobServicesIfDisabled()
@@ -423,8 +294,10 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'job' => false,
+            'default' => [
+                'transport' => [],
+                'job' => false,
+            ],
         ]], $container);
 
         self::assertFalse($container->hasDefinition(JobRunner::class));
@@ -446,9 +319,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'doctrine_ping_connection_extension' => true,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_ping_connection_extension' => true,
+                ],
             ],
         ]], $container);
 
@@ -462,9 +337,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'doctrine_ping_connection_extension' => false,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_ping_connection_extension' => false,
+                ],
             ],
         ]], $container);
 
@@ -478,9 +355,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'doctrine_clear_identity_map_extension' => true,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_clear_identity_map_extension' => true,
+                ],
             ],
         ]], $container);
 
@@ -494,9 +373,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'doctrine_clear_identity_map_extension' => false,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_clear_identity_map_extension' => false,
+                ],
             ],
         ]], $container);
 
@@ -510,9 +391,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'signal_extension' => true,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'signal_extension' => true,
+                ],
             ],
         ]], $container);
 
@@ -526,9 +409,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'signal_extension' => false,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'signal_extension' => false,
+                ],
             ],
         ]], $container);
 
@@ -542,9 +427,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'reply_extension' => true,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'reply_extension' => true,
+                ],
             ],
         ]], $container);
 
@@ -558,9 +445,11 @@ class EnqueueExtensionTest extends TestCase
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'transport' => [],
-            'extensions' => [
-                'reply_extension' => false,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'reply_extension' => false,
+                ],
             ],
         ]], $container);
 
@@ -601,62 +490,92 @@ class EnqueueExtensionTest extends TestCase
 
         $extension = new EnqueueExtension();
         $extension->load([[
-            'client' => [],
-            'transport' => [
-            ],
-            'consumption' => [
-                'idle_timeout' => 123,
-                'receive_timeout' => 456,
+            'default' => [
+                'client' => [],
+                'transport' => [
+                ],
+                'consumption' => [
+                    'receive_timeout' => 456,
+                ],
             ],
         ]], $container);
 
-        $def = $container->getDefinition(QueueConsumer::class);
-        $this->assertSame(123, $def->getArgument(2));
-        $this->assertSame(456, $def->getArgument(3));
+        $def = $container->getDefinition('enqueue.transport.default.queue_consumer');
+        $this->assertSame('%enqueue.transport.default.receive_timeout%', $def->getArgument(4));
 
-        $def = $container->getDefinition('enqueue.client.queue_consumer');
-        $this->assertSame(123, $def->getArgument(2));
-        $this->assertSame(456, $def->getArgument(3));
+        $this->assertSame(456, $container->getParameter('enqueue.transport.default.receive_timeout'));
+
+        $def = $container->getDefinition('enqueue.client.default.queue_consumer');
+        $this->assertSame(456, $def->getArgument(4));
     }
 
-    public function testShouldThrowIfPackageShouldBeInstalledToUseTransport()
+    public function testShouldSetPropertyWithAllConfiguredTransports()
     {
         $container = $this->getContainerBuilder(true);
 
         $extension = new EnqueueExtension();
-        $extension->addTransportFactory(new MissingTransportFactory('need_package', ['a_package', 'another_package']));
-
-        $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('In order to use the transport "need_package" install');
         $extension->load([[
-            'transport' => [
-                'need_package' => true,
+            'default' => [
+                'transport' => 'default:',
+                'client' => [],
+            ],
+            'foo' => [
+                'transport' => 'foo:',
+                'client' => [],
+            ],
+            'bar' => [
+                'transport' => 'bar:',
+                'client' => [],
             ],
         ]], $container);
+
+        $this->assertTrue($container->hasParameter('enqueue.transports'));
+        $this->assertEquals(['default', 'foo', 'bar'], $container->getParameter('enqueue.transports'));
+    }
+
+    public function testShouldSetPropertyWithAllConfiguredClients()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+        $extension->load([[
+            'default' => [
+                'transport' => 'default:',
+                'client' => [],
+            ],
+            'foo' => [
+                'transport' => 'foo:',
+            ],
+            'bar' => [
+                'transport' => 'bar:',
+                'client' => [],
+            ],
+        ]], $container);
+
+        $this->assertTrue($container->hasParameter('enqueue.clients'));
+        $this->assertEquals(['default', 'bar'], $container->getParameter('enqueue.clients'));
     }
 
     public function testShouldLoadProcessAutoconfigureChildDefinition()
     {
-        if (30300 >= Kernel::VERSION_ID) {
-            $this->markTestSkipped('The autoconfigure feature is available since Symfony 3.3 version');
-        }
-
         $container = $this->getContainerBuilder(true);
         $extension = new EnqueueExtension();
 
         $extension->load([[
-            'client' => [],
-            'transport' => [],
+            'default' => [
+                'client' => [],
+                'transport' => [],
+            ],
         ]], $container);
 
         $autoconfigured = $container->getAutoconfiguredInstanceof();
 
         self::assertArrayHasKey(CommandSubscriberInterface::class, $autoconfigured);
-        self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+        self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->hasTag('enqueue.command_subscriber'));
         self::assertTrue($autoconfigured[CommandSubscriberInterface::class]->isPublic());
 
         self::assertArrayHasKey(TopicSubscriberInterface::class, $autoconfigured);
-        self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->hasTag('enqueue.client.processor'));
+        self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->hasTag('enqueue.topic_subscriber'));
         self::assertTrue($autoconfigured[TopicSubscriberInterface::class]->isPublic());
     }
 

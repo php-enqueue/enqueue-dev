@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Stomp;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use Stomp\Client;
 use Stomp\Transport\Frame;
 
-class StompConsumer implements PsrConsumer
+class StompConsumer implements Consumer
 {
     const ACK_AUTO = 'auto';
     const ACK_CLIENT = 'client';
@@ -44,10 +47,6 @@ class StompConsumer implements PsrConsumer
      */
     private $subscriptionId;
 
-    /**
-     * @param BufferedStompClient $stomp
-     * @param StompDestination    $queue
-     */
     public function __construct(BufferedStompClient $stomp, StompDestination $queue)
     {
         $this->stomp = $stomp;
@@ -61,10 +60,7 @@ class StompConsumer implements PsrConsumer
         ;
     }
 
-    /**
-     * @param string $mode
-     */
-    public function setAckMode($mode)
+    public function setAckMode(string $mode): void
     {
         if (false === in_array($mode, [self::ACK_AUTO, self::ACK_CLIENT, self::ACK_CLIENT_INDIVIDUAL], true)) {
             throw new \LogicException(sprintf('Ack mode is not valid: "%s"', $mode));
@@ -73,50 +69,36 @@ class StompConsumer implements PsrConsumer
         $this->ackMode = $mode;
     }
 
-    /**
-     * @return string
-     */
-    public function getAckMode()
+    public function getAckMode(): string
     {
         return $this->ackMode;
     }
 
-    /**
-     * @return int
-     */
-    public function getPrefetchCount()
+    public function getPrefetchCount(): int
     {
         return $this->prefetchCount;
     }
 
-    /**
-     * @param int $prefetchCount
-     */
-    public function setPrefetchCount($prefetchCount)
+    public function setPrefetchCount(int $prefetchCount): void
     {
-        $this->prefetchCount = (int) $prefetchCount;
+        $this->prefetchCount = $prefetchCount;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompDestination
      */
-    public function getQueue()
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?Message
     {
         $this->subscribe();
 
         if (0 === $timeout) {
             while (true) {
-                if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 0.1)) {
+                if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 100)) {
                     return $this->convertMessage($message);
                 }
             }
@@ -125,26 +107,25 @@ class StompConsumer implements PsrConsumer
                 return $this->convertMessage($message);
             }
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?Message
     {
         $this->subscribe();
 
         if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 0)) {
             return $this->convertMessage($message);
         }
+
+        return null;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param StompMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(Message $message): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
 
@@ -154,11 +135,9 @@ class StompConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param StompMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
 
@@ -172,7 +151,7 @@ class StompConsumer implements PsrConsumer
         $this->stomp->sendFrame($nackFrame);
     }
 
-    private function subscribe()
+    private function subscribe(): void
     {
         if (StompDestination::TYPE_TEMP_QUEUE == $this->queue->getType()) {
             $this->isSubscribed = true;
@@ -183,8 +162,11 @@ class StompConsumer implements PsrConsumer
         if (false == $this->isSubscribed) {
             $this->isSubscribed = true;
 
-            $frame = $this->stomp->getProtocol()
-                ->getSubscribeFrame($this->queue->getQueueName(), $this->subscriptionId, $this->ackMode);
+            $frame = $this->stomp->getProtocol()->getSubscribeFrame(
+                $this->queue->getQueueName(),
+                $this->subscriptionId,
+                $this->ackMode
+            );
 
             // rabbitmq STOMP protocol extension
             $headers = $this->queue->getHeaders();
@@ -199,12 +181,7 @@ class StompConsumer implements PsrConsumer
         }
     }
 
-    /**
-     * @param Frame $frame
-     *
-     * @return StompMessage
-     */
-    private function convertMessage(Frame $frame)
+    private function convertMessage(Frame $frame): StompMessage
     {
         if ('MESSAGE' !== $frame->getCommand()) {
             throw new \LogicException(sprintf('Frame is not MESSAGE frame but: "%s"', $frame->getCommand()));
@@ -224,7 +201,7 @@ class StompConsumer implements PsrConsumer
             $headers['content-length']
         );
 
-        $message = new StompMessage($frame->getBody(), $properties, $headers);
+        $message = new StompMessage((string) $frame->getBody(), $properties, $headers);
         $message->setRedelivered($redelivered);
         $message->setFrame($frame);
 

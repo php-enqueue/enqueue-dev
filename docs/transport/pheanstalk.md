@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Beanstalk (Pheanstalk) transport
 
 The transport uses [Beanstalkd](http://kr.github.io/beanstalkd/) job manager. 
@@ -37,44 +46,44 @@ $factory = new PheanstalkConnectionFactory([
     'port' => 5555
 ]);
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a function from there to create the context
-$psrContext = \Enqueue\dsn_to_context('beanstalk:');
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('beanstalk:')->createContext();
 ```
 
 ## Send message to topic
 
 ```php
 <?php
-/** @var \Enqueue\Pheanstalk\PheanstalkContext $psrContext */
+/** @var \Enqueue\Pheanstalk\PheanstalkContext $context */
 
-$fooTopic = $psrContext->createTopic('aTopic');
-$message = $psrContext->createMessage('Hello world!');
+$fooTopic = $context->createTopic('aTopic');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Pheanstalk\PheanstalkContext $psrContext */
+/** @var \Enqueue\Pheanstalk\PheanstalkContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('aQueue');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Consume message:
 
 ```php
 <?php
-/** @var \Enqueue\Pheanstalk\PheanstalkContext $psrContext */
+/** @var \Enqueue\Pheanstalk\PheanstalkContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$consumer = $psrContext->createConsumer($fooQueue);
+$fooQueue = $context->createQueue('aQueue');
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive(2000); // wait for 2 seconds
 

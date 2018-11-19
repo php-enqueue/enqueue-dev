@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Magento Enqueue. Quick tour
 
 The module integrates [Enqueue Client](../client/quick_tour.md) with Magento1. You can send and consume messages to different message queues such as RabbitMQ, AMQP, STOMP, Amazon SQS, Kafka, Redis, Google PubSub, Gearman, Beanstalk, Google PubSub and others. Or integrate Magento2 app with other applications or service via [Message Bus](../client/message_bus.md).
@@ -44,13 +53,13 @@ To consume messages you have to define a processor class first:
 <?php
 // app/code/local/Acme/Module/Helper/Async/Foo.php
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class Acme_Module_Helper_Async_Foo implements PsrProcessor
+class Acme_Module_Helper_Async_Foo implements Processor
 {
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         // do job
         // $message->getBody() -> 'payload'

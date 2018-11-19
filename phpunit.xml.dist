@@ -96,7 +96,23 @@
         <testsuite name="async-event-dispatcher">
             <directory>pkg/async-event-dispatcher/Tests</directory>
         </testsuite>
+
+        <testsuite name="async-command">
+            <directory>pkg/async-command/Tests</directory>
+        </testsuite>
+
+        <testsuite name="dsn">
+            <directory>pkg/dsn/Tests</directory>
+        </testsuite>
+
+        <testsuite name="wamp transport">
+            <directory>pkg/wamp/Tests</directory>
+        </testsuite>
     </testsuites>
+
+    <php>
+        <env name="SHELL_VERBOSITY" value="-1"/>
+    </php>
 
     <filter>
         <whitelist>

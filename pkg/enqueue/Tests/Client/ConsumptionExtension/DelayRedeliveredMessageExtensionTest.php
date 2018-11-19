@@ -4,14 +4,20 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\DriverSendResult;
 use Enqueue\Client\Message;
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class DelayRedeliveredMessageExtensionTest extends TestCase
 {
@@ -38,6 +44,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             ->expects(self::once())
             ->method('sendToProcessor')
             ->with(self::isInstanceOf(Message::class))
+            ->willReturn($this->createDriverSendResult())
         ;
         $driver
             ->expects(self::once())
@@ -61,17 +68,21 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             )
         ;
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrQueue($queue);
-        $context->setPsrMessage($originMessage);
-        $context->setLogger($logger);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub($queue),
+            $originMessage,
+            $this->createProcessorMock(),
+            1,
+            $logger
+        );
 
-        $this->assertNull($context->getResult());
+        $this->assertNull($messageReceived->getResult());
 
         $extension = new DelayRedeliveredMessageExtension($driver, 12345);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        $result = $context->getResult();
+        $result = $messageReceived->getResult();
         $this->assertInstanceOf(Result::class, $result);
         $this->assertSame(Result::REJECT, $result->getStatus());
         $this->assertSame('A new copy of the message was sent with a delay. The original message is rejected', $result->getReason());
@@ -92,13 +103,19 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $extension = new DelayRedeliveredMessageExtension($driver, 12345);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        $this->assertNull($context->getResult());
+        $this->assertNull($messageReceived->getResult());
     }
 
     public function testShouldDoNothingIfMessageIsRedeliveredButResultWasAlreadySetOnContext()
@@ -112,35 +129,74 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             ->method('sendToProcessor')
         ;
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
-        $context->setResult('aStatus');
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
+        $messageReceived->setResult(Result::ack());
 
         $extension = new DelayRedeliveredMessageExtension($driver, 12345);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createDriverMock()
+    private function createDriverMock(): DriverInterface
     {
         return $this->createMock(DriverInterface::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createPsrContextMock()
+    private function createContextMock(): InteropContext
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(InteropContext::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createLoggerMock()
+    private function createProcessorMock(): Processor
+    {
+        return $this->createMock(Processor::class);
+    }
+
+    /**
+     * @param mixed $queue
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createConsumerStub($queue): Consumer
+    {
+        $consumerMock = $this->createMock(Consumer::class);
+        $consumerMock
+            ->expects($this->any())
+            ->method('getQueue')
+            ->willReturn($queue)
+        ;
+
+        return $consumerMock;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createLoggerMock(): LoggerInterface
     {
         return $this->createMock(LoggerInterface::class);
+    }
+
+    private function createDriverSendResult(): DriverSendResult
+    {
+        return new DriverSendResult(
+            $this->createMock(Destination::class),
+            $this->createMock(TransportMessage::class)
+        );
     }
 }

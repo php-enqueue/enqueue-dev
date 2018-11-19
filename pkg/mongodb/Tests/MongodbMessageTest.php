@@ -4,11 +4,12 @@ namespace Enqueue\Mongodb\Tests;
 
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbMessageTest extends \PHPUnit_Framework_TestCase
+class MongodbMessageTest extends TestCase
 {
     use ClassExtensionTrait;
 

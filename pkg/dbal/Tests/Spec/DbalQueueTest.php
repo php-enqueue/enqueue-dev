@@ -3,9 +3,9 @@
 namespace Enqueue\Dbal\Tests\Spec;
 
 use Enqueue\Dbal\DbalDestination;
-use Interop\Queue\Spec\PsrQueueSpec;
+use Interop\Queue\Spec\QueueSpec;
 
-class DbalQueueTest extends PsrQueueSpec
+class DbalQueueTest extends QueueSpec
 {
     /**
      * {@inheritdoc}

@@ -2,11 +2,12 @@
 
 namespace Enqueue\Client;
 
+use Enqueue\Client\Extension\PrepareBodyExtension;
+use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcFactory;
-use Enqueue\Util\JSON;
 use Enqueue\Util\UUID;
 
-class Producer implements ProducerInterface
+final class Producer implements ProducerInterface
 {
     /**
      * compatibility with 0.9x.
@@ -17,7 +18,7 @@ class Producer implements ProducerInterface
     /**
      * @var DriverInterface
      */
-    protected $driver;
+    private $driver;
 
     /**
      * @var ExtensionInterface
@@ -29,13 +30,6 @@ class Producer implements ProducerInterface
      */
     private $rpcFactory;
 
-    /**
-     * @param DriverInterface         $driver
-     * @param ExtensionInterface|null $extension
-     * @param RpcFactory              $rpcFactory
-     *
-     * @internal param RpcClient $rpcClient
-     */
     public function __construct(
         DriverInterface $driver,
         RpcFactory $rpcFactory,
@@ -43,72 +37,39 @@ class Producer implements ProducerInterface
     ) {
         $this->driver = $driver;
         $this->rpcFactory = $rpcFactory;
-        $this->extension = $extension ?: new ChainExtension([]);
+
+        $this->extension = $extension ?
+            new ChainExtension([$extension, new PrepareBodyExtension()]) :
+            new ChainExtension([new PrepareBodyExtension()])
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendEvent($topic, $message)
-    {
-        if (false == $message instanceof Message) {
-            $body = $message;
-            $message = new Message();
-            $message->setBody($body);
-        }
-
-        $this->prepareBody($message);
-
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, $topic);
-        $message->setProperty(self::TOPIC_09X, $topic);
-
-        if (!$message->getMessageId()) {
-            $message->setMessageId(UUID::generate());
-        }
-
-        if (!$message->getTimestamp()) {
-            $message->setTimestamp(time());
-        }
-
-        if (!$message->getPriority()) {
-            $message->setPriority(MessagePriority::NORMAL);
-        }
-
-        if (Message::SCOPE_MESSAGE_BUS == $message->getScope()) {
-            if ($message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-                throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_QUEUE_NAME));
-            }
-            if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-                throw new \LogicException(sprintf('The %s property must not be set for messages that are sent to message bus.', Config::PARAMETER_PROCESSOR_NAME));
-            }
-
-            $this->extension->onPreSend($topic, $message);
-            $this->driver->sendToRouter($message);
-            $this->extension->onPostSend($topic, $message);
-        } elseif (Message::SCOPE_APP == $message->getScope()) {
-            if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-                $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->driver->getConfig()->getRouterProcessorName());
-            }
-            if (false == $message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
-                $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->driver->getConfig()->getRouterQueueName());
-            }
-
-            $this->extension->onPreSend($topic, $message);
-            $this->driver->sendToProcessor($message);
-            $this->extension->onPostSend($topic, $message);
-        } else {
-            throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sendCommand($command, $message, $needReply = false)
+    public function sendEvent(string $topic, $message): void
     {
         if (false == $message instanceof Message) {
             $message = new Message($message);
         }
+
+        $preSend = new PreSend($topic, $message, $this, $this->driver);
+        $this->extension->onPreSendEvent($preSend);
+
+        $message = $preSend->getMessage();
+        $message->setProperty(Config::TOPIC, $preSend->getTopic());
+
+        $this->doSend($message);
+    }
+
+    public function sendCommand(string $command, $message, bool $needReply = false): ?Promise
+    {
+        if (false == $message instanceof Message) {
+            $message = new Message($message);
+        }
+
+        $preSend = new PreSend($command, $message, $this, $this->driver);
+        $this->extension->onPreSendCommand($preSend);
+
+        $command = $preSend->getCommand();
+        $message = $preSend->getMessage();
 
         $deleteReplyQueue = false;
         $replyTo = $message->getReplyTo();
@@ -124,12 +85,10 @@ class Producer implements ProducerInterface
             }
         }
 
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, $command);
-        $message->setProperty(self::COMMAND_09X, $command);
+        $message->setProperty(Config::COMMAND, $command);
         $message->setScope(Message::SCOPE_APP);
 
-        $this->sendEvent(Config::COMMAND_TOPIC, $message);
+        $this->doSend($message);
 
         if ($needReply) {
             $promise = $this->rpcFactory->createPromise($replyTo, $message->getCorrelationId(), 60000);
@@ -137,59 +96,41 @@ class Producer implements ProducerInterface
 
             return $promise;
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function send($topic, $message)
+    private function doSend(Message $message): void
     {
-        $this->sendEvent($topic, $message);
-    }
-
-    /**
-     * @param Message $message
-     */
-    private function prepareBody(Message $message)
-    {
-        $body = $message->getBody();
-        $contentType = $message->getContentType();
-
-        if (is_scalar($body) || null === $body) {
-            $contentType = $contentType ?: 'text/plain';
-            $body = (string) $body;
-        } elseif (is_array($body)) {
-            if ($contentType && 'application/json' !== $contentType) {
-                throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
-            }
-
-            // only array of scalars is allowed.
-            array_walk_recursive($body, function ($value) {
-                if (!is_scalar($value) && null !== $value) {
-                    throw new \LogicException(sprintf(
-                        'The message\'s body must be an array of scalars. Found not scalar in the array: %s',
-                        is_object($value) ? get_class($value) : gettype($value)
-                    ));
-                }
-            });
-
-            $contentType = 'application/json';
-            $body = JSON::encode($body);
-        } elseif ($body instanceof \JsonSerializable) {
-            if ($contentType && 'application/json' !== $contentType) {
-                throw new \LogicException(sprintf('Content type "application/json" only allowed when body is array'));
-            }
-
-            $contentType = 'application/json';
-            $body = JSON::encode($body);
-        } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
+        if (false === is_string($message->getBody())) {
+            throw new \LogicException(sprintf(
+                'The message body must be string at this stage, got "%s". Make sure you passed string as message or there is an extension that converts custom input to string.',
+                is_object($message->getBody()) ? get_class($message->getBody()) : gettype($message->getBody())
             ));
         }
 
-        $message->setContentType($contentType);
-        $message->setBody($body);
+        if ($message->getProperty(Config::PROCESSOR)) {
+            throw new \LogicException(sprintf('The %s property must not be set.', Config::PROCESSOR));
+        }
+
+        if (!$message->getMessageId()) {
+            $message->setMessageId(UUID::generate());
+        }
+
+        if (!$message->getTimestamp()) {
+            $message->setTimestamp(time());
+        }
+
+        $this->extension->onDriverPreSend(new DriverPreSend($message, $this, $this->driver));
+
+        if (Message::SCOPE_MESSAGE_BUS == $message->getScope()) {
+            $result = $this->driver->sendToRouter($message);
+        } elseif (Message::SCOPE_APP == $message->getScope()) {
+            $result = $this->driver->sendToProcessor($message);
+        } else {
+            throw new \LogicException(sprintf('The message scope "%s" is not supported.', $message->getScope()));
+        }
+
+        $this->extension->onPostSend(new PostSend($message, $this, $this->driver, $result->getTransportDestination(), $result->getTransportMessage()));
     }
 }

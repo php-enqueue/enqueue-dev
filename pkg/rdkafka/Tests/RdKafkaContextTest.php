@@ -6,7 +6,8 @@ use Enqueue\Null\NullQueue;
 use Enqueue\RdKafka\JsonSerializer;
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\Serializer;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,8 +19,8 @@ class RdKafkaContextTest extends TestCase
     {
         $context = new RdKafkaContext([]);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Not implemented');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
+
         $context->createTemporaryQueue();
     }
 

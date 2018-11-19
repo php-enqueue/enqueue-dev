@@ -1,28 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gps;
 
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue;
 
-class GpsQueue implements PsrQueue
+class GpsQueue implements Queue
 {
     /**
      * @var string
      */
     private $name;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->name;
     }

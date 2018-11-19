@@ -4,10 +4,11 @@ namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
-use Enqueue\Consumption\Context;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Enqueue\Consumption\Context\MessageReceived;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -41,7 +42,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('connect')
         ;
 
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
         $context->getLogger()
             ->expects($this->never())
             ->method('debug')
@@ -55,7 +56,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($context);
     }
 
     public function testShouldDoesReconnectIfConnectionFailed()
@@ -80,7 +81,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('connect')
         ;
 
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
         $context->getLogger()
             ->expects($this->at(0))
             ->method('debug')
@@ -100,7 +101,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($context);
     }
 
     public function testShouldSkipIfConnectionWasNotOpened()
@@ -129,7 +130,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->will($this->returnValue(true))
         ;
 
-        $context = $this->createPsrContext();
+        $context = $this->createContext();
         $context->getLogger()
             ->expects($this->never())
             ->method('debug')
@@ -143,26 +144,25 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($context);
     }
 
-    /**
-     * @return Context
-     */
-    protected function createPsrContext()
+    protected function createContext(): MessageReceived
     {
-        $context = new Context($this->createMock(PsrContext::class));
-        $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setPsrConsumer($this->createMock(PsrConsumer::class));
-        $context->setPsrProcessor($this->createMock(PsrProcessor::class));
-
-        return $context;
+        return new MessageReceived(
+            $this->createMock(InteropContext::class),
+            $this->createMock(Consumer::class),
+            $this->createMock(Message::class),
+            $this->createMock(Processor::class),
+            1,
+            $this->createMock(LoggerInterface::class)
+        );
     }
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|RegistryInterface
      */
-    protected function createRegistryMock()
+    protected function createRegistryMock(): RegistryInterface
     {
         return $this->createMock(RegistryInterface::class);
     }
@@ -170,7 +170,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|Connection
      */
-    protected function createConnectionMock()
+    protected function createConnectionMock(): Connection
     {
         return $this->createMock(Connection::class);
     }

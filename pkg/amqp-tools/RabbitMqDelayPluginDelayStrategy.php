@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpTools;
 
 use Interop\Amqp\AmqpContext;
@@ -8,17 +10,14 @@ use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
-use Interop\Queue\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidDestinationException;
 
 class RabbitMqDelayPluginDelayStrategy implements DelayStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, $delayMsec)
+    public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, int $delay): void
     {
         $delayMessage = $context->createMessage($message->getBody(), $message->getProperties(), $message->getHeaders());
-        $delayMessage->setProperty('x-delay', (int) $delayMsec);
+        $delayMessage->setProperty('x-delay', (int) $delay);
         $delayMessage->setRoutingKey($message->getRoutingKey());
 
         if ($dest instanceof AmqpTopic) {

@@ -16,19 +16,21 @@ class CustomAppKernel extends Kernel
     private $enqueueConfigId;
 
     private $enqueueConfig = [
-        'client' => [
-            'prefix' => 'enqueue',
-            'app_name' => '',
-            'router_topic' => 'test',
-            'router_queue' => 'test',
-            'default_processor_queue' => 'test',
+        'default' => [
+            'client' => [
+                'prefix' => 'enqueue',
+                'app_name' => '',
+                'router_topic' => 'test',
+                'router_queue' => 'test',
+                'default_processor_queue' => 'test',
+            ],
         ],
     ];
 
     public function setEnqueueConfig(array $config)
     {
         $this->enqueueConfig = array_replace_recursive($this->enqueueConfig, $config);
-        $this->enqueueConfig['client']['app_name'] = str_replace('.', '', uniqid('app_name', true));
+        $this->enqueueConfig['default']['client']['app_name'] = str_replace('.', '', uniqid('app_name', true));
         $this->enqueueConfigId = md5(json_encode($this->enqueueConfig));
 
         $fs = new Filesystem();
@@ -44,7 +46,6 @@ class CustomAppKernel extends Kernel
         $bundles = [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new \Symfony\Bundle\MonologBundle\MonologBundle(),
             new \Enqueue\Bundle\EnqueueBundle(),
         ];
 

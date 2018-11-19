@@ -1,16 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
-use RdKafka\Producer;
+use RdKafka\Producer as VendorProducer;
 use RdKafka\TopicConf;
 
-class RdKafkaContext implements PsrContext
+class RdKafkaContext implements Context
 {
     use SerializerAwareTrait;
 
@@ -46,57 +57,48 @@ class RdKafkaContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new RdKafkaMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RdKafkaTopic
      */
-    public function createTopic($topicName)
+    public function createTopic(string $topicName): Topic
     {
         return new RdKafkaTopic($topicName);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RdKafkaTopic
      */
-    public function createQueue($queueName)
+    public function createQueue(string $queueName): Queue
     {
         return new RdKafkaTopic($queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): Queue
     {
-        throw new \LogicException('Not implemented');
+        throw TemporaryQueueNotSupportedException::providerDoestNotSupportIt();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return RdKafkaProducer
      */
-    public function createProducer()
+    public function createProducer(): Producer
     {
         return new RdKafkaProducer($this->getProducer(), $this->getSerializer());
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RdKafkaTopic $destination
+     *
+     * @return RdKafkaConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
 
@@ -116,10 +118,7 @@ class RdKafkaContext implements PsrContext
         return $consumer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
         $kafkaConsumers = $this->kafkaConsumers;
         $this->kafkaConsumers = [];
@@ -129,13 +128,20 @@ class RdKafkaContext implements PsrContext
         }
     }
 
-    /**
-     * @return Producer
-     */
-    private function getProducer()
+    public function createSubscriptionConsumer(): SubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function purgeQueue(Queue $queue): void
+    {
+        throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    private function getProducer(): VendorProducer
     {
         if (null === $this->producer) {
-            $this->producer = new Producer($this->getConf());
+            $this->producer = new VendorProducer($this->getConf());
 
             if (isset($this->config['log_level'])) {
                 $this->producer->setLogLevel($this->config['log_level']);
@@ -145,10 +151,7 @@ class RdKafkaContext implements PsrContext
         return $this->producer;
     }
 
-    /**
-     * @return Conf
-     */
-    private function getConf()
+    private function getConf(): Conf
     {
         if (null === $this->conf) {
             $topicConf = new TopicConf();

@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gearman;
 
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class GearmanConnectionFactory implements PsrConnectionFactory
+class GearmanConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -40,21 +43,14 @@ class GearmanConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return GearmanContext
      */
-    public function createContext()
+    public function createContext(): Context
     {
         return new GearmanContext($this->config);
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
         $dsnConfig = parse_url($dsn);
         if (false === $dsnConfig) {
@@ -81,10 +77,7 @@ class GearmanConnectionFactory implements PsrConnectionFactory
         ];
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'host' => \GEARMAN_DEFAULT_TCP_HOST,

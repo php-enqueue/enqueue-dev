@@ -8,8 +8,8 @@ use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Context;
+use Interop\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -35,7 +35,7 @@ class AsyncListenerTest extends TestCase
         $this->assertAttributeSame($eventQueue, 'eventQueue', $listener);
     }
 
-    public function testCouldBeConstructedWithContextAndRegistryAndPsrQueue()
+    public function testCouldBeConstructedWithContextAndRegistryAndQueue()
     {
         $eventQueue = new NullQueue('symfony_events');
 
@@ -137,19 +137,19 @@ class AsyncListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProducer
+     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
      */
     private function createProducerMock()
     {
-        return $this->createMock(PsrProducer::class);
+        return $this->createMock(Producer::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
     private function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
     /**

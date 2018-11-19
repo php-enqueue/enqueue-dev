@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Config reference
 
 You can get this info by running `./bin/console config:dump-reference enqueue` command.
@@ -5,311 +14,57 @@ You can get this info by running `./bin/console config:dump-reference enqueue` c
 ```yaml
 # Default configuration for extension with alias: "enqueue"
 enqueue:
-    transport:            # Required
-        default:
-            alias:                ~
-            dsn:                  ~
-        null:
-            dsn:                  ~
-        stomp:
-            host:                 localhost
-            port:                 61613
-            login:                guest
-            password:             guest
-            vhost:                /
-            sync:                 true
-            connection_timeout:   1
-            buffer_size:          1000
-            lazy:                 true
-            ssl_on:               false
-        rabbitmq_stomp:
-            host:                 localhost
-            port:                 61613
-            login:                guest
-            password:             guest
-            vhost:                /
-            sync:                 true
-            connection_timeout:   1
-            buffer_size:          1000
-            lazy:                 true
-            ssl_on:               false
 
-            # The option tells whether RabbitMQ broker has management plugin installed or not
-            management_plugin_installed: false
-            management_plugin_port: 15672
-
-            # The option tells whether RabbitMQ broker has delay plugin installed or not
-            delay_plugin_installed: false
-        amqp:
-            driver:               ~
-
-            # The connection to AMQP broker set as a string. Other parameters could be used as defaults
-            dsn:                  ~
-
-            # The host to connect too. Note: Max 1024 characters
-            host:                 ~
-
-            # Port on the host.
-            port:                 ~
-
-            # The user name to use. Note: Max 128 characters.
-            user:                 ~
-
-            # Password. Note: Max 128 characters.
-            pass:                 ~
-
-            # The virtual host on the host. Note: Max 128 characters.
-            vhost:                ~
-
-            # Connection timeout. Note: 0 or greater seconds. May be fractional.
-            connection_timeout:   ~
-
-            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
-            read_timeout:         ~
-
-            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
-            write_timeout:        ~
-
-            # How often to send heartbeat. 0 means off.
-            heartbeat:            ~
-            persisted:            ~
-            lazy:                 ~
-
-            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
-            receive_method:       ~ # One of "basic_get"; "basic_consume"
-
-            # The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"
-            qos_prefetch_size:    ~
-
-            # Specifies a prefetch window in terms of whole messages
-            qos_prefetch_count:   ~
-
-            # If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.
-            qos_global:           ~
-
-            # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
-            driver_options:       ~
-
-            # Should be true if you want to use secure connections. False by default
-            ssl_on:               ~
-
-            # This option determines whether ssl client verifies that the server cert is for the server it is known as. True by default.
-            ssl_verify:           ~
-
-            # Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.
-            ssl_cacert:           ~
-
-            # Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string
-            ssl_cert:             ~
-
-            # Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.
-            ssl_key:              ~
-        rabbitmq_amqp:
-            driver:               ~
-
-            # The connection to AMQP broker set as a string. Other parameters could be used as defaults
-            dsn:                  ~
-
-            # The host to connect too. Note: Max 1024 characters
-            host:                 ~
-
-            # Port on the host.
-            port:                 ~
-
-            # The user name to use. Note: Max 128 characters.
-            user:                 ~
-
-            # Password. Note: Max 128 characters.
-            pass:                 ~
-
-            # The virtual host on the host. Note: Max 128 characters.
-            vhost:                ~
-
-            # Connection timeout. Note: 0 or greater seconds. May be fractional.
-            connection_timeout:   ~
-
-            # Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
-            read_timeout:         ~
-
-            # Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
-            write_timeout:        ~
-
-            # How often to send heartbeat. 0 means off.
-            heartbeat:            ~
-            persisted:            ~
-            lazy:                 ~
-
-            # The receive strategy to be used. We suggest to use basic_consume as it is more performant. Though you need AMQP extension 1.9.1 or higher
-            receive_method:       ~ # One of "basic_get"; "basic_consume"
-
-            # The server will send a message in advance if it is equal to or smaller in size than the available prefetch size. May be set to zero, meaning "no specific limit"
-            qos_prefetch_size:    ~
-
-            # Specifies a prefetch window in terms of whole messages
-            qos_prefetch_count:   ~
-
-            # If "false" the QoS settings apply to the current channel only. If this field is "true", they are applied to the entire connection.
-            qos_global:           ~
-
-            # The options that are specific to the amqp transport you chose. For example amqp+lib have insist, keepalive, stream options. amqp+bunny has tcp_nodelay extra option.
-            driver_options:       ~
-
-            # Should be true if you want to use secure connections. False by default
-            ssl_on:               ~
-
-            # This option determines whether ssl client verifies that the server cert is for the server it is known as. True by default.
-            ssl_verify:           ~
-
-            # Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. A string.
-            ssl_cacert:           ~
-
-            # Path to local certificate file on filesystem. It must be a PEM encoded file which contains your certificate and private key. A string
-            ssl_cert:             ~
-
-            # Path to local private key file on filesystem in case of separate files for certificate (local_cert) and private key. A string.
-            ssl_key:              ~
-
-            # The delay strategy to be used. Possible values are "dlx", "delayed_message_plugin" or service id
-            delay_strategy:       dlx
-        fs:
-
-            # The path to a directory where to store messages given as DSN. For example file://tmp/foo
-            dsn:                  ~
-
-            # The store directory where all queue\topics files will be created and messages are stored
-            path:                 ~
-
-            # The option tells how many messages should be read from file at once. The feature save resources but could lead to bigger messages lose.
-            pre_fetch_count:      1
-
-            # The queue files are created with this given permissions if not exist.
-            chmod:                384
-
-            # How often query for new messages.
-            polling_interval:     100
-        redis:
-
-            # The redis connection given as DSN. For example redis://host:port?vendor=predis
-            dsn:                  ~
-
-            # can be a host, or the path to a unix domain socket
-            host:                 ~
-            port:                 ~
-
-            # The library used internally to interact with Redis server
-            vendor:               ~ # One of "phpredis"; "predis"; "custom"
-
-            # A custom redis service id, used with vendor true only
-            redis:                ~
-
-            # bool, Whether it use single persisted connection or open a new one for every context
-            persisted:            false
-
-            # the connection will be performed as later as possible, if the option set to true
-            lazy:                 true
-
-            # Database index to select when connected.
-            database:             0
-        dbal:
-
-            # The Doctrine DBAL DSN. Other parameters are ignored if set
-            dsn:                  ~
-
-            # Doctrine DBAL connection options. See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
-            connection:           ~
-
-            # Doctrine dbal connection name.
-            dbal_connection_name: null
-
-            # Database table name.
-            table_name:           enqueue
-
-            # How often query for new messages.
-            polling_interval:     1000
-            lazy:                 true
-        sqs:
-            client:               null
-            key:                  null
-            secret:               null
-            token:                null
-            region:               ~ # Required
-            retries:              3
-            version:              '2012-11-05'
-
-            # the connection will be performed as later as possible, if the option set to true
-            lazy:                 true
-            endpoint:             null
-        gps:
-
-            # The connection to Google Pub/Sub broker set as a string. Other parameters are ignored if set
-            dsn:                  ~
-
-            # The project ID from the Google Developer's Console.
-            projectId:            ~
-
-            # The full path to your service account credentials.json file retrieved from the Google Developers Console.
-            keyFilePath:          ~
-
-            # Number of retries for a failed request.
-            retries:              3
-
-            # Scopes to be used for the request.
-            scopes:               []
-
-            # The connection will be performed as later as possible, if the option set to true
-            lazy:                 true
-        rdkafka:
-
-            # The kafka DSN. Other parameters are ignored if set
-            dsn:                  ~
-
-            # The kafka global configuration properties
-            global:               []
-
-            # The kafka topic configuration properties
-            topic:                []
-
-            # Delivery report callback
-            dr_msg_cb:            ~
-
-            # Error callback
-            error_cb:             ~
-
-            # Called after consumer group has been rebalanced
-            rebalance_cb:         ~
-
-            # Which partitioner to use
-            partitioner:          ~ # One of "RD_KAFKA_MSG_PARTITIONER_RANDOM"; "RD_KAFKA_MSG_PARTITIONER_CONSISTENT"
-
-            # Logging level (syslog(3) levels)
-            log_level:            ~
-
-            # Commit asynchronous
-            commit_async:         false
-    client:
-        traceable_producer:   true
-        prefix:               enqueue
-        app_name:             app
-        router_topic:         default
-        router_queue:         default
-        router_processor:     Enqueue\Client\RouterProcessor
-        default_processor_queue: default
-        redelivered_delay_time: 0
-    consumption:
-
-        # the time in milliseconds queue consumer waits if no message received
-        idle_timeout:         0
-
-        # the time in milliseconds queue consumer waits for a message (100 ms by default)
-        receive_timeout:      100
-    job:                  false
-    async_events:
-        enabled:              false
-    extensions:
-        doctrine_ping_connection_extension: false
-        doctrine_clear_identity_map_extension: false
-        signal_extension:     true
-        reply_extension:      true
+    # Prototype
+    key:
+
+        # The transport option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at connection factory constructor docblock.
+        transport:            # Required
+
+            # The MQ broker DSN. These schemes are supported: "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", "wamp", "ws", to use these "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", "wamp", "ws" you have to install a package.
+            dsn:                  ~ # Required
+
+            # The connection factory class should implement "Interop\Queue\ConnectionFactory" interface
+            connection_factory_class: ~
+
+            # The factory class should implement "Enqueue\ConnectionFactoryFactoryInterface" interface
+            factory_service:      ~
+
+            # The factory service should be a class that implements "Enqueue\ConnectionFactoryFactoryInterface" interface
+            factory_class:        ~
+        consumption:
+
+            # the time in milliseconds queue consumer waits for a message (100 ms by default)
+            receive_timeout:      10000
+        client:
+            traceable_producer:   true
+            prefix:               enqueue
+            app_name:             app
+            router_topic:         default
+            router_queue:         default
+            router_processor:     null
+            default_processor_queue: default
+            redelivered_delay_time: 0
+
+        # The "monitoring" option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at stats storage constructor doc block.
+        monitoring:
+
+            # The stats storage DSN. These schemes are supported: "wamp", "ws", "influxdb".
+            dsn:                  ~ # Required
+
+            # The factory class should implement "Enqueue\Monitoring\StatsStorageFactory" interface
+            storage_factory_service: ~
+
+            # The factory service should be a class that implements "Enqueue\Monitoring\StatsStorageFactory" interface
+            storage_factory_class: ~
+        job:                      false
+        async_commands:
+            enabled:              false
+        extensions:
+            doctrine_ping_connection_extension: false
+            doctrine_clear_identity_map_extension: false
+            signal_extension:     true
+            reply_extension:      true
 ```
 
 [back to index](../index.md)

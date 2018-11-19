@@ -3,83 +3,75 @@
 namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;
-use Enqueue\Client\ExtensionInterface as ClientExtensionInterface;
-use Enqueue\Client\Message;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
+use Enqueue\Client\DriverInterface;
+use Enqueue\Client\Route;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 
-class ExclusiveCommandExtension implements ConsumptionExtensionInterface, ClientExtensionInterface
+final class ExclusiveCommandExtension implements MessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
 
     /**
-     * @var string[]
+     * @var Route[]
      */
-    private $queueNameToProcessorNameMap;
+    private $queueToRouteMap;
 
-    /**
-     * @var string[]
-     */
-    private $processorNameToQueueNameMap;
-
-    /**
-     * @param string[] $queueNameToProcessorNameMap
-     */
-    public function __construct(array $queueNameToProcessorNameMap)
+    public function __construct(DriverInterface $driver)
     {
-        $this->queueNameToProcessorNameMap = $queueNameToProcessorNameMap;
-        $this->processorNameToQueueNameMap = array_flip($queueNameToProcessorNameMap);
+        $this->driver = $driver;
     }
 
-    public function onPreReceived(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
-        $message = $context->getPsrMessage();
-        $queue = $context->getPsrQueue();
-
-        if ($message->getProperty(Config::PARAMETER_TOPIC_NAME)) {
+        $message = $context->getMessage();
+        if ($message->getProperty(Config::TOPIC)) {
             return;
         }
-        if ($message->getProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME)) {
+        if ($message->getProperty(Config::COMMAND)) {
             return;
         }
-        if ($message->getProperty(Config::PARAMETER_PROCESSOR_NAME)) {
-            return;
-        }
-        if ($message->getProperty(Config::PARAMETER_COMMAND_NAME)) {
+        if ($message->getProperty(Config::PROCESSOR)) {
             return;
         }
 
-        if (array_key_exists($queue->getQueueName(), $this->queueNameToProcessorNameMap)) {
+        if (null === $this->queueToRouteMap) {
+            $this->queueToRouteMap = $this->buildMap();
+        }
+
+        $queue = $context->getConsumer()->getQueue();
+        if (array_key_exists($queue->getQueueName(), $this->queueToRouteMap)) {
             $context->getLogger()->debug('[ExclusiveCommandExtension] This is a exclusive command queue and client\'s properties are not set. Setting them');
 
-            $message->setProperty(Config::PARAMETER_TOPIC_NAME, Config::COMMAND_TOPIC);
-            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $queue->getQueueName());
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $this->queueNameToProcessorNameMap[$queue->getQueueName()]);
-            $message->setProperty(Config::PARAMETER_COMMAND_NAME, $this->queueNameToProcessorNameMap[$queue->getQueueName()]);
+            $route = $this->queueToRouteMap[$queue->getQueueName()];
+            $message->setProperty(Config::PROCESSOR, $route->getProcessor());
+            $message->setProperty(Config::COMMAND, $route->getSource());
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPreSend($topic, Message $message)
+    private function buildMap(): array
     {
-        if (Config::COMMAND_TOPIC != $topic) {
-            return;
+        $map = [];
+        foreach ($this->driver->getRouteCollection()->all() as $route) {
+            if (false == $route->isCommand()) {
+                continue;
+            }
+
+            if (false == $route->isProcessorExclusive()) {
+                continue;
+            }
+
+            $queueName = $this->driver->createQueue($route->getQueue())->getQueueName();
+            if (array_key_exists($queueName, $map)) {
+                throw new \LogicException('The queue name has been already bound by another exclusive command processor');
+            }
+
+            $map[$queueName] = $route;
         }
 
-        $commandName = $message->getProperty(Config::PARAMETER_COMMAND_NAME);
-        if (array_key_exists($commandName, $this->processorNameToQueueNameMap)) {
-            $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, $commandName);
-            $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, $this->processorNameToQueueNameMap[$commandName]);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSend($topic, Message $message)
-    {
+        return $map;
     }
 }

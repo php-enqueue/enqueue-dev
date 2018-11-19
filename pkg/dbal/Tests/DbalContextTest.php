@@ -9,17 +9,19 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use PHPUnit\Framework\TestCase;
 
-class DbalContextTest extends \PHPUnit_Framework_TestCase
+class DbalContextTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementContextInterface()
     {
-        $this->assertClassImplements(PsrContext::class, DbalContext::class);
+        $this->assertClassImplements(Context::class, DbalContext::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -59,8 +61,23 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('body', $message->getBody());
         $this->assertEquals(['pkey' => 'pval'], $message->getProperties());
         $this->assertEquals(['hkey' => 'hval'], $message->getHeaders());
-        $this->assertSame(0, $message->getPriority());
+        $this->assertNull($message->getPriority());
         $this->assertFalse($message->isRedelivered());
+    }
+
+    public function testShouldConvertArrayToDbalMessage()
+    {
+        $arrayData = [
+            'body' => 'theBody',
+            'properties' => json_encode(['barProp' => 'barPropVal']),
+            'headers' => json_encode(['fooHeader' => 'fooHeaderVal']),
+        ];
+        $context = new DbalContext($this->createConnectionMock());
+        $message = $context->convertMessage($arrayData);
+
+        $this->assertSame('theBody', $message->getBody());
+        $this->assertSame(['barProp' => 'barPropVal'], $message->getProperties());
+        $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
     }
 
     public function testShouldCreateTopic()
@@ -139,8 +156,7 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
     {
         $context = new DbalContext($connection = $this->createConnectionMock());
 
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Dbal transport does not support temporary queues');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
 
         $context->createTemporaryQueue();
     }
@@ -154,6 +170,6 @@ class DbalContextTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class NotSupportedDestination2 implements PsrDestination
+class NotSupportedDestination2 implements Destination
 {
 }

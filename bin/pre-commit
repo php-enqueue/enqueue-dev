@@ -68,7 +68,9 @@ function getFilesToFix()
         return (bool) preg_match('/\.(php|twig|translations\/*.yml)$/', $file);
     });
 
-    echo sprintf('Found %s staged files', count($stagedFiles)).PHP_EOL;
+    $stagedFiles = array_filter($stagedFiles, function ($file) {
+        return (bool) preg_match('/^pkg\//', $file);
+    });
 
     return $stagedFiles;
 }
@@ -77,18 +79,18 @@ function runPhpLint()
 {
     global $phpBin, $projectRootDir;
 
-    $filesWithErrors = array();
+    $output = [];
     foreach (getFilesToFix() as $file) {
-        $output = '';
+        $commandOutput = null;
         $returnCode = null;
-        exec(sprintf('%s -l %s 2>/dev/null', $phpBin, $projectRootDir.'/'.$file), $output, $returnCode);
+        exec(sprintf('%s -l %s', $phpBin, $projectRootDir.'/'.$file), $commandOutput, $returnCode);
 
         if ($returnCode) {
-            $filesWithErrors[] = $file;
+            $output[] = $commandOutput;
         }
     }
 
-    return $filesWithErrors;
+    return $output;
 }
 
 function runPhpCsFixer()
@@ -101,54 +103,69 @@ function runPhpCsFixer()
     }
 
     $filesWithErrors = array();
-    foreach (getFilesToFix() as $file) {
-        $output = '';
-        $returnCode = null;
+    $output = '';
+    $returnCode = null;
 
+    exec(sprintf(
+        '%s %s fix --config=.php_cs.php --dry-run --no-interaction --path-mode=intersection  -- %s',
+        $phpBin,
+        $phpCsFixerBin,
+        implode(' ', getFilesToFix())
+    ), $output, $returnCode);
+
+    if ($returnCode) {
         exec(sprintf(
-            '%s %s fix %s --dry-run',
+            '%s %s fix --config=.php_cs.php --no-interaction -v --path-mode=intersection  -- %s',
             $phpBin,
             $phpCsFixerBin,
-            $projectRootDir.'/'.$file
-        ), $output, $returnCode);
-
-        if ($returnCode) {
-            $output = '';
-
-            exec(sprintf(
-                '%s %s fix %s',
-                $phpBin,
-                $phpCsFixerBin,
-                $projectRootDir.'/'.$file
-            ), $output);
-
-            $filesWithErrors[] = $file;
-        }
+            implode(' ', getFilesToFix())
+        ), $output);
     }
 
-    return $filesWithErrors;
+    return $returnCode;
 }
+
+function runPhpstan()
+{
+    $output = '';
+    $returnCode = null;
+
+    exec(sprintf(
+        'docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon %s',
+        implode(' ', getFilesToFix())
+    ), $output, $returnCode);
+
+    return $returnCode ? $output : false;
+}
+
+echo sprintf('Found %s staged files', count(getFilesToFix())).PHP_EOL;
 
 $phpSyntaxErrors = runPhpLint();
 if ($phpSyntaxErrors) {
     echo "Php syntax errors were found in next files:" . PHP_EOL;
-
-    foreach ($phpSyntaxErrors as $error) {
-        echo $error . PHP_EOL;
+    foreach ($phpSyntaxErrors as $phpSyntaxErrors) {
+        echo array_walk_recursive($phpSyntaxErrors, function($item) {
+            echo $item.PHP_EOL;
+        }) . PHP_EOL;
     }
 
     exit(1);
 }
 
-$phpCSFixerErrors = runPhpCsFixer();
-if ($phpCSFixerErrors) {
+$phpCSFixed = runPhpCsFixer();
+if ($phpCSFixed) {
     echo "Incorrect coding standards were detected and fixed." . PHP_EOL;
     echo "Please stash changes and run commit again." . PHP_EOL;
-    echo "List of changed files:" . PHP_EOL;
 
-    foreach ($phpCSFixerErrors as $error) {
-        echo $error . PHP_EOL;
-    }
+    exit(1);
+}
+
+$phpStanErrors = runPhpstan();
+if ($phpStanErrors) {
+    echo array_walk_recursive($phpStanErrors, function($item) {
+        echo $item.PHP_EOL;
+    }) . PHP_EOL;
+    echo PHP_EOL;
 
     exit(1);
 }
