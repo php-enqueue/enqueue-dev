@@ -16,13 +16,10 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class AsyncListenerTest extends WebTestCase
 {
-    protected function tearDown()
+    public function setUp()
     {
-        parent::tearDown();
+        parent::setUp();
 
-        //<<<<<<< HEAD
-//        static::$container = null;
-        //=======
         /** @var AsyncListener $asyncListener */
         $asyncListener = static::$container->get('enqueue.events.async_listener');
 
