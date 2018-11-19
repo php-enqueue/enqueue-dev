@@ -20,9 +20,9 @@ class AsyncListenerTest extends WebTestCase
     {
         parent::tearDown();
 
-//<<<<<<< HEAD
+        //<<<<<<< HEAD
 //        static::$container = null;
-//=======
+        //=======
         /** @var AsyncListener $asyncListener */
         $asyncListener = static::$container->get('enqueue.events.async_listener');
 

@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Functional\Events;
 
+use Enqueue\AsyncEventDispatcher\AsyncListener;
 use Enqueue\AsyncEventDispatcher\AsyncProcessor;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncListener;
 use Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber;
@@ -17,20 +18,16 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class AsyncProcessorTest extends WebTestCase
 {
-    protected function tearDown()
+    public function setUp()
     {
-        parent::tearDown();
+        parent::setUp();
 
-//<<<<<<< HEAD
-//        static::$container = null;
-//=======
         /** @var AsyncListener $asyncListener */
         $asyncListener = static::$container->get('enqueue.events.async_listener');
 
         $asyncListener->resetSyncMode();
         static::$container->get('test_async_subscriber')->calls = [];
         static::$container->get('test_async_listener')->calls = [];
-//>>>>>>> origin/master
     }
 
     public function testCouldBeGetFromContainerAsService()

@@ -10,12 +10,6 @@ use Enqueue\Util\UUID;
 final class Producer implements ProducerInterface
 {
     /**
-     * compatibility with 0.9x.
-     */
-    const TOPIC_09X = 'enqueue.topic';
-    const COMMAND_09X = 'enqueue.command';
-
-    /**
      * @var DriverInterface
      */
     private $driver;
