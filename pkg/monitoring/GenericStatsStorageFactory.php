@@ -22,7 +22,7 @@ class GenericStatsStorageFactory implements StatsStorageFactory
             throw new \InvalidArgumentException('The config must have dsn key set.');
         }
 
-        $dsn = new Dsn($config['dsn']);
+        $dsn = Dsn::parseFirst($config['dsn']);
 
         if ($storageClass = $this->findStorageClass($dsn, Resources::getKnownStorages())) {
             return new $storageClass(1 === count($config) ? $config['dsn'] : $config);

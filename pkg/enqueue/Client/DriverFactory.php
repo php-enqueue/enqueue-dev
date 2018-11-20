@@ -30,7 +30,7 @@ final class DriverFactory implements DriverFactoryInterface
 
     public function create(ConnectionFactory $factory, string $dsn, array $config): DriverInterface
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         if ($driverInfo = $this->findDriverInfo($dsn, Resources::getAvailableDrivers())) {
             $driverClass = $driverInfo['driverClass'];

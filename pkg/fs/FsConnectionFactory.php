@@ -70,7 +70,7 @@ class FsConnectionFactory implements ConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         $supportedSchemes = ['file'];
         if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
@@ -83,9 +83,9 @@ class FsConnectionFactory implements ConnectionFactory
 
         return array_filter(array_replace($dsn->getQuery(), [
             'path' => $dsn->getPath(),
-            'pre_fetch_count' => $dsn->getInt('pre_fetch_count'),
+            'pre_fetch_count' => $dsn->getDecimal('pre_fetch_count'),
             'chmod' => $dsn->getOctal('chmod'),
-            'polling_interval' => $dsn->getInt('polling_interval'),
+            'polling_interval' => $dsn->getDecimal('polling_interval'),
         ]), function ($value) { return null !== $value; });
     }
 

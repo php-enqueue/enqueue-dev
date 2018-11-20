@@ -11,7 +11,7 @@ trait RabbitManagementExtensionTrait
      */
     private function removeQueue($queueName)
     {
-        $dsn = new Dsn(getenv('RABBITMQ_AMQP_DSN'));
+        $dsn = Dsn::parseFirst(getenv('RABBITMQ_AMQP_DSN'));
 
         $url = sprintf(
             'http://%s:15672/api/queues/%s/%s',
@@ -45,7 +45,7 @@ trait RabbitManagementExtensionTrait
      */
     private function removeExchange($exchangeName)
     {
-        $dsn = new Dsn(getenv('RABBITMQ_AMQP_DSN'));
+        $dsn = Dsn::parseFirst(getenv('RABBITMQ_AMQP_DSN'));
 
         $url = sprintf(
             'http://%s:15672/api/exchanges/%s/%s',

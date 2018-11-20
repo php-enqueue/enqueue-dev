@@ -9,12 +9,17 @@ class Dsn
     /**
      * @var string
      */
-    private $dsn;
+    private $scheme;
 
     /**
      * @var string
      */
-    private $scheme;
+    private $schemeProtocol;
+
+    /**
+     * @var string[]
+     */
+    private $schemeExtensions;
 
     /**
      * @var string|null
@@ -47,37 +52,43 @@ class Dsn
     private $queryString;
 
     /**
-     * @var array
+     * @var QueryBag
      */
-    private $query;
+    private $queryBag;
 
-    /**
-     * @var string
-     */
-    private $schemeProtocol;
-
-    /**
-     * @var string[]
-     */
-    private $schemeExtensions;
-
-    public function __construct(string $dsn)
-    {
-        $this->dsn = $dsn;
-        $this->query = [];
-
-        $this->parse($dsn);
+    public function __construct(
+        string $scheme,
+        string $schemeProtocol,
+        array $schemeExtensions,
+        ?string $user,
+        ?string $password,
+        ?string $host,
+        ?int $port,
+        ?string $path,
+        ?string $queryString,
+        array $query
+    ) {
+        $this->scheme = $scheme;
+        $this->schemeProtocol = $schemeProtocol;
+        $this->schemeExtensions = $schemeExtensions;
+        $this->user = $user;
+        $this->password = $password;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->queryString = $queryString;
+        $this->queryBag = new QueryBag($query);
     }
 
-    public function __toString(): string
-    {
-        return $this->dsn;
-    }
-
-    public function getDsn(): string
-    {
-        return $this->dsn;
-    }
+//    public function __toString(): string
+//    {
+//        return $this->dsn;
+//    }
+//
+//    public function getDsn(): string
+//    {
+//        return $this->dsn;
+//    }
 
     public function getScheme(): string
     {
@@ -99,33 +110,21 @@ class Dsn
         return in_array($extension, $this->schemeExtensions, true);
     }
 
-    /**
-     * @return null|string
-     */
     public function getUser(): ?string
     {
         return $this->user;
     }
 
-    /**
-     * @return null|string
-     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * @return null|string
-     */
     public function getHost(): ?string
     {
         return $this->host;
     }
 
-    /**
-     * @return int|null
-     */
     public function getPort(): ?int
     {
         return $this->port;
@@ -141,74 +140,44 @@ class Dsn
         return $this->queryString;
     }
 
+    public function getQueryBag(): QueryBag
+    {
+        return $this->queryBag;
+    }
+
     public function getQuery(): array
     {
-        return $this->query;
+        return $this->queryBag->toArray();
     }
 
-    public function getQueryParameter(string $name, string $default = null): ?string
+    public function getString(string $name, string $default = null): ?string
     {
-        return array_key_exists($name, $this->query) ? $this->query[$name] : $default;
+        return $this->queryBag->getString($name, $default);
     }
 
-    public function getInt(string $name, int $default = null): ?int
+    public function getDecimal(string $name, int $default = null): ?int
     {
-        $value = $this->getQueryParameter($name);
-        if (null === $value) {
-            return $default;
-        }
-
-        if (false == preg_match('/^[\+\-]?[0-9]*$/', $value)) {
-            throw InvalidQueryParameterTypeException::create($name, 'integer');
-        }
-
-        return (int) $value;
+        return $this->queryBag->getDecimal($name, $default);
     }
 
     public function getOctal(string $name, int $default = null): ?int
     {
-        $value = $this->getQueryParameter($name);
-        if (null === $value) {
-            return $default;
-        }
-
-        if (false == preg_match('/^0[\+\-]?[0-7]*$/', $value)) {
-            throw InvalidQueryParameterTypeException::create($name, 'integer');
-        }
-
-        return intval($value, 8);
+        return $this->queryBag->getOctal($name, $default);
     }
 
     public function getFloat(string $name, float $default = null): ?float
     {
-        $value = $this->getQueryParameter($name);
-        if (null === $value) {
-            return $default;
-        }
-
-        if (false == is_numeric($value)) {
-            throw InvalidQueryParameterTypeException::create($name, 'float');
-        }
-
-        return (float) $value;
+        return $this->queryBag->getFloat($name, $default);
     }
 
     public function getBool(string $name, bool $default = null): ?bool
     {
-        $value = $this->getQueryParameter($name);
-        if (null === $value) {
-            return $default;
-        }
+        return $this->queryBag->getBool($name, $default);
+    }
 
-        if (in_array($value, ['', '0', 'false'], true)) {
-            return false;
-        }
-
-        if (in_array($value, ['1', 'true'], true)) {
-            return true;
-        }
-
-        throw InvalidQueryParameterTypeException::create($name, 'bool');
+    public function getArray(string $name, array $default = []): QueryBag
+    {
+        return $this->queryBag->getArray($name, $default);
     }
 
     public function toArray()
@@ -223,11 +192,21 @@ class Dsn
             'port' => $this->port,
             'path' => $this->path,
             'queryString' => $this->queryString,
-            'query' => $this->query,
+            'query' => $this->queryBag->toArray(),
         ];
     }
 
-    private function parse(string $dsn): void
+    public static function parseFirst(string $dsn): ?self
+    {
+        return self::parse($dsn)[0];
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return Dsn[]
+     */
+    public static function parse(string $dsn): array
     {
         if (false === strpos($dsn, ':')) {
             throw new \LogicException(sprintf('The DSN is invalid. It does not have scheme separator ":".'));
@@ -241,43 +220,89 @@ class Dsn
         }
 
         $schemeParts = explode('+', $scheme);
-        $this->scheme = $scheme;
-        $this->schemeProtocol = $schemeParts[0];
+        $schemeProtocol = $schemeParts[0];
 
         unset($schemeParts[0]);
-        $this->schemeExtensions = array_values($schemeParts);
+        $schemeExtensions = array_values($schemeParts);
 
-        if ($host = parse_url($dsn, PHP_URL_HOST)) {
-            $this->host = $host;
+        $user = parse_url($dsn, PHP_URL_USER) ?: null;
+        $password = parse_url($dsn, PHP_URL_PASS) ?: null;
+
+        $path = parse_url($dsn, PHP_URL_PATH) ?: null;
+        if ($path) {
+            $path = rawurldecode($path);
         }
 
-        if ($port = parse_url($dsn, PHP_URL_PORT)) {
-            $this->port = (int) $port;
+        $query = [];
+        $queryString = parse_url($dsn, PHP_URL_QUERY) ?: null;
+        if (is_string($queryString)) {
+            $query = self::httpParseQuery($queryString, '&', PHP_QUERY_RFC3986);
+        }
+        $hostsPorts = '';
+        if (0 === strpos($dsnWithoutScheme, '//')) {
+            $dsnWithoutScheme = substr($dsnWithoutScheme, 2);
+            $dsnWithoutUserPassword = explode('@', $dsnWithoutScheme, 2);
+            $dsnWithoutUserPassword = 2 === count($dsnWithoutUserPassword) ?
+                $dsnWithoutUserPassword[1] :
+                $dsnWithoutUserPassword[0]
+            ;
+
+            list($hostsPorts) = explode('#', $dsnWithoutUserPassword, 2);
+            list($hostsPorts) = explode('?', $hostsPorts, 2);
+            list($hostsPorts) = explode('/', $hostsPorts, 2);
         }
 
-        if ($user = parse_url($dsn, PHP_URL_USER)) {
-            $this->user = $user;
+        if (empty($hostsPorts)) {
+            return [
+                new self(
+                    $scheme,
+                    $schemeProtocol,
+                    $schemeExtensions,
+                    null,
+                    null,
+                    null,
+                    null,
+                    $path,
+                    $queryString,
+                    $query
+                ),
+            ];
         }
 
-        if ($password = parse_url($dsn, PHP_URL_PASS)) {
-            $this->password = $password;
+        $dsns = [];
+        $hostParts = explode(',', $hostsPorts);
+        foreach ($hostParts as $key => $hostPart) {
+            unset($hostParts[$key]);
+
+            $parts = explode(':', $hostPart, 2);
+            $host = $parts[0];
+
+            $port = null;
+            if (isset($parts[1])) {
+                $port = (int) $parts[1];
+            }
+
+            $dsns[] = new self(
+                $scheme,
+                $schemeProtocol,
+                $schemeExtensions,
+                $user,
+                $password,
+                $host,
+                $port,
+                $path,
+                $queryString,
+                $query
+            );
         }
 
-        if ($path = parse_url($dsn, PHP_URL_PATH)) {
-            $this->path = rawurldecode($path);
-        }
-
-        if ($queryString = parse_url($dsn, PHP_URL_QUERY)) {
-            $this->queryString = $queryString;
-
-            $this->query = $this->httpParseQuery($queryString, '&', PHP_QUERY_RFC3986);
-        }
+        return $dsns;
     }
 
     /**
      * based on http://php.net/manual/en/function.parse-str.php#119484 with some slight modifications.
      */
-    private function httpParseQuery(string $queryString, string $argSeparator = '&', int $decType = PHP_QUERY_RFC1738): array
+    private static function httpParseQuery(string $queryString, string $argSeparator = '&', int $decType = PHP_QUERY_RFC1738): array
     {
         $result = [];
         $parts = explode($argSeparator, $queryString);
