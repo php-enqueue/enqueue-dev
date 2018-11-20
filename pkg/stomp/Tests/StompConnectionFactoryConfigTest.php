@@ -24,7 +24,7 @@ class StompConnectionFactoryConfigTest extends TestCase
     public function testThrowIfSchemeIsNotStomp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "stomp:".');
+        $this->expectExceptionMessage('The given DSN is not supported. Must start with "stomp:".');
 
         new StompConnectionFactory('http://example.com');
     }
