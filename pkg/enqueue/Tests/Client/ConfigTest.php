@@ -11,11 +11,14 @@ class ConfigTest extends TestCase
     {
         $config = new Config(
             'thePrefix',
+            'theSeparator',
             'aApp',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertEquals('thePrefix', $config->getPrefix());
@@ -29,10 +32,13 @@ class ConfigTest extends TestCase
         $config = new Config(
             $empty,
             'aApp',
+            'theSeparator',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertSame('', $config->getPrefix());
@@ -42,11 +48,14 @@ class ConfigTest extends TestCase
     {
         $config = new Config(
             'aPrefix',
+            'theSeparator',
             'theApp',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertEquals('theApp', $config->getApp());
@@ -59,11 +68,14 @@ class ConfigTest extends TestCase
     {
         $config = new Config(
             'aPrefix',
+            'theSeparator',
             $empty,
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertSame('', $config->getApp());
@@ -73,11 +85,14 @@ class ConfigTest extends TestCase
     {
         $config = new Config(
             'aPrefix',
+            'theSeparator',
             'aApp',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertEquals('aRouterProcessorName', $config->getRouterProcessor());
@@ -87,11 +102,14 @@ class ConfigTest extends TestCase
     {
         $config = new Config(
             'aPrefix',
+            'theSeparator',
             'aApp',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertEquals('aRouterTopicName', $config->getRouterTopic());
@@ -101,11 +119,14 @@ class ConfigTest extends TestCase
     {
         $config = new Config(
             'aPrefix',
+            'theSeparator',
             'aApp',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertEquals('aRouterQueueName', $config->getRouterQueue());
@@ -115,11 +136,14 @@ class ConfigTest extends TestCase
     {
         $config = new Config(
             'aPrefix',
+            'theSeparator',
             'aApp',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
 
         $this->assertEquals('aDefaultQueueName', $config->getDefaultQueue());
@@ -145,10 +169,13 @@ class ConfigTest extends TestCase
         new Config(
             '',
             '',
+            '',
             $empty,
             'aRouterQueueName',
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
     }
 
@@ -162,10 +189,13 @@ class ConfigTest extends TestCase
         new Config(
             '',
             '',
+            '',
             'aRouterTopicName',
             $empty,
             'aDefaultQueueName',
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
     }
 
@@ -179,10 +209,13 @@ class ConfigTest extends TestCase
         new Config(
             '',
             '',
+            '',
             'aRouterTopicName',
             'aRouterQueueName',
             $empty,
-            'aRouterProcessorName'
+            'aRouterProcessorName',
+            [],
+            []
         );
     }
 
@@ -196,10 +229,13 @@ class ConfigTest extends TestCase
         new Config(
             '',
             '',
+            '',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueueName',
-            $empty
+            $empty,
+            [],
+            []
         );
     }
 

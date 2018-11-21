@@ -2,72 +2,31 @@
 
 namespace Enqueue\Client;
 
-use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
 use Enqueue\Client\Driver\StompManagementClient;
 use Enqueue\Dsn\Dsn;
-use Enqueue\Stomp\StompConnectionFactory;
-use Interop\Amqp\AmqpConnectionFactory;
 use Interop\Queue\ConnectionFactory;
 
 final class DriverFactory implements DriverFactoryInterface
 {
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
-
-    public function __construct(Config $config, RouteCollection $routeCollection)
+    public function create(ConnectionFactory $factory, Config $config, RouteCollection $collection): DriverInterface
     {
-        $this->config = $config;
-        $this->routeCollection = $routeCollection;
-    }
+        $dsn = $config->getTransportOption('dsn');
 
-    public function create(ConnectionFactory $factory, string $dsn, array $config): DriverInterface
-    {
+        if (empty($dsn)) {
+            throw new \LogicException('This driver factory relies on dsn option from transport config. The option is empty or not set.');
+        }
+
         $dsn = Dsn::parseFirst($dsn);
 
         if ($driverInfo = $this->findDriverInfo($dsn, Resources::getAvailableDrivers())) {
             $driverClass = $driverInfo['driverClass'];
 
-            if (RabbitMqDriver::class === $driverClass) {
-                if (false == $factory instanceof AmqpConnectionFactory) {
-                    throw new \LogicException(sprintf(
-                        'The factory must be instance of "%s", got "%s"',
-                        AmqpConnectionFactory::class,
-                        get_class($factory)
-                    ));
-                }
-
-                return new RabbitMqDriver($factory->createContext(), $this->config, $this->routeCollection);
-            }
-
             if (RabbitMqStompDriver::class === $driverClass) {
-                if (false == $factory instanceof StompConnectionFactory) {
-                    throw new \LogicException(sprintf(
-                        'The factory must be instance of "%s", got "%s"',
-                        StompConnectionFactory::class,
-                        get_class($factory)
-                    ));
-                }
-
-                $managementClient = StompManagementClient::create(
-                    ltrim($dsn->getPath(), '/'),
-                    $dsn->getHost() ?: 'localhost',
-                    $config['management_plugin_port'] ?? 15672,
-                    (string) $dsn->getUser(),
-                    (string) $dsn->getPassword()
-                );
-
-                return new RabbitMqStompDriver($factory->createContext(), $this->config, $this->routeCollection, $managementClient);
+                return $this->createRabbitMqStompDriver($factory, $dsn, $config, $collection);
             }
 
-            return new $driverClass($factory->createContext(), $this->config, $this->routeCollection);
+            return new $driverClass($factory->createContext(), $config, $collection);
         }
 
         $knownDrivers = Resources::getKnownDrivers();
@@ -120,5 +79,21 @@ final class DriverFactory implements DriverFactoryInterface
         }
 
         return null;
+    }
+
+    private function createRabbitMqStompDriver(ConnectionFactory $factory, Dsn $dsn, Config $config, RouteCollection $collection): RabbitMqStompDriver
+    {
+        $defaultManagementHost = $dsn->getHost() ?: $config->getTransportOption('host', 'localhost');
+        $managementVast = ltrim($dsn->getPath(), '/') ?: $config->getTransportOption('vhost', '/');
+
+        $managementClient = StompManagementClient::create(
+            urldecode($managementVast),
+            $config->getDriverOption('rabbitmq_management_host', $defaultManagementHost),
+            $config->getDriverOption('rabbitmq_management_port', 15672),
+            (string) $dsn->getUser() ?: $config->getTransportOption('user', 'guest'),
+            (string) $dsn->getPassword() ?: $config->getTransportOption('pass', 'guest')
+        );
+
+        return new RabbitMqStompDriver($factory->createContext(), $config, $collection, $managementClient);
     }
 }

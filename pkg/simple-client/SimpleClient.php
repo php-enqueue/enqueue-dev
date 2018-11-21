@@ -20,11 +20,14 @@ use Enqueue\Client\RouterProcessor;
 use Enqueue\ConnectionFactoryFactory;
 use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
+use Enqueue\Consumption\Extension\ReplyExtension;
+use Enqueue\Consumption\Extension\SignalExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcFactory;
+use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Interop\Queue\Processor;
 use Psr\Log\LoggerInterface;
@@ -98,14 +101,16 @@ final class SimpleClient
      *   'transport' => 'null:',
      *   'client' => [
      *     'prefix'                   => 'enqueue',
+     *     'separator'                => '.',
      *     'app_name'                 => 'app',
      *     'router_topic'             => 'router',
      *     'router_queue'             => 'default',
-     *     'default_processor_queue'  => 'default',
+     *     'default_queue'            => 'default',
      *     'redelivered_delay_time'   => 0
      *   ],
      *   'extensions' => [
      *     'signal_extension' => true,
+     *     'reply_extension' => true,
      *   ]
      * ]
      *
@@ -241,20 +246,23 @@ final class SimpleClient
 
         $config = new Config(
             $simpleClientConfig['client']['prefix'],
+            $simpleClientConfig['client']['separator'],
             $simpleClientConfig['client']['app_name'],
             $simpleClientConfig['client']['router_topic'],
             $simpleClientConfig['client']['router_queue'],
-            $simpleClientConfig['client']['default_processor_queue'],
+            $simpleClientConfig['client']['default_queue'],
             'enqueue.client.router_processor',
-            $simpleClientConfig['transport']
+            $simpleClientConfig['transport'],
+            []
         );
+
         $routeCollection = new RouteCollection([]);
-        $driverFactory = new DriverFactory($config, $routeCollection);
+        $driverFactory = new DriverFactory();
 
         $driver = $driverFactory->create(
             $connection,
-            $simpleClientConfig['transport']['dsn'],
-            $simpleClientConfig['transport']
+            $config,
+            $routeCollection
         );
 
         $rpcFactory = new RpcFactory($driver->getContext());
@@ -269,6 +277,14 @@ final class SimpleClient
         $consumptionExtensions = [];
         if ($simpleClientConfig['client']['redelivered_delay_time']) {
             $consumptionExtensions[] = new DelayRedeliveredMessageExtension($driver, $simpleClientConfig['client']['redelivered_delay_time']);
+        }
+
+        if ($simpleClientConfig['extensions']['signal_extension']) {
+            $consumptionExtensions[] = new SignalExtension();
+        }
+
+        if ($simpleClientConfig['extensions']['reply_extension']) {
+            $consumptionExtensions[] = new ReplyExtension();
         }
 
         $consumptionExtensions[] = new SetRouterPropertiesExtension($driver);
@@ -299,23 +315,17 @@ final class SimpleClient
                 return ['transport' => ['dsn' => 'null:']];
             });
 
-        $rootNode->children()->append(TransportFactory::getConfiguration());
+        $rootNode
+            ->append(TransportFactory::getConfiguration())
+            ->append(TransportFactory::getQueueConsumerConfiguration())
+            ->append(ClientFactory::getConfiguration(false))
+        ;
 
         $rootNode->children()
-            ->arrayNode('client')
-            ->addDefaultsIfNotSet()
-                ->children()
-                    ->scalarNode('prefix')->defaultValue('enqueue')->end()
-                    ->scalarNode('app_name')->defaultValue('app')->end()
-                    ->scalarNode('router_topic')->defaultValue('default')->cannotBeEmpty()->end()
-                    ->scalarNode('router_queue')->defaultValue('default')->cannotBeEmpty()->end()
-                    ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
-                    ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
-                ->end()
-            ->end()
-                ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
+            ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
                 ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
-            ->end()->end()
+                ->booleanNode('reply_extension')->defaultTrue()->end()
+            ->end()
         ;
 
         return $tb->buildTree();

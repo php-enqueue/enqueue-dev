@@ -66,7 +66,7 @@ return [
         'client' => [
               'router_topic'             => 'default',
               'router_queue'             => 'default',
-              'default_processor_queue'  => 'default',
+              'default_queue'  => 'default',
         ],
     ],
 ];

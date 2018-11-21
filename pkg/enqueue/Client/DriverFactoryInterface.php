@@ -6,5 +6,5 @@ use Interop\Queue\ConnectionFactory;
 
 interface DriverFactoryInterface
 {
-    public function create(ConnectionFactory $factory, string $dsn, array $config): DriverInterface;
+    public function create(ConnectionFactory $factory, Config $config, RouteCollection $collection): DriverInterface;
 }

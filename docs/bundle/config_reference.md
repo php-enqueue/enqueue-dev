@@ -39,12 +39,16 @@ enqueue:
         client:
             traceable_producer:   true
             prefix:               enqueue
+            separator:            .
             app_name:             app
             router_topic:         default
             router_queue:         default
             router_processor:     null
-            default_processor_queue: default
             redelivered_delay_time: 0
+            default_queue:        default
+
+            # The array contains driver specific options
+            driver_options:       []
 
         # The "monitoring" option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at stats storage constructor doc block.
         monitoring:
@@ -57,8 +61,11 @@ enqueue:
 
             # The factory service should be a class that implements "Enqueue\Monitoring\StatsStorageFactory" interface
             storage_factory_class: ~
-        job:                      false
         async_commands:
+            enabled:              false
+        job:
+            enabled:              false
+        async_events:
             enabled:              false
         extensions:
             doctrine_ping_connection_extension: false

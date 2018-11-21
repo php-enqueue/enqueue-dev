@@ -2,6 +2,7 @@
 
 namespace Enqueue\Wamp\Tests\Functional;
 
+use Enqueue\Test\RetryTrait;
 use Enqueue\Test\WampExtension;
 use Enqueue\Wamp\WampMessage;
 use PHPUnit\Framework\TestCase;
@@ -11,10 +12,12 @@ use Thruway\Logging\Logger;
 /**
  * @group functional
  * @group Wamp
+ * @retry 5
  */
 class WampConsumerTest extends TestCase
 {
     use WampExtension;
+    use RetryTrait;
 
     public static function setUpBeforeClass()
     {

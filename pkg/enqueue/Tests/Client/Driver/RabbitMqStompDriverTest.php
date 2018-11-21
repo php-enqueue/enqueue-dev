@@ -121,6 +121,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $config = Config::create(
             'aPrefix',
+            '.',
             '',
             null,
             null,
@@ -156,6 +157,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $config = Config::create(
             'aPrefix',
+            '.',
             '',
             null,
             null,
@@ -232,6 +234,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $config = Config::create(
             'aPrefix',
+            '.',
             '',
             null,
             null,
@@ -261,6 +264,7 @@ class RabbitMqStompDriverTest extends TestCase
     {
         $config = Config::create(
             'aPrefix',
+            '.',
             '',
             null,
             null,
@@ -345,6 +349,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $config = Config::create(
             'aPrefix',
+            '.',
             '',
             null,
             null,
@@ -412,6 +417,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $config = Config::create(
             'aPrefix',
+            '.',
             '',
             null,
             null,
@@ -555,6 +561,7 @@ class RabbitMqStompDriverTest extends TestCase
     {
         return Config::create(
             'aPrefix',
+            '.',
             '',
             null,
             null,

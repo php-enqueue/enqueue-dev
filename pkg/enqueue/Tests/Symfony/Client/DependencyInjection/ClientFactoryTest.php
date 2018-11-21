@@ -45,8 +45,8 @@ class ClientFactoryTest extends TestCase
         $this->assertEquals(
             [
                 new Reference('enqueue.transport.default.connection_factory'),
-                'foo://bar/baz',
-                ['dsn' => 'foo://bar/baz', 'foo' => 'fooVal'],
+                new Reference('enqueue.client.default.config'),
+                new Reference('enqueue.client.default.route_collection'),
             ],
             $container->getDefinition('enqueue.client.default.driver')->getArguments())
         ;
