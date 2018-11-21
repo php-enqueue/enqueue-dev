@@ -65,13 +65,19 @@ final class ClientFactory
         $builder->children()
             ->booleanNode('traceable_producer')->defaultValue($debug)->end()
             ->scalarNode('prefix')->defaultValue('enqueue')->end()
+            ->scalarNode('separator')->defaultValue('.')->end()
             ->scalarNode('app_name')->defaultValue('app')->end()
             ->scalarNode('router_topic')->defaultValue('default')->cannotBeEmpty()->end()
             ->scalarNode('router_queue')->defaultValue('default')->cannotBeEmpty()->end()
             ->scalarNode('router_processor')->defaultNull()->end()
-            ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
             ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
-        ->end()->end()
+            ->scalarNode('default_queue')->defaultValue('default')->cannotBeEmpty()->end()
+            ->arrayNode('driver_options')
+                ->addDefaultsIfNotSet()
+                ->info('The array contains driver specific options')
+                ->ignoreExtraKeys(false)
+            ->end()
+            ->end()->end()
         ;
 
         return $builder;
@@ -83,10 +89,7 @@ final class ClientFactory
             ->setFactory([$this->diUtils->reference('driver'), 'getContext'])
         ;
 
-        $container->register($this->diUtils->format('driver_factory'), DriverFactory::class)
-            ->addArgument($this->diUtils->reference('config'))
-            ->addArgument($this->diUtils->reference('route_collection'))
-        ;
+        $container->register($this->diUtils->format('driver_factory'), DriverFactory::class);
 
         $routerProcessor = empty($config['router_processor'])
             ? $this->diUtils->format('router_processor')
@@ -96,18 +99,19 @@ final class ClientFactory
         $container->register($this->diUtils->format('config'), Config::class)
             ->setArguments([
                 $config['prefix'],
+                $config['separator'],
                 $config['app_name'],
                 $config['router_topic'],
                 $config['router_queue'],
-                $config['default_processor_queue'],
+                $config['default_queue'],
                 $routerProcessor,
-                // @todo should be driver options.
                 $config['transport'],
+                $config['driver_options'] ?? [],
             ]);
 
         $container->setParameter($this->diUtils->format('router_processor'), $routerProcessor);
         $container->setParameter($this->diUtils->format('router_queue_name'), $config['router_queue']);
-        $container->setParameter($this->diUtils->format('default_queue_name'), $config['default_processor_queue']);
+        $container->setParameter($this->diUtils->format('default_queue_name'), $config['default_queue']);
 
         $container->register($this->diUtils->format('route_collection'), RouteCollection::class)
             ->addArgument([])
@@ -220,8 +224,8 @@ final class ClientFactory
         $container->register($driverId, DriverInterface::class)
             ->setFactory([new Reference($driverFactoryId), 'create'])
             ->addArgument(new Reference($factoryId))
-            ->addArgument($config['dsn'])
-            ->addArgument($config)
+            ->addArgument($this->diUtils->reference('config'))
+            ->addArgument($this->diUtils->reference('route_collection'))
         ;
 
         if ($this->default) {

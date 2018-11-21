@@ -70,11 +70,13 @@ trait GenericDriverTestsTrait
 
         $config = new Config(
             'aPrefix',
+            '.',
             'anAppName',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueue',
             'aRouterProcessor',
+            [],
             []
         );
 
@@ -99,11 +101,13 @@ trait GenericDriverTestsTrait
 
         $config = new Config(
             'aPrefix',
+            '.',
             '',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueue',
             'aRouterProcessor',
+            [],
             []
         );
 
@@ -128,11 +132,13 @@ trait GenericDriverTestsTrait
 
         $config = new Config(
             '',
+            '.',
             'anAppName',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueue',
             'aRouterProcessor',
+            [],
             []
         );
 
@@ -157,11 +163,13 @@ trait GenericDriverTestsTrait
 
         $config = new Config(
             '',
+            '.',
             '',
             'aRouterTopicName',
             'aRouterQueueName',
             'aDefaultQueue',
             'aRouterProcessor',
+            [],
             []
         );
 

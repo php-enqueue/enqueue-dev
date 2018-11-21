@@ -52,8 +52,22 @@ class Config
      */
     private $transportConfig;
 
-    public function __construct(string $prefix, string $app, string $routerTopic, string $routerQueue, string $defaultQueue, string $routerProcessor, array $transportConfig = [])
-    {
+    /**
+     * @var array
+     */
+    private $driverConfig;
+
+    public function __construct(
+        string $prefix,
+        string $separator,
+        string $app,
+        string $routerTopic,
+        string $routerQueue,
+        string $defaultQueue,
+        string $routerProcessor,
+        array $transportConfig,
+        array $driverConfig
+    ) {
         $this->prefix = trim($prefix);
         $this->app = trim($app);
 
@@ -78,8 +92,9 @@ class Config
         }
 
         $this->transportConfig = $transportConfig;
+        $this->driverConfig = $driverConfig;
 
-        $this->separator = '.';
+        $this->separator = $separator;
     }
 
     public function getPrefix(): string
@@ -117,33 +132,47 @@ class Config
         return $this->routerProcessor;
     }
 
-    /**
-     * @deprecated
-     *
-     * @param null|mixed $default
-     */
     public function getTransportOption(string $name, $default = null)
     {
         return array_key_exists($name, $this->transportConfig) ? $this->transportConfig[$name] : $default;
     }
 
+    public function getTransportOptions(): array
+    {
+        return $this->transportConfig;
+    }
+
+    public function getDriverOption(string $name, $default = null)
+    {
+        return array_key_exists($name, $this->driverConfig) ? $this->driverConfig[$name] : $default;
+    }
+
+    public function getDriverOptions(): array
+    {
+        return $this->driverConfig;
+    }
+
     public static function create(
         string $prefix = null,
+        string $separator = null,
         string $app = null,
         string $routerTopic = null,
         string $routerQueue = null,
         string $defaultQueue = null,
         string $routerProcessor = null,
-        array $transportConfig = []
+        array $transportConfig = [],
+        array $driverConfig = []
     ): self {
         return new static(
             $prefix ?: '',
+            $separator ?: '.',
             $app ?: '',
             $routerTopic ?: 'router',
             $routerQueue ?: 'default',
             $defaultQueue ?: 'default',
             $routerProcessor ?: 'router',
-            $transportConfig
+            $transportConfig,
+            $driverConfig
         );
     }
 }

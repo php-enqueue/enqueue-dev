@@ -527,11 +527,14 @@ class ProducerSendEventTest extends TestCase
     {
         $config = new Config(
             'a_prefix',
+            '.',
             'an_app',
             'a_router_topic',
             'a_router_queue',
             'a_default_processor_queue',
-            'a_router_processor_name'
+            'a_router_processor_name',
+            [],
+            []
         );
 
         $driverMock = $this->createMock(DriverInterface::class);

@@ -12,24 +12,14 @@ use Interop\Queue\ConnectionFactory;
 
 final class DriverFactory implements DriverFactoryInterface
 {
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
-
-    public function __construct(Config $config, RouteCollection $routeCollection)
+    public function create(ConnectionFactory $factory, Config $config, RouteCollection $collection): DriverInterface
     {
-        $this->config = $config;
-        $this->routeCollection = $routeCollection;
-    }
+        $dsn = $config->getTransportOption('dsn');
 
-    public function create(ConnectionFactory $factory, string $dsn, array $config): DriverInterface
-    {
+        if (empty($dsn)) {
+            throw new \LogicException('This driver factory relies on dsn option from transport config. The option is empty or not set.');
+        }
+
         $dsn = Dsn::parseFirst($dsn);
 
         if ($driverInfo = $this->findDriverInfo($dsn, Resources::getAvailableDrivers())) {
@@ -44,7 +34,7 @@ final class DriverFactory implements DriverFactoryInterface
                     ));
                 }
 
-                return new RabbitMqDriver($factory->createContext(), $this->config, $this->routeCollection);
+                return new RabbitMqDriver($factory->createContext(), $config, $collection);
             }
 
             if (RabbitMqStompDriver::class === $driverClass) {
@@ -59,15 +49,15 @@ final class DriverFactory implements DriverFactoryInterface
                 $managementClient = StompManagementClient::create(
                     ltrim($dsn->getPath(), '/'),
                     $dsn->getHost() ?: 'localhost',
-                    $config['management_plugin_port'] ?? 15672,
+                    $config->getDriverOption('management_plugin_port', 15672),
                     (string) $dsn->getUser(),
                     (string) $dsn->getPassword()
                 );
 
-                return new RabbitMqStompDriver($factory->createContext(), $this->config, $this->routeCollection, $managementClient);
+                return new RabbitMqStompDriver($factory->createContext(), $config, $collection, $managementClient);
             }
 
-            return new $driverClass($factory->createContext(), $this->config, $this->routeCollection);
+            return new $driverClass($factory->createContext(), $config, $collection);
         }
 
         $knownDrivers = Resources::getKnownDrivers();

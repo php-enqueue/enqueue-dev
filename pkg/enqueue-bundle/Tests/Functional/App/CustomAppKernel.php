@@ -22,7 +22,7 @@ class CustomAppKernel extends Kernel
                 'app_name' => '',
                 'router_topic' => 'test',
                 'router_queue' => 'test',
-                'default_processor_queue' => 'test',
+                'default_queue' => 'test',
             ],
         ],
     ];

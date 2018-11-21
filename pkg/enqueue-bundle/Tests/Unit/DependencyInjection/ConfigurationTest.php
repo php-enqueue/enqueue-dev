@@ -7,6 +7,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends TestCase
@@ -96,9 +97,61 @@ class ConfigurationTest extends TestCase
                     'router_processor' => null,
                     'router_topic' => 'default',
                     'router_queue' => 'default',
-                    'default_processor_queue' => 'default',
+                    'default_queue' => 'default',
                     'traceable_producer' => true,
                     'redelivered_delay_time' => 0,
+                ],
+            ],
+        ], $config);
+    }
+
+    public function testThrowIfClientDriverOptionsIsNotArray()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('Invalid type for path "enqueue.default.client.driver_options". Expected array, but got string');
+        $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => 'null:',
+                'client' => [
+                    'driver_options' => 'invalidOption',
+                ],
+            ],
+        ]]);
+    }
+
+    public function testShouldConfigureClientDriverOptions()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => 'null:',
+                'client' => [
+                    'driver_options' => [
+                        'foo' => 'fooVal',
+                    ],
+                ],
+            ],
+        ]]);
+
+        $this->assertConfigEquals([
+            'default' => [
+                'client' => [
+                    'prefix' => 'enqueue',
+                    'app_name' => 'app',
+                    'router_processor' => null,
+                    'router_topic' => 'default',
+                    'router_queue' => 'default',
+                    'default_queue' => 'default',
+                    'traceable_producer' => true,
+                    'driver_options' => [
+                        'foo' => 'fooVal',
+                    ],
                 ],
             ],
         ], $config);
@@ -147,12 +200,12 @@ class ConfigurationTest extends TestCase
         $processor = new Processor();
 
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The path "enqueue.default.client.default_processor_queue" cannot contain an empty value, but got "".');
+        $this->expectExceptionMessage('The path "enqueue.default.client.default_queue" cannot contain an empty value, but got "".');
         $processor->processConfiguration($configuration, [[
             'default' => [
                 'transport' => ['dsn' => 'null:'],
                 'client' => [
-                    'default_processor_queue' => '',
+                    'default_queue' => '',
                 ],
             ],
         ]]);

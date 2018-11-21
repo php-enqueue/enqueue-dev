@@ -43,8 +43,8 @@ enqueue:
             router_topic:         default
             router_queue:         default
             router_processor:     null
-            default_processor_queue: default
             redelivered_delay_time: 0
+            default_queue:        default
 
         # The "monitoring" option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at stats storage constructor doc block.
         monitoring:
