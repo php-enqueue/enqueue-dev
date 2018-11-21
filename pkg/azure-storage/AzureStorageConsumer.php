@@ -5,20 +5,18 @@ declare(strict_types=1);
 namespace Enqueue\AzureStorage;
 
 use Interop\Queue\Consumer;
-use Interop\Queue\ConsumerWithInterval;
-use Interop\Queue\ConsumerWithIntervalTrait;
-use Interop\Queue\ConsumerWithVisibilityTimeout;
-use Interop\Queue\ConsumerWithVisibilityTimeoutTrait;
+use Interop\Queue\Impl\ConsumerPollingTrait;
+use Interop\Queue\Impl\ConsumerVisibilityTimeoutTrait;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
 use MicrosoftAzure\Storage\Queue\Models\ListMessagesOptions;
 use MicrosoftAzure\Storage\Queue\QueueRestProxy;
 
-class AzureStorageConsumer implements Consumer, ConsumerWithInterval, ConsumerWithVisibilityTimeout
+class AzureStorageConsumer implements Consumer
 {
-    use ConsumerWithIntervalTrait;
-    use ConsumerWithVisibilityTimeoutTrait;
+    use ConsumerPollingTrait;
+    use ConsumerVisibilityTimeoutTrait;
 
     /**
      * @var QueueRestProxy
@@ -92,7 +90,12 @@ class AzureStorageConsumer implements Consumer, ConsumerWithInterval, ConsumerWi
     {
         InvalidMessageException::assertMessageInstanceOf($message, AzureStorageMessage::class);
 
-        if(false === $requeue) {
+        if (true === $requeue) {
+            $factory = new AzureStorageConnectionFactory($this->client);
+            $context = $factory->getContext();
+            $producer = $context->createProducer();
+            $producer->send($this->queue, $message);
+        } else {
             $this->acknowledge($message);
         }
     }

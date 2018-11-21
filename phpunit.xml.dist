@@ -104,6 +104,10 @@
         <testsuite name="dsn">
             <directory>pkg/dsn/Tests</directory>
         </testsuite>
+
+        <testsuite name="Azure transport">
+            <directory>pkg/azure-storage/Tests</directory>
+        </testsuite>
     </testsuites>
 
     <php>

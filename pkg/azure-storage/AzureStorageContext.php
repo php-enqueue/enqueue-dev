@@ -48,6 +48,27 @@ class AzureStorageContext implements Context
         return new AzureStorageDestination($queueName);
     }
 
+
+    /**
+     * @param AzureStorageDestination $queue
+     */
+    public function deleteQueue(Queue $queue): void
+    {
+        InvalidDestinationException::assertDestinationInstanceOf($queue, AzureStorageDestination::class);
+
+        $this->client->deleteQueue($queue);
+    }
+
+    /**
+     * @param AzureStorageDestination $topic
+     */
+    public function deleteTopic(Topic $topic): void
+    {
+        InvalidDestinationException::assertDestinationInstanceOf($topic, AzureStorageDestination::class);
+
+        $this->client->deleteQueue($topic);
+    }
+
     /**
      * @inheritdoc
      */

@@ -17,5 +17,17 @@ class AzureStorageMessage implements Message
         $this->headers = $headers;
 
         $this->redelivered = false;
+        $this->visibilityTimeout = 0;
+    }
+
+    public function getVisibilityTimeout()
+    {
+        return $this->visibilityTimeout;
+    }
+
+    public function setVisibilityTimeout($visibilityTimeout)
+    {
+        $this->visibilityTimeout = $visibilityTimeout;
+        return $this;
     }
 }
