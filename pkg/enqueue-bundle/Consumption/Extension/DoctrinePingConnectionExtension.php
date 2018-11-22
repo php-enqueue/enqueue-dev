@@ -37,7 +37,7 @@ class DoctrinePingConnectionExtension implements ExtensionInterface
             }
 
             if ($connection->ping()) {
-                return;
+                continue;
             }
 
             $context->getLogger()->debug(
