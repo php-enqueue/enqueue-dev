@@ -1,5 +1,67 @@
 # Change Log
 
+## [0.8.41](https://github.com/php-enqueue/enqueue-dev/tree/0.8.41) (2018-11-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.40...0.8.41)
+
+- \[dbal\] consumption improvements. [\#605](https://github.com/php-enqueue/enqueue-dev/issues/605)
+- Make new RouterProcessor backward compatible.  [\#598](https://github.com/php-enqueue/enqueue-dev/issues/598)
+- profiler and data collector should support multiple clients.  [\#594](https://github.com/php-enqueue/enqueue-dev/issues/594)
+- \[bundle\]\[client\] Add ability to configure multiple clients.  [\#592](https://github.com/php-enqueue/enqueue-dev/issues/592)
+- \[gearman\]\[travis\] Build and cache gearman extension.  [\#511](https://github.com/php-enqueue/enqueue-dev/issues/511)
+- \[consumption\] Do not overwrite signal handlers set before SignalExtension [\#318](https://github.com/php-enqueue/enqueue-dev/issues/318)
+- \[Symfony\] add support to transfer tokenStorage \(user info\) to the worker [\#69](https://github.com/php-enqueue/enqueue-dev/issues/69)
+
+- Fix AMQP tests  [\#614](https://github.com/php-enqueue/enqueue-dev/issues/614)
+- Enqueue/FS does not use latest Parse DSN class [\#610](https://github.com/php-enqueue/enqueue-dev/issues/610)
+- Async commands queue setup error [\#608](https://github.com/php-enqueue/enqueue-dev/issues/608)
+- \[FS\] Maximum function nesting level of '256' reached [\#327](https://github.com/php-enqueue/enqueue-dev/issues/327)
+
+- \[dbal\] consumer should still work if table is truncated [\#638](https://github.com/php-enqueue/enqueue-dev/issues/638)
+- \[redis\] LogicException on set priority [\#635](https://github.com/php-enqueue/enqueue-dev/issues/635)
+- Elastica populate with AWS SQS [\#629](https://github.com/php-enqueue/enqueue-dev/issues/629)
+- SQS and fallback subscription consumer [\#625](https://github.com/php-enqueue/enqueue-dev/issues/625)
+- \[dsn\] Add multi hosts parsing.  [\#624](https://github.com/php-enqueue/enqueue-dev/issues/624)
+- \[Symfony\] Try to check private service existence from container [\#621](https://github.com/php-enqueue/enqueue-dev/issues/621)
+- Configuration with Amazon SQS and Symfony [\#619](https://github.com/php-enqueue/enqueue-dev/issues/619)
+- \[redis\] Do not force phpredis [\#551](https://github.com/php-enqueue/enqueue-dev/issues/551)
+
+- Fixed headline [\#631](https://github.com/php-enqueue/enqueue-dev/pull/631) ([OskarStark](https://github.com/OskarStark))
+- Compatibility with 0.9x [\#615](https://github.com/php-enqueue/enqueue-dev/pull/615) ([ASKozienko](https://github.com/ASKozienko))
+- Fix Tests 0.8x [\#609](https://github.com/php-enqueue/enqueue-dev/pull/609) ([ASKozienko](https://github.com/ASKozienko))
+- Add support for the 'ciphers' ssl option [\#607](https://github.com/php-enqueue/enqueue-dev/pull/607) ([eperazzo](https://github.com/eperazzo))
+- Allow JobStorage to reset the EntityManager [\#586](https://github.com/php-enqueue/enqueue-dev/pull/586) ([damijank](https://github.com/damijank))
+- Fix delay not working on SQS [\#584](https://github.com/php-enqueue/enqueue-dev/pull/584) ([mbeccati](https://github.com/mbeccati))
+
+## [0.8.40](https://github.com/php-enqueue/enqueue-dev/tree/0.8.40) (2018-10-22)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.39...0.8.40)
+
+- \[redis\] support for delay [\#553](https://github.com/php-enqueue/enqueue-dev/issues/553)
+
+- \[rdkafka\] Backport changes to topic subscription [\#575](https://github.com/php-enqueue/enqueue-dev/pull/575) ([Steveb-p](https://github.com/Steveb-p))
+
+## [0.8.39](https://github.com/php-enqueue/enqueue-dev/tree/0.8.39) (2018-10-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.38...0.8.39)
+
+- Consuming with Simple Client and Kafka [\#557](https://github.com/php-enqueue/enqueue-dev/issues/557)
+
+- Merge pull request \#552 from versh23/stomp-public [\#568](https://github.com/php-enqueue/enqueue-dev/pull/568) ([versh23](https://github.com/versh23))
+
+## [0.8.38](https://github.com/php-enqueue/enqueue-dev/tree/0.8.38) (2018-10-16)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.37...0.8.38)
+
+- Support rabbitmq-cli-consumer [\#546](https://github.com/php-enqueue/enqueue-dev/issues/546)
+- Add ability to choose transport\context to be used in consume command  [\#312](https://github.com/php-enqueue/enqueue-dev/issues/312)
+
+- \[Symfony\] sendCommand / sendEvent for delayed message have different behaviour [\#523](https://github.com/php-enqueue/enqueue-dev/issues/523)
+- \[bundle\] The bundle  does not work correctly with env parameters set as tag attr. [\#28](https://github.com/php-enqueue/enqueue-dev/issues/28)
+
+- Stomp heartbeat [\#549](https://github.com/php-enqueue/enqueue-dev/issues/549)
+- \[Elastica\]Slow processing [\#537](https://github.com/php-enqueue/enqueue-dev/issues/537)
+- \[consumption\] Some improvements [\#323](https://github.com/php-enqueue/enqueue-dev/issues/323)
+
+- Fixing kafka default configuration [\#562](https://github.com/php-enqueue/enqueue-dev/pull/562) ([adumas37](https://github.com/adumas37))
+- enableSubscriptionConsumer setter [\#541](https://github.com/php-enqueue/enqueue-dev/pull/541) ([ArnaudTarroux](https://github.com/ArnaudTarroux))
+
 ## [0.8.37](https://github.com/php-enqueue/enqueue-dev/tree/0.8.37) (2018-09-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.36...0.8.37)
 

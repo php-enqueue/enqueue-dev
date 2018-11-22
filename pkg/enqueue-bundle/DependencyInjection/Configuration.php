@@ -2,8 +2,14 @@
 
 namespace Enqueue\Bundle\DependencyInjection;
 
-use Enqueue\Client\RouterProcessor;
+use Enqueue\AsyncCommand\RunCommandProcessor;
+use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
+use Enqueue\JobQueue\Job;
+use Enqueue\Monitoring\Symfony\DependencyInjection\MonitoringFactory;
+use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
+use Enqueue\Symfony\MissingComponentFactory;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -20,48 +26,74 @@ final class Configuration implements ConfigurationInterface
     {
         $tb = new TreeBuilder();
         $rootNode = $tb->root('enqueue');
+
         $rootNode
-            ->beforeNormalization()
-            ->ifEmpty()->then(function () {
-                return ['transport' => ['dsn' => 'null:']];
-            });
-
-        $transportFactory = new TransportFactory('default');
-
-        $transportNode = $rootNode->children()->arrayNode('transport');
-        $transportFactory->addTransportConfiguration($transportNode);
-
-        $consumptionNode = $rootNode->children()->arrayNode('consumption');
-        $transportFactory->addQueueConsumerConfiguration($consumptionNode);
-
-        $rootNode->children()
-            ->arrayNode('client')->children()
-                ->booleanNode('traceable_producer')->defaultValue($this->debug)->end()
-                ->scalarNode('prefix')->defaultValue('enqueue')->end()
-                ->scalarNode('app_name')->defaultValue('app')->end()
-                ->scalarNode('router_topic')->defaultValue('default')->cannotBeEmpty()->end()
-                ->scalarNode('router_queue')->defaultValue('default')->cannotBeEmpty()->end()
-                ->scalarNode('router_processor')->defaultValue(RouterProcessor::class)->end()
-                ->scalarNode('default_processor_queue')->defaultValue('default')->cannotBeEmpty()->end()
-                ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
-            ->end()->end()
-            ->booleanNode('job')->defaultFalse()->end()
-            ->arrayNode('async_events')
-                ->addDefaultsIfNotSet()
-                ->canBeEnabled()
+            ->requiresAtLeastOneElement()
+            ->useAttributeAsKey('key')
+            ->arrayPrototype()
+                ->children()
+                    ->append(TransportFactory::getConfiguration())
+                    ->append(TransportFactory::getQueueConsumerConfiguration())
+                    ->append(ClientFactory::getConfiguration($this->debug))
+                    ->append($this->getMonitoringConfiguration())
+                    ->append($this->getAsyncCommandsConfiguration())
+                    ->append($this->getJobConfiguration())
+                    ->append($this->getAsyncEventsConfiguration())
+                    ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
+                        ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
+                        ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
+                        ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
+                        ->booleanNode('reply_extension')->defaultTrue()->end()
+                    ->end()->end()
+                ->end()
             ->end()
-            ->arrayNode('async_commands')
-                ->addDefaultsIfNotSet()
-                ->canBeEnabled()
-            ->end()
-            ->arrayNode('extensions')->addDefaultsIfNotSet()->children()
-                ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
-                ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
-                ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
-                ->booleanNode('reply_extension')->defaultTrue()->end()
-            ->end()->end()
         ;
 
         return $tb;
+    }
+
+    private function getMonitoringConfiguration(): ArrayNodeDefinition
+    {
+        if (false === class_exists(MonitoringFactory::class)) {
+            return MissingComponentFactory::getConfiguration('monitoring', ['enqueue/monitoring']);
+        }
+
+        return MonitoringFactory::getConfiguration();
+    }
+
+    private function getAsyncCommandsConfiguration(): ArrayNodeDefinition
+    {
+        if (false === class_exists(RunCommandProcessor::class)) {
+            return MissingComponentFactory::getConfiguration('async_commands', ['enqueue/async-command']);
+        }
+
+        return (new ArrayNodeDefinition('async_commands'))
+            ->addDefaultsIfNotSet()
+            ->canBeEnabled()
+        ;
+    }
+
+    private function getJobConfiguration(): ArrayNodeDefinition
+    {
+        if (false === class_exists(Job::class)) {
+            return MissingComponentFactory::getConfiguration('job', ['enqueue/job-queue']);
+        }
+
+        return (new ArrayNodeDefinition('job'))
+            ->addDefaultsIfNotSet()
+            ->canBeEnabled()
+        ;
+    }
+
+    private function getAsyncEventsConfiguration(): ArrayNodeDefinition
+    {
+        if (false == class_exists(AsyncEventDispatcherExtension::class)) {
+            return MissingComponentFactory::getConfiguration('async_events', ['enqueue/async-event-dispatcher']);
+        }
+
+        return (new ArrayNodeDefinition('async_events'))
+            ->addDefaultsIfNotSet()
+            ->canBeEnabled()
+        ;
     }
 }

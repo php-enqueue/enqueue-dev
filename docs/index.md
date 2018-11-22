@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 ## Documentation.
 
 * [Quick tour](quick_tour.md)
@@ -10,6 +19,7 @@
     - [Kafka](transport/kafka.md)
     - [Stomp](transport/stomp.md)
     - [Redis](transport/redis.md)
+    - [Wamp](transport/wamp.md)
     - [Doctrine DBAL](transport/dbal.md)
     - [Filesystem](transport/filesystem.md)
     - [Null](transport/null.md)
@@ -51,6 +61,8 @@
 * [Yii](#yii)
     - [AMQP Interop driver](yii/amqp_driver.md)
 * [EnqueueElasticaBundle. Overview](elastica-bundle/overview.md)
+* [DSN Parser](dsn.md)
+* [Monitoring](monitoring.md)
 * [Use cases](#use-cases)
     - [Symfony. Async event dispatcher](async_event_dispatcher/quick_tour.md)
     - [Monolog. Send messages to message queue](monolog/send-messages-to-mq.md)
@@ -77,3 +89,4 @@
 * [Spool Swiftmailer emails to real message queue.](https://blog.forma-pro.com/spool-swiftmailer-emails-to-real-message-queue-9ecb8b53b5de)
 * [Yii PHP Framework has adopted AMQP Interop.](https://blog.forma-pro.com/yii-php-framework-has-adopted-amqp-interop-85ab47c9869f)
 * [(En)queue Symfony console commands](http://tech.yappa.be/enqueue-symfony-console-commands)
+* [From RabbitMq to PhpEnqueue via Symfony Messenger](https://medium.com/@stefanoalletti_40357/from-rabbitmq-to-phpenqueue-via-symfony-messenger-b8260d0e506c)

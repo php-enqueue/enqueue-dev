@@ -25,28 +25,30 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $this->assertClassFinal(BuildConsumptionExtensionsPass::class);
     }
 
-    public function testCouldBeConstructedWithName()
+    public function testCouldBeConstructedWithoutArguments()
     {
-        $pass = new BuildConsumptionExtensionsPass('aName');
-
-        $this->assertAttributeSame('aName', 'name', $pass);
+        new BuildConsumptionExtensionsPass();
     }
 
-    public function testThrowIfNameEmptyOnConstruct()
+    public function testThrowIfEnqueueClientsParameterNotSet()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The name could not be empty.');
-        new BuildConsumptionExtensionsPass('');
+        $pass = new BuildConsumptionExtensionsPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The "enqueue.clients" parameter must be set.');
+        $pass->process(new ContainerBuilder());
     }
 
-    public function testShouldDoNothingIfExtensionsServiceIsNotRegistered()
+    public function testThrowsIfNoConsumptionExtensionsServiceFoundForConfiguredTransport()
     {
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_client', 'baz');
 
-        //guard
-        $this->assertFalse($container->hasDefinition('enqueue.client.aName.consumption_extensions'));
+        $pass = new BuildConsumptionExtensionsPass();
 
-        $pass = new BuildConsumptionExtensionsPass('aName');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Service "enqueue.client.foo.consumption_extensions" not found');
         $pass->process($container);
     }
 
@@ -56,16 +58,18 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $extensions->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.client.aName.consumption_extensions', $extensions);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
-            ->addTag('enqueue.consumption_extension', ['client' => 'aName'])
+            ->addTag('enqueue.consumption_extension', ['client' => 'foo'])
         ;
         $container->register('aBarExtension', ExtensionInterface::class)
-            ->addTag('enqueue.consumption_extension', ['client' => 'aName'])
+            ->addTag('enqueue.consumption_extension', ['client' => 'foo'])
         ;
 
-        $pass = new BuildConsumptionExtensionsPass('aName');
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $extensions->getArgument(0));
@@ -81,16 +85,18 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $extensions->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.client.aName.consumption_extensions', $extensions);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
-            ->addTag('enqueue.consumption_extension', ['client' => 'aName'])
+            ->addTag('enqueue.consumption_extension', ['client' => 'foo'])
         ;
         $container->register('aBarExtension', ExtensionInterface::class)
             ->addTag('enqueue.consumption_extension', ['client' => 'anotherName'])
         ;
 
-        $pass = new BuildConsumptionExtensionsPass('aName');
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $extensions->getArgument(0));
@@ -105,7 +111,9 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $extensions->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.client.aName.consumption_extensions', $extensions);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
             ->addTag('enqueue.consumption_extension', ['client' => 'all'])
@@ -114,7 +122,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
             ->addTag('enqueue.consumption_extension', ['client' => 'anotherName'])
         ;
 
-        $pass = new BuildConsumptionExtensionsPass('aName');
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $extensions->getArgument(0));
@@ -129,7 +137,9 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $extensions->addArgument([]);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.client.default.consumption_extensions', $extensions);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
             ->addTag('enqueue.consumption_extension')
@@ -138,7 +148,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
             ->addTag('enqueue.consumption_extension')
         ;
 
-        $pass = new BuildConsumptionExtensionsPass('default');
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $extensions->getArgument(0));
@@ -151,10 +161,12 @@ class BuildConsumptionExtensionsPassTest extends TestCase
     public function testShouldOrderExtensionsByPriority()
     {
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
 
         $extensions = new Definition();
         $extensions->addArgument([]);
-        $container->setDefinition('enqueue.client.default.consumption_extensions', $extensions);
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $extensions);
 
         $extension = new Definition();
         $extension->addTag('enqueue.consumption_extension', ['priority' => 6]);
@@ -168,7 +180,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $extension->addTag('enqueue.consumption_extension', ['priority' => 2]);
         $container->setDefinition('baz_extension', $extension);
 
-        $pass = new BuildConsumptionExtensionsPass('default');
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $orderedExtensions = $extensions->getArgument(0);
@@ -182,10 +194,12 @@ class BuildConsumptionExtensionsPassTest extends TestCase
     public function testShouldAssumePriorityZeroIfPriorityIsNotSet()
     {
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
 
         $extensions = new Definition();
         $extensions->addArgument([]);
-        $container->setDefinition('enqueue.client.default.consumption_extensions', $extensions);
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $extensions);
 
         $extension = new Definition();
         $extension->addTag('enqueue.consumption_extension');
@@ -199,7 +213,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $extension->addTag('enqueue.consumption_extension', ['priority' => -1]);
         $container->setDefinition('baz_extension', $extension);
 
-        $pass = new BuildConsumptionExtensionsPass('default');
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $orderedExtensions = $extensions->getArgument(0);
@@ -219,7 +233,9 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         ]);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.client.aName.consumption_extensions', $extensions);
+        $container->setParameter('enqueue.clients', ['foo']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $extensions);
 
         $container->register('aFooExtension', ExtensionInterface::class)
             ->addTag('enqueue.consumption_extension')
@@ -228,13 +244,45 @@ class BuildConsumptionExtensionsPassTest extends TestCase
             ->addTag('enqueue.consumption_extension')
         ;
 
-        $pass = new BuildConsumptionExtensionsPass('aName');
+        $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
         $this->assertInternalType('array', $extensions->getArgument(0));
+        $this->assertCount(4, $extensions->getArgument(0));
+    }
+
+    public function testShouldRegisterProcessorWithMatchedNameToCorrespondingExtensions()
+    {
+        $fooExtensions = new Definition();
+        $fooExtensions->addArgument([]);
+
+        $barExtensions = new Definition();
+        $barExtensions->addArgument([]);
+
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.clients', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_client', 'foo');
+        $container->setDefinition('enqueue.client.foo.consumption_extensions', $fooExtensions);
+        $container->setDefinition('enqueue.client.bar.consumption_extensions', $barExtensions);
+
+        $container->register('aFooExtension', ExtensionInterface::class)
+            ->addTag('enqueue.consumption_extension', ['client' => 'foo'])
+        ;
+        $container->register('aBarExtension', ExtensionInterface::class)
+            ->addTag('enqueue.consumption_extension', ['client' => 'bar'])
+        ;
+
+        $pass = new BuildConsumptionExtensionsPass();
+        $pass->process($container);
+
+        $this->assertInternalType('array', $fooExtensions->getArgument(0));
         $this->assertEquals([
-            'aBarExtension' => 'aBarServiceIdAddedPreviously',
-            'aOloloExtension' => 'aOloloServiceIdAddedPreviously',
-        ], $extensions->getArgument(0));
+            new Reference('aFooExtension'),
+        ], $fooExtensions->getArgument(0));
+
+        $this->assertInternalType('array', $barExtensions->getArgument(0));
+        $this->assertEquals([
+            new Reference('aBarExtension'),
+        ], $barExtensions->getArgument(0));
     }
 }

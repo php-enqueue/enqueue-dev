@@ -6,6 +6,7 @@ namespace Enqueue\Client\Driver;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\DriverSendResult;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
@@ -45,7 +46,7 @@ class GenericDriver implements DriverInterface
         $this->routeCollection = $routeCollection;
     }
 
-    public function sendToRouter(Message $message): void
+    public function sendToRouter(Message $message): DriverSendResult
     {
         if ($message->getProperty(Config::COMMAND)) {
             throw new \LogicException('Command must not be send to router but go directly to its processor.');
@@ -59,9 +60,11 @@ class GenericDriver implements DriverInterface
         $producer = $this->getContext()->createProducer();
 
         $this->doSendToRouter($producer, $topic, $transportMessage);
+
+        return new DriverSendResult($topic, $transportMessage);
     }
 
-    public function sendToProcessor(Message $message): void
+    public function sendToProcessor(Message $message): DriverSendResult
     {
         $topic = $message->getProperty(Config::TOPIC);
         $command = $message->getProperty(Config::COMMAND);
@@ -111,6 +114,8 @@ class GenericDriver implements DriverInterface
         }
 
         $this->doSendToProcessor($producer, $queue, $transportMessage);
+
+        return new DriverSendResult($queue, $transportMessage);
     }
 
     public function setupBroker(LoggerInterface $logger = null): void

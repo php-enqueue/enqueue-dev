@@ -114,7 +114,7 @@ class SqsConnectionFactory implements ConnectionFactory
 
     private function parseDsn(string $dsn): array
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         if ('sqs' !== $dsn->getSchemeProtocol()) {
             throw new \LogicException(sprintf(
@@ -124,14 +124,14 @@ class SqsConnectionFactory implements ConnectionFactory
         }
 
         return array_filter(array_replace($dsn->getQuery(), [
-            'key' => $dsn->getQueryParameter('key'),
-            'secret' => $dsn->getQueryParameter('secret'),
-            'token' => $dsn->getQueryParameter('token'),
-            'region' => $dsn->getQueryParameter('region'),
-            'retries' => $dsn->getInt('retries'),
-            'version' => $dsn->getQueryParameter('version'),
+            'key' => $dsn->getString('key'),
+            'secret' => $dsn->getString('secret'),
+            'token' => $dsn->getString('token'),
+            'region' => $dsn->getString('region'),
+            'retries' => $dsn->getDecimal('retries'),
+            'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
-            'endpoint' => $dsn->getQueryParameter('endpoint'),
+            'endpoint' => $dsn->getString('endpoint'),
         ]), function ($value) { return null !== $value; });
     }
 

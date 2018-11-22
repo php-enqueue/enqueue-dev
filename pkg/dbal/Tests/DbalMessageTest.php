@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class DbalMessageTest extends \PHPUnit_Framework_TestCase
+class DbalMessageTest extends TestCase
 {
     use ClassExtensionTrait;
 

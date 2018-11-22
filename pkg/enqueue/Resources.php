@@ -16,6 +16,7 @@ use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Stomp\StompConnectionFactory;
+use Enqueue\Wamp\WampConnectionFactory;
 use Interop\Queue\ConnectionFactory;
 
 final class Resources
@@ -162,6 +163,11 @@ final class Resources
                 'schemes' => ['mongodb'],
                 'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/mongodb',
+            ];
+            $map[WampConnectionFactory::class] = [
+                'schemes' => ['wamp', 'ws'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/wamp',
             ];
 
             self::$knownConnections = $map;

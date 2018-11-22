@@ -3,11 +3,11 @@
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
 use Enqueue\Bundle\DependencyInjection\Configuration;
-use Enqueue\Client\RouterProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends TestCase
@@ -29,54 +29,52 @@ class ConfigurationTest extends TestCase
         new Configuration(true);
     }
 
-    public function testShouldUseDefaultConfigurationIfNothingIsConfiguredAtAll()
-    {
-        $configuration = new Configuration(true);
-
-        $processor = new Processor();
-        $config = $processor->processConfiguration($configuration, [[]]);
-
-        $this->assertEquals([
-            'transport' => ['dsn' => 'null:'],
-            'consumption' => [
-                'receive_timeout' => 10000,
-            ],
-            'job' => false,
-            'async_events' => ['enabled' => false],
-            'async_commands' => ['enabled' => false],
-            'extensions' => [
-                'doctrine_ping_connection_extension' => false,
-                'doctrine_clear_identity_map_extension' => false,
-                'signal_extension' => function_exists('pcntl_signal_dispatch'),
-                'reply_extension' => true,
-            ],
-        ], $config);
-    }
-
-    public function testShouldUseDefaultTransportIfIfTransportIsConfiguredAtAll()
+    public function testShouldProcessSeveralTransports()
     {
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => null,
+            'default' => [
+                'transport' => 'default:',
+            ],
+            'foo' => [
+                'transport' => 'foo:',
+            ],
         ]]);
 
-        $this->assertEquals([
-            'transport' => ['dsn' => 'null:'],
-            'consumption' => [
-                'receive_timeout' => 10000,
+        $this->assertConfigEquals([
+            'default' => [
+                'transport' => [
+                    'dsn' => 'default:',
+                ],
             ],
-            'job' => false,
-            'async_events' => ['enabled' => false],
-            'async_commands' => ['enabled' => false],
-            'extensions' => [
-                'doctrine_ping_connection_extension' => false,
-                'doctrine_clear_identity_map_extension' => false,
-                'signal_extension' => function_exists('pcntl_signal_dispatch'),
-                'reply_extension' => true,
+            'foo' => [
+                'transport' => [
+                    'dsn' => 'foo:',
+                ],
             ],
         ], $config);
+    }
+
+    public function testTransportFactoryShouldValidateEachTransportAccordingToItsRules()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Both options factory_class and factory_service are set. Please choose one.');
+        $processor->processConfiguration($configuration, [
+            [
+                'default' => [
+                    'transport' => [
+                        'factory_class' => 'aClass',
+                        'factory_service' => 'aService',
+                    ],
+                ],
+            ],
+        ]);
     }
 
     public function testShouldSetDefaultConfigurationForClient()
@@ -85,21 +83,76 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => 'null:',
-            'client' => null,
+            'default' => [
+                'transport' => 'null:',
+                'client' => null,
+            ],
         ]]);
 
-        $this->assertArraySubset([
-            'transport' => ['dsn' => 'null:'],
-            'client' => [
-                'prefix' => 'enqueue',
-                'app_name' => 'app',
-                'router_processor' => RouterProcessor::class,
-                'router_topic' => 'default',
-                'router_queue' => 'default',
-                'default_processor_queue' => 'default',
-                'traceable_producer' => true,
-                'redelivered_delay_time' => 0,
+        $this->assertConfigEquals([
+            'default' => [
+                'client' => [
+                    'prefix' => 'enqueue',
+                    'app_name' => 'app',
+                    'router_processor' => null,
+                    'router_topic' => 'default',
+                    'router_queue' => 'default',
+                    'default_queue' => 'default',
+                    'traceable_producer' => true,
+                    'redelivered_delay_time' => 0,
+                ],
+            ],
+        ], $config);
+    }
+
+    public function testThrowIfClientDriverOptionsIsNotArray()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('Invalid type for path "enqueue.default.client.driver_options". Expected array, but got string');
+        $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => 'null:',
+                'client' => [
+                    'driver_options' => 'invalidOption',
+                ],
+            ],
+        ]]);
+    }
+
+    public function testShouldConfigureClientDriverOptions()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => 'null:',
+                'client' => [
+                    'driver_options' => [
+                        'foo' => 'fooVal',
+                    ],
+                ],
+            ],
+        ]]);
+
+        $this->assertConfigEquals([
+            'default' => [
+                'client' => [
+                    'prefix' => 'enqueue',
+                    'app_name' => 'app',
+                    'router_processor' => null,
+                    'router_topic' => 'default',
+                    'router_queue' => 'default',
+                    'default_queue' => 'default',
+                    'traceable_producer' => true,
+                    'driver_options' => [
+                        'foo' => 'fooVal',
+                    ],
+                ],
             ],
         ], $config);
     }
@@ -107,15 +160,17 @@ class ConfigurationTest extends TestCase
     public function testThrowExceptionIfRouterTopicIsEmpty()
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The path "enqueue.client.router_topic" cannot contain an empty value, but got "".');
+        $this->expectExceptionMessage('The path "enqueue.default.client.router_topic" cannot contain an empty value, but got "".');
 
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $processor->processConfiguration($configuration, [[
-            'transport' => ['dsn' => 'null:'],
-            'client' => [
-                'router_topic' => '',
+            'default' => [
+                'transport' => ['dsn' => 'null:'],
+                'client' => [
+                    'router_topic' => '',
+                ],
             ],
         ]]);
     }
@@ -123,15 +178,17 @@ class ConfigurationTest extends TestCase
     public function testThrowExceptionIfRouterQueueIsEmpty()
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The path "enqueue.client.router_queue" cannot contain an empty value, but got "".');
+        $this->expectExceptionMessage('The path "enqueue.default.client.router_queue" cannot contain an empty value, but got "".');
 
         $configuration = new Configuration(true);
 
         $processor = new Processor();
         $processor->processConfiguration($configuration, [[
-            'transport' => ['dsn' => 'null:'],
-            'client' => [
-                'router_queue' => '',
+            'default' => [
+                'transport' => ['dsn' => 'null:'],
+                'client' => [
+                    'router_queue' => '',
+                ],
             ],
         ]]);
     }
@@ -143,11 +200,13 @@ class ConfigurationTest extends TestCase
         $processor = new Processor();
 
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The path "enqueue.client.default_processor_queue" cannot contain an empty value, but got "".');
+        $this->expectExceptionMessage('The path "enqueue.default.client.default_queue" cannot contain an empty value, but got "".');
         $processor->processConfiguration($configuration, [[
-            'transport' => ['dsn' => 'null:'],
-            'client' => [
-                'default_processor_queue' => '',
+            'default' => [
+                'transport' => ['dsn' => 'null:'],
+                'client' => [
+                    'default_queue' => '',
+                ],
             ],
         ]]);
     }
@@ -158,11 +217,17 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'job' => false,
+            'default' => [
+                'job' => [
+                    'enabled' => false,
+                ],
+            ],
         ], $config);
     }
 
@@ -172,12 +237,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'job' => true,
+            'default' => [
+                'transport' => [],
+                'job' => true,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'job' => true,
+            'default' => [
+                'job' => true,
+            ],
         ], $config);
     }
 
@@ -187,12 +256,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => null,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'doctrine_ping_connection_extension' => false,
+            'default' => [
+                'extensions' => [
+                    'doctrine_ping_connection_extension' => false,
+                ],
             ],
         ], $config);
     }
@@ -203,15 +276,19 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'extensions' => [
-                'doctrine_ping_connection_extension' => true,
+            'default' => [
+                'transport' => null,
+                'extensions' => [
+                    'doctrine_ping_connection_extension' => true,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'doctrine_ping_connection_extension' => true,
+            'default' => [
+                'extensions' => [
+                    'doctrine_ping_connection_extension' => true,
+                ],
             ],
         ], $config);
     }
@@ -222,12 +299,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => null,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'doctrine_clear_identity_map_extension' => false,
+            'default' => [
+                'extensions' => [
+                    'doctrine_clear_identity_map_extension' => false,
+                ],
             ],
         ], $config);
     }
@@ -238,15 +319,19 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'extensions' => [
-                'doctrine_clear_identity_map_extension' => true,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_clear_identity_map_extension' => true,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'doctrine_clear_identity_map_extension' => true,
+            'default' => [
+                'extensions' => [
+                    'doctrine_clear_identity_map_extension' => true,
+                ],
             ],
         ], $config);
     }
@@ -259,12 +344,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'signal_extension' => $isLoaded,
+            'default' => [
+                'extensions' => [
+                    'signal_extension' => $isLoaded,
+                ],
             ],
         ], $config);
     }
@@ -275,15 +364,19 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'extensions' => [
-                'signal_extension' => false,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'signal_extension' => false,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'signal_extension' => false,
+            'default' => [
+                'extensions' => [
+                    'signal_extension' => false,
+                ],
             ],
         ], $config);
     }
@@ -294,12 +387,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'reply_extension' => true,
+            'default' => [
+                'extensions' => [
+                    'reply_extension' => true,
+                ],
             ],
         ], $config);
     }
@@ -310,15 +407,19 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'extensions' => [
-                'reply_extension' => false,
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'reply_extension' => false,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'extensions' => [
-                'reply_extension' => false,
+            'default' => [
+                'extensions' => [
+                    'reply_extension' => false,
+                ],
             ],
         ], $config);
     }
@@ -329,12 +430,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => false,
+            'default' => [
+                'async_events' => [
+                    'enabled' => false,
+                ],
             ],
         ], $config);
     }
@@ -346,26 +451,34 @@ class ConfigurationTest extends TestCase
         $processor = new Processor();
 
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'async_events' => true,
+            'default' => [
+                'transport' => [],
+                'async_events' => true,
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ], $config);
 
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'transport' => [],
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'async_events' => [
-                'enabled' => true,
+            'default' => [
+                'async_events' => [
+                    'enabled' => true,
+                ],
             ],
         ], $config);
     }
@@ -376,12 +489,16 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
+            'default' => [
+                'transport' => [],
+            ],
         ]]);
 
         $this->assertArraySubset([
-            'consumption' => [
-                'receive_timeout' => 10000,
+            'default' => [
+                'consumption' => [
+                    'receive_timeout' => 10000,
+                ],
             ],
         ], $config);
     }
@@ -392,16 +509,25 @@ class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $config = $processor->processConfiguration($configuration, [[
-            'transport' => [],
-            'consumption' => [
-                'receive_timeout' => 456,
+            'default' => [
+                'transport' => [],
+                'consumption' => [
+                    'receive_timeout' => 456,
+                ],
             ],
         ]]);
 
         $this->assertArraySubset([
-            'consumption' => [
-                'receive_timeout' => 456,
+            'default' => [
+                'consumption' => [
+                    'receive_timeout' => 456,
+                ],
             ],
         ], $config);
+    }
+
+    private function assertConfigEquals(array $expected, array $actual): void
+    {
+        $this->assertArraySubset($expected, $actual, false, var_export($actual, true));
     }
 }

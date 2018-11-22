@@ -4,6 +4,7 @@ namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\DriverSendResult;
 use Enqueue\Client\Message;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
@@ -12,6 +13,8 @@ use Enqueue\Consumption\Result;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 
@@ -83,6 +86,8 @@ class RouterProcessorTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) use ($routedMessages) {
                 $routedMessages->append($message);
+
+                return $this->createDriverSendResult();
             })
         ;
         $driver
@@ -167,6 +172,8 @@ class RouterProcessorTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) use ($routedMessages) {
                 $routedMessages->append($message);
+
+                return $this->createDriverSendResult();
             });
         $driver
             ->expects($this->atLeastOnce())
@@ -200,5 +207,13 @@ class RouterProcessorTest extends TestCase
         ;
 
         return $driver;
+    }
+
+    private function createDriverSendResult(): DriverSendResult
+    {
+        return new DriverSendResult(
+            $this->createMock(Destination::class),
+            $this->createMock(TransportMessage::class)
+        );
     }
 }

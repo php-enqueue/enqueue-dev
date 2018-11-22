@@ -4,6 +4,7 @@ namespace Enqueue\Tests;
 
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Resources;
+use Enqueue\Wamp\WampConnectionFactory;
 use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -126,5 +127,23 @@ class ResourcesTest extends TestCase
 
         $this->assertArrayHasKey('package', $connectionInfo);
         $this->assertSame('foo/bar', $connectionInfo['package']);
+    }
+
+    public function testShouldHaveRegisteredWampConfiguration()
+    {
+        $availableConnections = Resources::getKnownConnections();
+
+        $this->assertInternalType('array', $availableConnections);
+        $this->assertArrayHasKey(WampConnectionFactory::class, $availableConnections);
+
+        $connectionInfo = $availableConnections[WampConnectionFactory::class];
+        $this->assertArrayHasKey('schemes', $connectionInfo);
+        $this->assertSame(['wamp', 'ws'], $connectionInfo['schemes']);
+
+        $this->assertArrayHasKey('supportedSchemeExtensions', $connectionInfo);
+        $this->assertSame([], $connectionInfo['supportedSchemeExtensions']);
+
+        $this->assertArrayHasKey('package', $connectionInfo);
+        $this->assertSame('enqueue/wamp', $connectionInfo['package']);
     }
 }

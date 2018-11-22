@@ -108,6 +108,10 @@
         <testsuite name="Azure transport">
             <directory>pkg/azure-storage/Tests</directory>
         </testsuite>
+
+        <testsuite name="wamp transport">
+            <directory>pkg/wamp/Tests</directory>
+        </testsuite>
     </testsuites>
 
     <php>

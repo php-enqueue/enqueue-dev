@@ -196,11 +196,11 @@ final class QueueConsumer implements QueueConsumerInterface
                 try {
                     $result = $processor->process($message, $this->interopContext);
                 } catch (\Exception $e) {
-                    $result = $this->onProcessorException($extension, $message, $e, $receivedAt);
+                    $result = $this->onProcessorException($extension, $consumer, $message, $e, $receivedAt);
                 }
             }
 
-            $messageResult = new MessageResult($this->interopContext, $message, $result, $receivedAt, $this->logger);
+            $messageResult = new MessageResult($this->interopContext, $consumer, $message, $result, $receivedAt, $this->logger);
             $extension->onResult($messageResult);
             $result = $messageResult->getResult();
 
@@ -302,9 +302,9 @@ final class QueueConsumer implements QueueConsumerInterface
      *
      * https://github.com/symfony/symfony/blob/cbe289517470eeea27162fd2d523eb29c95f775f/src/Symfony/Component/HttpKernel/EventListener/ExceptionListener.php#L77
      */
-    private function onProcessorException(ExtensionInterface $extension, Message $message, \Exception $exception, int $receivedAt)
+    private function onProcessorException(ExtensionInterface $extension, Consumer $consumer, Message $message, \Exception $exception, int $receivedAt)
     {
-        $processorException = new ProcessorException($this->interopContext, $message, $exception, $receivedAt, $this->logger);
+        $processorException = new ProcessorException($this->interopContext, $consumer, $message, $exception, $receivedAt, $this->logger);
 
         try {
             $extension->onProcessorException($processorException);
@@ -329,7 +329,5 @@ final class QueueConsumer implements QueueConsumerInterface
 
             throw $e;
         }
-
-        throw $exception;
     }
 }

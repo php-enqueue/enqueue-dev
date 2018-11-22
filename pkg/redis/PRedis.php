@@ -30,6 +30,10 @@ class PRedis implements Redis
      */
     public function __construct(array $config)
     {
+        if (false == class_exists(Client::class)) {
+            throw new \LogicException('The package "predis/predis" must be installed. Please run "composer req predis/predis:^1.1" to install it');
+        }
+
         $this->options = $config['predis_options'];
 
         $this->parameters = [
@@ -46,6 +50,34 @@ class PRedis implements Redis
 
         if ($config['ssl']) {
             $this->parameters['ssl'] = $config['ssl'];
+        }
+    }
+
+    public function eval(string $script, array $keys = [], array $args = [])
+    {
+        try {
+            // mixed eval($script, $numkeys, $keyOrArg1 = null, $keyOrArgN = null)
+            return call_user_func_array([$this->redis, 'eval'], array_merge([$script, count($keys)], $keys, $args));
+        } catch (PRedisServerException $e) {
+            throw new ServerException('eval command has failed', null, $e);
+        }
+    }
+
+    public function zadd(string $key, string $value, float $score): int
+    {
+        try {
+            return $this->redis->zadd($key, [$value => $score]);
+        } catch (PRedisServerException $e) {
+            throw new ServerException('zadd command has failed', null, $e);
+        }
+    }
+
+    public function zrem(string $key, string $value): int
+    {
+        try {
+            return $this->redis->zrem($key, [$value]);
+        } catch (PRedisServerException $e) {
+            throw new ServerException('zrem command has failed', null, $e);
         }
     }
 

@@ -39,9 +39,24 @@ class DbalMessage implements Message
     private $deliveryDelay;
 
     /**
+     * @var int seconds
+     */
+    private $redeliverAfter;
+
+    /**
      * @var int milliseconds
      */
     private $timeToLive;
+
+    /**
+     * @var null|string
+     */
+    private $deliveryId;
+
+    /**
+     * @var string|null
+     */
+    private $queue;
 
     /**
      * Milliseconds, for example 15186054527288.
@@ -65,6 +80,8 @@ class DbalMessage implements Message
         $this->redelivered = false;
         $this->priority = null;
         $this->deliveryDelay = null;
+        $this->deliveryId = null;
+        $this->redeliverAfter = null;
     }
 
     public function setBody(string $body): void
@@ -208,6 +225,26 @@ class DbalMessage implements Message
         $this->setHeader('timestamp', $timestamp);
     }
 
+    public function getDeliveryId(): ?string
+    {
+        return $this->deliveryId;
+    }
+
+    public function setDeliveryId(?string $deliveryId = null): void
+    {
+        $this->deliveryId = $deliveryId;
+    }
+
+    public function getRedeliverAfter(): int
+    {
+        return $this->redeliverAfter;
+    }
+
+    public function setRedeliverAfter(int $redeliverAfter = null): void
+    {
+        $this->redeliverAfter = $redeliverAfter;
+    }
+
     public function getPublishedAt(): ?int
     {
         return $this->publishedAt;
@@ -216,5 +253,15 @@ class DbalMessage implements Message
     public function setPublishedAt(int $publishedAt = null): void
     {
         $this->publishedAt = $publishedAt;
+    }
+
+    public function getQueue(): ?string
+    {
+        return $this->queue;
+    }
+
+    public function setQueue(?string $queue): void
+    {
+        $this->queue = $queue;
     }
 }

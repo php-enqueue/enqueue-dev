@@ -8,7 +8,6 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
-use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
@@ -107,7 +106,26 @@ class MongodbContext implements Context
 
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+        return new MongodbSubscriptionConsumer($this);
+    }
+
+    /**
+     * @internal It must be used here and in the consumer only
+     */
+    public function convertMessage(array $mongodbMessage): MongodbMessage
+    {
+        $mongodbMessageObj = $this->createMessage(
+            $mongodbMessage['body'],
+            JSON::decode($mongodbMessage['properties']),
+            JSON::decode($mongodbMessage['headers'])
+        );
+
+        $mongodbMessageObj->setId((string) $mongodbMessage['_id']);
+        $mongodbMessageObj->setPriority((int) $mongodbMessage['priority']);
+        $mongodbMessageObj->setRedelivered((bool) $mongodbMessage['redelivered']);
+        $mongodbMessageObj->setPublishedAt((int) $mongodbMessage['published_at']);
+
+        return $mongodbMessageObj;
     }
 
     /**
@@ -140,6 +158,7 @@ class MongodbContext implements Context
     public function createCollection(): void
     {
         $collection = $this->getCollection();
+        $collection->createIndex(['queue' => 1], ['name' => 'enqueue_queue']);
         $collection->createIndex(['priority' => -1, 'published_at' => 1], ['name' => 'enqueue_priority']);
         $collection->createIndex(['delayed_until' => 1], ['name' => 'enqueue_delayed']);
     }

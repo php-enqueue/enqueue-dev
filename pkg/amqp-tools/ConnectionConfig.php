@@ -379,7 +379,7 @@ class ConnectionConfig
      */
     private function parseDsn($dsn)
     {
-        $dsn = new Dsn($dsn);
+        $dsn = Dsn::parseFirst($dsn);
 
         $supportedSchemes = $this->supportedSchemes;
         if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
@@ -410,14 +410,14 @@ class ConnectionConfig
             'persisted' => $dsn->getBool('persisted'),
             'lazy' => $dsn->getBool('lazy'),
             'qos_global' => $dsn->getBool('qos_global'),
-            'qos_prefetch_size' => $dsn->getInt('qos_prefetch_size'),
-            'qos_prefetch_count' => $dsn->getInt('qos_prefetch_count'),
+            'qos_prefetch_size' => $dsn->getDecimal('qos_prefetch_size'),
+            'qos_prefetch_count' => $dsn->getDecimal('qos_prefetch_count'),
             'ssl_on' => $sslOn,
             'ssl_verify' => $dsn->getBool('ssl_verify'),
-            'ssl_cacert' => $dsn->getQueryParameter('ssl_cacert'),
-            'ssl_cert' => $dsn->getQueryParameter('ssl_cert'),
-            'ssl_key' => $dsn->getQueryParameter('ssl_key'),
-            'ssl_passphrase' => $dsn->getQueryParameter('ssl_passphrase'),
+            'ssl_cacert' => $dsn->getString('ssl_cacert'),
+            'ssl_cert' => $dsn->getString('ssl_cert'),
+            'ssl_key' => $dsn->getString('ssl_key'),
+            'ssl_passphrase' => $dsn->getString('ssl_passphrase'),
         ]), function ($value) { return null !== $value; });
 
         return array_map(function ($value) {

@@ -3,39 +3,38 @@
 namespace Enqueue\Symfony\Client\DependencyInjection;
 
 use Enqueue\Client\RouteCollection;
+use Enqueue\Symfony\DiUtils;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class AnalyzeRouteCollectionPass implements CompilerPassInterface
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    public function __construct(string $clientName)
-    {
-        if (empty($clientName)) {
-            throw new \InvalidArgumentException('The name could not be empty.');
-        }
-
-        $this->name = $clientName;
-    }
-
     public function process(ContainerBuilder $container): void
     {
-        $routeCollectionId = sprintf('enqueue.client.%s.route_collection', $this->name);
-        if (false == $container->hasDefinition($routeCollectionId)) {
-            return;
+        if (false == $container->hasParameter('enqueue.clients')) {
+            throw new \LogicException('The "enqueue.clients" parameter must be set.');
         }
 
-        $collection = RouteCollection::fromArray($container->getDefinition($routeCollectionId)->getArgument(0));
+        $names = $container->getParameter('enqueue.clients');
 
-        $this->exclusiveCommandsCouldNotBeRunOnDefaultQueue($collection);
-        $this->exclusiveCommandProcessorMustBeSingleOnGivenQueue($collection);
+        foreach ($names as $name) {
+            $diUtils = DiUtils::create(ClientFactory::MODULE, $name);
+
+            $routeCollectionId = $diUtils->format('route_collection');
+            if (false == $container->hasDefinition($routeCollectionId)) {
+                throw new \LogicException(sprintf('Service "%s" not found', $routeCollectionId));
+            }
+
+            $collection = RouteCollection::fromArray($container->getDefinition($routeCollectionId)->getArgument(0));
+
+            $this->exclusiveCommandsCouldNotBeRunOnDefaultQueue($collection);
+            $this->exclusiveCommandProcessorMustBeSingleOnGivenQueue($collection);
+            $this->customQueueNamesUnique($collection);
+            $this->defaultQueueMustBePrefixed($collection);
+        }
     }
 
-    private function exclusiveCommandsCouldNotBeRunOnDefaultQueue(RouteCollection $collection)
+    private function exclusiveCommandsCouldNotBeRunOnDefaultQueue(RouteCollection $collection): void
     {
         foreach ($collection->all() as $route) {
             if ($route->isCommand() && $route->isProcessorExclusive() && false == $route->getQueue()) {
@@ -48,7 +47,7 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
         }
     }
 
-    private function exclusiveCommandProcessorMustBeSingleOnGivenQueue(RouteCollection $collection)
+    private function exclusiveCommandProcessorMustBeSingleOnGivenQueue(RouteCollection $collection): void
     {
         $prefixedQueues = [];
         $queues = [];
@@ -84,6 +83,40 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
                 }
 
                 $queues[$route->getQueue()] = $route->getProcessor();
+            }
+        }
+    }
+
+    private function defaultQueueMustBePrefixed(RouteCollection $collection): void
+    {
+        foreach ($collection->all() as $route) {
+            if (false == $route->getQueue() && false == $route->isPrefixQueue()) {
+                throw new \LogicException('The default queue must be prefixed.');
+            }
+        }
+    }
+
+    private function customQueueNamesUnique(RouteCollection $collection): void
+    {
+        $prefixedQueues = [];
+        $notPrefixedQueues = [];
+
+        foreach ($collection->all() as $route) {
+            //default queue
+            $queueName = $route->getQueue();
+            if (false == $queueName) {
+                return;
+            }
+
+            $route->isPrefixQueue() ?
+                $prefixedQueues[$queueName] = $queueName :
+                $notPrefixedQueues[$queueName] = $queueName
+            ;
+        }
+
+        foreach ($notPrefixedQueues as $queueName) {
+            if (array_key_exists($queueName, $prefixedQueues)) {
+                throw new \LogicException(sprintf('There are prefixed and not prefixed queue with the same name "%s". This is not allowed.', $queueName));
             }
         }
     }

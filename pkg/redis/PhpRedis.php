@@ -19,7 +19,38 @@ class PhpRedis implements Redis
      */
     public function __construct(array $config)
     {
+        if (false == class_exists(\Redis::class)) {
+            throw new \LogicException('You must install the redis extension to use phpredis');
+        }
+
         $this->config = $config;
+    }
+
+    public function eval(string $script, array $keys = [], array $args = [])
+    {
+        try {
+            return $this->redis->eval($script, array_merge($keys, $args), count($keys));
+        } catch (\RedisException $e) {
+            throw new ServerException('eval command has failed', null, $e);
+        }
+    }
+
+    public function zadd(string $key, string $value, float $score): int
+    {
+        try {
+            return $this->redis->zAdd($key, $score, $value);
+        } catch (\RedisException $e) {
+            throw new ServerException('zadd command has failed', null, $e);
+        }
+    }
+
+    public function zrem(string $key, string $value): int
+    {
+        try {
+            return $this->redis->zRem($key, $value);
+        } catch (\RedisException $e) {
+            throw new ServerException('zrem command has failed', null, $e);
+        }
     }
 
     public function lpush(string $key, string $value): int

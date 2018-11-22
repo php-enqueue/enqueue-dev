@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Filesystem transport
 
 Use files on local filesystem as queues. 
@@ -35,10 +44,10 @@ $connectionFactory = new FsConnectionFactory('file:');
 $connectionFactory = new FsConnectionFactory('/path/to/queue/dir');
 
 // same as above
-$connectionFactory = new FsConnectionFactory('file://path/to/queue/dir');
+$connectionFactory = new FsConnectionFactory('file:///path/to/queue/dir');
 
 // with options
-$connectionFactory = new FsConnectionFactory('file://path/to/queue/dir?pre_fetch_count=1');
+$connectionFactory = new FsConnectionFactory('file:///path/to/queue/dir?pre_fetch_count=1');
 
 // as an array
 $connectionFactory = new FsConnectionFactory([
@@ -46,46 +55,46 @@ $connectionFactory = new FsConnectionFactory([
     'pre_fetch_count' => 1,
 ]);
 
-$psrContext = $connectionFactory->createContext();
+$context = $connectionFactory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('file:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('file:')->createContext();
 ```
 
 ## Send message to topic
 
 ```php
 <?php
-/** @var \Enqueue\Fs\FsContext $psrContext */
+/** @var \Enqueue\Fs\FsContext $context */
 
-$fooTopic = $psrContext->createTopic('aTopic');
-$message = $psrContext->createMessage('Hello world!');
+$fooTopic = $context->createTopic('aTopic');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Fs\FsContext $psrContext */
+/** @var \Enqueue\Fs\FsContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('aQueue');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Send expiration message
 
 ```php
 <?php
-/** @var \Enqueue\Fs\FsContext $psrContext */
+/** @var \Enqueue\Fs\FsContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$message = $psrContext->createMessage('Hello world!');
+$fooQueue = $context->createQueue('aQueue');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setTimeToLive(60000) // 60 sec
     //    
     ->send($fooQueue, $message)
@@ -96,10 +105,10 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Fs\FsContext $psrContext */
+/** @var \Enqueue\Fs\FsContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
-$consumer = $psrContext->createConsumer($fooQueue);
+$fooQueue = $context->createQueue('aQueue');
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive();
 
@@ -113,11 +122,11 @@ $consumer->acknowledge($message);
 
 ```php
 <?php
-/** @var \Enqueue\Fs\FsContext $psrContext */
+/** @var \Enqueue\Fs\FsContext $context */
 
-$fooQueue = $psrContext->createQueue('aQueue');
+$fooQueue = $context->createQueue('aQueue');
 
-$psrContext->purge($fooQueue);
+$context->purge($fooQueue);
 ```
 
 [back to index](../index.md)

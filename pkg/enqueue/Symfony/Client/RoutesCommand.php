@@ -25,6 +25,11 @@ class RoutesCommand extends Command
     /**
      * @var string
      */
+    private $defaultClient;
+
+    /**
+     * @var string
+     */
     private $driverIdPatter;
 
     /**
@@ -32,12 +37,13 @@ class RoutesCommand extends Command
      */
     private $driver;
 
-    public function __construct(ContainerInterface $container, string $driverIdPatter = 'enqueue.client.%s.driver')
+    public function __construct(ContainerInterface $container, string $defaultClient, string $driverIdPatter = 'enqueue.client.%s.driver')
     {
-        parent::__construct(static::$defaultName);
-
         $this->container = $container;
+        $this->defaultClient = $defaultClient;
         $this->driverIdPatter = $driverIdPatter;
+
+        parent::__construct(static::$defaultName);
     }
 
     protected function configure(): void
@@ -46,7 +52,7 @@ class RoutesCommand extends Command
             ->setAliases(['debug:enqueue:routes'])
             ->setDescription('A command lists all registered routes.')
             ->addOption('show-route-options', null, InputOption::VALUE_NONE, 'Adds ability to hide options.')
-            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', $this->defaultClient)
         ;
 
         $this->driver = null;

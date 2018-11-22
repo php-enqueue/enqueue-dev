@@ -66,6 +66,8 @@ remote async-event-dispatcher git@github.com:php-enqueue/async-event-dispatcher.
 remote async-command git@github.com:php-enqueue/async-command.git
 remote mongodb git@github.com:php-enqueue/mongodb.git
 remote dsn git@github.com:php-enqueue/dsn.git
+remote wamp git@github.com:php-enqueue/wamp.git
+remote monitoring git@github.com:php-enqueue/monitoring.git
 
 split 'pkg/enqueue' enqueue
 split 'pkg/simple-client' simple-client
@@ -90,3 +92,5 @@ split 'pkg/async-event-dispatcher' async-event-dispatcher
 split 'pkg/async-command' async-command
 split 'pkg/mongodb' mongodb
 split 'pkg/dsn' dsn
+split 'pkg/wamp' wamp
+split 'pkg/monitoring' monitoring

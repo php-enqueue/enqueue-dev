@@ -61,9 +61,9 @@ class DriverFactoryTest extends TestCase
         $this->assertTrue($rc->isFinal());
     }
 
-    public function testCouldBeConstructedWithConfigAndRouteCollectionAsArguments()
+    public function testCouldBeConstructedWithoutAnyArguments()
     {
-        new DriverFactory($this->createConfigMock(), new RouteCollection([]));
+        new DriverFactory();
     }
 
     public function testThrowIfPackageThatSupportSchemeNotInstalled()
@@ -75,9 +75,9 @@ class DriverFactoryTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('To use given scheme "scheme5b7aa7d7cd213" a package has to be installed. Run "composer req thePackage theOtherPackage" to add it.');
-        $factory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
+        $factory = new DriverFactory();
 
-        $factory->create($this->createConnectionFactoryMock(), $scheme.'://foo', []);
+        $factory->create($this->createConnectionFactoryMock(), $this->createDummyConfig($scheme.'://foo'), new RouteCollection([]));
     }
 
     public function testThrowIfSchemeIsNotKnown()
@@ -87,9 +87,9 @@ class DriverFactoryTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('A given scheme "scheme5b7aa862e70a5" is not supported. Maybe it is a custom driver, make sure you registered it with "Enqueue\Client\Resources::addDriver".');
 
-        $factory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
+        $factory = new DriverFactory();
 
-        $factory->create($this->createConnectionFactoryMock(), $scheme.'://foo', []);
+        $factory->create($this->createConnectionFactoryMock(), $this->createDummyConfig($scheme.'://foo'), new RouteCollection([]));
     }
 
     public function testThrowIfDsnInvalid()
@@ -97,9 +97,9 @@ class DriverFactoryTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The DSN is invalid. It does not have scheme separator ":".');
 
-        $factory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
+        $factory = new DriverFactory();
 
-        $factory->create($this->createConnectionFactoryMock(), 'invalidDsn', []);
+        $factory->create($this->createConnectionFactoryMock(), $this->createDummyConfig('invalidDsn'), new RouteCollection([]));
     }
 
     /**
@@ -119,9 +119,9 @@ class DriverFactoryTest extends TestCase
             ->willReturn($this->createMock($contextClass))
         ;
 
-        $driverFactory = new DriverFactory($this->createConfigMock(), new RouteCollection([]));
+        $driverFactory = new DriverFactory();
 
-        $driver = $driverFactory->create($connectionFactoryMock, $dsn, $conifg);
+        $driver = $driverFactory->create($connectionFactoryMock, $this->createDummyConfig($dsn), new RouteCollection([]));
 
         $this->assertInstanceOf($expectedDriverClass, $driver);
     }
@@ -162,6 +162,21 @@ class DriverFactoryTest extends TestCase
         yield ['gearman:', GearmanConnectionFactory::class, GearmanContext::class, [], GenericDriver::class];
 
         yield ['beanstalk:', PheanstalkConnectionFactory::class, PheanstalkContext::class, [], GenericDriver::class];
+    }
+
+    private function createDummyConfig(string $dsn): Config
+    {
+        return Config::create(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ['dsn' => $dsn],
+            []
+        );
     }
 
     private function createConnectionFactoryMock(): ConnectionFactory

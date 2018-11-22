@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Enqueue Mongodb message queue transport
 
 Allows to use [MongoDB](https://www.mongodb.com/) as a message queue broker. 
@@ -10,6 +19,7 @@ Allows to use [MongoDB](https://www.mongodb.com/) as a message queue broker.
 * [Send expiration message](#send-expiration-message)
 * [Send delayed message](#send-delayed-message)
 * [Consume message](#consume-message)
+* [Subscription consumer](#subscription-consumer)
 
 ## Installation
 
@@ -39,47 +49,47 @@ $factory = new MongodbConnectionFactory([
     'polling_interval' => '1000',
 ]);
 
-$psrContext = $factory->createContext();
+$context = $factory->createContext();
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
-$psrContext = (new \Enqueue\ConnectionFactoryFactory())->create('mongodb:')->createContext();
+$context = (new \Enqueue\ConnectionFactoryFactory())->create('mongodb:')->createContext();
 ```
 
 ## Send message to topic 
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooTopic */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooTopic, $message);
+$context->createProducer()->send($fooTopic, $message);
 ```
 
 ## Send message to queue 
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()->send($fooQueue, $message);
+$context->createProducer()->send($fooQueue, $message);
 ```
 
 ## Send priority message
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 
-$fooQueue = $psrContext->createQueue('foo');
+$fooQueue = $context->createQueue('foo');
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setPriority(5) // the higher priority the sooner a message gets to a consumer
     //    
     ->send($fooQueue, $message)
@@ -90,12 +100,12 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setTimeToLive(60000) // 60 sec
     //    
     ->send($fooQueue, $message)
@@ -108,14 +118,14 @@ $psrContext->createProducer()
 <?php
 use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
 // make sure you run "composer require enqueue/amqp-tools".
 
-$message = $psrContext->createMessage('Hello world!');
+$message = $context->createMessage('Hello world!');
 
-$psrContext->createProducer()
+$context->createProducer()
     ->setDeliveryDelay(5000) // 5 sec
     
     ->send($fooQueue, $message)
@@ -126,10 +136,10 @@ $psrContext->createProducer()
 
 ```php
 <?php
-/** @var \Enqueue\Mongodb\MongodbContext $psrContext */
+/** @var \Enqueue\Mongodb\MongodbContext $context */
 /** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
 
-$consumer = $psrContext->createConsumer($fooQueue);
+$consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive();
 
@@ -137,6 +147,39 @@ $message = $consumer->receive();
 
 $consumer->acknowledge($message);
 // $consumer->reject($message);
+```
+
+## Subscription consumer
+
+```php
+<?php
+use Interop\Queue\Message;
+use Interop\Queue\Consumer;
+
+/** @var \Enqueue\Mongodb\MongodbContext $context */
+/** @var \Enqueue\Mongodb\MongodbDestination $fooQueue */
+/** @var \Enqueue\Mongodb\MongodbDestination $barQueue */
+
+$fooConsumer = $context->createConsumer($fooQueue);
+$barConsumer = $context->createConsumer($barQueue);
+
+$subscriptionConsumer = $context->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+$subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
+    // process message
+    
+    $consumer->acknowledge($message);
+    
+    return true;
+});
+
+$subscriptionConsumer->consume(2000); // 2 sec
 ```
 
 [back to index](../index.md)

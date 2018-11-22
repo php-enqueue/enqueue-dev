@@ -35,7 +35,7 @@ class RedisSubscriptionConsumerConsumeUntilUnsubscribedTest extends Subscription
     {
         /** @var RedisDestination $queue */
         $queue = parent::createQueue($context, $queueName);
-        $context->getRedis()->del($queueName);
+        $context->purgeQueue($queue);
 
         return $queue;
     }

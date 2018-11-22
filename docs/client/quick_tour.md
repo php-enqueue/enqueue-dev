@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Simple client. Quick tour.
 
 The simple client library takes Enqueue client classes and Symfony components and makes an easy to use client facade.
@@ -84,15 +93,15 @@ $replyMessage->getBody();
 ```php
 <?php
 
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
 /** @var \Enqueue\SimpleClient\SimpleClient $client */
 
-$client->bindTopic('a_bar_topic', function(PsrMessage $psrMessage) {
+$client->bindTopic('a_bar_topic', function(Message $psrMessage) {
     // processing logic here
     
-    return PsrProcessor::ACK;
+    return Processor::ACK;
 });
 
 $client->consume();

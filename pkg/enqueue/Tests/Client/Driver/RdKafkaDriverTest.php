@@ -118,11 +118,6 @@ class RdKafkaDriverTest extends TestCase
         return new RdKafkaMessage();
     }
 
-    protected function getRouterTransportName(): string
-    {
-        return 'aprefix.router';
-    }
-
     /**
      * @return Config
      */

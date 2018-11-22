@@ -9,6 +9,8 @@ use Interop\Queue\SubscriptionConsumer;
 
 class RedisSubscriptionConsumer implements SubscriptionConsumer
 {
+    use RedisConsumerHelperTrait;
+
     /**
      * @var RedisContext
      */
@@ -22,12 +24,33 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     private $subscribers;
 
     /**
+     * @var int
+     */
+    private $redeliveryDelay = 300;
+
+    /**
      * @param RedisContext $context
      */
     public function __construct(RedisContext $context)
     {
         $this->context = $context;
         $this->subscribers = [];
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedeliveryDelay(): ?int
+    {
+        return $this->redeliveryDelay;
+    }
+
+    /**
+     * @param int $delay
+     */
+    public function setRedeliveryDelay(int $delay): void
+    {
+        $this->redeliveryDelay = $delay;
     }
 
     public function consume(int $timeout = 0): void
@@ -39,35 +62,17 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         $timeout = (int) ceil($timeout / 1000);
         $endAt = time() + $timeout;
 
-        $queueNames = [];
-        foreach (array_keys($this->subscribers) as $queueName) {
-            $queueNames[$queueName] = $queueName;
+        $queues = [];
+        /** @var Consumer $consumer */
+        foreach ($this->subscribers as list($consumer)) {
+            $queues[] = $consumer->getQueue();
         }
 
-        $currentQueueNames = [];
         while (true) {
-            if (empty($currentQueueNames)) {
-                $currentQueueNames = $queueNames;
-            }
+            if ($message = $this->receiveMessage($queues, $timeout ?: 5, $this->redeliveryDelay)) {
+                list($consumer, $callback) = $this->subscribers[$message->getKey()];
 
-            /**
-             * @var string
-             * @var Consumer $consumer
-             * @var callable $processor
-             */
-            $result = $this->context->getRedis()->brpop($currentQueueNames, $timeout ?: 5);
-            if ($result) {
-                $message = RedisMessage::jsonUnserialize($result->getMessage());
-                list($consumer, $callback) = $this->subscribers[$result->getKey()];
                 if (false === call_user_func($callback, $message, $consumer)) {
-                    return;
-                }
-
-                unset($currentQueueNames[$result->getKey()]);
-            } else {
-                $currentQueueNames = [];
-
-                if ($timeout && microtime(true) >= $endAt) {
                     return;
                 }
             }
@@ -97,6 +102,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         $this->subscribers[$queueName] = [$consumer, $callback];
+        $this->queueNames = null;
     }
 
     /**
@@ -119,10 +125,17 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         unset($this->subscribers[$queueName]);
+        $this->queueNames = null;
     }
 
     public function unsubscribeAll(): void
     {
         $this->subscribers = [];
+        $this->queueNames = null;
+    }
+
+    private function getContext(): RedisContext
+    {
+        return $this->context;
     }
 }

@@ -70,7 +70,7 @@ class SimpleClientTest extends TestCase
             'app_name' => 'simple_client',
             'router_topic' => 'test',
             'router_queue' => 'test',
-            'default_processor_queue' => 'test',
+            'default_queue' => 'test',
         ];
 
         $client = new SimpleClient($config);
@@ -110,7 +110,7 @@ class SimpleClientTest extends TestCase
             'app_name' => 'simple_client',
             'router_topic' => 'test',
             'router_queue' => 'test',
-            'default_processor_queue' => 'test',
+            'default_queue' => 'test',
         ];
 
         $client = new SimpleClient($config);
@@ -153,7 +153,7 @@ class SimpleClientTest extends TestCase
             'app_name' => 'simple_client',
             'router_topic' => 'test',
             'router_queue' => 'test',
-            'default_processor_queue' => 'test',
+            'default_queue' => 'test',
         ];
 
         $client = new SimpleClient($config);

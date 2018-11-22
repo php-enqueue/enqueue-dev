@@ -26,24 +26,31 @@ class BuildProcessorRegistryPassTest extends TestCase
         $this->assertClassFinal(BuildProcessorRegistryPass::class);
     }
 
-    public function testCouldBeConstructedWithName()
+    public function testCouldBeConstructedWithoutArguments()
     {
-        $pass = new BuildProcessorRegistryPass('aName');
-
-        $this->assertAttributeSame('aName', 'name', $pass);
+        new BuildProcessorRegistryPass();
     }
 
-    public function testThrowIfNameEmptyOnConstruct()
+    public function testThrowIfEnqueueTransportsParameterNotSet()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The name could not be empty.');
-        new BuildProcessorRegistryPass('');
-    }
+        $pass = new BuildProcessorRegistryPass();
 
-    public function testShouldDoNothingIfProcessorRegistryServiceIsNotRegistered()
-    {
-        $pass = new BuildProcessorRegistryPass('aName');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The "enqueue.transports" parameter must be set.');
         $pass->process(new ContainerBuilder());
+    }
+
+    public function testThrowsIfNoRegistryServiceFoundForConfiguredTransport()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.transports', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_transport', 'baz');
+
+        $pass = new BuildProcessorRegistryPass();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Service "enqueue.transport.foo.processor_registry" not found');
+        $pass->process($container);
     }
 
     public function testShouldRegisterProcessorWithMatchedName()
@@ -52,6 +59,8 @@ class BuildProcessorRegistryPassTest extends TestCase
         $registry->addArgument([]);
 
         $container = new ContainerBuilder();
+        $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
         $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', ['transport' => 'foo'])
@@ -60,7 +69,7 @@ class BuildProcessorRegistryPassTest extends TestCase
             ->addTag('enqueue.transport.processor', ['transport' => 'bar'])
         ;
 
-        $pass = new BuildProcessorRegistryPass('foo');
+        $pass = new BuildProcessorRegistryPass();
 
         $pass->process($container);
 
@@ -71,13 +80,50 @@ class BuildProcessorRegistryPassTest extends TestCase
         ]);
     }
 
+    public function testShouldRegisterProcessorWithMatchedNameToCorrespondingRegistries()
+    {
+        $fooRegistry = new Definition(ProcessorRegistryInterface::class);
+        $fooRegistry->addArgument([]);
+
+        $barRegistry = new Definition(ProcessorRegistryInterface::class);
+        $barRegistry->addArgument([]);
+
+        $container = new ContainerBuilder();
+        $container->setParameter('enqueue.transports', ['foo', 'bar']);
+        $container->setParameter('enqueue.default_transport', 'foo');
+        $container->setDefinition('enqueue.transport.foo.processor_registry', $fooRegistry);
+        $container->setDefinition('enqueue.transport.bar.processor_registry', $barRegistry);
+        $container->register('aFooProcessor', 'aProcessorClass')
+            ->addTag('enqueue.transport.processor', ['transport' => 'foo'])
+        ;
+        $container->register('aBarProcessor', 'aProcessorClass')
+            ->addTag('enqueue.transport.processor', ['transport' => 'bar'])
+        ;
+
+        $pass = new BuildProcessorRegistryPass();
+
+        $pass->process($container);
+
+        $this->assertInstanceOf(Reference::class, $fooRegistry->getArgument(0));
+        $this->assertLocatorServices($container, $fooRegistry->getArgument(0), [
+            'aFooProcessor' => 'aFooProcessor',
+        ]);
+
+        $this->assertInstanceOf(Reference::class, $barRegistry->getArgument(0));
+        $this->assertLocatorServices($container, $barRegistry->getArgument(0), [
+            'aBarProcessor' => 'aBarProcessor',
+        ]);
+    }
+
     public function testShouldRegisterProcessorWithoutNameToDefaultTransport()
     {
         $registry = new Definition(ProcessorRegistryInterface::class);
         $registry->addArgument(null);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.transport.default.processor_registry', $registry);
+        $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
+        $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', [])
         ;
@@ -85,7 +131,7 @@ class BuildProcessorRegistryPassTest extends TestCase
             ->addTag('enqueue.transport.processor', ['transport' => 'bar'])
         ;
 
-        $pass = new BuildProcessorRegistryPass('default');
+        $pass = new BuildProcessorRegistryPass();
 
         $pass->process($container);
 
@@ -102,7 +148,9 @@ class BuildProcessorRegistryPassTest extends TestCase
         $registry->addArgument(null);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.transport.default.processor_registry', $registry);
+        $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
+        $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', ['transport' => 'all'])
         ;
@@ -110,7 +158,7 @@ class BuildProcessorRegistryPassTest extends TestCase
             ->addTag('enqueue.transport.processor', ['transport' => 'bar'])
         ;
 
-        $pass = new BuildProcessorRegistryPass('default');
+        $pass = new BuildProcessorRegistryPass();
 
         $pass->process($container);
 
@@ -127,12 +175,14 @@ class BuildProcessorRegistryPassTest extends TestCase
         $registry->addArgument(null);
 
         $container = new ContainerBuilder();
-        $container->setDefinition('enqueue.transport.default.processor_registry', $registry);
+        $container->setParameter('enqueue.transports', ['foo']);
+        $container->setParameter('enqueue.default_transport', 'foo');
+        $container->setDefinition('enqueue.transport.foo.processor_registry', $registry);
         $container->register('aFooProcessor', 'aProcessorClass')
             ->addTag('enqueue.transport.processor', ['processor' => 'customProcessorName'])
         ;
 
-        $pass = new BuildProcessorRegistryPass('default');
+        $pass = new BuildProcessorRegistryPass();
 
         $pass->process($container);
 

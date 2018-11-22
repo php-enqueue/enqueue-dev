@@ -2,9 +2,11 @@
 
 namespace Enqueue\Tests\Client;
 
+use Enqueue\Client\ChainExtension;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\DriverPreSend;
+use Enqueue\Client\DriverSendResult;
 use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
@@ -15,6 +17,8 @@ use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Tests\Mocks\CustomPrepareBodyClientExtension;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as TransportMessage;
 use PHPUnit\Framework\TestCase;
 
 class ProducerSendCommandTest extends TestCase
@@ -30,6 +34,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
         $driver
             ->expects($this->never())
@@ -55,6 +60,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
         $driver
             ->expects($this->never())
@@ -100,6 +106,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
         $driver
             ->expects($this->never())
@@ -140,6 +147,11 @@ class ProducerSendCommandTest extends TestCase
         $message->setScope('scopeShouldBeOverwritten');
 
         $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->once())
+            ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
+        ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
         $producer->sendCommand('expectedCommand', $message);
@@ -161,6 +173,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -179,6 +192,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -196,6 +210,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -214,6 +229,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -231,6 +247,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -249,6 +266,7 @@ class ProducerSendCommandTest extends TestCase
             ->expects($this->once())
             ->method('sendToProcessor')
             ->with(self::identicalTo($message))
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $producer = new Producer($driver, $this->createRpcFactoryMock());
@@ -265,6 +283,8 @@ class ProducerSendCommandTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) {
                 $this->assertSame('{"foo":"fooVal"}', $message->getBody());
+
+                return $this->createDriverSendResult();
             })
         ;
 
@@ -280,10 +300,12 @@ class ProducerSendCommandTest extends TestCase
             ->method('sendToProcessor')
             ->willReturnCallback(function (Message $message) {
                 $this->assertSame('theCommandBodySerializedByCustomExtension', $message->getBody());
+
+                return $this->createDriverSendResult();
             })
         ;
 
-        $producer = new Producer($driver, $this->createRpcFactoryMock(), new CustomPrepareBodyClientExtension());
+        $producer = new Producer($driver, $this->createRpcFactoryMock(), new ChainExtension([new CustomPrepareBodyClientExtension()]));
         $producer->sendCommand('command', ['foo' => 'fooVal']);
     }
 
@@ -301,6 +323,8 @@ class ProducerSendCommandTest extends TestCase
                 self::assertSame('aBody', $message->getBody());
                 self::assertNull($message->getProperty(Config::PROCESSOR));
                 self::assertSame('command', $message->getProperty(Config::COMMAND));
+
+                return $this->createDriverSendResult();
             })
         ;
 
@@ -338,6 +362,7 @@ class ProducerSendCommandTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -375,6 +400,7 @@ class ProducerSendCommandTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -412,6 +438,7 @@ class ProducerSendCommandTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -443,6 +470,7 @@ class ProducerSendCommandTest extends TestCase
         $driver
             ->expects($this->once())
             ->method('sendToProcessor')
+            ->willReturn($this->createDriverSendResult())
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
@@ -479,11 +507,14 @@ class ProducerSendCommandTest extends TestCase
     {
         $config = new Config(
             'a_prefix',
+            '.',
             'an_app',
             'a_router_topic',
             'a_router_queue',
             'a_default_processor_queue',
-            'a_router_processor_name'
+            'a_router_processor_name',
+            [],
+            []
         );
 
         $driverMock = $this->createMock(DriverInterface::class);
@@ -494,5 +525,13 @@ class ProducerSendCommandTest extends TestCase
         ;
 
         return $driverMock;
+    }
+
+    private function createDriverSendResult(): DriverSendResult
+    {
+        return new DriverSendResult(
+            $this->createMock(Destination::class),
+            $this->createMock(TransportMessage::class)
+        );
     }
 }

@@ -19,7 +19,7 @@ class RedisSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    public function testCouldBeConstructedWithAmqpContextAsFirstArgument()
+    public function testCouldBeConstructedWithRedisContextAsFirstArgument()
     {
         new RedisSubscriptionConsumer($this->createRedisContextMock());
     }

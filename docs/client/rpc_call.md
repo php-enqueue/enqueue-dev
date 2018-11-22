@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Client. RPC call
 
 The client's [quick tour](quick_tour.md) describes how to get the client object. 
@@ -14,19 +23,19 @@ Of course it is possible to implement rpc server side based on transport classes
 ```php
 <?php
 
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 use Enqueue\Consumption\Result;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\SimpleClient\SimpleClient;
 
-/** @var \Interop\Queue\PsrContext $context */
+/** @var \Interop\Queue\Context $context */
 
 // composer require enqueue/amqp-ext # or enqueue/amqp-bunny, enqueue/amqp-lib
 $client = new SimpleClient('amqp:');
 
-$client->bindCommand('square', function (PsrMessage $message, PsrContext $context) use (&$requestMessage) {
+$client->bindCommand('square', function (Message $message, Context $context) use (&$requestMessage) {
     $number = (int) $message->getBody();
     
     return Result::reply($context->createMessage($number ^ 2));

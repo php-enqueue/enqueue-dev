@@ -22,12 +22,13 @@ doctrine:
         charset:  UTF8
 
 enqueue:
-    transport: 'null:'
-    client:
-        traceable_producer: true
-    job: true
-    async_events: true
-    async_commands: true
+    default:
+        transport: 'null:'
+        client:
+            traceable_producer: true
+        job: true
+        async_events: true
+        async_commands: true
 
 services:
     test_enqueue.client.default.traceable_producer:
@@ -48,6 +49,10 @@ services:
 
     test_enqueue.client.default.producer:
         alias: 'enqueue.client.default.producer'
+        public: true
+
+    test_enqueue.client.default.spool_producer:
+        alias: 'enqueue.client.default.spool_producer'
         public: true
 
     test_Enqueue\Client\ProducerInterface:

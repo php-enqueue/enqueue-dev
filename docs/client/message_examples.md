@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Client. Message examples
 
 * [Scope](#scope)
@@ -63,8 +72,13 @@ $producer->sendEvent('aTopic', $message);
 ## Priority 
 
 You can set a priority If you want a message to be processed quicker than other messages in the queue.
-Client defines five priority constants: `MessagePriority::VERY_LOW`, `MessagePriority::LOW`, `MessagePriority::NORMAL`, `MessagePriority::HIGH`, `MessagePriority::VERY_HIGH`.
-The `MessagePriority::NORMAL` is default priority.
+Client defines five priority constants:
+
+* `MessagePriority::VERY_LOW`
+* `MessagePriority::LOW`
+* `MessagePriority::NORMAL` (**default**)
+* `MessagePriority::HIGH`
+* `MessagePriority::VERY_HIGH`
 
 ```php
 <?php

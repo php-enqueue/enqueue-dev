@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Message producer
 
 You can choose how to send messages either using a transport directly or with the client. 
@@ -10,7 +19,7 @@ Transport gives you the access to all transport specific features so you can tun
 
 /** @var Symfony\Component\DependencyInjection\ContainerInterface $container */
 
-/** @var Interop\Queue\PsrContext $context */
+/** @var Interop\Queue\Context $context */
 $context = $container->get('enqueue.transport.context');
 
 $context->createProducer()->send(

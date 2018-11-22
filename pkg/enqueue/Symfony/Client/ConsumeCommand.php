@@ -37,6 +37,11 @@ class ConsumeCommand extends Command
     /**
      * @var string
      */
+    private $defaultClient;
+
+    /**
+     * @var string
+     */
     private $queueConsumerIdPattern;
 
     /**
@@ -51,16 +56,18 @@ class ConsumeCommand extends Command
 
     public function __construct(
         ContainerInterface $container,
+        string $defaultClient,
         string $queueConsumerIdPattern = 'enqueue.client.%s.queue_consumer',
         string $driverIdPattern = 'enqueue.client.%s.driver',
         string $processorIdPatter = 'enqueue.client.%s.delegate_processor'
     ) {
-        parent::__construct(self::$defaultName);
-
         $this->container = $container;
+        $this->defaultClient = $defaultClient;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
         $this->driverIdPattern = $driverIdPattern;
         $this->processorIdPattern = $processorIdPatter;
+
+        parent::__construct(self::$defaultName);
     }
 
     protected function configure(): void
@@ -77,7 +84,7 @@ class ConsumeCommand extends Command
                 'It select an appropriate message processor based on a message headers')
             ->addArgument('client-queue-names', InputArgument::IS_ARRAY, 'Queues to consume messages from')
             ->addOption('skip', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Queues to skip consumption of messages from', [])
-            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', 'default')
+            ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', $this->defaultClient)
         ;
     }
 
@@ -96,26 +103,43 @@ class ConsumeCommand extends Command
 
         $this->setQueueConsumerOptions($consumer, $input);
 
-        $clientQueueNames = $input->getArgument('client-queue-names');
-        if (empty($clientQueueNames)) {
-            $clientQueueNames[$driver->getConfig()->getDefaultQueue()] = true;
-            $clientQueueNames[$driver->getConfig()->getRouterQueue()] = true;
-
-            foreach ($driver->getRouteCollection()->all() as $route) {
-                if ($route->getQueue()) {
-                    $clientQueueNames[$route->getQueue()] = true;
-                }
+        $allQueues[$driver->getConfig()->getDefaultQueue()] = true;
+        $allQueues[$driver->getConfig()->getRouterQueue()] = true;
+        foreach ($driver->getRouteCollection()->all() as $route) {
+            if (false == $route->getQueue()) {
+                continue;
+            }
+            if ($route->isProcessorExternal()) {
+                continue;
             }
 
-            foreach ($input->getOption('skip') as $skipClientQueueName) {
-                unset($clientQueueNames[$skipClientQueueName]);
-            }
-
-            $clientQueueNames = array_keys($clientQueueNames);
+            $allQueues[$route->getQueue()] = $route->isPrefixQueue();
         }
 
-        foreach ($clientQueueNames as $clientQueueName) {
-            $queue = $driver->createQueue($clientQueueName);
+        $selectedQueues = $input->getArgument('client-queue-names');
+        if (empty($selectedQueues)) {
+            $queues = $allQueues;
+        } else {
+            $queues = [];
+            foreach ($selectedQueues as $queue) {
+                if (false == array_key_exists($queue, $allQueues)) {
+                    throw new \LogicException(sprintf(
+                        'There is no such queue "%s". Available are "%s"',
+                        $queue,
+                        implode('", "', array_keys($allQueues))
+                    ));
+                }
+
+                $queues[$queue] = $allQueues[$queue];
+            }
+        }
+
+        foreach ($input->getOption('skip') as $skipQueue) {
+            unset($queues[$skipQueue]);
+        }
+
+        foreach ($queues as $queue => $prefix) {
+            $queue = $driver->createQueue($queue, $prefix);
             $consumer->bind($queue, $processor);
         }
 

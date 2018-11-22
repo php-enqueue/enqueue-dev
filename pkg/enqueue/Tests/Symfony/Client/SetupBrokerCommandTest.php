@@ -27,26 +27,26 @@ class SetupBrokerCommandTest extends TestCase
 
     public function testCouldBeConstructedWithContainerAsFirstArgument()
     {
-        new SetupBrokerCommand($this->createMock(ContainerInterface::class));
+        new SetupBrokerCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
     public function testShouldHaveCommandName()
     {
-        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class));
+        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals('enqueue:setup-broker', $command->getName());
     }
 
     public function testShouldHaveCommandAliases()
     {
-        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class));
+        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class), 'default');
 
         $this->assertEquals(['enq:sb'], $command->getAliases());
     }
 
     public function testShouldHaveExpectedOptions()
     {
-        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class));
+        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class), 'default');
 
         $options = $command->getDefinition()->getOptions();
 
@@ -56,7 +56,7 @@ class SetupBrokerCommandTest extends TestCase
 
     public function testShouldHaveExpectedAttributes()
     {
-        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class));
+        $command = new SetupBrokerCommand($this->createMock(ContainerInterface::class), 'default');
 
         $arguments = $command->getDefinition()->getArguments();
 
@@ -73,7 +73,7 @@ class SetupBrokerCommandTest extends TestCase
 
         $command = new SetupBrokerCommand(new Container([
             'enqueue.client.default.driver' => $driver,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([]);
@@ -98,7 +98,7 @@ class SetupBrokerCommandTest extends TestCase
         $command = new SetupBrokerCommand(new Container([
             'enqueue.client.default.driver' => $defaultDriver,
             'enqueue.client.foo.driver' => $fooDriver,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -118,7 +118,7 @@ class SetupBrokerCommandTest extends TestCase
 
         $command = new SetupBrokerCommand(new Container([
             'enqueue.client.default.driver' => $defaultDriver,
-        ]));
+        ]), 'default');
 
         $tester = new CommandTester($command);
 

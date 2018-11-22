@@ -50,69 +50,91 @@ class UseCasesTest extends WebTestCase
         $this->assertDirectoryExists($certDir);
 
         yield 'amqp_dsn' => [[
-            'transport' => getenv('AMQP_DSN'),
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
         ]];
 
         yield 'amqps_dsn' => [[
-            'transport' => [
-                'dsn' => getenv('AMQPS_DSN'),
-                'ssl_verify' => false,
-                'ssl_cacert' => $certDir.'/cacert.pem',
-                'ssl_cert' => $certDir.'/cert.pem',
-                'ssl_key' => $certDir.'/key.pem',
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('AMQPS_DSN'),
+                    'ssl_verify' => false,
+                    'ssl_cacert' => $certDir.'/cacert.pem',
+                    'ssl_cert' => $certDir.'/cert.pem',
+                    'ssl_key' => $certDir.'/key.pem',
+                ],
             ],
         ]];
 
         yield 'dsn_as_env' => [[
-            'transport' => '%env(AMQP_DSN)%',
+            'default' => [
+                'transport' => '%env(AMQP_DSN)%',
+            ],
         ]];
 
         yield 'dbal_dsn' => [[
-            'transport' => getenv('DOCTRINE_DSN'),
+            'default' => [
+                'transport' => getenv('DOCTRINE_DSN'),
+            ],
         ]];
 
         yield 'rabbitmq_stomp' => [[
-            'transport' => [
-                'dsn' => getenv('RABITMQ_STOMP_DSN'),
-                'lazy' => false,
-                'management_plugin_installed' => true,
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('RABITMQ_STOMP_DSN'),
+                    'lazy' => false,
+                    'management_plugin_installed' => true,
+                ],
             ],
         ]];
 
         yield 'predis_dsn' => [[
-            'transport' => [
-                'dsn' => getenv('PREDIS_DSN'),
-                'lazy' => false,
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('PREDIS_DSN'),
+                    'lazy' => false,
+                ],
             ],
         ]];
 
         yield 'phpredis_dsn' => [[
-            'transport' => [
-                'dsn' => getenv('PHPREDIS_DSN'),
-                'lazy' => false,
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('PHPREDIS_DSN'),
+                    'lazy' => false,
+                ],
             ],
         ]];
 
         yield 'fs_dsn' => [[
-            'transport' => 'file://'.sys_get_temp_dir(),
+            'default' => [
+                'transport' => 'file://'.sys_get_temp_dir(),
+            ],
         ]];
 
         yield 'sqs' => [[
-            'transport' => [
-                'dsn' => getenv('SQS_DSN'),
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('SQS_DSN'),
+                ],
             ],
         ]];
 
         yield 'sqs_client' => [[
-            'transport' => [
-                'dsn' => 'sqs:',
-                'service' => 'test.sqs_client',
-                'factory_service' => 'test.sqs_custom_connection_factory_factory',
+            'default' => [
+                'transport' => [
+                    'dsn' => 'sqs:',
+                    'service' => 'test.sqs_client',
+                    'factory_service' => 'test.sqs_custom_connection_factory_factory',
+                ],
             ],
         ]];
 
         yield 'mongodb_dsn' => [[
-            'transport' => getenv('MONGO_DSN'),
+            'default' => [
+                'transport' => getenv('MONGO_DSN'),
+            ],
         ]];
 //
 //        yield 'gps' => [[
@@ -166,7 +188,9 @@ class UseCasesTest extends WebTestCase
     public function testProducerSendsEventMessageViaProduceCommand()
     {
         $this->customSetUp([
-            'transport' => getenv('AMQP_DSN'),
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
         ]);
 
         $expectedBody = __METHOD__.time();
@@ -191,7 +215,9 @@ class UseCasesTest extends WebTestCase
     public function testProducerSendsCommandMessageViaProduceCommand()
     {
         $this->customSetUp([
-            'transport' => getenv('AMQP_DSN'),
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
         ]);
 
         $expectedBody = __METHOD__.time();
@@ -217,7 +243,9 @@ class UseCasesTest extends WebTestCase
     public function testShouldSetupBroker()
     {
         $this->customSetUp([
-            'transport' => 'file://'.sys_get_temp_dir(),
+            'default' => [
+                'transport' => 'file://'.sys_get_temp_dir(),
+            ],
         ]);
 
         $command = static::$container->get('test_enqueue.client.setup_broker_command');
@@ -230,7 +258,9 @@ class UseCasesTest extends WebTestCase
     public function testClientConsumeCommandMessagesFromExplicitlySetQueue()
     {
         $this->customSetUp([
-            'transport' => getenv('AMQP_DSN'),
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
         ]);
 
         $command = static::$container->get('test_enqueue.client.consume_command');
@@ -255,7 +285,9 @@ class UseCasesTest extends WebTestCase
     public function testClientConsumeMessagesFromExplicitlySetQueue()
     {
         $this->customSetUp([
-            'transport' => getenv('AMQP_DSN'),
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
         ]);
 
         $expectedBody = __METHOD__.time();
@@ -280,7 +312,9 @@ class UseCasesTest extends WebTestCase
     public function testTransportConsumeMessagesCommandShouldConsumeMessage()
     {
         $this->customSetUp([
-            'transport' => getenv('AMQP_DSN'),
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
         ]);
 
         if ($this->getTestQueue() instanceof StompDestination) {
@@ -363,7 +397,7 @@ class UseCasesTest extends WebTestCase
 
     private function getMessageProducer(): ProducerInterface
     {
-        return static::$container->get('enqueue.client.default.producer');
+        return static::$container->get('test_enqueue.client.default.producer');
     }
 
     private function getContext(): Context

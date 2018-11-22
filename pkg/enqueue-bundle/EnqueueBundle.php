@@ -23,17 +23,17 @@ class EnqueueBundle extends Bundle
     public function build(ContainerBuilder $container): void
     {
         //transport passes
-        $container->addCompilerPass(new BuildConsumptionExtensionsPass('default'));
-        $container->addCompilerPass(new BuildProcessorRegistryPass('default'));
+        $container->addCompilerPass(new BuildConsumptionExtensionsPass());
+        $container->addCompilerPass(new BuildProcessorRegistryPass());
 
         //client passes
-        $container->addCompilerPass(new BuildClientConsumptionExtensionsPass('default'));
-        $container->addCompilerPass(new BuildClientExtensionsPass('default'));
-        $container->addCompilerPass(new BuildClientTopicSubscriberRoutesPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
-        $container->addCompilerPass(new BuildClientCommandSubscriberRoutesPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
-        $container->addCompilerPass(new BuildClientProcessorRoutesPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
-        $container->addCompilerPass(new AnalyzeRouteCollectionPass('default'), PassConfig::TYPE_BEFORE_OPTIMIZATION, 30);
-        $container->addCompilerPass(new BuildClientProcessorRegistryPass('default'));
+        $container->addCompilerPass(new BuildClientConsumptionExtensionsPass());
+        $container->addCompilerPass(new BuildClientExtensionsPass());
+        $container->addCompilerPass(new BuildClientTopicSubscriberRoutesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+        $container->addCompilerPass(new BuildClientCommandSubscriberRoutesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+        $container->addCompilerPass(new BuildClientProcessorRoutesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+        $container->addCompilerPass(new AnalyzeRouteCollectionPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 30);
+        $container->addCompilerPass(new BuildClientProcessorRegistryPass());
 
         if (class_exists(AsyncEventDispatcherExtension::class)) {
             $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

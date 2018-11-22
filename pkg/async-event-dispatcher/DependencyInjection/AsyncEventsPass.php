@@ -19,6 +19,8 @@ class AsyncEventsPass implements CompilerPassInterface
             return;
         }
 
+        $defaultClient = $container->getParameter('enqueue.default_client');
+
         $registeredToEvent = [];
         foreach ($container->findTaggedServiceIds('kernel.event_listener') as $serviceId => $tagAttributes) {
             foreach ($tagAttributes as $tagAttribute) {
@@ -44,7 +46,7 @@ class AsyncEventsPass implements CompilerPassInterface
                     $container->getDefinition('enqueue.events.async_processor')
                         ->addTag('enqueue.processor', [
                             'topic' => 'event.'.$event,
-                            'client' => 'default',
+                            'client' => $defaultClient,
                         ])
                     ;
 
@@ -78,7 +80,7 @@ class AsyncEventsPass implements CompilerPassInterface
                         $container->getDefinition('enqueue.events.async_processor')
                             ->addTag('enqueue.processor', [
                                 'topicName' => 'event.'.$event,
-                                'client' => 'default',
+                                'client' => $defaultClient,
                             ])
                         ;
 

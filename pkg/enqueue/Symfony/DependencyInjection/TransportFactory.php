@@ -12,10 +12,13 @@ use Enqueue\Resources;
 use Enqueue\Rpc\RpcClient;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\ContainerProcessorRegistry;
+use Enqueue\Symfony\DiUtils;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -23,27 +26,34 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class TransportFactory
 {
-    use FormatTransportNameTrait;
+    public const MODULE = 'transport';
 
     /**
-     * @var string
+     * @var bool
      */
-    private $name;
+    private $default;
 
-    public function __construct(string $name)
+    /**
+     * @var DiUtils
+     */
+    private $diUtils;
+
+    public function __construct(string $name, bool $default = false)
     {
         if (empty($name)) {
             throw new \InvalidArgumentException('The name could not be empty.');
         }
 
-        $this->name = $name;
+        $this->default = $default;
+        $this->diUtils = DiUtils::create(self::MODULE, $name);
     }
 
-    public function addTransportConfiguration(ArrayNodeDefinition $builder): void
+    public static function getConfiguration(string $name = 'transport'): NodeDefinition
     {
         $knownSchemes = array_keys(Resources::getKnownSchemes());
         $availableSchemes = array_keys(Resources::getAvailableSchemes());
 
+        $builder = new ArrayNodeDefinition($name);
         $builder
             ->info('The transport option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at connection factory constructor docblock.')
             ->beforeNormalization()
@@ -71,6 +81,7 @@ final class TransportFactory
                     throw new \LogicException(sprintf('The value must be array, null or string. Got "%s"', gettype($v)));
                 })
         ->end()
+        ->isRequired()
         ->ignoreExtraKeys(false)
         ->children()
             ->scalarNode('dsn')
@@ -93,10 +104,14 @@ final class TransportFactory
             ->end()
         ->end()
         ;
+
+        return $builder;
     }
 
-    public function addQueueConsumerConfiguration(ArrayNodeDefinition $builder): void
+    public static function getQueueConsumerConfiguration(string $name = 'consumption'): ArrayNodeDefinition
     {
+        $builder = new ArrayNodeDefinition($name);
+
         $builder
             ->addDefaultsIfNotSet()->children()
                 ->integerNode('receive_timeout')
@@ -105,18 +120,15 @@ final class TransportFactory
                     ->info('the time in milliseconds queue consumer waits for a message (100 ms by default)')
                 ->end()
         ;
-    }
 
-    public function getName(): string
-    {
-        return $this->name;
+        return $builder;
     }
 
     public function buildConnectionFactory(ContainerBuilder $container, array $config): void
     {
-        $factoryId = $this->format('connection_factory');
+        $factoryId = $this->diUtils->format('connection_factory');
 
-        $factoryFactoryId = $this->format('connection_factory_factory');
+        $factoryFactoryId = $this->diUtils->format('connection_factory_factory');
         $container->register($factoryFactoryId, $config['factory_class'] ?? ConnectionFactoryFactory::class);
 
         $factoryFactoryService = new Reference(
@@ -139,83 +151,95 @@ final class TransportFactory
             ;
         }
 
-        if ('default' === $this->name) {
-            $container->setAlias(ConnectionFactory::class, $this->format('connection_factory'));
+        if ($this->default) {
+            $container->setAlias(ConnectionFactory::class, $factoryId);
+
+            if (DiUtils::DEFAULT_CONFIG !== $this->diUtils->getConfigName()) {
+                $container->setAlias($this->diUtils->formatDefault('connection_factory'), $factoryId);
+            }
         }
     }
 
     public function buildContext(ContainerBuilder $container, array $config): void
     {
-        $factoryId = $this->format('connection_factory');
+        $factoryId = $this->diUtils->format('connection_factory');
         $this->assertServiceExists($container, $factoryId);
 
-        $contextId = $this->format('context');
+        $contextId = $this->diUtils->format('context');
 
         $container->register($contextId, Context::class)
             ->setFactory([new Reference($factoryId), 'createContext'])
         ;
 
-        if ('default' === $this->name) {
-            $container->setAlias(Context::class, $this->format('context'));
+        $this->addServiceToLocator($container, 'context');
+
+        if ($this->default) {
+            $container->setAlias(Context::class, $contextId);
+
+            if (DiUtils::DEFAULT_CONFIG !== $this->diUtils->getConfigName()) {
+                $container->setAlias($this->diUtils->formatDefault('context'), $contextId);
+            }
         }
     }
 
     public function buildQueueConsumer(ContainerBuilder $container, array $config): void
     {
-        $contextId = $this->format('context');
+        $contextId = $this->diUtils->format('context');
         $this->assertServiceExists($container, $contextId);
 
-        $container->setParameter($this->format('receive_timeout'), $config['receive_timeout'] ?? 10000);
+        $container->setParameter($this->diUtils->format('receive_timeout'), $config['receive_timeout'] ?? 10000);
 
-        $logExtensionId = $this->format('log_extension');
+        $logExtensionId = $this->diUtils->format('log_extension');
         $container->register($logExtensionId, LogExtension::class)
-            ->addTag('enqueue.transport.consumption_extension', ['transport' => $this->name, 'priority' => -100])
+            ->addTag('enqueue.transport.consumption_extension', ['transport' => $this->diUtils->getConfigName(), 'priority' => -100])
         ;
 
-        $container->register($this->format('consumption_extensions'), ChainExtension::class)
+        $container->register($this->diUtils->format('consumption_extensions'), ChainExtension::class)
             ->addArgument([])
         ;
 
-        $container->register($this->format('queue_consumer'), QueueConsumer::class)
+        $container->register($this->diUtils->format('queue_consumer'), QueueConsumer::class)
             ->addArgument(new Reference($contextId))
-            ->addArgument(new Reference($this->format('consumption_extensions')))
+            ->addArgument(new Reference($this->diUtils->format('consumption_extensions')))
             ->addArgument([])
-            ->addArgument(null)
-            ->addArgument($this->format('receive_timeout', true))
+            ->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
+            ->addArgument($this->diUtils->parameter('receive_timeout'))
         ;
 
-        $container->register($this->format('processor_registry'), ContainerProcessorRegistry::class);
+        $container->register($this->diUtils->format('processor_registry'), ContainerProcessorRegistry::class);
 
-        $locatorId = 'enqueue.locator';
-        if ($container->hasDefinition($locatorId)) {
-            $locator = $container->getDefinition($locatorId);
-            $locator->replaceArgument(0, array_replace($locator->getArgument(0), [
-                $this->format('queue_consumer') => new Reference($this->format('queue_consumer')),
-                $this->format('processor_registry') => new Reference($this->format('processor_registry')),
-            ]));
-        }
+        $this->addServiceToLocator($container, 'queue_consumer');
+        $this->addServiceToLocator($container, 'processor_registry');
 
-        if ('default' === $this->name) {
-            $container->setAlias(QueueConsumerInterface::class, $this->format('queue_consumer'));
+        if ($this->default) {
+            $container->setAlias(QueueConsumerInterface::class, $this->diUtils->format('queue_consumer'));
+
+            if (DiUtils::DEFAULT_CONFIG !== $this->diUtils->getConfigName()) {
+                $container->setAlias($this->diUtils->formatDefault('queue_consumer'), $this->diUtils->format('queue_consumer'));
+            }
         }
     }
 
     public function buildRpcClient(ContainerBuilder $container, array $config): void
     {
-        $contextId = $this->format('context');
+        $contextId = $this->diUtils->format('context');
         $this->assertServiceExists($container, $contextId);
 
-        $container->register($this->format('rpc_factory'), RpcFactory::class)
+        $container->register($this->diUtils->format('rpc_factory'), RpcFactory::class)
             ->addArgument(new Reference($contextId))
         ;
 
-        $container->register($this->format('rpc_client'), RpcClient::class)
+        $container->register($this->diUtils->format('rpc_client'), RpcClient::class)
             ->addArgument(new Reference($contextId))
-            ->addArgument(new Reference($this->format('rpc_factory')))
+            ->addArgument(new Reference($this->diUtils->format('rpc_factory')))
         ;
 
-        if ('default' === $this->name) {
-            $container->setAlias(RpcClient::class, $this->format('rpc_client'));
+        if ($this->default) {
+            $container->setAlias(RpcClient::class, $this->diUtils->format('rpc_client'));
+
+            if (DiUtils::DEFAULT_CONFIG !== $this->diUtils->getConfigName()) {
+                $container->setAlias($this->diUtils->formatDefault('rpc_client'), $this->diUtils->format('rpc_client'));
+            }
         }
     }
 
@@ -223,6 +247,20 @@ final class TransportFactory
     {
         if (false == $container->hasDefinition($serviceId)) {
             throw new \InvalidArgumentException(sprintf('The service "%s" does not exist.', $serviceId));
+        }
+    }
+
+    private function addServiceToLocator(ContainerBuilder $container, string $serviceName): void
+    {
+        $locatorId = 'enqueue.locator';
+
+        if ($container->hasDefinition($locatorId)) {
+            $locator = $container->getDefinition($locatorId);
+
+            $map = $locator->getArgument(0);
+            $map[$this->diUtils->format($serviceName)] = $this->diUtils->reference($serviceName);
+
+            $locator->replaceArgument(0, $map);
         }
     }
 }

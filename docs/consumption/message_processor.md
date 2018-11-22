@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Message processor
 
 * [Basics](#basics)
@@ -13,13 +22,13 @@ Here's example:
 
 ```php
 <?php
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Processor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 
-class SendMailProcessor implements PsrProcessor
+class SendMailProcessor implements Processor
 {
-    public function process(PsrMessage $message, PsrContext $context) 
+    public function process(Message $message, Context $context) 
     {
         $this->mailer->send('foo@example.com', $message->getBody());
         
@@ -40,14 +49,14 @@ Look at the next example that shows the message validation before sending a mail
 
 ```php
 <?php
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Processor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 use Enqueue\Util\JSON;
 
-class SendMailProcessor implements PsrProcessor
+class SendMailProcessor implements Processor
 {
-    public function process(PsrMessage $message, PsrContext $context) 
+    public function process(Message $message, Context $context) 
     {
         $data = JSON::decode($message->getBody());
         if ($user  = $this->userRepository->find($data['userId'])) {
@@ -67,13 +76,13 @@ If it returns true than there was attempt to process message.
    
 ```php
 <?php
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Processor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 
-class SendMailProcessor implements PsrProcessor
+class SendMailProcessor implements Processor
 {
-    public function process(PsrMessage $message, PsrContext $context) 
+    public function process(Message $message, Context $context) 
     {
         if ($message->isRedelivered()) {
             return self::REQUEUE;
@@ -90,13 +99,13 @@ The second argument is your context. You can use it to send messages to other qu
  
 ```php
 <?php
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Processor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 
-class SendMailProcessor implements PsrProcessor
+class SendMailProcessor implements Processor
 {
-    public function process(PsrMessage $message, PsrContext $context) 
+    public function process(Message $message, Context $context) 
     {
         $this->mailer->send('foo@example.com', $message->getBody());
         
@@ -117,17 +126,17 @@ Don't forget to add `ReplyExtension`.
  
 ```php
 <?php
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Processor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 
-class SendMailProcessor implements PsrProcessor
+class SendMailProcessor implements Processor
 {
-    public function process(PsrMessage $message, PsrContext $context) 
+    public function process(Message $message, Context $context) 
     {
         $this->mailer->send('foo@example.com', $message->getBody());
         
@@ -137,9 +146,9 @@ class SendMailProcessor implements PsrProcessor
     }
 }
 
-/** @var \Interop\Queue\PsrContext $psrContext */
+/** @var \Interop\Queue\Context $context */
 
-$queueConsumer = new QueueConsumer($psrContext, new ChainExtension([
+$queueConsumer = new QueueConsumer($context, new ChainExtension([
     new ReplyExtension()
 ]));
 

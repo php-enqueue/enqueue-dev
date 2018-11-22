@@ -9,6 +9,7 @@ services:
         class: 'Enqueue\Symfony\Consumption\ConfigurableConsumeCommand'
         arguments:
             - '@enqueue.locator'
+            - '%enqueue.default_transport%'
             - 'enqueue.transport.%s.queue_consumer'
             - 'enqueue.transport.%s.processor_registry'
         tags:
@@ -18,6 +19,7 @@ services:
         class: 'Enqueue\Symfony\Client\ConsumeCommand'
         arguments:
             - '@enqueue.locator'
+            - '%enqueue.default_client%'
             - 'enqueue.client.%s.queue_consumer'
             - 'enqueue.client.%s.driver'
             - 'enqueue.client.%s.delegate_processor'
@@ -28,6 +30,7 @@ services:
         class: 'Enqueue\Symfony\Client\ProduceCommand'
         arguments:
             - '@enqueue.locator'
+            - '%enqueue.default_client%'
             - 'enqueue.client.%s.producer'
         tags:
             - { name: 'console.command' }
@@ -36,6 +39,7 @@ services:
         class: 'Enqueue\Symfony\Client\SetupBrokerCommand'
         arguments:
             - '@enqueue.locator'
+            - '%enqueue.default_client%'
             - 'enqueue.client.%s.driver'
         tags:
             - { name: 'console.command' }
@@ -44,6 +48,7 @@ services:
         class: 'Enqueue\Symfony\Client\RoutesCommand'
         arguments:
             - '@enqueue.locator'
+            - '%enqueue.default_client%'
             - 'enqueue.client.%s.driver'
         tags:
             - { name: 'console.command' }

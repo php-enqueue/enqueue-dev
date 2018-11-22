@@ -15,6 +15,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 class TransportFactoryTest extends TestCase
@@ -24,13 +25,6 @@ class TransportFactoryTest extends TestCase
     public function testShouldBeFinal()
     {
         $this->assertClassFinal(TransportFactory::class);
-    }
-
-    public function testShouldAllowGetNameSetInConstructor()
-    {
-        $transport = new TransportFactory('aName');
-
-        $this->assertEquals('aName', $transport->getName());
     }
 
     public function testThrowIfEmptyNameGivenOnConstruction()
@@ -43,15 +37,19 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowAddConfigurationAsStringDsn()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
-        $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), ['dsn://']);
+        $rootNode->append(TransportFactory::getConfiguration());
 
-        $this->assertEquals(['dsn' => 'dsn://'], $config);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [['transport' => 'dsn://']]);
+
+        $this->assertEquals([
+            'transport' => [
+                'dsn' => 'dsn://',
+            ],
+        ], $config);
     }
 
     /**
@@ -61,191 +59,209 @@ class TransportFactoryTest extends TestCase
      */
     public function testShouldAllowAddConfigurationAsDsnWithoutSlashes()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
-        $processor = new Processor();
-        $config = $processor->process($tb->buildTree(), ['dsn:']);
+        $rootNode->append(TransportFactory::getConfiguration());
 
-        $this->assertEquals(['dsn' => 'dsn:'], $config);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [['transport' => 'dsn:']]);
+
+        $this->assertEquals([
+            'transport' => [
+                'dsn' => 'dsn:',
+            ],
+        ], $config);
     }
 
     public function testShouldSetNullTransportIfNullGiven()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
-        $processor = new Processor();
+        $rootNode->append(TransportFactory::getConfiguration());
 
-        $config = $processor->process($tb->buildTree(), [null]);
-        $this->assertEquals(['dsn' => 'null:'], $config);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [['transport' => null]]);
+
+        $this->assertEquals([
+            'transport' => [
+                'dsn' => 'null:',
+            ],
+        ], $config);
     }
 
     public function testShouldSetNullTransportIfEmptyStringGiven()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
-        $processor = new Processor();
+        $rootNode->append(TransportFactory::getConfiguration());
 
-        $config = $processor->process($tb->buildTree(), ['']);
-        $this->assertEquals(['dsn' => 'null:'], $config);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [['transport' => '']]);
+
+        $this->assertEquals([
+            'transport' => [
+                'dsn' => 'null:',
+            ],
+        ], $config);
     }
 
     public function testShouldSetNullTransportIfEmptyArrayGiven()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
-        $processor = new Processor();
+        $rootNode->append(TransportFactory::getConfiguration());
 
-        $config = $processor->process($tb->buildTree(), [[]]);
-        $this->assertEquals(['dsn' => 'null:'], $config);
+        $processor = new Processor();
+        $config = $processor->process($tb->buildTree(), [['transport' => []]]);
+
+        $this->assertEquals([
+            'transport' => [
+                'dsn' => 'null:',
+            ],
+        ], $config);
     }
 
     public function testThrowIfEmptyDsnGiven()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
-        $processor = new Processor();
+        $rootNode->append(TransportFactory::getConfiguration());
 
+        $processor = new Processor();
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The path "foo.dsn" cannot contain an empty value, but got "".');
-        $processor->process($tb->buildTree(), [['dsn' => '']]);
+        $this->expectExceptionMessage('The path "foo.transport.dsn" cannot contain an empty value, but got "".');
+        $processor->process($tb->buildTree(), [['transport' => ['dsn' => '']]]);
     }
 
     public function testThrowIfFactoryClassAndFactoryServiceSetAtTheSameTime()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
+        $rootNode->append(TransportFactory::getConfiguration());
+
         $processor = new Processor();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Both options factory_class and factory_service are set. Please choose one.');
         $processor->process($tb->buildTree(), [[
-            'dsn' => 'foo:',
-            'factory_class' => 'aFactoryClass',
-            'factory_service' => 'aFactoryService',
-        ]]);
+            'transport' => [
+                'dsn' => 'foo:',
+                'factory_class' => 'aFactoryClass',
+                'factory_service' => 'aFactoryService',
+        ], ]]);
     }
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryClassAtTheSameTime()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
+        $rootNode->append(TransportFactory::getConfiguration());
+
         $processor = new Processor();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The option connection_factory_class must not be used with factory_class or factory_service at the same time. Please choose one.');
         $processor->process($tb->buildTree(), [[
-            'dsn' => 'foo:',
-            'connection_factory_class' => 'aFactoryClass',
-            'factory_service' => 'aFactoryService',
-        ]]);
+            'transport' => [
+                'dsn' => 'foo:',
+                'connection_factory_class' => 'aFactoryClass',
+                'factory_service' => 'aFactoryService',
+        ], ]]);
     }
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryServiceAtTheSameTime()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
+        $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The option connection_factory_class must not be used with factory_class or factory_service at the same time. Please choose one.');
         $processor->process($tb->buildTree(), [[
-            'dsn' => 'foo:',
-            'connection_factory_class' => 'aFactoryClass',
-            'factory_service' => 'aFactoryService',
-        ]]);
+            'transport' => [
+                'dsn' => 'foo:',
+                'connection_factory_class' => 'aFactoryClass',
+                'factory_service' => 'aFactoryService',
+        ], ]]);
     }
 
     public function testShouldAllowSetFactoryClass()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
+        $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [[
-            'dsn' => 'foo:',
-            'factory_class' => 'theFactoryClass',
-        ]]);
+            'transport' => [
+                'dsn' => 'foo:',
+                'factory_class' => 'theFactoryClass',
+        ], ]]);
 
-        $this->assertArrayHasKey('factory_class', $config);
-        $this->assertSame('theFactoryClass', $config['factory_class']);
+        $this->assertArrayHasKey('factory_class', $config['transport']);
+        $this->assertSame('theFactoryClass', $config['transport']['factory_class']);
     }
 
     public function testShouldAllowSetFactoryService()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
+        $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [[
-            'dsn' => 'foo:',
-            'factory_service' => 'theFactoryService',
-        ]]);
+            'transport' => [
+                'dsn' => 'foo:',
+                'factory_service' => 'theFactoryService',
+        ], ]]);
 
-        $this->assertArrayHasKey('factory_service', $config);
-        $this->assertSame('theFactoryService', $config['factory_service']);
+        $this->assertArrayHasKey('factory_service', $config['transport']);
+        $this->assertSame('theFactoryService', $config['transport']['factory_service']);
     }
 
     public function testShouldAllowSetConnectionFactoryClass()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
+        $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
 
         $config = $processor->process($tb->buildTree(), [[
-            'dsn' => 'foo:',
-            'connection_factory_class' => 'theFactoryClass',
-        ]]);
+            'transport' => [
+                'dsn' => 'foo:',
+                'connection_factory_class' => 'theFactoryClass',
+        ], ]]);
 
-        $this->assertArrayHasKey('connection_factory_class', $config);
-        $this->assertSame('theFactoryClass', $config['connection_factory_class']);
+        $this->assertArrayHasKey('connection_factory_class', $config['transport']);
+        $this->assertSame('theFactoryClass', $config['transport']['connection_factory_class']);
     }
 
     public function testThrowIfExtraOptionGiven()
     {
-        $transport = new TransportFactory('default');
         $tb = new TreeBuilder();
         $rootNode = $tb->root('foo');
 
-        $transport->addTransportConfiguration($rootNode);
+        $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
 
-        $config = $processor->process($tb->buildTree(), [['dsn' => 'foo:', 'extraOption' => 'aVal']]);
-        $this->assertEquals(
-            ['dsn' => 'foo:', 'extraOption' => 'aVal'],
-            $config
+        $config = $processor->process($tb->buildTree(), [['transport' => ['dsn' => 'foo:', 'extraOption' => 'aVal']]]);
+        $this->assertEquals([
+            'transport' => [
+                'dsn' => 'foo:',
+                'extraOption' => 'aVal',
+            ], ], $config
         );
     }
 
@@ -388,7 +404,7 @@ class TransportFactoryTest extends TestCase
             new Reference('enqueue.transport.default.context'),
             new Reference('enqueue.transport.default.consumption_extensions'),
             [],
-            null,
+            new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE),
             '%enqueue.transport.default.receive_timeout%',
         ], $container->getDefinition('enqueue.transport.default.queue_consumer')->getArguments());
     }

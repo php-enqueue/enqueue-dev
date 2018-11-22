@@ -4,9 +4,10 @@ namespace Enqueue\Tests\Client\Extension;
 
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Extension\PrepareBodyExtension;
-use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\PreSend;
+use Enqueue\Client\PreSendCommandExtensionInterface;
+use Enqueue\Client\PreSendEventExtensionInterface;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Tests\Mocks\JsonSerializableObject;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +18,8 @@ class PrepareBodyExtensionTest extends TestCase
     {
         $rc = new \ReflectionClass(PrepareBodyExtension::class);
 
-        $this->assertTrue($rc->implementsInterface(ExtensionInterface::class));
+        $this->assertTrue($rc->implementsInterface(PreSendEventExtensionInterface::class));
+        $this->assertTrue($rc->implementsInterface(PreSendCommandExtensionInterface::class));
     }
 
     public function testCouldConstructedWithoutAnyArguments()
