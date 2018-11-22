@@ -31,7 +31,7 @@ class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterfa
             }
 
             if ($connection->ping()) {
-                return;
+                continue;
             }
 
             $context->getLogger()->debug(
