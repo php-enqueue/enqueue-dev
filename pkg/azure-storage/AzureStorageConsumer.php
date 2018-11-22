@@ -91,8 +91,7 @@ class AzureStorageConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, AzureStorageMessage::class);
 
         if (true === $requeue) {
-            $factory = new AzureStorageConnectionFactory($this->client);
-            $context = $factory->getContext();
+            $context = new AzureStorageContext($this->client);
             $producer = $context->createProducer();
             $producer->send($this->queue, $message);
         } else {

@@ -13,6 +13,7 @@ use Interop\Queue\Consumer;
 use MicrosoftAzure\Storage\Queue\QueueRestProxy;
 use MicrosoftAzure\Storage\Queue\Models\ListMessagesOptions;
 use MicrosoftAzure\Storage\Queue\Models\ListMessagesResult;
+use MicrosoftAzure\Storage\Queue\Models\CreateMessageResult;
 use MicrosoftAzure\Storage\Queue\Models\QueueMessage;
 
 class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
@@ -77,6 +78,50 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
         $consumer = new AzureStorageConsumer($this->createQueueRestProxyMock(), new AzureStorageDestination('aQueue'));
 
         $consumer->reject(new AzureStorageMessage());
+    }
+
+    public function testShouldQueueMsgAgainReject()
+    {
+        $messageMock = $this->createQueueMessageMock();
+
+        $options = new ListMessagesOptions();
+        $options->setNumberOfMessages(1);
+
+        $listMessagesResultMock = $this->createMock(ListMessagesResult::class);
+        $listMessagesResultMock
+            ->expects($this->any())
+            ->method('getQueueMessages')
+            ->willReturn([$messageMock])
+        ;
+        $createMessageResultMock = $this->createMock(CreateMessageResult::class);
+        $createMessageResultMock
+            ->expects($this->any())
+            ->method('getQueueMessage')
+            ->willReturn($messageMock)
+        ;
+
+        $azureMock = $this->createQueueRestProxyMock();
+        $azureMock
+            ->expects($this->any())
+            ->method('listMessages')
+            ->with('aQueue', $options)
+            ->willReturn($listMessagesResultMock)
+        ;
+         $azureMock
+            ->expects($this->any())
+            ->method('createMessage')
+            ->with('aQueue', $messageMock->getMessageText())
+            ->willReturn($createMessageResultMock)
+        ;
+ 
+        $consumer = new AzureStorageConsumer($azureMock, new AzureStorageDestination('aQueue'));
+
+        $receivedMessage = $consumer->receiveNoWait();
+
+        $consumer->reject($receivedMessage, true);
+
+        $this->assertInstanceOf(AzureStorageMessage::class, $receivedMessage);
+        $this->assertSame('aBody', $receivedMessage->getBody());
     }
 
     public function testShouldReturnMsgOnReceiveNoWait()
