@@ -91,7 +91,7 @@ class AzureStorageContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, AzureStorageDestination::class);
 
-        return new AzureStorageConsumer($this->client, $destination);
+        return new AzureStorageConsumer($this->client, $destination, $this);
     }
 
     /**

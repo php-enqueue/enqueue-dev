@@ -25,10 +25,11 @@ class AzureStorageConsumer implements Consumer
 
     protected $queue;
 
-    public function __construct(QueueRestProxy $client, AzureStorageDestination $queue)
+    public function __construct(QueueRestProxy $client, AzureStorageDestination $queue, AzureStorageContext $context)
     {
         $this->client = $client;
         $this->queue = $queue;
+        $this->context = $context;
     }
 
     /**
@@ -91,8 +92,7 @@ class AzureStorageConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, AzureStorageMessage::class);
 
         if (true === $requeue) {
-            $context = new AzureStorageContext($this->client);
-            $producer = $context->createProducer();
+            $producer = $this->context->createProducer();
             $producer->send($this->queue, $message);
         } else {
             $this->acknowledge($message);
