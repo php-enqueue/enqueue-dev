@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.8.42](https://github.com/php-enqueue/enqueue-dev/tree/0.8.42) (2018-11-22)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.41...0.8.42)
+
+- Update symfony recipes  [\#600](https://github.com/php-enqueue/enqueue-dev/issues/600)
+- Update UPGRADE.md with BC breaks.  [\#599](https://github.com/php-enqueue/enqueue-dev/issues/599)
+- Gitattributes backporting [\#654](https://github.com/php-enqueue/enqueue-dev/pull/654) ([webmake](https://github.com/webmake))
+
+- Fix ping to check each connection, not only first one [\#651](https://github.com/php-enqueue/enqueue-dev/pull/651) ([webmake](https://github.com/webmake))
+
 ## [0.8.41](https://github.com/php-enqueue/enqueue-dev/tree/0.8.41) (2018-11-19)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.40...0.8.41)
 
