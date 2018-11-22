@@ -4,15 +4,15 @@ namespace Enqueue\Bundle\Tests\Functional\App;
 
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class TestCommandSubscriberProcessor implements PsrProcessor, CommandSubscriberInterface
+class TestCommandSubscriberProcessor implements Processor, CommandSubscriberInterface
 {
     public $calls = [];
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $this->calls[] = $message;
 
@@ -23,6 +23,6 @@ class TestCommandSubscriberProcessor implements PsrProcessor, CommandSubscriberI
 
     public static function getSubscribedCommand()
     {
-        return 'test_command_subscriber';
+        return 'theCommand';
     }
 }

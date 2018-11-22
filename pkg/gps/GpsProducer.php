@@ -1,36 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Gps;
 
 use Google\Cloud\PubSub\Topic;
-use Interop\Queue\DeliveryDelayNotSupportedException;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PriorityNotSupportedException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\TimeToLiveNotSupportedException;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Exception\TimeToLiveNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 
-class GpsProducer implements PsrProducer
+class GpsProducer implements Producer
 {
     /**
      * @var GpsContext
      */
     private $context;
 
-    /**
-     * @param GpsContext $context
-     */
     public function __construct(GpsContext $context)
     {
         $this->context = $context;
     }
 
     /**
-     * {@inheritdoc}
+     * @param GpsTopic   $destination
+     * @param GpsMessage $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, GpsTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, GpsMessage::class);
@@ -42,60 +42,45 @@ class GpsProducer implements PsrProducer
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
         throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw TimeToLiveNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
+        return null;
     }
 }

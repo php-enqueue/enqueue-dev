@@ -6,11 +6,10 @@ use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\HttpKernel\Kernel;
 
 class PhpSerializerEventTransformerTest extends TestCase
 {
@@ -28,10 +27,6 @@ class PhpSerializerEventTransformerTest extends TestCase
 
     public function testShouldReturnMessageWithPhpSerializedEventAsBodyOnToMessage()
     {
-        if (version_compare(Kernel::VERSION, '3.0', '<')) {
-            $this->markTestSkipped('This functionality only works on Symfony 3.0 or higher');
-        }
-
         $transformer = new PhpSerializerEventTransformer($this->createContextStub());
 
         $event = new GenericEvent('theSubject');
@@ -39,16 +34,12 @@ class PhpSerializerEventTransformerTest extends TestCase
 
         $message = $transformer->toMessage('fooEvent', $event);
 
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $this->assertEquals($expectedBody, $message->getBody());
     }
 
     public function testShouldReturnEventUnserializedFromMessageBodyOnToEvent()
     {
-        if (version_compare(Kernel::VERSION, '3.0', '<')) {
-            $this->markTestSkipped('This functionality only works on Symfony 3.0 or higher');
-        }
-
         $message = new NullMessage();
         $message->setBody(serialize(new GenericEvent('theSubject')));
 
@@ -60,40 +51,12 @@ class PhpSerializerEventTransformerTest extends TestCase
         $this->assertEquals('theSubject', $event->getSubject());
     }
 
-    public function testThrowNotSupportedExceptionOnSymfonyPrior30OnToMessage()
-    {
-        if (version_compare(Kernel::VERSION, '3.0', '>=')) {
-            $this->markTestSkipped('This functionality only works on Symfony 3.0 or higher');
-        }
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('This transformer does not work on Symfony prior 3.0.');
-
-        $transformer = new PhpSerializerEventTransformer($this->createContextStub());
-
-        $transformer->toMessage(new GenericEvent());
-    }
-
-    public function testThrowNotSupportedExceptionOnSymfonyPrior30OnToEvent()
-    {
-        if (version_compare(Kernel::VERSION, '3.0', '>=')) {
-            $this->markTestSkipped('This functionality only works on Symfony 3.0 or higher');
-        }
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('This transformer does not work on Symfony prior 3.0.');
-
-        $transformer = new PhpSerializerEventTransformer($this->createContextStub());
-
-        $transformer->toEvent('anEvent', new NullMessage());
-    }
-
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
     private function createContextStub()
     {
-        $context = $this->createMock(PsrContext::class);
+        $context = $this->createMock(Context::class);
         $context
             ->expects($this->any())
             ->method('createMessage')

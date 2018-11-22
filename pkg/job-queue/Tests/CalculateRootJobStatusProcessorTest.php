@@ -6,11 +6,12 @@ use Enqueue\Client\ProducerInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\JobQueue\CalculateRootJobStatusProcessor;
 use Enqueue\JobQueue\CalculateRootJobStatusService;
+use Enqueue\JobQueue\Commands;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
 use Enqueue\Null\NullMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Psr\Log\LoggerInterface;
 
 class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
@@ -28,8 +29,8 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     public function testShouldReturnSubscribedTopicNames()
     {
         $this->assertEquals(
-            [Topics::CALCULATE_ROOT_JOB_STATUS],
-            CalculateRootJobStatusProcessor::getSubscribedTopics()
+            Commands::CALCULATE_ROOT_JOB_STATUS,
+            CalculateRootJobStatusProcessor::getSubscribedCommand()
         );
     }
 
@@ -183,11 +184,11 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
     private function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
     /**

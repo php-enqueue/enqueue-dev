@@ -2,17 +2,12 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
-use Enqueue\Consumption\Result;
-use Interop\Queue\PsrMessage;
+use Enqueue\Consumption\Context\InitLogger;
+use Enqueue\Consumption\InitLoggerExtensionInterface;
 use Psr\Log\LoggerInterface;
 
-class LoggerExtension implements ExtensionInterface
+class LoggerExtension implements InitLoggerExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     /**
      * @var LoggerInterface
      */
@@ -26,65 +21,14 @@ class LoggerExtension implements ExtensionInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onStart(Context $context)
+    public function onInitLogger(InitLogger $context): void
     {
-        if ($context->getLogger()) {
-            $context->getLogger()->debug(sprintf(
-                'Skip setting context\'s logger "%s". Another one "%s" has already been set.',
-                get_class($this->logger),
-                get_class($context->getLogger())
-            ));
-        } else {
-            $context->setLogger($this->logger);
-            $this->logger->debug(sprintf('Set context\'s logger "%s"', get_class($this->logger)));
+        $previousLogger = $context->getLogger();
+
+        if ($previousLogger !== $this->logger) {
+            $context->changeLogger($this->logger);
+
+            $this->logger->debug(sprintf('Change logger from "%s" to "%s"', get_class($previousLogger), get_class($this->logger)));
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostReceived(Context $context)
-    {
-        if (false == $context->getResult() instanceof Result) {
-            return;
-        }
-
-        /** @var $result Result */
-        $result = $context->getResult();
-
-        switch ($result->getStatus()) {
-            case Result::REJECT:
-            case Result::REQUEUE:
-                if ($result->getReason()) {
-                    $this->logger->error($result->getReason(), $this->messageToLogContext($context->getPsrMessage()));
-                }
-
-                break;
-            case Result::ACK:
-                if ($result->getReason()) {
-                    $this->logger->info($result->getReason(), $this->messageToLogContext($context->getPsrMessage()));
-                }
-
-                break;
-            default:
-                throw new \LogicException(sprintf('Got unexpected message result. "%s"', $result->getStatus()));
-        }
-    }
-
-    /**
-     * @param PsrMessage $message
-     *
-     * @return array
-     */
-    private function messageToLogContext(PsrMessage $message)
-    {
-        return [
-            'body' => $message->getBody(),
-            'headers' => $message->getHeaders(),
-            'properties' => $message->getProperties(),
-        ];
     }
 }

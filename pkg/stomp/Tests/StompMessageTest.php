@@ -86,4 +86,34 @@ class StompMessageTest extends \PHPUnit\Framework\TestCase
 
         self::assertSame(['reply-to' => 'theQueueName'], $message->getHeaders());
     }
+
+    public function testShouldUnsetHeaderIfNullPassed()
+    {
+        $message = new StompMessage();
+
+        $message->setHeader('aHeader', 'aVal');
+
+        //guard
+        $this->assertSame('aVal', $message->getHeader('aHeader'));
+
+        $message->setHeader('aHeader', null);
+
+        $this->assertNull($message->getHeader('aHeader'));
+        $this->assertSame([], $message->getHeaders());
+    }
+
+    public function testShouldUnsetPropertyIfNullPassed()
+    {
+        $message = new StompMessage();
+
+        $message->setProperty('aProperty', 'aVal');
+
+        //guard
+        $this->assertSame('aVal', $message->getProperty('aProperty'));
+
+        $message->setProperty('aProperty', null);
+
+        $this->assertNull($message->getProperty('aProperty'));
+        $this->assertSame([], $message->getProperties());
+    }
 }

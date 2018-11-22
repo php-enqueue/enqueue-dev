@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Async events
 
 The EnqueueBundle allows you to dispatch events asynchronously. 
@@ -22,10 +31,11 @@ If you already [installed the bundle](quick_tour.md#install), then enable `async
 # app/config/config.yml
 
 enqueue:
-   async_events:
-      enabled: true
-      # if you'd like to send send messages onTerminate use spool_producer (it further reduces response time):
-      # spool_producer: true
+    default:
+        async_events:
+            enabled: true
+            # if you'd like to send send messages onTerminate use spool_producer (it further reduces response time):
+            # spool_producer: true
 ```
 
 ## Usage
@@ -87,7 +97,7 @@ namespace AcmeBundle\Listener;
 
 use Enqueue\Client\Message;
 use Enqueue\Consumption\Result;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message as QueueMessage;
 use Enqueue\Util\JSON;
 use Symfony\Component\EventDispatcher\Event;
 use Enqueue\AsyncEventDispatcher\EventTransformer;
@@ -132,7 +142,7 @@ class FooEventTransformer implements EventTransformer
     /**
      * {@inheritdoc}
      */
-    public function toEvent($eventName, PsrMessage $message)
+    public function toEvent($eventName, QueueMessage $message)
     {
         $data = JSON::decode($message->getBody());
         

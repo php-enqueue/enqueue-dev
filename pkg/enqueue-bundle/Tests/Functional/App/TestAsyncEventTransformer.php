@@ -4,22 +4,22 @@ namespace Enqueue\Bundle\Tests\Functional\App;
 
 use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\Util\JSON;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class TestAsyncEventTransformer implements EventTransformer
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     private $context;
 
     /**
-     * @param PsrContext $context
+     * @param Context $context
      */
-    public function __construct(PsrContext $context)
+    public function __construct(Context $context)
     {
         $this->context = $context;
     }
@@ -41,7 +41,7 @@ class TestAsyncEventTransformer implements EventTransformer
         ]));
     }
 
-    public function toEvent($eventName, PsrMessage $message)
+    public function toEvent($eventName, Message $message)
     {
         $data = JSON::decode($message->getBody());
 

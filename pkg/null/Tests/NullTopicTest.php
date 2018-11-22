@@ -4,7 +4,7 @@ namespace Enqueue\Null\Tests;
 
 use Enqueue\Null\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Topic;
 use PHPUnit\Framework\TestCase;
 
 class NullTopicTest extends TestCase
@@ -13,7 +13,7 @@ class NullTopicTest extends TestCase
 
     public function testShouldImplementTopicInterface()
     {
-        $this->assertClassImplements(PsrTopic::class, NullTopic::class);
+        $this->assertClassImplements(Topic::class, NullTopic::class);
     }
 
     public function testCouldBeConstructedWithNameAsArgument()

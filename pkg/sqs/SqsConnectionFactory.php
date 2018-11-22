@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Sqs;
 
 use Aws\Sqs\SqsClient;
-use Interop\Queue\PsrConnectionFactory;
+use Enqueue\Dsn\Dsn;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class SqsConnectionFactory implements PsrConnectionFactory
+class SqsConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -43,30 +47,29 @@ class SqsConnectionFactory implements PsrConnectionFactory
             $this->config = ['lazy' => false] + $this->defaultConfig();
 
             return;
-        } elseif (empty($config) || 'sqs:' === $config) {
+        }
+
+        if (empty($config)) {
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
-            $dsn = array_key_exists('dsn', $config) ? $config['dsn'] : null;
-            unset($config['dsn']);
+            if (array_key_exists('dsn', $config)) {
+                $config = array_replace_recursive($config, $this->parseDsn($config['dsn']));
 
-            if ($dsn) {
-                $config = array_replace($config, $this->parseDsn($dsn));
+                unset($config['dsn']);
             }
         } else {
-            throw new \LogicException('The config must be either an array of options, a DSN string or null');
+            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', SqsClient::class));
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return SqsContext
      */
-    public function createContext()
+    public function createContext(): Context
     {
         if ($this->config['lazy']) {
             return new SqsContext(function () {
@@ -77,17 +80,7 @@ class SqsConnectionFactory implements PsrConnectionFactory
         return new SqsContext($this->establishConnection());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
-    {
-    }
-
-    /**
-     * @return SqsClient
-     */
-    private function establishConnection()
+    private function establishConnection(): SqsClient
     {
         if ($this->client) {
             return $this->client;
@@ -119,39 +112,30 @@ class SqsConnectionFactory implements PsrConnectionFactory
         return $this->client;
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
-        if (false === strpos($dsn, 'sqs:')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "sqs:".', $dsn));
+        $dsn = Dsn::parseFirst($dsn);
+
+        if ('sqs' !== $dsn->getSchemeProtocol()) {
+            throw new \LogicException(sprintf(
+                'The given scheme protocol "%s" is not supported. It must be "sqs"',
+                $dsn->getSchemeProtocol()
+            ));
         }
 
-        if (false === $config = parse_url($dsn)) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
-        }
-
-        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
-            $queryConfig = [];
-            parse_str($query, $queryConfig);
-
-            $config = array_replace($queryConfig, $config);
-        }
-
-        unset($config['query'], $config['scheme']);
-
-        $config['lazy'] = empty($config['lazy']) ? false : true;
-
-        return $config;
+        return array_filter(array_replace($dsn->getQuery(), [
+            'key' => $dsn->getString('key'),
+            'secret' => $dsn->getString('secret'),
+            'token' => $dsn->getString('token'),
+            'region' => $dsn->getString('region'),
+            'retries' => $dsn->getDecimal('retries'),
+            'version' => $dsn->getString('version'),
+            'lazy' => $dsn->getBool('lazy'),
+            'endpoint' => $dsn->getString('endpoint'),
+        ]), function ($value) { return null !== $value; });
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'key' => null,

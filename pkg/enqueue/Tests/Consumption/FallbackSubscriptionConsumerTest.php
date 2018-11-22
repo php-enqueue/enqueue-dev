@@ -3,18 +3,19 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\FallbackSubscriptionConsumer;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrSubscriptionConsumer;
+use Interop\Queue\Consumer;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Queue as InteropQueue;
+use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\TestCase;
 
-class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
+class FallbackSubscriptionConsumerTest extends TestCase
 {
-    public function testShouldImplementPsrSubscriptionConsumerInterface()
+    public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(FallbackSubscriptionConsumer::class);
 
-        $this->assertTrue($rc->implementsInterface(PsrSubscriptionConsumer::class));
+        $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
@@ -176,7 +177,7 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $actualOrder = [];
-        $callback = function (PsrMessage $message, PsrConsumer $consumer) use (&$actualOrder) {
+        $callback = function (InteropMessage $message, Consumer $consumer) use (&$actualOrder) {
             $actualOrder[] = [$message->getBody(), $consumer->getQueue()->getQueueName()];
         };
 
@@ -228,11 +229,11 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param null|mixed $body
      *
-     * @return PsrMessage|\PHPUnit_Framework_MockObject_MockObject
+     * @return InteropMessage|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createMessageStub($body = null)
     {
-        $messageMock = $this->createMock(PsrMessage::class);
+        $messageMock = $this->createMock(InteropMessage::class);
         $messageMock
             ->expects($this->any())
             ->method('getBody')
@@ -245,17 +246,17 @@ class FallbackSubscriptionConsumerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param null|mixed $queueName
      *
-     * @return PsrConsumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createConsumerStub($queueName = null)
     {
-        $queueMock = $this->createMock(PsrQueue::class);
+        $queueMock = $this->createMock(InteropQueue::class);
         $queueMock
             ->expects($this->any())
             ->method('getQueueName')
             ->willReturn($queueName);
 
-        $consumerMock = $this->createMock(PsrConsumer::class);
+        $consumerMock = $this->createMock(Consumer::class);
         $consumerMock
             ->expects($this->any())
             ->method('getQueue')

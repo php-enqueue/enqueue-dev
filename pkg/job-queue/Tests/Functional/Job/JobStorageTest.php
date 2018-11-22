@@ -138,7 +138,7 @@ class JobStorageTest extends WebTestCase
      */
     private function getEntityManager()
     {
-        return $this->container->get('doctrine.orm.default_entity_manager');
+        return static::$container->get('doctrine.orm.default_entity_manager');
     }
 
     /**
@@ -146,6 +146,6 @@ class JobStorageTest extends WebTestCase
      */
     private function getJobStorage()
     {
-        return new JobStorage($this->container->get('doctrine'), Job::class, 'enqueue_job_queue_unique');
+        return new JobStorage(static::$container->get('doctrine'), Job::class, 'enqueue_job_queue_unique');
     }
 }

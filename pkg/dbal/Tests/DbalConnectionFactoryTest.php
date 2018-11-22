@@ -2,46 +2,19 @@
 
 namespace Enqueue\Dbal\Tests;
 
-use Doctrine\DBAL\Connection;
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
+use PHPUnit\Framework\TestCase;
 
-class DbalConnectionFactoryTest extends \PHPUnit_Framework_TestCase
+class DbalConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {
-        $this->assertClassImplements(PsrConnectionFactory::class, DbalConnectionFactory::class);
-    }
-
-    public function testCouldBeConstructedWithEmptyConfiguration()
-    {
-        $factory = new DbalConnectionFactory();
-
-        $this->assertAttributeEquals([
-            'lazy' => true,
-            'connection' => ['url' => 'mysql://root@localhost'],
-        ], 'config', $factory);
-    }
-
-    public function testCouldBeConstructedWithCustomConfiguration()
-    {
-        $factory = new DbalConnectionFactory([
-            'connection' => [
-                'dbname' => 'theDbName',
-            ],
-            'lazy' => false,
-        ]);
-
-        $this->assertAttributeEquals([
-            'lazy' => false,
-            'connection' => [
-                'dbname' => 'theDbName',
-            ],
-        ], 'config', $factory);
+        $this->assertClassImplements(ConnectionFactory::class, DbalConnectionFactory::class);
     }
 
     public function testShouldCreateLazyContext()

@@ -13,9 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 trait LimitsExtensionsCommandTrait
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configureLimitsExtensions()
     {
         $this

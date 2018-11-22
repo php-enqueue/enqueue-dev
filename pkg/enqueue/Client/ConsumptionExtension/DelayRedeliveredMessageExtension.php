@@ -3,15 +3,12 @@
 namespace Enqueue\Client\ConsumptionExtension;
 
 use Enqueue\Client\DriverInterface;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\EmptyExtensionTrait;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
 
-class DelayRedeliveredMessageExtension implements ExtensionInterface
+class DelayRedeliveredMessageExtension implements MessageReceivedExtensionInterface
 {
-    use EmptyExtensionTrait;
-
     const PROPERTY_REDELIVER_COUNT = 'enqueue.redelivery_count';
 
     /**
@@ -36,12 +33,9 @@ class DelayRedeliveredMessageExtension implements ExtensionInterface
         $this->delay = $delay;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPreReceived(Context $context)
+    public function onMessageReceived(MessageReceived $context): void
     {
-        $message = $context->getPsrMessage();
+        $message = $context->getMessage();
         if (false == $message->isRedelivered()) {
             return;
         }

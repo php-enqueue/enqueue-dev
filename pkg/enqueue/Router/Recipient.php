@@ -2,33 +2,33 @@
 
 namespace Enqueue\Router;
 
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Destination;
+use Interop\Queue\Message as InteropMessage;
 
 class Recipient
 {
     /**
-     * @var PsrDestination
+     * @var Destination
      */
     private $destination;
 
     /**
-     * @var PsrMessage
+     * @var InteropMessage
      */
     private $message;
 
     /**
-     * @param PsrDestination $destination
-     * @param PsrMessage     $message
+     * @param Destination    $destination
+     * @param InteropMessage $message
      */
-    public function __construct(PsrDestination $destination, PsrMessage $message)
+    public function __construct(Destination $destination, InteropMessage $message)
     {
         $this->destination = $destination;
         $this->message = $message;
     }
 
     /**
-     * @return PsrDestination
+     * @return Destination
      */
     public function getDestination()
     {
@@ -36,7 +36,7 @@ class Recipient
     }
 
     /**
-     * @return PsrMessage
+     * @return InteropMessage
      */
     public function getMessage()
     {

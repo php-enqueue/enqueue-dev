@@ -2,12 +2,12 @@
 
 namespace Enqueue\JobQueue\Tests;
 
-use Enqueue\Client\Producer;
+use Enqueue\Client\ProducerInterface;
+use Enqueue\JobQueue\Commands;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobProcessor;
-use Enqueue\JobQueue\Topics;
 use PHPUnit\Framework\TestCase;
 
 class JobProcessorTest extends TestCase
@@ -170,7 +170,7 @@ class JobProcessorTest extends TestCase
         $producer
             ->expects($this->once())
             ->method('sendEvent')
-            ->with(Topics::CALCULATE_ROOT_JOB_STATUS, ['jobId' => 12345])
+            ->with(Commands::CALCULATE_ROOT_JOB_STATUS, ['jobId' => 12345])
         ;
 
         $processor = new JobProcessor($storage, $producer);
@@ -539,18 +539,18 @@ class JobProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|JobStorage
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createJobStorage()
+    private function createJobStorage(): JobStorage
     {
         return $this->createMock(JobStorage::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createProducerMock()
+    private function createProducerMock(): ProducerInterface
     {
-        return $this->createMock(Producer::class);
+        return $this->createMock(ProducerInterface::class);
     }
 }

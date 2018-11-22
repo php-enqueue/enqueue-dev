@@ -1,24 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal\Tests;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Type;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
-class DbalConsumerTest extends \PHPUnit_Framework_TestCase
+class DbalConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, DbalConsumer::class);
+        $this->assertClassImplements(Consumer::class, DbalConsumer::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -35,10 +41,55 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($destination, $consumer->getQueue());
     }
 
-    public function testCouldCallAcknowledgedMethod()
+    public function testAcknowledgeShouldThrowIfInstanceOfMessageIsInvalid()
     {
+        $this->expectException(InvalidMessageException::class);
+        $this->expectExceptionMessage(
+            'The message must be an instance of '.
+            'Enqueue\Dbal\DbalMessage '.
+            'but it is Enqueue\Dbal\Tests\InvalidMessage.'
+        );
+
         $consumer = new DbalConsumer($this->createContextMock(), new DbalDestination('queue'));
-        $consumer->acknowledge(new DbalMessage());
+        $consumer->acknowledge(new InvalidMessage());
+    }
+
+    public function testShouldDeleteMessageOnAcknowledge()
+    {
+        $deliveryId = Uuid::uuid4();
+
+        $queue = new DbalDestination('queue');
+
+        $message = new DbalMessage();
+        $message->setBody('theBody');
+        $message->setDeliveryId($deliveryId->toString());
+
+        $dbal = $this->createConectionMock();
+        $dbal
+            ->expects($this->once())
+            ->method('delete')
+            ->with(
+                'some-table-name',
+                ['delivery_id' => $deliveryId->getBytes()],
+                ['delivery_id' => Type::GUID]
+            )
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getDbalConnection')
+            ->will($this->returnValue($dbal))
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getTableName')
+            ->will($this->returnValue('some-table-name'))
+        ;
+
+        $consumer = new DbalConsumer($context, $queue);
+
+        $consumer->acknowledge($message);
     }
 
     public function testCouldSetAndGetPollingInterval()
@@ -49,6 +100,16 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $consumer->setPollingInterval(123456);
 
         $this->assertEquals(123456, $consumer->getPollingInterval());
+    }
+
+    public function testCouldSetAndGetRedeliveryDelay()
+    {
+        $destination = new DbalDestination('queue');
+
+        $consumer = new DbalConsumer($this->createContextMock(), $destination);
+        $consumer->setRedeliveryDelay(123456);
+
+        $this->assertEquals(123456, $consumer->getRedeliveryDelay());
     }
 
     public function testRejectShouldThrowIfInstanceOfMessageIsInvalid()
@@ -64,17 +125,37 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $consumer->reject(new InvalidMessage());
     }
 
-    public function testShouldDoNothingOnReject()
+    public function testShouldDeleteMessageFromQueueOnReject()
     {
+        $deliveryId = Uuid::uuid4();
+
         $queue = new DbalDestination('queue');
 
         $message = new DbalMessage();
         $message->setBody('theBody');
+        $message->setDeliveryId($deliveryId->toString());
+
+        $dbal = $this->createConectionMock();
+        $dbal
+            ->expects($this->once())
+            ->method('delete')
+            ->with(
+                'some-table-name',
+                ['delivery_id' => $deliveryId->getBytes()],
+                ['delivery_id' => Type::GUID]
+            )
+        ;
 
         $context = $this->createContextMock();
         $context
-            ->expects($this->never())
-            ->method('createProducer')
+            ->expects($this->once())
+            ->method('getDbalConnection')
+            ->will($this->returnValue($dbal))
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getTableName')
+            ->will($this->returnValue('some-table-name'))
         ;
 
         $consumer = new DbalConsumer($context, $queue);
@@ -93,7 +174,7 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($queue), $this->identicalTo($message))
+            ->with($this->identicalTo($queue), $this->isInstanceOf($message))
         ;
 
         $context = $this->createContextMock();
@@ -123,87 +204,95 @@ class DbalConsumerTest extends \PHPUnit_Framework_TestCase
     {
         return $this->createMock(DbalContext::class);
     }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|DbalContext
+     */
+    private function createConectionMock()
+    {
+        return $this->createMock(Connection::class);
+    }
 }
 
-class InvalidMessage implements PsrMessage
+class InvalidMessage implements Message
 {
-    public function getBody()
+    public function getBody(): string
     {
     }
 
-    public function setBody($body)
+    public function setBody(string $body): void
     {
     }
 
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
     }
 
-    public function getProperties()
+    public function getProperties(): array
     {
     }
 
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
     }
 
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
     }
 
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
     }
 
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
     }
 
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
     }
 
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
     }
 
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
     }
 
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
     }
 
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
     }
 
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
     }
 
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
     }
 
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
     }
 
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
     }
 
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
     }
 
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
     }
 }

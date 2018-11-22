@@ -1,12 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Stomp;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrDestination;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Queue;
+use Interop\Queue\SubscriptionConsumer;
+use Interop\Queue\Topic;
 
-class StompContext implements PsrContext
+class StompContext implements Context
 {
     /**
      * @var BufferedStompClient
@@ -33,21 +43,17 @@ class StompContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompMessage
      */
-    public function createMessage($body = '', array $properties = [], array $headers = [])
+    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         return new StompMessage($body, $properties, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompDestination
      */
-    public function createQueue($name)
+    public function createQueue(string $name): Queue
     {
         if (0 !== strpos($name, '/')) {
             $destination = new StompDestination();
@@ -61,11 +67,9 @@ class StompContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompDestination
      */
-    public function createTemporaryQueue()
+    public function createTemporaryQueue(): Queue
     {
         $queue = $this->createQueue(uniqid('', true));
         $queue->setType(StompDestination::TYPE_TEMP_QUEUE);
@@ -74,11 +78,9 @@ class StompContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompDestination
      */
-    public function createTopic($name)
+    public function createTopic(string $name): Topic
     {
         if (0 !== strpos($name, '/')) {
             $destination = new StompDestination();
@@ -91,12 +93,7 @@ class StompContext implements PsrContext
         return $this->createDestination($name);
     }
 
-    /**
-     * @param string $destination
-     *
-     * @return StompDestination
-     */
-    public function createDestination($destination)
+    public function createDestination(string $destination): StompDestination
     {
         $types = [
             StompDestination::TYPE_TOPIC,
@@ -155,13 +152,11 @@ class StompContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param StompDestination $destination
      *
      * @return StompConsumer
      */
-    public function createConsumer(PsrDestination $destination)
+    public function createConsumer(Destination $destination): Consumer
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
 
@@ -169,27 +164,29 @@ class StompContext implements PsrContext
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompProducer
      */
-    public function createProducer()
+    public function createProducer(): Producer
     {
         return new StompProducer($this->getStomp());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
+    public function close(): void
     {
         $this->getStomp()->disconnect();
     }
 
-    /**
-     * @return BufferedStompClient
-     */
-    public function getStomp()
+    public function createSubscriptionConsumer(): SubscriptionConsumer
+    {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function purgeQueue(Queue $queue): void
+    {
+        throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
+    }
+
+    public function getStomp(): BufferedStompClient
     {
         if (false == $this->stomp) {
             $stomp = call_user_func($this->stompFactory);

@@ -10,7 +10,7 @@ use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
 use Enqueue\Null\NullMessage;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Psr\Log\LoggerInterface;
 
 class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
@@ -18,7 +18,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     public function testShouldReturnSubscribedTopicNames()
     {
         $this->assertEquals(
-            [Topics::ROOT_JOB_STOPPED],
+            Topics::ROOT_JOB_STOPPED,
             DependentJobProcessor::getSubscribedTopics()
         );
     }
@@ -317,11 +317,11 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
     private function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
     /**

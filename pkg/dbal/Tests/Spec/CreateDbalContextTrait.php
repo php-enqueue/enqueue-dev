@@ -8,8 +8,8 @@ trait CreateDbalContextTrait
 {
     protected function createDbalContext()
     {
-        if (false == $env = getenv('DOCTRINE_DSN')) {
-            $this->markTestSkipped('The DOCTRINE_DSN env is not available. Skip tests');
+        if (false == $env = getenv('MYSQL_DSN')) {
+            $this->markTestSkipped('The MYSQL_DSN env is not available. Skip tests');
         }
 
         $factory = new DbalConnectionFactory($env);

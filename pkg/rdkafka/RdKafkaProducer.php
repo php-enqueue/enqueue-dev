@@ -1,28 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use RdKafka\Producer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use RdKafka\Producer as VendorProducer;
 
-class RdKafkaProducer implements PsrProducer
+class RdKafkaProducer implements Producer
 {
     use SerializerAwareTrait;
 
     /**
-     * @var Producer
+     * @var VendorProducer
      */
     private $producer;
 
-    /**
-     * @param Producer   $producer
-     * @param Serializer $serializer
-     */
-    public function __construct(Producer $producer, Serializer $serializer)
+    public function __construct(VendorProducer $producer, Serializer $serializer)
     {
         $this->producer = $producer;
 
@@ -30,12 +29,10 @@ class RdKafkaProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RdKafkaTopic   $destination
      * @param RdKafkaMessage $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
@@ -49,61 +46,49 @@ class RdKafkaProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaProducer
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return RdKafkaProducer
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
-        throw new \LogicException('Not implemented');
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return null;
     }

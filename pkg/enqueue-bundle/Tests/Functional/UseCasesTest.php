@@ -4,17 +4,14 @@ namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Bundle\Tests\Functional\App\CustomAppKernel;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Stomp\StompDestination;
-use Enqueue\Symfony\Client\ConsumeMessagesCommand;
-use Enqueue\Symfony\Consumption\ContainerAwareConsumeMessagesCommand;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Context;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @group functional
@@ -29,8 +26,8 @@ class UseCasesTest extends WebTestCase
 
     public function tearDown()
     {
-        if ($this->getPsrContext()) {
-            $this->getPsrContext()->close();
+        if ($this->getContext()) {
+            $this->getContext()->close();
         }
 
         if (static::$kernel) {
@@ -52,32 +49,15 @@ class UseCasesTest extends WebTestCase
         $certDir = $baseDir.'/var/rabbitmq_certificates';
         $this->assertDirectoryExists($certDir);
 
-        yield 'amqp' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
-                    'driver' => 'ext',
-                    'host' => getenv('RABBITMQ_HOST'),
-                    'port' => getenv('RABBITMQ_AMQP__PORT'),
-                    'user' => getenv('RABBITMQ_USER'),
-                    'pass' => getenv('RABBITMQ_PASSWORD'),
-                    'vhost' => getenv('RABBITMQ_VHOST'),
-                    'lazy' => false,
-                ],
-            ],
-        ]];
-
         yield 'amqp_dsn' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => getenv('AMQP_DSN'),
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
             ],
         ]];
 
         yield 'amqps_dsn' => [[
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
+            'default' => [
+                'transport' => [
                     'dsn' => getenv('AMQPS_DSN'),
                     'ssl_verify' => false,
                     'ssl_cacert' => $certDir.'/cacert.pem',
@@ -87,146 +67,79 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
-        yield 'default_amqp_as_dsn' => [[
-            'transport' => [
-                'default' => getenv('AMQP_DSN'),
+        yield 'dsn_as_env' => [[
+            'default' => [
+                'transport' => '%env(AMQP_DSN)%',
             ],
         ]];
 
-        // Symfony 2.x does not such env syntax
-        if (version_compare(Kernel::VERSION, '3.2', '>=')) {
-            yield 'default_dsn_as_env' => [[
-                'transport' => [
-                    'default' => '%env(AMQP_DSN)%',
-                ],
-            ]];
-        }
-
-        yield 'default_dbal_as_dsn' => [[
-            'transport' => [
-                'default' => getenv('DOCTRINE_DSN'),
+        yield 'dbal_dsn' => [[
+            'default' => [
+                'transport' => getenv('DOCTRINE_DSN'),
             ],
         ]];
 
         yield 'rabbitmq_stomp' => [[
-            'transport' => [
-                'default' => 'rabbitmq_stomp',
-                'rabbitmq_stomp' => [
-                    'host' => getenv('RABBITMQ_HOST'),
-                    'port' => getenv('﻿RABBITMQ_STOMP_PORT'),
-                    'login' => getenv('RABBITMQ_USER'),
-                    'password' => getenv('RABBITMQ_PASSWORD'),
-                    'vhost' => getenv('RABBITMQ_VHOST'),
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('RABITMQ_STOMP_DSN'),
                     'lazy' => false,
                     'management_plugin_installed' => true,
                 ],
             ],
         ]];
 
-        yield 'predis' => [[
-            'transport' => [
-                'default' => 'redis',
-                'redis' => [
-                    'host' => getenv('REDIS_HOST'),
-                    'port' => (int) getenv('REDIS_PORT'),
-                    'vendor' => 'predis',
+        yield 'predis_dsn' => [[
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('PREDIS_DSN'),
                     'lazy' => false,
                 ],
             ],
         ]];
 
-        yield 'phpredis' => [[
-            'transport' => [
-                'default' => 'redis',
-                'redis' => [
-                    'host' => getenv('REDIS_HOST'),
-                    'port' => (int) getenv('REDIS_PORT'),
-                    'vendor' => 'phpredis',
+        yield 'phpredis_dsn' => [[
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('PHPREDIS_DSN'),
                     'lazy' => false,
-                ],
-            ],
-        ]];
-
-        yield 'fs' => [[
-            'transport' => [
-                'default' => 'fs',
-                'fs' => [
-                    'path' => sys_get_temp_dir(),
                 ],
             ],
         ]];
 
         yield 'fs_dsn' => [[
-            'transport' => [
-                'default' => 'fs',
-                'fs' => 'file://'.sys_get_temp_dir(),
+            'default' => [
+                'transport' => 'file://'.sys_get_temp_dir(),
             ],
         ]];
 
-        yield 'default_fs_as_dsn' => [[
-            'transport' => [
-                'default' => 'file://'.sys_get_temp_dir(),
-            ],
-        ]];
-
-        yield 'dbal' => [[
-            'transport' => [
-                'default' => 'dbal',
-                'dbal' => [
-                    'connection' => [
-                        'dbname' => getenv('DOCTRINE_DB_NAME'),
-                        'user' => getenv('DOCTRINE_USER'),
-                        'password' => getenv('DOCTRINE_PASSWORD'),
-                        'host' => getenv('DOCTRINE_HOST'),
-                        'port' => getenv('DOCTRINE_PORT'),
-                        'driver' => getenv('DOCTRINE_DRIVER'),
-                    ],
-                ],
-            ],
-        ]];
-
-        yield 'dbal_dsn' => [[
-            'transport' => [
-                'default' => 'dbal',
-                'dbal' => getenv('DOCTRINE_DSN'),
-            ],
-        ]];
-
-        // travis build does not have secret env vars if contribution is from outside.
-        if (getenv('AWS_SQS_KEY')) {
-            yield 'sqs' => [[
+        yield 'sqs' => [[
+            'default' => [
                 'transport' => [
-                    'default' => 'sqs',
-                    'sqs' => [
-                        'key' => getenv('AWS_SQS_KEY'),
-                        'secret' => getenv('AWS_SQS_SECRET'),
-                        'region' => getenv('AWS_SQS_REGION'),
-                        'endpoint' => getenv('AWS_SQS_ENDPOINT'),
-                    ],
+                    'dsn' => getenv('SQS_DSN'),
                 ],
-            ]];
+            ],
+        ]];
 
-            yield 'sqs_client' => [[
+        yield 'sqs_client' => [[
+            'default' => [
                 'transport' => [
-                    'default' => 'sqs',
-                    'sqs' => [
-                        'client' => 'test.sqs_client',
-                    ],
+                    'dsn' => 'sqs:',
+                    'service' => 'test.sqs_client',
+                    'factory_service' => 'test.sqs_custom_connection_factory_factory',
                 ],
-            ]];
-        }
+            ],
+        ]];
 
         yield 'mongodb_dsn' => [[
-            'transport' => [
-                'default' => 'mongodb',
-                'mongodb' => getenv('MONGO_DSN'),
+            'default' => [
+                'transport' => getenv('MONGO_DSN'),
             ],
         ]];
-
+//
 //        yield 'gps' => [[
 //            'transport' => [
-//                'default' => 'gps',
-//                'gps' => [],
+//                'dsn' => getenv('GPS_DSN'),
 //            ],
 //        ]];
     }
@@ -234,7 +147,7 @@ class UseCasesTest extends WebTestCase
     /**
      * @dataProvider provideEnqueueConfigs
      */
-    public function testProducerSendsMessage(array $enqueueConfig)
+    public function testProducerSendsEventMessage(array $enqueueConfig)
     {
         $this->customSetUp($enqueueConfig);
 
@@ -242,10 +155,10 @@ class UseCasesTest extends WebTestCase
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
 
-        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
         $message = $consumer->receive(100);
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
         $this->assertSame($expectedBody, $message->getBody());
@@ -262,24 +175,95 @@ class UseCasesTest extends WebTestCase
 
         $this->getMessageProducer()->sendCommand(TestCommandProcessor::COMMAND, $expectedBody);
 
-        $consumer = $this->getPsrContext()->createConsumer($this->getTestQueue());
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
         $message = $consumer->receive(100);
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
-        $this->assertInstanceOf(PsrMessage::class, $message);
+        $this->assertInstanceOf(Message::class, $message);
         $this->assertSame($expectedBody, $message->getBody());
     }
 
-    /**
-     * @dataProvider provideEnqueueConfigs
-     */
-    public function testClientConsumeCommandMessagesFromExplicitlySetQueue(array $enqueueConfig)
+    public function testProducerSendsEventMessageViaProduceCommand()
     {
-        $this->customSetUp($enqueueConfig);
+        $this->customSetUp([
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
+        ]);
 
-        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get('test_enqueue.client.produce_command');
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'message' => $expectedBody,
+            '--topic' => TestProcessor::TOPIC,
+            '--client' => 'default',
+        ]);
+
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
+
+        $message = $consumer->receive(100);
+        $this->assertInstanceOf(Message::class, $message);
+        $consumer->acknowledge($message);
+
+        $this->assertSame($expectedBody, $message->getBody());
+    }
+
+    public function testProducerSendsCommandMessageViaProduceCommand()
+    {
+        $this->customSetUp([
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
+        ]);
+
+        $expectedBody = __METHOD__.time();
+
+        $command = static::$container->get('test_enqueue.client.produce_command');
+        $tester = new CommandTester($command);
+        $tester->execute([
+            'message' => $expectedBody,
+            '--command' => TestCommandProcessor::COMMAND,
+            '--client' => 'default',
+        ]);
+
+        $consumer = $this->getContext()->createConsumer($this->getTestQueue());
+
+        $message = $consumer->receive(100);
+        $this->assertInstanceOf(Message::class, $message);
+        $consumer->acknowledge($message);
+
+        $this->assertInstanceOf(Message::class, $message);
+        $this->assertSame($expectedBody, $message->getBody());
+    }
+
+    public function testShouldSetupBroker()
+    {
+        $this->customSetUp([
+            'default' => [
+                'transport' => 'file://'.sys_get_temp_dir(),
+            ],
+        ]);
+
+        $command = static::$container->get('test_enqueue.client.setup_broker_command');
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+
+        $this->assertSame("Broker set up\n", $tester->getDisplay());
+    }
+
+    public function testClientConsumeCommandMessagesFromExplicitlySetQueue()
+    {
+        $this->customSetUp([
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
+        ]);
+
+        $command = static::$container->get('test_enqueue.client.consume_command');
         $processor = static::$container->get('test.message.command_processor');
 
         $expectedBody = __METHOD__.time();
@@ -289,24 +273,26 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
-            '--time-limit' => 'now +10 seconds',
+            '--receive-timeout' => 100,
+            '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertInstanceOf(Message::class, $processor->message);
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
-    /**
-     * @dataProvider provideEnqueueConfigs
-     */
-    public function testClientConsumeMessagesFromExplicitlySetQueue(array $enqueueConfig)
+    public function testClientConsumeMessagesFromExplicitlySetQueue()
     {
-        $this->customSetUp($enqueueConfig);
+        $this->customSetUp([
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
+        ]);
 
         $expectedBody = __METHOD__.time();
 
-        $command = static::$container->get(ConsumeMessagesCommand::class);
+        $command = static::$container->get('test_enqueue.client.consume_command');
         $processor = static::$container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
@@ -314,20 +300,22 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 2,
-            '--time-limit' => 'now +10 seconds',
+            '--receive-timeout' => 100,
+            '--time-limit' => 'now + 2 seconds',
             'client-queue-names' => ['test'],
         ]);
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertInstanceOf(Message::class, $processor->message);
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
-    /**
-     * @dataProvider provideEnqueueConfigs
-     */
-    public function testTransportConsumeMessagesCommandShouldConsumeMessage(array $enqueueConfig)
+    public function testTransportConsumeMessagesCommandShouldConsumeMessage()
     {
-        $this->customSetUp($enqueueConfig);
+        $this->customSetUp([
+            'default' => [
+                'transport' => getenv('AMQP_DSN'),
+            ],
+        ]);
 
         if ($this->getTestQueue() instanceof StompDestination) {
             $this->markTestSkipped('The test fails with the exception Stomp\Exception\ErrorFrameException: Error "precondition_failed". '.
@@ -337,8 +325,7 @@ class UseCasesTest extends WebTestCase
 
         $expectedBody = __METHOD__.time();
 
-        $command = static::$container->get(ContainerAwareConsumeMessagesCommand::class);
-        $command->setContainer(static::$container);
+        $command = static::$container->get('test_enqueue.transport.consume_command');
         $processor = static::$container->get('test.message.processor');
 
         $this->getMessageProducer()->sendEvent(TestProcessor::TOPIC, $expectedBody);
@@ -346,13 +333,13 @@ class UseCasesTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([
             '--message-limit' => 1,
-            '--time-limit' => '+10sec',
+            '--time-limit' => '+2sec',
             '--receive-timeout' => 1000,
-            '--queue' => [$this->getTestQueue()->getQueueName()],
-            'processor-service' => 'test.message.processor',
+            'processor' => 'test.message.processor',
+            'queues' => [$this->getTestQueue()->getQueueName()],
         ]);
 
-        $this->assertInstanceOf(PsrMessage::class, $processor->message);
+        $this->assertInstanceOf(Message::class, $processor->message);
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
@@ -376,35 +363,29 @@ class UseCasesTest extends WebTestCase
         static::$container = static::$kernel->getContainer();
 
         /** @var DriverInterface $driver */
-        $driver = static::$container->get('enqueue.client.driver');
-        $context = $this->getPsrContext();
+        $driver = static::$container->get('test_enqueue.client.default.driver');
+        $context = $this->getContext();
 
         $driver->setupBroker();
 
         try {
-            if (method_exists($context, 'purgeQueue')) {
-                $queue = $this->getTestQueue();
-                $context->purgeQueue($queue);
-            }
-        } catch (\Exception $e) {
+            $context->purgeQueue($this->getTestQueue());
+        } catch (PurgeQueueNotSupportedException $e) {
         }
     }
 
     /**
-     * @return PsrQueue
+     * @return Queue
      */
     protected function getTestQueue()
     {
         /** @var DriverInterface $driver */
-        $driver = static::$container->get('enqueue.client.driver');
+        $driver = static::$container->get('test_enqueue.client.default.driver');
 
         return $driver->createQueue('test');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function createKernel(array $options = [])
+    protected static function createKernel(array $options = []): CustomAppKernel
     {
         /** @var CustomAppKernel $kernel */
         $kernel = parent::createKernel($options);
@@ -414,19 +395,13 @@ class UseCasesTest extends WebTestCase
         return $kernel;
     }
 
-    /**
-     * @return ProducerInterface|object
-     */
-    private function getMessageProducer()
+    private function getMessageProducer(): ProducerInterface
     {
-        return static::$container->get(Producer::class);
+        return static::$container->get('test_enqueue.client.default.producer');
     }
 
-    /**
-     * @return PsrContext|object
-     */
-    private function getPsrContext()
+    private function getContext(): Context
     {
-        return static::$container->get('enqueue.transport.context');
+        return static::$container->get('test_enqueue.transport.default.context');
     }
 }

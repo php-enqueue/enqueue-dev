@@ -2,15 +2,16 @@
 
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostMessageReceived;
 use Enqueue\Consumption\Extension\ReplyExtension;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Producer as InteropProducer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -18,9 +19,9 @@ class ReplyExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementPostMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, ReplyExtension::class);
+        $this->assertClassImplements(PostMessageReceivedExtensionInterface::class, ReplyExtension::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
@@ -28,42 +29,20 @@ class ReplyExtensionTest extends TestCase
         new ReplyExtension();
     }
 
-    public function testShouldDoNothingOnPreReceived()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onPreReceived(new Context($this->createNeverUsedContextMock()));
-    }
-
-    public function testShouldDoNothingOnStart()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onStart(new Context($this->createNeverUsedContextMock()));
-    }
-
-    public function testShouldDoNothingOnBeforeReceive()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onBeforeReceive(new Context($this->createNeverUsedContextMock()));
-    }
-
-    public function testShouldDoNothingOnInterrupted()
-    {
-        $extension = new ReplyExtension();
-
-        $extension->onInterrupted(new Context($this->createNeverUsedContextMock()));
-    }
-
     public function testShouldDoNothingIfReceivedMessageNotHaveReplyToSet()
     {
         $extension = new ReplyExtension();
 
-        $context = new Context($this->createNeverUsedContextMock());
-        $context->setPsrMessage(new NullMessage());
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createNeverUsedContextMock(),
+            $this->createMock(Consumer::class),
+            new NullMessage(),
+            'aResult',
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldDoNothingIfContextResultIsNotInstanceOfResult()
@@ -73,11 +52,16 @@ class ReplyExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setReplyTo('aReplyToQueue');
 
-        $context = new Context($this->createNeverUsedContextMock());
-        $context->setPsrMessage($message);
-        $context->setResult('notInstanceOfResult');
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createNeverUsedContextMock(),
+            $this->createMock(Consumer::class),
+            $message,
+            'notInstanceOfResult',
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldDoNothingIfResultInstanceOfResultButReplyMessageNotSet()
@@ -87,11 +71,16 @@ class ReplyExtensionTest extends TestCase
         $message = new NullMessage();
         $message->setReplyTo('aReplyToQueue');
 
-        $context = new Context($this->createNeverUsedContextMock());
-        $context->setPsrMessage($message);
-        $context->setResult(Result::ack());
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createNeverUsedContextMock(),
+            $this->createMock(Consumer::class),
+            $message,
+            Result::ack(),
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     public function testShouldSendReplyMessageToReplyQueueOnPostReceived()
@@ -107,15 +96,15 @@ class ReplyExtensionTest extends TestCase
 
         $replyQueue = new NullQueue('aReplyName');
 
-        $producerMock = $this->createMock(PsrProducer::class);
+        $producerMock = $this->createMock(InteropProducer::class);
         $producerMock
             ->expects($this->once())
             ->method('send')
             ->with($replyQueue, $replyMessage)
         ;
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PsrContext $contextMock */
-        $contextMock = $this->createMock(PsrContext::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Context $contextMock */
+        $contextMock = $this->createMock(Context::class);
         $contextMock
             ->expects($this->once())
             ->method('createQueue')
@@ -127,20 +116,32 @@ class ReplyExtensionTest extends TestCase
             ->willReturn($producerMock)
         ;
 
-        $context = new Context($contextMock);
-        $context->setPsrMessage($message);
-        $context->setResult(Result::reply($replyMessage));
-        $context->setLogger(new NullLogger());
+        $postReceivedMessage = new PostMessageReceived(
+            $contextMock,
+            $this->createMock(Consumer::class),
+            $message,
+            Result::reply($replyMessage),
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createNeverUsedContextMock()
+    protected function createInteropContextMock(): Context
     {
-        $contextMock = $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createNeverUsedContextMock(): Context
+    {
+        $contextMock = $this->createMock(Context::class);
         $contextMock
             ->expects($this->never())
             ->method('createProducer')

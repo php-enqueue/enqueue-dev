@@ -9,11 +9,6 @@ class RedisMessageTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementJsonSerializableInterface()
-    {
-        $this->assertClassImplements(\JsonSerializable::class, RedisMessage::class);
-    }
-
     public function testCouldConstructMessageWithoutArguments()
     {
         $message = new RedisMessage();
@@ -62,35 +57,5 @@ class RedisMessageTest extends \PHPUnit\Framework\TestCase
         $message->setReplyTo('theQueueName');
 
         $this->assertSame(['reply_to' => 'theQueueName'], $message->getHeaders());
-    }
-
-    public function testColdBeSerializedToJson()
-    {
-        $message = new RedisMessage('theBody', ['thePropFoo' => 'thePropFooVal'], ['theHeaderFoo' => 'theHeaderFooVal']);
-
-        $this->assertEquals('{"body":"theBody","properties":{"thePropFoo":"thePropFooVal"},"headers":{"theHeaderFoo":"theHeaderFooVal"}}', json_encode($message));
-    }
-
-    public function testCouldBeUnserializedFromJson()
-    {
-        $message = new RedisMessage('theBody', ['thePropFoo' => 'thePropFooVal'], ['theHeaderFoo' => 'theHeaderFooVal']);
-
-        $json = json_encode($message);
-
-        //guard
-        $this->assertNotEmpty($json);
-
-        $unserializedMessage = RedisMessage::jsonUnserialize($json);
-
-        $this->assertInstanceOf(RedisMessage::class, $unserializedMessage);
-        $this->assertEquals($message, $unserializedMessage);
-    }
-
-    public function testThrowIfMalformedJsonGivenOnUnsterilizedFromJson()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The malformed json given.');
-
-        RedisMessage::jsonUnserialize('{]');
     }
 }

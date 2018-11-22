@@ -14,25 +14,24 @@ services:
       - google-pubsub
       - rabbitmqssl
       - mongo
+      - thruway
       - localstack
     volumes:
       - './:/mqdev'
     environment:
       - AMQP_DSN=amqp://guest:guest@rabbitmq:5672/mqdev
+      - RABBITMQ_AMQP_DSN=amqp+rabbitmq://guest:guest@rabbitmq:5672/mqdev
       - AMQPS_DSN=amqps://guest:guest@rabbitmqssl:5671
+      - STOMP_DSN=stomp://guest:guest@rabbitmq:61613/mqdev
+      - RABITMQ_STOMP_DSN=stomp+rabbitmq://guest:guest@rabbitmq:61613/mqdev
+      - RABBITMQ_MANAGMENT_DSN=http://guest:guest@rabbitmq:15672/mqdev
       - DOCTRINE_DSN=mysql://root:rootpass@mysql/mqdev
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_USER=guest
-      - RABBITMQ_PASSWORD=guest
-      - RABBITMQ_VHOST=mqdev
-      - RABBITMQ_AMQP__PORT=5672
-      - RABBITMQ_STOMP_PORT=61613
-      - DOCTRINE_DRIVER=pdo_mysql
-      - DOCTRINE_HOST=mysql
-      - DOCTRINE_PORT=3306
-      - DOCTRINE_DB_NAME=mqdev
-      - DOCTRINE_USER=root
-      - DOCTRINE_PASSWORD=rootpass
+      - MYSQL_DSN=mysql://root:rootpass@mysql/mqdev
+      - PREDIS_DSN=redis+predis://redis
+      - PHPREDIS_DSN=redis+phpredis://redis
+      - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
+      - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4576&version=latest
+      - WAMP_DSN=wamp://thruway:9090
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - AWS_SQS_KEY=key
@@ -40,18 +39,14 @@ services:
       - AWS_SQS_REGION=us-east-1
       - AWS_SQS_ENDPOINT=http://localstack:4576
       - AWS_SQS_VERSION=latest
-      - BEANSTALKD_HOST=beanstalkd
-      - BEANSTALKD_PORT=11300
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
       - GEARMAN_DSN=gearman://gearmand:4730
+      - MONGO_DSN=mongodb://mongo
       - RDKAFKA_HOST=kafka
       - RDKAFKA_PORT=9092
-      - PUBSUB_EMULATOR_HOST=http://google-pubsub:8085
-      - GCLOUD_PROJECT=mqdev
-      - MONGO_DSN=mongodb://mongo
 
   rabbitmq:
-    image: 'enqueue/rabbitmq:latest'
+    image: 'enqueue/rabbitmq:3.7'
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -77,11 +72,10 @@ services:
       - "6379:6379"
 
   mysql:
-    image: mariadb:10
-    volumes:
-      - mysql-data:/var/lib/mysql
+    image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mqdev
 
   generate-changelog:
     image: enqueue/generate-changelog:latest
@@ -112,6 +106,17 @@ services:
       ports:
         - "27017:27017"
 
+  thruway:
+    image: formapro/nginx-php-fpm:latest-all-exts
+    ports:
+      - '9090:9090'
+    working_dir: '/app'
+    volumes:
+      - './:/app'
+    entrypoint:
+        - '/usr/bin/php'
+        - 'docker/thruway/WsRouter.php'
+
   localstack:
     image: 'localstack/localstack:latest'
     ports:
@@ -120,6 +125,16 @@ services:
       HOSTNAME_EXTERNAL: 'localstack'
       SERVICES: 'sqs'
 
-volumes:
-  mysql-data:
-    driver: local
+  influxdb:
+    image: 'influxdb:latest'
+
+  chronograf:
+    image: 'chronograf:latest'
+    entrypoint: 'chronograf --influxdb-url=http://influxdb:8086'
+    ports:
+      - '8888:8888'
+
+  grafana:
+    image: 'grafana/grafana:latest'
+    ports:
+      - '3000:3000'

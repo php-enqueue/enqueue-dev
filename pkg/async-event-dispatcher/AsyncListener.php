@@ -2,14 +2,14 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Context;
+use Interop\Queue\Queue;
 use Symfony\Component\EventDispatcher\Event;
 
 class AsyncListener
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     private $context;
 
@@ -19,7 +19,7 @@ class AsyncListener
     private $registry;
 
     /**
-     * @var PsrQueue
+     * @var Queue
      */
     private $eventQueue;
 
@@ -29,15 +29,15 @@ class AsyncListener
     private $syncMode;
 
     /**
-     * @param PsrContext      $context
-     * @param Registry        $registry
-     * @param PsrQueue|string $eventQueue
+     * @param Context      $context
+     * @param Registry     $registry
+     * @param Queue|string $eventQueue
      */
-    public function __construct(PsrContext $context, Registry $registry, $eventQueue)
+    public function __construct(Context $context, Registry $registry, $eventQueue)
     {
         $this->context = $context;
         $this->registry = $registry;
-        $this->eventQueue = $eventQueue instanceof PsrQueue ? $eventQueue : $context->createQueue($eventQueue);
+        $this->eventQueue = $eventQueue instanceof Queue ? $eventQueue : $context->createQueue($eventQueue);
     }
 
     public function __invoke(Event $event, $eventName)

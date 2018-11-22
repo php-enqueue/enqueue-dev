@@ -3,12 +3,12 @@
 namespace Enqueue\RdKafka\Tests\Spec;
 
 use Enqueue\RdKafka\RdKafkaMessage;
-use Interop\Queue\Spec\PsrMessageSpec;
+use Interop\Queue\Spec\MessageSpec;
 
 /**
  * @group rdkafka
  */
-class RdKafkaMessageTest extends PsrMessageSpec
+class RdKafkaMessageTest extends MessageSpec
 {
     /**
      * {@inheritdoc}

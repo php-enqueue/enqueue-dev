@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Queue;
 
-class RedisConsumer implements PsrConsumer
+class RedisConsumer implements Consumer
 {
+    use RedisConsumerHelperTrait;
+
     /**
      * @var RedisDestination
      */
@@ -19,9 +24,10 @@ class RedisConsumer implements PsrConsumer
     private $context;
 
     /**
-     * @param RedisContext     $context
-     * @param RedisDestination $queue
+     * @var int
      */
+    private $redeliveryDelay = 300;
+
     public function __construct(RedisContext $context, RedisDestination $queue)
     {
         $this->context = $context;
@@ -29,78 +35,92 @@ class RedisConsumer implements PsrConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * @return int
+     */
+    public function getRedeliveryDelay(): ?int
+    {
+        return $this->redeliveryDelay;
+    }
+
+    /**
+     * @param int $delay
+     */
+    public function setRedeliveryDelay(int $delay): void
+    {
+        $this->redeliveryDelay = $delay;
+    }
+
+    /**
      * @return RedisDestination
      */
-    public function getQueue()
+    public function getQueue(): Queue
     {
         return $this->queue;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return RedisMessage|null
+     * @return RedisMessage
      */
-    public function receive($timeout = 0)
+    public function receive(int $timeout = 0): ?Message
     {
-        $timeout = (int) ($timeout / 1000);
-        if (empty($timeout)) {
-            //            Caused by
-            //            Predis\Response\ServerException: ERR timeout is not an integer or out of range
-            //            /mqdev/vendor/predis/predis/src/Client.php:370
+        $timeout = (int) ceil($timeout / 1000);
 
-            return $this->receiveNoWait();
+        if ($timeout <= 0) {
+            while (true) {
+                if ($message = $this->receive(5000)) {
+                    return $message;
+                }
+            }
         }
 
-        if ($message = $this->getRedis()->brpop($this->queue->getName(), $timeout)) {
-            return RedisMessage::jsonUnserialize($message);
-        }
+        return $this->receiveMessage([$this->queue], $timeout, $this->redeliveryDelay);
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return RedisMessage|null
+     * @return RedisMessage
      */
-    public function receiveNoWait()
+    public function receiveNoWait(): ?Message
     {
-        if ($message = $this->getRedis()->rpop($this->queue->getName())) {
-            return RedisMessage::jsonUnserialize($message);
-        }
+        return $this->receiveMessageNoWait($this->queue, $this->redeliveryDelay);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisMessage $message
      */
-    public function acknowledge(PsrMessage $message)
+    public function acknowledge(Message $message): void
     {
-        // do nothing. redis transport always works in auto ack mode
+        $this->getRedis()->zrem($this->queue->getName().':reserved', $message->getReservedKey());
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param RedisMessage $message
      */
-    public function reject(PsrMessage $message, $requeue = false)
+    public function reject(Message $message, bool $requeue = false): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        // do nothing on reject. redis transport always works in auto ack mode
+        $this->acknowledge($message);
 
         if ($requeue) {
-            $this->context->createProducer()->send($this->queue, $message);
+            $message = $this->getContext()->getSerializer()->toMessage($message->getReservedKey());
+            $message->setHeader('attempts', 0);
+
+            if ($message->getTimeToLive()) {
+                $message->setHeader('expires_at', time() + $message->getTimeToLive());
+            }
+
+            $payload = $this->getContext()->getSerializer()->toString($message);
+
+            $this->getRedis()->lpush($this->queue->getName(), $payload);
         }
     }
 
-    /**
-     * @return Redis
-     */
-    private function getRedis()
+    private function getContext(): RedisContext
+    {
+        return $this->context;
+    }
+
+    private function getRedis(): Redis
     {
         return $this->context->getRedis();
     }

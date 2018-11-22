@@ -1,38 +1,83 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
 interface Redis
 {
     /**
+     * @param string $script
+     * @param array  $keys
+     * @param array  $args
+     *
+     * @throws ServerException
+     *
+     * @return mixed
+     */
+    public function eval(string $script, array $keys = [], array $args = []);
+
+    /**
+     * @param string $key
+     * @param string $value
+     * @param float  $score
+     *
+     * @throws ServerException
+     *
+     * @return int
+     */
+    public function zadd(string $key, string $value, float $score): int;
+
+    /**
      * @param string $key
      * @param string $value
      *
+     * @throws ServerException
+     *
+     * @return int
+     */
+    public function zrem(string $key, string $value): int;
+
+    /**
+     * @param string $key
+     * @param string $value
+     *
+     * @throws ServerException
+     *
      * @return int length of the list
      */
-    public function lpush($key, $value);
+    public function lpush(string $key, string $value): int;
 
     /**
-     * @param string $key
-     * @param int    $timeout in seconds
+     * @param string[] $keys
+     * @param int      $timeout in seconds
      *
-     * @return string|null
+     * @throws ServerException
+     *
+     * @return RedisResult|null
      */
-    public function brpop($key, $timeout);
+    public function brpop(array $keys, int $timeout): ?RedisResult;
 
     /**
      * @param string $key
      *
-     * @return string|null
+     * @throws ServerException
+     *
+     * @return RedisResult|null
      */
-    public function rpop($key);
+    public function rpop(string $key): ?RedisResult;
 
-    public function connect();
+    /**
+     * @throws ServerException
+     */
+    public function connect(): void;
 
-    public function disconnect();
+    public function disconnect(): void;
 
     /**
      * @param string $key
+     *
+     * @throws ServerException
      */
-    public function del($key);
+    public function del(string $key): void;
 }

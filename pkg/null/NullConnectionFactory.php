@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Null;
 
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 
-class NullConnectionFactory implements PsrConnectionFactory
+class NullConnectionFactory implements ConnectionFactory
 {
     /**
-     * {@inheritdoc}
+     * @return NullContext
      */
-    public function createContext()
+    public function createContext(): Context
     {
         return new NullContext();
     }

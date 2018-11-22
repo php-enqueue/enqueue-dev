@@ -7,9 +7,9 @@ use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
 use Stomp\Protocol\Protocol;
 use Stomp\Transport\Frame;
 
@@ -19,31 +19,31 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementMessageConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, StompConsumer::class);
+        $this->assertClassImplements(Consumer::class, StompConsumer::class);
     }
 
     public function testCouldBeConstructedWithRequiredAttributes()
     {
-        new StompConsumer($this->createStompClientMock(), new StompDestination());
+        new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
     }
 
     public function testCouldGetQueue()
     {
-        $consumer = new StompConsumer($this->createStompClientMock(), $dest = new StompDestination());
+        $consumer = new StompConsumer($this->createStompClientMock(), $dest = $this->createDummyDestination());
 
         $this->assertSame($dest, $consumer->getQueue());
     }
 
     public function testShouldReturnDefaultAckMode()
     {
-        $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
+        $consumer = new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
 
         $this->assertSame(StompConsumer::ACK_CLIENT_INDIVIDUAL, $consumer->getAckMode());
     }
 
     public function testCouldSetGetAckMethod()
     {
-        $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
+        $consumer = new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
         $consumer->setAckMode(StompConsumer::ACK_CLIENT);
 
         $this->assertSame(StompConsumer::ACK_CLIENT, $consumer->getAckMode());
@@ -54,20 +54,20 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Ack mode is not valid: "invalid-ack-mode"');
 
-        $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
+        $consumer = new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
         $consumer->setAckMode('invalid-ack-mode');
     }
 
     public function testShouldReturnDefaultPrefetchCount()
     {
-        $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
+        $consumer = new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
 
         $this->assertSame(1, $consumer->getPrefetchCount());
     }
 
     public function testCouldSetGetPrefetchCount()
     {
-        $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
+        $consumer = new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
         $consumer->setPrefetchCount(123);
 
         $this->assertSame(123, $consumer->getPrefetchCount());
@@ -78,8 +78,8 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InvalidMessageException::class);
         $this->expectExceptionMessage('The message must be an instance of');
 
-        $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
-        $consumer->acknowledge($this->createMock(PsrMessage::class));
+        $consumer = new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
+        $consumer->acknowledge($this->createMock(Message::class));
     }
 
     public function testShouldAcknowledgeMessage()
@@ -106,7 +106,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new StompMessage();
         $message->setFrame(new Frame());
 
-        $consumer = new StompConsumer($client, new StompDestination());
+        $consumer = new StompConsumer($client, $this->createDummyDestination());
         $consumer->acknowledge($message);
     }
 
@@ -115,8 +115,8 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InvalidMessageException::class);
         $this->expectExceptionMessage('The message must be an instance of');
 
-        $consumer = new StompConsumer($this->createStompClientMock(), new StompDestination());
-        $consumer->reject($this->createMock(PsrMessage::class));
+        $consumer = new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());
+        $consumer->reject($this->createMock(Message::class));
     }
 
     public function testShouldRejectMessage()
@@ -143,7 +143,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new StompMessage();
         $message->setFrame(new Frame());
 
-        $consumer = new StompConsumer($client, new StompDestination());
+        $consumer = new StompConsumer($client, $this->createDummyDestination());
         $consumer->reject($message);
 
         $this->assertSame(['requeue' => 'false'], $frame->getHeaders());
@@ -173,7 +173,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new StompMessage();
         $message->setFrame(new Frame());
 
-        $consumer = new StompConsumer($client, new StompDestination());
+        $consumer = new StompConsumer($client, $this->createDummyDestination());
         $consumer->reject($message, true);
 
         $this->assertSame(['requeue' => 'true'], $frame->getHeaders());
@@ -210,7 +210,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new StompMessage();
         $message->setFrame(new Frame());
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName('name');
 
@@ -247,7 +247,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new StompMessage();
         $message->setFrame(new Frame());
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName('name');
 
@@ -280,7 +280,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
             ->method('readMessageFrame')
         ;
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setStompName('name');
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setDurable(true);
@@ -340,7 +340,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($stompMessageFrame)
         ;
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setStompName('name');
         $destination->setType(StompDestination::TYPE_QUEUE);
 
@@ -381,7 +381,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($stompMessageFrame)
         ;
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setStompName('name');
         $destination->setType(StompDestination::TYPE_QUEUE);
 
@@ -418,7 +418,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Frame('MESSAGE'))
         ;
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setStompName('name');
         $destination->setType(StompDestination::TYPE_QUEUE);
 
@@ -454,7 +454,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Frame('MESSAGE'))
         ;
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setStompName('name');
         $destination->setType(StompDestination::TYPE_QUEUE);
 
@@ -480,7 +480,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new StompMessage();
         $message->setFrame(new Frame());
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setType(StompDestination::TYPE_TEMP_QUEUE);
         $destination->setStompName('name');
 
@@ -503,7 +503,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new StompMessage();
         $message->setFrame(new Frame());
 
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setType(StompDestination::TYPE_TEMP_QUEUE);
         $destination->setStompName('name');
 
@@ -513,7 +513,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldGenerateUniqueSubscriptionIdPerConsumer()
     {
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName('name');
 
@@ -530,7 +530,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldUseTempQueueNameAsSubscriptionId()
     {
-        $destination = new StompDestination();
+        $destination = $this->createDummyDestination();
         $destination->setType(StompDestination::TYPE_TEMP_QUEUE);
         $destination->setStompName('foo');
 
@@ -553,5 +553,14 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
     private function createStompClientMock()
     {
         return $this->createMock(BufferedStompClient::class);
+    }
+
+    private function createDummyDestination(): StompDestination
+    {
+        $destination = new StompDestination();
+        $destination->setStompName('aName');
+        $destination->setType(StompDestination::TYPE_QUEUE);
+
+        return $destination;
     }
 }

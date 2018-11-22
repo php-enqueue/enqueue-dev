@@ -9,9 +9,9 @@ use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Context;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Queue;
 
 class StompContextTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,7 +19,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementSessionInterface()
     {
-        $this->assertClassImplements(PsrContext::class, StompContext::class);
+        $this->assertClassImplements(Context::class, StompContext::class);
     }
 
     public function testCouldBeCreatedWithRequiredArguments()
@@ -110,14 +110,14 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('The destination must be an instance of');
 
         $session = new StompContext($this->createStompClientMock());
-        $session->createConsumer($this->createMock(PsrQueue::class));
+        $session->createConsumer($this->createMock(Queue::class));
     }
 
     public function testShouldCreateMessageConsumerInstance()
     {
         $context = new StompContext($this->createStompClientMock());
 
-        $this->assertInstanceOf(StompConsumer::class, $context->createConsumer(new StompDestination()));
+        $this->assertInstanceOf(StompConsumer::class, $context->createConsumer($this->createDummyDestination()));
     }
 
     public function testShouldCreateMessageProducerInstance()
@@ -138,7 +138,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $context = new StompContext($client);
 
         $context->createProducer();
-        $context->createConsumer(new StompDestination());
+        $context->createConsumer($this->createDummyDestination());
 
         $context->close();
     }
@@ -226,5 +226,14 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
     private function createStompClientMock()
     {
         return $this->createMock(BufferedStompClient::class);
+    }
+
+    private function createDummyDestination(): StompDestination
+    {
+        $destination = new StompDestination();
+        $destination->setStompName('aName');
+        $destination->setType(StompDestination::TYPE_QUEUE);
+
+        return $destination;
     }
 }

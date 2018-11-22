@@ -260,7 +260,7 @@ class JobProcessor
      */
     protected function sendCalculateRootJobStatusEvent(Job $job)
     {
-        $this->producer->sendEvent(Topics::CALCULATE_ROOT_JOB_STATUS, [
+        $this->producer->sendEvent(Commands::CALCULATE_ROOT_JOB_STATUS, [
             'jobId' => $job->getId(),
         ]);
     }

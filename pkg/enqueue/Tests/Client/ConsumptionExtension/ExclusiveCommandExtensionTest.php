@@ -4,14 +4,17 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\ExclusiveCommandExtension;
-use Enqueue\Client\ExtensionInterface as ClientExtensionInterface;
-use Enqueue\Client\Message;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\ExtensionInterface as ConsumptionExtensionInterface;
-use Enqueue\Null\NullContext;
+use Enqueue\Client\DriverInterface;
+use Enqueue\Client\Route;
+use Enqueue\Client\RouteCollection;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -19,176 +22,269 @@ class ExclusiveCommandExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementConsumptionExtensionInterface()
+    public function testShouldImplementMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ConsumptionExtensionInterface::class, ExclusiveCommandExtension::class);
+        $this->assertClassImplements(MessageReceivedExtensionInterface::class, ExclusiveCommandExtension::class);
     }
 
-    public function testShouldImplementClientExtensionInterface()
+    public function testShouldBeFinal()
     {
-        $this->assertClassImplements(ClientExtensionInterface::class, ExclusiveCommandExtension::class);
+        $this->assertClassFinal(ExclusiveCommandExtension::class);
     }
 
-    public function testCouldBeConstructedWithQueueNameToProcessorNameMap()
+    public function testCouldBeConstructedWithDriverAsFirstArgument()
     {
-        new ExclusiveCommandExtension([]);
-
-        new ExclusiveCommandExtension(['fooQueueName' => 'fooProcessorName']);
+        new ExclusiveCommandExtension($this->createDriverStub());
     }
 
     public function testShouldDoNothingIfMessageHasTopicPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, 'aTopic');
+        $message->setProperty(Config::TOPIC, 'aTopic');
 
-        $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('createQueue')
+        ;
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
-        ]);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
-        $extension->onPreReceived($context);
+        $extension = new ExclusiveCommandExtension($driver);
 
-        self::assertNull($context->getResult());
+        $extension->onMessageReceived($messageReceived);
+
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.topic_name' => 'aTopic',
+            Config::TOPIC => 'aTopic',
         ], $message->getProperties());
     }
 
-    public function testShouldDoNothingIfMessageHasProcessorNamePropertySetOnPreReceive()
+    public function testShouldDoNothingIfMessageHasCommandPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'aProcessor');
+        $message->setProperty(Config::COMMAND, 'aCommand');
 
-        $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
-        ]);
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('createQueue')
+        ;
 
-        $extension->onPreReceived($context);
+        $extension = new ExclusiveCommandExtension($driver);
 
-        self::assertNull($context->getResult());
+        $extension->onMessageReceived($messageReceived);
+
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.processor_name' => 'aProcessor',
+            Config::COMMAND => 'aCommand',
         ], $message->getProperties());
     }
 
-    public function testShouldDoNothingIfMessageHasProcessorQueueNamePropertySetOnPreReceive()
+    public function testShouldDoNothingIfMessageHasProcessorPropertySetOnPreReceive()
     {
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_QUEUE_NAME, 'aProcessorQueueName');
+        $message->setProperty(Config::PROCESSOR, 'aProcessor');
 
-        $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
-        ]);
+        $driver = $this->createDriverStub();
+        $driver
+            ->expects($this->never())
+            ->method('createQueue')
+        ;
 
-        $extension->onPreReceived($context);
+        $extension = new ExclusiveCommandExtension($driver);
 
-        self::assertNull($context->getResult());
+        $extension->onMessageReceived($messageReceived);
+
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.processor_queue_name' => 'aProcessorQueueName',
+            Config::PROCESSOR => 'aProcessor',
         ], $message->getProperties());
     }
 
-    public function testShouldDoNothingIfCurrentQueueIsNotInTheMap()
+    public function testShouldDoNothingIfCurrentQueueHasNoExclusiveProcessor()
     {
         $message = new NullMessage();
         $queue = new NullQueue('aBarQueueName');
 
-        $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
-        $context->setPsrQueue($queue);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub($queue),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
-        ]);
+        $extension = new ExclusiveCommandExtension($this->createDriverStub(new RouteCollection([])));
 
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
-        self::assertNull($context->getResult());
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([], $message->getProperties());
     }
 
-    public function testShouldSetCommandPropertiesIfCurrentQueueInTheMap()
+    public function testShouldSetCommandPropertiesIfCurrentQueueHasExclusiveCommandProcessor()
     {
         $message = new NullMessage();
-        $queue = new NullQueue('aFooQueueName');
+        $queue = new NullQueue('fooQueue');
 
-        $context = new Context(new NullContext());
-        $context->setPsrMessage($message);
-        $context->setPsrQueue($queue);
-        $context->setLogger(new NullLogger());
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub($queue),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
+        $routeCollection = new RouteCollection([
+            new Route('fooCommand', Route::COMMAND, 'theFooProcessor', [
+                'exclusive' => true,
+                'queue' => 'fooQueue',
+            ]),
+            new Route('barCommand', Route::COMMAND, 'theFooProcessor', [
+                'exclusive' => true,
+                'queue' => 'barQueue',
+            ]),
         ]);
 
-        $extension->onPreReceived($context);
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->any())
+            ->method('createQueue')
+            ->willReturnCallback(function (string $queueName) {
+                return new NullQueue($queueName);
+            })
+        ;
 
-        self::assertNull($context->getResult());
+        $extension = new ExclusiveCommandExtension($driver);
+        $extension->onMessageReceived($messageReceived);
+
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([
-            'enqueue.topic_name' => '__command__',
-            'enqueue.processor_queue_name' => 'aFooQueueName',
-            'enqueue.processor_name' => 'aFooProcessorName',
-            'enqueue.command_name' => 'aFooProcessorName',
+            Config::PROCESSOR => 'theFooProcessor',
+            Config::COMMAND => 'fooCommand',
         ], $message->getProperties());
     }
 
-    public function testShouldDoNothingOnPreSendIfTopicNotCommandOne()
+    public function testShouldDoNothingIfAnotherQueue()
     {
-        $message = new Message();
+        $message = new NullMessage();
+        $queue = new NullQueue('barQueue');
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub($queue),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
+
+        $routeCollection = new RouteCollection([
+            new Route('fooCommand', Route::COMMAND, 'theFooProcessor', [
+                'exclusive' => true,
+                'queue' => 'fooQueue',
+            ]),
+            new Route('barCommand', Route::COMMAND, 'theFooProcessor', [
+                'exclusive' => false,
+                'queue' => 'barQueue',
+            ]),
         ]);
 
-        $extension->onPreSend('aTopic', $message);
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->any())
+            ->method('createQueue')
+            ->willReturnCallback(function (string $queueName) {
+                return new NullQueue($queueName);
+            })
+        ;
+
+        $extension = new ExclusiveCommandExtension($driver);
+        $extension->onMessageReceived($messageReceived);
+
+        self::assertNull($messageReceived->getResult());
 
         $this->assertEquals([], $message->getProperties());
     }
 
-    public function testShouldDoNothingIfCommandNotExclusive()
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
     {
-        $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'theBarProcessorName');
+        $driver = $this->createMock(DriverInterface::class);
+        $driver
+            ->expects($this->any())
+            ->method('getRouteCollection')
+            ->willReturn($routeCollection)
+        ;
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
-        ]);
-
-        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
-
-        $this->assertEquals([
-            'enqueue.command_name' => 'theBarProcessorName',
-        ], $message->getProperties());
+        return $driver;
     }
 
-    public function testShouldForceExclusiveCommandQueue()
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createContextMock(): InteropContext
     {
-        $message = new Message();
-        $message->setProperty(Config::PARAMETER_COMMAND_NAME, 'aFooProcessorName');
+        return $this->createMock(InteropContext::class);
+    }
 
-        $extension = new ExclusiveCommandExtension([
-            'aFooQueueName' => 'aFooProcessorName',
-        ]);
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createProcessorMock(): Processor
+    {
+        return $this->createMock(Processor::class);
+    }
 
-        $extension->onPreSend(Config::COMMAND_TOPIC, $message);
+    /**
+     * @param mixed $queue
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createConsumerStub($queue): Consumer
+    {
+        $consumerMock = $this->createMock(Consumer::class);
+        $consumerMock
+            ->expects($this->any())
+            ->method('getQueue')
+            ->willReturn($queue)
+        ;
 
-        $this->assertEquals([
-            'enqueue.command_name' => 'aFooProcessorName',
-            'enqueue.processor_name' => 'aFooProcessorName',
-            'enqueue.processor_queue_name' => 'aFooQueueName',
-        ], $message->getProperties());
+        return $consumerMock;
     }
 }

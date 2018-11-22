@@ -2,19 +2,19 @@
 
 namespace Enqueue\Rpc;
 
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 
 class RpcFactory
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
     private $context;
 
     /**
-     * @param PsrContext $context
+     * @param Context $context
      */
-    public function __construct(PsrContext $context)
+    public function __construct(Context $context)
     {
         $this->context = $context;
     }

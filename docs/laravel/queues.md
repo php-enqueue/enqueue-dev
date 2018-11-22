@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Laravel Queue. Quick tour.
 
 The [LaravelQueue](https://github.com/php-enqueue/laravel-queue) package allows to use [queue-interop](https://github.com/queue-interop/queue-interop) compatible transports [the Laravel way](https://laravel.com/docs/5.4/queues).
@@ -13,20 +22,17 @@ You have to add a connector to `config/queues.php` file. The driver must be `int
 // config/queue.php
 
 return [
-    // uncomment to set it as default
-    // 'default' => env('QUEUE_DRIVER', 'interop'),
-    
+    'default' => 'interop',
     'connections' => [
         'interop' => [
             'driver' => 'interop',
-            'connection_factory_class' => \Enqueue\Fs\FsConnectionFactory::class,
-            
-            // the factory specific options
-            'dsn' => 'file://'.storage_path('enqueue'),
+            'dsn' => 'amqp+rabbitmq://guest:guest@localhost:5672/%2f',
         ],
     ],
 ];
 ```
+
+Here's a [full list](../transport) of supported transports.
 
 ## Usage
 
@@ -50,11 +56,6 @@ $ php artisan queue:work interop
 
 ## Amqp interop
 
-While interop connector can send\consume messages from any queue interop compatible transports. 
-But it does not support some AMQP specific features, such as queue declaration and delays. 
-To cover those cases the package provides a AmqpQueue. It can work with any amqp interop [compatible transport](https://github.com/queue-interop/queue-interop#compatible-projects-1), for example `enqueue/amqp-bunny`. 
-Here's how it could be configured:
-
 ```php
 <?php
 
@@ -66,11 +67,10 @@ return [
     
     'connections' => [
         'interop' => [
-            'driver' => 'amqp_interop',
-            'connection_factory_class' => \Enqueue\AmqpBunny\AmqpConnectionFactory::class,
+            'driver' => 'interop',
             
             // connects to localhost
-            'dsn' => 'amqp:',
+            'dsn' => 'amqp:', //
             
             // could be "rabbitmq_dlx", "rabbitmq_delay_plugin", instance of DelayStrategy interface or null 
             // 'delay_strategy' => 'rabbitmq_dlx' 

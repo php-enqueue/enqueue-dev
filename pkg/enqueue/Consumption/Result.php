@@ -2,25 +2,27 @@
 
 namespace Enqueue\Consumption;
 
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Processor;
 
 class Result
 {
     /**
-     * @see PsrProcessor::ACK for more details
+     * @see Processor::ACK for more details
      */
-    const ACK = PsrProcessor::ACK;
+    const ACK = Processor::ACK;
 
     /**
-     * @see PsrProcessor::ACK for more details
+     * @see Processor::ACK for more details
      */
-    const REJECT = PsrProcessor::REJECT;
+    const REJECT = Processor::REJECT;
 
     /**
-     * @see PsrProcessor::ACK for more details
+     * @see Processor::ACK for more details
      */
-    const REQUEUE = PsrProcessor::REQUEUE;
+    const REQUEUE = Processor::REQUEUE;
+
+    const ALREADY_ACKNOWLEDGED = 'enqueue.already_acknowledged';
 
     /**
      * @var string
@@ -33,7 +35,7 @@ class Result
     private $reason;
 
     /**
-     * @var PsrMessage|null
+     * @var InteropMessage|null
      */
     private $reply;
 
@@ -72,7 +74,7 @@ class Result
     }
 
     /**
-     * @return PsrMessage|null
+     * @return InteropMessage|null
      */
     public function getReply()
     {
@@ -80,9 +82,9 @@ class Result
     }
 
     /**
-     * @param PsrMessage|null $reply
+     * @param InteropMessage|null $reply
      */
-    public function setReply(PsrMessage $reply = null)
+    public function setReply(InteropMessage $reply = null)
     {
         $this->reply = $reply;
     }
@@ -118,13 +120,13 @@ class Result
     }
 
     /**
-     * @param PsrMessage  $replyMessage
-     * @param string      $status
-     * @param string|null $reason
+     * @param InteropMessage $replyMessage
+     * @param string         $status
+     * @param string|null    $reason
      *
      * @return static
      */
-    public static function reply(PsrMessage $replyMessage, $status = self::ACK, $reason = null)
+    public static function reply(InteropMessage $replyMessage, $status = self::ACK, $reason = null)
     {
         $status = null === $status ? self::ACK : $status;
 

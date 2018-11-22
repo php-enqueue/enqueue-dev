@@ -1,37 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class DbalDestination implements PsrTopic, PsrQueue
+class DbalDestination implements Topic, Queue
 {
     /**
      * @var string
      */
     private $destinationName;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->destinationName = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->destinationName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
         return $this->destinationName;
     }

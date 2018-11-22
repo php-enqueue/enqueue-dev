@@ -2,13 +2,17 @@
 
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\PostConsume;
+use Enqueue\Consumption\Context\PostMessageReceived;
+use Enqueue\Consumption\Context\PreConsume;
 use Enqueue\Consumption\Extension\LimitConsumptionTimeExtension;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\SubscriptionConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LimitConsumptionTimeExtensionTest extends TestCase
 {
@@ -17,9 +21,16 @@ class LimitConsumptionTimeExtensionTest extends TestCase
         new LimitConsumptionTimeExtension(new \DateTime('+1 day'));
     }
 
-    public function testOnBeforeReceiveShouldInterruptExecutionIfConsumptionTimeExceeded()
+    public function testOnPreConsumeShouldInterruptExecutionIfConsumptionTimeExceeded()
     {
-        $context = $this->createContext();
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            new NullLogger(),
+            1,
+            2,
+            3
+        );
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -27,44 +38,65 @@ class LimitConsumptionTimeExtensionTest extends TestCase
         // test
         $extension = new LimitConsumptionTimeExtension(new \DateTime('-2 second'));
 
-        $extension->onBeforeReceive($context);
+        $extension->onPreConsume($context);
 
         $this->assertTrue($context->isExecutionInterrupted());
     }
 
-    public function testOnIdleShouldInterruptExecutionIfConsumptionTimeExceeded()
+    public function testOnPostConsumeShouldInterruptExecutionIfConsumptionTimeExceeded()
     {
-        $context = $this->createContext();
+        $postConsume = new PostConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            1,
+            1,
+            1,
+            new NullLogger()
+        );
 
         // guard
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postConsume->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumptionTimeExtension(new \DateTime('-2 second'));
 
-        $extension->onIdle($context);
+        $extension->onPostConsume($postConsume);
 
-        $this->assertTrue($context->isExecutionInterrupted());
+        $this->assertTrue($postConsume->isExecutionInterrupted());
     }
 
     public function testOnPostReceivedShouldInterruptExecutionIfConsumptionTimeExceeded()
     {
-        $context = $this->createContext();
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            new NullLogger()
+        );
 
         // guard
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumptionTimeExtension(new \DateTime('-2 second'));
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
 
-        $this->assertTrue($context->isExecutionInterrupted());
+        $this->assertTrue($postReceivedMessage->isExecutionInterrupted());
     }
 
-    public function testOnBeforeReceiveShouldNotInterruptExecutionIfConsumptionTimeIsNotExceeded()
+    public function testOnPreConsumeShouldNotInterruptExecutionIfConsumptionTimeIsNotExceeded()
     {
-        $context = $this->createContext();
+        $context = new PreConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            new NullLogger(),
+            1,
+            2,
+            3
+        );
 
         // guard
         $this->assertFalse($context->isExecutionInterrupted());
@@ -72,51 +104,76 @@ class LimitConsumptionTimeExtensionTest extends TestCase
         // test
         $extension = new LimitConsumptionTimeExtension(new \DateTime('+2 second'));
 
-        $extension->onBeforeReceive($context);
+        $extension->onPreConsume($context);
 
         $this->assertFalse($context->isExecutionInterrupted());
     }
 
-    public function testOnIdleShouldNotInterruptExecutionIfConsumptionTimeIsNotExceeded()
+    public function testOnPostConsumeShouldNotInterruptExecutionIfConsumptionTimeIsNotExceeded()
     {
-        $context = $this->createContext();
+        $postConsume = new PostConsume(
+            $this->createInteropContextMock(),
+            $this->createSubscriptionConsumerMock(),
+            1,
+            1,
+            1,
+            new NullLogger()
+        );
 
         // guard
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postConsume->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumptionTimeExtension(new \DateTime('+2 second'));
 
-        $extension->onIdle($context);
+        $extension->onPostConsume($postConsume);
 
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postConsume->isExecutionInterrupted());
     }
 
     public function testOnPostReceivedShouldNotInterruptExecutionIfConsumptionTimeIsNotExceeded()
     {
-        $context = $this->createContext();
+        $postReceivedMessage = new PostMessageReceived(
+            $this->createInteropContextMock(),
+            $this->createMock(Consumer::class),
+            $this->createMock(Message::class),
+            'aResult',
+            1,
+            new NullLogger()
+        );
 
         // guard
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
 
         // test
         $extension = new LimitConsumptionTimeExtension(new \DateTime('+2 second'));
 
-        $extension->onPostReceived($context);
+        $extension->onPostMessageReceived($postReceivedMessage);
 
-        $this->assertFalse($context->isExecutionInterrupted());
+        $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
     }
 
     /**
-     * @return Context
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createContext()
+    protected function createInteropContextMock(): Context
     {
-        $context = new Context($this->createMock(PsrContext::class));
-        $context->setLogger($this->createMock(LoggerInterface::class));
-        $context->setPsrConsumer($this->createMock(PsrConsumer::class));
-        $context->setPsrProcessor($this->createMock(PsrProcessor::class));
+        return $this->createMock(Context::class);
+    }
 
-        return $context;
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createSubscriptionConsumerMock(): SubscriptionConsumer
+    {
+        return $this->createMock(SubscriptionConsumer::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createLoggerMock(): LoggerInterface
+    {
+        return $this->createMock(LoggerInterface::class);
     }
 }

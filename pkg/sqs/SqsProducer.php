@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Sqs;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PriorityNotSupportedException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
-use Interop\Queue\TimeToLiveNotSupportedException;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Exception\TimeToLiveNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 
-class SqsProducer implements PsrProducer
+class SqsProducer implements Producer
 {
     /**
-     * @var int|float|null
+     * @var int|null
      */
     private $deliveryDelay;
 
@@ -22,33 +24,23 @@ class SqsProducer implements PsrProducer
      */
     private $context;
 
-    /**
-     * @param SqsContext $context
-     */
     public function __construct(SqsContext $context)
     {
         $this->context = $context;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param SqsDestination $destination
      * @param SqsMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, SqsDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
         $body = $message->getBody();
-        if (is_scalar($body) && strlen($body) > 0) {
-            $body = (string) $body;
-        } else {
-            throw new InvalidMessageException(sprintf(
-                'The message body must be a non-empty string. Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
-            ));
+        if (empty($body)) {
+            throw new InvalidMessageException('The message body must be a non-empty string.');
         }
 
         $arguments = [
@@ -86,59 +78,50 @@ class SqsProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
+     * @return SqsProducer
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
     /**
-     * {@inheritdoc}
+     * @return SqsProducer
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
         throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return SqsProducer
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw TimeToLiveNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return null;
     }

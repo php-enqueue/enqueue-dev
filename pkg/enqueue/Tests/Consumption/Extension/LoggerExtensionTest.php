@@ -2,24 +2,21 @@
 
 namespace Enqueue\Tests\Consumption\Extension;
 
-use Enqueue\Consumption\Context;
+use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Extension\LoggerExtension;
-use Enqueue\Consumption\ExtensionInterface;
-use Enqueue\Consumption\Result;
-use Enqueue\Null\NullMessage;
+use Enqueue\Consumption\InitLoggerExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LoggerExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementInitLoggerExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, LoggerExtension::class);
+        $this->assertClassImplements(InitLoggerExtensionInterface::class, LoggerExtension::class);
     }
 
     public function testCouldBeConstructedWithLoggerAsFirstArgument()
@@ -27,159 +24,53 @@ class LoggerExtensionTest extends TestCase
         new LoggerExtension($this->createLogger());
     }
 
-    public function testShouldSetLoggerToContextOnStart()
+    public function testShouldSetLoggerToContextOnInitLogger()
     {
         $logger = $this->createLogger();
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $previousLogger = new NullLogger();
+        $context = new InitLogger($previousLogger);
 
-        $extension->onStart($context);
+        $extension->onInitLogger($context);
 
         $this->assertSame($logger, $context->getLogger());
     }
 
     public function testShouldAddInfoMessageOnStart()
     {
+        $previousLogger = $this->createLogger();
+
         $logger = $this->createLogger();
         $logger
             ->expects($this->once())
             ->method('debug')
-            ->with($this->stringStartsWith('Set context\'s logger'))
+            ->with(sprintf('Change logger from "%s" to "%s"', get_class($logger), get_class($previousLogger)))
         ;
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
+        $context = new InitLogger($previousLogger);
 
-        $extension->onStart($context);
+        $extension->onInitLogger($context);
     }
 
-    public function testShouldLogRejectMessageStatus()
-    {
-        $logger = $this->createLogger();
-        $logger
-            ->expects($this->once())
-            ->method('error')
-            ->with('reason', ['body' => 'message body', 'headers' => [], 'properties' => []])
-        ;
-
-        $extension = new LoggerExtension($logger);
-
-        $message = new NullMessage();
-        $message->setBody('message body');
-
-        $context = new Context($this->createPsrContextMock());
-        $context->setResult(Result::reject('reason'));
-        $context->setPsrMessage($message);
-
-        $extension->onPostReceived($context);
-    }
-
-    public function testShouldLogRequeueMessageStatus()
-    {
-        $logger = $this->createLogger();
-        $logger
-            ->expects($this->once())
-            ->method('error')
-            ->with('reason', ['body' => 'message body', 'headers' => [], 'properties' => []])
-        ;
-
-        $extension = new LoggerExtension($logger);
-
-        $message = new NullMessage();
-        $message->setBody('message body');
-
-        $context = new Context($this->createPsrContextMock());
-        $context->setResult(Result::requeue('reason'));
-        $context->setPsrMessage($message);
-
-        $extension->onPostReceived($context);
-    }
-
-    public function testShouldNotLogRequeueMessageStatusIfReasonIsEmpty()
+    public function testShouldDoNothingIfSameLoggerInstanceAlreadySet()
     {
         $logger = $this->createLogger();
         $logger
             ->expects($this->never())
-            ->method('error')
-        ;
-
-        $extension = new LoggerExtension($logger);
-
-        $context = new Context($this->createPsrContextMock());
-        $context->setResult(Result::requeue());
-
-        $extension->onPostReceived($context);
-    }
-
-    public function testShouldLogAckMessageStatus()
-    {
-        $logger = $this->createLogger();
-        $logger
-            ->expects($this->once())
-            ->method('info')
-            ->with('reason', ['body' => 'message body', 'headers' => [], 'properties' => []])
-        ;
-
-        $extension = new LoggerExtension($logger);
-
-        $message = new NullMessage();
-        $message->setBody('message body');
-
-        $context = new Context($this->createPsrContextMock());
-        $context->setResult(Result::ack('reason'));
-        $context->setPsrMessage($message);
-
-        $extension->onPostReceived($context);
-    }
-
-    public function testShouldNotLogAckMessageStatusIfReasonIsEmpty()
-    {
-        $logger = $this->createLogger();
-        $logger
-            ->expects($this->never())
-            ->method('info')
-        ;
-
-        $extension = new LoggerExtension($logger);
-
-        $context = new Context($this->createPsrContextMock());
-        $context->setResult(Result::ack());
-
-        $extension->onPostReceived($context);
-    }
-
-    public function testShouldNotSetLoggerIfOneHasBeenSetOnStart()
-    {
-        $logger = $this->createLogger();
-
-        $alreadySetLogger = $this->createLogger();
-        $alreadySetLogger
-            ->expects($this->once())
             ->method('debug')
-            ->with(sprintf(
-                'Skip setting context\'s logger "%s". Another one "%s" has already been set.',
-                get_class($logger),
-                get_class($alreadySetLogger)
-            ))
         ;
 
         $extension = new LoggerExtension($logger);
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setLogger($alreadySetLogger);
+        $context = new InitLogger($logger);
 
-        $extension->onStart($context);
-    }
+        $extension->onInitLogger($context);
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
-     */
-    protected function createPsrContextMock()
-    {
-        return $this->createMock(PsrContext::class);
+        $this->assertSame($logger, $context->getLogger());
     }
 
     /**
@@ -188,13 +79,5 @@ class LoggerExtensionTest extends TestCase
     protected function createLogger()
     {
         return $this->createMock(LoggerInterface::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrConsumer
-     */
-    protected function createConsumerMock()
-    {
-        return $this->createMock(PsrConsumer::class);
     }
 }

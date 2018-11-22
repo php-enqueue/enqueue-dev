@@ -2,11 +2,12 @@
 
 namespace Enqueue\Client;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Enqueue\ProcessorRegistryInterface;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Processor;
 
-class DelegateProcessor implements PsrProcessor
+class DelegateProcessor implements Processor
 {
     /**
      * @var ProcessorRegistryInterface
@@ -24,13 +25,13 @@ class DelegateProcessor implements PsrProcessor
     /**
      * {@inheritdoc}
      */
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(InteropMessage $message, Context $context)
     {
-        $processorName = $message->getProperty(Config::PARAMETER_PROCESSOR_NAME);
+        $processorName = $message->getProperty(Config::PROCESSOR);
         if (false == $processorName) {
             throw new \LogicException(sprintf(
                 'Got message without required parameter: "%s"',
-                Config::PARAMETER_PROCESSOR_NAME
+                Config::PROCESSOR
             ));
         }
 

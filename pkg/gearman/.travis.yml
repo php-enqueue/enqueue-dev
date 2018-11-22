@@ -4,7 +4,8 @@ git:
 language: php
 
 php:
-    - '5.6'
+    - '7.1'
+    - '7.2'
 
 cache:
     directories:
@@ -13,7 +14,17 @@ cache:
 install:
     - sudo apt-get update
     - sudo apt-get install libgearman-dev -y --no-install-recommends --no-install-suggests
-    - pecl install gearman
+    - export GEARMAN_PACKAGE=gearman-2.0.3
+    - curl -L -O https://github.com/wcgallego/pecl-gearman/archive/$GEARMAN_PACKAGE.tar.gz
+    - tar zxvf $GEARMAN_PACKAGE.tar.gz
+    - pushd pecl-gearman-$GEARMAN_PACKAGE
+    - phpize
+    - ./configure
+    - make
+    - make install
+    - echo 'extension=gearman.so' > gearman.ini
+    - phpenv config-add gearman.ini
+    - popd
     - composer self-update
     - composer install --prefer-source
 

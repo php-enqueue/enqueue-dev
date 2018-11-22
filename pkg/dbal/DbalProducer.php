@@ -1,16 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Types\Type;
-use Interop\Queue\Exception;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\Exception;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Ramsey\Uuid\Codec\OrderedTimeCodec;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidFactory;
 
-class DbalProducer implements PsrProducer
+class DbalProducer implements Producer
 {
     /**
      * @var int|null
@@ -33,27 +38,29 @@ class DbalProducer implements PsrProducer
     private $context;
 
     /**
+     * @var OrderedTimeCodec
+     */
+    private $uuidCodec;
+
+    /**
      * @param DbalContext $context
      */
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
+        $this->uuidCodec = new OrderedTimeCodec((new UuidFactory())->getUuidBuilder());
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param DbalDestination $destination
      * @param DbalMessage     $message
-     *
-     * @throws Exception
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, DbalDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
-        if (null !== $this->priority && 0 === $message->getPriority()) {
+        if (null !== $this->priority && null === $message->getPriority()) {
             $message->setPriority($this->priority);
         }
         if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
@@ -64,21 +71,7 @@ class DbalProducer implements PsrProducer
         }
 
         $body = $message->getBody();
-        if (is_scalar($body) || null === $body) {
-            $body = (string) $body;
-        } else {
-            throw new InvalidMessageException(sprintf(
-                'The message body must be a scalar or null. Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
-            ));
-        }
-
-        $sql = 'SELECT '.$this->context->getDbalConnection()->getDatabasePlatform()->getGuidExpression();
-        $uuid = $this->context->getDbalConnection()->query($sql)->fetchColumn(0);
-
-        if (empty($uuid)) {
-            throw new \LogicException('The generated uuid is empty');
-        }
+        $uuid = Uuid::uuid4();
 
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
@@ -86,13 +79,16 @@ class DbalProducer implements PsrProducer
         ;
 
         $dbalMessage = [
-            'id' => $uuid,
+            'id' => $this->uuidCodec->encodeBinary($uuid),
             'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
-            'priority' => $message->getPriority(),
+            'priority' => -1 * $message->getPriority(),
             'queue' => $destination->getQueueName(),
+            'redelivered' => false,
+            'delivery_id' => null,
+            'redeliver_after' => null,
         ];
 
         $delay = $message->getDeliveryDelay();
@@ -138,60 +134,47 @@ class DbalProducer implements PsrProducer
                 'queue' => Type::STRING,
                 'time_to_live' => Type::INTEGER,
                 'delayed_until' => Type::INTEGER,
+                'redelivered' => Type::BOOLEAN,
+                'delivery_id' => Type::STRING,
+                'redeliver_after' => Type::BIGINT,
             ]);
         } catch (\Exception $e) {
             throw new Exception('The transport fails to send the message due to some internal error.', null, $e);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         $this->priority = $priority;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
+
+        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }

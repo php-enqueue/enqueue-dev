@@ -1,11 +1,6 @@
 parameters:
     locale: 'en'
     secret: 'ThisTokenIsNotSoSecretChangeIt'
-    env(AWS_SQS_REGION): 'us-east-1'
-    env(AWS_SQS_VERSION): 'latest'
-    env(AWS_SQS_KEY): 'key'
-    env(AWS_SQS_SECRET): 'secret'
-    env(AWS_SQS_ENDPOINT): 'http://localstack:4576'
 
 framework:
     #esi:             ~
@@ -19,28 +14,51 @@ framework:
     router:          { resource: '%kernel.root_dir%/config/routing.yml' }
     default_locale:  '%locale%'
 
-monolog:
-    handlers:
-        main:
-            type: 'null'
-            level: 'error'
-
 services:
+    test_enqueue.client.default.driver:
+        alias: 'enqueue.client.default.driver'
+        public: true
+
+    test_enqueue.client.default.producer:
+        alias: 'enqueue.client.default.producer'
+        public: true
+
+    test_enqueue.transport.default.context:
+        alias: 'enqueue.transport.default.context'
+        public: true
+
+    test_enqueue.transport.consume_command:
+        alias: 'enqueue.transport.consume_command'
+        public: true
+
+    test_enqueue.client.consume_command:
+        alias: 'enqueue.client.consume_command'
+        public: true
+
+    test_enqueue.client.produce_command:
+        alias: 'enqueue.client.produce_command'
+        public: true
+
+    test_enqueue.client.setup_broker_command:
+        alias: 'enqueue.client.setup_broker_command'
+        public: true
+
     test.message.processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.topic_subscriber', client: 'default' }
+            - { name: 'enqueue.transport.processor', transport: 'default' }
 
     test.message.command_processor:
         class: 'Enqueue\Bundle\Tests\Functional\TestCommandProcessor'
         public: true
         tags:
-            - { name: 'enqueue.client.processor' }
+            - { name: 'enqueue.command_subscriber', client: 'default' }
 
     test.sqs_client:
         public: true
-        class: Aws\Sqs\SqsClient
+        class: 'Aws\Sqs\SqsClient'
         arguments:
             -
                 endpoint: '%env(AWS_SQS_ENDPOINT)%'
@@ -49,3 +67,7 @@ services:
                 credentials:
                     key: '%env(AWS_SQS_KEY)%'
                     secret: '%env(AWS_SQS_SECRET)%'
+
+    test.sqs_custom_connection_factory_factory:
+        class: 'Enqueue\Bundle\Tests\Functional\App\SqsCustomConnectionFactoryFactory'
+        arguments: ['@service_container']

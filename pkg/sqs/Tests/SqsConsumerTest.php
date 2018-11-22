@@ -10,17 +10,18 @@ use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Enqueue\Sqs\SqsProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use PHPUnit\Framework\TestCase;
 
-class SqsConsumerTest extends \PHPUnit_Framework_TestCase
+class SqsConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, SqsConsumer::class);
+        $this->assertClassImplements(Consumer::class, SqsConsumer::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -40,10 +41,10 @@ class SqsConsumerTest extends \PHPUnit_Framework_TestCase
     public function testAcknowledgeShouldThrowIfInstanceOfMessageIsInvalid()
     {
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Sqs\SqsMessage but it is Mock_PsrMessage');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Sqs\SqsMessage but it is Mock_Message');
 
         $consumer = new SqsConsumer($this->createContextMock(), new SqsDestination('queue'));
-        $consumer->acknowledge($this->createMock(PsrMessage::class));
+        $consumer->acknowledge($this->createMock(Message::class));
     }
 
     public function testCouldAcknowledgeMessage()
@@ -77,10 +78,10 @@ class SqsConsumerTest extends \PHPUnit_Framework_TestCase
     public function testRejectShouldThrowIfInstanceOfMessageIsInvalid()
     {
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Sqs\SqsMessage but it is Mock_PsrMessage');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Sqs\SqsMessage but it is Mock_Message');
 
         $consumer = new SqsConsumer($this->createContextMock(), new SqsDestination('queue'));
-        $consumer->reject($this->createMock(PsrMessage::class));
+        $consumer->reject($this->createMock(Message::class));
     }
 
     public function testShouldRejectMessage()

@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Jobs
 
 Use jobs when your message flow has several steps(tasks) which run one after another.
@@ -48,9 +57,10 @@ class AppKernel extends Kernel
 # app/config/config.yml
 
 enqueue:
-    # plus basic bundle configuration
-    
-    job: true
+    default:
+        # plus basic bundle configuration
+        
+        job: true
 
 doctrine:
     # plus basic bundle configuration
@@ -84,15 +94,15 @@ Here's how to do it:
 <?php 
 namespace App\Queue;
 
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
+use Interop\Queue\Context;
 use Enqueue\Util\JSON;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Client\CommandSubscriberInterface;
 
-class SearchReindexProcessor implements PsrProcessor, CommandSubscriberInterface
+class SearchReindexProcessor implements Processor, CommandSubscriberInterface
 {
     private $jobRunner;
     
@@ -101,7 +111,7 @@ class SearchReindexProcessor implements PsrProcessor, CommandSubscriberInterface
         $this->jobRunner = $jobRunner;
     }
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -160,11 +170,11 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Util\JSON;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
 
-class Step1Processor implements PsrProcessor 
+class Step1Processor implements Processor 
 {
     /**
      * @var JobRunner
@@ -176,7 +186,7 @@ class Step1Processor implements PsrProcessor
      */
     private $producer;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -207,14 +217,14 @@ class Step1Processor implements PsrProcessor
     }
 }
 
-class Step2Processor implements PsrProcessor 
+class Step2Processor implements Processor 
 {
     /**
      * @var JobRunner
      */
     private $jobRunner;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $data = JSON::decode($message->getBody());
 
@@ -244,11 +254,11 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\DependentJobService;
 use Enqueue\Util\JSON;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Message;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
 
-class ReindexProcessor implements PsrProcessor 
+class ReindexProcessor implements Processor 
 {
     /**
      * @var JobRunner
@@ -260,7 +270,7 @@ class ReindexProcessor implements PsrProcessor
      */
     private $dependentJob;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $data = JSON::decode($message->getBody());
 

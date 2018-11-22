@@ -17,16 +17,7 @@ if ($autoload) {
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
 
-$config = [
-    'host' => getenv('RABBITMQ_HOST'),
-    'port' => getenv('RABBITMQ_AMQP__PORT'),
-    'user' => getenv('RABBITMQ_USER'),
-    'pass' => getenv('RABBITMQ_PASSWORD'),
-    'vhost' => getenv('RABBITMQ_VHOST'),
-    'receive_method' => 'basic_consume',
-];
-
-$factory = new AmqpConnectionFactory($config);
+$factory = new AmqpConnectionFactory(getenv('RABBITMQ_AMQP_DSN'));
 $context = $factory->createContext();
 
 $queue = $context->createQueue('foo');

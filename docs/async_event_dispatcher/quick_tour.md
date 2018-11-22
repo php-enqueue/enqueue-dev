@@ -1,3 +1,12 @@
+<h2 align="center">Supporting Enqueue</h2>
+
+Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
+
+- [Become a sponsor](https://www.patreon.com/makasim)
+- [Become our client](http://forma-pro.com/)
+
+---
+
 # Async event dispatcher (Symfony)
 
 The doc shows how you can setup async event dispatching in plain PHP. 
@@ -39,7 +48,7 @@ $eventQueue = $context->createQueue('symfony_events');
 
 $registry = new SimpleRegistry(
     ['the_event' => 'default'], 
-    ['default' => new PhpSerializerEventTransformer($context, true)]
+    ['default' => new PhpSerializerEventTransformer($context)]
 );
 
 $asyncListener = new AsyncListener($context, $registry, $eventQueue);
@@ -81,7 +90,7 @@ $dispatcher->dispatch('the_event', new GenericEvent('theSubject'));
 
 // consume.php
 
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Processor;
 
 require_once __DIR__.'/vendor/autoload.php';
 include __DIR__.'/config.php';
@@ -93,13 +102,13 @@ while (true) {
         $result = $asyncProcessor->process($message, $context);
 
         switch ((string) $result) {
-            case PsrProcessor::ACK:
+            case Processor::ACK:
                 $consumer->acknowledge($message);
                 break;
-            case PsrProcessor::REJECT:
+            case Processor::REJECT:
                 $consumer->reject($message);
                 break;
-            case PsrProcessor::REQUEUE:
+            case Processor::REQUEUE:
                 $consumer->reject($message, true);
                 break;
             default:

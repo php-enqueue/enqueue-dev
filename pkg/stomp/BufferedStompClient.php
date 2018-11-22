@@ -3,6 +3,7 @@
 namespace Enqueue\Stomp;
 
 use Stomp\Client;
+use Stomp\Transport\Frame;
 
 class BufferedStompClient extends Client
 {
@@ -47,12 +48,9 @@ class BufferedStompClient extends Client
     }
 
     /**
-     * @param string    $subscriptionId
-     * @param int|float $timeout
-     *
-     * @return \Stomp\Transport\Frame
+     * Timeout is in milliseconds.
      */
-    public function readMessageFrame($subscriptionId, $timeout)
+    public function readMessageFrame(string $subscriptionId, int $timeout): ?Frame
     {
         // pop up frame from the buffer
         if (isset($this->buffer[$subscriptionId]) && ($frame = array_shift($this->buffer[$subscriptionId]))) {
@@ -63,18 +61,18 @@ class BufferedStompClient extends Client
 
         // do nothing when buffer is full
         if ($this->currentBufferSize >= $this->bufferSize) {
-            return;
+            return null;
         }
 
         $startTime = microtime(true);
-        $remainingTimeout = $timeout * 1000000;
+        $remainingTimeout = $timeout * 1000;
 
         while (true) {
             $this->getConnection()->setReadTimeout(0, $remainingTimeout);
 
             // there is nothing to read
             if (false === $frame = $this->readFrame()) {
-                return;
+                return null;
             }
 
             if ('MESSAGE' !== $frame->getCommand()) {
@@ -95,7 +93,7 @@ class BufferedStompClient extends Client
                 $remainingTimeout -= (microtime(true) - $startTime) * 1000000;
 
                 if ($remainingTimeout <= 0) {
-                    return;
+                    return null;
                 }
 
                 continue;

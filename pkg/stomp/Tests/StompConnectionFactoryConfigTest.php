@@ -21,10 +21,10 @@ class StompConnectionFactoryConfigTest extends TestCase
         new StompConnectionFactory(new \stdClass());
     }
 
-    public function testThrowIfSchemeIsNotAmqp()
+    public function testThrowIfSchemeIsNotStomp()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given DSN "http://example.com" is not supported. Must start with "stomp:".');
+        $this->expectExceptionMessage('The given DSN is not supported. Must start with "stomp:".');
 
         new StompConnectionFactory('http://example.com');
     }
@@ -32,9 +32,9 @@ class StompConnectionFactoryConfigTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN "stomp://:@/"');
+        $this->expectExceptionMessage('The DSN is invalid.');
 
-        new StompConnectionFactory('stomp://:@/');
+        new StompConnectionFactory('foo');
     }
 
     /**
@@ -113,6 +113,40 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'sync' => true,
                 'lazy' => false,
                 'foo' => 'bar',
+                'ssl_on' => false,
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'stomp://localhost:1234/theVhost?foo=bar&lazy=0&sync=true', 'baz' => 'bazVal', 'foo' => 'fooVal'],
+            [
+                'host' => 'localhost',
+                'port' => 1234,
+                'login' => 'guest',
+                'password' => 'guest',
+                'vhost' => 'theVhost',
+                'buffer_size' => 1000,
+                'connection_timeout' => 1,
+                'sync' => true,
+                'lazy' => false,
+                'foo' => 'bar',
+                'ssl_on' => false,
+                'baz' => 'bazVal',
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'stomp:///%2f'],
+            [
+                'host' => 'localhost',
+                'port' => 61613,
+                'login' => 'guest',
+                'password' => 'guest',
+                'vhost' => '/',
+                'buffer_size' => 1000,
+                'connection_timeout' => 1,
+                'sync' => false,
+                'lazy' => true,
                 'ssl_on' => false,
             ],
         ];

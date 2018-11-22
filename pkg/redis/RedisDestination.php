@@ -1,45 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
-use Interop\Queue\PsrQueue;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Queue;
+use Interop\Queue\Topic;
 
-class RedisDestination implements PsrQueue, PsrTopic
+class RedisDestination implements Queue, Topic
 {
     /**
      * @var string
      */
     private $name;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueName()
+    public function getQueueName(): string
     {
         return $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTopicName()
+    public function getTopicName(): string
     {
         return $this->getName();
     }

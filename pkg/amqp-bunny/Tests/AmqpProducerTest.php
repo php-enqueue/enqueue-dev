@@ -3,7 +3,6 @@
 namespace Enqueue\AmqpBunny\Tests;
 
 use Bunny\Channel;
-use Bunny\Message;
 use Enqueue\AmqpBunny\AmqpContext;
 use Enqueue\AmqpBunny\AmqpProducer;
 use Enqueue\AmqpTools\DelayStrategy;
@@ -12,12 +11,12 @@ use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\DeliveryDelayNotSupportedException;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 
 class AmqpProducerTest extends TestCase
@@ -29,9 +28,9 @@ class AmqpProducerTest extends TestCase
         new AmqpProducer($this->createBunnyChannelMock(), $this->createContextMock());
     }
 
-    public function testShouldImplementPsrProducerInterface()
+    public function testShouldImplementQueueInteropProducerInterface()
     {
-        $this->assertClassImplements(PsrProducer::class, AmqpProducer::class);
+        $this->assertClassImplements(Producer::class, AmqpProducer::class);
     }
 
     public function testShouldThrowExceptionWhenDestinationTypeIsInvalid()
@@ -173,19 +172,19 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrMessage
+     * @return \PHPUnit_Framework_MockObject_MockObject|Message
      */
     private function createMessageMock()
     {
-        return $this->createMock(PsrMessage::class);
+        return $this->createMock(Message::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrDestination
+     * @return \PHPUnit_Framework_MockObject_MockObject|Destination
      */
     private function createDestinationMock()
     {
-        return $this->createMock(PsrDestination::class);
+        return $this->createMock(Destination::class);
     }
 
     /**

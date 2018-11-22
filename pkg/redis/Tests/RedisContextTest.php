@@ -10,9 +10,11 @@ use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
 use Enqueue\Redis\RedisProducer;
+use Enqueue\Redis\RedisSubscriptionConsumer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 
 class RedisContextTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,31 +22,31 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldImplementContextInterface()
     {
-        $this->assertClassImplements(PsrContext::class, RedisContext::class);
+        $this->assertClassImplements(Context::class, RedisContext::class);
     }
 
     public function testCouldBeConstructedWithRedisAsFirstArgument()
     {
-        new RedisContext($this->createRedisMock());
+        new RedisContext($this->createRedisMock(), 300);
     }
 
     public function testCouldBeConstructedWithRedisFactoryAsFirstArgument()
     {
         new RedisContext(function () {
             return $this->createRedisMock();
-        });
+        }, 300);
     }
 
     public function testThrowIfNeitherRedisNorFactoryGiven()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The $redis argument must be either Enqueue\Redis\Redis or callable that returns Enqueue\Redis\Redis once called.');
-        new RedisContext(new \stdClass());
+        new RedisContext(new \stdClass(), 300);
     }
 
     public function testShouldAllowCreateEmptyMessage()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
         $message = $context->createMessage();
 
@@ -57,7 +59,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldAllowCreateCustomMessage()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
         $message = $context->createMessage('theBody', ['aProp' => 'aPropVal'], ['aHeader' => 'aHeaderVal']);
 
@@ -70,7 +72,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateQueue()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
         $queue = $context->createQueue('aQueue');
 
@@ -80,7 +82,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldAllowCreateTopic()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
         $topic = $context->createTopic('aTopic');
 
@@ -90,16 +92,16 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testThrowNotImplementedOnCreateTmpQueueCall()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Not implemented');
+        $this->expectException(TemporaryQueueNotSupportedException::class);
+
         $context->createTemporaryQueue();
     }
 
     public function testShouldCreateProducer()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
         $producer = $context->createProducer();
 
@@ -108,7 +110,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldThrowIfNotRedisDestinationGivenOnCreateConsumer()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Null\NullQueue.');
@@ -119,7 +121,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateConsumer()
     {
-        $context = new RedisContext($this->createRedisMock());
+        $context = new RedisContext($this->createRedisMock(), 300);
 
         $queue = $context->createQueue('aQueue');
 
@@ -136,7 +138,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
             ->method('disconnect')
         ;
 
-        $context = new RedisContext($redisMock);
+        $context = new RedisContext($redisMock, 300);
 
         $context->close();
     }
@@ -149,7 +151,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
             ->method('del')
         ;
 
-        $context = new RedisContext($redisMock);
+        $context = new RedisContext($redisMock, 300);
 
         $this->expectException(InvalidDestinationException::class);
         $context->deleteQueue(new NullQueue('aQueue'));
@@ -159,12 +161,22 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     {
         $redisMock = $this->createRedisMock();
         $redisMock
-            ->expects($this->once())
+            ->expects($this->at(0))
             ->method('del')
             ->with('aQueueName')
         ;
+        $redisMock
+            ->expects($this->at(1))
+            ->method('del')
+            ->with('aQueueName:delayed')
+        ;
+        $redisMock
+            ->expects($this->at(2))
+            ->method('del')
+            ->with('aQueueName:reserved')
+        ;
 
-        $context = new RedisContext($redisMock);
+        $context = new RedisContext($redisMock, 300);
 
         $queue = $context->createQueue('aQueueName');
 
@@ -179,7 +191,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
             ->method('del')
         ;
 
-        $context = new RedisContext($redisMock);
+        $context = new RedisContext($redisMock, 300);
 
         $this->expectException(InvalidDestinationException::class);
         $context->deleteTopic(new NullTopic('aTopic'));
@@ -189,16 +201,33 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     {
         $redisMock = $this->createRedisMock();
         $redisMock
-            ->expects($this->once())
+            ->expects($this->at(0))
             ->method('del')
             ->with('aTopicName')
         ;
+        $redisMock
+            ->expects($this->at(1))
+            ->method('del')
+            ->with('aTopicName:delayed')
+        ;
+        $redisMock
+            ->expects($this->at(2))
+            ->method('del')
+            ->with('aTopicName:reserved')
+        ;
 
-        $context = new RedisContext($redisMock);
+        $context = new RedisContext($redisMock, 300);
 
         $topic = $context->createTopic('aTopicName');
 
         $context->deleteQueue($topic);
+    }
+
+    public function testShouldReturnExpectedSubscriptionConsumerInstance()
+    {
+        $context = new RedisContext($this->createRedisMock(), 300);
+
+        $this->assertInstanceOf(RedisSubscriptionConsumer::class, $context->createSubscriptionConsumer());
     }
 
     /**

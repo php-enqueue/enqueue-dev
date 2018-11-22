@@ -12,9 +12,10 @@ use Interop\Amqp\AmqpProducer;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 
 class RabbitMqDelayPluginDelayStrategyTest extends TestCase
@@ -183,35 +184,35 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
 
 class TestProducer implements AmqpProducer, DelayStrategy
 {
-    public function delayMessage(AmqpContext $context, AmqpDestination $dest, \Interop\Amqp\AmqpMessage $message, $delayMsec)
+    public function delayMessage(AmqpContext $context, AmqpDestination $dest, \Interop\Amqp\AmqpMessage $message, int $delay): void
     {
     }
 
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
     }
 
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
     }
 
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
     }
 
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
     }
 
-    public function getPriority()
+    public function getPriority(): ?int
     {
     }
 
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
     }
 
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
     }
 }

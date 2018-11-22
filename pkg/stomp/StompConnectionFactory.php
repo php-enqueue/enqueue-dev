@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Stomp;
 
-use Interop\Queue\PsrConnectionFactory;
+use Enqueue\Dsn\Dsn;
+use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 use Stomp\Network\Connection;
 
-class StompConnectionFactory implements PsrConnectionFactory
+class StompConnectionFactory implements ConnectionFactory
 {
     /**
      * @var array
@@ -45,6 +49,11 @@ class StompConnectionFactory implements PsrConnectionFactory
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
+            if (array_key_exists('dsn', $config)) {
+                $config = array_replace($config, $this->parseDsn($config['dsn']));
+
+                unset($config['dsn']);
+            }
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
@@ -53,11 +62,9 @@ class StompConnectionFactory implements PsrConnectionFactory
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return StompContext
      */
-    public function createContext()
+    public function createContext(): Context
     {
         if ($this->config['lazy']) {
             return new StompContext(function () {
@@ -68,10 +75,7 @@ class StompConnectionFactory implements PsrConnectionFactory
         return new StompContext($this->establishConnection());
     }
 
-    /**
-     * @return BufferedStompClient
-     */
-    private function establishConnection()
+    private function establishConnection(): BufferedStompClient
     {
         if (false == $this->stomp) {
             $config = $this->config;
@@ -91,40 +95,29 @@ class StompConnectionFactory implements PsrConnectionFactory
         return $this->stomp;
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return array
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): array
     {
-        if (false === strpos($dsn, 'stomp:')) {
-            throw new \LogicException(sprintf('The given DSN "%s" is not supported. Must start with "stomp:".', $dsn));
+        $dsn = Dsn::parseFirst($dsn);
+
+        if ('stomp' !== $dsn->getSchemeProtocol()) {
+            throw new \LogicException(sprintf('The given DSN is not supported. Must start with "stomp:".'));
         }
 
-        if (false === $config = parse_url($dsn)) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
-        }
-
-        if ($query = parse_url($dsn, PHP_URL_QUERY)) {
-            $queryConfig = [];
-            parse_str($query, $queryConfig);
-
-            $config = array_replace($queryConfig, $config);
-        }
-
-        unset($config['query'], $config['scheme']);
-
-        $config['sync'] = empty($config['sync']) ? false : true;
-        $config['lazy'] = empty($config['lazy']) ? false : true;
-
-        return $config;
+        return array_filter(array_replace($dsn->getQuery(), [
+            'host' => $dsn->getHost(),
+            'port' => $dsn->getPort(),
+            'login' => $dsn->getUser(),
+            'password' => $dsn->getPassword(),
+            'vhost' => null !== $dsn->getPath() ? ltrim($dsn->getPath(), '/') : null,
+            'buffer_size' => $dsn->getDecimal('buffer_size'),
+            'connection_timeout' => $dsn->getDecimal('connection_timeout'),
+            'sync' => $dsn->getBool('sync'),
+            'lazy' => $dsn->getBool('lazy'),
+            'ssl_on' => $dsn->getBool('ssl_on'),
+        ]), function ($value) { return null !== $value; });
     }
 
-    /**
-     * @return array
-     */
-    private function defaultConfig()
+    private function defaultConfig(): array
     {
         return [
             'host' => 'localhost',

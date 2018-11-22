@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\RdKafka;
 
 class JsonSerializer implements Serializer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function toString(RdKafkaMessage $message)
+    public function toString(RdKafkaMessage $message): string
     {
         $json = json_encode([
             'body' => $message->getBody(),
@@ -26,10 +25,7 @@ class JsonSerializer implements Serializer
         return $json;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function toMessage($string)
+    public function toMessage(string $string): RdKafkaMessage
     {
         $data = json_decode($string, true);
         if (JSON_ERROR_NONE !== json_last_error()) {

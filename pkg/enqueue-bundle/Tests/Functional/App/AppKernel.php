@@ -15,7 +15,6 @@ class AppKernel extends Kernel
         $bundles = [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new \Symfony\Bundle\MonologBundle\MonologBundle(),
             new \Enqueue\Bundle\EnqueueBundle(),
         ];
 
@@ -44,21 +43,6 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config.yml');
-    }
-
-    protected function getKernelParameters()
-    {
-        $parameters = parent::getKernelParameters();
-
-        // it works in all Symfony version, 2.8, 3.x, 4.x
-        $parameters['db.driver'] = getenv('DOCTRINE_DRIVER');
-        $parameters['db.host'] = getenv('DOCTRINE_HOST');
-        $parameters['db.port'] = getenv('DOCTRINE_PORT');
-        $parameters['db.name'] = getenv('DOCTRINE_DB_NAME');
-        $parameters['db.user'] = getenv('DOCTRINE_USER');
-        $parameters['db.password'] = getenv('DOCTRINE_PASSWORD');
-
-        return $parameters;
     }
 
     protected function getContainerClass()

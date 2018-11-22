@@ -5,21 +5,24 @@ namespace Enqueue\Tests\Client\ConsumptionExtension;
 use Enqueue\Client\Config;
 use Enqueue\Client\ConsumptionExtension\SetRouterPropertiesExtension;
 use Enqueue\Client\DriverInterface;
-use Enqueue\Consumption\Context;
-use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class SetRouterPropertiesExtensionTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testShouldImplementExtensionInterface()
+    public function testShouldImplementMessageReceivedExtensionInterface()
     {
-        $this->assertClassImplements(ExtensionInterface::class, SetRouterPropertiesExtension::class);
+        $this->assertClassImplements(MessageReceivedExtensionInterface::class, SetRouterPropertiesExtension::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -29,7 +32,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
     public function testShouldSetRouterProcessorPropertyIfNotSetAndOnRouterQueue()
     {
-        $config = Config::create('test', '', '', 'router-queue', '', 'router-processor-name');
+        $config = Config::create('test', '.', '', '', 'router-queue', '', 'router-processor-name');
         $queue = new NullQueue('test.router-queue');
 
         $driver = $this->createDriverMock();
@@ -47,16 +50,20 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $message = new NullMessage();
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
-        $context->setPsrQueue(new NullQueue('test.router-queue'));
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(new NullQueue('test.router-queue')),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $extension = new SetRouterPropertiesExtension($driver);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
         $this->assertEquals([
-            'enqueue.processor_name' => 'router-processor-name',
-            'enqueue.processor_queue_name' => 'router-queue',
+            Config::PROCESSOR => 'router-processor-name',
         ], $message->getProperties());
     }
 
@@ -80,12 +87,17 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $message = new NullMessage();
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
-        $context->setPsrQueue(new NullQueue('test.another-queue'));
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(new NullQueue('test.another-queue')),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $extension = new SetRouterPropertiesExtension($driver);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
         $this->assertEquals([], $message->getProperties());
     }
@@ -99,32 +111,63 @@ class SetRouterPropertiesExtensionTest extends TestCase
         ;
 
         $message = new NullMessage();
-        $message->setProperty(Config::PARAMETER_PROCESSOR_NAME, 'non-router-processor');
+        $message->setProperty(Config::PROCESSOR, 'non-router-processor');
 
-        $context = new Context($this->createPsrContextMock());
-        $context->setPsrMessage($message);
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
 
         $extension = new SetRouterPropertiesExtension($driver);
-        $extension->onPreReceived($context);
+        $extension->onMessageReceived($messageReceived);
 
         $this->assertEquals([
-            'enqueue.processor_name' => 'non-router-processor',
+            'enqueue.processor' => 'non-router-processor',
         ], $message->getProperties());
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
      */
-    protected function createPsrContextMock()
+    protected function createContextMock(): InteropContext
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(InteropContext::class);
     }
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
      */
-    protected function createDriverMock()
+    protected function createDriverMock(): DriverInterface
     {
         return $this->createMock(DriverInterface::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createProcessorMock(): Processor
+    {
+        return $this->createMock(Processor::class);
+    }
+
+    /**
+     * @param mixed $queue
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createConsumerStub($queue): Consumer
+    {
+        $consumerMock = $this->createMock(Consumer::class);
+        $consumerMock
+            ->expects($this->any())
+            ->method('getQueue')
+            ->willReturn($queue)
+        ;
+
+        return $consumerMock;
     }
 }

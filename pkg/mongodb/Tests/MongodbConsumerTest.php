@@ -8,20 +8,21 @@ use Enqueue\Mongodb\MongodbDestination;
 use Enqueue\Mongodb\MongodbMessage;
 use Enqueue\Mongodb\MongodbProducer;
 use Enqueue\Test\ClassExtensionTrait;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Consumer;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mongodb
  */
-class MongodbConsumerTest extends \PHPUnit_Framework_TestCase
+class MongodbConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 
     public function testShouldImplementConsumerInterface()
     {
-        $this->assertClassImplements(PsrConsumer::class, MongodbConsumer::class);
+        $this->assertClassImplements(Consumer::class, MongodbConsumer::class);
     }
 
     public function testCouldBeConstructedWithRequiredArguments()
@@ -128,85 +129,85 @@ class MongodbConsumerTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class InvalidMessage implements PsrMessage
+class InvalidMessage implements Message
 {
-    public function getBody()
+    public function getBody(): string
     {
     }
 
-    public function setBody($body)
+    public function setBody(string $body): void
     {
     }
 
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
     }
 
-    public function getProperties()
+    public function getProperties(): array
     {
     }
 
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
     }
 
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
     }
 
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
     }
 
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
     }
 
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
     }
 
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
     }
 
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
     }
 
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
     }
 
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
     }
 
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
     }
 
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
     }
 
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
     }
 
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
     }
 
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
     }
 
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
     }
 }

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Sqs;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class SqsMessage implements PsrMessage
+class SqsMessage implements Message
 {
     /**
      * @var string
@@ -46,12 +48,7 @@ class SqsMessage implements PsrMessage
      */
     private $receiptHandle;
 
-    /**
-     * @param string $body
-     * @param array  $properties
-     * @param array  $headers
-     */
-    public function __construct($body = '', array $properties = [], array $headers = [])
+    public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -60,164 +57,104 @@ class SqsMessage implements PsrMessage
         $this->delaySeconds = 0;
     }
 
-    /**
-     * @param string $body
-     */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
         $this->properties = $properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
         $this->properties[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
         return array_key_exists($name, $this->properties) ? $this->properties[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
         $this->headers[$name] = $value;
     }
 
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
         return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
         return $this->redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
         $this->redelivered = $redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
         return $this->getHeader('reply_to');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
         $this->setHeader('correlation_id', $correlationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
         return $this->getHeader('correlation_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
         $this->setHeader('message_id', $messageId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
         return $this->getHeader('message_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         $value = $this->getHeader('timestamp');
 
         return null === $value ? null : (int) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
@@ -229,18 +166,13 @@ class SqsMessage implements PsrMessage
      * When you set FifoQueue, you can't set DelaySeconds per message. You can set this parameter only on a queue level.
      *
      * Set delay in seconds
-     *
-     * @param int $seconds
      */
-    public function setDelaySeconds($seconds)
+    public function setDelaySeconds(int $seconds): void
     {
-        $this->delaySeconds = (int) $seconds;
+        $this->delaySeconds = $seconds;
     }
 
-    /**
-     * @return int
-     */
-    public function getDelaySeconds()
+    public function getDelaySeconds(): int
     {
         return $this->delaySeconds;
     }
@@ -251,18 +183,13 @@ class SqsMessage implements PsrMessage
      * The token used for deduplication of sent messages. If a message with a particular MessageDeduplicationId is sent successfully,
      * any messages sent with the same MessageDeduplicationId are accepted successfully but aren't delivered during the 5-minute
      * deduplication interval. For more information, see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing.
-     *
-     * @param string|null $id
      */
-    public function setMessageDeduplicationId($id)
+    public function setMessageDeduplicationId(string $id = null): void
     {
         $this->messageDeduplicationId = $id;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getMessageDeduplicationId()
+    public function getMessageDeduplicationId(): ?string
     {
         return $this->messageDeduplicationId;
     }
@@ -275,18 +202,13 @@ class SqsMessage implements PsrMessage
      * To interleave multiple ordered streams within a single queue, use MessageGroupId values (for example, session data
      * for multiple users). In this scenario, multiple readers can process the queue, but the session data
      * of each user is processed in a FIFO fashion.
-     *
-     * @param string|null $id
      */
-    public function setMessageGroupId($id)
+    public function setMessageGroupId(string $id = null): void
     {
         $this->messageGroupId = $id;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getMessageGroupId()
+    public function getMessageGroupId(): ?string
     {
         return $this->messageGroupId;
     }
@@ -297,18 +219,13 @@ class SqsMessage implements PsrMessage
      *
      * If you receive a message more than once, each time you receive it, you get a different receipt handle.
      * You must provide the most recently received receipt handle when you request to delete the message (otherwise, the message might not be deleted).
-     *
-     * @param string $receipt
      */
-    public function setReceiptHandle($receipt)
+    public function setReceiptHandle(string $receipt = null): void
     {
         $this->receiptHandle = $receipt;
     }
 
-    /**
-     * @return string
-     */
-    public function getReceiptHandle()
+    public function getReceiptHandle(): ?string
     {
         return $this->receiptHandle;
     }

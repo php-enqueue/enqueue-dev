@@ -4,15 +4,15 @@ namespace Enqueue\Bundle\Tests\Functional\App;
 
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class TestExclusiveCommandSubscriberProcessor implements PsrProcessor, CommandSubscriberInterface
+class TestExclusiveCommandSubscriberProcessor implements Processor, CommandSubscriberInterface
 {
     public $calls = [];
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $this->calls[] = $message;
 
@@ -22,9 +22,10 @@ class TestExclusiveCommandSubscriberProcessor implements PsrProcessor, CommandSu
     public static function getSubscribedCommand()
     {
         return [
-            'processorName' => 'theExclusiveCommandName',
-            'queueName' => 'the_exclusive_command_queue',
-            'queueNameHardcoded' => true,
+            'command' => 'theExclusiveCommandName',
+            'processor' => 'theExclusiveCommandName',
+            'queue' => 'the_exclusive_command_queue',
+            'prefix_queue' => true,
             'exclusive' => true,
         ];
     }

@@ -1,36 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Pheanstalk;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 use Pheanstalk\Pheanstalk;
 
-class PheanstalkProducer implements PsrProducer
+class PheanstalkProducer implements Producer
 {
     /**
      * @var Pheanstalk
      */
     private $pheanstalk;
 
-    /**
-     * @param Pheanstalk $pheanstalk
-     */
     public function __construct(Pheanstalk $pheanstalk)
     {
         $this->pheanstalk = $pheanstalk;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param PheanstalkDestination $destination
      * @param PheanstalkMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, PheanstalkDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, PheanstalkMessage::class);
@@ -53,61 +51,52 @@ class PheanstalkProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
+     * @return PheanstalkProducer
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return PheanstalkProducer
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
-        throw new \LogicException('Not implemented');
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @return PheanstalkProducer
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return null;
     }

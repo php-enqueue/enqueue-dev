@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\AmqpLib;
 
 use Enqueue\AmqpTools\DelayStrategyAware;
@@ -9,13 +11,14 @@ use Interop\Amqp\AmqpMessage as InteropAmqpMessage;
 use Interop\Amqp\AmqpProducer as InteropAmqpProducer;
 use Interop\Amqp\AmqpQueue as InteropAmqpQueue;
 use Interop\Amqp\AmqpTopic as InteropAmqpTopic;
-use Interop\Queue\DeliveryDelayNotSupportedException;
-use Interop\Queue\Exception;
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrTopic;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
+use Interop\Queue\Exception\Exception;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
+use Interop\Queue\Topic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
@@ -49,10 +52,6 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
      */
     private $context;
 
-    /**
-     * @param AMQPChannel $channel
-     * @param AmqpContext $context
-     */
     public function __construct(AMQPChannel $channel, AmqpContext $context)
     {
         $this->channel = $channel;
@@ -60,14 +59,12 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param InteropAmqpTopic|InteropAmqpQueue $destination
      * @param InteropAmqpMessage                $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
-        $destination instanceof PsrTopic
+        $destination instanceof Topic
             ? InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpTopic::class)
             : InvalidDestinationException::assertDestinationInstanceOf($destination, InteropAmqpQueue::class)
         ;
@@ -82,9 +79,9 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $this->delayStrategy) {
             throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
@@ -95,51 +92,42 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return $this->deliveryDelay;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         $this->priority = $priority;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }
 
-    private function doSend(InteropAmqpDestination $destination, InteropAmqpMessage $message)
+    private function doSend(InteropAmqpDestination $destination, InteropAmqpMessage $message): void
     {
         if (null !== $this->priority && null === $message->getPriority()) {
             $message->setPriority($this->priority);

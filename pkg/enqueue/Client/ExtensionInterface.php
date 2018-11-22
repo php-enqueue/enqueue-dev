@@ -2,21 +2,6 @@
 
 namespace Enqueue\Client;
 
-interface ExtensionInterface
+interface ExtensionInterface extends PreSendEventExtensionInterface, PreSendCommandExtensionInterface, DriverPreSendExtensionInterface, PostSendExtensionInterface
 {
-    /**
-     * @param string  $topic
-     * @param Message $message
-     *
-     * @return
-     */
-    public function onPreSend($topic, Message $message);
-
-    /**
-     * @param string  $topic
-     * @param Message $message
-     *
-     * @return
-     */
-    public function onPostSend($topic, Message $message);
 }

@@ -3,20 +3,20 @@
 namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Client\CommandSubscriberInterface;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class TestCommandProcessor implements PsrProcessor, CommandSubscriberInterface
+class TestCommandProcessor implements Processor, CommandSubscriberInterface
 {
     const COMMAND = 'test-command';
 
     /**
-     * @var PsrMessage
+     * @var Message
      */
     public $message;
 
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $this->message = $message;
 

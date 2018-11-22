@@ -1,9 +1,0 @@
-services:
-    enqueue.client.delay_redelivered_message_extension:
-        class: 'Enqueue\Client\ConsumptionExtension\DelayRedeliveredMessageExtension'
-        public: false
-        arguments:
-            - '@enqueue.client.driver'
-            - ~
-        tags:
-            - { name: 'enqueue.consumption.extension', priority: 10 }

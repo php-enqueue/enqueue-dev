@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Stomp;
 
-use Interop\Queue\InvalidDestinationException;
-use Interop\Queue\InvalidMessageException;
-use Interop\Queue\PsrDestination;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProducer;
+use Interop\Queue\Destination;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Message;
+use Interop\Queue\Producer;
 use Stomp\Client;
 use Stomp\Transport\Message as StompLibMessage;
 
-class StompProducer implements PsrProducer
+class StompProducer implements Producer
 {
     /**
      * @var Client
@@ -26,15 +29,12 @@ class StompProducer implements PsrProducer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param StompDestination $destination
      * @param StompMessage     $message
      */
-    public function send(PsrDestination $destination, PsrMessage $message)
+    public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
-
         InvalidMessageException::assertMessageInstanceOf($message, StompMessage::class);
 
         $headers = array_merge($message->getHeaders(), $destination->getHeaders());
@@ -45,62 +45,44 @@ class StompProducer implements PsrProducer
         $this->stomp->send($destination->getQueueName(), $stompMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeliveryDelay($deliveryDelay)
+    public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDeliveryDelay()
+    public function getDeliveryDelay(): ?int
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority = null): Producer
     {
         if (null === $priority) {
-            return;
+            return $this;
         }
 
-        throw new \LogicException('Not implemented');
+        throw PriorityNotSupportedException::providerDoestNotSupportIt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
-            return;
+            return $this;
         }
 
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return null;
     }

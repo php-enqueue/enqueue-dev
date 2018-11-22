@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Redis;
 
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Message;
 
-class RedisMessage implements PsrMessage, \JsonSerializable
+class RedisMessage implements Message
 {
     /**
      * @var string
@@ -27,11 +29,16 @@ class RedisMessage implements PsrMessage, \JsonSerializable
     private $redelivered;
 
     /**
-     * @param string $body
-     * @param array  $properties
-     * @param array  $headers
+     * @var string
      */
-    public function __construct($body = '', array $properties = [], array $headers = [])
+    private $reservedKey;
+
+    /**
+     * @var string
+     */
+    private $key;
+
+    public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -40,196 +47,174 @@ class RedisMessage implements PsrMessage, \JsonSerializable
         $this->redelivered = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(array $properties)
+    public function setProperties(array $properties): void
     {
         $this->properties = $properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $value)
+    public function setProperty(string $name, $value): void
     {
         $this->properties[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
         return array_key_exists($name, $this->properties) ? $this->properties[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeader($name, $value)
+    public function setHeader(string $name, $value): void
     {
         $this->headers[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($name, $default = null)
+    public function getHeader(string $name, $default = null)
     {
         return array_key_exists($name, $this->headers) ? $this->headers[$name] : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRedelivered($redelivered)
+    public function setRedelivered(bool $redelivered): void
     {
         $this->redelivered = (bool) $redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isRedelivered()
+    public function isRedelivered(): bool
     {
         return $this->redelivered;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCorrelationId($correlationId)
+    public function setCorrelationId(string $correlationId = null): void
     {
         $this->setHeader('correlation_id', $correlationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCorrelationId()
+    public function getCorrelationId(): ?string
     {
         return $this->getHeader('correlation_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMessageId($messageId)
+    public function setMessageId(string $messageId = null): void
     {
         $this->setHeader('message_id', $messageId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessageId()
+    public function getMessageId(): ?string
     {
         return $this->getHeader('message_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         $value = $this->getHeader('timestamp');
 
         return null === $value ? null : (int) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getReplyTo()
+    public function getReplyTo(): ?string
     {
         return $this->getHeader('reply_to');
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
-    public function jsonSerialize()
+    public function getAttempts(): int
     {
-        return [
-            'body' => $this->getBody(),
-            'properties' => $this->getProperties(),
-            'headers' => $this->getHeaders(),
-        ];
+        return (int) $this->getHeader('attempts', 0);
     }
 
     /**
-     * @param string $json
-     *
-     * @return RedisMessage
+     * @return int
      */
-    public static function jsonUnserialize($json)
+    public function getTimeToLive(): ?int
     {
-        $data = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
-        }
+        return $this->getHeader('time_to_live');
+    }
 
-        return new self($data['body'], $data['properties'], $data['headers']);
+    /**
+     * Set time to live in milliseconds.
+     */
+    public function setTimeToLive(int $timeToLive = null): void
+    {
+        $this->setHeader('time_to_live', $timeToLive);
+    }
+
+    public function getDeliveryDelay(): ?int
+    {
+        return $this->getHeader('delivery_delay');
+    }
+
+    /**
+     * Set delay in milliseconds.
+     */
+    public function setDeliveryDelay(int $deliveryDelay = null): void
+    {
+        $this->setHeader('delivery_delay', $deliveryDelay);
+    }
+
+    /**
+     * @return string
+     */
+    public function getReservedKey(): ?string
+    {
+        return $this->reservedKey;
+    }
+
+    /**
+     * @param string $reservedKey
+     */
+    public function setReservedKey(string $reservedKey)
+    {
+        $this->reservedKey = $reservedKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey(): ?string
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function setKey(string $key): void
+    {
+        $this->key = $key;
     }
 }

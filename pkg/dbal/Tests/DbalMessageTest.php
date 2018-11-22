@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\TestCase;
 
-class DbalMessageTest extends \PHPUnit_Framework_TestCase
+class DbalMessageTest extends TestCase
 {
     use ClassExtensionTrait;
 
@@ -27,11 +30,11 @@ class DbalMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['fooHeader' => 'fooHeaderVal'], $message->getHeaders());
     }
 
-    public function testShouldSetPriorityToZeroInConstructor()
+    public function testShouldSetPriorityToNullInConstructor()
     {
         $message = new DbalMessage();
 
-        $this->assertSame(0, $message->getPriority());
+        $this->assertNull($message->getPriority());
     }
 
     public function testShouldSetDelayToNullInConstructor()

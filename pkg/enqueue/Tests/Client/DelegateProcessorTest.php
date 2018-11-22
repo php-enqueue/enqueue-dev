@@ -4,10 +4,10 @@ namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
-use Enqueue\Client\ProcessorRegistryInterface;
 use Enqueue\Null\NullMessage;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrProcessor;
+use Enqueue\ProcessorRegistryInterface;
+use Interop\Queue\Context;
+use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 
 class DelegateProcessorTest extends TestCase
@@ -19,21 +19,19 @@ class DelegateProcessorTest extends TestCase
 
     public function testShouldThrowExceptionIfProcessorNameIsNotSet()
     {
-        $this->setExpectedException(
-            \LogicException::class,
-            'Got message without required parameter: "enqueue.processor_name"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Got message without required parameter: "enqueue.processor"');
 
         $processor = new DelegateProcessor($this->createProcessorRegistryMock());
-        $processor->process(new NullMessage(), $this->createPsrContextMock());
+        $processor->process(new NullMessage(), $this->createContextMock());
     }
 
     public function testShouldProcessMessage()
     {
-        $session = $this->createPsrContextMock();
+        $session = $this->createContextMock();
         $message = new NullMessage();
         $message->setProperties([
-            Config::PARAMETER_PROCESSOR_NAME => 'processor-name',
+            Config::PROCESSOR => 'processor-name',
         ]);
 
         $processor = $this->createProcessorMock();
@@ -67,18 +65,18 @@ class DelegateProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|Context
      */
-    protected function createPsrContextMock()
+    protected function createContextMock()
     {
-        return $this->createMock(PsrContext::class);
+        return $this->createMock(Context::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PsrProcessor
+     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
      */
     protected function createProcessorMock()
     {
-        return $this->createMock(PsrProcessor::class);
+        return $this->createMock(Processor::class);
     }
 }

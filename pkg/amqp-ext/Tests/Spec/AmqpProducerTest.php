@@ -3,12 +3,12 @@
 namespace Enqueue\AmqpExt\Tests\Spec;
 
 use Enqueue\AmqpExt\AmqpConnectionFactory;
-use Interop\Queue\Spec\PsrProducerSpec;
+use Interop\Queue\Spec\ProducerSpec;
 
 /**
  * @group functional
  */
-class AmqpProducerTest extends PsrProducerSpec
+class AmqpProducerTest extends ProducerSpec
 {
     /**
      * {@inheritdoc}
