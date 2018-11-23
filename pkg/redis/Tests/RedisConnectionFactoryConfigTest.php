@@ -315,6 +315,50 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
+        // password as user
+        yield [
+            'redis://asdfqwer1234asdf@foo',
+            [
+                'host' => 'foo',
+                'scheme' => 'redis',
+                'port' => 6379,
+                'timeout' => 5.,
+                'database' => null,
+                'password' => 'asdfqwer1234asdf',
+                'scheme_extensions' => [],
+                'path' => null,
+                'async' => false,
+                'persistent' => false,
+                'lazy' => true,
+                'read_write_timeout' => null,
+                'predis_options' => null,
+                'ssl' => null,
+                'redelivery_delay' => 300,
+            ],
+        ];
+
+        // password as query parameter
+        yield [
+            'redis:?password=asdfqwer1234asdf',
+            [
+                'host' => '127.0.0.1',
+                'scheme' => 'redis',
+                'port' => 6379,
+                'timeout' => 5.,
+                'database' => null,
+                'password' => 'asdfqwer1234asdf',
+                'scheme_extensions' => [],
+                'path' => null,
+                'async' => false,
+                'persistent' => false,
+                'lazy' => true,
+                'read_write_timeout' => null,
+                'predis_options' => null,
+                'ssl' => null,
+                'redelivery_delay' => 300,
+            ],
+        ];
+
         // from predis doc
 
         yield [
