@@ -382,6 +382,36 @@ class DsnTest extends TestCase
         $this->assertCount(3, $dsns);
     }
 
+    public function testShouldParseDsnWithOnlyUser()
+    {
+        $dsn = Dsn::parseFirst('foo://user@host');
+
+        $this->assertSame('user', $dsn->getUser());
+        $this->assertNull($dsn->getPassword());
+        $this->assertSame('foo', $dsn->getScheme());
+        $this->assertSame('host', $dsn->getHost());
+    }
+
+    public function testShouldUrlEncodeUser()
+    {
+        $dsn = Dsn::parseFirst('foo://us%3Aer@host');
+
+        $this->assertSame('us:er', $dsn->getUser());
+        $this->assertNull($dsn->getPassword());
+        $this->assertSame('foo', $dsn->getScheme());
+        $this->assertSame('host', $dsn->getHost());
+    }
+
+    public function testShouldUrlEncodePassword()
+    {
+        $dsn = Dsn::parseFirst('foo://user:pass%3Aword@host');
+
+        $this->assertSame('user', $dsn->getUser());
+        $this->assertSame('pass:word', $dsn->getPassword());
+        $this->assertSame('foo', $dsn->getScheme());
+        $this->assertSame('host', $dsn->getHost());
+    }
+
     public static function provideSchemes()
     {
         yield [':', '', '', []];

@@ -226,7 +226,14 @@ class Dsn
         $schemeExtensions = array_values($schemeParts);
 
         $user = parse_url($dsn, PHP_URL_USER) ?: null;
+        if (is_string($user)) {
+            $user = rawurldecode($user);
+        }
+
         $password = parse_url($dsn, PHP_URL_PASS) ?: null;
+        if (is_string($password)) {
+            $password = rawurldecode($password);
+        }
 
         $path = parse_url($dsn, PHP_URL_PATH) ?: null;
         if ($path) {
