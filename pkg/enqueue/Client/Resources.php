@@ -81,7 +81,7 @@ final class Resources
                 'packages' => ['enqueue/enqueue', 'enqueue/gps'],
             ];
             $map[] = [
-                'schemes' => ['redis'],
+                'schemes' => ['redis', 'rediss'],
                 'driverClass' => RedisDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/redis'],

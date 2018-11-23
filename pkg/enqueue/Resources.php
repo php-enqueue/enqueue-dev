@@ -143,7 +143,7 @@ final class Resources
                 'package' => 'enqueue/rdkafka',
             ];
             $map[RedisConnectionFactory::class] = [
-                'schemes' => ['redis'],
+                'schemes' => ['redis', 'rediss'],
                 'supportedSchemeExtensions' => ['predis', 'phpredis'],
                 'package' => 'enqueue/redis',
             ];

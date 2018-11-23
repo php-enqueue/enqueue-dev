@@ -31,7 +31,7 @@ class PhpRedis implements Redis
         try {
             return $this->redis->eval($script, array_merge($keys, $args), count($keys));
         } catch (\RedisException $e) {
-            throw new ServerException('eval command has failed', null, $e);
+            throw new ServerException('eval command has failed', 0, $e);
         }
     }
 
@@ -40,7 +40,7 @@ class PhpRedis implements Redis
         try {
             return $this->redis->zAdd($key, $score, $value);
         } catch (\RedisException $e) {
-            throw new ServerException('zadd command has failed', null, $e);
+            throw new ServerException('zadd command has failed', 0, $e);
         }
     }
 
@@ -49,7 +49,7 @@ class PhpRedis implements Redis
         try {
             return $this->redis->zRem($key, $value);
         } catch (\RedisException $e) {
-            throw new ServerException('zrem command has failed', null, $e);
+            throw new ServerException('zrem command has failed', 0, $e);
         }
     }
 
@@ -58,7 +58,7 @@ class PhpRedis implements Redis
         try {
             return $this->redis->lPush($key, $value);
         } catch (\RedisException $e) {
-            throw new ServerException('lpush command has failed', null, $e);
+            throw new ServerException('lpush command has failed', 0, $e);
         }
     }
 
@@ -71,7 +71,7 @@ class PhpRedis implements Redis
 
             return null;
         } catch (\RedisException $e) {
-            throw new ServerException('brpop command has failed', null, $e);
+            throw new ServerException('brpop command has failed', 0, $e);
         }
     }
 
@@ -84,7 +84,7 @@ class PhpRedis implements Redis
 
             return null;
         } catch (\RedisException $e) {
-            throw new ServerException('rpop command has failed', null, $e);
+            throw new ServerException('rpop command has failed', 0, $e);
         }
     }
 

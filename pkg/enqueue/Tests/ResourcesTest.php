@@ -33,7 +33,7 @@ class ResourcesTest extends TestCase
 
         $connectionInfo = $availableConnections[RedisConnectionFactory::class];
         $this->assertArrayHasKey('schemes', $connectionInfo);
-        $this->assertSame(['redis'], $connectionInfo['schemes']);
+        $this->assertSame(['redis', 'rediss'], $connectionInfo['schemes']);
 
         $this->assertArrayHasKey('supportedSchemeExtensions', $connectionInfo);
         $this->assertSame(['predis', 'phpredis'], $connectionInfo['supportedSchemeExtensions']);
@@ -51,7 +51,7 @@ class ResourcesTest extends TestCase
 
         $connectionInfo = $availableConnections[RedisConnectionFactory::class];
         $this->assertArrayHasKey('schemes', $connectionInfo);
-        $this->assertSame(['redis'], $connectionInfo['schemes']);
+        $this->assertSame(['redis', 'rediss'], $connectionInfo['schemes']);
 
         $this->assertArrayHasKey('supportedSchemeExtensions', $connectionInfo);
         $this->assertSame(['predis', 'phpredis'], $connectionInfo['supportedSchemeExtensions']);

@@ -135,7 +135,7 @@ class RedisConnectionFactory implements ConnectionFactory
             'port' => $dsn->getPort(),
             'path' => $dsn->getPath(),
             'database' => $database,
-            'password' => $dsn->getPassword(),
+            'password' => $dsn->getPassword() ?: $dsn->getUser() ?: $dsn->getString('password'),
             'async' => $dsn->getBool('async'),
             'persistent' => $dsn->getBool('persistent'),
             'timeout' => $dsn->getFloat('timeout'),
