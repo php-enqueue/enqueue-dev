@@ -51,7 +51,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
             $context->getLibChannel()->getConnection()->getIO()->check_heartbeat();
         };
 
-        $this->heartbeatOnTick && register_tick_function($heartbeatOnTick);
+        $this->heartbeatOnTick && register_tick_function($heartbeatOnTick, $this->context);
 
         try {
             while (true) {
