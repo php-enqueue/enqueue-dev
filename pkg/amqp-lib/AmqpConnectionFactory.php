@@ -47,6 +47,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             ->addDefaultOption('login_response', null)
             ->addDefaultOption('locale', 'en_US')
             ->addDefaultOption('keepalive', false)
+            ->addDefaultOption('heartbeat_on_tick', true)
             ->parse()
         ;
 

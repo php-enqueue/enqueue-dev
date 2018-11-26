@@ -110,7 +110,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        return new AmqpSubscriptionConsumer($this);
+        return new AmqpSubscriptionConsumer($this, (bool) $this->config['heartbeat_on_tick']);
     }
 
     /**
