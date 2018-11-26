@@ -34,7 +34,7 @@ Parts:
 * [Consume message](#consume-message)
 * [Subscription consumer](#subscription-consumer)
 * [Purge queue messages](#purge-queue-messages)
-* [Long running task, heartbeat, timeouts](#long-running-task,-heartbeat,-timeouts)
+* [Long running task and heartbeat and timeouts](#long-running-task-and-heartbeat-and-timeouts)
 
 ## Installation
 
@@ -285,10 +285,10 @@ $queue = $context->createQueue('aQueue');
 $context->purgeQueue($queue);
 ```
 
-## Long running task, heartbeat, timeouts
+## Long running task and heartbeat and timeouts
 
 AMQP relies on heartbeat feature to make sure consumer is still there. 
-Basically consumer is expected to send heartbeat frames from time to time to RabbitMQ broker.
+Basically consumer is expected to send heartbeat frames from time to time to RabbitMQ broker so the broker does not close the connection.
 It is not possible to implement heartbeat feature in PHP, due to its synchronous nature. 
 You could read more about the issues in post: [Keeping RabbitMQ connections alive in PHP](https://blog.mollie.com/keeping-rabbitmq-connections-alive-in-php-b11cb657d5fb).
 
