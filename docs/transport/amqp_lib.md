@@ -12,6 +12,15 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 Implements [AMQP specifications](https://www.rabbitmq.com/specification.html) and implements [amqp interop](https://github.com/queue-interop/amqp-interop) interfaces.
 Build on top of [php amqp lib](https://github.com/php-amqplib/php-amqplib).
 
+Features:
+* Configure with DSN string
+* Delay strategies out of the box
+* Interchangeable with other AMQP Interop implementations
+* Fixes AMQPIOWaitException when signal is sent.
+* More reliable heartbeat implementations.   
+* Supports Subscription consumer
+
+Parts:
 * [Installation](#installation)
 * [Create context](#create-context)
 * [Declare topic](#declare-topic)
@@ -25,6 +34,7 @@ Build on top of [php amqp lib](https://github.com/php-amqplib/php-amqplib).
 * [Consume message](#consume-message)
 * [Subscription consumer](#subscription-consumer)
 * [Purge queue messages](#purge-queue-messages)
+* [Long running task, heartbeat, timeouts](#long-running-task,-heartbeat,-timeouts)
 
 ## Installation
 
@@ -273,6 +283,66 @@ $subscriptionConsumer->consume(2000); // 2 sec
 $queue = $context->createQueue('aQueue');
 
 $context->purgeQueue($queue);
+```
+
+## Long running task, heartbeat, timeouts
+
+AMQP relies on heartbeat feature to make sure consumer is still there. 
+Basically consumer is expected to send heartbeat frames from time to time to RabbitMQ broker.
+It is not possible to implement heartbeat feature in PHP, due to its synchronous nature. 
+You could read more about the issues in post: [Keeping RabbitMQ connections alive in PHP](https://blog.mollie.com/keeping-rabbitmq-connections-alive-in-php-b11cb657d5fb).
+
+`enqueue/amqp-lib` address the issue by registering heartbeat call as a [tick callbacks](http://php.net/manual/en/function.register-tick-function.php).
+To make it work you have to wrapp your long running task by `decalre(ticks=1) {}`. 
+The number of ticks could be adjusted to your needs. 
+Calling it at every tick is not good. 
+
+Please note that it does not fix heartbeat issue if you spent most of the time on IO operation.
+
+Example:
+
+```php
+<?php
+
+use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Interop\Amqp\AmqpConsumer;
+use Interop\Amqp\AmqpMessage;
+
+$context = (new AmqpConnectionFactory('amqp:?heartbeat_on_tick=1'))->createContext();
+
+$queue = $context->createQueue('a_queue');
+$consumer = $context->createConsumer($queue);
+
+$subscriptionConsumer = $context->createSubscriptionConsumer();
+$subscriptionConsumer->subscribe($consumer, function(AmqpMessage $message, AmqpConsumer $consumer) {
+    // ticks number should be adjusted.
+    declare(ticks=1) {
+        foreach (fetchHugeSet() as $item) {
+            // cycle does something for a long time, much longer than amqp heartbeat.
+        }
+    }
+
+    $consumer->acknowledge($message);
+
+    return true;
+});
+
+$subscriptionConsumer->consume(10000);
+
+
+function fetchHugeSet(): array {};
+``` 
+
+Fixes partly `Invalid frame type 65` issue. 
+
+```
+Error: Uncaught PhpAmqpLib\Exception\AMQPRuntimeException: Invalid frame type 65 in /some/path/vendor/php-amqplib/php-amqplib/PhpAmqpLib/Connection/AbstractConnection.php:528
+```
+
+Fixes partly `Broken pipe or closed connection` issue.
+
+```
+PHP Fatal error: Uncaught exception 'PhpAmqpLib\Exception\AMQPRuntimeException' with message 'Broken pipe or closed connection' in /some/path/vendor/php-amqplib/php-amqplib/PhpAmqpLib/Wire/IO/StreamIO.php:190
 ```
 
 [back to index](../index.md)

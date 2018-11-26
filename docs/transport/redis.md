@@ -12,8 +12,18 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 The transport uses [Redis](https://redis.io/) as a message broker. 
 It creates a collection (a queue or topic) there. Pushes messages to the tail of the collection and pops from the head.
 The transport works with [phpredis](https://github.com/phpredis/phpredis) php extension or [predis](https://github.com/nrk/predis) library. 
-Make sure you installed either of them 
+Make sure you installed either of them
+
+Features:
+* Configure with DSN string
+* Delay strategies out of the box
+* Recovery&Redelivery support
+* Expiration support
+* Delaying support
+* Interchangeable with other Queue Interop implementations   
+* Supports Subscription consumer
  
+Parts: 
 * [Installation](#installation)
 * [Create context](#create-context)
 * [Send message to topic](#send-message-to-topic)
