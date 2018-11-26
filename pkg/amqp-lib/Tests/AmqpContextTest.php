@@ -344,7 +344,7 @@ class AmqpContextTest extends TestCase
 
     public function testShouldReturnExpectedSubscriptionConsumerInstance()
     {
-        $context = new AmqpContext($this->createConnectionMock(), []);
+        $context = new AmqpContext($this->createConnectionMock(), ['heartbeat_on_tick' => true]);
 
         $this->assertInstanceOf(AmqpSubscriptionConsumer::class, $context->createSubscriptionConsumer());
     }

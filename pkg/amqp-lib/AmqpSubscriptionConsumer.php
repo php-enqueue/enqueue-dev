@@ -27,9 +27,15 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
      */
     private $subscribers;
 
-    public function __construct(AmqpContext $context)
+    /**
+     * @var bool
+     */
+    private $heartbeatOnTick;
+
+    public function __construct(AmqpContext $context, bool $heartbeatOnTick)
     {
         $this->context = $context;
+        $this->heartbeatOnTick = $heartbeatOnTick;
     }
 
     public function consume(int $timeout = 0): void
@@ -40,6 +46,12 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
 
         $signalHandler = new SignalSocketHelper();
         $signalHandler->beforeSocket();
+
+        $heartbeatOnTick = function (AmqpContext $context) {
+            $context->getLibChannel()->getConnection()->getIO()->check_heartbeat();
+        };
+
+        $this->heartbeatOnTick && register_tick_function($heartbeatOnTick);
 
         try {
             while (true) {
@@ -69,6 +81,8 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
             throw $e;
         } finally {
             $signalHandler->afterSocket();
+
+            $this->heartbeatOnTick && unregister_tick_function($heartbeatOnTick);
         }
     }
 
