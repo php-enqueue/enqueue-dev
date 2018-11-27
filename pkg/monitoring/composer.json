@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.1.3",
-        "enqueue/enqueue": "0.9.x-dev",
+        "enqueue/enqueue": "^0.9",
         "ramsey/uuid": "^3",
         "enqueue/dsn": "0.9.x-dev"
     },
