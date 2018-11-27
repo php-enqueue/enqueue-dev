@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.9.1](https://github.com/php-enqueue/enqueue-dev/tree/0.9.1) (2018-11-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.0...0.9.1)
+
+**Merged pull requests:**
+
+- Allow installing stable dependencies. [\#660](https://github.com/php-enqueue/enqueue-dev/pull/660) ([makasim](https://github.com/makasim))
+
 ## [0.9.0](https://github.com/php-enqueue/enqueue-dev/tree/0.9) (2018-11-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.8.42...0.9)
 
