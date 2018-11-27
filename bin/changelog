@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+
+if (( "$#" != 1 ))
+then
+    echo "Tag has to be provided"
+    exit 1
+fi
+
+docker-compose run -e CHANGELOG_GITHUB_TOKEN=${CHANGELOG_GITHUB_TOKEN:-""} --workdir="/mqdev" --rm generate-changelog github_changelog_generator --future-release "$1" --no-issues --unreleased-only --output "CHANGELOG_FUTURE.md"
+
+#git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin "$CURRENT_BRANCH"

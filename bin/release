@@ -8,9 +8,17 @@ then
     exit 1
 fi
 
+
+if [ ! -f ./CHANGELOG_FUTURE.md ]; then
+    echo "Release changelog has not been generated. File CHANGELOG_FUTURE.md does not exist."
+    exit 1
+fi
+
+rm ./CHANGELOG_FUTURE.md
+
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
-./bin/dev -c $1 "$CURRENT_BRANCH" && git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin "$CURRENT_BRANCH"
+git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin "$CURRENT_BRANCH"
 
 ./bin/subtree-split
 
