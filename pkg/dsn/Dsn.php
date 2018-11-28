@@ -80,16 +80,6 @@ class Dsn
         $this->queryBag = new QueryBag($query);
     }
 
-//    public function __toString(): string
-//    {
-//        return $this->dsn;
-//    }
-//
-//    public function getDsn(): string
-//    {
-//        return $this->dsn;
-//    }
-
     public function getScheme(): string
     {
         return $this->scheme;
