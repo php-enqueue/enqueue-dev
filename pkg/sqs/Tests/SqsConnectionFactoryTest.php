@@ -7,8 +7,9 @@ use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\ConnectionFactory;
+use PHPUnit\Framework\TestCase;
 
-class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
+class SqsConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
 
@@ -30,6 +31,7 @@ class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'retries' => 3,
             'version' => '2012-11-05',
             'endpoint' => null,
+            'queue_owner_aws_account_id' => null,
         ], 'config', $factory);
     }
 
@@ -46,6 +48,7 @@ class SqsConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'retries' => 3,
             'version' => '2012-11-05',
             'endpoint' => null,
+            'queue_owner_aws_account_id' => null,
         ], 'config', $factory);
     }
 

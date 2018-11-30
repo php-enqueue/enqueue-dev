@@ -34,12 +34,14 @@ class SqsContext implements Context
      */
     private $queueUrls;
 
+    private $config;
+
     /**
      * Callable must return instance of SqsClient once called.
      *
      * @param SqsClient|callable $client
      */
-    public function __construct($client)
+    public function __construct($client, array $config)
     {
         if ($client instanceof SqsClient) {
             $this->client = $client;
@@ -52,6 +54,8 @@ class SqsContext implements Context
                 SqsClient::class
             ));
         }
+
+        $this->config = $config;
     }
 
     /**
@@ -148,15 +152,18 @@ class SqsContext implements Context
             return $this->queueUrls[$destination->getQueueName()];
         }
 
-        $result = $this->getClient()->getQueueUrl([
-            'QueueName' => $destination->getQueueName(),
-        ]);
+        $arguments = ['QueueName' => $destination->getQueueName()];
+        if (false == empty($this->config['queue_owner_aws_account_id'])) {
+            $arguments['QueueOwnerAWSAccountId'] = $this->config['queue_owner_aws_account_id'];
+        }
+
+        $result = $this->getClient()->getQueueUrl($arguments);
 
         if (false == $result->hasKey('QueueUrl')) {
             throw new \RuntimeException(sprintf('QueueUrl cannot be resolved. queueName: "%s"', $destination->getQueueName()));
         }
 
-        return $this->queueUrls[$destination->getQueueName()] = $result->get('QueueUrl');
+        return $this->queueUrls[$destination->getQueueName()] = (string) $result->get('QueueUrl');
     }
 
     public function declareQueue(SqsDestination $dest): void

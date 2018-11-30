@@ -63,6 +63,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
+                'queue_owner_aws_account_id' => null,
             ],
         ];
 
@@ -77,6 +78,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
+                'queue_owner_aws_account_id' => null,
             ],
         ];
 
@@ -91,6 +93,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
+                'queue_owner_aws_account_id' => null,
             ],
         ];
 
@@ -105,6 +108,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
+                'queue_owner_aws_account_id' => null,
             ],
         ];
 
@@ -119,6 +123,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
+                'queue_owner_aws_account_id' => null,
             ],
         ];
 
@@ -133,6 +138,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
+                'queue_owner_aws_account_id' => null,
             ],
         ];
 
@@ -153,6 +159,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
+                'queue_owner_aws_account_id' => null,
             ],
         ];
     }
