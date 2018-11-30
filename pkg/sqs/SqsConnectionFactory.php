@@ -23,14 +23,15 @@ class SqsConnectionFactory implements ConnectionFactory
 
     /**
      * $config = [
-     *   'key' => null              - AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
-     *   'secret' => null,          - AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
-     *   'token' => null,           - AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
-     *   'region' => null,          - (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
-     *   'retries' => 3,            - (int, default=int(3)) Configures the maximum number of allowed retries for a client (pass 0 to disable retries).
-     *   'version' => '2012-11-05', - (string, required) The version of the webservice to utilize
-     *   'lazy' => true,            - Enable lazy connection (boolean)
-     *   'endpoint' => null         - (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'key' => null                AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
+     *   'secret' => null,            AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
+     *   'token' => null,             AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
+     *   'region' => null,            (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
+     *   'retries' => 3,              (int, default=int(3)) Configures the maximum number of allowed retries for a client (pass 0 to disable retries).
+     *   'version' => '2012-11-05',   (string, required) The version of the webservice to utilize
+     *   'lazy' => true,              Enable lazy connection (boolean)
+     *   'endpoint' => null           (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'queue_owner_aws_account_id' The AWS account ID of the account that created the queue.
      * ].
      *
      * or
@@ -74,10 +75,10 @@ class SqsConnectionFactory implements ConnectionFactory
         if ($this->config['lazy']) {
             return new SqsContext(function () {
                 return $this->establishConnection();
-            });
+            }, $this->config);
         }
 
-        return new SqsContext($this->establishConnection());
+        return new SqsContext($this->establishConnection(), $this->config);
     }
 
     private function establishConnection(): SqsClient
@@ -132,6 +133,7 @@ class SqsConnectionFactory implements ConnectionFactory
             'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
+            'queue_owner_aws_account_id' => $dsn->getString('queue_owner_aws_account_id'),
         ]), function ($value) { return null !== $value; });
     }
 
@@ -146,6 +148,7 @@ class SqsConnectionFactory implements ConnectionFactory
             'version' => '2012-11-05',
             'lazy' => true,
             'endpoint' => null,
+            'queue_owner_aws_account_id' => null,
         ];
     }
 }

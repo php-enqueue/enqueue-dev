@@ -26,26 +26,26 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCouldBeConstructedWithSqsClientAsFirstArgument()
     {
-        new SqsContext($this->createSqsClientMock());
+        new SqsContext($this->createSqsClientMock(), []);
     }
 
     public function testCouldBeConstructedWithSqsClientFactoryAsFirstArgument()
     {
         new SqsContext(function () {
             return $this->createSqsClientMock();
-        });
+        }, []);
     }
 
     public function testThrowIfNeitherSqsClientNorFactoryGiven()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The $client argument must be either Aws\Sqs\SqsClient or callable that returns Aws\Sqs\SqsClient once called.');
-        new SqsContext(new \stdClass());
+        new SqsContext(new \stdClass(), []);
     }
 
     public function testShouldAllowCreateEmptyMessage()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), []);
 
         $message = $context->createMessage();
 
@@ -58,7 +58,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldAllowCreateCustomMessage()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), []);
 
         $message = $context->createMessage('theBody', ['aProp' => 'aPropVal'], ['aHeader' => 'aHeaderVal']);
 
@@ -71,7 +71,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateQueue()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), [
+            'queue_owner_aws_account_id' => null,
+        ]);
 
         $queue = $context->createQueue('aQueue');
 
@@ -81,7 +83,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldAllowCreateTopic()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), [
+            'queue_owner_aws_account_id' => null,
+        ]);
 
         $topic = $context->createTopic('aTopic');
 
@@ -91,7 +95,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testThrowNotImplementedOnCreateTmpQueueCall()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), []);
 
         $this->expectException(TemporaryQueueNotSupportedException::class);
 
@@ -100,7 +104,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateProducer()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), []);
 
         $producer = $context->createProducer();
 
@@ -109,7 +113,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldThrowIfNotSqsDestinationGivenOnCreateConsumer()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), []);
 
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of Enqueue\Sqs\SqsDestination but got Mock_Queue');
@@ -119,7 +123,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateConsumer()
     {
-        $context = new SqsContext($this->createSqsClientMock());
+        $context = new SqsContext($this->createSqsClientMock(), [
+            'queue_owner_aws_account_id' => null,
+        ]);
 
         $queue = $context->createQueue('aQueue');
 
@@ -138,7 +144,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
         ;
 
-        $context = new SqsContext($sqsClient);
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
 
         $queue = $context->createQueue('aQueueName');
 
@@ -161,7 +169,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Result())
         ;
 
-        $context = new SqsContext($sqsClient);
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
 
         $queue = $context->createQueue('aQueueName');
 
@@ -184,7 +194,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Result())
         ;
 
-        $context = new SqsContext($sqsClient);
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
 
         $queue = $context->createQueue('aQueueName');
 
@@ -201,7 +213,29 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
         ;
 
-        $context = new SqsContext($sqsClient);
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
+
+        $context->getQueueUrl(new SqsDestination('aQueueName'));
+    }
+
+    public function testShouldAllowGetQueueUrlFromAnotherAWSAccount()
+    {
+        $sqsClient = $this->createSqsClientMock();
+        $sqsClient
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->with($this->identicalTo([
+                'QueueName' => 'aQueueName',
+                'QueueOwnerAWSAccountId' => 'anotherAWSAccountID',
+            ]))
+            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+        ;
+
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => 'anotherAWSAccountID',
+        ]);
 
         $context->getQueueUrl(new SqsDestination('aQueueName'));
     }
@@ -216,7 +250,9 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Result([]))
         ;
 
-        $context = new SqsContext($sqsClient);
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('QueueUrl cannot be resolved. queueName: "aQueueName"');

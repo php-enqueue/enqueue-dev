@@ -14,16 +14,12 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 class SqsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
     use SqsExtension;
+    use CreateSqsQueueTrait;
 
     /**
      * @var SqsContext
      */
     private $context;
-
-    /**
-     * @var SqsDestination
-     */
-    private $queue;
 
     protected function tearDown()
     {
@@ -34,26 +30,13 @@ class SqsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
+    protected function createContext(): SqsContext
     {
         return $this->context = $this->buildSqsContext();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param SqsContext $context
-     */
-    protected function createQueue(Context $context, $queueName)
+    protected function createQueue(Context $context, $queueName): SqsDestination
     {
-        $queueName = $queueName.time();
-
-        $this->queue = $context->createQueue($queueName);
-        $context->declareQueue($this->queue);
-
-        return $this->queue;
+        return $this->createSqsQueue($context, $queueName);
     }
 }

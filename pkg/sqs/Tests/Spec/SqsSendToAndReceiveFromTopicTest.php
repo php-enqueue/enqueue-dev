@@ -17,16 +17,12 @@ class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
     use SqsExtension;
     use RetryTrait;
+    use CreateSqsQueueTrait;
 
     /**
      * @var SqsContext
      */
     private $context;
-
-    /**
-     * @var SqsDestination
-     */
-    private $queue;
 
     protected function tearDown()
     {
@@ -37,26 +33,13 @@ class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
+    protected function createContext(): SqsContext
     {
         return $this->context = $this->buildSqsContext();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param SqsContext $context
-     */
-    protected function createTopic(Context $context, $topicName)
+    protected function createTopic(Context $context, $queueName): SqsDestination
     {
-        $topicName = $topicName.time();
-
-        $this->queue = $context->createTopic($topicName);
-        $context->declareQueue($this->queue);
-
-        return $this->queue;
+        return $this->createSqsQueue($context, $queueName);
     }
 }
