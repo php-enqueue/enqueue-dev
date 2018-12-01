@@ -19,6 +19,7 @@ It uses internally official [aws sdk library](https://packagist.org/packages/aws
 * [Send delay message](#send-delay-message)
 * [Consume message](#consume-message)
 * [Purge queue messages](#purge-queue-messages)
+* [Queue from another AWS account](#queue-from-another-aws-account)
 
 ## Installation
 
@@ -120,6 +121,25 @@ $consumer->acknowledge($message);
 $fooQueue = $context->createQueue('foo');
 
 $context->purgeQueue($fooQueue);
+```
+
+## Queue from another AWS account
+
+SQS allows to use queues from another account. You could set it globally for all queues via option `queue_owner_aws_account_id` or 
+per queue using `SqsDestination::setQueueOwnerAWSAccountId` method.
+
+```php
+<?php
+use Enqueue\Sqs\SqsConnectionFactory;
+
+// globally for all queues
+$factory = new SqsConnectionFactory('sqs:?queue_owner_aws_account_id=awsAccountId');
+
+$context = (new SqsConnectionFactory('sqs:'))->createContext();
+
+// per queue.
+$queue = $context->createQueue('foo');
+$queue->setQueueOwnerAWSAccountId('awsAccountId');
 ```
 
 [back to index](../index.md)

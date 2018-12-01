@@ -20,6 +20,11 @@ class SqsDestination implements Topic, Queue
     private $attributes;
 
     /**
+     * @var string|null
+     */
+    private $queueOwnerAWSAccountId;
+
+    /**
      * The name of the new queue.
      * The following limits apply to this name:
      *   * A queue name can have up to 80 characters.
@@ -186,5 +191,15 @@ class SqsDestination implements Topic, Queue
         } else {
             unset($this->attributes['ContentBasedDeduplication']);
         }
+    }
+
+    public function getQueueOwnerAWSAccountId(): ?string
+    {
+        return $this->queueOwnerAWSAccountId;
+    }
+
+    public function setQueueOwnerAWSAccountId(?string $queueOwnerAWSAccountId): void
+    {
+        $this->queueOwnerAWSAccountId = $queueOwnerAWSAccountId;
     }
 }

@@ -220,7 +220,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $context->getQueueUrl(new SqsDestination('aQueueName'));
     }
 
-    public function testShouldAllowGetQueueUrlFromAnotherAWSAccount()
+    public function testShouldAllowGetQueueUrlFromAnotherAWSAccountSetGlobally()
     {
         $sqsClient = $this->createSqsClientMock();
         $sqsClient
@@ -238,6 +238,29 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $context->getQueueUrl(new SqsDestination('aQueueName'));
+    }
+
+    public function testShouldAllowGetQueueUrlFromAnotherAWSAccountSetPerQueue()
+    {
+        $sqsClient = $this->createSqsClientMock();
+        $sqsClient
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->with($this->identicalTo([
+                'QueueName' => 'aQueueName',
+                'QueueOwnerAWSAccountId' => 'anotherAWSAccountID',
+            ]))
+            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+        ;
+
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
+
+        $queue = new SqsDestination('aQueueName');
+        $queue->setQueueOwnerAWSAccountId('anotherAWSAccountID');
+
+        $context->getQueueUrl($queue);
     }
 
     public function testShouldThrowExceptionIfGetQueueUrlResultHasNoQueueUrlProperty()
