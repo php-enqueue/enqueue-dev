@@ -4,15 +4,18 @@ namespace Enqueue\Sqs\Tests\Spec;
 
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
+use Enqueue\Test\RetryTrait;
 use Enqueue\Test\SqsExtension;
 use Interop\Queue\Context;
 use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
 
 /**
  * @group functional
+ * @retry 5
  */
 class SqsSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFromQueueSpec
 {
+    use RetryTrait;
     use SqsExtension;
     use CreateSqsQueueTrait;
 

@@ -153,7 +153,10 @@ class SqsContext implements Context
         }
 
         $arguments = ['QueueName' => $destination->getQueueName()];
-        if (false == empty($this->config['queue_owner_aws_account_id'])) {
+
+        if ($destination->getQueueOwnerAWSAccountId()) {
+            $arguments['QueueOwnerAWSAccountId'] = $destination->getQueueOwnerAWSAccountId();
+        } elseif (false == empty($this->config['queue_owner_aws_account_id'])) {
             $arguments['QueueOwnerAWSAccountId'] = $this->config['queue_owner_aws_account_id'];
         }
 
