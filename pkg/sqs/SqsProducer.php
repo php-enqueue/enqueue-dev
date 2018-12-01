@@ -44,6 +44,7 @@ class SqsProducer implements Producer
         }
 
         $arguments = [
+            '@region' => $destination->getRegion(),
             'MessageAttributes' => [
                 'Headers' => [
                     'DataType' => 'String',

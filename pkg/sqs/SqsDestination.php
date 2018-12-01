@@ -15,9 +15,19 @@ class SqsDestination implements Topic, Queue
     private $name;
 
     /**
+     * @var string|null
+     */
+    private $region;
+
+    /**
      * @var array
      */
     private $attributes;
+
+    /**
+     * @var string|null
+     */
+    private $queueOwnerAWSAccountId;
 
     /**
      * The name of the new queue.
@@ -186,5 +196,25 @@ class SqsDestination implements Topic, Queue
         } else {
             unset($this->attributes['ContentBasedDeduplication']);
         }
+    }
+
+    public function getQueueOwnerAWSAccountId(): ?string
+    {
+        return $this->queueOwnerAWSAccountId;
+    }
+
+    public function setQueueOwnerAWSAccountId(?string $queueOwnerAWSAccountId): void
+    {
+        $this->queueOwnerAWSAccountId = $queueOwnerAWSAccountId;
+    }
+
+    public function setRegion(string $region = null): void
+    {
+        $this->region = $region;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
     }
 }

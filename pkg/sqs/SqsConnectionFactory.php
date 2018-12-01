@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
+use Aws\MultiRegionClient;
+use Aws\Sdk;
 use Aws\Sqs\SqsClient;
 use Enqueue\Dsn\Dsn;
 use Interop\Queue\ConnectionFactory;
@@ -17,7 +19,7 @@ class SqsConnectionFactory implements ConnectionFactory
     private $config;
 
     /**
-     * @var SqsClient
+     * @var MultiRegionClient
      */
     private $client;
 
@@ -81,7 +83,7 @@ class SqsConnectionFactory implements ConnectionFactory
         return new SqsContext($this->establishConnection(), $this->config);
     }
 
-    private function establishConnection(): SqsClient
+    private function establishConnection(): MultiRegionClient
     {
         if ($this->client) {
             return $this->client;
@@ -108,7 +110,7 @@ class SqsConnectionFactory implements ConnectionFactory
             }
         }
 
-        $this->client = new SqsClient($config);
+        $this->client = (new Sdk(['Sqs' => $config]))->createMultiRegionSqs();
 
         return $this->client;
     }

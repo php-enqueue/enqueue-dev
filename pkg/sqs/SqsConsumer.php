@@ -120,6 +120,7 @@ class SqsConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
         $this->context->getClient()->deleteMessage([
+            '@region' => $this->queue->getRegion(),
             'QueueUrl' => $this->context->getQueueUrl($this->queue),
             'ReceiptHandle' => $message->getReceiptHandle(),
         ]);
@@ -133,6 +134,7 @@ class SqsConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
         $this->context->getClient()->deleteMessage([
+            '@region' => $this->queue->getRegion(),
             'QueueUrl' => $this->context->getQueueUrl($this->queue),
             'ReceiptHandle' => $message->getReceiptHandle(),
         ]);
@@ -149,6 +151,7 @@ class SqsConsumer implements Consumer
         }
 
         $arguments = [
+            '@region' => $this->queue->getRegion(),
             'AttributeNames' => ['All'],
             'MessageAttributeNames' => ['All'],
             'MaxNumberOfMessages' => $this->maxNumberOfMessages,

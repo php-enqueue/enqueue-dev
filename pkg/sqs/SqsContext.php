@@ -119,6 +119,7 @@ class SqsContext implements Context
         InvalidDestinationException::assertDestinationInstanceOf($queue, SqsDestination::class);
 
         $this->getClient()->purgeQueue([
+            '@region' => $queue->getRegion(),
             'QueueUrl' => $this->getQueueUrl($queue),
         ]);
     }
@@ -152,8 +153,14 @@ class SqsContext implements Context
             return $this->queueUrls[$destination->getQueueName()];
         }
 
-        $arguments = ['QueueName' => $destination->getQueueName()];
-        if (false == empty($this->config['queue_owner_aws_account_id'])) {
+        $arguments = [
+            '@region' => $destination->getRegion(),
+            'QueueName' => $destination->getQueueName()
+        ];
+
+        if ($destination->getQueueOwnerAWSAccountId()) {
+            $arguments['QueueOwnerAWSAccountId'] = $destination->getQueueOwnerAWSAccountId();
+        } elseif (false == empty($this->config['queue_owner_aws_account_id'])) {
             $arguments['QueueOwnerAWSAccountId'] = $this->config['queue_owner_aws_account_id'];
         }
 
@@ -169,6 +176,7 @@ class SqsContext implements Context
     public function declareQueue(SqsDestination $dest): void
     {
         $result = $this->getClient()->createQueue([
+            '@region' => $dest->getRegion(),
             'Attributes' => $dest->getAttributes(),
             'QueueName' => $dest->getQueueName(),
         ]);
