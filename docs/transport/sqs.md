@@ -142,4 +142,23 @@ $queue = $context->createQueue('foo');
 $queue->setQueueOwnerAWSAccountId('awsAccountId');
 ```
 
+## Multi region examples
+
+Enqueue SQS provides a generic multi-region support. This enables users to specify which AWS Region to send a command to by setting region on SqsDestination.
+You might need it to access SQS FIFO queue because they are not available for all regions. 
+If not specified the default region is used. 
+
+```php
+<?php
+use Enqueue\Sqs\SqsConnectionFactory;
+
+$context = (new SqsConnectionFactory('sqs:?region=eu-west-2'))->createContext();
+
+$queue = $context->createQueue('foo');
+$queue->setRegion('us-west-2');
+
+// the request goes to US West (Oregon) Region
+$context->declareQueue($queue);
+```
+
 [back to index](../index.md)

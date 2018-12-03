@@ -15,6 +15,11 @@ class SqsDestination implements Topic, Queue
     private $name;
 
     /**
+     * @var string|null
+     */
+    private $region;
+
+    /**
      * @var array
      */
     private $attributes;
@@ -201,5 +206,15 @@ class SqsDestination implements Topic, Queue
     public function setQueueOwnerAWSAccountId(?string $queueOwnerAWSAccountId): void
     {
         $this->queueOwnerAWSAccountId = $queueOwnerAWSAccountId;
+    }
+
+    public function setRegion(string $region = null): void
+    {
+        $this->region = $region;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
     }
 }

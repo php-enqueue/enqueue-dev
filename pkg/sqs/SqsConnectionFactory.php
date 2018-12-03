@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use Aws\Sqs\SqsClient;
+use Aws\Sdk;
+use Aws\Sqs\SqsClient as AwsSqsClient;
 use Enqueue\Dsn\Dsn;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
@@ -43,8 +44,8 @@ class SqsConnectionFactory implements ConnectionFactory
      */
     public function __construct($config = 'sqs:')
     {
-        if ($config instanceof SqsClient) {
-            $this->client = $config;
+        if ($config instanceof AwsSqsClient) {
+            $this->client = new SqsClient($config);
             $this->config = ['lazy' => false] + $this->defaultConfig();
 
             return;
@@ -61,7 +62,7 @@ class SqsConnectionFactory implements ConnectionFactory
                 unset($config['dsn']);
             }
         } else {
-            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', SqsClient::class));
+            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSqsClient::class));
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
@@ -72,12 +73,6 @@ class SqsConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
-        if ($this->config['lazy']) {
-            return new SqsContext(function () {
-                return $this->establishConnection();
-            }, $this->config);
-        }
-
         return new SqsContext($this->establishConnection(), $this->config);
     }
 
@@ -108,7 +103,14 @@ class SqsConnectionFactory implements ConnectionFactory
             }
         }
 
-        $this->client = new SqsClient($config);
+        $establishConnection = function () use ($config) {
+            return (new Sdk(['Sqs' => $config]))->createMultiRegionSqs();
+        };
+
+        $this->client = $this->config['lazy'] ?
+            new SqsClient($establishConnection) :
+            new SqsClient($establishConnection())
+        ;
 
         return $this->client;
     }
