@@ -25,11 +25,12 @@ class SqsClient
      */
     private $inputClient;
 
+    /**
+     * @param AwsSqsClient|callable $inputClient
+     */
     public function __construct($inputClient)
     {
-        $this->inputClient = is_callable($inputClient) ? $inputClient : function () use ($inputClient) {
-            return $inputClient;
-        };
+        $this->inputClient = $inputClient;
     }
 
     public function deleteMessage(array $args): Result
@@ -89,7 +90,13 @@ class SqsClient
 
     private function callApi(string $name, array $args): Result
     {
+        $this->resolveClient();
+
         if ($this->singleClient) {
+            if (false == empty($args['@region'])) {
+                throw new \LogicException('Cannot send message to another region because transport is configured with single aws client');
+            }
+
             unset($args['@region']);
 
             return call_user_func([$this->singleClient, $name], $args);
@@ -108,16 +115,27 @@ class SqsClient
             return;
         }
 
-        $client = call_user_func($this->inputClient);
+        $client = $this->inputClient;
         if ($client instanceof MultiRegionClient) {
             $this->multiClient = $client;
 
             return;
-        }
-        if ($client instanceof AwsSqsClient) {
+        } elseif ($client instanceof AwsSqsClient) {
             $this->singleClient = $client;
 
             return;
+        } elseif (is_callable($client)) {
+            $client = call_user_func($client);
+            if ($client instanceof MultiRegionClient) {
+                $this->multiClient = $client;
+
+                return;
+            }
+            if ($client instanceof AwsSqsClient) {
+                $this->singleClient = $client;
+
+                return;
+            }
         }
 
         throw new \LogicException(sprintf(

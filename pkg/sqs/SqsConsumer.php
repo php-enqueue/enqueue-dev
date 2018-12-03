@@ -119,7 +119,7 @@ class SqsConsumer implements Consumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
-        $this->context->getClient()->deleteMessage([
+        $this->context->getSqsClient()->deleteMessage([
             '@region' => $this->queue->getRegion(),
             'QueueUrl' => $this->context->getQueueUrl($this->queue),
             'ReceiptHandle' => $message->getReceiptHandle(),
@@ -133,7 +133,7 @@ class SqsConsumer implements Consumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
-        $this->context->getClient()->deleteMessage([
+        $this->context->getSqsClient()->deleteMessage([
             '@region' => $this->queue->getRegion(),
             'QueueUrl' => $this->context->getQueueUrl($this->queue),
             'ReceiptHandle' => $message->getReceiptHandle(),
@@ -163,7 +163,7 @@ class SqsConsumer implements Consumer
             $arguments['VisibilityTimeout'] = $this->visibilityTimeout;
         }
 
-        $result = $this->context->getClient()->receiveMessage($arguments);
+        $result = $this->context->getSqsClient()->receiveMessage($arguments);
 
         if ($result->hasKey('Messages')) {
             $this->messages = $result->get('Messages');

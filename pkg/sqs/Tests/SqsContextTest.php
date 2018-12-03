@@ -3,7 +3,7 @@
 namespace Enqueue\Sqs\Tests;
 
 use Aws\Result;
-use Aws\Sqs\SqsClient;
+use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsConsumer;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
@@ -14,8 +14,9 @@ use Interop\Queue\Context;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use Interop\Queue\Queue;
+use PHPUnit\Framework\TestCase;
 
-class SqsContextTest extends \PHPUnit\Framework\TestCase
+class SqsContextTest extends TestCase
 {
     use ClassExtensionTrait;
 
@@ -27,20 +28,6 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
     public function testCouldBeConstructedWithSqsClientAsFirstArgument()
     {
         new SqsContext($this->createSqsClientMock(), []);
-    }
-
-    public function testCouldBeConstructedWithSqsClientFactoryAsFirstArgument()
-    {
-        new SqsContext(function () {
-            return $this->createSqsClientMock();
-        }, []);
-    }
-
-    public function testThrowIfNeitherSqsClientNorFactoryGiven()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The $client argument must be either Aws\Sqs\SqsClient or callable that returns Aws\Sqs\SqsClient once called.');
-        new SqsContext(new \stdClass(), []);
     }
 
     public function testShouldAllowCreateEmptyMessage()
@@ -140,7 +127,11 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $sqsClient
             ->expects($this->once())
             ->method('createQueue')
-            ->with($this->identicalTo(['Attributes' => [], 'QueueName' => 'aQueueName']))
+            ->with($this->identicalTo([
+                '@region' => null,
+                'Attributes' => [],
+                'QueueName' => 'aQueueName',
+            ]))
             ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
         ;
 
@@ -153,13 +144,40 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $context->declareQueue($queue);
     }
 
+    public function testShouldAllowDeclareQueueWithCustomRegion()
+    {
+        $sqsClient = $this->createSqsClientMock();
+        $sqsClient
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'Attributes' => [],
+                'QueueName' => 'aQueueName',
+            ]))
+            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+        ;
+
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
+
+        $queue = $context->createQueue('aQueueName');
+        $queue->setRegion('theRegion');
+
+        $context->declareQueue($queue);
+    }
+
     public function testShouldAllowDeleteQueue()
     {
         $sqsClient = $this->createSqsClientMock();
         $sqsClient
             ->expects($this->once())
             ->method('getQueueUrl')
-            ->with($this->identicalTo(['QueueName' => 'aQueueName']))
+            ->with($this->identicalTo([
+                '@region' => null,
+                'QueueName' => 'aQueueName',
+            ]))
             ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
         ;
         $sqsClient
@@ -178,19 +196,54 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $context->deleteQueue($queue);
     }
 
+    public function testShouldAllowDeleteQueueWithCustomRegion()
+    {
+        $sqsClient = $this->createSqsClientMock();
+        $sqsClient
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'QueueName' => 'aQueueName',
+            ]))
+            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+        ;
+        $sqsClient
+            ->expects($this->once())
+            ->method('deleteQueue')
+            ->with($this->identicalTo(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(new Result())
+        ;
+
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
+
+        $queue = $context->createQueue('aQueueName');
+        $queue->setRegion('theRegion');
+
+        $context->deleteQueue($queue);
+    }
+
     public function testShouldAllowPurgeQueue()
     {
         $sqsClient = $this->createSqsClientMock();
         $sqsClient
             ->expects($this->once())
             ->method('getQueueUrl')
-            ->with($this->identicalTo(['QueueName' => 'aQueueName']))
+            ->with($this->identicalTo([
+                '@region' => null,
+                'QueueName' => 'aQueueName',
+            ]))
             ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
         ;
         $sqsClient
             ->expects($this->once())
             ->method('purgeQueue')
-            ->with($this->identicalTo(['QueueUrl' => 'theQueueUrl']))
+            ->with($this->identicalTo([
+                '@region' => null,
+                'QueueUrl' => 'theQueueUrl',
+            ]))
             ->willReturn(new Result())
         ;
 
@@ -203,13 +256,48 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $context->purgeQueue($queue);
     }
 
+    public function testShouldAllowPurgeQueueWithCustomRegion()
+    {
+        $sqsClient = $this->createSqsClientMock();
+        $sqsClient
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'QueueName' => 'aQueueName',
+            ]))
+            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+        ;
+        $sqsClient
+            ->expects($this->once())
+            ->method('purgeQueue')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'QueueUrl' => 'theQueueUrl',
+            ]))
+            ->willReturn(new Result())
+        ;
+
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
+
+        $queue = $context->createQueue('aQueueName');
+        $queue->setRegion('theRegion');
+
+        $context->purgeQueue($queue);
+    }
+
     public function testShouldAllowGetQueueUrl()
     {
         $sqsClient = $this->createSqsClientMock();
         $sqsClient
             ->expects($this->once())
             ->method('getQueueUrl')
-            ->with($this->identicalTo(['QueueName' => 'aQueueName']))
+            ->with($this->identicalTo([
+                '@region' => null,
+                'QueueName' => 'aQueueName',
+            ]))
             ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
         ;
 
@@ -220,6 +308,29 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $context->getQueueUrl(new SqsDestination('aQueueName'));
     }
 
+    public function testShouldAllowGetQueueUrlWithCustomRegion()
+    {
+        $sqsClient = $this->createSqsClientMock();
+        $sqsClient
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'QueueName' => 'aQueueName',
+            ]))
+            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+        ;
+
+        $context = new SqsContext($sqsClient, [
+            'queue_owner_aws_account_id' => null,
+        ]);
+
+        $queue = new SqsDestination('aQueueName');
+        $queue->setRegion('theRegion');
+
+        $context->getQueueUrl($queue);
+    }
+
     public function testShouldAllowGetQueueUrlFromAnotherAWSAccountSetGlobally()
     {
         $sqsClient = $this->createSqsClientMock();
@@ -227,6 +338,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getQueueUrl')
             ->with($this->identicalTo([
+                '@region' => null,
                 'QueueName' => 'aQueueName',
                 'QueueOwnerAWSAccountId' => 'anotherAWSAccountID',
             ]))
@@ -247,6 +359,7 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getQueueUrl')
             ->with($this->identicalTo([
+                '@region' => null,
                 'QueueName' => 'aQueueName',
                 'QueueOwnerAWSAccountId' => 'anotherAWSAccountID',
             ]))
@@ -269,7 +382,10 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
         $sqsClient
             ->expects($this->once())
             ->method('getQueueUrl')
-            ->with($this->identicalTo(['QueueName' => 'aQueueName']))
+            ->with($this->identicalTo([
+                '@region' => null,
+                'QueueName' => 'aQueueName',
+            ]))
             ->willReturn(new Result([]))
         ;
 
@@ -286,12 +402,8 @@ class SqsContextTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|SqsClient
      */
-    private function createSqsClientMock()
+    private function createSqsClientMock(): SqsClient
     {
-        return $this->getMockBuilder(SqsClient::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['deleteQueue', 'purgeQueue', 'createQueue', 'getQueueUrl'])
-            ->getMock()
-        ;
+        return $this->createMock(SqsClient::class);
     }
 }

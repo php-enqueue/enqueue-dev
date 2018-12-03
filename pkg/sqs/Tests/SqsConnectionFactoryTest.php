@@ -2,7 +2,8 @@
 
 namespace Enqueue\Sqs\Tests;
 
-use Aws\Sqs\SqsClient;
+use Aws\Sqs\SqsClient as AwsSqsClient;
+use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\ClassExtensionTrait;
@@ -54,14 +55,17 @@ class SqsConnectionFactoryTest extends TestCase
 
     public function testCouldBeConstructedWithClient()
     {
-        $client = $this->createMock(SqsClient::class);
+        $awsClient = $this->createMock(AwsSqsClient::class);
 
-        $factory = new SqsConnectionFactory($client);
+        $factory = new SqsConnectionFactory($awsClient);
 
         $context = $factory->createContext();
 
         $this->assertInstanceOf(SqsContext::class, $context);
-        $this->assertAttributeSame($client, 'client', $context);
+
+        $client = $this->readAttribute($context, 'client');
+        $this->assertInstanceOf(SqsClient::class, $client);
+        $this->assertAttributeSame($awsClient, 'inputClient', $client);
     }
 
     public function testShouldCreateLazyContext()
@@ -72,7 +76,8 @@ class SqsConnectionFactoryTest extends TestCase
 
         $this->assertInstanceOf(SqsContext::class, $context);
 
-        $this->assertAttributeEquals(null, 'client', $context);
-        $this->assertInternalType('callable', $this->readAttribute($context, 'clientFactory'));
+        $client = $this->readAttribute($context, 'client');
+        $this->assertInstanceOf(SqsClient::class, $client);
+        $this->assertAttributeInstanceOf(\Closure::class, 'inputClient', $client);
     }
 }
