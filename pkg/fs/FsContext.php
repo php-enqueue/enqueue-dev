@@ -105,7 +105,7 @@ class FsContext implements Context
 
         set_error_handler(function ($severity, $message, $file, $line) {
             throw new \ErrorException($message, 0, $severity, $file, $line);
-        });
+        }, E_ALL & ~E_USER_DEPRECATED);
 
         try {
             $file = fopen((string) $destination->getFileInfo(), $mode);
