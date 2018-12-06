@@ -1,46 +1,46 @@
 <?php
 
-namespace Enqueue\Sqs\Tests;
+namespace Enqueue\Sns\Tests;
 
 use Aws\MultiRegionClient;
 use Aws\Result;
 use Aws\Sdk;
-use Aws\Sqs\SqsClient as AwsSqsClient;
-use Enqueue\Sqs\SqsClient;
+use Aws\Sns\SnsClient as AwsSnsClient;
+use Enqueue\Sns\SnsClient;
 use PHPUnit\Framework\TestCase;
 
-class SqsClientTest extends TestCase
+class SnsClientTest extends TestCase
 {
     public function testShouldAllowGetAwsClientIfSingleClientProvided()
     {
-        $awsClient = (new Sdk(['Sqs' => [
+        $awsClient = (new Sdk(['Sns' => [
             'key' => '',
             'secret' => '',
             'token' => '',
             'region' => '',
-            'version' => '2012-11-05',
+            'version' => '2010-03-31',
             'endpoint' => 'http://localhost',
-        ]]))->createSqs();
+        ]]))->createSns();
 
-        $client = new SqsClient($awsClient);
+        $client = new SnsClient($awsClient);
 
         $this->assertSame($awsClient, $client->getAWSClient());
     }
 
     public function testShouldAllowGetAwsClientIfMultipleClientProvided()
     {
-        $awsClient = (new Sdk(['Sqs' => [
+        $awsClient = (new Sdk(['Sns' => [
             'key' => '',
             'secret' => '',
             'token' => '',
             'region' => '',
-            'version' => '2012-11-05',
+            'version' => '2010-03-31',
             'endpoint' => 'http://localhost',
-        ]]))->createMultiRegionSqs();
+        ]]))->createMultiRegionSns();
 
-        $client = new SqsClient($awsClient);
+        $client = new SnsClient($awsClient);
 
-        $this->assertInstanceOf(AwsSqsClient::class, $client->getAWSClient());
+        $this->assertInstanceOf(AwsSnsClient::class, $client->getAWSClient());
     }
 
     /**
@@ -59,7 +59,7 @@ class SqsClientTest extends TestCase
             ->with($this->identicalTo($args))
             ->willReturn(new Result($result));
 
-        $client = new SqsClient($awsClient);
+        $client = new SnsClient($awsClient);
 
         $actualResult = $client->{$method}($args);
 
@@ -83,7 +83,7 @@ class SqsClientTest extends TestCase
             ->with($this->identicalTo($args))
             ->willReturn(new Result($result));
 
-        $client = new SqsClient(function () use ($awsClient) {
+        $client = new SnsClient(function () use ($awsClient) {
             return $awsClient;
         });
 
@@ -99,10 +99,10 @@ class SqsClientTest extends TestCase
      */
     public function testThrowIfInvalidInputClientApiCall(string $method, array $args, array $result, string $awsClientClass)
     {
-        $client = new SqsClient(new \stdClass());
+        $client = new SnsClient(new \stdClass());
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The input client must be an instance of "Aws\Sqs\SqsClient" or "Aws\MultiRegionClient" or a callable that returns one of those. Got "stdClass"');
+        $this->expectExceptionMessage('The input client must be an instance of "Aws\Sns\SnsClient" or "Aws\MultiRegionClient" or a callable that returns one of those. Got "stdClass"');
         $client->{$method}($args);
     }
 
@@ -112,10 +112,10 @@ class SqsClientTest extends TestCase
      */
     public function testThrowIfInvalidLazyInputClientApiCall(string $method, array $args, array $result, string $awsClientClass)
     {
-        $client = new SqsClient(function () { return new \stdClass(); });
+        $client = new SnsClient(function () { return new \stdClass(); });
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The input client must be an instance of "Aws\Sqs\SqsClient" or "Aws\MultiRegionClient" or a callable that returns one of those. Got "stdClass"');
+        $this->expectExceptionMessage('The input client must be an instance of "Aws\Sns\SnsClient" or "Aws\MultiRegionClient" or a callable that returns one of those. Got "stdClass"');
         $client->{$method}($args);
     }
 
@@ -136,7 +136,7 @@ class SqsClientTest extends TestCase
             ->with($this->identicalTo($args))
             ->willReturn(new Result($result));
 
-        $client = new SqsClient($awsClient);
+        $client = new SnsClient($awsClient);
 
         $actualResult = $client->{$method}($args);
 
@@ -160,7 +160,7 @@ class SqsClientTest extends TestCase
             ->method($method)
         ;
 
-        $client = new SqsClient($awsClient);
+        $client = new SnsClient($awsClient);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Cannot send message to another region because transport is configured with single aws client');
@@ -185,7 +185,7 @@ class SqsClientTest extends TestCase
             ->with($this->identicalTo($expectedArgs))
             ->willReturn(new Result($result));
 
-        $client = new SqsClient($awsClient);
+        $client = new SnsClient($awsClient);
 
         $actualResult = $client->{$method}($args);
 
@@ -196,115 +196,31 @@ class SqsClientTest extends TestCase
     public function provideApiCallsSingleClient()
     {
         yield [
-            'deleteMessage',
+            'createTopic',
             ['fooArg' => 'fooArgVal'],
             ['bar' => 'barVal'],
-            AwsSqsClient::class,
+            AwsSnsClient::class,
         ];
 
         yield [
-            'receiveMessage',
+            'publish',
             ['fooArg' => 'fooArgVal'],
             ['bar' => 'barVal'],
-            AwsSqsClient::class,
-        ];
-
-        yield [
-            'purgeQueue',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            AwsSqsClient::class,
-        ];
-
-        yield [
-            'getQueueUrl',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            AwsSqsClient::class,
-        ];
-
-        yield [
-            'getQueueAttributes',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            AwsSqsClient::class,
-        ];
-
-        yield [
-            'createQueue',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            AwsSqsClient::class,
-        ];
-
-        yield [
-            'deleteQueue',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            AwsSqsClient::class,
-        ];
-
-        yield [
-            'sendMessage',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            AwsSqsClient::class,
+            AwsSnsClient::class,
         ];
     }
 
     public function provideApiCallsMultipleClient()
     {
         yield [
-            'deleteMessage',
+            'createTopic',
             ['fooArg' => 'fooArgVal'],
             ['bar' => 'barVal'],
             MultiRegionClient::class,
         ];
 
         yield [
-            'receiveMessage',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            MultiRegionClient::class,
-        ];
-
-        yield [
-            'purgeQueue',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            MultiRegionClient::class,
-        ];
-
-        yield [
-            'getQueueUrl',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            MultiRegionClient::class,
-        ];
-
-        yield [
-            'getQueueAttributes',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            MultiRegionClient::class,
-        ];
-
-        yield [
-            'createQueue',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            MultiRegionClient::class,
-        ];
-
-        yield [
-            'deleteQueue',
-            ['fooArg' => 'fooArgVal'],
-            ['bar' => 'barVal'],
-            MultiRegionClient::class,
-        ];
-
-        yield [
-            'sendMessage',
+            'publish',
             ['fooArg' => 'fooArgVal'],
             ['bar' => 'barVal'],
             MultiRegionClient::class,

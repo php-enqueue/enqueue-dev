@@ -7,19 +7,19 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ---
 
-# Amazon SQS Transport
+# Amazon SNS Transport
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://travis-ci.org/php-enqueue/sqs.png?branch=master)](https://travis-ci.org/php-enqueue/sqs)
-[![Total Downloads](https://poser.pugx.org/enqueue/sqs/d/total.png)](https://packagist.org/packages/enqueue/sqs)
-[![Latest Stable Version](https://poser.pugx.org/enqueue/sqs/version.png)](https://packagist.org/packages/enqueue/sqs)
+[![Build Status](https://travis-ci.org/php-enqueue/sns.png?branch=master)](https://travis-ci.org/php-enqueue/sns)
+[![Total Downloads](https://poser.pugx.org/enqueue/sns/d/total.png)](https://packagist.org/packages/enqueue/sns)
+[![Latest Stable Version](https://poser.pugx.org/enqueue/sns/version.png)](https://packagist.org/packages/enqueue/sns)
  
-This is an implementation of Queue Interop specification. It allows you to send and consume message using [Amazon SQS](https://aws.amazon.com/sqs/) service.  
+This is an implementation of Queue Interop specification. It allows you to send and consume message using [Amazon SNS](https://aws.amazon.com/sns/) service.
 
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/sqs.md)
+* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/sns.md)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 

@@ -61,6 +61,10 @@
             <directory>pkg/sqs/Tests</directory>
         </testsuite>
 
+        <testsuite name="sns transport">
+            <directory>pkg/sns/Tests</directory>
+        </testsuite>
+
         <testsuite name="pheanstalk transport">
             <directory>pkg/pheanstalk/Tests</directory>
         </testsuite>

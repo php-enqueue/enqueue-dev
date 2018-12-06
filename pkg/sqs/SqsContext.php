@@ -32,12 +32,20 @@ class SqsContext implements Context
     /**
      * @var array
      */
+    private $queueArns;
+
+    /**
+     * @var array
+     */
     private $config;
 
     public function __construct(SqsClient $client, array $config)
     {
         $this->client = $client;
         $this->config = $config;
+
+        $this->queueUrls = [];
+        $this->queueArns = [];
     }
 
     /**
@@ -155,6 +163,27 @@ class SqsContext implements Context
         }
 
         return $this->queueUrls[$destination->getQueueName()] = (string) $result->get('QueueUrl');
+    }
+
+    public function getQueueArn(SqsDestination $destination): string
+    {
+        if (isset($this->queueArns[$destination->getQueueName()])) {
+            return $this->queueArns[$destination->getQueueName()];
+        }
+
+        $arguments = [
+            '@region' => $destination->getRegion(),
+            'QueueUrl' => $this->getQueueUrl($destination),
+            'AttributeNames' => ['QueueArn'],
+        ];
+
+        $result = $this->client->getQueueAttributes($arguments);
+
+        if (false == $result->hasKey('QueueArn')) {
+            throw new \RuntimeException(sprintf('QueueArn cannot be resolved. queueName: "%s"', $destination->getQueueName()));
+        }
+
+        return $this->queueArns[$destination->getQueueName()] = (string) $result->get('QueueArn');
     }
 
     public function declareQueue(SqsDestination $dest): void
