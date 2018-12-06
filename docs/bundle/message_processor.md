@@ -25,7 +25,7 @@ services:
   app.async.say_hello_processor:
     class: 'AppBundle\Async\SayHelloProcessor'
     tags:
-        - { name: 'enqueue.client.processor', topicName: 'aTopic' }
+        - { name: 'enqueue.transport.processor', topicName: 'aTopic' }
         
 ```
 
@@ -75,7 +75,7 @@ class SayHelloProcessor implements Processor, TopicSubscriberInterface
 }
 ```
 
-In the container you can just add the tag `enqueue.client.message_processor` and omit any other options:
+In the container you can just add the tag `enqueue.topic_subscriber` and omit any other options:
 
 ```yaml
 # src/AppBundle/Resources/services.yml
@@ -84,7 +84,7 @@ services:
   app.async.say_hello_processor:
     class: 'AppBundle\Async\SayHelloProcessor'
     tags:
-        - { name: 'enqueue.client.processor'}
+        - { name: 'enqueue.topic_subscriber'}
 
 ```
 
@@ -128,7 +128,7 @@ class SayHelloProcessor implements Processor, CommandSubscriberInterface
 There is a possibility to register a command processor which works exclusively on the queue (no other processors bound to it).
 In this case you can send messages without setting any message properties at all. Here's an example of such a processor:
 
-In the container you can just add the tag `enqueue.client.message_processor` and omit any other options:
+In the container you can just add the tag `enqueue.command_subscriber` and omit any other options:
 
 ```php
 <?php
@@ -159,7 +159,7 @@ services:
   app.async.say_hello_processor:
     class: 'AppBundle\Async\SayHelloProcessor'
     tags:
-        - { name: 'enqueue.client.processor'}
+        - { name: 'enqueue.command_subscriber'}
 
 ```
 
