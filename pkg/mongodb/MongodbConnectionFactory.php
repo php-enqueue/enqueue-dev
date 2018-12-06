@@ -98,7 +98,7 @@ class MongodbConnectionFactory implements ConnectionFactory
             parse_str($parsedUrl['query'], $queryParts);
             //get enqueue attributes values
             if (!empty($queryParts['polling_interval'])) {
-                $config['polling_interval'] = $queryParts['polling_interval'];
+                $config['polling_interval'] = (int) $queryParts['polling_interval'];
             }
             if (!empty($queryParts['enqueue_collection'])) {
                 $config['collection_name'] = $queryParts['enqueue_collection'];
