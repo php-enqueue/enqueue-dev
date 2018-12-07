@@ -137,7 +137,7 @@ class FsConsumer implements Consumer
 
                         $this->preFetchedMessages[] = $fetchedMessage;
                     } catch (\Exception $e) {
-                        throw new \LogicException(sprintf("Cannot decode json message '%s'", $rawMessage), null, $e);
+                        throw new \LogicException(sprintf("Cannot decode json message '%s'", $rawMessage), 0, $e);
                     }
                 } else {
                     return null;
