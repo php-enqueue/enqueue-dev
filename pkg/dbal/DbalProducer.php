@@ -139,7 +139,7 @@ class DbalProducer implements Producer
                 'redeliver_after' => Type::BIGINT,
             ]);
         } catch (\Exception $e) {
-            throw new Exception('The transport fails to send the message due to some internal error.', null, $e);
+            throw new Exception('The transport fails to send the message due to some internal error.', 0, $e);
         }
     }
 
