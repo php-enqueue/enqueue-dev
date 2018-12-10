@@ -19,7 +19,7 @@ Here's the list of transports supported by Enqueue Client:
 | Doctrine DBAL       | [enqueue/dbal](../transport/dbal.md)                       | mysql: pgsql: pdo_pgsql etc     |
 | Filesystem          | [enqueue/fs](../transport/fs.md)                           | file:///foo/bar                 |
 | Google PubSub       | [enqueue/gps](../transport/gps.md)                         | gps:                            |
-| Redis               | [enqueue/gps](../transport/redis.md)                       | redis:                          |
+| Redis               | [enqueue/redis](../transport/redis.md)                     | redis:                          |
 | Amazon SQS          | [enqueue/sqs](../transport/sqs.md)                         | sqs:                            |
 | STOMP, RabbitMQ     | [enqueue/stomp](../transport/stomp.md)                     | stomp:                          |
 | Kafka               | [enqueue/rdkafka](../transport/kafka.md)                   | kafka:                          |
