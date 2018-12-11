@@ -90,7 +90,7 @@ Features:
 [![Build Status](https://travis-ci.org/php-enqueue/null.png?branch=master)](https://travis-ci.org/php-enqueue/null)
 [![Total Downloads](https://poser.pugx.org/enqueue/null/d/total.png)](https://packagist.org/packages/enqueue/null/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/null/version.png)](https://packagist.org/packages/enqueue/null)
-    * [the others are comming](https://github.com/php-enqueue/enqueue-dev/issues/284)
+    * [the others are coming](https://github.com/php-enqueue/enqueue-dev/issues/284)
 * [Symfony bundle](docs/bundle/quick_tour.md)
 * [Magento1 extension](docs/magento/quick_tour.md)
 * [Magento2 module](docs/magento2/quick_tour.md)
