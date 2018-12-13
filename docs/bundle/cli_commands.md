@@ -155,7 +155,7 @@ Help:
  
 ```
 ./bin/console enqueue:transport:consume --help
-Usage:ng mqdev_gearmand_1 ... done
+Usage:
   enqueue:transport:consume [options] [--] <processor-service>
 
 Arguments:
