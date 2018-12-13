@@ -77,7 +77,6 @@ class DbalPersistedConnection extends Connection
             $rc->getProperty('_isConnected')
         ;
 
-
         $rp->setAccessible(true);
         $rp->setValue($this, $connected);
         $rp->setAccessible(false);
