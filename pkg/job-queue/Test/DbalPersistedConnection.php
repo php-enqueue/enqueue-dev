@@ -71,10 +71,16 @@ class DbalPersistedConnection extends Connection
      */
     protected function setConnected($connected)
     {
-        $isConnected = new \ReflectionProperty('Doctrine\DBAL\Connection', '_isConnected');
-        $isConnected->setAccessible(true);
-        $isConnected->setValue($this, $connected);
-        $isConnected->setAccessible(false);
+        $rc = new \ReflectionClass(Connection::class);
+        $rp = $rc->hasProperty('isConnected') ?
+            $rc->getProperty('isConnected') :
+            $rc->getProperty('_isConnected')
+        ;
+
+
+        $rp->setAccessible(true);
+        $rp->setValue($this, $connected);
+        $rp->setAccessible(false);
     }
 
     /**
@@ -134,10 +140,15 @@ class DbalPersistedConnection extends Connection
      */
     private function setTransactionNestingLevel($level)
     {
-        $prop = new \ReflectionProperty('Doctrine\DBAL\Connection', '_transactionNestingLevel');
-        $prop->setAccessible(true);
+        $rc = new \ReflectionClass(Connection::class);
+        $rp = $rc->hasProperty('transactionNestingLevel') ?
+            $rc->getProperty('transactionNestingLevel') :
+            $rc->getProperty('_transactionNestingLevel')
+        ;
 
-        return $prop->setValue($this, $level);
+        $rp->setAccessible(true);
+        $rp->setValue($this, $level);
+        $rp->setAccessible(false);
     }
 
     /**
