@@ -1,5 +1,25 @@
 # Change Log
 
+## [0.9.2](https://github.com/php-enqueue/enqueue-dev/tree/0.9.2) (2018-12-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.1...0.9.2)
+
+**Merged pull requests:**
+
+- Allow 0.8.x Queue Interop \(without deprecated Psr prefixed interfaces\)  [\#688](https://github.com/php-enqueue/enqueue-dev/pull/688) ([makasim](https://github.com/makasim))
+- \[dsn\] remove commented out code [\#661](https://github.com/php-enqueue/enqueue-dev/pull/661) ([kunicmarko20](https://github.com/kunicmarko20))
+- \[fs\]: fix: Wrong parameters for Exception [\#678](https://github.com/php-enqueue/enqueue-dev/pull/678) ([ssiergl](https://github.com/ssiergl))
+- \[fs\] Do not throw error in jsonUnserialize on deprecation notice [\#671](https://github.com/php-enqueue/enqueue-dev/pull/671) ([ssiergl](https://github.com/ssiergl))
+- \[mongodb\] polling\_integer type not correctly handled when using DSN [\#673](https://github.com/php-enqueue/enqueue-dev/pull/673) ([jak](https://github.com/jak))
+- \[dbal\] Use ordered bytes time uuid codec on message id decode. [\#665](https://github.com/php-enqueue/enqueue-dev/pull/665) ([makasim](https://github.com/makasim))
+- \[dbal\] fix: Wrong parameters for Exception [\#676](https://github.com/php-enqueue/enqueue-dev/pull/676) ([Nommyde](https://github.com/Nommyde))
+- \[sqs\] Add ability to use another aws account per queue. [\#666](https://github.com/php-enqueue/enqueue-dev/pull/666) ([makasim](https://github.com/makasim))
+- \[sqs\] Multi region support [\#664](https://github.com/php-enqueue/enqueue-dev/pull/664) ([makasim](https://github.com/makasim))
+- \[sqs\] Use a queue created in another AWS account. [\#662](https://github.com/php-enqueue/enqueue-dev/pull/662) ([makasim](https://github.com/makasim))
+- \[job-queue\] Fix tests on newer dbal versions. [\#687](https://github.com/php-enqueue/enqueue-dev/pull/687) ([makasim](https://github.com/makasim))
+- [doc] typo [\#686](https://github.com/php-enqueue/enqueue-dev/pull/686) ([OskarStark](https://github.com/OskarStark))
+- [doc] typo [\#683](https://github.com/php-enqueue/enqueue-dev/pull/683) ([OskarStark](https://github.com/OskarStark))
+- [doc] Fix package name for redis [\#680](https://github.com/php-enqueue/enqueue-dev/pull/680) ([gnumoksha](https://github.com/gnumoksha))
+
 ## [0.9.1](https://github.com/php-enqueue/enqueue-dev/tree/0.9.1) (2018-11-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.0...0.9.1)
 
