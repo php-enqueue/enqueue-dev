@@ -24,11 +24,11 @@ final class Configuration implements ConfigurationInterface
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $tb = new TreeBuilder('enqueue');
-
-        if (method_exists($tb, 'getRootNode')) {
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
+            $tb = new TreeBuilder('enqueue');
             $rootNode = $tb->getRootNode();
         } else {
+            $tb = new TreeBuilder();
             $rootNode = $tb->root('enqueue');
         }
 
