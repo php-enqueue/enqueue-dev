@@ -10,4 +10,7 @@ parameters:
 		- pkg/job-queue/Test/JobRunner.php
 		- pkg/job-queue/Tests/Functional/app/AppKernel.php
 		- pkg/rdkafka/RdKafkaConsumer.php
-
+		- pkg/async-event-dispatcher/DependencyInjection/Configuration.php
+		- pkg/enqueue-bundle/DependencyInjection/Configuration.php
+		- pkg/enqueue/Tests/Symfony/DependencyInjection/TransportFactoryTest.php
+		- pkg/simple-client/SimpleClient.php
