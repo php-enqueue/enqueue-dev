@@ -38,7 +38,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowAddConfigurationAsStringDsn()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -59,7 +59,7 @@ class TransportFactoryTest extends TestCase
      */
     public function testShouldAllowAddConfigurationAsDsnWithoutSlashes()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -75,7 +75,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfNullGiven()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -91,7 +91,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfEmptyStringGiven()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -107,7 +107,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfEmptyArrayGiven()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -123,7 +123,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfEmptyDsnGiven()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -135,7 +135,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfFactoryClassAndFactoryServiceSetAtTheSameTime()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -153,7 +153,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryClassAtTheSameTime()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -171,7 +171,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryServiceAtTheSameTime()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -188,7 +188,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetFactoryClass()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -205,7 +205,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetFactoryService()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -222,7 +222,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetConnectionFactoryClass()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -239,7 +239,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfExtraOptionGiven()
     {
-        $rootNode = $this->getRootNode();
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -453,14 +453,19 @@ class TransportFactoryTest extends TestCase
         $transport->buildRpcClient($container, []);
     }
 
-    private function getRootNode(): NodeDefinition
+    /**
+     * @return [TreeBuilder, NodeDefinition]
+     */
+    private function getRootNode(): array
     {
         if (method_exists(TreeBuilder::class, 'getRootNode')) {
             $tb = new TreeBuilder('foo');
-            return $tb->getRootNode();
+
+            return [$tb, $tb->getRootNode()];
         }
 
         $tb = new TreeBuilder();
-        return $tb->root('foo');
+
+        return [$tb, $tb->root('foo')];
     }
 }
