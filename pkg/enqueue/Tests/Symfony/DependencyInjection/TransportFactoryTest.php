@@ -37,8 +37,8 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowAddConfigurationAsStringDsn()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -59,8 +59,8 @@ class TransportFactoryTest extends TestCase
      */
     public function testShouldAllowAddConfigurationAsDsnWithoutSlashes()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -76,8 +76,8 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfNullGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -93,8 +93,8 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfEmptyStringGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -110,8 +110,8 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfEmptyArrayGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -127,8 +127,8 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfEmptyDsnGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -140,8 +140,8 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfFactoryClassAndFactoryServiceSetAtTheSameTime()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -159,8 +159,8 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryClassAtTheSameTime()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -178,8 +178,8 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryServiceAtTheSameTime()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -196,8 +196,8 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetFactoryClass()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -214,8 +214,8 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetFactoryService()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -232,8 +232,8 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetConnectionFactoryClass()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -250,8 +250,8 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfExtraOptionGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        $tb = new TreeBuilder('foo');
+        $rootNode = $tb->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();

@@ -24,8 +24,8 @@ final class Configuration implements ConfigurationInterface
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('enqueue');
+        $tb = new TreeBuilder('enqueue');
+        $rootNode = $tb->getRootNode();
 
         $rootNode
             ->requiresAtLeastOneElement()
