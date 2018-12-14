@@ -119,6 +119,13 @@ final class SimpleClient
      */
     public function __construct($config, LoggerInterface $logger = null)
     {
+        if (is_string($config)) {
+            $config = [
+                'transport' => $config,
+                'client' => true,
+            ];
+        }
+
         $this->build(['enqueue' => $config]);
 
         $this->logger = $logger ?: new NullLogger();
@@ -217,6 +224,11 @@ final class SimpleClient
         $setupBroker && $this->setupBroker();
 
         return $this->producer;
+    }
+
+    public function getDelegateProcessor(): DelegateProcessor
+    {
+        return $this->delegateProcessor;
     }
 
     public function setupBroker(): void

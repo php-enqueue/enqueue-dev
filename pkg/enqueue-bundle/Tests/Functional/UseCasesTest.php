@@ -309,7 +309,7 @@ class UseCasesTest extends WebTestCase
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
-    public function testTransportConsumeMessagesCommandShouldConsumeMessage()
+    public function testTransportConsumeCommandShouldConsumeOneMessage()
     {
         $this->customSetUp([
             'default' => [
