@@ -13,7 +13,12 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $tb = new TreeBuilder('enqueue_async_event_dispatcher');
-        $rootNode = $tb->getRootNode();
+
+        if (method_exists($tb, 'getRootNode')) {
+            $rootNode = $tb->getRootNode();
+        } else {
+            $rootNode = $tb->root('enqueue_async_event_dispatcher');
+        }
 
         $rootNode->children()
             ->scalarNode('context_service')->isRequired()->cannotBeEmpty()->end()

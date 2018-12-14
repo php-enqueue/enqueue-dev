@@ -307,7 +307,12 @@ final class SimpleClient
     private function createConfiguration(): NodeInterface
     {
         $tb = new TreeBuilder('enqueue');
-        $rootNode = $tb->getRootNode();
+
+        if (method_exists($tb, 'getRootNode')) {
+            $rootNode = $tb->getRootNode();
+        } else {
+            $rootNode = $tb->root('enqueue');
+        }
 
         $rootNode
             ->beforeNormalization()
