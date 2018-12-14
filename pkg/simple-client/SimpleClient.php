@@ -219,6 +219,11 @@ final class SimpleClient
         return $this->producer;
     }
 
+    public function getDelegateProcessor(): DelegateProcessor
+    {
+        return $this->delegateProcessor;
+    }
+
     public function setupBroker(): void
     {
         $this->getDriver()->setupBroker();
