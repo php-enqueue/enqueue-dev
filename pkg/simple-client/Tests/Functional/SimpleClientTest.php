@@ -56,12 +56,39 @@ class SimpleClientTest extends TestCase
         ], '+1sec'];
     }
 
+    public function testShouldWorkWithStringDsnConstructorArgument()
+    {
+        $actualMessage = null;
+
+        $client = new SimpleClient(getenv('AMQP_DSN'));
+
+        $client->bindTopic('foo_topic', function (Message $message) use (&$actualMessage) {
+            $actualMessage = $message;
+
+            return Result::ACK;
+        });
+
+        $client->setupBroker();
+        $this->purgeQueue($client);
+
+        $client->sendEvent('foo_topic', 'Hello there!');
+
+        $client->getQueueConsumer()->setReceiveTimeout(200);
+        $client->consume(new ChainExtension([
+            new LimitConsumptionTimeExtension(new \DateTime('+1sec')),
+            new LimitConsumedMessagesExtension(2),
+        ]));
+
+        $this->assertInstanceOf(Message::class, $actualMessage);
+        $this->assertSame('Hello there!', $actualMessage->getBody());
+    }
+
     /**
      * @dataProvider transportConfigDataProvider
      *
      * @param mixed $config
      */
-    public function testSendEventWithOneSubscriber(array $config, string $timeLimit)
+    public function testSendEventWithOneSubscriber($config, string $timeLimit)
     {
         $actualMessage = null;
 
@@ -101,7 +128,7 @@ class SimpleClientTest extends TestCase
      *
      * @param mixed $config
      */
-    public function testSendEventWithTwoSubscriber(array $config, string $timeLimit)
+    public function testSendEventWithTwoSubscriber($config, string $timeLimit)
     {
         $received = 0;
 
@@ -144,7 +171,7 @@ class SimpleClientTest extends TestCase
      *
      * @param mixed $config
      */
-    public function testSendCommand(array $config, string $timeLimit)
+    public function testSendCommand($config, string $timeLimit)
     {
         $received = 0;
 
