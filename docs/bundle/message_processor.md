@@ -9,40 +9,30 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Message processor
 
+A processor is responsible for processing consumed messages. 
 Message processors and usage examples described in [consumption/message_processor](../consumption/message_processor.md)
-Here we just show how to register a message processor service to enqueue. Let's say we have app bundle and a message processor there
+Here we just show how to register a message processor service to enqueue.
 
-* [Container tag](#container-tag)
-* [Topic subscriber](#topic-subscriber)
-* [Command subscriber](#command-subscriber)
+* Transport:
 
-# Container tag
+  * [Register a transport processor](#register-a-transport-processor)
 
-```yaml
-# src/AppBundle/Resources/services.yml
+* Client: 
 
-services:
-  app.async.say_hello_processor:
-    class: 'AppBundle\Async\SayHelloProcessor'
-    tags:
-        - { name: 'enqueue.client.processor', topicName: 'aTopic' }
-        
-```
-
-The tag has some additional options:
-
-* topicName [Req]: Tells what topic to consume messages from.
-* queueName: By default message processor does not require an extra queue on broker side. It reuse a default one. Setting the option you can define a custom queue to be used.
-* processorName: By default the service id is used as message processor name. Using the option you can define a custom name.
-
-# Topic subscriber
+  * [Register a topic subscriber processor](#register-a-topic-subscriber-processor)
+  * [Register a command subscriber processor](#register-a-command-subscriber-processor)
+  * [Register a custom processor](#register-a-custom-processor)
+   
+## Register a topic subscriber processor
 
 There is a `TopicSubscriberInterface` interface (like [EventSubscriberInterface](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/EventDispatcher/EventSubscriberInterface.php)). 
-It is handy to subscribe on event messages. It allows to keep subscription login and process logic closer to each other. 
+It is handy to subscribe on event messages. 
+Check interface description for more possible ways to configure it.
+It allows to keep subscription and processing logic in one place.
 
 ```php
 <?php
-namespace AppBundle\Async;
+namespace App\Queue;
 
 use Enqueue\Client\TopicSubscriberInterface;
 use Interop\Queue\Processor;
@@ -56,111 +46,139 @@ class SayHelloProcessor implements Processor, TopicSubscriberInterface
 }
 ```
 
-On the topic subscriber you can also define queue and processor name:
-
-```php
-<?php
-use Enqueue\Client\TopicSubscriberInterface;
-use Interop\Queue\Processor;
-
-class SayHelloProcessor implements Processor, TopicSubscriberInterface
-{
-    public static function getSubscribedTopics()
-    {
-        return [
-            'aTopic' => ['queueName' => 'fooQueue', 'processorName' => 'foo'], 
-            'anotherTopic' => ['queueName' => 'barQueue', 'processorName' => 'bar'], 
-        ];
-    }
-}
-```
-
-In the container you can just add the tag `enqueue.client.message_processor` and omit any other options:
+Tag the service in the container with `enqueue.topic_subscriber` tag:
 
 ```yaml
-# src/AppBundle/Resources/services.yml
+# config/services.yml
 
 services:
-  app.async.say_hello_processor:
-    class: 'AppBundle\Async\SayHelloProcessor'
+  App\Queue\SayHelloProcessor:
     tags:
-        - { name: 'enqueue.client.processor'}
-
+        - { name: 'enqueue.topic_subscriber' }
+        
+        # registers to no default client
+        - { name: 'enqueue.topic_subscriber', client: 'foo' } 
 ```
 
-# Command subscriber
+## Register a command subscriber processor
 
-There is a `CommandSubscriberInterface` interface which allows to register a command handlers. 
-If you send a message using ProducerV2::sendCommand('aCommandName') method it will come to this processor.
+There is a `CommandSubscriberInterface` interface. 
+It is handy to register a command processor. 
+Check interface description for more possible ways to configure it.
+It allows to keep subscription and processing logic in one place.
 
 ```php
 <?php
-namespace AppBundle\Async;
+namespace App\Queue;
 
 use Enqueue\Client\CommandSubscriberInterface;
 use Interop\Queue\Processor;
 
-class SayHelloProcessor implements Processor, CommandSubscriberInterface
+class SendEmailProcessor implements Processor, CommandSubscriberInterface
 {
     public static function getSubscribedCommand()
     {
-        return 'aCommandName';
+        return 'aCommand';
     }
 }
 ```
 
-On the command subscriber you can also define additional settings such as queue and processor name:
+Tag the service in the container with `enqueue.command_subscriber` tag:
 
-```php
-<?php
-use Enqueue\Client\CommandSubscriberInterface;
-use Interop\Queue\Processor;
+```yaml
+# config/services.yml
 
-class SayHelloProcessor implements Processor, CommandSubscriberInterface
-{
-    public static function getSubscribedCommand()
-    {
-        return ['queueName' => 'fooQueue', 'processorName' => 'aCommandName'];
-    }
-}
+services:
+  App\Queue\SendEmailProcessor:
+    tags:
+        - { name: 'enqueue.command_subscriber' }
+        
+        # registers to no default client
+        - { name: 'enqueue.command_subscriber', client: 'foo' } 
 ```
 
 There is a possibility to register a command processor which works exclusively on the queue (no other processors bound to it).
-In this case you can send messages without setting any message properties at all. Here's an example of such a processor:
+In this case you can send messages without setting any message properties at all. 
+It might be handy if you want to process messages that are sent by another application. 
 
-In the container you can just add the tag `enqueue.client.message_processor` and omit any other options:
+Here's a configuration example:
 
 ```php
 <?php
 use Enqueue\Client\CommandSubscriberInterface;
 use Interop\Queue\Processor;
 
-class SayHelloProcessor implements Processor, CommandSubscriberInterface
+class SendEmailProcessor implements Processor, CommandSubscriberInterface
 {
     public static function getSubscribedCommand()
     {
         return [
-           'processorName' => 'the-exclusive-command-name',
-           'queueName' => 'the-queue-name',
-           'queueNameHardcoded' => true,
+           'command' => 'aCommand',
+           'queue' => 'the-queue-name',
+           'prefix_queue' => false,
            'exclusive' => true,
        ];
     }
 }
 ```
 
-The same as a topic subscriber you have to tag a processor service (no need to add any options there):
+The service has to be tagged with `enqueue.command_subscriber` tag.
 
+# Register a custom processor
+
+You could register a processor that does not implement neither `CommandSubscriberInterface` not `TopicSubscriberInterface`.
+There is a tag `enqueue.processor` for it. You must define either `topic` or `command` tag attribute. 
+It is possible to define a client you would like to register the processor to. By default, it is registered to default client (first configured or named `default` one ).
 
 ```yaml
 # src/AppBundle/Resources/services.yml
 
 services:
-  app.async.say_hello_processor:
-    class: 'AppBundle\Async\SayHelloProcessor'
+  AppBundle\Async\SayHelloProcessor:
     tags:
-        - { name: 'enqueue.client.processor'}
+        # registers as topic processor 
+        - { name: 'enqueue.processor', topic: 'aTopic' }
+        # registers as command processor
+        - { name: 'enqueue.processor', command: 'aCommand' }
+        
+        # registers to no default client
+        - { name: 'enqueue.processor', command: 'aCommand', client: 'foo' }
+```
 
+The tag has some additional options:
+
+* queue
+* prefix_queue 
+* processor
+* exclusive
+
+You could add your own attributes. They will be accessible through `Route::getOption` later.
+
+# Register a transport processor 
+
+If you want to use a processor with `enqueue:transport:consume` it should be tagged `enqueue.transport.processor`.
+It is possible to define a transport you would like to register the processor to. By default, it is registered to default transport (first configured or named `default` one ).
+
+```yaml
+# config/services.yml
+
+services:
+  App\Queue\SayHelloProcessor:
+    tags:
+        - { name: 'enqueue.transport.processor', processor: 'say_hello' }
+        
+        # registers to no default transport
+        - { name: 'enqueue.processor', transport: 'foo' } 
+```  
+
+The tag has some additional options:
+ 
+* processor
+
+Now you can run a command and tell it to consume from a given queue and process messages with given processor:
+
+```bash
+$ ./bin/console enqueue:transport:consume say_hello foo_queue -vvv 
 ```
 
 [back to index](../index.md)

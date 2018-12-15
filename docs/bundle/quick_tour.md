@@ -15,10 +15,10 @@ It adds easy to use [configuration layer](config_reference.md), register service
 ## Install
 
 ```bash
-$ composer require enqueue/enqueue-bundle enqueue/amqp-ext # or enqueue/amqp-bunny, enqueue/amqp-lib
+$ composer require enqueue/enqueue-bundle enqueue/fs
 ```
 
-_**Note**: You could use not only AMQP transport but any other [available](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/transport)._
+_**Note**: You could various other [transports](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/transport)._
 
 _**Note**: If you are looking for a way to migrate from `php-amqplib/rabbitmq-bundle` read this [article](https://blog.forma-pro.com/the-how-and-why-of-the-migration-from-rabbitmqbundle-to-enqueuebundle-6c4054135e2b)._
 
@@ -28,11 +28,12 @@ Then, enable the bundle by adding `new Enqueue\Bundle\EnqueueBundle()` to the bu
 
 ```php
 <?php
+// src/Kernel.php
+namespace App;
 
-// app/AppKernel.php
+use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
-// ...
-class AppKernel extends Kernel
+class Kernel extends BaseKernel
 {
     public function registerBundles()
     {
@@ -112,7 +113,7 @@ Register it as a container service and subscribe to the topic:
 foo_message_processor:
     class: 'FooProcessor'
     tags:
-        - { name: 'enqueue.client.processor' }
+        - { name: 'enqueue.topic_subscriber' }
 ```
 
 Now you can start consuming messages:
