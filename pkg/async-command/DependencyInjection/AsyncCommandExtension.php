@@ -22,6 +22,7 @@ class AsyncCommandExtension extends Extension
                     'queue_prefixed' => false,
                     'exclusive' => true,
                 ])
+                ->addTag('enqueue.transport.processor')
             ;
         }
     }
