@@ -1,7 +1,0 @@
-services:
-    enqueue.async_command.run_command_processor:
-        class: 'Enqueue\AsyncCommand\RunCommandProcessor'
-        arguments:
-            - '%kernel.project_dir%'
-        tags:
-            - { name: 'enqueue.command_subscriber', client: 'default' }
