@@ -2,7 +2,6 @@
 
 namespace Enqueue\AsyncCommand;
 
-use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
@@ -10,7 +9,7 @@ use Interop\Queue\Processor;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
-final class RunCommandProcessor implements Processor, CommandSubscriberInterface
+final class RunCommandProcessor implements Processor
 {
     /**
      * @var string
@@ -40,16 +39,6 @@ final class RunCommandProcessor implements Processor, CommandSubscriberInterface
         }
 
         return Result::ack();
-    }
-
-    public static function getSubscribedCommand(): array
-    {
-        return [
-            'command' => Commands::RUN_COMMAND,
-            'queue' => Commands::RUN_COMMAND,
-            'prefix_queue' => false,
-            'exclusive' => true,
-        ];
     }
 
     /**

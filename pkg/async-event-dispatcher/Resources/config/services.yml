@@ -25,20 +25,6 @@ services:
             - '@event_dispatcher'
             - '@enqueue.events.async_listener'
 
-    enqueue.events.async_processor:
-        class: 'Enqueue\AsyncEventDispatcher\AsyncProcessor'
-        public: public
-        arguments:
-            - '@enqueue.events.registry'
-            - '@enqueue.events.event_dispatcher'
-        tags:
-            -
-                name: 'enqueue.processor'
-                command: 'symfony.dispatch_async_events'
-                queue: '%enqueue_events_queue%'
-                queue_prefixed: false
-                exclusive: true
-
     enqueue.events.php_serializer_event_transofrmer:
         class: 'Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer'
         public: public

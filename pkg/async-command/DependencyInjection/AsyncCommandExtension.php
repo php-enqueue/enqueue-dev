@@ -2,28 +2,28 @@
 
 namespace Enqueue\AsyncCommand\DependencyInjection;
 
+use Enqueue\AsyncCommand\Commands;
 use Enqueue\AsyncCommand\RunCommandProcessor;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class AsyncCommandExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
-
-        $service = $container->register('enqueue.async_command.run_command_processor', RunCommandProcessor::class)
-            ->addArgument('%kernel.project_dir%')
-        ;
-
         foreach ($configs['clients'] as $client) {
-            $service->addTag('enqueue.command_subscriber', ['client' => $client]);
+            $id = sprintf('enqueue.async_command.%s.run_command_processor', $client);
+            $container->register($id, RunCommandProcessor::class)
+                ->addArgument('%kernel.project_dir%')
+                ->addTag('enqueue.processor', [
+                    'client' => $client,
+                    'command' => Commands::RUN_COMMAND,
+                    'queue' => Commands::RUN_COMMAND,
+                    'queue_prefixed' => false,
+                    'exclusive' => true,
+                ])
+                ->addTag('enqueue.transport.processor')
+            ;
         }
     }
 }

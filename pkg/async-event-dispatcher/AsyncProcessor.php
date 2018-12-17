@@ -2,14 +2,13 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Consumption\Result;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AsyncProcessor implements Processor, CommandSubscriberInterface
+class AsyncProcessor implements Processor
 {
     /**
      * @var Registry
@@ -50,10 +49,5 @@ class AsyncProcessor implements Processor, CommandSubscriberInterface
         $this->dispatcher->dispatchAsyncListenersOnly($eventName, $event);
 
         return self::ACK;
-    }
-
-    public static function getSubscribedCommand()
-    {
-        return Commands::DISPATCH_ASYNC_EVENTS;
     }
 }
