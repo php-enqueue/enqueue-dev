@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.9.3](https://github.com/php-enqueue/enqueue-dev/tree/0.9.3) (2018-12-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.2...0.9.3)
+
+**Merged pull requests:**
+
+- Fix async command package [\#694](https://github.com/php-enqueue/enqueue-dev/pull/694) ([makasim](https://github.com/makasim))
+- Fix async events package [\#694](https://github.com/php-enqueue/enqueue-dev/pull/694) ([makasim](https://github.com/makasim))
+- Add commands for single transport\client with typed arguments. [\#693](https://github.com/php-enqueue/enqueue-dev/pull/693) ([makasim](https://github.com/makasim))
+- Fix TreeBuilder in Symfony 4.2 [\#692](https://github.com/php-enqueue/enqueue-dev/pull/692) ([angelsk](https://github.com/angelsk))
+- [doc] update docs [\#689](https://github.com/php-enqueue/enqueue-dev/pull/689) ([OskarStark](https://github.com/OskarStark))
+
 ## [0.9.2](https://github.com/php-enqueue/enqueue-dev/tree/0.9.2) (2018-12-13)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.1...0.9.2)
 
