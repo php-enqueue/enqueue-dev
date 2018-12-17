@@ -25,12 +25,12 @@ class RoutesCommandTest extends WebTestCase
         $tester = new CommandTester($command);
         $tester->execute([]);
 
-        $expected = <<<'OUTPUT'
-| topic   | theTopic                                            | default (prefixed)                     | test_topic_subscriber_processor                         | (hidden) |
-OUTPUT;
-
         $this->assertSame(0, $tester->getStatusCode());
-        $this->assertContains($expected, $tester->getDisplay());
+        $this->assertContains('| topic', $tester->getDisplay());
+        $this->assertContains('| theTopic', $tester->getDisplay());
+        $this->assertContains('| default (prefixed)', $tester->getDisplay());
+        $this->assertContains('| test_topic_subscriber_processor', $tester->getDisplay());
+        $this->assertContains('| (hidden)', $tester->getDisplay());
     }
 
     public function testShouldDisplayCommands()
@@ -41,11 +41,11 @@ OUTPUT;
         $tester = new CommandTester($command);
         $tester->execute([]);
 
-        $expected = <<<'OUTPUT'
-| command | theCommand                                          | default (prefixed)                     | test_command_subscriber_processor                       | (hidden) |
-OUTPUT;
-
         $this->assertSame(0, $tester->getStatusCode());
-        $this->assertContains($expected, $tester->getDisplay());
+        $this->assertContains('| command', $tester->getDisplay());
+        $this->assertContains('| theCommand', $tester->getDisplay());
+        $this->assertContains('| test_command_subscriber_processor', $tester->getDisplay());
+        $this->assertContains('| default (prefixed)', $tester->getDisplay());
+        $this->assertContains('| (hidden)', $tester->getDisplay());
     }
 }

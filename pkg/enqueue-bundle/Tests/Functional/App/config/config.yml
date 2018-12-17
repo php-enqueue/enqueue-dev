@@ -75,6 +75,10 @@ services:
         alias: 'enqueue.client.routes_command'
         public: true
 
+    test.enqueue.events.async_processor:
+        alias: 'enqueue.events.async_processor'
+        public: true
+
     test_async_listener:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncListener'
         public: true
