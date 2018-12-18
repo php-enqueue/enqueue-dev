@@ -402,7 +402,9 @@ class ConnectionConfig
             'port' => $dsn->getPort(),
             'user' => $dsn->getUser(),
             'pass' => $dsn->getPassword(),
-            'vhost' => null !== $dsn->getPath() ? ltrim($dsn->getPath(), '/') : null,
+            'vhost' => null !== ($path = $dsn->getPath()) ?
+                (0 === strpos($path, '/') ? substr($path, 1) : $path)
+                : null,
             'read_timeout' => $dsn->getFloat('read_timeout'),
             'write_timeout' => $dsn->getFloat('write_timeout'),
             'connection_timeout' => $dsn->getFloat('connection_timeout'),
