@@ -49,7 +49,7 @@ trait DbalConsumerHelperTrait
             ->set('redeliver_after', ':redeliverAfter')
             ->andWhere('id = :messageId')
             ->andWhere('delivery_id IS NULL')
-            ->setParameter('deliveryId', $deliveryId->getBytes(), Type::GUID)
+            ->setParameter('deliveryId', $deliveryId, Type::GUID)
             ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
         ;
 
@@ -68,7 +68,7 @@ trait DbalConsumerHelperTrait
                         ->select('*')
                         ->from($this->getContext()->getTableName())
                         ->andWhere('delivery_id = :deliveryId')
-                        ->setParameter('deliveryId', $deliveryId->getBytes(), Type::GUID)
+                        ->setParameter('deliveryId', $deliveryId, Type::GUID)
                         ->setMaxResults(1)
                         ->execute()
                         ->fetch();
@@ -152,7 +152,7 @@ trait DbalConsumerHelperTrait
 
         $this->getConnection()->delete(
             $this->getContext()->getTableName(),
-            ['delivery_id' => Uuid::fromString($deliveryId)->getBytes()],
+            ['delivery_id' => $deliveryId],
             ['delivery_id' => Type::GUID]
         );
     }
