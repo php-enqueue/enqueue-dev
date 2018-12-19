@@ -15,7 +15,7 @@ Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 * [Installation](#installation)
 * [Create context](#create-context)
 * [Declare topic](#declare-topic)
-* [Declare queue](#decalre-queue)
+* [Declare queue](#declare-queue)
 * [Bind queue to topic](#bind-queue-to-topic)
 * [Send message to topic](#send-message-to-topic)
 * [Send message to queue](#send-message-to-queue)
