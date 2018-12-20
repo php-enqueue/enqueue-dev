@@ -445,6 +445,54 @@ trait GenericDriverTestsTrait
         $driver->sendToRouter($message);
     }
 
+    public function testShouldSendMessageToRouterProcessor()
+    {
+        $queue = $this->createQueue('');
+        $transportMessage = $this->createMessage();
+
+        $producer = $this->createProducerMock();
+        $producer
+            ->expects($this->once())
+            ->method('send')
+            ->with($this->identicalTo($queue), $this->identicalTo($transportMessage))
+        ;
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->with($this->getDefaultQueueTransportName())
+            ->willReturn($queue)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createProducer')
+            ->willReturn($producer)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('createMessage')
+            ->willReturn($transportMessage)
+        ;
+
+        $config = $this->createDummyConfig();
+
+        $driver = $this->createDriver(
+            $context,
+            $config,
+            new RouteCollection([
+                new Route('topic', Route::TOPIC, 'processor', [
+                    'queue' => 'custom',
+                ]),
+            ])
+        );
+
+        $message = new Message();
+        $message->setProperty(Config::TOPIC, 'topic');
+        $message->setProperty(Config::PROCESSOR, $config->getRouterProcessor());
+
+        $driver->sendToProcessor($message);
+    }
+
     public function testShouldSendTopicMessageToProcessorToDefaultQueue()
     {
         $queue = $this->createQueue('');
