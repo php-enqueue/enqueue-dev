@@ -15,6 +15,15 @@ services:
         tags:
             - { name: 'console.command' }
 
+    enqueue.transport.setup_broker:
+        class: 'Enqueue\Symfony\SetupBrokerCommand'
+        arguments:
+            - '@enqueue.locator'
+            - '%enqueue.default_transport%'
+            - 'enqueue.transport.%s.setup_broker'
+        tags:
+            - { name: 'console.command' }
+
     enqueue.client.consume_command:
         class: 'Enqueue\Symfony\Client\ConsumeCommand'
         arguments:

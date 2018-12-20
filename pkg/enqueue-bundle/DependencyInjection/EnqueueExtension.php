@@ -59,6 +59,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             $transportFactory->buildContext($container, []);
             $transportFactory->buildQueueConsumer($container, $modules['consumption']);
             $transportFactory->buildRpcClient($container, []);
+            $transportFactory->buildSetupBroker($container, []);
 
             // client
             if (isset($modules['client'])) {

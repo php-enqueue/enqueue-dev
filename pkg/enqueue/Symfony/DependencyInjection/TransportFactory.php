@@ -11,6 +11,7 @@ use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Resources;
 use Enqueue\Rpc\RpcClient;
 use Enqueue\Rpc\RpcFactory;
+use Enqueue\SetupBroker\ChainSetupBroker;
 use Enqueue\Symfony\ContainerProcessorRegistry;
 use Enqueue\Symfony\DiUtils;
 use Interop\Queue\ConnectionFactory;
@@ -241,6 +242,15 @@ final class TransportFactory
                 $container->setAlias($this->diUtils->formatDefault('rpc_client'), $this->diUtils->format('rpc_client'));
             }
         }
+    }
+
+    public function buildSetupBroker(ContainerBuilder $container, array $config): void
+    {
+        $container->register($this->diUtils->format('setup_broker'), ChainSetupBroker::class)
+            ->addArgument([])
+        ;
+
+        $this->addServiceToLocator($container, 'setup_broker');
     }
 
     private function assertServiceExists(ContainerBuilder $container, string $serviceId): void

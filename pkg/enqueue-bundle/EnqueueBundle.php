@@ -14,6 +14,7 @@ use Enqueue\Symfony\Client\DependencyInjection\BuildProcessorRoutesPass as Build
 use Enqueue\Symfony\Client\DependencyInjection\BuildTopicSubscriberRoutesPass as BuildClientTopicSubscriberRoutesPass;
 use Enqueue\Symfony\DependencyInjection\BuildConsumptionExtensionsPass;
 use Enqueue\Symfony\DependencyInjection\BuildProcessorRegistryPass;
+use Enqueue\Symfony\DependencyInjection\BuildSetupBrokerPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -25,6 +26,7 @@ class EnqueueBundle extends Bundle
         //transport passes
         $container->addCompilerPass(new BuildConsumptionExtensionsPass());
         $container->addCompilerPass(new BuildProcessorRegistryPass());
+        $container->addCompilerPass(new BuildSetupBrokerPass());
 
         //client passes
         $container->addCompilerPass(new BuildClientConsumptionExtensionsPass());
