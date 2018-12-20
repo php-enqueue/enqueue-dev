@@ -181,9 +181,10 @@ class ExclusiveCommandExtensionTest extends TestCase
         $driver = $this->createDriverStub($routeCollection);
         $driver
             ->expects($this->any())
-            ->method('createQueue')
-            ->willReturnCallback(function (string $queueName) {
-                return new NullQueue($queueName);
+            ->method('createRouteQueue')
+            ->with($this->isInstanceOf(Route::class))
+            ->willReturnCallback(function (Route $route) {
+                return new NullQueue($route->getQueue());
             })
         ;
 
