@@ -71,7 +71,9 @@ class GenericDriver implements DriverInterface
 
         /** @var InteropQueue $queue */
         $queue = null;
-        if ($topic && $processor = $message->getProperty(Config::PROCESSOR)) {
+        $routerProcessor = $this->config->getRouterProcessor();
+        $processor = $message->getProperty(Config::PROCESSOR);
+        if ($topic && $processor && $processor !== $routerProcessor) {
             $route = $this->routeCollection->topicAndProcessor($topic, $processor);
             if (false == $route) {
                 throw new \LogicException(sprintf('There is no route for topic "%s" and processor "%s"', $topic, $processor));
@@ -79,8 +81,8 @@ class GenericDriver implements DriverInterface
 
             $message->setProperty(Config::PROCESSOR, $route->getProcessor());
             $queue = $this->createRouteQueue($route);
-        } elseif ($topic && false == $message->getProperty(Config::PROCESSOR)) {
-            $message->setProperty(Config::PROCESSOR, $this->config->getRouterProcessor());
+        } elseif ($topic && (false == $processor || $processor === $routerProcessor)) {
+            $message->setProperty(Config::PROCESSOR, $routerProcessor);
 
             $queue = $this->createQueue($this->config->getRouterQueue());
         } elseif ($command) {
