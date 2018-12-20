@@ -64,7 +64,7 @@ final class ExclusiveCommandExtension implements MessageReceivedExtensionInterfa
                 continue;
             }
 
-            $queueName = $this->driver->createQueue($route->getQueue())->getQueueName();
+            $queueName = $this->driver->createRouteQueue($route)->getQueueName();
             if (array_key_exists($queueName, $map)) {
                 throw new \LogicException('The queue name has been already bound by another exclusive command processor');
             }
