@@ -25,6 +25,9 @@ class SetRouterPropertiesExtension implements MessageReceivedExtensionInterface
     public function onMessageReceived(MessageReceived $context): void
     {
         $message = $context->getMessage();
+        if (false == $message->getProperty(Config::TOPIC)) {
+            return;
+        }
         if ($message->getProperty(Config::PROCESSOR)) {
             return;
         }
