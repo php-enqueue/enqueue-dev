@@ -481,7 +481,7 @@ trait GenericDriverTestsTrait
             $config,
             new RouteCollection([
                 new Route('topic', Route::TOPIC, 'processor', [
-                    'queue' => 'custom'
+                    'queue' => 'custom',
                 ]),
             ])
         );
