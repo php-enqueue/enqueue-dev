@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.9.5](https://github.com/php-enqueue/enqueue-dev/tree/0.9.5) (2018-12-21)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.4...0.9.5)
+
+**Merged pull requests:**
+
+- \[dbal\] Run tests on PostgreSQS [\#705](https://github.com/php-enqueue/enqueue-dev/pull/705) ([makasim](https://github.com/makasim))
+- \[dbal\] Use string-based UUIDs instead of binary [\#698](https://github.com/php-enqueue/enqueue-dev/pull/698) ([jverdeyen](https://github.com/jverdeyen))
+
 ## [0.9.4](https://github.com/php-enqueue/enqueue-dev/tree/0.9.4) (2018-12-20)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.3...0.9.4)
 
