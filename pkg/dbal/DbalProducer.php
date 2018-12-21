@@ -11,9 +11,7 @@ use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
-use Ramsey\Uuid\Codec\OrderedTimeCodec;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidFactory;
 
 class DbalProducer implements Producer
 {
@@ -38,17 +36,11 @@ class DbalProducer implements Producer
     private $context;
 
     /**
-     * @var OrderedTimeCodec
-     */
-    private $uuidCodec;
-
-    /**
      * @param DbalContext $context
      */
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
-        $this->uuidCodec = new OrderedTimeCodec((new UuidFactory())->getUuidBuilder());
     }
 
     /**
@@ -71,7 +63,6 @@ class DbalProducer implements Producer
         }
 
         $body = $message->getBody();
-        $uuid = Uuid::uuid4();
 
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
@@ -79,7 +70,7 @@ class DbalProducer implements Producer
         ;
 
         $dbalMessage = [
-            'id' => $this->uuidCodec->encodeBinary($uuid),
+            'id' => Uuid::uuid4(),
             'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),

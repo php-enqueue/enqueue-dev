@@ -17,9 +17,6 @@ use Interop\Queue\Producer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
 use Interop\Queue\Topic;
-use Ramsey\Uuid\Codec\OrderedTimeCodec;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidFactory;
 
 class DbalContext implements Context
 {
@@ -154,9 +151,7 @@ class DbalContext implements Context
         );
 
         if (isset($arrayMessage['id'])) {
-            $uuidCodec = new OrderedTimeCodec((new UuidFactory())->getUuidBuilder());
-
-            $message->setMessageId($uuidCodec->decodeBytes($arrayMessage['id'])->toString());
+            $message->setMessageId($arrayMessage['id']);
         }
         if (isset($arrayMessage['queue'])) {
             $message->setQueue($arrayMessage['queue']);
@@ -171,7 +166,7 @@ class DbalContext implements Context
             $message->setPublishedAt((int) $arrayMessage['published_at']);
         }
         if (isset($arrayMessage['delivery_id'])) {
-            $message->setDeliveryId(Uuid::fromBytes($arrayMessage['delivery_id'])->toString());
+            $message->setDeliveryId($arrayMessage['delivery_id']);
         }
         if (isset($arrayMessage['redeliver_after'])) {
             $message->setRedeliverAfter((int) $arrayMessage['redeliver_after']);
