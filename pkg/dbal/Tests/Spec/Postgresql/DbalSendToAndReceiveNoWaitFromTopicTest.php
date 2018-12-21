@@ -1,13 +1,13 @@
 <?php
 
-namespace Enqueue\Dbal\Tests\Spec;
+namespace Enqueue\Dbal\Tests\Spec\Postgresql;
 
-use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
+use Interop\Queue\Spec\SendToAndReceiveNoWaitFromTopicSpec;
 
 /**
  * @group functional
  */
-class DbalSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFromQueueSpec
+class DbalSendToAndReceiveNoWaitFromTopicTest extends SendToAndReceiveNoWaitFromTopicSpec
 {
     use CreateDbalContextTrait;
 

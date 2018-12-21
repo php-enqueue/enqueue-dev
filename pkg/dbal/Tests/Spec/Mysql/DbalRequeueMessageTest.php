@@ -1,13 +1,13 @@
 <?php
 
-namespace Enqueue\Dbal\Tests\Spec;
+namespace Enqueue\Dbal\Tests\Spec\Mysql;
 
-use Interop\Queue\Spec\SendToAndReceiveNoWaitFromTopicSpec;
+use Interop\Queue\Spec\RequeueMessageSpec;
 
 /**
  * @group functional
  */
-class DbalSendToAndReceiveNoWaitFromTopicTest extends SendToAndReceiveNoWaitFromTopicSpec
+class DbalRequeueMessageTest extends RequeueMessageSpec
 {
     use CreateDbalContextTrait;
 
