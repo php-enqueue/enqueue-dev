@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.9.4](https://github.com/php-enqueue/enqueue-dev/tree/0.9.4) (2018-12-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.3...0.9.4)
+
+**Merged pull requests:**
+
+- \[client\] sendToProcessor should able to send message to router processor. [\#703](https://github.com/php-enqueue/enqueue-dev/pull/703) ([makasim](https://github.com/makasim))
+- \[client\] Fix SetRouterPropertiesExtension should skip no topic messages. [\#702](https://github.com/php-enqueue/enqueue-dev/pull/702) ([makasim](https://github.com/makasim))
+- \[client\] Fix Exclusive Command Extension ignores route queue prefix option. [\#701](https://github.com/php-enqueue/enqueue-dev/pull/701) ([makasim](https://github.com/makasim))
+- \[amqp\] fix \#696 parsing vhost from amqp dsn [\#697](https://github.com/php-enqueue/enqueue-dev/pull/697) ([rpanfili](https://github.com/rpanfili))
+- \[doc\] Fix link to declare queue [\#699](https://github.com/php-enqueue/enqueue-dev/pull/699) ([samnela](https://github.com/samnela))
+
 ## [0.9.3](https://github.com/php-enqueue/enqueue-dev/tree/0.9.3) (2018-12-17)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.2...0.9.3)
 
