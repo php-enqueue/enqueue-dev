@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Enqueue\Dbal\Tests\Spec;
+namespace Enqueue\Dbal\Tests\Spec\Postgresql;
 
 use Enqueue\Dbal\DbalContext;
 use Interop\Queue\Context;
-use Interop\Queue\Spec\SubscriptionConsumerStopOnFalseSpec;
+use Interop\Queue\Spec\SubscriptionConsumerConsumeUntilUnsubscribedSpec;
 
 /**
  * @group functional
  * @group Dbal
  */
-class DbalSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopOnFalseSpec
+class DbalSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionConsumerConsumeUntilUnsubscribedSpec
 {
     use CreateDbalContextTrait;
 

@@ -6,6 +6,7 @@ services:
     depends_on:
       - rabbitmq
       - mysql
+      - postgres
       - redis
       - beanstalkd
       - gearmand
@@ -26,7 +27,9 @@ services:
       - RABITMQ_STOMP_DSN=stomp+rabbitmq://guest:guest@rabbitmq:61613/mqdev
       - RABBITMQ_MANAGMENT_DSN=http://guest:guest@rabbitmq:15672/mqdev
       - DOCTRINE_DSN=mysql://root:rootpass@mysql/mqdev
+      - DOCTRINE_POSTGRES_DSN=postgres://postgres:pass@postgres/template1
       - MYSQL_DSN=mysql://root:rootpass@mysql/mqdev
+      - POSTGRES_DSN=postgres://postgres:pass@postgres/postgres
       - PREDIS_DSN=redis+predis://redis
       - PHPREDIS_DSN=redis+phpredis://redis
       - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
@@ -76,6 +79,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: mqdev
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: pass
 
   generate-changelog:
     image: enqueue/generate-changelog:latest

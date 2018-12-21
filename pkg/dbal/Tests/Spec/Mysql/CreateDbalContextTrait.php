@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Dbal\Tests\Spec;
+namespace Enqueue\Dbal\Tests\Spec\Mysql;
 
 use Enqueue\Dbal\DbalConnectionFactory;
 
