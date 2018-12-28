@@ -58,8 +58,8 @@ trait LimitsExtensionsCommandTrait
         }
 
         $niceness = $input->getOption('niceness');
-        if ($niceness) {
-            $extensions[] = new NicenessExtension($niceness);
+        if (!empty($niceness) && is_numeric($niceness)) {
+            $extensions[] = new NicenessExtension((int) $niceness);
         }
 
         return $extensions;
