@@ -41,6 +41,7 @@ class PRedis implements Redis
             'host' => $config['host'],
             'port' => $config['port'],
             'password' => $config['password'],
+            'database' => $config['database'],
             'path' => $config['path'],
             'async' => $config['async'],
             'persistent' => $config['persistent'],
