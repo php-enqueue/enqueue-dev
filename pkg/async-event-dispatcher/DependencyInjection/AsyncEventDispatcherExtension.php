@@ -28,7 +28,7 @@ class AsyncEventDispatcherExtension extends Extension
             ->addTag('enqueue.processor', [
                 'command' => Commands::DISPATCH_ASYNC_EVENTS,
                 'queue' => '%enqueue_events_queue%',
-                'queue_prefixed' => false,
+                'prefix_queue' => false,
                 'exclusive' => true,
             ])
             ->addTag('enqueue.transport.processor')
