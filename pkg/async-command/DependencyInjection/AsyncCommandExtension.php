@@ -19,7 +19,7 @@ class AsyncCommandExtension extends Extension
                     'client' => $client,
                     'command' => Commands::RUN_COMMAND,
                     'queue' => Commands::RUN_COMMAND,
-                    'queue_prefixed' => false,
+                    'prefix_queue' => false,
                     'exclusive' => true,
                 ])
                 ->addTag('enqueue.transport.processor')
