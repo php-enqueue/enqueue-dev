@@ -8,7 +8,6 @@ use DataDog\BatchedDogStatsd;
 use DataDog\DogStatsd;
 use Enqueue\Client\Config;
 use Enqueue\Dsn\Dsn;
-use Interop\Queue\Queue;
 
 class DatadogStorage implements StatsStorage
 {
@@ -30,8 +29,8 @@ class DatadogStorage implements StatsStorage
 
         $this->config = $this->prepareConfig($config);
 
-        if (false === $this->datadog) {
-            if (true === $this->config['batched']) {
+        if (null === $this->datadog) {
+            if (true === filter_var($this->config['batched'], FILTER_VALIDATE_BOOLEAN)) {
                 $this->datadog = new BatchedDogStatsd($this->config);
             } else {
                 $this->datadog = new DogStatsd($this->config);
@@ -42,26 +41,19 @@ class DatadogStorage implements StatsStorage
     public function pushConsumerStats(ConsumerStats $stats): void
     {
         $queues = $stats->getQueues();
-        array_walk($queues, function (Queue $queue) use ($stats) {
+        array_walk($queues, function (string $queue) use ($stats) {
             $tags = [
                 'queue' => $queue,
                 'consumerId' => $stats->getConsumerId(),
-            ];
-
-            $values = [
-                'startedAtMs' => $stats->getStartedAtMs(),
-                'started' => $stats->isStarted(),
-                'finished' => $stats->isFinished(),
-                'failed' => $stats->isFailed(),
             ];
 
             if ($stats->getFinishedAtMs()) {
                 $values['finishedAtMs'] = $stats->getFinishedAtMs();
             }
 
-            $this->datadog->gauge($this->config['metric.consumers.started'], $stats->isStarted(), 1, $tags);
-            $this->datadog->gauge($this->config['metric.consumers.finished'], $stats->isFinished(), 1, $tags);
-            $this->datadog->gauge($this->config['metric.consumers.failed'], $stats->isFailed(), 1, $tags);
+            $this->datadog->gauge($this->config['metric.consumers.started'], (int) $stats->isStarted(), 1, $tags);
+            $this->datadog->gauge($this->config['metric.consumers.finished'], (int) $stats->isFinished(), 1, $tags);
+            $this->datadog->gauge($this->config['metric.consumers.failed'], (int) $stats->isFailed(), 1, $tags);
             $this->datadog->gauge($this->config['metric.consumers.received'], $stats->getReceived(), 1, $tags);
             $this->datadog->gauge($this->config['metric.consumers.acknowledged'], $stats->getAcknowledged(), 1, $tags);
             $this->datadog->gauge($this->config['metric.consumers.rejected'], $stats->getRejected(), 1, $tags);
@@ -163,7 +155,6 @@ class DatadogStorage implements StatsStorage
         return array_replace([
             'host' => 'localhost',
             'port' => 8125,
-            'global_tags' => 'enqueue',
             'batched' => true,
             'metric.messages.sent' => 'enqueue.messages.sent',
             'metric.messages.consumed' => 'enqueue.messages.consumed',
