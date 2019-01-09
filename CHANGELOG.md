@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.9.6](https://github.com/php-enqueue/enqueue-dev/tree/0.9.6) (2019-01-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.5...0.9.6)
+
+**Merged pull requests:**
+
+- Fix async command/event pkgs [\#717](https://github.com/php-enqueue/enqueue-dev/pull/717) ([GCalmels](https://github.com/GCalmels))
+- Use database from config in PRedis driver [\#715](https://github.com/php-enqueue/enqueue-dev/pull/715) ([lalov](https://github.com/lalov))
+- \[monitoring\] Add support of Datadog [\#716](https://github.com/php-enqueue/enqueue-dev/pull/716) ([uro](https://github.com/uro))
+- \[monitoring\] Fixed influxdb write on sentMessageStats [\#712](https://github.com/php-enqueue/enqueue-dev/pull/712) ([uro](https://github.com/uro))
+- \[monitoring\] Add support for minimum stability - stable [\#711](https://github.com/php-enqueue/enqueue-dev/pull/711) ([uro](https://github.com/uro))
+- \[consumption\] fix wrong niceness extension param [\#709](https://github.com/php-enqueue/enqueue-dev/pull/709) ([ramunasd](https://github.com/ramunasd))
+
 ## [0.9.5](https://github.com/php-enqueue/enqueue-dev/tree/0.9.5) (2018-12-21)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.4...0.9.5)
 
