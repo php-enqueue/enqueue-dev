@@ -14,7 +14,7 @@ Queue Monitoring tool. Track sent, consumed messages. Consumers performances.
 * Could be used with any message queue library.
 * Could be intergrated to any PHP framework
 * Could send stats to any analytical platform
-* Supports Grafana and WAMP out of the box.
+* Supports Datadog, InfluxDb, Grafana and WAMP out of the box.
 * Provides integration for Enqueue 
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)

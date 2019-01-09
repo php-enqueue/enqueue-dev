@@ -14,9 +14,9 @@ With it, you can control how many messages were sent, how many processed success
 How many consumers are working, their up time, processed messages stats, memory usage and system load. 
 The tool could be integrated with virtually any analytics and monitoring platform.
 There are several integration:  
+  * [Datadog StatsD](https://datadoghq.com)
   * [InfluxDB](https://www.influxdata.com/) and [Grafana](https://grafana.com/)
   * [WAMP (Web Application Messaging Protocol)](https://wamp-proto.org/) 
-
 We are working on a JS\WAMP based real-time UI tool, for more information please [contact us](opensource@forma-pro.com).
 
 ![Grafana Monitoring](images/grafana_monitoring.jpg)
@@ -30,6 +30,7 @@ We are working on a JS\WAMP based real-time UI tool, for more information please
 * [Consumption extension](#consumption-extension)
 * [Enqueue Client Extension](#enqueue-client-extension)
 * [InfluxDB Storage](#influxdb-storage)
+* [Datadog Storage](#datadog-storage)
 * [WAMP (Web Socket Messaging Protocol) Storage](#wamp-(web-socket-messaging-protocol)-storage)
 * [Symfony App](#symfony-app)
 
@@ -237,6 +238,50 @@ There are available options:
 *   'measurementConsumers' => 'consumers',
 ```
 
+## Datadog storage
+
+Install additional packages:
+
+```
+composer req datadog/php-datadogstatsd:^1.3
+```
+
+```php
+<?php
+use Enqueue\Monitoring\GenericStatsStorageFactory;
+
+$statsStorage = (new GenericStatsStorageFactory())->create('datadog://127.0.0.1:8125');
+```
+
+For best experience please adjust units and types in metric summary.
+
+Example dashboard:
+ 
+![Datadog monitoring](images/datadog_monitoring.png)
+
+
+There are available options (and all available metrics):
+
+```
+*   'host' => '127.0.0.1',
+*   'port' => '8125',
+*   'batched' => true, // performance boost
+*   'global_tags' => '', // should contain keys and values
+*   'metric.messages.sent' => 'enqueue.messages.sent',
+*   'metric.messages.consumed' => 'enqueue.messages.consumed',
+*   'metric.messages.redelivered' => 'enqueue.messages.redelivered',
+*   'metric.messages.failed' => 'enqueue.messages.failed',
+*   'metric.consumers.started' => 'enqueue.consumers.started',
+*   'metric.consumers.finished' => 'enqueue.consumers.finished',
+*   'metric.consumers.failed' => 'enqueue.consumers.failed',
+*   'metric.consumers.received' => 'enqueue.consumers.received',
+*   'metric.consumers.acknowledged' => 'enqueue.consumers.acknowledged',
+*   'metric.consumers.rejected' => 'enqueue.consumers.rejected',
+*   'metric.consumers.requeued' => 'enqueue.consumers.requeued',
+*   'metric.consumers.memoryUsage' => 'enqueue.consumers.memoryUsage',
+```
+
+
 ## WAMP (Web Socket Messaging Protocol) Storage
 
 Install additional packages:
@@ -279,6 +324,11 @@ enqueue:
   another:
     transport: 'amqp://guest:guest@foo:5672/%2f'
     monitoring: 'wamp://127.0.0.1:9090?topic=stats'
+    client: ~
+    
+  datadog:
+    transport: 'amqp://guest:guest@foo:5672/%2f'
+    monitoring: 'datadog://127.0.0.1:8125?batched=false'
     client: ~
 ```
 

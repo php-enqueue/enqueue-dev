@@ -108,6 +108,10 @@
         <testsuite name="wamp transport">
             <directory>pkg/wamp/Tests</directory>
         </testsuite>
+
+        <testsuite name="monitoring">
+            <directory>pkg/monitoring/Tests</directory>
+        </testsuite>
     </testsuites>
 
     <php>
