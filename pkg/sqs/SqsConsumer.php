@@ -133,14 +133,19 @@ class SqsConsumer implements Consumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
-        $this->context->getSqsClient()->deleteMessage([
-            '@region' => $this->queue->getRegion(),
-            'QueueUrl' => $this->context->getQueueUrl($this->queue),
-            'ReceiptHandle' => $message->getReceiptHandle(),
-        ]);
-
         if ($requeue) {
-            $this->context->createProducer()->send($this->queue, $message);
+            $this->context->getAwsSqsClient()->changeMessageVisibility([
+                '@region' => $this->queue->getRegion(),
+                'QueueUrl' => $this->context->getQueueUrl($this->queue),
+                'ReceiptHandle' => $message->getReceiptHandle(),
+                'VisibilityTimeout' => 0,
+            ]);
+        } else {
+            $this->context->getSqsClient()->deleteMessage([
+                '@region' => $this->queue->getRegion(),
+                'QueueUrl' => $this->context->getQueueUrl($this->queue),
+                'ReceiptHandle' => $message->getReceiptHandle(),
+            ]);
         }
     }
 
