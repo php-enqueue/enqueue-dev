@@ -134,7 +134,7 @@ class SqsConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, SqsMessage::class);
 
         if ($requeue) {
-            $this->context->getAwsSqsClient()->changeMessageVisibility([
+            $this->context->getSqsClient()->changeMessageVisibility([
                 '@region' => $this->queue->getRegion(),
                 'QueueUrl' => $this->context->getQueueUrl($this->queue),
                 'ReceiptHandle' => $message->getReceiptHandle(),
