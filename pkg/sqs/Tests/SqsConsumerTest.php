@@ -205,18 +205,11 @@ class SqsConsumerTest extends TestCase
             ->expects($this->once())
             ->method('changeMessageVisibility')
             ->with($this->identicalTo([
-                '@region' => null,
+                '@region' => 'theRegion',
                 'QueueUrl' => 'theQueueUrl',
                 'ReceiptHandle' => 'theReceipt',
                 'VisibilityTimeout' => 0,
             ]))
-        ;
-
-        $producer = $this->createProducerMock();
-        $producer
-            ->expects($this->once())
-            ->method('send')
-            ->with($this->identicalTo($destination), $this->identicalTo($message))
         ;
 
         $context = $this->createContextMock();
@@ -239,6 +232,7 @@ class SqsConsumerTest extends TestCase
         $message->setReceiptHandle('theReceipt');
 
         $destination = new SqsDestination('queue');
+        $destination->setRegion('theRegion');
 
         $consumer = new SqsConsumer($context, $destination);
         $consumer->reject($message, true);
