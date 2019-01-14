@@ -203,18 +203,14 @@ class SqsConsumerTest extends TestCase
         $client = $this->createSqsClientMock();
         $client
             ->expects($this->once())
-            ->method('deleteMessage')
+            ->method('changeMessageVisibility')
             ->with($this->identicalTo([
                 '@region' => null,
                 'QueueUrl' => 'theQueueUrl',
                 'ReceiptHandle' => 'theReceipt',
+                'VisibilityTimeout' => 0,
             ]))
         ;
-
-        $message = new SqsMessage();
-        $message->setReceiptHandle('theReceipt');
-
-        $destination = new SqsDestination('queue');
 
         $producer = $this->createProducerMock();
         $producer
@@ -235,10 +231,14 @@ class SqsConsumerTest extends TestCase
             ->willReturn('theQueueUrl')
         ;
         $context
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('createProducer')
-            ->willReturn($producer)
         ;
+
+        $message = new SqsMessage();
+        $message->setReceiptHandle('theReceipt');
+
+        $destination = new SqsDestination('queue');
 
         $consumer = new SqsConsumer($context, $destination);
         $consumer->reject($message, true);
