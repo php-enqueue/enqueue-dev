@@ -88,11 +88,13 @@ class PheanstalkConsumer implements Consumer
      */
     public function reject(Message $message, bool $requeue = false): void
     {
-        $this->acknowledge($message);
-
         if ($requeue) {
             $this->pheanstalk->release($message->getJob(), $message->getPriority(), $message->getDelay());
+
+            return;
         }
+
+        $this->acknowledge($message);
     }
 
     private function convertJobToMessage(Job $job): PheanstalkMessage
