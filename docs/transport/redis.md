@@ -107,7 +107,7 @@ $connectionFactory = new RedisConnectionFactory([
 $context = $connectionFactory->createContext();
 ```
 
-* With custom redis instance:
+* With predis and custom [options](https://github.com/nrk/predis/wiki/Client-Options):
 
 It gives you more control over vendor specific features.
 
@@ -116,10 +116,15 @@ It gives you more control over vendor specific features.
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\PRedis;
  
-$config = []; 
-$options = [];
+$config = [
+    'host' => 'localhost',
+    'port' => 6379,
+    'predis_options' => [
+        'prefix'  => 'ns:'
+    ]
+]; 
 
-$redis = new PRedis(new \PRedis\Client($config, $options));
+$redis = new PRedis($config);
 
 $factory = new RedisConnectionFactory($redis);
 ```
