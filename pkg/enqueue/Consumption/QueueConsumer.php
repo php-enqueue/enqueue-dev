@@ -323,9 +323,11 @@ final class QueueConsumer implements QueueConsumerInterface
                 }
             }
 
-            $prev = new \ReflectionProperty('Exception', 'previous');
-            $prev->setAccessible(true);
-            $prev->setValue($wrapper, $exception);
+            if ($exception !== $wrapper) {
+                $prev = new \ReflectionProperty('Exception', 'previous');
+                $prev->setAccessible(true);
+                $prev->setValue($wrapper, $exception);
+            }
 
             throw $e;
         }
