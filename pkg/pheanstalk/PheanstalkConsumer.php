@@ -88,6 +88,15 @@ class PheanstalkConsumer implements Consumer
      */
     public function reject(Message $message, bool $requeue = false): void
     {
+        InvalidMessageException::assertMessageInstanceOf($message, PheanstalkMessage::class);
+
+        if (false == $message->getJob()) {
+            throw new \LogicException(sprintf(
+                'The message could not be %s because it does not have job set.',
+                $requeue ? 'requeued' : 'rejected'
+            ));
+        }
+
         if ($requeue) {
             $this->pheanstalk->release($message->getJob(), $message->getPriority(), $message->getDelay());
 

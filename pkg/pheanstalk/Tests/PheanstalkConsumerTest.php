@@ -96,7 +96,7 @@ class PheanstalkConsumerTest extends TestCase
     public function testShouldReceiveNoWaitFromQueueAndReturnMessageIfMessageInQueue()
     {
         $destination = new PheanstalkDestination('theQueueName');
-        $message = new  PheanstalkMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
+        $message = new PheanstalkMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
 
         $job = new Job('theJobId', json_encode($message));
 
@@ -116,6 +116,109 @@ class PheanstalkConsumerTest extends TestCase
         $this->assertSame(['foo' => 'fooVal'], $actualMessage->getProperties());
         $this->assertSame(['bar' => 'barVal'], $actualMessage->getHeaders());
         $this->assertSame($job, $actualMessage->getJob());
+    }
+
+    public function testShouldAcknowledgeMessage()
+    {
+        $destination = new PheanstalkDestination('theQueueName');
+        $message = new PheanstalkMessage();
+
+        $job = new Job('theJobId', json_encode($message));
+        $message->setJob($job);
+
+        $pheanstalk = $this->createPheanstalkMock();
+        $pheanstalk
+            ->expects($this->once())
+            ->method('delete')
+            ->with($job)
+        ;
+
+        $consumer = new PheanstalkConsumer($destination, $pheanstalk);
+
+        $consumer->acknowledge($message);
+    }
+
+    public function testAcknowledgeShouldThrowExceptionIfMessageHasNoJob()
+    {
+        $destination = new PheanstalkDestination('theQueueName');
+        $pheanstalk = $this->createPheanstalkMock();
+
+        $consumer = new PheanstalkConsumer($destination, $pheanstalk);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The message could not be acknowledged because it does not have job set.');
+
+        $consumer->acknowledge(new PheanstalkMessage());
+    }
+
+    public function testShouldRejectMessage()
+    {
+        $destination = new PheanstalkDestination('theQueueName');
+        $message = new PheanstalkMessage();
+
+        $job = new Job('theJobId', json_encode($message));
+        $message->setJob($job);
+
+        $pheanstalk = $this->createPheanstalkMock();
+        $pheanstalk
+            ->expects($this->once())
+            ->method('delete')
+            ->with($job)
+        ;
+
+        $consumer = new PheanstalkConsumer($destination, $pheanstalk);
+
+        $consumer->reject($message);
+    }
+
+    public function testRejectShouldThrowExceptionIfMessageHasNoJob()
+    {
+        $destination = new PheanstalkDestination('theQueueName');
+        $pheanstalk = $this->createPheanstalkMock();
+
+        $consumer = new PheanstalkConsumer($destination, $pheanstalk);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The message could not be rejected because it does not have job set.');
+
+        $consumer->reject(new PheanstalkMessage());
+    }
+
+    public function testShouldRequeueMessage()
+    {
+        $destination = new PheanstalkDestination('theQueueName');
+        $message = new PheanstalkMessage();
+
+        $job = new Job('theJobId', json_encode($message));
+        $message->setJob($job);
+
+        $pheanstalk = $this->createPheanstalkMock();
+        $pheanstalk
+            ->expects($this->once())
+            ->method('release')
+            ->with($job, Pheanstalk::DEFAULT_PRIORITY, Pheanstalk::DEFAULT_DELAY)
+        ;
+        $pheanstalk
+            ->expects($this->never())
+            ->method('delete')
+        ;
+
+        $consumer = new PheanstalkConsumer($destination, $pheanstalk);
+
+        $consumer->reject($message, true);
+    }
+
+    public function testRequeueShouldThrowExceptionIfMessageHasNoJob()
+    {
+        $destination = new PheanstalkDestination('theQueueName');
+        $pheanstalk = $this->createPheanstalkMock();
+
+        $consumer = new PheanstalkConsumer($destination, $pheanstalk);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('The message could not be requeued because it does not have job set.');
+
+        $consumer->reject(new PheanstalkMessage(), true);
     }
 
     /**
