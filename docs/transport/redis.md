@@ -71,7 +71,7 @@ $factory = new RedisConnectionFactory([]);
 $factory = new RedisConnectionFactory([
     'host' => 'example.com',
     'port' => 1000,
-    'vendor' => 'phpredis',
+    'scheme_extensions' => ['phpredis'],
 ]);
 
 // same as above but given as DSN string
@@ -101,7 +101,7 @@ use Enqueue\Redis\RedisConnectionFactory;
 $connectionFactory = new RedisConnectionFactory([
     'host' => 'localhost',
     'port' => 6379,
-    'scheme_extensions' => 'predis',
+    'scheme_extensions' => ['predis'],
 ]);
 
 $context = $connectionFactory->createContext();
