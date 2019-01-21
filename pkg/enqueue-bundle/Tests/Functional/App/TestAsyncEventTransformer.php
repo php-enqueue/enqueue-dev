@@ -24,7 +24,7 @@ class TestAsyncEventTransformer implements EventTransformer
         $this->context = $context;
     }
 
-    public function toMessage($eventName, Event $event)
+    public function toMessage($eventName, Event $event = null)
     {
         if (Event::class === get_class($event)) {
             return $this->context->createMessage(json_encode(''));
