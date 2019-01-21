@@ -14,6 +14,14 @@ framework:
     router:          { resource: '%kernel.root_dir%/config/routing.yml' }
     default_locale:  '%locale%'
 
+doctrine:
+    dbal:
+        connections:
+            custom:
+                url:   "%env(DOCTRINE_DSN)%"
+                driver: pdo_mysql
+                charset:  UTF8
+
 services:
     test_enqueue.client.default.driver:
         alias: 'enqueue.client.default.driver'
