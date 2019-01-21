@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\DoctrineSchema;
+namespace Enqueue\Doctrine;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\Driver\DbalDriver;
@@ -15,11 +15,11 @@ class DoctrineDriverFactory implements DriverFactoryInterface
     /**
      * @var DriverFactoryInterface
      */
-    private $parentFactory;
+    private $fallbackFactory;
 
-    public function __construct(DriverFactoryInterface $parentFactory)
+    public function __construct(DriverFactoryInterface $fallbackFactory)
     {
-        $this->parentFactory = $parentFactory;
+        $this->fallbackFactory = $fallbackFactory;
     }
 
     public function create(ConnectionFactory $factory, Config $config, RouteCollection $collection): DriverInterface
@@ -36,6 +36,6 @@ class DoctrineDriverFactory implements DriverFactoryInterface
             return new DbalDriver($factory->createContext(), $config, $collection);
         }
 
-        return $this->parentFactory->create($factory, $config, $collection);
+        return $this->fallbackFactory->create($factory, $config, $collection);
     }
 }

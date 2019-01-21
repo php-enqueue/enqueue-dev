@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\DoctrineSchema;
+namespace Enqueue\Doctrine;
 
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
@@ -18,12 +18,12 @@ class DoctrineConnectionFactoryFactory implements ConnectionFactoryFactoryInterf
     /**
      * @var ConnectionFactoryFactoryInterface
      */
-    private $parentFactory;
+    private $fallbackFactory;
 
-    public function __construct(RegistryInterface $doctrine, ConnectionFactoryFactoryInterface $parentFactory)
+    public function __construct(RegistryInterface $doctrine, ConnectionFactoryFactoryInterface $fallbackFactory)
     {
         $this->doctrine = $doctrine;
-        $this->parentFactory = $parentFactory;
+        $this->fallbackFactory = $fallbackFactory;
     }
 
     public function create($config): ConnectionFactory
@@ -49,6 +49,6 @@ class DoctrineConnectionFactoryFactory implements ConnectionFactoryFactoryInterf
             return new ManagerRegistryConnectionFactory($this->doctrine, $config);
         }
 
-        return $this->parentFactory->create($config);
+        return $this->fallbackFactory->create($config);
     }
 }

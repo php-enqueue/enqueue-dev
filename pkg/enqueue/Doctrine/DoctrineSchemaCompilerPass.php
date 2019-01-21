@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Bundle\DoctrineSchema;
+namespace Enqueue\Doctrine;
 
 use Enqueue\Symfony\Client\DependencyInjection\ClientFactory;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;

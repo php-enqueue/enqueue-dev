@@ -5,7 +5,7 @@ namespace Enqueue\Bundle;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventsPass;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncTransformersPass;
-use Enqueue\Bundle\DoctrineSchema\DoctrineSchemaCompilerPass;
+use Enqueue\Doctrine\DoctrineSchemaCompilerPass;
 use Enqueue\Symfony\Client\DependencyInjection\AnalyzeRouteCollectionPass;
 use Enqueue\Symfony\Client\DependencyInjection\BuildClientExtensionsPass;
 use Enqueue\Symfony\Client\DependencyInjection\BuildCommandSubscriberRoutesPass as BuildClientCommandSubscriberRoutesPass;
