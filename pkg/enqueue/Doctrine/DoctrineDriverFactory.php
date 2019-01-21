@@ -32,7 +32,7 @@ class DoctrineDriverFactory implements DriverFactoryInterface
 
         $dsn = Dsn::parseFirst($dsn);
 
-        if ($dsn->getScheme() === 'doctrine') {
+        if ('doctrine' === $dsn->getScheme()) {
             return new DbalDriver($factory->createContext(), $config, $collection);
         }
 

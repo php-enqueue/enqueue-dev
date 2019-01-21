@@ -42,7 +42,7 @@ class DoctrineConnectionFactoryFactory implements ConnectionFactoryFactoryInterf
 
         $dsn = Dsn::parseFirst($config['dsn']);
 
-        if ($dsn->getScheme() === 'doctrine') {
+        if ('doctrine' === $dsn->getScheme()) {
             $config = $dsn->getQuery();
             $config['connection_name'] = $dsn->getHost();
 
