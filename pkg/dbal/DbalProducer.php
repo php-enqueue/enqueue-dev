@@ -129,7 +129,7 @@ class DbalProducer implements Producer
                 'delivery_id' => Type::STRING,
                 'redeliver_after' => Type::BIGINT,
             ]);
-            
+
             if (1 !== $rowsAffected) {
                 throw new Exception('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }
