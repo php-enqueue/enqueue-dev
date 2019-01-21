@@ -130,8 +130,8 @@ class DbalProducer implements Producer
                 'redeliver_after' => Type::BIGINT,
             ]);
             
-            if ($rowsAffected !== 1) {
-                throw new Exception('The message was not enqueued. Dbal did not confirm that record inserted.');
+            if (1 !== $rowsAffected) {
+                throw new Exception('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }
         } catch (\Exception $e) {
             throw new Exception('The transport fails to send the message due to some internal error.', 0, $e);
