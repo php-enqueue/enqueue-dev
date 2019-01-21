@@ -136,6 +136,13 @@ class UseCasesTest extends WebTestCase
                 'transport' => getenv('MONGO_DSN'),
             ],
         ]];
+
+        yield 'doctrine' => [[
+            'default' => [
+                'transport' => 'doctrine://custom',
+            ],
+        ]];
+
 //
 //        yield 'gps' => [[
 //            'transport' => [
