@@ -89,6 +89,45 @@ class RedisProducerTest extends TestCase
     }
 
     /**
+     * Tests if Redis::zadd is called with the expected 'score' (used as delivery timestamp).
+     *
+     * @depends testShouldCallLPushOnSend
+     */
+    public function testShouldCallZaddOnSendWithDeliveryDelay()
+    {
+        $destination = new RedisDestination('aDestination');
+
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->once())
+            ->method('zadd')
+            ->with(
+                'aDestination:delayed',
+                $this->isJson(),
+                $this->equalTo(time() + 5)
+            )
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getRedis')
+            ->willReturn($redisMock)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getSerializer')
+            ->willReturn(new JsonSerializer())
+        ;
+
+        $message = new RedisMessage();
+        $message->setDeliveryDelay(5000); // 5 seconds in milliseconds
+
+        $producer = new RedisProducer($context);
+        $producer->send($destination, $message);
+    }
+
+    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|RedisContext
      */
     private function createContextMock()
