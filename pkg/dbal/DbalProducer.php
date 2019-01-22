@@ -115,7 +115,7 @@ class DbalProducer implements Producer
         }
 
         try {
-            $this->context->getDbalConnection()->insert($this->context->getTableName(), $dbalMessage, [
+            $rowsAffected = $this->context->getDbalConnection()->insert($this->context->getTableName(), $dbalMessage, [
                 'id' => Type::GUID,
                 'published_at' => Type::INTEGER,
                 'body' => Type::TEXT,
@@ -125,10 +125,14 @@ class DbalProducer implements Producer
                 'queue' => Type::STRING,
                 'time_to_live' => Type::INTEGER,
                 'delayed_until' => Type::INTEGER,
-                'redelivered' => Type::BOOLEAN,
+                'redelivered' => Type::SMALLINT,
                 'delivery_id' => Type::STRING,
                 'redeliver_after' => Type::BIGINT,
             ]);
+
+            if (1 !== $rowsAffected) {
+                throw new Exception('The message was not enqueued. Dbal did not confirm that the record is inserted.');
+            }
         } catch (\Exception $e) {
             throw new Exception('The transport fails to send the message due to some internal error.', 0, $e);
         }
