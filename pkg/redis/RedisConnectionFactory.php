@@ -42,9 +42,9 @@ class RedisConnectionFactory implements PsrConnectionFactory
     {
         if (empty($config) || 'redis:' === $config) {
             $config = [];
-        } elseif (is_string($config)) {
+        } elseif (\is_string($config)) {
             $config = $this->parseDsn($config);
-        } elseif (is_array($config)) {
+        } elseif (\is_array($config)) {
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
@@ -52,7 +52,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
         $this->config = array_replace($this->defaultConfig(), $config);
 
         $supportedVendors = ['predis', 'phpredis', 'custom'];
-        if (false == in_array($this->config['vendor'], $supportedVendors, true)) {
+        if (false == \in_array($this->config['vendor'], $supportedVendors, true)) {
             throw new \LogicException(sprintf(
                 'Unsupported redis vendor given. It must be either "%s". Got "%s"',
                 implode('", "', $supportedVendors),
@@ -133,6 +133,7 @@ class RedisConnectionFactory implements PsrConnectionFactory
 
         unset($config['query'], $config['scheme']);
 
+        $config['database'] = empty($config['path']) ? 0 : (int) str_replace('/', '', $config['path']);
         $config['lazy'] = empty($config['lazy']) ? false : true;
         $config['persisted'] = empty($config['persisted']) ? false : true;
 
