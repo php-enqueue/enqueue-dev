@@ -8,7 +8,7 @@
     "require": {
         "php": "^7.1.3",
         "enqueue/enqueue": "^0.9",
-        "enqueue/null": "0.9.x-dev",
+        "enqueue/null": "^0.9",
         "queue-interop/queue-interop": "^0.7|^0.8",
         "doctrine/orm": "~2.4"
     },
