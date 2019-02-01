@@ -126,9 +126,9 @@ final class SimpleClient
             ];
         }
 
-        $this->build(['enqueue' => $config]);
-
         $this->logger = $logger ?: new NullLogger();
+
+        $this->build(['enqueue' => $config]);
     }
 
     /**
