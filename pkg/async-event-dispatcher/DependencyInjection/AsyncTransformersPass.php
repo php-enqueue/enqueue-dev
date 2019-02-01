@@ -33,7 +33,7 @@ class AsyncTransformersPass implements CompilerPassInterface
                     $defaultTransformer = [
                         'id' => $serviceId,
                         'transformerName' => $transformerName,
-                        'eventName' => $eventName
+                        'eventName' => $eventName,
                     ];
                 } else {
                     $eventNamesMap[$eventName] = $transformerName;
