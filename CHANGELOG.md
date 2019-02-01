@@ -1,5 +1,22 @@
 # Change Log
 
+## [0.9.7](https://github.com/php-enqueue/enqueue-dev/tree/0.9.7) (2019-02-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.6...0.9.7)
+
+**Merged pull requests:**
+
+- Avoid OutOfMemoryException [\#725](https://github.com/php-enqueue/enqueue-dev/pull/725) ([DamienHarper](https://github.com/DamienHarper))
+- \[async-event-dispatcher\] Add default to php\_serializer\_event\_transformer [\#748](https://github.com/php-enqueue/enqueue-dev/pull/748) ([GCalmels](https://github.com/GCalmels))
+- \[async-event-dispatcher\] Fixed param on EventTransformer [\#736](https://github.com/php-enqueue/enqueue-dev/pull/736) ([samnela](https://github.com/samnela))
+- \[job-queue\] Install stable dependencies [\#745](https://github.com/php-enqueue/enqueue-dev/pull/745) ([mbabic131](https://github.com/mbabic131))
+- \[job-queue\] Fix job status processor [\#735](https://github.com/php-enqueue/enqueue-dev/pull/735) ([ASKozienko](https://github.com/ASKozienko))
+- \[redis\] Fix messages sent with incorrect delivery delay [\#738](https://github.com/php-enqueue/enqueue-dev/pull/738) ([niels-nijens](https://github.com/niels-nijens))
+- \[dbal\] Exception on affected record !=1 [\#733](https://github.com/php-enqueue/enqueue-dev/pull/733) ([otzy](https://github.com/otzy))
+- \[bundle\]\[dbal\] Use doctrine bundle configured connections [\#732](https://github.com/php-enqueue/enqueue-dev/pull/732) ([ASKozienko](https://github.com/ASKozienko))
+- \[pheanstalk\] Add unit tests for PheanstalkConsumer [\#726](https://github.com/php-enqueue/enqueue-dev/pull/726) ([alanpoulain](https://github.com/alanpoulain))
+- \[pheanstalk\] Requeuing a message should not acknowledge it beforehand [\#722](https://github.com/php-enqueue/enqueue-dev/pull/722) ([alanpoulain](https://github.com/alanpoulain))
+- \[sqs\] Dead Letter Queue Adoption [\#720](https://github.com/php-enqueue/enqueue-dev/pull/720) ([cshum](https://github.com/cshum))
+
 ## [0.9.6](https://github.com/php-enqueue/enqueue-dev/tree/0.9.6) (2019-01-09)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.5...0.9.6)
 
