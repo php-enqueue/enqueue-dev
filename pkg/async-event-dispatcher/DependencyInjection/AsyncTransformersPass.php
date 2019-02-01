@@ -18,6 +18,7 @@ class AsyncTransformersPass implements CompilerPassInterface
 
         $transformerIdsMap = [];
         $eventNamesMap = [];
+        $defaultTransformer = null;
         foreach ($container->findTaggedServiceIds('enqueue.event_transformer') as $serviceId => $tagAttributes) {
             foreach ($tagAttributes as $tagAttribute) {
                 if (false == isset($tagAttribute['eventName'])) {
@@ -28,9 +29,18 @@ class AsyncTransformersPass implements CompilerPassInterface
 
                 $transformerName = isset($tagAttribute['transformerName']) ? $tagAttribute['transformerName'] : $serviceId;
 
-                $eventNamesMap[$eventName] = $transformerName;
-                $transformerIdsMap[$transformerName] = $serviceId;
+                if (isset($tagAttribute['default']) && $tagAttribute['default']) {
+                    $defaultTransformer = ['id' => $serviceId, 'transformerName' => $transformerName];
+                } else {
+                    $eventNamesMap[] = $transformerName;
+                    $transformerIdsMap[] = $serviceId;
+                }
             }
+        }
+
+        if ($defaultTransformer) {
+            $eventNamesMap[] = $defaultTransformer['transformerName'];
+            $transformerIdsMap[] = $defaultTransformer['id'];
         }
 
         $container->getDefinition('enqueue.events.registry')
