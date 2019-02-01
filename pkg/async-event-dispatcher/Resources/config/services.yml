@@ -25,10 +25,10 @@ services:
             - '@event_dispatcher'
             - '@enqueue.events.async_listener'
 
-    enqueue.events.php_serializer_event_transofrmer:
+    enqueue.events.php_serializer_event_transformer:
         class: 'Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer'
         public: public
         arguments:
             - '@enqueue.events.context'
         tags:
-            - {name: 'enqueue.event_transformer', eventName: '/.*/', transformerName: 'php_serializer' }
+            - {name: 'enqueue.event_transformer', eventName: '/.*/', transformerName: 'php_serializer', default: true }
