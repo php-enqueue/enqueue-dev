@@ -14,7 +14,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 [![Total Downloads](https://poser.pugx.org/enqueue/simple-client/d/total.png)](https://packagist.org/packages/enqueue/simple-client)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/simple-client/version.png)](https://packagist.org/packages/enqueue/simple-client)
  
-The simple client takes Enqueue client classes and Symfony components and combines it to easy to use facade called `SimpleCLient`.   
+The simple client takes Enqueue client classes and Symfony components and combines it to easy to use facade called `SimpleClient`.   
 
 ## Resources
 
