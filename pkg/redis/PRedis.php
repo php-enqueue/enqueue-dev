@@ -91,6 +91,15 @@ class PRedis implements Redis
         }
     }
 
+    public function lrem(string $key, int $count, string $value): int
+    {
+        try {
+            return $this->redis->lrem($key, $count, $value);
+        } catch (PRedisServerException $e) {
+            throw new ServerException('lrem command has failed', 0, $e);
+        }
+    }
+
     public function brpop(array $keys, int $timeout): ?RedisResult
     {
         try {

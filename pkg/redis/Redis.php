@@ -49,6 +49,17 @@ interface Redis
     public function lpush(string $key, string $value): int;
 
     /**
+     * @param string $key
+     * @param int $count
+     * @param string $value
+     *
+     * @throws ServerException
+     *
+     * @return int number of removed elements
+     */
+    public function lrem(string $key, int $count, string $value): int;
+
+    /**
      * @param string   $source
      * @param string   $dest
      * @param int      $timeout in seconds

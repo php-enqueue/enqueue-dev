@@ -77,9 +77,7 @@ trait RedisConsumerHelperTrait
 
         $redis = $this->getContext()->getRedis();
         $redis->zadd($reservedQueue, $message->getReservedKey(), $redeliveryAt);
-        // TODO update Redis.php to include lrem
-        $redis->lrem($processingQueue, $result->getMessage());
-
+        $redis->lrem($processingQueue, 0, $result->getMessage());
         return $message;
     }
 
