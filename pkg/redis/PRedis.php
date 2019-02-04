@@ -107,8 +107,8 @@ class PRedis implements Redis
     public function brpoplpush(string $source, string $dest, int $timeout): ?RedisResult
     {
         try {
-            if ($result = $this->redis->brpoplpush($source, $dest, $timeout)) {
-                return new RedisResult($result[0], $result[1]);
+            if ($message = $this->redis->brpoplpush($source, $dest, $timeout)) {
+                return new RedisResult($source, $message);
             }
 
             return null;
@@ -117,11 +117,11 @@ class PRedis implements Redis
         }
     }
 
-    public function rpop(string $key): ?RedisResult
+    public function rpoplpush(string $source, string $dest): ?RedisResult
     {
         try {
-            if ($message = $this->redis->rpop($key)) {
-                return new RedisResult($key, $message);
+            if ($message = $this->redis->rpoplpush($source, $dest)) {
+                return new RedisResult($source, $message);
             }
 
             return null;
@@ -130,10 +130,10 @@ class PRedis implements Redis
         }
     }
 
-    public function rpoplpush(string $source, string $dest): ?RedisResult
+    public function rpop(string $key): ?RedisResult
     {
         try {
-            if ($message = $this->redis->rpoplpush($source, $dest)) {
+            if ($message = $this->redis->rpop($key)) {
                 return new RedisResult($key, $message);
             }
 
