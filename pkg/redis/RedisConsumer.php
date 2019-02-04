@@ -99,8 +99,6 @@ class RedisConsumer implements Consumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        $this->acknowledge($message);
-
         if ($requeue) {
             $message = $this->getContext()->getSerializer()->toMessage($message->getReservedKey());
             $message->setHeader('attempts', 0);
@@ -113,6 +111,8 @@ class RedisConsumer implements Consumer
 
             $this->getRedis()->lpush($this->queue->getName(), $payload);
         }
+
+        $this->acknowledge($message);
     }
 
     private function getContext(): RedisContext
