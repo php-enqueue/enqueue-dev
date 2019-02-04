@@ -73,7 +73,7 @@ class RedisConsumer implements Consumer
             }
         }
 
-        return $this->receiveMessage([$this->queue], $timeout, $this->redeliveryDelay);
+        return $this->receiveMessage($this->queue, $timeout, $this->redeliveryDelay);
     }
 
     /**

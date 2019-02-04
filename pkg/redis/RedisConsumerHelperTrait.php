@@ -9,7 +9,7 @@ trait RedisConsumerHelperTrait
     abstract protected function getContext(): RedisContext;
 
     /**
-     * @param RedisDestination[] $queues
+     * @param RedisDestination   $destination
      * @param int                $timeout
      * @param int                $redeliveryDelay
      *
