@@ -100,15 +100,14 @@ class RedisConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
         if ($requeue) {
-            $message = $this->getContext()->getSerializer()->toMessage($message->getReservedKey());
-            $message->setHeader('attempts', 0);
+            $newMessage = $this->getContext()->getSerializer()->toMessage($message->getReservedKey());
+            $newMessage->setHeader('attempts', 0);
 
             if ($message->getTimeToLive()) {
-                $message->setHeader('expires_at', time() + $message->getTimeToLive());
+                $newMessage->setHeader('expires_at', time() + $message->getTimeToLive());
             }
 
-            $payload = $this->getContext()->getSerializer()->toString($message);
-
+            $payload = $this->getContext()->getSerializer()->toString($newMessage);
             $this->getRedis()->lpush($this->queue->getName(), $payload);
         }
 

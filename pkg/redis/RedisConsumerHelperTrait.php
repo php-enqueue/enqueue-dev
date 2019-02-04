@@ -97,7 +97,7 @@ trait RedisConsumerHelperTrait
         }
     }
 
-    protected function migrateProcessingMessages(array $queueNames): int
+    protected function migrateProcessingMessages(array $queueNames): void
     {
         foreach ($queueNames as $queueName) {
             $this->getContext()->getRedis()

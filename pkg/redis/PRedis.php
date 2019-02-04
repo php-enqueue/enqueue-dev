@@ -105,6 +105,9 @@ class PRedis implements Redis
         try {
             return $this->redis->renamenx($key, $target);
         } catch (PRedisServerException $e) {
+            if ($e->getMessage() == 'ERR no such key') {
+                return 0;
+            }
             throw new ServerException('renamenx command has failed', 0, $e);
         }
     }
