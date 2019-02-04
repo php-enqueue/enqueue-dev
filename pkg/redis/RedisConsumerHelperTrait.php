@@ -25,7 +25,7 @@ trait RedisConsumerHelperTrait
             $this->migrateExpiredMessages([$queueName]);
 
             if (false == $result = $this->getContext()->getRedis()->brpoplpush(
-                $queueName, $queueName . ':processing', $thisTimeout
+                $queueName, $queueName.':processing', $thisTimeout
             )) {
                 return null;
             }
@@ -42,9 +42,12 @@ trait RedisConsumerHelperTrait
 
     protected function receiveMessageNoWait(RedisDestination $destination, int $redeliveryDelay): ?RedisMessage
     {
-        $this->migrateExpiredMessages([$destination->getName()]);
+        $queueName = $destination->getName();
+        $this->migrateExpiredMessages([$queueName]);
 
-        if ($result = $this->getContext()->getRedis()->rpop($destination->getName())) {
+        if ($result = $this->getContext()->getRedis()->rpoplpush(
+            $queueName, $queueName.':processing'
+        )) {
             return $this->processResult($result, $redeliveryDelay);
         }
 
