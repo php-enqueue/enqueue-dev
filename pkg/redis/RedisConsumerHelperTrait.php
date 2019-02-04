@@ -27,6 +27,7 @@ trait RedisConsumerHelperTrait
             if (false == $result = $this->getContext()->getRedis()->brpoplpush(
                 $queueName, $queueName.':processing', $thisTimeout
             )) {
+                $this->migrateProcessingMessages([$queueName]);
                 return null;
             }
 
@@ -92,5 +93,14 @@ trait RedisConsumerHelperTrait
             $this->getContext()->getRedis()
                 ->eval(LuaScripts::migrateExpired(), [$queueName.':reserved', $queueName], [$now]);
         }
+    }
+
+    protected function migrateProcessingMessages(array $queueNames): int
+    {
+        foreach ($queueNames as $queueName) {
+            $this->getContext()->getRedis()
+                ->renamenx($queueName.':processing', $queueName);
+        }
+
     }
 }

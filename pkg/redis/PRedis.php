@@ -100,6 +100,15 @@ class PRedis implements Redis
         }
     }
 
+    public function renamenx(string $key, string $target): int
+    {
+        try {
+            return $this->redis->renamenx($key, $target);
+        } catch (PRedisServerException $e) {
+            throw new ServerException('lrem command has failed', 0, $e);
+        }
+    }
+
     public function brpop(array $keys, int $timeout): ?RedisResult
     {
         try {

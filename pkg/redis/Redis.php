@@ -60,6 +60,16 @@ interface Redis
     public function lrem(string $key, int $count, string $value): int;
 
     /**
+     * @param string $key
+     * @param string $target
+     *
+     * @throws ServerException
+     *
+     * @return int rename key to non-exists target success
+     */
+    public function renamenx(string $key, string $target): int;
+
+    /**
      * @param string   $source
      * @param string   $dest
      * @param int      $timeout in seconds
