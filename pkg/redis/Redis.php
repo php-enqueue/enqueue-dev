@@ -49,6 +49,17 @@ interface Redis
     public function lpush(string $key, string $value): int;
 
     /**
+     * @param string   $source
+     * @param string   $dest
+     * @param int      $timeout in seconds
+     *
+     * @throws ServerException
+     *
+     * @return RedisResult|null
+     */
+    public function brpoplpush(string $source, string $dest, int $timeout): ?RedisResult;
+
+    /**
      * @param string[] $keys
      * @param int      $timeout in seconds
      *
@@ -57,6 +68,16 @@ interface Redis
      * @return RedisResult|null
      */
     public function brpop(array $keys, int $timeout): ?RedisResult;
+
+    /**
+     * @param string   $source
+     * @param string   $dest
+     *
+     * @throws ServerException
+     *
+     * @return RedisResult|null
+     */
+    public function rpoplpush(string $source, string $dest): ?RedisResult;
 
     /**
      * @param string $key

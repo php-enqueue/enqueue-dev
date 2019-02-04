@@ -104,10 +104,36 @@ class PRedis implements Redis
         }
     }
 
+    public function brpoplpush(string $source, string $dest, int $timeout): ?RedisResult
+    {
+        try {
+            if ($result = $this->redis->brpoplpush($source, $dest, $timeout)) {
+                return new RedisResult($result[0], $result[1]);
+            }
+
+            return null;
+        } catch (PRedisServerException $e) {
+            throw new ServerException('brpop command has failed', 0, $e);
+        }
+    }
+
     public function rpop(string $key): ?RedisResult
     {
         try {
             if ($message = $this->redis->rpop($key)) {
+                return new RedisResult($key, $message);
+            }
+
+            return null;
+        } catch (PRedisServerException $e) {
+            throw new ServerException('rpop command has failed', 0, $e);
+        }
+    }
+
+    public function rpoplpush(string $source, string $dest): ?RedisResult
+    {
+        try {
+            if ($message = $this->redis->rpoplpush($source, $dest)) {
                 return new RedisResult($key, $message);
             }
 
