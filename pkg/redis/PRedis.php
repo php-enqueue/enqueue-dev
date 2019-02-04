@@ -105,7 +105,7 @@ class PRedis implements Redis
         try {
             return $this->redis->renamenx($key, $target);
         } catch (PRedisServerException $e) {
-            throw new ServerException('lrem command has failed', 0, $e);
+            throw new ServerException('renamenx command has failed', 0, $e);
         }
     }
 

@@ -50,6 +50,8 @@ trait RedisConsumerHelperTrait
             $queueName, $queueName.':processing'
         )) {
             return $this->processResult($result, $redeliveryDelay);
+        } else {
+            $this->migrateProcessingMessages([$queueName]);
         }
 
         return null;
