@@ -8,6 +8,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
@@ -135,10 +136,14 @@ class RedisContext implements Context
      */
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
+        throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
+        /*
+         * Todo temp disable subscription consumer
         $consumer = new RedisSubscriptionConsumer($this);
         $consumer->setRedeliveryDelay($this->redeliveryDelay);
 
         return $consumer;
+        */
     }
 
     /**

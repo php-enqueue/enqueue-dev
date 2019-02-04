@@ -6,11 +6,6 @@ namespace Enqueue\Redis;
 
 trait RedisConsumerHelperTrait
 {
-    /**
-     * @var string[]
-     */
-    protected $queueNames;
-
     abstract protected function getContext(): RedisContext;
 
     /**
@@ -20,26 +15,20 @@ trait RedisConsumerHelperTrait
      *
      * @return RedisMessage|null
      */
-    protected function receiveMessage(array $queues, int $timeout, int $redeliveryDelay): ?RedisMessage
+    protected function receiveMessage(RedisDestination $destination, int $timeout, int $redeliveryDelay): ?RedisMessage
     {
         $startAt = time();
         $thisTimeout = $timeout;
 
-        if (null === $this->queueNames) {
-            $this->queueNames = [];
-            foreach ($queues as $queue) {
-                $this->queueNames[] = $queue->getName();
-            }
-        }
-
         while ($thisTimeout > 0) {
-            $this->migrateExpiredMessages($this->queueNames);
+            $queueName = $destination->getName();
+            $this->migrateExpiredMessages([$queueName]);
 
-            if (false == $result = $this->getContext()->getRedis()->brpop($this->queueNames, $thisTimeout)) {
+            if (false == $result = $this->getContext()->getRedis()->brpoplpush(
+                $queueName, $queueName . ':processing', $thisTimeout
+            )) {
                 return null;
             }
-
-            $this->pushQueueNameBack($result->getKey());
 
             if ($message = $this->processResult($result, $redeliveryDelay)) {
                 return $message;
@@ -80,27 +69,15 @@ trait RedisConsumerHelperTrait
         $message->setReservedKey($this->getContext()->getSerializer()->toString($message));
 
         $reservedQueue = $result->getKey().':reserved';
+        $processingQueue = $result->getKey().':processing';
         $redeliveryAt = $now + $redeliveryDelay;
 
-        $this->getContext()->getRedis()->zadd($reservedQueue, $message->getReservedKey(), $redeliveryAt);
+        $redis = $this->getContext()->getRedis();
+        $redis->zadd($reservedQueue, $message->getReservedKey(), $redeliveryAt);
+        // TODO update Redis.php to include lrem
+        $redis->lrem($processingQueue, $result->getMessage());
 
         return $message;
-    }
-
-    protected function pushQueueNameBack(string $queueName): void
-    {
-        if (count($this->queueNames) <= 1) {
-            return;
-        }
-
-        if (false === $from = array_search($queueName, $this->queueNames, true)) {
-            throw new \LogicException(sprintf('Queue name was not found: "%s"', $queueName));
-        }
-
-        $to = count($this->queueNames) - 1;
-
-        $out = array_splice($this->queueNames, $from, 1);
-        array_splice($this->queueNames, $to, 0, $out);
     }
 
     protected function migrateExpiredMessages(array $queueNames): void
