@@ -47,6 +47,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             ->addDefaultOption('login_response', null)
             ->addDefaultOption('locale', 'en_US')
             ->addDefaultOption('keepalive', false)
+            ->addDefaultOption('channel_rpc_timeout', 0.)
             ->addDefaultOption('heartbeat_on_tick', true)
             ->parse()
         ;
@@ -120,7 +121,8 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
                         (int) round(min($this->config->getReadTimeout(), $this->config->getWriteTimeout())),
                         null,
                         $this->config->getOption('keepalive'),
-                        (int) round($this->config->getHeartbeat())
+                        (int) round($this->config->getHeartbeat()),
+                        $this->config->getOption('channel_rpc_timeout')
                     );
                 } else {
                     $con = new AMQPStreamConnection(
@@ -137,7 +139,8 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
                         (int) round(min($this->config->getReadTimeout(), $this->config->getWriteTimeout())),
                         null,
                         $this->config->getOption('keepalive'),
-                        (int) round($this->config->getHeartbeat())
+                        (int) round($this->config->getHeartbeat()),
+                        $this->config->getOption('channel_rpc_timeout')
                     );
                 }
             } else {
@@ -159,7 +162,8 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
                         (int) round($this->config->getReadTimeout()),
                         $this->config->getOption('keepalive'),
                         (int) round($this->config->getWriteTimeout()),
-                        (int) round($this->config->getHeartbeat())
+                        (int) round($this->config->getHeartbeat()),
+                        $this->config->getOption('channel_rpc_timeout')
                     );
                 } else {
                     $con = new AMQPSocketConnection(
@@ -175,7 +179,8 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
                         (int) round($this->config->getReadTimeout()),
                         $this->config->getOption('keepalive'),
                         (int) round($this->config->getWriteTimeout()),
-                        (int) round($this->config->getHeartbeat())
+                        (int) round($this->config->getHeartbeat()),
+                        $this->config->getOption('channel_rpc_timeout')
                     );
                 }
             }
