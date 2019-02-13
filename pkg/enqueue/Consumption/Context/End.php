@@ -27,12 +27,23 @@ final class End
      */
     private $logger;
 
-    public function __construct(Context $context, int $startTime, int $endTime, LoggerInterface $logger)
-    {
+    /**
+     * @var int
+     */
+    private $exitStatus;
+
+    public function __construct(
+        Context $context,
+        int $startTime,
+        int $endTime,
+        LoggerInterface $logger,
+        ?int $exitStatus = null
+    ) {
         $this->context = $context;
         $this->logger = $logger;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
+        $this->exitStatus = $exitStatus;
     }
 
     public function getContext(): Context
@@ -59,5 +70,10 @@ final class End
     public function getEndTime(): int
     {
         return $this->startTime;
+    }
+
+    public function getExitStatus(): ?int
+    {
+        return $this->exitStatus;
     }
 }
