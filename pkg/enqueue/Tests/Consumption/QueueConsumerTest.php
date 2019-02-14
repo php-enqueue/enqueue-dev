@@ -1448,7 +1448,7 @@ class QueueConsumerTest extends TestCase
         $exitExtension = new CaptureExitStatusExtension();
 
         $consumer = new QueueConsumer($this->createContextStub(), $stubExtension);
-        $consumer->consume($exitExtension);
+        $consumer->consume(new ChainExtension([$exitExtension]));
 
         $this->assertEquals($testExitCode, $exitExtension->getExitStatus());
         $this->assertTrue($exitExtension->isExitStatusCaptured());
