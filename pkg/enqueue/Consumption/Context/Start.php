@@ -39,6 +39,11 @@ final class Start
     private $executionInterrupted;
 
     /**
+     * @var int
+     */
+    private $exitStatus;
+
+    /**
      * @param BoundProcessor[] $processors
      */
     public function __construct(Context $context, LoggerInterface $logger, array $processors, int $receiveTimeout, int $startTime)
@@ -105,13 +110,19 @@ final class Start
         });
     }
 
+    public function getExitStatus(): ?int
+    {
+        return $this->exitStatus;
+    }
+
     public function isExecutionInterrupted(): bool
     {
         return $this->executionInterrupted;
     }
 
-    public function interruptExecution(): void
+    public function interruptExecution(?int $exitStatus = null): void
     {
+        $this->exitStatus = $exitStatus;
         $this->executionInterrupted = true;
     }
 }
