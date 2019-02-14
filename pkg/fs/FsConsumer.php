@@ -90,7 +90,7 @@ class FsConsumer implements Consumer
                 return null;
             }
 
-            usleep($this->pollingInterval);
+            usleep($this->pollingInterval * 1000);
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
                 return null;
