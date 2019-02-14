@@ -3,9 +3,9 @@
 namespace Enqueue\Consumption\Extension;
 
 use Enqueue\Consumption\Context\End;
-use Enqueue\Consumption\EndExtensionInterface;
+use Enqueue\Consumption\ExtensionInterface;
 
-class CaptureExitStatusExtension implements EndExtensionInterface
+class CaptureExitStatusExtension implements ExtensionInterface
 {
     /**
      * @var int
@@ -31,5 +31,41 @@ class CaptureExitStatusExtension implements EndExtensionInterface
     public function isExitStatusCaptured(): bool
     {
         return $this->isExitStatusCaptured;
+    }
+
+    public function onInitLogger(\Enqueue\Consumption\Context\InitLogger $context): void
+    {
+    }
+
+    public function onMessageReceived(\Enqueue\Consumption\Context\MessageReceived $context): void
+    {
+    }
+
+    public function onPostConsume(\Enqueue\Consumption\Context\PostConsume $context): void
+    {
+    }
+
+    public function onPostMessageReceived(\Enqueue\Consumption\Context\PostMessageReceived $context): void
+    {
+    }
+
+    public function onPreConsume(\Enqueue\Consumption\Context\PreConsume $context): void
+    {
+    }
+
+    public function onPreSubscribe(\Enqueue\Consumption\Context\PreSubscribe $context): void
+    {
+    }
+
+    public function onProcessorException(\Enqueue\Consumption\Context\ProcessorException $context): void
+    {
+    }
+
+    public function onResult(\Enqueue\Consumption\Context\MessageResult $context): void
+    {
+    }
+
+    public function onStart(\Enqueue\Consumption\Context\Start $context): void
+    {
     }
 }

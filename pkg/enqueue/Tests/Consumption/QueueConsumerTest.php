@@ -16,6 +16,7 @@ use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
+use Enqueue\Consumption\Extension\CaptureExitStatusExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
@@ -1427,6 +1428,30 @@ class QueueConsumerTest extends TestCase
         $this->assertSame($fooConsumerStub, $actualContexts[0]->getConsumer());
         $this->assertSame($barConsumerStub, $actualContexts[1]->getConsumer());
         $this->assertSame($fooConsumerStub, $actualContexts[2]->getConsumer());
+    }
+
+    public function testCaptureExitStatus()
+    {
+        $testExitCode = 5;
+
+        $stubExtension = $this->createExtension();
+
+        $stubExtension
+            ->expects($this->once())
+            ->method('onStart')
+            ->with($this->isInstanceOf(Start::class))
+            ->willReturnCallback(function (Start $context) use ($testExitCode) {
+                $context->interruptExecution($testExitCode);
+            })
+        ;
+
+        $exitExtension = new CaptureExitStatusExtension();
+
+        $consumer = new QueueConsumer($this->createContextStub(), $stubExtension);
+        $consumer->consume($exitExtension);
+
+        $this->assertEquals($testExitCode, $exitExtension->getExitStatus());
+        $this->assertTrue($exitExtension->isExitStatusCaptured());
     }
 
     /**
