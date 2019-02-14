@@ -3,7 +3,7 @@
 namespace Enqueue\Symfony\Consumption;
 
 use Enqueue\Consumption\ChainExtension;
-use Enqueue\Consumption\Extension\CaptureExitStatusExtension;
+use Enqueue\Consumption\Extension\ExitStatusExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -76,12 +76,12 @@ class ConsumeCommand extends Command
             array_unshift($extensions, $loggerExtension);
         }
 
-        $captureExitStatusExtension = new CaptureExitStatusExtension();
-        array_unshift($extensions, $captureExitStatusExtension);
+        $exitStatusExtension = new ExitStatusExtension();
+        array_unshift($extensions, $exitStatusExtension);
 
         $consumer->consume(new ChainExtension($extensions));
 
-        return $captureExitStatusExtension->getExitStatus();
+        return $exitStatusExtension->getExitStatus();
     }
 
     private function getQueueConsumer(string $name): QueueConsumerInterface

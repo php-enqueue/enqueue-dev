@@ -16,7 +16,7 @@ use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
-use Enqueue\Consumption\Extension\CaptureExitStatusExtension;
+use Enqueue\Consumption\Extension\ExitStatusExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
@@ -1445,13 +1445,12 @@ class QueueConsumerTest extends TestCase
             })
         ;
 
-        $exitExtension = new CaptureExitStatusExtension();
+        $exitExtension = new ExitStatusExtension();
 
         $consumer = new QueueConsumer($this->createContextStub(), $stubExtension);
         $consumer->consume(new ChainExtension([$exitExtension]));
 
         $this->assertEquals($testExitCode, $exitExtension->getExitStatus());
-        $this->assertTrue($exitExtension->isExitStatusCaptured());
     }
 
     /**

@@ -8,11 +8,18 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Consumption\ChainExtension;
+use Enqueue\Consumption\Context\Start;
+use Enqueue\Consumption\ExtensionInterface;
+use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Container\Container;
 use Enqueue\Null\NullQueue;
 use Enqueue\Symfony\Client\ConsumeCommand;
 use Enqueue\Test\ClassExtensionTrait;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context as InteropContext;
+use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Queue;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -536,6 +543,49 @@ class ConsumeCommandTest extends TestCase
         ]);
     }
 
+    public function testShouldReturnExitStatusIfSet()
+    {
+        $testExitCode = 678;
+
+        $stubExtension = $this->createExtension();
+
+        $stubExtension
+            ->expects($this->once())
+            ->method('onStart')
+            ->with($this->isInstanceOf(Start::class))
+            ->willReturnCallback(function (Start $context) use ($testExitCode) {
+                $context->interruptExecution($testExitCode);
+            })
+        ;
+
+        $defaultQueue = new NullQueue('default');
+
+        $routeCollection = new RouteCollection([]);
+
+        $processor = $this->createDelegateProcessorMock();
+
+        $driver = $this->createDriverStub($routeCollection);
+        $driver
+            ->expects($this->exactly(1))
+            ->method('createQueue')
+            ->with('default', true)
+            ->willReturn($defaultQueue)
+        ;
+
+        $consumer = new QueueConsumer($this->createContextStub(), $stubExtension);
+
+        $command = new ConsumeCommand(new Container([
+            'enqueue.client.default.queue_consumer' => $consumer,
+            'enqueue.client.default.driver' => $driver,
+            'enqueue.client.default.delegate_processor' => $processor,
+        ]), 'default');
+
+        $tester = new CommandTester($command);
+        $tester->execute([]);
+
+        $this->assertEquals($testExitCode, $tester->getStatusCode());
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DelegateProcessor
      */
@@ -571,5 +621,73 @@ class ConsumeCommandTest extends TestCase
         ;
 
         return $driverMock;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createContextWithoutSubscriptionConsumerMock(): InteropContext
+    {
+        $contextMock = $this->createMock(InteropContext::class);
+        $contextMock
+            ->expects($this->any())
+            ->method('createSubscriptionConsumer')
+            ->willThrowException(SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt())
+        ;
+
+        return $contextMock;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
+     */
+    private function createContextStub(Consumer $consumer = null): InteropContext
+    {
+        $context = $this->createContextWithoutSubscriptionConsumerMock();
+        $context
+            ->expects($this->any())
+            ->method('createQueue')
+            ->willReturnCallback(function (string $queueName) {
+                return new NullQueue($queueName);
+            })
+        ;
+        $context
+            ->expects($this->any())
+            ->method('createConsumer')
+            ->willReturnCallback(function (Queue $queue) use ($consumer) {
+                return $consumer ?: $this->createConsumerStub($queue);
+            })
+        ;
+
+        return $context;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ExtensionInterface
+     */
+    private function createExtension()
+    {
+        return $this->createMock(ExtensionInterface::class);
+    }
+
+    /**
+     * @param null|mixed $queue
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     */
+    private function createConsumerStub($queue = null): Consumer
+    {
+        if (is_string($queue)) {
+            $queue = new NullQueue($queue);
+        }
+
+        $consumerMock = $this->createMock(Consumer::class);
+        $consumerMock
+            ->expects($this->any())
+            ->method('getQueue')
+            ->willReturn($queue)
+        ;
+
+        return $consumerMock;
     }
 }
