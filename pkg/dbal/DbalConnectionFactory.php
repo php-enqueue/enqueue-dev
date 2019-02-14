@@ -45,8 +45,7 @@ class DbalConnectionFactory implements ConnectionFactory
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
             if (array_key_exists('dsn', $config)) {
-                $config = array_replace_recursive($config, $this->parseDsn($config['dsn']));
-
+                $config = array_replace_recursive($config, $this->parseDsn($config['dsn'], $config));
                 unset($config['dsn']);
             }
         } else {
@@ -92,7 +91,13 @@ class DbalConnectionFactory implements ConnectionFactory
         return $this->connection;
     }
 
-    private function parseDsn(string $dsn): array
+    /**
+     * @param string     $dsn
+     * @param array|null $config
+     *
+     * @return array
+     */
+    private function parseDsn(string $dsn, array $config = null): array
     {
         if (false === strpos($dsn, ':')) {
             throw new \LogicException(sprintf('The DSN is invalid. It does not have scheme separator ":".'));
@@ -134,6 +139,21 @@ class DbalConnectionFactory implements ConnectionFactory
         }
 
         $doctrineScheme = $supported[$scheme];
+
+        if ($scheme.':' === $dsn && is_array($config) && array_key_exists('connection', $config)) {
+            $default = [
+                'driver' => $doctrineScheme,
+                'host' => 'localhost',
+                'port' => '3306',
+                'user' => 'root',
+                'password' => '',
+            ];
+
+            return [
+                'lazy' => true,
+                'connection' => array_replace_recursive($default, $config['connection']),
+            ];
+        }
 
         return [
             'lazy' => true,

@@ -102,6 +102,72 @@ class DbalConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
+            [
+                'dsn' => 'mysql+pdo:',
+                'connection' => [
+                    'dbname' => 'customDbName',
+                ],
+            ],
+            [
+                'connection' => [
+                    'dbname' => 'customDbName',
+                    'driver' => 'pdo_mysql',
+                    'host' => 'localhost',
+                    'port' => '3306',
+                    'user' => 'root',
+                    'password' => '',
+                ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
+            ],
+        ];
+
+        yield [
+            [
+                'dsn' => 'mysql+pdo:',
+                'connection' => [
+                    'dbname' => 'customDbName',
+                    'host' => 'host',
+                    'port' => '10000',
+                    'user' => 'user',
+                    'password' => 'pass',
+                ],
+            ],
+            [
+                'connection' => [
+                    'dbname' => 'customDbName',
+                    'host' => 'host',
+                    'port' => '10000',
+                    'user' => 'user',
+                    'password' => 'pass',
+                    'driver' => 'pdo_mysql',
+                ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
+            ],
+        ];
+
+        yield [
+            [
+                'dsn' => 'mysql+pdo://user:pass@host:10000/db',
+                'connection' => [
+                    'foo' => 'fooValue',
+                ],
+            ],
+            [
+                'connection' => [
+                    'foo' => 'fooValue',
+                    'url' => 'pdo_mysql://user:pass@host:10000/db',
+                ],
+                'table_name' => 'enqueue',
+                'polling_interval' => 1000,
+                'lazy' => true,
+            ],
+        ];
+
+        yield [
             'mysql://user:pass@host:10000/db',
             [
                 'connection' => [
