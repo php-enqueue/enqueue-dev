@@ -215,7 +215,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @param null|mixed $queue
+     * @param mixed|null $queue
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
      */
