@@ -41,7 +41,7 @@
         "enqueue/dsn": "0.9.x-dev"
     },
     "suggest": {
-        "symfony/console": "^2.8|^3|^4 If you want to use li commands",
+        "symfony/console": "^2.8|^3|^4 If you want to use cli commands",
         "symfony/dependency-injection": "^3.4|^4",
         "symfony/config": "^3.4|^4",
         "enqueue/amqp-ext": "AMQP transport (based on php extension)",
