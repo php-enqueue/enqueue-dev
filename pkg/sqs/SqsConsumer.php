@@ -138,7 +138,7 @@ class SqsConsumer implements Consumer
                 '@region' => $this->queue->getRegion(),
                 'QueueUrl' => $this->context->getQueueUrl($this->queue),
                 'ReceiptHandle' => $message->getReceiptHandle(),
-                'VisibilityTimeout' => 0,
+                'VisibilityTimeout' => $message->getDelaySeconds(),
             ]);
         } else {
             $this->context->getSqsClient()->deleteMessage([
