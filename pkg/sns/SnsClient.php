@@ -48,6 +48,16 @@ class SnsClient
         return $this->callApi('subscribe', $args);
     }
 
+    public function unsubscribe(array $args): Result
+    {
+        return $this->callApi('unsubscribe', $args);
+    }
+
+    public function listSubscriptionsByTopic(array $args): Result
+    {
+        return $this->callApi('ListSubscriptionsByTopic', $args);
+    }
+
     public function getAWSClient(): AwsSnsClient
     {
         $this->resolveClient();

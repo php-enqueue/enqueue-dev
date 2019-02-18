@@ -76,6 +76,7 @@
       "Enqueue\\SimpleClient\\": "pkg/simple-client/",
       "Enqueue\\Sqs\\": "pkg/sqs/",
       "Enqueue\\Sns\\": "pkg/sns/",
+      "Enqueue\\SnsQs\\": "pkg/snsqs/",
       "Enqueue\\Stomp\\": "pkg/stomp/",
       "Enqueue\\Test\\": "pkg/test/",
       "Enqueue\\Dsn\\": "pkg/dsn/",

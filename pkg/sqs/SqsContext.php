@@ -179,11 +179,11 @@ class SqsContext implements Context
 
         $result = $this->client->getQueueAttributes($arguments);
 
-        if (false == $result->hasKey('QueueArn')) {
+        if (false == $arn = $result->search('Attributes.QueueArn')) {
             throw new \RuntimeException(sprintf('QueueArn cannot be resolved. queueName: "%s"', $destination->getQueueName()));
         }
 
-        return $this->queueArns[$destination->getQueueName()] = (string) $result->get('QueueArn');
+        return $this->queueArns[$destination->getQueueName()] = (string) $arn;
     }
 
     public function declareQueue(SqsDestination $dest): void

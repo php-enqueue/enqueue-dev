@@ -79,14 +79,59 @@ class SnsContext implements Context
 
     public function subscribe(SnsSubscribe $subscribe): void
     {
+        foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {
+            if ($subscription['Protocol'] === $subscribe->getProtocol()
+                && $subscription['Endpoint'] === $subscribe->getEndpoint()) {
+                return;
+            }
+        }
+
         $this->client->subscribe([
             'Attributes' => $subscribe->getAttributes(),
             'Endpoint' => $subscribe->getEndpoint(),
-            //'Protocol' => '<string>', // REQUIRED
-//'ReturnSubscriptionArn' => true || false,
-//'TopicArn' => '<string>', // REQUIRED
-//]);
+            'Protocol' => $subscribe->getProtocol(),
+            'ReturnSubscriptionArn' => $subscribe->isReturnSubscriptionArn(),
+            'TopicArn' => $this->getTopicArn($subscribe->getTopic()),
         ]);
+    }
+
+    public function unsubscibe(SnsUnsubscribe $unsubscribe): void
+    {
+        foreach ($this->getSubscriptions($unsubscribe->getTopic()) as $subscription) {
+            if ($subscription['Protocol'] != $unsubscribe->getProtocol()) {
+                continue;
+            }
+
+            if ($subscription['Endpoint'] != $unsubscribe->getEndpoint()) {
+                continue;
+            }
+
+            $this->client->unsubscribe([
+                'SubscriptionArn' => $subscription['SubscriptionArn'],
+            ]);
+        }
+    }
+
+    public function getSubscriptions(SnsDestination $destination): array
+    {
+        $args = [
+            'TopicArn' => $this->getTopicArn($destination),
+        ];
+
+        $subscriptions = [];
+        while (true) {
+            $result = $this->client->listSubscriptionsByTopic($args);
+
+            $subscriptions = array_merge($subscriptions, $result->get('Subscriptions'));
+
+            if (false == $result->hasKey('NextToken')) {
+                break;
+            }
+
+            $args['NextToken'] = $result->get('NextToken');
+        }
+
+        return $subscriptions;
     }
 
     public function getTopicArn(SnsDestination $destination): string
