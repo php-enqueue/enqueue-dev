@@ -1,5 +1,84 @@
 # Change Log
 
+## [0.9.7](https://github.com/php-enqueue/enqueue-dev/tree/0.9.7) (2019-02-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.6...0.9.7)
+
+**Merged pull requests:**
+
+- Avoid OutOfMemoryException [\#725](https://github.com/php-enqueue/enqueue-dev/pull/725) ([DamienHarper](https://github.com/DamienHarper))
+- \[async-event-dispatcher\] Add default to php\_serializer\_event\_transformer [\#748](https://github.com/php-enqueue/enqueue-dev/pull/748) ([GCalmels](https://github.com/GCalmels))
+- \[async-event-dispatcher\] Fixed param on EventTransformer [\#736](https://github.com/php-enqueue/enqueue-dev/pull/736) ([samnela](https://github.com/samnela))
+- \[job-queue\] Install stable dependencies [\#745](https://github.com/php-enqueue/enqueue-dev/pull/745) ([mbabic131](https://github.com/mbabic131))
+- \[job-queue\] Fix job status processor [\#735](https://github.com/php-enqueue/enqueue-dev/pull/735) ([ASKozienko](https://github.com/ASKozienko))
+- \[redis\] Fix messages sent with incorrect delivery delay [\#738](https://github.com/php-enqueue/enqueue-dev/pull/738) ([niels-nijens](https://github.com/niels-nijens))
+- \[dbal\] Exception on affected record !=1 [\#733](https://github.com/php-enqueue/enqueue-dev/pull/733) ([otzy](https://github.com/otzy))
+- \[bundle\]\[dbal\] Use doctrine bundle configured connections [\#732](https://github.com/php-enqueue/enqueue-dev/pull/732) ([ASKozienko](https://github.com/ASKozienko))
+- \[pheanstalk\] Add unit tests for PheanstalkConsumer [\#726](https://github.com/php-enqueue/enqueue-dev/pull/726) ([alanpoulain](https://github.com/alanpoulain))
+- \[pheanstalk\] Requeuing a message should not acknowledge it beforehand [\#722](https://github.com/php-enqueue/enqueue-dev/pull/722) ([alanpoulain](https://github.com/alanpoulain))
+- \[sqs\] Dead Letter Queue Adoption [\#720](https://github.com/php-enqueue/enqueue-dev/pull/720) ([cshum](https://github.com/cshum))
+
+## [0.9.6](https://github.com/php-enqueue/enqueue-dev/tree/0.9.6) (2019-01-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.5...0.9.6)
+
+**Merged pull requests:**
+
+- Fix async command/event pkgs [\#717](https://github.com/php-enqueue/enqueue-dev/pull/717) ([GCalmels](https://github.com/GCalmels))
+- Use database from config in PRedis driver [\#715](https://github.com/php-enqueue/enqueue-dev/pull/715) ([lalov](https://github.com/lalov))
+- \[monitoring\] Add support of Datadog [\#716](https://github.com/php-enqueue/enqueue-dev/pull/716) ([uro](https://github.com/uro))
+- \[monitoring\] Fixed influxdb write on sentMessageStats [\#712](https://github.com/php-enqueue/enqueue-dev/pull/712) ([uro](https://github.com/uro))
+- \[monitoring\] Add support for minimum stability - stable [\#711](https://github.com/php-enqueue/enqueue-dev/pull/711) ([uro](https://github.com/uro))
+- \[consumption\] fix wrong niceness extension param [\#709](https://github.com/php-enqueue/enqueue-dev/pull/709) ([ramunasd](https://github.com/ramunasd))
+
+## [0.9.5](https://github.com/php-enqueue/enqueue-dev/tree/0.9.5) (2018-12-21)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.4...0.9.5)
+
+**Merged pull requests:**
+
+- \[dbal\] Run tests on PostgreSQS [\#705](https://github.com/php-enqueue/enqueue-dev/pull/705) ([makasim](https://github.com/makasim))
+- \[dbal\] Use string-based UUIDs instead of binary [\#698](https://github.com/php-enqueue/enqueue-dev/pull/698) ([jverdeyen](https://github.com/jverdeyen))
+
+## [0.9.4](https://github.com/php-enqueue/enqueue-dev/tree/0.9.4) (2018-12-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.3...0.9.4)
+
+**Merged pull requests:**
+
+- \[client\] sendToProcessor should able to send message to router processor. [\#703](https://github.com/php-enqueue/enqueue-dev/pull/703) ([makasim](https://github.com/makasim))
+- \[client\] Fix SetRouterPropertiesExtension should skip no topic messages. [\#702](https://github.com/php-enqueue/enqueue-dev/pull/702) ([makasim](https://github.com/makasim))
+- \[client\] Fix Exclusive Command Extension ignores route queue prefix option. [\#701](https://github.com/php-enqueue/enqueue-dev/pull/701) ([makasim](https://github.com/makasim))
+- \[amqp\] fix \#696 parsing vhost from amqp dsn [\#697](https://github.com/php-enqueue/enqueue-dev/pull/697) ([rpanfili](https://github.com/rpanfili))
+- \[doc\] Fix link to declare queue [\#699](https://github.com/php-enqueue/enqueue-dev/pull/699) ([samnela](https://github.com/samnela))
+
+## [0.9.3](https://github.com/php-enqueue/enqueue-dev/tree/0.9.3) (2018-12-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.2...0.9.3)
+
+**Merged pull requests:**
+
+- Fix async command package [\#694](https://github.com/php-enqueue/enqueue-dev/pull/694) ([makasim](https://github.com/makasim))
+- Fix async events package [\#694](https://github.com/php-enqueue/enqueue-dev/pull/694) ([makasim](https://github.com/makasim))
+- Add commands for single transport\client with typed arguments. [\#693](https://github.com/php-enqueue/enqueue-dev/pull/693) ([makasim](https://github.com/makasim))
+- Fix TreeBuilder in Symfony 4.2 [\#692](https://github.com/php-enqueue/enqueue-dev/pull/692) ([angelsk](https://github.com/angelsk))
+- [doc] update docs [\#689](https://github.com/php-enqueue/enqueue-dev/pull/689) ([OskarStark](https://github.com/OskarStark))
+
+## [0.9.2](https://github.com/php-enqueue/enqueue-dev/tree/0.9.2) (2018-12-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.1...0.9.2)
+
+**Merged pull requests:**
+
+- Allow 0.8.x Queue Interop \(without deprecated Psr prefixed interfaces\)  [\#688](https://github.com/php-enqueue/enqueue-dev/pull/688) ([makasim](https://github.com/makasim))
+- \[dsn\] remove commented out code [\#661](https://github.com/php-enqueue/enqueue-dev/pull/661) ([kunicmarko20](https://github.com/kunicmarko20))
+- \[fs\]: fix: Wrong parameters for Exception [\#678](https://github.com/php-enqueue/enqueue-dev/pull/678) ([ssiergl](https://github.com/ssiergl))
+- \[fs\] Do not throw error in jsonUnserialize on deprecation notice [\#671](https://github.com/php-enqueue/enqueue-dev/pull/671) ([ssiergl](https://github.com/ssiergl))
+- \[mongodb\] polling\_integer type not correctly handled when using DSN [\#673](https://github.com/php-enqueue/enqueue-dev/pull/673) ([jak](https://github.com/jak))
+- \[dbal\] Use ordered bytes time uuid codec on message id decode. [\#665](https://github.com/php-enqueue/enqueue-dev/pull/665) ([makasim](https://github.com/makasim))
+- \[dbal\] fix: Wrong parameters for Exception [\#676](https://github.com/php-enqueue/enqueue-dev/pull/676) ([Nommyde](https://github.com/Nommyde))
+- \[sqs\] Add ability to use another aws account per queue. [\#666](https://github.com/php-enqueue/enqueue-dev/pull/666) ([makasim](https://github.com/makasim))
+- \[sqs\] Multi region support [\#664](https://github.com/php-enqueue/enqueue-dev/pull/664) ([makasim](https://github.com/makasim))
+- \[sqs\] Use a queue created in another AWS account. [\#662](https://github.com/php-enqueue/enqueue-dev/pull/662) ([makasim](https://github.com/makasim))
+- \[job-queue\] Fix tests on newer dbal versions. [\#687](https://github.com/php-enqueue/enqueue-dev/pull/687) ([makasim](https://github.com/makasim))
+- [doc] typo [\#686](https://github.com/php-enqueue/enqueue-dev/pull/686) ([OskarStark](https://github.com/OskarStark))
+- [doc] typo [\#683](https://github.com/php-enqueue/enqueue-dev/pull/683) ([OskarStark](https://github.com/OskarStark))
+- [doc] Fix package name for redis [\#680](https://github.com/php-enqueue/enqueue-dev/pull/680) ([gnumoksha](https://github.com/gnumoksha))
+
 ## [0.9.1](https://github.com/php-enqueue/enqueue-dev/tree/0.9.1) (2018-11-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.0...0.9.1)
 

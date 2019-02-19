@@ -9,19 +9,21 @@
         "php": "^7.1.3",
         "enqueue/enqueue": "^0.9",
         "ramsey/uuid": "^3",
-        "enqueue/dsn": "0.9.x-dev"
+        "enqueue/dsn": "^0.9"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4.0",
         "enqueue/test": "0.9.x-dev",
         "influxdb/influxdb-php": "^1.14",
+        "datadog/php-datadogstatsd": "^1.3",
         "thruway/client": "^0.5",
         "thruway/pawl-transport": "^0.5"
     },
     "suggest": {
         "thruway/client": "Client for Thruway and the WAMP (Web Application Messaging Protocol).",
         "thruway/pawl-transport": "Pawl WebSocket Transport for Thruway Client",
-        "influxdb/influxdb-php": "A PHP Client for InfluxDB, a time series database"
+        "influxdb/influxdb-php": "A PHP Client for InfluxDB, a time series database",
+        "datadog/php-datadogstatsd": "Datadog monitoring tool PHP integration"
     },
     "support": {
         "email": "opensource@forma-pro.com",

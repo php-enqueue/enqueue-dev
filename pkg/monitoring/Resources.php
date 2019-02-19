@@ -42,6 +42,11 @@ final class Resources
                 'supportedSchemeExtensions' => [],
             ];
 
+            $map[DatadogStorage::class] = [
+                'schemes' => ['datadog'],
+                'supportedSchemeExtensions' => [],
+            ];
+
             self::$knownStorages = $map;
         }
 

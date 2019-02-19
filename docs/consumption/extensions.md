@@ -59,4 +59,8 @@ The extension catch process signals and gracefully stops consumption. Works only
 The extension checks whether the received message is redelivered (There was attempt to process message but it failed). 
 If so the extension reject the origin message and creates a copy message with a delay. 
 
+## [ConsumerMonitoringExtension](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/monitoring.md#consumption-extension)
+
+There is an extension ConsumerMonitoringExtension for Enqueue QueueConsumer. It could collect consumed messages and consumer stats for you and send them to Grafana, InfluxDB or Datadog. 
+
 [back to index](../index.md)

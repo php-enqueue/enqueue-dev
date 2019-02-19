@@ -3,7 +3,7 @@ FROM formapro/nginx-php-fpm:latest-all-exts
 ## libs
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php-dev php-redis git python
+    apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php-dev php-redis php-pgsql git python
 
 RUN set -x && \
     apt-get update && \

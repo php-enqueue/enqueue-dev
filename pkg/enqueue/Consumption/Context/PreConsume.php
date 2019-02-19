@@ -43,6 +43,11 @@ final class PreConsume
      */
     private $executionInterrupted;
 
+    /**
+     * @var int
+     */
+    private $exitStatus;
+
     public function __construct(Context $context, SubscriptionConsumer $subscriptionConsumer, LoggerInterface $logger, int $cycle, int $receiveTimeout, int $startTime)
     {
         $this->context = $context;
@@ -85,13 +90,19 @@ final class PreConsume
         return $this->startTime;
     }
 
+    public function getExitStatus(): ?int
+    {
+        return $this->exitStatus;
+    }
+
     public function isExecutionInterrupted(): bool
     {
         return $this->executionInterrupted;
     }
 
-    public function interruptExecution(): void
+    public function interruptExecution(?int $exitStatus = null): void
     {
+        $this->exitStatus = $exitStatus;
         $this->executionInterrupted = true;
     }
 }

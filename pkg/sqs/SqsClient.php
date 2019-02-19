@@ -43,6 +43,11 @@ class SqsClient
         return $this->callApi('receiveMessage', $args);
     }
 
+    public function changeMessageVisibility(array $args): Result
+    {
+        return $this->callApi('changeMessageVisibility', $args);
+    }
+
     public function purgeQueue(array $args): Result
     {
         return $this->callApi('purgeQueue', $args);

@@ -108,17 +108,37 @@ class LimitsExtensionsCommandTraitTest extends TestCase
         $this->assertInstanceOf(LimitConsumerMemoryExtension::class, $result[2]);
     }
 
-    public function testShouldAddNicenessExtension()
+    /**
+     * @param mixed $inputValue
+     * @param bool  $enabled
+     * @dataProvider provideNicenessValues
+     */
+    public function testShouldAddNicenessExtension($inputValue, bool $enabled)
     {
         $command = new LimitsExtensionsCommand('name');
         $tester = new CommandTester($command);
         $tester->execute([
-            '--niceness' => 1,
+            '--niceness' => $inputValue,
         ]);
 
         $result = $command->getExtensions();
-        $this->assertCount(1, $result);
 
-        $this->assertInstanceOf(NicenessExtension::class, $result[0]);
+        if ($enabled) {
+            $this->assertCount(1, $result);
+            $this->assertInstanceOf(NicenessExtension::class, $result[0]);
+        } else {
+            $this->assertEmpty($result);
+        }
+    }
+
+    public function provideNicenessValues(): \Generator
+    {
+        yield [1, true];
+        yield ['1', true];
+        yield [-1.0, true];
+        yield ['100', true];
+        yield ['', false];
+        yield ['0', false];
+        yield [0.0, false];
     }
 }

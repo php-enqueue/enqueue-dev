@@ -16,6 +16,7 @@ use Enqueue\Consumption\Context\PreSubscribe;
 use Enqueue\Consumption\Context\ProcessorException;
 use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\Exception\InvalidArgumentException;
+use Enqueue\Consumption\Extension\ExitStatusExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
@@ -1429,6 +1430,29 @@ class QueueConsumerTest extends TestCase
         $this->assertSame($fooConsumerStub, $actualContexts[2]->getConsumer());
     }
 
+    public function testCaptureExitStatus()
+    {
+        $testExitCode = 5;
+
+        $stubExtension = $this->createExtension();
+
+        $stubExtension
+            ->expects($this->once())
+            ->method('onStart')
+            ->with($this->isInstanceOf(Start::class))
+            ->willReturnCallback(function (Start $context) use ($testExitCode) {
+                $context->interruptExecution($testExitCode);
+            })
+        ;
+
+        $exitExtension = new ExitStatusExtension();
+
+        $consumer = new QueueConsumer($this->createContextStub(), $stubExtension);
+        $consumer->consume(new ChainExtension([$exitExtension]));
+
+        $this->assertEquals($testExitCode, $exitExtension->getExitStatus());
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
@@ -1508,7 +1532,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @param null|mixed $queue
+     * @param mixed|null $queue
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
      */

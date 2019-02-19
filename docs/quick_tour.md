@@ -260,7 +260,7 @@ Let's see how you can use consumption one:
 use Symfony\Component\Console\Application;
 use Interop\Queue\Message;
 use Enqueue\Consumption\QueueConsumer;
-use Enqueue\Symfony\Consumption\ConsumeMessagesCommand;
+use Enqueue\Symfony\Consumption\SimpleConsumeCommand;
 
 /** @var QueueConsumer $queueConsumer */
 
@@ -268,7 +268,7 @@ $queueConsumer->bindCallback('a_queue', function(Message $message) {
     // process message    
 });
 
-$consumeCommand = new ConsumeMessagesCommand($queueConsumer);
+$consumeCommand = new SimpleConsumeCommand($queueConsumer);
 $consumeCommand->setName('consume');
 
 $app = new Application();

@@ -43,6 +43,11 @@ final class PostConsume
      */
     private $executionInterrupted;
 
+    /**
+     * @var int
+     */
+    private $exitStatus;
+
     public function __construct(Context $context, SubscriptionConsumer $subscriptionConsumer, int $receivedMessagesCount, int $cycle, int $startTime, LoggerInterface $logger)
     {
         $this->context = $context;
@@ -85,13 +90,19 @@ final class PostConsume
         return $this->logger;
     }
 
+    public function getExitStatus(): ?int
+    {
+        return $this->exitStatus;
+    }
+
     public function isExecutionInterrupted(): bool
     {
         return $this->executionInterrupted;
     }
 
-    public function interruptExecution(): void
+    public function interruptExecution(?int $exitStatus = null): void
     {
+        $this->exitStatus = $exitStatus;
         $this->executionInterrupted = true;
     }
 }

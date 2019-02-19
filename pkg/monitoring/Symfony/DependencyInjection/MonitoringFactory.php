@@ -42,8 +42,8 @@ final class MonitoringFactory
             ->info(sprintf('The "%s" option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at stats storage constructor doc block.', $name))
             ->beforeNormalization()
                 ->always(function ($v) {
-                    if (is_array($v)) {
-                        if (isset($v['storage_factory_class']) && isset($v['storage_factory_service'])) {
+                    if (\is_array($v)) {
+                        if (isset($v['storage_factory_class'], $v['storage_factory_service'])) {
                             throw new \LogicException('Both options storage_factory_class and storage_factory_service are set. Please choose one.');
                         }
 

@@ -5,6 +5,7 @@ namespace Enqueue\Bundle;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventsPass;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncTransformersPass;
+use Enqueue\Doctrine\DoctrineSchemaCompilerPass;
 use Enqueue\Symfony\Client\DependencyInjection\AnalyzeRouteCollectionPass;
 use Enqueue\Symfony\Client\DependencyInjection\BuildClientExtensionsPass;
 use Enqueue\Symfony\Client\DependencyInjection\BuildCommandSubscriberRoutesPass as BuildClientCommandSubscriberRoutesPass;
@@ -39,5 +40,7 @@ class EnqueueBundle extends Bundle
             $container->addCompilerPass(new AsyncEventsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
             $container->addCompilerPass(new AsyncTransformersPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
         }
+
+        $container->addCompilerPass(new DoctrineSchemaCompilerPass());
     }
 }

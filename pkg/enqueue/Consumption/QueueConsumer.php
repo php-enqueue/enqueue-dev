@@ -147,7 +147,7 @@ final class QueueConsumer implements QueueConsumerInterface
         $extension->onStart($start);
 
         if ($start->isExecutionInterrupted()) {
-            $this->onEnd($extension, $startTime);
+            $this->onEnd($extension, $startTime, $start->getExitStatus());
 
             return;
         }
@@ -256,7 +256,7 @@ final class QueueConsumer implements QueueConsumerInterface
             $extension->onPreConsume($preConsume);
 
             if ($preConsume->isExecutionInterrupted()) {
-                $this->onEnd($extension, $startTime, $subscriptionConsumer);
+                $this->onEnd($extension, $startTime, $preConsume->getExitStatus(), $subscriptionConsumer);
 
                 return;
             }
@@ -267,7 +267,7 @@ final class QueueConsumer implements QueueConsumerInterface
             $extension->onPostConsume($postConsume);
 
             if ($interruptExecution || $postConsume->isExecutionInterrupted()) {
-                $this->onEnd($extension, $startTime, $subscriptionConsumer);
+                $this->onEnd($extension, $startTime, $postConsume->getExitStatus(), $subscriptionConsumer);
 
                 return;
             }
@@ -286,11 +286,12 @@ final class QueueConsumer implements QueueConsumerInterface
         $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
 
-    private function onEnd(ExtensionInterface $extension, int $startTime, SubscriptionConsumer $subscriptionConsumer = null): void
+    private function onEnd(ExtensionInterface $extension, int $startTime, ?int $exitStatus = null, SubscriptionConsumer $subscriptionConsumer = null): void
     {
         $endTime = (int) (microtime(true) * 1000);
 
-        $extension->onEnd(new End($this->interopContext, $startTime, $endTime, $this->logger));
+        $endContext = new End($this->interopContext, $startTime, $endTime, $this->logger, $exitStatus);
+        $extension->onEnd($endContext);
 
         if ($subscriptionConsumer) {
             $subscriptionConsumer->unsubscribeAll();
@@ -323,9 +324,11 @@ final class QueueConsumer implements QueueConsumerInterface
                 }
             }
 
-            $prev = new \ReflectionProperty('Exception', 'previous');
-            $prev->setAccessible(true);
-            $prev->setValue($wrapper, $exception);
+            if ($exception !== $wrapper) {
+                $prev = new \ReflectionProperty('Exception', 'previous');
+                $prev->setAccessible(true);
+                $prev->setValue($wrapper, $exception);
+            }
 
             throw $e;
         }

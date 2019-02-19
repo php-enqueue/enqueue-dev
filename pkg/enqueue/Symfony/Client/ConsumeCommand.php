@@ -4,6 +4,7 @@ namespace Enqueue\Symfony\Client;
 
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\ChainExtension;
+use Enqueue\Consumption\Extension\ExitStatusExtension;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumerInterface;
@@ -143,9 +144,12 @@ class ConsumeCommand extends Command
             $consumer->bind($queue, $processor);
         }
 
-        $consumer->consume($this->getRuntimeExtensions($input, $output));
+        $runtimeExtensionChain = $this->getRuntimeExtensions($input, $output);
+        $exitStatusExtension = new ExitStatusExtension();
 
-        return null;
+        $consumer->consume(new ChainExtension([$runtimeExtensionChain, $exitStatusExtension]));
+
+        return $exitStatusExtension->getExitStatus();
     }
 
     protected function getRuntimeExtensions(InputInterface $input, OutputInterface $output): ExtensionInterface

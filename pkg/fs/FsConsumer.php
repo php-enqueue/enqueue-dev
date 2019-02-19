@@ -90,7 +90,7 @@ class FsConsumer implements Consumer
                 return null;
             }
 
-            usleep($this->pollingInterval);
+            usleep($this->pollingInterval * 1000);
 
             if ($timeout && (microtime(true) - $startAt) >= $timeout) {
                 return null;
@@ -137,7 +137,7 @@ class FsConsumer implements Consumer
 
                         $this->preFetchedMessages[] = $fetchedMessage;
                     } catch (\Exception $e) {
-                        throw new \LogicException(sprintf("Cannot decode json message '%s'", $rawMessage), null, $e);
+                        throw new \LogicException(sprintf("Cannot decode json message '%s'", $rawMessage), 0, $e);
                     }
                 } else {
                     return null;

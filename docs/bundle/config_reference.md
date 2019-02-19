@@ -21,7 +21,7 @@ enqueue:
         # The transport option could accept a string DSN, an array with DSN key, or null. It accept extra options. To find out what option you can set, look at connection factory constructor docblock.
         transport:            # Required
 
-            # The MQ broker DSN. These schemes are supported: "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", "wamp", "ws", to use these "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "stomp", "sqs", "gps", "mongodb", "wamp", "ws" you have to install a package.
+            # The MQ broker DSN. These schemes are supported: "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "rediss", "stomp", "sqs", "gps", "mongodb", "wamp", "ws", to use these "file", "amqp", "amqps", "db2", "ibm-db2", "mssql", "sqlsrv", "mysql", "mysql2", "pgsql", "postgres", "sqlite", "sqlite3", "null", "gearman", "beanstalk", "kafka", "rdkafka", "redis", "rediss", "stomp", "sqs", "gps", "mongodb", "wamp", "ws" you have to install a package.
             dsn:                  ~ # Required
 
             # The connection factory class should implement "Interop\Queue\ConnectionFactory" interface

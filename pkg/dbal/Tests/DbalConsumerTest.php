@@ -70,7 +70,7 @@ class DbalConsumerTest extends TestCase
             ->method('delete')
             ->with(
                 'some-table-name',
-                ['delivery_id' => $deliveryId->getBytes()],
+                ['delivery_id' => $deliveryId->toString()],
                 ['delivery_id' => Type::GUID]
             )
         ;
@@ -141,7 +141,7 @@ class DbalConsumerTest extends TestCase
             ->method('delete')
             ->with(
                 'some-table-name',
-                ['delivery_id' => $deliveryId->getBytes()],
+                ['delivery_id' => $deliveryId->toString()],
                 ['delivery_id' => Type::GUID]
             )
         ;

@@ -45,6 +45,11 @@ final class PostMessageReceived
      */
     private $executionInterrupted;
 
+    /**
+     * @var int
+     */
+    private $exitStatus;
+
     public function __construct(
         Context $context,
         Consumer $consumer,
@@ -89,11 +94,16 @@ final class PostMessageReceived
     }
 
     /**
-     * @return Result|null|object|string
+     * @return Result|object|string|null
      */
     public function getResult()
     {
         return $this->result;
+    }
+
+    public function getExitStatus(): ?int
+    {
+        return $this->exitStatus;
     }
 
     public function isExecutionInterrupted(): bool
@@ -101,8 +111,9 @@ final class PostMessageReceived
         return $this->executionInterrupted;
     }
 
-    public function interruptExecution(): void
+    public function interruptExecution(?int $exitStatus = null): void
     {
+        $this->exitStatus = $exitStatus;
         $this->executionInterrupted = true;
     }
 }

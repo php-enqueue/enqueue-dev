@@ -49,6 +49,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         ;
 
         $message = new NullMessage();
+        $message->setProperty(Config::TOPIC, 'aTopic');
 
         $messageReceived = new MessageReceived(
             $this->createContextMock(),
@@ -64,6 +65,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
 
         $this->assertEquals([
             Config::PROCESSOR => 'router-processor-name',
+            Config::TOPIC => 'aTopic',
         ], $message->getProperties());
     }
 
@@ -86,6 +88,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
         ;
 
         $message = new NullMessage();
+        $message->setProperty(Config::TOPIC, 'aTopic');
 
         $messageReceived = new MessageReceived(
             $this->createContextMock(),
@@ -99,7 +102,9 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $extension = new SetRouterPropertiesExtension($driver);
         $extension->onMessageReceived($messageReceived);
 
-        $this->assertEquals([], $message->getProperties());
+        $this->assertEquals([
+            Config::TOPIC => 'aTopic',
+        ], $message->getProperties());
     }
 
     public function testShouldNotSetAnyPropertyIfProcessorNamePropertyAlreadySet()
@@ -128,6 +133,31 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $this->assertEquals([
             'enqueue.processor' => 'non-router-processor',
         ], $message->getProperties());
+    }
+
+    public function testShouldSkipMessagesWithoutTopicPropertySet()
+    {
+        $driver = $this->createDriverMock();
+        $driver
+            ->expects($this->never())
+            ->method('getConfig')
+        ;
+
+        $message = new NullMessage();
+
+        $messageReceived = new MessageReceived(
+            $this->createContextMock(),
+            $this->createConsumerStub(null),
+            $message,
+            $this->createProcessorMock(),
+            1,
+            new NullLogger()
+        );
+
+        $extension = new SetRouterPropertiesExtension($driver);
+        $extension->onMessageReceived($messageReceived);
+
+        $this->assertEquals([], $message->getProperties());
     }
 
     /**

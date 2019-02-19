@@ -169,7 +169,7 @@ class JobProcessorTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('sendEvent')
+            ->method('sendCommand')
             ->with(Commands::CALCULATE_ROOT_JOB_STATUS, ['jobId' => 12345])
         ;
 
@@ -246,7 +246,7 @@ class JobProcessorTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('sendEvent')
+            ->method('sendCommand')
         ;
 
         $processor = new JobProcessor($storage, $producer);
@@ -316,7 +316,7 @@ class JobProcessorTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('sendEvent')
+            ->method('sendCommand')
         ;
 
         $processor = new JobProcessor($storage, $producer);
@@ -386,7 +386,7 @@ class JobProcessorTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('sendEvent')
+            ->method('sendCommand')
         ;
 
         $processor = new JobProcessor($storage, $producer);
@@ -456,7 +456,7 @@ class JobProcessorTest extends TestCase
         $producer = $this->createProducerMock();
         $producer
             ->expects($this->once())
-            ->method('sendEvent')
+            ->method('sendCommand')
         ;
 
         $processor = new JobProcessor($storage, $producer);

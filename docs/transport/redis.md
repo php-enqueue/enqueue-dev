@@ -71,7 +71,7 @@ $factory = new RedisConnectionFactory([]);
 $factory = new RedisConnectionFactory([
     'host' => 'example.com',
     'port' => 1000,
-    'vendor' => 'phpredis',
+    'scheme_extensions' => ['phpredis'],
 ]);
 
 // same as above but given as DSN string
@@ -101,13 +101,13 @@ use Enqueue\Redis\RedisConnectionFactory;
 $connectionFactory = new RedisConnectionFactory([
     'host' => 'localhost',
     'port' => 6379,
-    'scheme_extensions' => 'predis',
+    'scheme_extensions' => ['predis'],
 ]);
 
 $context = $connectionFactory->createContext();
 ```
 
-* With custom redis instance:
+* With predis and custom [options](https://github.com/nrk/predis/wiki/Client-Options):
 
 It gives you more control over vendor specific features.
 
@@ -116,10 +116,15 @@ It gives you more control over vendor specific features.
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\PRedis;
  
-$config = []; 
-$options = [];
+$config = [
+    'host' => 'localhost',
+    'port' => 6379,
+    'predis_options' => [
+        'prefix'  => 'ns:'
+    ]
+]; 
 
-$redis = new PRedis(new \PRedis\Client($config, $options));
+$redis = new PRedis($config);
 
 $factory = new RedisConnectionFactory($redis);
 ```

@@ -143,7 +143,7 @@ services:
     class: 'App\Queue\SearchReindexProcessor'
     arguments: ['@Enqueue\JobQueue\JobRunner']
     tags:
-        - { name: 'enqueue.client.processor' }
+        - { name: 'enqueue.command_subscriber' }
 ```
 
 * Schedule command

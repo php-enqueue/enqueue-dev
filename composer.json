@@ -12,7 +12,7 @@
     "ext-rdkafka": "^3.0.3",
 
     "queue-interop/amqp-interop": "^0.8",
-    "queue-interop/queue-interop": "^0.7",
+    "queue-interop/queue-interop": "^0.7|^0.8",
     "bunny/bunny": "^0.2.4|^0.3|^0.4",
     "php-amqplib/php-amqplib": "^2.7",
     "doctrine/dbal": "^2.6",
@@ -33,7 +33,8 @@
     "predis/predis": "^1.1",
     "thruway/pawl-transport": "^0.5.0",
     "voryx/thruway": "^0.5.3",
-    "influxdb/influxdb-php": "^1.14"
+    "influxdb/influxdb-php": "^1.14",
+    "datadog/php-datadogstatsd": "^1.3"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.5",

@@ -64,7 +64,7 @@ class RedisProducer implements Producer
         $payload = $this->context->getSerializer()->toString($message);
 
         if ($message->getDeliveryDelay()) {
-            $deliveryAt = time() + $message->getDeliveryDelay();
+            $deliveryAt = time() + $message->getDeliveryDelay() / 1000;
             $this->context->getRedis()->zadd($destination->getName().':delayed', $payload, $deliveryAt);
         } else {
             $this->context->getRedis()->lpush($destination->getName(), $payload);

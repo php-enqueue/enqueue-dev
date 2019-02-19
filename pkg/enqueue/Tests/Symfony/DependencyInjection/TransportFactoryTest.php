@@ -11,6 +11,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
@@ -37,8 +38,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowAddConfigurationAsStringDsn()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -59,8 +59,7 @@ class TransportFactoryTest extends TestCase
      */
     public function testShouldAllowAddConfigurationAsDsnWithoutSlashes()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -76,8 +75,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfNullGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -93,8 +91,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfEmptyStringGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -110,8 +107,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldSetNullTransportIfEmptyArrayGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -127,8 +123,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfEmptyDsnGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -140,8 +135,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfFactoryClassAndFactoryServiceSetAtTheSameTime()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -159,8 +153,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryClassAtTheSameTime()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
 
@@ -178,8 +171,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryServiceAtTheSameTime()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -196,8 +188,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetFactoryClass()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -214,8 +205,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetFactoryService()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -232,8 +222,7 @@ class TransportFactoryTest extends TestCase
 
     public function testShouldAllowSetConnectionFactoryClass()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -250,8 +239,7 @@ class TransportFactoryTest extends TestCase
 
     public function testThrowIfExtraOptionGiven()
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('foo');
+        list($tb, $rootNode) = $this->getRootNode();
 
         $rootNode->append(TransportFactory::getConfiguration());
         $processor = new Processor();
@@ -463,5 +451,21 @@ class TransportFactoryTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The service "enqueue.transport.default.context" does not exist.');
         $transport->buildRpcClient($container, []);
+    }
+
+    /**
+     * @return [TreeBuilder, NodeDefinition]
+     */
+    private function getRootNode(): array
+    {
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
+            $tb = new TreeBuilder('foo');
+
+            return [$tb, $tb->getRootNode()];
+        }
+
+        $tb = new TreeBuilder();
+
+        return [$tb, $tb->root('foo')];
     }
 }

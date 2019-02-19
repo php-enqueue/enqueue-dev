@@ -155,7 +155,7 @@ class InfluxDbStorage implements StatsStorage
         }
 
         $points = [
-            new Point($this->config['measurementSentMessages'], null, $tags, [], $stats->getTimestampMs()),
+            new Point($this->config['measurementSentMessages'], 1, $tags, [], $stats->getTimestampMs()),
         ];
 
         $this->getDb()->writePoints($points, Database::PRECISION_MILLISECONDS);

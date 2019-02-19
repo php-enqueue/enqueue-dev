@@ -119,9 +119,16 @@ final class SimpleClient
      */
     public function __construct($config, LoggerInterface $logger = null)
     {
-        $this->build(['enqueue' => $config]);
+        if (is_string($config)) {
+            $config = [
+                'transport' => $config,
+                'client' => true,
+            ];
+        }
 
         $this->logger = $logger ?: new NullLogger();
+
+        $this->build(['enqueue' => $config]);
     }
 
     /**
@@ -219,6 +226,11 @@ final class SimpleClient
         return $this->producer;
     }
 
+    public function getDelegateProcessor(): DelegateProcessor
+    {
+        return $this->delegateProcessor;
+    }
+
     public function setupBroker(): void
     {
         $this->getDriver()->setupBroker();
@@ -306,8 +318,13 @@ final class SimpleClient
 
     private function createConfiguration(): NodeInterface
     {
-        $tb = new TreeBuilder();
-        $rootNode = $tb->root('enqueue');
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
+            $tb = new TreeBuilder('enqueue');
+            $rootNode = $tb->getRootNode();
+        } else {
+            $tb = new TreeBuilder();
+            $rootNode = $tb->root('enqueue');
+        }
 
         $rootNode
             ->beforeNormalization()

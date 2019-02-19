@@ -33,7 +33,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testCouldBeGetFromContainerAsService()
     {
         /** @var AsyncProcessor $processor */
-        $processor = static::$container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('test.enqueue.events.async_processor');
 
         $this->assertInstanceOf(AsyncProcessor::class, $processor);
     }
@@ -41,7 +41,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldRejectIfMessageDoesNotContainEventNameProperty()
     {
         /** @var AsyncProcessor $processor */
-        $processor = static::$container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('test.enqueue.events.async_processor');
 
         $message = new NullMessage();
 
@@ -51,7 +51,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldRejectIfMessageDoesNotContainTransformerNameProperty()
     {
         /** @var AsyncProcessor $processor */
-        $processor = static::$container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('test.enqueue.events.async_processor');
 
         $message = new NullMessage();
         $message->setProperty('event_name', 'anEventName');
@@ -62,7 +62,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldCallRealListener()
     {
         /** @var AsyncProcessor $processor */
-        $processor = static::$container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('test.enqueue.events.async_processor');
 
         $message = new NullMessage();
         $message->setProperty('event_name', 'test_async');
@@ -93,7 +93,7 @@ class AsyncProcessorTest extends WebTestCase
     public function testShouldCallRealSubscriber()
     {
         /** @var AsyncProcessor $processor */
-        $processor = static::$container->get('enqueue.events.async_processor');
+        $processor = static::$container->get('test.enqueue.events.async_processor');
 
         $message = new NullMessage();
         $message->setProperty('event_name', 'test_async_subscriber');

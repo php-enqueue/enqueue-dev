@@ -40,7 +40,7 @@ class SqsConnectionFactory implements ConnectionFactory
      * sqs:
      * sqs::?key=aKey&secret=aSecret&token=aToken
      *
-     * @param array|string|SqsClient|null $config
+     * @param array|string|AwsSqsClient|null $config
      */
     public function __construct($config = 'sqs:')
     {
