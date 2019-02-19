@@ -136,6 +136,15 @@ class UseCasesTest extends WebTestCase
                 'transport' => getenv('MONGO_DSN'),
             ],
         ]];
+
+        yield 'snsqs' => [[
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('SNSQS_DSN'),
+                ],
+            ],
+        ]];
+
 //
 //        yield 'gps' => [[
 //            'transport' => [

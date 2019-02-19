@@ -32,6 +32,7 @@ services:
       - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
       - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4576&version=latest
       - SNS_DSN=sns:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4575&version=latest
+      - SNSQS_DSN=snsqs:?key=key&secret=secret&region=us-east-1&sns_endpoint=http://localstack:4575&sqs_endpoint=http://localstack:4576&version=latest
       - WAMP_DSN=wamp://thruway:9090
       - REDIS_HOST=redis
       - REDIS_PORT=6379

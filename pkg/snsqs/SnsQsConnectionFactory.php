@@ -35,8 +35,16 @@ class SnsQsConnectionFactory implements ConnectionFactory
      *
      * or
      *
+     * $config = [
+     *   'sns_key' => null,           SNS option
+     *   'sqs_secret' => null,        SQS option
+     *   'token'                      Option for both SNS and SQS
+     * ].
+     *
+     * or
+     *
      * snsqs:
-     * snsqs:?key=aKey&secret=aSecret&token=aToken
+     * snsqs:?key=aKey&secret=aSecret&sns_token=aSnsToken&sqs_token=aSqsToken
      *
      * @param array|string|null $config
      */
@@ -51,17 +59,7 @@ class SnsQsConnectionFactory implements ConnectionFactory
             if (array_key_exists('dsn', $config)) {
                 $this->parseDsn($config['dsn']);
             } else {
-                if (array_key_exists('sns', $config)) {
-                    $this->snsConfig = $config['sns'];
-                } else {
-                    $this->snsConfig = $config;
-                }
-
-                if (array_key_exists('sqs', $config)) {
-                    $this->sqsConfig = $config['sqs'];
-                } else {
-                    $this->sqsConfig = $config;
-                }
+                $this->parseOptions($config);
             }
         } else {
             throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
@@ -91,7 +89,29 @@ class SnsQsConnectionFactory implements ConnectionFactory
             ));
         }
 
-        $this->snsConfig = 'sns:?'.$dsn->getQueryString();
-        $this->sqsConfig = 'sqs:?'.$dsn->getQueryString();
+        $this->parseOptions($dsn->getQuery());
+    }
+
+    private function parseOptions(array $options): void
+    {
+        // set default options
+        foreach ($options as $key => $value) {
+            if (false === in_array(substr($key, 0, 4), ['sns_', 'sqs_'])) {
+                $this->snsConfig[$key] = $value;
+                $this->sqsConfig[$key] = $value;
+            }
+        }
+
+        // set transport specific options
+        foreach ($options as $key => $value) {
+            switch (substr($key, 0, 4)) {
+                case 'sns_':
+                    $this->snsConfig[substr($key, 4)] = $value;
+                    break;
+                case 'sqs_':
+                    $this->sqsConfig[substr($key, 4)] = $value;
+                    break;
+            }
+        }
     }
 }

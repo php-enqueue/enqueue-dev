@@ -9,13 +9,10 @@ trait SnsQsExtension
 {
     private function buildSnsQsContext(): SnsQsContext
     {
-        $snsDsn = getenv('SNS_DSN');
-        $sqsDsn = getenv('SQS_DSN');
-
-        if (false == $snsDsn || false == $sqsDsn) {
+        if (false == $dsn = getenv('SNSQS_DSN')) {
             throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
         }
 
-        return (new SnsQsConnectionFactory(['sns' => $snsDsn, 'sqs' => $sqsDsn]))->createContext();
+        return (new SnsQsConnectionFactory($dsn))->createContext();
     }
 }

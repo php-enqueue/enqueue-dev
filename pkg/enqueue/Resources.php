@@ -14,6 +14,7 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\SnsQs\SnsQsConnectionFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Wamp\WampConnectionFactory;
@@ -155,7 +156,7 @@ final class Resources
                 'schemes' => ['sqs'],
                 'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/sqs', ];
-            $map[SqsConnectionFactory::class] = [
+            $map[SnsQsConnectionFactory::class] = [
                 'schemes' => ['snsqs'],
                 'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/snsqs', ];
