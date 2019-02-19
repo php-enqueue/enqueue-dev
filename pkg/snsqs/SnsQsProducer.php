@@ -6,6 +6,8 @@ namespace Enqueue\SnsQs;
 
 use Enqueue\Sns\SnsContext;
 use Enqueue\Sns\SnsProducer;
+use Enqueue\Sqs\SqsContext;
+use Enqueue\Sqs\SqsProducer;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
@@ -17,16 +19,27 @@ class SnsQsProducer implements Producer
     /**
      * @var SnsContext
      */
-    private $context;
+    private $snsContext;
 
     /**
      * @var SnsProducer
      */
-    private $producer;
+    private $snsProducer;
 
-    public function __construct(SnsContext $context)
+    /**
+     * @var SqsContext
+     */
+    private $sqsContext;
+
+    /**
+     * @var SqsProducer
+     */
+    private $sqsProducer;
+
+    public function __construct(SnsContext $snsContext, SqsContext $sqsContext)
     {
-        $this->context = $context;
+        $this->snsContext = $snsContext;
+        $this->sqsContext = $sqsContext;
     }
 
     /**
@@ -35,56 +48,89 @@ class SnsQsProducer implements Producer
      */
     public function send(Destination $destination, Message $message): void
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, SnsQsTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, SnsQsMessage::class);
 
-        $snsMessage = $this->context->createMessage($message->getBody(), $message->getProperties(), $message->getHeaders());
+        if (false == $destination instanceof SnsQsTopic && false == $destination instanceof SnsQsQueue) {
+            throw new InvalidDestinationException(sprintf(
+                'The destination must be an instance of [%s|%s] but got %s.',
+                SnsQsTopic::class, SnsQsQueue::class,
+                is_object($destination) ? get_class($destination) : gettype($destination)
+            ));
+        }
 
-        $this->getProducer()->send($destination, $snsMessage);
+        if ($destination instanceof SnsQsTopic) {
+            $snsMessage = $this->snsContext->createMessage(
+                $message->getBody(),
+                $message->getProperties(),
+                $message->getHeaders()
+            );
+
+            $this->getSnsProducer()->send($destination, $snsMessage);
+        } else {
+            $sqsMessage = $this->sqsContext->createMessage(
+                $message->getBody(),
+                $message->getProperties(),
+                $message->getHeaders()
+            );
+
+            $this->getSqsProducer()->send($destination, $sqsMessage);
+        }
     }
 
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
-        $this->getProducer()->setDeliveryDelay($deliveryDelay);
+        $this->getSnsProducer()->setDeliveryDelay($deliveryDelay);
+        $this->getSqsProducer()->setDeliveryDelay($deliveryDelay);
 
         return $this;
     }
 
     public function getDeliveryDelay(): ?int
     {
-        return $this->getProducer()->getDeliveryDelay();
+        return $this->getSnsProducer()->getDeliveryDelay();
     }
 
     public function setPriority(int $priority = null): Producer
     {
-        $this->getProducer()->setPriority($priority);
+        $this->getSnsProducer()->setPriority($priority);
+        $this->getSqsProducer()->setPriority($priority);
 
         return $this;
     }
 
     public function getPriority(): ?int
     {
-        return $this->getProducer()->getPriority();
+        return $this->getSnsProducer()->getPriority();
     }
 
     public function setTimeToLive(int $timeToLive = null): Producer
     {
-        $this->getProducer()->setTimeToLive($timeToLive);
+        $this->getSnsProducer()->setTimeToLive($timeToLive);
+        $this->getSqsProducer()->setTimeToLive($timeToLive);
 
         return $this;
     }
 
     public function getTimeToLive(): ?int
     {
-        return $this->getProducer()->getTimeToLive();
+        return $this->getSnsProducer()->getTimeToLive();
     }
 
-    private function getProducer(): SnsProducer
+    private function getSnsProducer(): SnsProducer
     {
-        if (null === $this->producer) {
-            $this->producer = $this->context->createProducer();
+        if (null === $this->snsProducer) {
+            $this->snsProducer = $this->snsContext->createProducer();
         }
 
-        return $this->producer;
+        return $this->snsProducer;
+    }
+
+    private function getSqsProducer(): SqsProducer
+    {
+        if (null === $this->sqsProducer) {
+            $this->sqsProducer = $this->sqsContext->createProducer();
+        }
+
+        return $this->sqsProducer;
     }
 }

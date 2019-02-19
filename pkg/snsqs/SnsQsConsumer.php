@@ -84,18 +84,30 @@ class SnsQsConsumer implements Consumer
         $message->setRedelivered($sqsMessage->isRedelivered());
         $message->setSqsMessage($sqsMessage);
 
-        $data = json_decode($sqsMessage->getBody(), true);
+        $body = $sqsMessage->getBody();
 
-        if (isset($data['Message'])) {
-            $message->setBody((string) $data['Message']);
+        if (isset($body[0]) && $body[0] === '{') {
+            $data = json_decode($sqsMessage->getBody(), true);
+
+            if (isset($data['TopicArn']) && isset($data['Type']) && $data['Type'] === 'Notification') {
+                // SNS message conversion
+                if (isset($data['Message'])) {
+                    $message->setBody((string) $data['Message']);
+                }
+
+                if (isset($data['MessageAttributes']['Headers'])) {
+                    $headersData = json_decode($data['MessageAttributes']['Headers']['Value'], true);
+
+                    $message->setHeaders($headersData[0]);
+                    $message->setProperties($headersData[1]);
+                }
+
+                return $message;
+            }
         }
 
-        if (isset($data['MessageAttributes']['Headers'])) {
-            $headersData = json_decode($data['MessageAttributes']['Headers']['Value'], true);
-
-           $message->setHeaders($headersData[0]);
-           $message->setProperties($headersData[1]);
-        }
+        $message->setBody($sqsMessage->getBody());
+        $message->setProperties($sqsMessage->getProperties());
 
         return $message;
     }

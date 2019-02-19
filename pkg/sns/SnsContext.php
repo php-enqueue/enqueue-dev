@@ -77,6 +77,13 @@ class SnsContext implements Context
         $this->topicArns[$destination->getTopicName()] = (string) $result->get('TopicArn');
     }
 
+    public function deleteTopic(SnsDestination $destination): void
+    {
+        $this->client->deleteTopic($this->getTopicArn($destination));
+
+        unset($this->topicArns[$destination->getTopicName()]);
+    }
+
     public function subscribe(SnsSubscribe $subscribe): void
     {
         foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {

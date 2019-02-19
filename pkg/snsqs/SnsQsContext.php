@@ -104,7 +104,7 @@ class SnsQsContext implements Context
 
     public function createProducer(): Producer
     {
-        return new SnsQsProducer($this->getSnsContext());
+        return new SnsQsProducer($this->getSnsContext(), $this->getSqsContext());
     }
 
     /**
@@ -134,16 +134,22 @@ class SnsQsContext implements Context
 
     public function declareTopic(SnsQsTopic $topic): void
     {
-        InvalidDestinationException::assertDestinationInstanceOf($topic, SnsQsTopic::class);
-
         $this->getSnsContext()->declareTopic($topic);
+    }
+
+    public function deleteTopic(SnsQsTopic $topic): void
+    {
+        $this->getSnsContext()->deleteTopic($topic);
     }
 
     public function declareQueue(SnsQsQueue $queue): void
     {
-        InvalidDestinationException::assertDestinationInstanceOf($queue, SnsQsQueue::class);
-
         $this->getSqsContext()->declareQueue($queue);
+    }
+
+    public function deleteQueue(SnsQsQueue $queue): void
+    {
+        $this->getSqsContext()->deleteQueue($queue);
     }
 
     public function bind(SnsQsTopic $topic, SnsQsQueue $queue): void

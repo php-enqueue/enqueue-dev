@@ -38,6 +38,13 @@ class SnsClient
         return $this->callApi('createTopic', $args);
     }
 
+    public function deleteTopic(string $topicArn): Result
+    {
+        return $this->callApi('DeleteTopic', [
+            'TopicArn' => $topicArn,
+        ]);
+    }
+
     public function publish(array $args): Result
     {
         return $this->callApi('publish', $args);

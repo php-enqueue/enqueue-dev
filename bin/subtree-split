@@ -84,6 +84,8 @@ split 'pkg/redis' redis
 split 'pkg/dbal' dbal
 split 'pkg/null' null
 split 'pkg/sqs' sqs
+split 'pkg/sns' sns
+split 'pkg/snsqs' snsqs
 split 'pkg/gps' gps
 split 'pkg/enqueue-bundle' enqueue-bundle
 split 'pkg/job-queue' job-queue
