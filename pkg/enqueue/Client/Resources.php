@@ -12,6 +12,7 @@ use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\Driver\RabbitMqStompDriver;
 use Enqueue\Client\Driver\RdKafkaDriver;
 use Enqueue\Client\Driver\RedisDriver;
+use Enqueue\Client\Driver\SnsQsDriver;
 use Enqueue\Client\Driver\SqsDriver;
 use Enqueue\Client\Driver\StompDriver;
 
@@ -91,6 +92,12 @@ final class Resources
                 'driverClass' => SqsDriver::class,
                 'requiredSchemeExtensions' => [],
                 'packages' => ['enqueue/enqueue', 'enqueue/sqs'],
+            ];
+            $map[] = [
+                'schemes' => ['snsqs'],
+                'driverClass' => SnsQsDriver::class,
+                'requiredSchemeExtensions' => [],
+                'packages' => ['enqueue/enqueue', 'enqueue/sqs', 'enqueue/sns', 'enqueue/snsqs'],
             ];
             $map[] = [
                 'schemes' => ['stomp'],

@@ -155,6 +155,10 @@ final class Resources
                 'schemes' => ['sqs'],
                 'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/sqs', ];
+            $map[SqsConnectionFactory::class] = [
+                'schemes' => ['snsqs'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/snsqs', ];
             $map[GpsConnectionFactory::class] = [
                 'schemes' => ['gps'],
                 'supportedSchemeExtensions' => [],
