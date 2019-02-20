@@ -328,12 +328,17 @@ class SqsContextTest extends TestCase
                 'QueueUrl' => 'theQueueUrl',
                 'AttributeNames' => ['QueueArn'],
             ]))
-            ->willReturn(new Result(['QueueArn' => 'theQueueArn']))
+            ->willReturn(new Result([
+                'Attributes' => [
+                    'QueueArn' => 'theQueueArn',
+                ],
+            ]))
         ;
 
         $context = new SqsContext($sqsClient, []);
 
         $queue = $context->createQueue('aQueueName');
+        $queue->setRegion('theRegion');
 
         $this->assertSame('theQueueArn', $context->getQueueArn($queue));
     }
