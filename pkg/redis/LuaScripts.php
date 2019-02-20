@@ -7,6 +7,47 @@ namespace Enqueue\Redis;
 class LuaScripts
 {
     /**
+     * KEYS[1] - The queue we are reading message
+     * KEYS[2] - The reserved queue we are moving message to
+     * ARGV[1] - Now timestamp
+     * ARGV[2] - Redelivery at timestamp
+     */
+    public static function receiveMessage()
+    {
+        return <<<LUA
+local message = redis.call('RPOP', KEYS[1])
+
+if (not message) then
+  return nil
+end
+
+local jsonSuccess, json = pcall(cjson.decode, message);
+
+if (not jsonSuccess) then
+  return nil
+end
+
+if (nil == json['headers']['attempts']) then
+  json['headers']['attempts'] = 0
+end
+
+if (0 == json['headers']['attempts'] and nil ~= json['headers']['expires_at']) then
+  if (tonumber(ARGV[1]) > json['headers']['expires_at']) then
+    return nil
+  end
+end
+
+json['headers']['attempts'] = json['headers']['attempts'] + 1
+
+message = cjson.encode(json)
+
+redis.call('ZADD', KEYS[2], tonumber(ARGV[2]), message)
+
+return message
+LUA;
+    }
+
+    /**
      * Get the Lua script to migrate expired messages back onto the queue.
      *
      * KEYS[1] - The queue we are removing messages from, for example: queues:foo:reserved
