@@ -62,7 +62,7 @@ class SnsQsConnectionFactory implements ConnectionFactory
                 $this->parseOptions($config);
             }
         } else {
-            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
+            throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
     }
 
