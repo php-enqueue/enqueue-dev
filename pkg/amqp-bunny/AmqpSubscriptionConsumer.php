@@ -47,7 +47,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
         try {
             $this->context->getBunnyChannel()->getClient()->run(0 !== $timeout ? $timeout / 1000 : null);
         } catch (ClientException $e) {
-            if ('stream_select() failed' === substr($e->getMessage(), 0, 22) && $signalHandler->wasThereSignal()) {
+            if (0 === strpos($e->getMessage(), 'stream_select() failed') && $signalHandler->wasThereSignal()) {
                 return;
             }
 
