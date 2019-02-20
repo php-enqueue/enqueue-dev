@@ -12,6 +12,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 * [Quick tour](quick_tour.md)
 * [Transports](#transports)
     - Amqp based on [the ext](transport/amqp.md), [bunny](transport/amqp_bunny.md), [the lib](transport/amqp_lib.md)
+    - [Amazon SNS-SQS](transport/snsqs.md)
     - [Amazon SQS](transport/sqs.md)
     - [Google PubSub](transport/gps.md)
     - [Beanstalk (Pheanstalk)](transport/pheanstalk.md)
