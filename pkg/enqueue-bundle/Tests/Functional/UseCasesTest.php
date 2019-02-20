@@ -143,6 +143,14 @@ class UseCasesTest extends WebTestCase
             ],
         ]];
 
+        yield 'snsqs' => [[
+            'default' => [
+                'transport' => [
+                    'dsn' => getenv('SNSQS_DSN'),
+                ],
+            ],
+        ]];
+
 //
 //        yield 'gps' => [[
 //            'transport' => [

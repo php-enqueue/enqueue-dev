@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Enqueue\Sqs;
+namespace Enqueue\Sns;
 
 use Aws\MultiRegionClient;
 use Aws\Result;
-use Aws\Sqs\SqsClient as AwsSqsClient;
+use Aws\Sns\SnsClient as AwsSnsClient;
 
-class SqsClient
+class SnsClient
 {
     /**
-     * @var AwsSqsClient
+     * @var AwsSnsClient
      */
     private $singleClient;
 
@@ -26,59 +26,46 @@ class SqsClient
     private $inputClient;
 
     /**
-     * @param AwsSqsClient|MultiRegionClient|callable $inputClient
+     * @param AwsSnsClient|MultiRegionClient|callable $inputClient
      */
     public function __construct($inputClient)
     {
         $this->inputClient = $inputClient;
     }
 
-    public function deleteMessage(array $args): Result
+    public function createTopic(array $args): Result
     {
-        return $this->callApi('deleteMessage', $args);
+        return $this->callApi('createTopic', $args);
     }
 
-    public function receiveMessage(array $args): Result
+    public function deleteTopic(string $topicArn): Result
     {
-        return $this->callApi('receiveMessage', $args);
+        return $this->callApi('DeleteTopic', [
+            'TopicArn' => $topicArn,
+        ]);
     }
 
-    public function changeMessageVisibility(array $args): Result
+    public function publish(array $args): Result
     {
-        return $this->callApi('changeMessageVisibility', $args);
+        return $this->callApi('publish', $args);
     }
 
-    public function purgeQueue(array $args): Result
+    public function subscribe(array $args): Result
     {
-        return $this->callApi('purgeQueue', $args);
+        return $this->callApi('subscribe', $args);
     }
 
-    public function getQueueUrl(array $args): Result
+    public function unsubscribe(array $args): Result
     {
-        return $this->callApi('getQueueUrl', $args);
+        return $this->callApi('unsubscribe', $args);
     }
 
-    public function getQueueAttributes(array $args): Result
+    public function listSubscriptionsByTopic(array $args): Result
     {
-        return $this->callApi('getQueueAttributes', $args);
+        return $this->callApi('ListSubscriptionsByTopic', $args);
     }
 
-    public function createQueue(array $args): Result
-    {
-        return $this->callApi('createQueue', $args);
-    }
-
-    public function deleteQueue(array $args): Result
-    {
-        return $this->callApi('deleteQueue', $args);
-    }
-
-    public function sendMessage(array $args): Result
-    {
-        return $this->callApi('sendMessage', $args);
-    }
-
-    public function getAWSClient(): AwsSqsClient
+    public function getAWSClient(): AwsSnsClient
     {
         $this->resolveClient();
 
@@ -130,7 +117,7 @@ class SqsClient
             $this->multiClient = $client;
 
             return;
-        } elseif ($client instanceof AwsSqsClient) {
+        } elseif ($client instanceof AwsSnsClient) {
             $this->singleClient = $client;
 
             return;
@@ -141,7 +128,7 @@ class SqsClient
 
                 return;
             }
-            if ($client instanceof AwsSqsClient) {
+            if ($client instanceof AwsSnsClient) {
                 $this->singleClient = $client;
 
                 return;
@@ -150,7 +137,7 @@ class SqsClient
 
         throw new \LogicException(sprintf(
             'The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"',
-            AwsSqsClient::class,
+            AwsSnsClient::class,
             MultiRegionClient::class,
             is_object($client) ? get_class($client) : gettype($client)
         ));

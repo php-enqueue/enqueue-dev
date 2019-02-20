@@ -308,6 +308,41 @@ class SqsContextTest extends TestCase
         $context->getQueueUrl(new SqsDestination('aQueueName'));
     }
 
+    public function testShouldAllowGetQueueArn()
+    {
+        $sqsClient = $this->createSqsClientMock();
+        $sqsClient
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'QueueName' => 'aQueueName',
+            ]))
+            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+        ;
+        $sqsClient
+            ->expects($this->once())
+            ->method('getQueueAttributes')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'QueueUrl' => 'theQueueUrl',
+                'AttributeNames' => ['QueueArn'],
+            ]))
+            ->willReturn(new Result([
+                'Attributes' => [
+                    'QueueArn' => 'theQueueArn',
+                ],
+            ]))
+        ;
+
+        $context = new SqsContext($sqsClient, []);
+
+        $queue = $context->createQueue('aQueueName');
+        $queue->setRegion('theRegion');
+
+        $this->assertSame('theQueueArn', $context->getQueueArn($queue));
+    }
+
     public function testShouldAllowGetQueueUrlWithCustomRegion()
     {
         $sqsClient = $this->createSqsClientMock();
