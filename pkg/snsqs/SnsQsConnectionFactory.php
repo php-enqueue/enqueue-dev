@@ -71,9 +71,9 @@ class SnsQsConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
-        return new SnsQsContext(function() {
+        return new SnsQsContext(function () {
             return (new SnsConnectionFactory($this->snsConfig))->createContext();
-        }, function() {
+        }, function () {
             return (new SqsConnectionFactory($this->sqsConfig))->createContext();
         });
     }
@@ -96,7 +96,7 @@ class SnsQsConnectionFactory implements ConnectionFactory
     {
         // set default options
         foreach ($options as $key => $value) {
-            if (false === in_array(substr($key, 0, 4), ['sns_', 'sqs_'])) {
+            if (false === in_array(substr($key, 0, 4), ['sns_', 'sqs_'], true)) {
                 $this->snsConfig[$key] = $value;
                 $this->sqsConfig[$key] = $value;
             }

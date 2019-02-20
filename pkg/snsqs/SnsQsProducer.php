@@ -43,7 +43,7 @@ class SnsQsProducer implements Producer
     }
 
     /**
-     * @param SnsQsTopic $destination
+     * @param SnsQsTopic   $destination
      * @param SnsQsMessage $message
      */
     public function send(Destination $destination, Message $message): void

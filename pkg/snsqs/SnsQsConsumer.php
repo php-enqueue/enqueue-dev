@@ -86,10 +86,10 @@ class SnsQsConsumer implements Consumer
 
         $body = $sqsMessage->getBody();
 
-        if (isset($body[0]) && $body[0] === '{') {
+        if (isset($body[0]) && '{' === $body[0]) {
             $data = json_decode($sqsMessage->getBody(), true);
 
-            if (isset($data['TopicArn']) && isset($data['Type']) && $data['Type'] === 'Notification') {
+            if (isset($data['TopicArn']) && isset($data['Type']) && 'Notification' === $data['Type']) {
                 // SNS message conversion
                 if (isset($data['Message'])) {
                     $message->setBody((string) $data['Message']);

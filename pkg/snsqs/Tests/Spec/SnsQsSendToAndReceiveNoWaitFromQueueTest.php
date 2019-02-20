@@ -10,7 +10,7 @@ use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
  * @group functional
  * @retry 5
  */
-class SqsQsSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFromQueueSpec
+class SnsQsSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFromQueueSpec
 {
     use RetryTrait;
     use SnsQsFactoryTrait;

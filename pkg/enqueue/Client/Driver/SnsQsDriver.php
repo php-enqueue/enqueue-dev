@@ -10,7 +10,7 @@ use Psr\Log\NullLogger;
 
 /**
  * @method SnsQsContext getContext()
- * @method SnsQsTopic createRouterTopic()
+ * @method SnsQsTopic   createRouterTopic()
  */
 class SnsQsDriver extends GenericDriver
 {
