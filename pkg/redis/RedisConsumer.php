@@ -11,8 +11,6 @@ use Interop\Queue\Queue;
 
 class RedisConsumer implements Consumer
 {
-    use RedisConsumerHelperTrait;
-
     /**
      * @var RedisDestination
      */
@@ -24,14 +22,23 @@ class RedisConsumer implements Consumer
     private $context;
 
     /**
+     * @var RedisConsumeStrategy
+     */
+    private $consumeStrategy;
+
+    /**
      * @var int
      */
     private $redeliveryDelay = 300;
 
-    public function __construct(RedisContext $context, RedisDestination $queue)
-    {
+    public function __construct(
+        RedisContext $context,
+        RedisDestination $queue,
+        RedisConsumeStrategy $consumeStrategy
+    ) {
         $this->context = $context;
         $this->queue = $queue;
+        $this->consumeStrategy = $consumeStrategy;
     }
 
     /**
@@ -63,8 +70,6 @@ class RedisConsumer implements Consumer
      */
     public function receive(int $timeout = 0): ?Message
     {
-        $timeout = (int) ceil($timeout / 1000);
-
         if ($timeout <= 0) {
             while (true) {
                 if ($message = $this->receive(5000)) {
@@ -73,7 +78,7 @@ class RedisConsumer implements Consumer
             }
         }
 
-        return $this->receiveMessage([$this->queue], $timeout, $this->redeliveryDelay);
+        return $this->consumeStrategy->receiveMessage([$this->queue], $timeout, $this->redeliveryDelay);
     }
 
     /**
@@ -81,7 +86,7 @@ class RedisConsumer implements Consumer
      */
     public function receiveNoWait(): ?Message
     {
-        return $this->receiveMessageNoWait($this->queue, $this->redeliveryDelay);
+        return $this->consumeStrategy->receiveMessageNoWait($this->queue, $this->redeliveryDelay);
     }
 
     /**

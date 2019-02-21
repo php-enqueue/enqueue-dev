@@ -30,17 +30,17 @@ class RedisContext implements Context
     private $redisFactory;
 
     /**
-     * @var int
+     * @var array
      */
-    private $redeliveryDelay = 300;
+    private $config;
 
     /**
      * Callable must return instance of Redis once called.
      *
      * @param Redis|callable $redis
-     * @param int            $redeliveryDelay
+     * @param array          $config
      */
-    public function __construct($redis, int $redeliveryDelay)
+    public function __construct($redis, array $config)
     {
         if ($redis instanceof Redis) {
             $this->redis = $redis;
@@ -54,7 +54,7 @@ class RedisContext implements Context
             ));
         }
 
-        $this->redeliveryDelay = $redeliveryDelay;
+        $this->config = $config;
         $this->setSerializer(new JsonSerializer());
     }
 
@@ -124,8 +124,8 @@ class RedisContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
 
-        $consumer = new RedisConsumer($this, $destination);
-        $consumer->setRedeliveryDelay($this->redeliveryDelay);
+        $consumer = new RedisConsumer($this, $destination, $this->getConsumeStrategy());
+        $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
 
         return $consumer;
     }
@@ -135,8 +135,8 @@ class RedisContext implements Context
      */
     public function createSubscriptionConsumer(): SubscriptionConsumer
     {
-        $consumer = new RedisSubscriptionConsumer($this);
-        $consumer->setRedeliveryDelay($this->redeliveryDelay);
+        $consumer = new RedisSubscriptionConsumer($this, $this->getConsumeStrategy());
+        $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
 
         return $consumer;
     }
@@ -177,5 +177,17 @@ class RedisContext implements Context
         $this->getRedis()->del($destination->getName());
         $this->getRedis()->del($destination->getName().':delayed');
         $this->getRedis()->del($destination->getName().':reserved');
+    }
+
+    private function getConsumeStrategy(): RedisConsumeStrategy
+    {
+        switch ($this->config['consume_strategy']) {
+            case RedisConnectionFactory::CONSUME_STRATEGY_BLOCKING:
+                return new RedisBlockingConsumeStrategy($this);
+            case RedisConnectionFactory::CONSUME_STRATEGY_NON_BLOCKING:
+                return new RedisNonBlockingConsumeStrategy($this);
+            default:
+                throw new \LogicException(sprintf('Unsupported consume strategy: "%s"', $this->config['consume_strategy']));
+        }
     }
 }

@@ -9,12 +9,15 @@ use Interop\Queue\SubscriptionConsumer;
 
 class RedisSubscriptionConsumer implements SubscriptionConsumer
 {
-    use RedisConsumerHelperTrait;
-
     /**
      * @var RedisContext
      */
     private $context;
+
+    /**
+     * @var RedisConsumeStrategy
+     */
+    private $consumeStrategy;
 
     /**
      * an item contains an array: [RedisConsumer $consumer, callable $callback];.
@@ -28,12 +31,10 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
      */
     private $redeliveryDelay = 300;
 
-    /**
-     * @param RedisContext $context
-     */
-    public function __construct(RedisContext $context)
+    public function __construct(RedisContext $context, RedisConsumeStrategy $consumeStrategy)
     {
         $this->context = $context;
+        $this->consumeStrategy = $consumeStrategy;
         $this->subscribers = [];
     }
 
@@ -69,7 +70,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         while (true) {
-            if ($message = $this->receiveMessage($queues, $timeout ?: 5, $this->redeliveryDelay)) {
+            if ($message = $this->consumeStrategy->receiveMessage($queues, $timeout ?: 5, $this->redeliveryDelay)) {
                 list($consumer, $callback) = $this->subscribers[$message->getKey()];
 
                 if (false === call_user_func($callback, $message, $consumer)) {
@@ -102,7 +103,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         $this->subscribers[$queueName] = [$consumer, $callback];
-        $this->queueNames = null;
+        $this->consumeStrategy->resetState();
     }
 
     /**
@@ -125,13 +126,13 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         unset($this->subscribers[$queueName]);
-        $this->queueNames = null;
+        $this->consumeStrategy->resetState();
     }
 
     public function unsubscribeAll(): void
     {
         $this->subscribers = [];
-        $this->queueNames = null;
+        $this->consumeStrategy->resetState();
     }
 
     private function getContext(): RedisContext

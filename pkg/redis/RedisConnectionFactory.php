@@ -10,6 +10,9 @@ use Interop\Queue\Context;
 
 class RedisConnectionFactory implements ConnectionFactory
 {
+    const CONSUME_STRATEGY_BLOCKING = 'blocking';
+    const CONSUME_STRATEGY_NON_BLOCKING = 'non_blocking';
+
     /**
      * @var array
      */
@@ -87,7 +90,7 @@ class RedisConnectionFactory implements ConnectionFactory
         if ($this->config['lazy']) {
             return new RedisContext(function () {
                 return $this->createRedis();
-            }, $this->config['redelivery_delay']);
+            }, $this->config);
         }
 
         return new RedisContext($this->createRedis(), $this->config['redelivery_delay']);
@@ -161,6 +164,7 @@ class RedisConnectionFactory implements ConnectionFactory
             'predis_options' => null,
             'ssl' => null,
             'redelivery_delay' => 300,
+            'consume_strategy' => self::CONSUME_STRATEGY_BLOCKING,
         ];
     }
 }
