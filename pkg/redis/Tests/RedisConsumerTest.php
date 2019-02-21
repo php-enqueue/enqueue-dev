@@ -5,11 +5,10 @@ namespace Enqueue\Redis\Tests;
 use Enqueue\Redis\JsonSerializer;
 use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisConsumer;
+use Enqueue\Redis\RedisConsumeStrategy;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisDestination;
 use Enqueue\Redis\RedisMessage;
-use Enqueue\Redis\RedisProducer;
-use Enqueue\Redis\RedisResult;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 
@@ -24,14 +23,14 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
 
     public function testCouldBeConstructedWithContextAndDestinationAndPreFetchCountAsArguments()
     {
-        new RedisConsumer($this->createContextMock(), new RedisDestination('aQueue'));
+        new RedisConsumer($this->createContextMock(), new RedisDestination('aQueue'), $this->createMock(RedisConsumeStrategy::class));
     }
 
     public function testShouldReturnDestinationSetInConstructorOnGetQueue()
     {
         $destination = new RedisDestination('aQueue');
 
-        $consumer = new RedisConsumer($this->createContextMock(), $destination);
+        $consumer = new RedisConsumer($this->createContextMock(), $destination, $this->createMock(RedisConsumeStrategy::class));
 
         $this->assertSame($destination, $consumer->getQueue());
     }
@@ -56,7 +55,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new RedisMessage();
         $message->setReservedKey('reserved-key');
 
-        $consumer = new RedisConsumer($contextMock, new RedisDestination('aQueue'));
+        $consumer = new RedisConsumer($contextMock, new RedisDestination('aQueue'), $this->createMock(RedisConsumeStrategy::class));
 
         $consumer->acknowledge($message);
     }
@@ -81,7 +80,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $message = new RedisMessage();
         $message->setReservedKey('reserved-key');
 
-        $consumer = new RedisConsumer($contextMock, new RedisDestination('aQueue'));
+        $consumer = new RedisConsumer($contextMock, new RedisDestination('aQueue'), $this->createMock(RedisConsumeStrategy::class));
 
         $consumer->reject($message);
     }
@@ -114,180 +113,51 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $message->setBody('text');
         $message->setReservedKey($serializer->toString($message));
 
-        $consumer = new RedisConsumer($contextMock, new RedisDestination('aQueue'));
+        $consumer = new RedisConsumer($contextMock, new RedisDestination('aQueue'), $this->createMock(RedisConsumeStrategy::class));
 
         $consumer->reject($message, true);
     }
 
-    public function testShouldCallRedisBRPopAndReturnNullIfNothingInQueueOnReceive()
+    public function testShouldReceiveMessage()
     {
         $destination = new RedisDestination('aQueue');
 
-        $redisMock = $this->createRedisMock();
-        $redisMock
-            ->expects($this->once())
-            ->method('brpop')
-            ->with(['aQueue'], 2)
-            ->willReturn(null)
-        ;
-
         $contextMock = $this->createContextMock();
-        $contextMock
-            ->expects($this->any())
-            ->method('getRedis')
-            ->willReturn($redisMock)
+
+        $strategy = $this->createMock(RedisConsumeStrategy::class);
+        $strategy
+            ->expects($this->once())
+            ->method('receiveMessage')
+            ->willReturn($message = new RedisMessage())
         ;
 
-        $consumer = new RedisConsumer($contextMock, $destination);
+        $consumer = new RedisConsumer($contextMock, $destination, $strategy);
 
-        $this->assertNull($consumer->receive(2000));
+        $result = $consumer->receive(2000);
+
+        $this->assertNotNull($result);
+        $this->assertSame($message, $result);;
     }
 
-    public function testShouldCallRedisBRPopAndReturnMessageIfOneInQueueOnReceive()
+    public function testShouldReceiveNoWaitMessage()
     {
         $destination = new RedisDestination('aQueue');
 
-        $serializer = new JsonSerializer();
+        $contextMock = $this->createContextMock();
 
-        $redisMock = $this->createRedisMock();
-        $redisMock
+        $strategy = $this->createMock(RedisConsumeStrategy::class);
+        $strategy
             ->expects($this->once())
-            ->method('brpop')
-            ->with(['aQueue'], 2)
-            ->willReturn(new RedisResult('aQueue', $serializer->toString(new RedisMessage('aBody'))))
+            ->method('receiveMessageNoWait')
+            ->willReturn($message = new RedisMessage())
         ;
 
-        $contextMock = $this->createContextMock();
-        $contextMock
-            ->expects($this->any())
-            ->method('getRedis')
-            ->willReturn($redisMock)
-        ;
-        $contextMock
-            ->expects($this->any())
-            ->method('getSerializer')
-            ->willReturn($serializer)
-        ;
+        $consumer = new RedisConsumer($contextMock, $destination, $strategy);
 
-        $consumer = new RedisConsumer($contextMock, $destination);
+        $result = $consumer->receiveNoWait();
 
-        $message = $consumer->receive(2000);
-
-        $this->assertInstanceOf(RedisMessage::class, $message);
-        $this->assertSame('aBody', $message->getBody());
-    }
-
-    public function testShouldCallRedisBRPopSeveralTimesWithFiveSecondTimeoutIfZeroTimeoutIsPassed()
-    {
-        $destination = new RedisDestination('aQueue');
-
-        $expectedTimeout = 5;
-
-        $serializer = new JsonSerializer();
-
-        $redisMock = $this->createRedisMock();
-        $redisMock
-            ->expects($this->at(2))
-            ->method('brpop')
-            ->with(['aQueue'], $expectedTimeout)
-            ->willReturn(null)
-        ;
-        $redisMock
-            ->expects($this->at(5))
-            ->method('brpop')
-            ->with(['aQueue'], $expectedTimeout)
-            ->willReturn(null)
-        ;
-        $redisMock
-            ->expects($this->at(8))
-            ->method('brpop')
-            ->with(['aQueue'], $expectedTimeout)
-            ->willReturn(new RedisResult('aQueue', $serializer->toString(new RedisMessage('aBody'))))
-        ;
-
-        $contextMock = $this->createContextMock();
-        $contextMock
-            ->expects($this->atLeastOnce())
-            ->method('getRedis')
-            ->willReturn($redisMock)
-        ;
-        $contextMock
-            ->expects($this->atLeastOnce())
-            ->method('getSerializer')
-            ->willReturn($serializer)
-        ;
-
-        $consumer = new RedisConsumer($contextMock, $destination);
-
-        $message = $consumer->receive(0);
-
-        $this->assertInstanceOf(RedisMessage::class, $message);
-        $this->assertSame('aBody', $message->getBody());
-    }
-
-    public function testShouldCallRedisRPopAndReturnNullIfNothingInQueueOnReceiveNoWait()
-    {
-        $destination = new RedisDestination('aQueue');
-
-        $serializer = new JsonSerializer();
-
-        $redisMock = $this->createRedisMock();
-        $redisMock
-            ->expects($this->once())
-            ->method('rpop')
-            ->with('aQueue')
-            ->willReturn(null)
-        ;
-
-        $contextMock = $this->createContextMock();
-        $contextMock
-            ->expects($this->any())
-            ->method('getRedis')
-            ->willReturn($redisMock)
-        ;
-        $contextMock
-            ->expects($this->any())
-            ->method('getSerializer')
-            ->willReturn($serializer)
-        ;
-
-        $consumer = new RedisConsumer($contextMock, $destination);
-
-        $this->assertNull($consumer->receiveNoWait());
-    }
-
-    public function testShouldCallRedisRPopAndReturnMessageIfOneInQueueOnReceiveNoWait()
-    {
-        $destination = new RedisDestination('aQueue');
-
-        $serializer = new JsonSerializer();
-
-        $redisMock = $this->createRedisMock();
-        $redisMock
-            ->expects($this->once())
-            ->method('rpop')
-            ->with('aQueue')
-            ->willReturn(new RedisResult('aQueue', $serializer->toString(new RedisMessage('aBody'))))
-        ;
-
-        $contextMock = $this->createContextMock();
-        $contextMock
-            ->expects($this->atLeastOnce())
-            ->method('getRedis')
-            ->willReturn($redisMock)
-        ;
-        $contextMock
-            ->expects($this->any())
-            ->method('getSerializer')
-            ->willReturn($serializer)
-        ;
-
-        $consumer = new RedisConsumer($contextMock, $destination);
-
-        $message = $consumer->receiveNoWait();
-
-        $this->assertInstanceOf(RedisMessage::class, $message);
-        $this->assertSame('aBody', $message->getBody());
+        $this->assertNotNull($result);
+        $this->assertSame($message, $result);;
     }
 
     /**
@@ -296,14 +166,6 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
     private function createRedisMock()
     {
         return $this->createMock(Redis::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RedisProducer
-     */
-    private function createProducerMock()
-    {
-        return $this->createMock(RedisProducer::class);
     }
 
     /**

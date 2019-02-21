@@ -32,7 +32,7 @@ class RedisNonBlockingConsumeStrategy implements RedisConsumeStrategy
      */
     public function receiveMessage(array $queues, int $timeout, int $redeliveryDelay): ?RedisMessage
     {
-        $endAt = microtime(true) + $timeout/1000;
+        $endAt = microtime(true) + $timeout / 1000;
 
         if (null === $this->queueNames) {
             $this->queueNames = [];

@@ -11,10 +11,12 @@ class LuaScripts
      * KEYS[2] - The reserved queue we are moving message to
      * ARGV[1] - Now timestamp
      * ARGV[2] - Redelivery at timestamp
+     *
+     * @return string
      */
-    public static function receiveMessage()
+    public static function receiveMessage(): string
     {
-        return <<<LUA
+        return <<<'LUA'
 local message = redis.call('RPOP', KEYS[1])
 
 if (not message) then
@@ -56,7 +58,7 @@ LUA;
      *
      * @return string
      */
-    public static function migrateExpired()
+    public static function migrateExpired(): string
     {
         return <<<'LUA'
 -- Get all of the messages with an expired "score"...

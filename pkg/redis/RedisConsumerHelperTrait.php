@@ -6,7 +6,7 @@ namespace Enqueue\Redis;
 
 trait RedisConsumerHelperTrait
 {
-    protected function pushQueueNameBack(array &$queueNames,  string $queueName): void
+    protected function pushQueueNameBack(array &$queueNames, string $queueName): void
     {
         if (count($queueNames) <= 1) {
             return;

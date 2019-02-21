@@ -3,6 +3,7 @@
 namespace Enqueue\Redis\Tests;
 
 use Enqueue\Redis\RedisConsumer;
+use Enqueue\Redis\RedisConsumeStrategy;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisSubscriptionConsumer;
 use Interop\Queue\Consumer;
@@ -21,12 +22,18 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testCouldBeConstructedWithRedisContextAsFirstArgument()
     {
-        new RedisSubscriptionConsumer($this->createRedisContextMock());
+        new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
     }
 
     public function testShouldAddConsumerAndCallbackToSubscribersPropertyOnSubscribe()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $fooCallback = function () {};
         $fooConsumer = $this->createConsumerStub('foo_queue');
@@ -45,7 +52,10 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testThrowsIfTrySubscribeAnotherConsumerToAlreadySubscribedQueue()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $fooCallback = function () {};
         $fooConsumer = $this->createConsumerStub('foo_queue');
@@ -62,7 +72,10 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testShouldAllowSubscribeSameConsumerAndCallbackSecondTime()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $fooCallback = function () {};
         $fooConsumer = $this->createConsumerStub('foo_queue');
@@ -73,7 +86,10 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testShouldRemoveSubscribedConsumerOnUnsubscribeCall()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $fooConsumer = $this->createConsumerStub('foo_queue');
         $barConsumer = $this->createConsumerStub('bar_queue');
@@ -91,7 +107,10 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testShouldDoNothingIfTryUnsubscribeNotSubscribedQueueName()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $subscriptionConsumer->subscribe($this->createConsumerStub('foo_queue'), function () {});
 
@@ -105,7 +124,10 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testShouldDoNothingIfTryUnsubscribeNotSubscribedConsumer()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $subscriptionConsumer->subscribe($this->createConsumerStub('foo_queue'), function () {});
 
@@ -119,7 +141,10 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testShouldRemoveAllSubscriberOnUnsubscribeAllCall()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $subscriptionConsumer->subscribe($this->createConsumerStub('foo_queue'), function () {});
         $subscriptionConsumer->subscribe($this->createConsumerStub('bar_queue'), function () {});
@@ -134,7 +159,10 @@ class RedisSubscriptionConsumerTest extends TestCase
 
     public function testThrowsIfTryConsumeWithoutSubscribers()
     {
-        $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());
+        $subscriptionConsumer = new RedisSubscriptionConsumer(
+            $this->createRedisContextMock(),
+            $this->createMock(RedisConsumeStrategy::class)
+        );
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('No subscribers');
