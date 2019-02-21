@@ -299,7 +299,7 @@ final class QueueConsumer implements QueueConsumerInterface
     }
 
     /**
-     * The logic is similar to one in Symfony's ExceptionListener::.
+     * The logic is similar to one in Symfony's ExceptionListener::onKernelException().
      *
      * https://github.com/symfony/symfony/blob/cbe289517470eeea27162fd2d523eb29c95f775f/src/Symfony/Component/HttpKernel/EventListener/ExceptionListener.php#L77
      */
