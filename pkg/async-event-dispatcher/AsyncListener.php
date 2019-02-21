@@ -63,7 +63,7 @@ class AsyncListener
      */
     public function asyncMode($eventName)
     {
-        if($this->isSyncMode($eventName)) {
+        if ($this->isSyncMode($eventName)) {
             unset($this->syncMode[$eventName]);
         }
     }
