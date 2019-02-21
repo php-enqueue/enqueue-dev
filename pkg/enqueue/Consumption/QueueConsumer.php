@@ -317,18 +317,16 @@ final class QueueConsumer implements QueueConsumerInterface
 
             return $result;
         } catch (\Exception $e) {
-            $wrapper = $e;
-            while ($prev = $wrapper->getPrevious()) {
+            $prev = $e;
+            do {
                 if ($exception === $wrapper = $prev) {
                     throw $e;
                 }
-            }
+            } while ($prev = $wrapper->getPrevious());
 
-            if ($exception !== $wrapper) {
-                $prev = new \ReflectionProperty('Exception', 'previous');
-                $prev->setAccessible(true);
-                $prev->setValue($wrapper, $exception);
-            }
+            $prev = new \ReflectionProperty($wrapper instanceof \Exception ? \Exception::class : \Error::class, 'previous');
+            $prev->setAccessible(true);
+            $prev->setValue($wrapper, $exception);
 
             throw $e;
         }
