@@ -43,6 +43,7 @@ class RedisConnectionFactory implements ConnectionFactory
      *  'ssl' => could be any of http://fi2.php.net/manual/en/context.ssl.php#refsect1-context.ssl-options
      *  'redelivery_delay' => Default 300 sec. Returns back message into the queue if message was not acknowledged or rejected after this delay.
      *                        It could happen if consumer has failed with fatal error or even if message processing is slow and takes more than this time.
+     *  'consume_strategy' => [blocking|non_blocking]
      * ].
      *
      * or
