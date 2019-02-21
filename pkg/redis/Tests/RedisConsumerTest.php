@@ -136,7 +136,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $result = $consumer->receive(2000);
 
         $this->assertNotNull($result);
-        $this->assertSame($message, $result);;
+        $this->assertSame($message, $result);
     }
 
     public function testShouldReceiveNoWaitMessage()
@@ -157,7 +157,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $result = $consumer->receiveNoWait();
 
         $this->assertNotNull($result);
-        $this->assertSame($message, $result);;
+        $this->assertSame($message, $result);
     }
 
     /**

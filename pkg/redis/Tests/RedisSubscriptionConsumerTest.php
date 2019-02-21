@@ -178,7 +178,7 @@ class RedisSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @param null|mixed $queueName
+     * @param mixed|null $queueName
      *
      * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
      */

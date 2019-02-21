@@ -94,7 +94,7 @@ class RedisConnectionFactory implements ConnectionFactory
             }, $this->config);
         }
 
-        return new RedisContext($this->createRedis(), $this->config['redelivery_delay']);
+        return new RedisContext($this->createRedis(), $this->config);
     }
 
     private function createRedis(): Redis

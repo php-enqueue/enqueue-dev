@@ -63,7 +63,7 @@ class RedisBlockingConsumeStrategy implements RedisConsumeStrategy
 
     public function receiveMessageNoWait(RedisDestination $queue, int $redeliveryDelay): ?RedisMessage
     {
-        $this->migrateExpiredMessages($this->context->getRedis(), [$queue]);
+        $this->migrateExpiredMessages($this->context->getRedis(), [$queue->getName()]);
 
         if ($result = $this->context->getRedis()->rpop($queue->getName())) {
             return $this->processResult($result, $redeliveryDelay);

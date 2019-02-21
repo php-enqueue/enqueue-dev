@@ -7,6 +7,8 @@ namespace Enqueue\Redis;
 class LuaScripts
 {
     /**
+     * Lua script to receive message.
+     *
      * KEYS[1] - The queue we are reading message
      * KEYS[2] - The reserved queue we are moving message to
      * ARGV[1] - Now timestamp
