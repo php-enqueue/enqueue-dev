@@ -1,7 +1,6 @@
 {
   "name": "enqueue/enqueue-dev",
   "type": "project",
-  "minimum-stability": "beta",
   "homepage": "https://enqueue.forma-pro.com/",
   "require": {
     "php": "^7.1.3",
@@ -19,7 +18,7 @@
     "ramsey/uuid": "^2|^3.5",
     "psr/log": "^1",
     "psr/container": "^1",
-    "symfony/event-dispatcher": "4.0.*",
+    "symfony/event-dispatcher": "^4.0",
     "makasim/temp-file": "^0.2",
     "google/cloud-pubsub": "^0.6.1|^1.0",
     "doctrine/orm": "~2.4",
@@ -40,20 +39,20 @@
     "phpunit/phpunit": "^5.5",
     "phpstan/phpstan": "^0.10",
     "queue-interop/queue-spec": "^0.6",
-    "symfony/browser-kit": "4.0.*",
-    "symfony/config": "4.0.*",
-    "symfony/process": "4.0.*",
-    "symfony/console": "4.0.*",
-    "symfony/dependency-injection": "4.0.*",
-    "symfony/event-dispatcher": "4.0.*",
-    "symfony/expression-language": "4.0.*",
-    "symfony/http-kernel": "4.0.*",
-    "symfony/filesystem": "4.0.*",
-    "symfony/framework-bundle": "4.0.*",
+    "symfony/browser-kit": "^4.0",
+    "symfony/config": "^4.0",
+    "symfony/process": "^4.0",
+    "symfony/console": "^4.0",
+    "symfony/dependency-injection": "^4.0",
+    "symfony/event-dispatcher": "^4.0",
+    "symfony/expression-language": "^4.0",
+    "symfony/http-kernel": "^4.0",
+    "symfony/filesystem": "^4.0",
+    "symfony/framework-bundle": "^4.0",
     "empi89/php-amqp-stubs": "*@dev",
     "doctrine/doctrine-bundle": "~1.2",
     "kwn/php-rdkafka-stubs": "^1.0.2",
-    "friendsofphp/php-cs-fixer": "^2"
+    "friendsofphp/php-cs-fixer": "^2.14"
   },
   "autoload": {
     "psr-4": {
