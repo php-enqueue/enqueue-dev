@@ -91,7 +91,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -113,7 +113,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -135,7 +135,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -158,7 +158,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'ssl' => null,
                 'foo' => 'bar',
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -181,7 +181,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'ssl' => null,
                 'foo' => 'bar',
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -204,7 +204,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'ssl' => null,
                 'foo' => 'bar',
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -228,7 +228,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'ssl' => null,
                 'foo' => 'bar',
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -252,7 +252,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'ssl' => null,
                 'foo' => 'bar',
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -276,7 +276,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'ssl' => null,
                 'foo' => 'bar',
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -299,7 +299,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'ssl' => null,
                 'foo' => 'bar',
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -322,7 +322,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -345,7 +345,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -368,7 +368,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'predis_options' => null,
                 'ssl' => null,
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
 
@@ -395,7 +395,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
                     'verify_peer' => '1',
                 ],
                 'redelivery_delay' => 300,
-                'consume_strategy' => 'blocking',
+                'consume_strategy' => 'non_blocking',
             ],
         ];
     }
