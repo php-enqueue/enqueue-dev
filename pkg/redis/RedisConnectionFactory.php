@@ -165,7 +165,7 @@ class RedisConnectionFactory implements ConnectionFactory
             'predis_options' => null,
             'ssl' => null,
             'redelivery_delay' => 300,
-            'consume_strategy' => self::CONSUME_STRATEGY_BLOCKING,
+            'consume_strategy' => self::CONSUME_STRATEGY_NON_BLOCKING,
         ];
     }
 }
