@@ -49,7 +49,7 @@ class ConnectionConfig
     private $config;
 
     /**
-     * @var array|null|string
+     * @var array|string|null
      */
     private $inputConfig;
 
@@ -391,7 +391,10 @@ class ConnectionConfig
         }
 
         $sslOn = false;
-        if ('amqps' === $dsn->getSchemeProtocol() || in_array('tls', $dsn->getSchemeExtensions(), true)) {
+        $isAmqps = 'amqps' === $dsn->getSchemeProtocol();
+        $isTls = in_array('tls', $dsn->getSchemeExtensions(), true);
+        $isSsl = in_array('ssl', $dsn->getSchemeExtensions(), true);
+        if ($isAmqps || $isTls || $isSsl) {
             $sslOn = true;
         }
 
