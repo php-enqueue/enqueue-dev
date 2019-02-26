@@ -49,7 +49,7 @@ class ConnectionConfig
     private $config;
 
     /**
-     * @var array|null|string
+     * @var array|string|null
      */
     private $inputConfig;
 
