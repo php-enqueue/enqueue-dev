@@ -1,8 +1,8 @@
-#Upgrading Enqueue:
+# Upgrading Enqueue:
 
 From `0.8.x` to `0.9.x`:
 
-##Processor declaration
+## Processor declaration
 
 `Interop\Queue\PsrProcessor` interface has been replaced by `Interop\Queue\Processor`
 `Interop\Queue\PsrMessage` interface has been replaced by `Interop\Queue\Message`
@@ -10,9 +10,9 @@ From `0.8.x` to `0.9.x`:
 
 
 
-##Symfony Bundle
+## Symfony Bundle
 
-###Configuration changes:
+### Configuration changes:
 
 `0.8.x`
 
@@ -36,7 +36,7 @@ In `0.9.x` the client name is a root config node.
 
 The `default_processor_queue` Client option was removed.
 
-###Service declarations:
+### Service declarations:
 
 `0.8.x`
 
@@ -58,7 +58,7 @@ tags:
 
 The tag to register message processors has changed and is now split into processor sub types.
 
-###CommandSubscriberInterface `getSubscribedCommand`
+### CommandSubscriberInterface `getSubscribedCommand`
 
 
 `0.8.x`
