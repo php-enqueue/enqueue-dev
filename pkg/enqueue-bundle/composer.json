@@ -8,9 +8,9 @@
     "require": {
         "php": "^7.1.3",
         "symfony/framework-bundle": "^3.4|^4",
-        "enqueue/enqueue": "0.9.x-dev",
-        "enqueue/null": "0.9.x-dev",
-        "enqueue/async-event-dispatcher": "0.9.x-dev"
+        "enqueue/enqueue": "^0.9",
+        "enqueue/null": "^0.9",
+        "enqueue/async-event-dispatcher": "^0.9"
     },
     "support": {
         "email": "opensource@forma-pro.com",
