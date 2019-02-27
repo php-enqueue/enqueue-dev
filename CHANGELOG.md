@@ -1,5 +1,24 @@
 # Change Log
 
+## [0.9.8](https://github.com/php-enqueue/enqueue-dev/tree/0.9.8) (2019-02-27)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.7...0.9.8)
+
+**Merged pull requests:**
+
+- Add upgrade instructions [\#787](https://github.com/php-enqueue/enqueue-dev/pull/787) ([KDederichs](https://github.com/KDederichs))
+- \[consumption\] Fix exception loop in QueueConsumer [\#776](https://github.com/php-enqueue/enqueue-dev/pull/776) ([enumag](https://github.com/enumag))
+- \[consumption\] Add ability to change process exit status from within queue consumer extension [\#766](https://github.com/php-enqueue/enqueue-dev/pull/766) ([greblov](https://github.com/greblov))
+- \[amqp-tools\] Fix amqp-tools dependency [\#785](https://github.com/php-enqueue/enqueue-dev/pull/785) ([TomPradat](https://github.com/TomPradat))
+- \[amqp-tools\] Enable 'ssl\_on' param for 'ssl' scheme extension [\#781](https://github.com/php-enqueue/enqueue-dev/pull/781) ([Leprechaunz](https://github.com/Leprechaunz))
+- \[amqp-bunny\] Catch signal in Bunny adapter [\#771](https://github.com/php-enqueue/enqueue-dev/pull/771) ([snapshotpl](https://github.com/snapshotpl))
+- \[amqp-lib\] supporting channel\_rpc\_timeout option [\#755](https://github.com/php-enqueue/enqueue-dev/pull/755) ([derek9gag](https://github.com/derek9gag))
+- \[dbal\]: make dbal connection config usable again [\#765](https://github.com/php-enqueue/enqueue-dev/pull/765) ([ssiergl](https://github.com/ssiergl))
+- \[fs\] polling\_interval config should be milliseconds not microseconds [\#764](https://github.com/php-enqueue/enqueue-dev/pull/764) ([ssiergl](https://github.com/ssiergl))
+- \[simple-client\] Fix Logger Initialisation [\#752](https://github.com/php-enqueue/enqueue-dev/pull/752) ([ajbonner](https://github.com/ajbonner))
+- \[snsqs\] Corrected the installation part in the docs/transport/snsqs.md [\#791](https://github.com/php-enqueue/enqueue-dev/pull/791) ([dgreda](https://github.com/dgreda))
+- \[sqs\] Update SqsConnectionFactory.php [\#751](https://github.com/php-enqueue/enqueue-dev/pull/751) ([Orkin](https://github.com/Orkin))
+- correct typo in composer.json [\#767](https://github.com/php-enqueue/enqueue-dev/pull/767) ([greblov](https://github.com/greblov))
+
 ## [0.9.7](https://github.com/php-enqueue/enqueue-dev/tree/0.9.7) (2019-02-01)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.6...0.9.7)
 
