@@ -29,7 +29,7 @@ It uses internally official [aws sdk library](https://packagist.org/packages/aws
 ## Installation
 
 ```bash
-$ composer require enqueue/sqs
+$ composer require enqueue/snsqs
 ```
 
 ## Create context
