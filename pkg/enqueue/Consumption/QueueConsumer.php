@@ -43,7 +43,7 @@ final class QueueConsumer implements QueueConsumerInterface
     private $boundProcessors;
 
     /**
-     * @var int|float in milliseconds
+     * @var int in milliseconds
      */
     private $receiveTimeout;
 
@@ -59,7 +59,7 @@ final class QueueConsumer implements QueueConsumerInterface
 
     /**
      * @param BoundProcessor[] $boundProcessors
-     * @param int|float        $receiveTimeout  the time in milliseconds queue consumer waits for a message (10 ms by default)
+     * @param int              $receiveTimeout  the time in milliseconds queue consumer waits for a message (10000 ms by default)
      */
     public function __construct(
         InteropContext $interopContext,
