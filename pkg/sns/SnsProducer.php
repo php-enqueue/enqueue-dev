@@ -57,6 +57,26 @@ class SnsProducer implements Producer
             'TopicArn' => $topicArn,
         ];
 
+        if (null !== $message->getMessageAttributes()) {
+            $arguments['MessageAttributes'] = array_merge(
+                $arguments['MessageAttributes'],
+                $message->getMessageAttributes()
+            );
+        }
+
+        if (null !== ($structure = $message->getMessageStructure())) {
+            $arguments['MessageStructure'] = $structure;
+        }
+        if (null !== ($phone = $message->getPhoneNumber())) {
+            $arguments['PhoneNumber'] = $phone;
+        }
+        if (null !== ($subject = $message->getSubject())) {
+            $arguments['Subject'] = $subject;
+        }
+        if (null !== ($targetArn = $message->getTargetArn())) {
+            $arguments['TargetArn'] = $targetArn;
+        }
+
         $result = $this->context->getSnsClient()->publish($arguments);
 
         if (false == $result->hasKey('MessageId')) {
