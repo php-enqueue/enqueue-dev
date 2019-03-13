@@ -186,6 +186,10 @@ class RdKafkaContext implements Context
                 $this->conf->setRebalanceCb($this->config['rebalance_cb']);
             }
 
+            if (isset($this->config['stats_cb'])) {
+                $this->conf->setStatsCb($this->config['stats_cb']);
+            }
+
             $this->conf->setDefaultTopicConf($topicConf);
         }
 
