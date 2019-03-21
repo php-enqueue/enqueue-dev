@@ -13,12 +13,12 @@ class Result
     const ACK = Processor::ACK;
 
     /**
-     * @see Processor::ACK for more details
+     * @see Processor::REJECT for more details
      */
     const REJECT = Processor::REJECT;
 
     /**
-     * @see Processor::ACK for more details
+     * @see Processor::REQUEUE for more details
      */
     const REQUEUE = Processor::REQUEUE;
 
