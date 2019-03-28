@@ -6,6 +6,8 @@ use Enqueue\Client\Config;
 use Enqueue\Dsn\Dsn;
 use InfluxDB\Client;
 use InfluxDB\Database;
+use InfluxDB\Driver\QueryDriverInterface;
+use InfluxDB\Exception as InfluxDBException;
 use InfluxDB\Point;
 
 class InfluxDbStorage implements StatsStorage
@@ -38,6 +40,8 @@ class InfluxDbStorage implements StatsStorage
      *   'measurementSentMessages' => 'sent-messages',
      *   'measurementConsumedMessages' => 'consumed-messages',
      *   'measurementConsumers' => 'consumers',
+     *   'client' => null, # Client instance. Null by default.
+     *   'retentionPolicy' => null,
      * ]
      *
      * or
@@ -59,6 +63,13 @@ class InfluxDbStorage implements StatsStorage
         } elseif (is_array($config)) {
             $config = empty($config['dsn']) ? $config : $this->parseDsn($config['dsn']);
         } elseif ($config instanceof Client) {
+            // Passing Client instead of array config is deprecated because it prevents setting any configuration values
+            // and causes library to use defaults.
+            @trigger_error(
+                sprintf('Passing %s as %s argument is deprecated. Pass it as "client" array property instead',
+                Client::class,
+                __METHOD__
+            ), E_USER_DEPRECATED);
             $this->client = $config;
             $config = [];
         } else {
@@ -74,7 +85,21 @@ class InfluxDbStorage implements StatsStorage
             'measurementSentMessages' => 'sent-messages',
             'measurementConsumedMessages' => 'consumed-messages',
             'measurementConsumers' => 'consumers',
+            'client' => null,
+            'retentionPolicy' => null,
         ], $config);
+
+        if (null !== $config['client']) {
+            if (!$config['client'] instanceof Client) {
+                throw new \InvalidArgumentException(sprintf(
+                    '%s configuration property is expected to be an instance of %s class. %s was passed instead.',
+                    'client',
+                    Client::class,
+                    gettype($config['client'])
+                ));
+            }
+            $this->client = $config['client'];
+        }
 
         $this->config = $config;
     }
@@ -109,7 +134,7 @@ class InfluxDbStorage implements StatsStorage
             $points[] = new Point($this->config['measurementConsumers'], null, $tags, $values, $stats->getTimestampMs());
         }
 
-        $this->getDb()->writePoints($points, Database::PRECISION_MILLISECONDS);
+        $this->doWrite($points);
     }
 
     public function pushConsumedMessageStats(ConsumedMessageStats $stats): void
@@ -135,7 +160,7 @@ class InfluxDbStorage implements StatsStorage
             new Point($this->config['measurementConsumedMessages'], $runtime, $tags, $values, $stats->getTimestampMs()),
         ];
 
-        $this->getDb()->writePoints($points, Database::PRECISION_MILLISECONDS);
+        $this->doWrite($points);
     }
 
     public function pushSentMessageStats(SentMessageStats $stats): void
@@ -158,21 +183,44 @@ class InfluxDbStorage implements StatsStorage
             new Point($this->config['measurementSentMessages'], 1, $tags, [], $stats->getTimestampMs()),
         ];
 
-        $this->getDb()->writePoints($points, Database::PRECISION_MILLISECONDS);
+        $this->doWrite($points);
+    }
+
+    private function doWrite(array $points): void
+    {
+        if (!$this->client || $this->client->getDriver() instanceof QueryDriverInterface) {
+            $this->getDb()->writePoints($points, Database::PRECISION_MILLISECONDS, $this->config['retentionPolicy']);
+        } else {
+            // Code below mirrors what `writePoints` method of Database does.
+            try {
+                $parameters = [
+                    'url' => sprintf('write?db=%s&precision=%s', $this->config['db'], Database::PRECISION_MILLISECONDS),
+                    'database' => $this->config['db'],
+                    'method' => 'post',
+                ];
+                if (null !== $this->config['retentionPolicy']) {
+                    $parameters['url'] .= sprintf('&rp=%s', $this->config['retentionPolicy']);
+                }
+
+                $this->client->write($parameters, $points);
+            } catch (\Exception $e) {
+                throw new InfluxDBException($e->getMessage(), $e->getCode());
+            }
+        }
     }
 
     private function getDb(): Database
     {
-        if (null === $this->database) {
-            if (null === $this->client) {
-                $this->client = new Client(
-                    $this->config['host'],
-                    $this->config['port'],
-                    $this->config['user'],
-                    $this->config['password']
-                );
-            }
+        if (null === $this->client) {
+            $this->client = new Client(
+                $this->config['host'],
+                $this->config['port'],
+                $this->config['user'],
+                $this->config['password']
+            );
+        }
 
+        if (null === $this->database) {
             $this->database = $this->client->selectDB($this->config['db']);
             $this->database->create();
         }
@@ -200,6 +248,7 @@ class InfluxDbStorage implements StatsStorage
             'measurementSentMessages' => $dsn->getString('measurementSentMessages'),
             'measurementConsumedMessages' => $dsn->getString('measurementConsumedMessages'),
             'measurementConsumers' => $dsn->getString('measurementConsumers'),
+            'retentionPolicy' => $dsn->getString('retentionPolicy'),
         ]), function ($value) { return null !== $value; });
     }
 }
