@@ -51,7 +51,7 @@ class RdKafkaConsumer implements Consumer
         $this->context = $context;
         $this->topic = $topic;
         $this->subscribed = false;
-        $this->commitAsync = false;
+        $this->commitAsync = true;
 
         $this->setSerializer($serializer);
     }
