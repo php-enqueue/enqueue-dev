@@ -59,10 +59,17 @@ class InfluxDbStorage implements StatsStorage
         if (empty($config)) {
             $config = [];
         } elseif (is_string($config)) {
-            $config = $this->parseDsn($config);
+            $config = self::parseDsn($config);
         } elseif (is_array($config)) {
-            $config = empty($config['dsn']) ? $config : $this->parseDsn($config['dsn']);
+            $config = empty($config['dsn']) ? $config : self::parseDsn($config['dsn']);
         } elseif ($config instanceof Client) {
+            // Passing Client instead of array config is deprecated because it prevents setting any configuration values
+            // and causes library to use defaults.
+            @trigger_error(
+                sprintf('Passing %s as %s argument is deprecated. Pass it as "client" array property or use createWithClient instead',
+                Client::class,
+                __METHOD__
+            ), E_USER_DEPRECATED);
             $this->client = $config;
             $config = [];
         } else {
@@ -95,6 +102,22 @@ class InfluxDbStorage implements StatsStorage
         }
 
         $this->config = $config;
+    }
+
+    /**
+     * @param Client $client
+     * @param string $config
+     *
+     * @return InfluxDbStorage
+     */
+    public static function createWithClient(Client $client, $config = 'influxdb:'): self
+    {
+        if (is_string($config)) {
+            $config = self::parseDsn($config);
+        }
+        $config['client'] = $client;
+
+        return new static($config);
     }
 
     public function pushConsumerStats(ConsumerStats $stats): void
@@ -221,7 +244,7 @@ class InfluxDbStorage implements StatsStorage
         return $this->database;
     }
 
-    private function parseDsn(string $dsn): array
+    private static function parseDsn(string $dsn): array
     {
         $dsn = Dsn::parseFirst($dsn);
 
