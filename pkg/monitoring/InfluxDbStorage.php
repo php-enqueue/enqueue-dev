@@ -204,8 +204,22 @@ class InfluxDbStorage implements StatsStorage
 
     private function doWrite(array $points): void
     {
-        if (!$this->client || $this->client->getDriver() instanceof QueryDriverInterface) {
-            $this->getDb()->writePoints($points, Database::PRECISION_MILLISECONDS, $this->config['retentionPolicy']);
+        if (null === $this->client) {
+            $this->client = new Client(
+                $this->config['host'],
+                $this->config['port'],
+                $this->config['user'],
+                $this->config['password']
+            );
+        }
+
+        if ($this->client->getDriver() instanceof QueryDriverInterface) {
+            if (null === $this->database) {
+                $this->database = $this->client->selectDB($this->config['db']);
+                $this->database->create();
+            }
+
+            $this->database->writePoints($points, Database::PRECISION_MILLISECONDS, $this->config['retentionPolicy']);
         } else {
             // Code below mirrors what `writePoints` method of Database does.
             try {
@@ -223,25 +237,6 @@ class InfluxDbStorage implements StatsStorage
                 throw new InfluxDBException($e->getMessage(), $e->getCode());
             }
         }
-    }
-
-    private function getDb(): Database
-    {
-        if (null === $this->client) {
-            $this->client = new Client(
-                $this->config['host'],
-                $this->config['port'],
-                $this->config['user'],
-                $this->config['password']
-            );
-        }
-
-        if (null === $this->database) {
-            $this->database = $this->client->selectDB($this->config['db']);
-            $this->database->create();
-        }
-
-        return $this->database;
     }
 
     private static function parseDsn(string $dsn): array
