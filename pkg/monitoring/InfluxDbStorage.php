@@ -63,13 +63,6 @@ class InfluxDbStorage implements StatsStorage
         } elseif (is_array($config)) {
             $config = empty($config['dsn']) ? $config : $this->parseDsn($config['dsn']);
         } elseif ($config instanceof Client) {
-            // Passing Client instead of array config is deprecated because it prevents setting any configuration values
-            // and causes library to use defaults.
-            @trigger_error(
-                sprintf('Passing %s as %s argument is deprecated. Pass it as "client" array property instead',
-                Client::class,
-                __METHOD__
-            ), E_USER_DEPRECATED);
             $this->client = $config;
             $config = [];
         } else {
