@@ -144,6 +144,31 @@ class DbalConsumerTest extends TestCase
         $this->assertSame(0, $this->getQuerySize());
     }
 
+    public function testShouldRemoveOriginalMessageThatHaveBeenRejectedWithRequeu()
+    {
+        $context = $this->context;
+        $queue = $context->createQueue(__METHOD__);
+
+        $consumer = $context->createConsumer($queue);
+
+        // guard
+        $this->assertSame(0, $this->getQuerySize());
+
+        $producer = $context->createProducer();
+
+        /** @var DbalMessage $message */
+        $message = $context->createMessage(__CLASS__);
+        $producer->send($queue, $message);
+
+        $this->assertCount(1, $this->getQuerySize());
+
+        $message = $consumer->receive(100); // 100ms
+
+        $this->assertInstanceOf(DbalMessage::class, $message);
+        $consumer->reject($message, true);
+        $this->assertCount(1, $this->getQuerySize());
+    }
+
     private function getQuerySize(): int
     {
         return (int) $this->context->getDbalConnection()

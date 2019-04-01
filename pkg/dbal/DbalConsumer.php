@@ -100,16 +100,14 @@ class DbalConsumer implements Consumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, DbalMessage::class);
 
+        $this->acknowledge($message);
+
         if ($requeue) {
             $message = clone $message;
             $message->setRedelivered(false);
 
             $this->getContext()->createProducer()->send($this->queue, $message);
-
-            return;
         }
-
-        $this->deleteMessage($message->getDeliveryId());
     }
 
     protected function getContext(): DbalContext
