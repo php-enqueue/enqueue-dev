@@ -9,19 +9,19 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Monitoring.
 
-Enqueue provides a tool for monitoring message queues. 
+Enqueue provides a tool for monitoring message queues.
 With it, you can control how many messages were sent, how many processed successfuly or failed.
-How many consumers are working, their up time, processed messages stats, memory usage and system load. 
+How many consumers are working, their up time, processed messages stats, memory usage and system load.
 The tool could be integrated with virtually any analytics and monitoring platform.
-There are several integration:  
+There are several integration:
   * [Datadog StatsD](https://datadoghq.com)
   * [InfluxDB](https://www.influxdata.com/) and [Grafana](https://grafana.com/)
-  * [WAMP (Web Application Messaging Protocol)](https://wamp-proto.org/) 
+  * [WAMP (Web Application Messaging Protocol)](https://wamp-proto.org/)
 We are working on a JS\WAMP based real-time UI tool, for more information please [contact us](opensource@forma-pro.com).
 
 ![Grafana Monitoring](images/grafana_monitoring.jpg)
 
-[contact us](opensource@forma-pro.com) if need a Grafana template such as on the picture. 
+[contact us](opensource@forma-pro.com) if need a Grafana template such as on the picture.
 
 * [Installation](#installation)
 * [Track sent messages](#track-sent-messages)
@@ -40,7 +40,7 @@ We are working on a JS\WAMP based real-time UI tool, for more information please
 composer req enqueue/monitoring:0.9.x-dev
 ```
 
-## Track sent messages 
+## Track sent messages
 
 ```php
 <?php
@@ -50,7 +50,7 @@ use Enqueue\Monitoring\GenericStatsStorageFactory;
 $statsStorage = (new GenericStatsStorageFactory())->create('influxdb://127.0.0.1:8086?db=foo');
 $statsStorage->pushSentMessageStats(new SentMessageStats(
     (int) (microtime(true) * 1000), // timestamp
-    'queue_name', // queue 
+    'queue_name', // queue
     'aMessageId',
     'aCorrelationId',
     [], // headers
@@ -76,7 +76,7 @@ $context->createProducer()->send($queue, $message);
 $statsStorage = (new GenericStatsStorageFactory())->create('influxdb://127.0.0.1:8086?db=foo');
 $statsStorage->pushSentMessageStats(new SentMessageStats(
     (int) (microtime(true) * 1000),
-    $queue->getQueueName(), 
+    $queue->getQueueName(),
     $message->getMessageId(),
     $message->getCorrelationId(),
     $message->getHeaders()[],
@@ -99,7 +99,7 @@ $statsStorage = (new GenericStatsStorageFactory())->create('influxdb://127.0.0.1
 $statsStorage->pushConsumedMessageStats(new ConsumedMessageStats(
     'consumerId',
     (int) (microtime(true) * 1000), // now
-    $receivedAt, 
+    $receivedAt,
     'aQueue',
     'aMessageId',
     'aCorrelationId',
@@ -127,16 +127,16 @@ $consumer = $context->createConsumer($queue);
 $consumerId = uniqid('consumer-id', true); // we suggest using UUID here
 if ($message = $consumer->receiveNoWait()) {
     $receivedAt = (int) (microtime(true) * 1000);
-    
+
     // heavy processing here.
-    
+
     $consumer->acknowledge($message);
-    
+
     $statsStorage = (new GenericStatsStorageFactory())->create('influxdb://127.0.0.1:8086?db=foo');
     $statsStorage->pushConsumedMessageStats(new ConsumedMessageStats(
         $consumerId,
         (int) (microtime(true) * 1000), // now
-        $receivedAt, 
+        $receivedAt,
         $queue->getQueueName(),
         $message->getMessageId(),
         $message->getCorrelationId(),
@@ -151,7 +151,7 @@ if ($message = $consumer->receiveNoWait()) {
 ## Track consumer metrics
 
 Consumers are long running processes. It vital to know how many of them are running right now, how they perform, how much memory do they use and so.
-This example shows how you can send such metrics. 
+This example shows how you can send such metrics.
 Call this code from time to time between processing messages.
 
 ```php
@@ -165,13 +165,13 @@ $statsStorage = (new GenericStatsStorageFactory())->create('influxdb://127.0.0.1
 $statsStorage->pushConsumerStats(new ConsumerStats(
     'consumerId',
     (int) (microtime(true) * 1000), // now
-    $startedAt, 
+    $startedAt,
     null, // finished at
-    true, // is started? 
+    true, // is started?
     false, // is finished?
     false, // is failed
     ['foo'], // consume from queues
-    123, // received messages 
+    123, // received messages
     120, // acknowledged messages
     1, // rejected messages
     1, // requeued messages
@@ -182,7 +182,7 @@ $statsStorage->pushConsumerStats(new ConsumerStats(
 
 ## Consumption extension
 
-There is an extension `ConsumerMonitoringExtension` for Enqueue [QueueConsumer](quick_tour.md#consumption). 
+There is an extension `ConsumerMonitoringExtension` for Enqueue [QueueConsumer](quick_tour.md#consumption).
 It could collect consumed messages and consumer stats for you.
 
 ```php
@@ -236,7 +236,15 @@ There are available options:
 *   'measurementSentMessages' => 'sent-messages',
 *   'measurementConsumedMessages' => 'consumed-messages',
 *   'measurementConsumers' => 'consumers',
+*   'client' => null,
+*   'retentionPolicy' => null,
 ```
+
+You can pass InfluxDB\Client instance in `client` option. Otherwise, it will be created on first use according to other
+options.
+
+If your InfluxDB\Client uses driver that implements InfluxDB\Driver\QueryDriverInterface, then database will be
+automatically created for you if it doesn't exist. Default InfluxDB\Client will also do that.
 
 ## Datadog storage
 
@@ -256,7 +264,7 @@ $statsStorage = (new GenericStatsStorageFactory())->create('datadog://127.0.0.1:
 For best experience please adjust units and types in metric summary.
 
 Example dashboard:
- 
+
 ![Datadog monitoring](images/datadog_monitoring.png)
 
 
@@ -311,7 +319,7 @@ There are available options:
 
 ## Symfony App
 
-You have to register some services in order to incorporate monitoring facilities into your Symfony application. 
+You have to register some services in order to incorporate monitoring facilities into your Symfony application.
 
 ```yaml
 # config/packages/enqueue.yaml
@@ -325,11 +333,11 @@ enqueue:
     transport: 'amqp://guest:guest@foo:5672/%2f'
     monitoring: 'wamp://127.0.0.1:9090?topic=stats'
     client: ~
-    
+
   datadog:
     transport: 'amqp://guest:guest@foo:5672/%2f'
     monitoring: 'datadog://127.0.0.1:8125?batched=false'
     client: ~
 ```
 
-[back to index](index.md) 
+[back to index](index.md)
