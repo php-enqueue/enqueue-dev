@@ -160,7 +160,7 @@ class DbalConsumerTest extends TestCase
         $message = $context->createMessage(__CLASS__);
         $producer->send($queue, $message);
 
-        $this->assertCount(1, $this->getQuerySize());
+        $this->assertSame(1, $this->getQuerySize());
 
         $message = $consumer->receive(100); // 100ms
 
