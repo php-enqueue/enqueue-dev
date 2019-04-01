@@ -34,7 +34,7 @@ enqueue:
 
 ## Traceable message producer
 
-Imagine you have a service that internally sends a message and you have to find out was the message sent or not.
+Imagine you have a service `my_service` with a method `someMethod()` that internally sends a message and you have to find out was the message sent or not.
 There is a solution for that. You have to enable traceable message producer in test environment. 
 
 ```yaml
@@ -65,10 +65,11 @@ class FooTest extends WebTestCase
     
     public function testMessageSentToFooTopic()
     {
-        $service = $this->client->getContainer()->get('a_service');
+        // Use your own business logic here:
+        $service = $this->client->getContainer()->get('my_service');
         
-        // the method calls inside $producer->send('fooTopic', 'messageBody');
-        $service->do();
+        // someMethod() is part of your business logic and is calling somewhere $producer->send('fooTopic', 'messageBody');
+        $service->someMethod();
         
         $traces = $this->getProducer()->getTopicTraces('fooTopic');
         
