@@ -166,7 +166,7 @@ class DbalConsumerTest extends TestCase
 
         $this->assertInstanceOf(DbalMessage::class, $message);
         $consumer->reject($message, true);
-        $this->assertCount(1, $this->getQuerySize());
+        $this->assertSame(1, $this->getQuerySize());
     }
 
     private function getQuerySize(): int
