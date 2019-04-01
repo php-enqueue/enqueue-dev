@@ -144,7 +144,7 @@ class DbalConsumerTest extends TestCase
         $this->assertSame(0, $this->getQuerySize());
     }
 
-    public function testShouldRemoveOriginalMessageThatHaveBeenRejectedWithRequeu()
+    public function testShouldRemoveOriginalMessageThatHaveBeenRejectedWithRequeue()
     {
         $context = $this->context;
         $queue = $context->createQueue(__METHOD__);
