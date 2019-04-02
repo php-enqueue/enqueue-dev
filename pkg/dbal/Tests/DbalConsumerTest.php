@@ -169,6 +169,7 @@ class DbalConsumerTest extends TestCase
 
         $message = new DbalMessage();
         $message->setBody('theBody');
+        $message->setDeliveryId(__METHOD__);
 
         $producerMock = $this->createProducerMock();
         $producerMock
