@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.9.9](https://github.com/php-enqueue/enqueue-dev/tree/0.9.9) (2019-04-04)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.8...0.9.9)
+
+**Merged pull requests:**
+
+- \[amqp-bunny\] Fix bunny producer to properly map headers to expected by bunny headers [\#816](https://github.com/php-enqueue/enqueue-dev/pull/816) ([nightlinus](https://github.com/nightlinus))
+- \[amqp-bunny\]\[doc\] Update amqp\_bunny.md [\#797](https://github.com/php-enqueue/enqueue-dev/pull/797) ([enumag](https://github.com/enumag))
+- \[dbal\] Fix DBAL Consumer duplicating messages when rejecting with requeue [\#815](https://github.com/php-enqueue/enqueue-dev/pull/815) ([Steveb-p](https://github.com/Steveb-p))
+- \[rdkafka\] Set `commit\_async` as true by default for Kafka, update docs [\#810](https://github.com/php-enqueue/enqueue-dev/pull/810) ([Steveb-p](https://github.com/Steveb-p))
+- \[rdkafka\] stats\_cb support [\#798](https://github.com/php-enqueue/enqueue-dev/pull/798) ([fkulakov](https://github.com/fkulakov))
+- \[Monitoring\]\[InfluxDB\] Allow passing Client as configuration option. [\#809](https://github.com/php-enqueue/enqueue-dev/pull/809) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] better doc for traceable message producer [\#813](https://github.com/php-enqueue/enqueue-dev/pull/813) ([sylfabre](https://github.com/sylfabre))
+- \[doc\] Minor typo fix in docblock [\#805](https://github.com/php-enqueue/enqueue-dev/pull/805) ([gpenverne](https://github.com/gpenverne))
+- fix comment on QueueConsumer constructor [\#796](https://github.com/php-enqueue/enqueue-dev/pull/796) ([kaznovac](https://github.com/kaznovac))
+
 ## [0.9.8](https://github.com/php-enqueue/enqueue-dev/tree/0.9.8) (2019-02-27)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.7...0.9.8)
 
