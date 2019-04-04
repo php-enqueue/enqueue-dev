@@ -22,7 +22,7 @@ git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin "$CURRE
 
 ./bin/subtree-split
 
-for REMOTE in origin stomp amqp-ext amqp-lib amqp-bunny amqp-tools pheanstalk gearman sqs gps fs redis dbal null rdkafka enqueue simple-client enqueue-bundle job-queue test async-event-dispatcher async-command mongodb wamp monitoring dsn
+for REMOTE in origin stomp amqp-ext amqp-lib amqp-bunny amqp-tools pheanstalk gearman sqs sns snsqs gps fs redis dbal null rdkafka enqueue simple-client enqueue-bundle job-queue test async-event-dispatcher async-command mongodb wamp monitoring dsn
 do
     echo ""
     echo ""
