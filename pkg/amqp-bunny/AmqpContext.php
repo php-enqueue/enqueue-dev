@@ -312,6 +312,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     public function convertMessage(BunnyMessage $bunnyMessage): InteropAmqpMessage
     {
         $headers = $bunnyMessage->headers;
+        $headers = $this->convertHeadersFromBunnyNotation($headers);
 
         $properties = [];
         if (isset($headers['application_headers'])) {
@@ -332,5 +333,107 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         $message->setRoutingKey($bunnyMessage->routingKey);
 
         return $message;
+    }
+
+    /** @internal It must be used here and in the producer only */
+    public function convertHeadersToBunnyNotation(array $headers): array
+    {
+        if (isset($headers['content_type'])) {
+            $headers['content-type'] = $headers['content_type'];
+            unset($headers['content_type']);
+        }
+
+        if (isset($headers['content_encoding'])) {
+            $headers['content-encoding'] = $headers['content_encoding'];
+            unset($headers['content_encoding']);
+        }
+
+        if (isset($headers['delivery_mode'])) {
+            $headers['delivery-mode'] = $headers['delivery_mode'];
+            unset($headers['delivery_mode']);
+        }
+
+        if (isset($headers['correlation_id'])) {
+            $headers['correlation-id'] = $headers['correlation_id'];
+            unset($headers['correlation_id']);
+        }
+
+        if (isset($headers['reply_to'])) {
+            $headers['reply-to'] = $headers['reply_to'];
+            unset($headers['reply_to']);
+        }
+
+        if (isset($headers['message_id'])) {
+            $headers['message-id'] = $headers['message_id'];
+            unset($headers['message_id']);
+        }
+
+        if (isset($headers['user_id'])) {
+            $headers['user-id'] = $headers['user_id'];
+            unset($headers['user_id']);
+        }
+
+        if (isset($headers['app_id'])) {
+            $headers['app-id'] = $headers['app_id'];
+            unset($headers['app_id']);
+        }
+
+        if (isset($headers['cluster_id'])) {
+            $headers['cluster-id'] = $headers['cluster_id'];
+            unset($headers['cluster_id']);
+        }
+
+        return $headers;
+    }
+
+    /** @internal It must be used here and in the consumer only */
+    public function convertHeadersFromBunnyNotation(array $bunnyHeaders): array
+    {
+        if (isset($bunnyHeaders['content-type'])) {
+            $bunnyHeaders['content_type'] = $bunnyHeaders['content-type'];
+            unset($bunnyHeaders['content-type']);
+        }
+
+        if (isset($bunnyHeaders['content-encoding'])) {
+            $bunnyHeaders['content_encoding'] = $bunnyHeaders['content-encoding'];
+            unset($bunnyHeaders['content-encoding']);
+        }
+
+        if (isset($bunnyHeaders['delivery-mode'])) {
+            $bunnyHeaders['delivery_mode'] = $bunnyHeaders['delivery-mode'];
+            unset($bunnyHeaders['delivery-mode']);
+        }
+
+        if (isset($bunnyHeaders['correlation-id'])) {
+            $bunnyHeaders['correlation_id'] = $bunnyHeaders['correlation-id'];
+            unset($bunnyHeaders['correlation-id']);
+        }
+
+        if (isset($bunnyHeaders['reply-to'])) {
+            $bunnyHeaders['reply_to'] = $bunnyHeaders['reply-to'];
+            unset($bunnyHeaders['reply-to']);
+        }
+
+        if (isset($bunnyHeaders['message-id'])) {
+            $bunnyHeaders['message_id'] = $bunnyHeaders['message-id'];
+            unset($bunnyHeaders['message-id']);
+        }
+
+        if (isset($bunnyHeaders['user-id'])) {
+            $bunnyHeaders['user_id'] = $bunnyHeaders['user-id'];
+            unset($bunnyHeaders['user-id']);
+        }
+
+        if (isset($bunnyHeaders['app-id'])) {
+            $bunnyHeaders['app_id'] = $bunnyHeaders['app-id'];
+            unset($bunnyHeaders['app-id']);
+        }
+
+        if (isset($bunnyHeaders['cluster-id'])) {
+            $bunnyHeaders['cluster_id'] = $bunnyHeaders['cluster-id'];
+            unset($bunnyHeaders['cluster-id']);
+        }
+
+        return $bunnyHeaders;
     }
 }
