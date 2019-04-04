@@ -134,11 +134,39 @@ class AmqpProducerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('publish')
-            ->with($this->anything(), ['content_type' => 'text/plain'])
+            ->with($this->anything(), ['misc' => 'text/plain'])
         ;
 
         $producer = new AmqpProducer($channel, $this->createContextMock());
-        $producer->send(new AmqpTopic('name'), new AmqpMessage('body', [], ['content_type' => 'text/plain']));
+        $producer->send(new AmqpTopic('name'), new AmqpMessage('body', [], ['misc' => 'text/plain']));
+    }
+
+    public function testShouldConvertStandartHeadersToBunnyFormat()
+    {
+        $channel = $this->createBunnyChannelMock();
+        $expectedHeaders = [
+            'content-encoding' => 'utf8',
+            'content-type' => 'text/plain',
+            'message-id' => 'id',
+            'correlation-id' => 'correlation',
+            'reply-to' => 'reply',
+            'delivery-mode' => 2,
+        ];
+        $channel
+            ->expects($this->once())
+            ->method('publish')
+            ->with($this->anything(), $expectedHeaders);
+
+        $producer = new AmqpProducer($channel, $this->createContextMock());
+        $message = new AmqpMessage('body', []);
+        $message->setMessageId('id');
+        $message->setReplyTo('reply');
+        $message->setDeliveryMode(2);
+        $message->setContentType('text/plain');
+        $message->setContentEncoding('utf8');
+        $message->setCorrelationId('correlation');
+
+        $producer->send(new AmqpTopic('name'), $message);
     }
 
     public function testShouldSetMessageProperties()
@@ -200,7 +228,7 @@ class AmqpProducerTest extends TestCase
      */
     private function createContextMock()
     {
-        return $this->createMock(AmqpContext::class);
+        return $this->createPartialMock(AmqpContext::class, []);
     }
 
     /**
