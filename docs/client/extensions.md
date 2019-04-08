@@ -46,7 +46,7 @@ services:
   timestamp_message_extension:
     class: Acme\TimestampMessageExtension
     tags:
-      - { name: 'enqueue.client.extensions' }    
+      - { name: 'enqueue.client.extension' }    
 ```
 
 You can add `priority` attribute with a number. The higher value you set the earlier the extension is called.  
