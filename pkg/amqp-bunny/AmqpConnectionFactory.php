@@ -87,16 +87,13 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             $bunnyConfig['password'] = $this->config->getPass();
             $bunnyConfig['read_write_timeout'] = min($this->config->getReadTimeout(), $this->config->getWriteTimeout());
             $bunnyConfig['timeout'] = $this->config->getConnectionTimeout();
+            $bunnyConfig['heartbeat'] = $this->config->getHeartbeat();
 
             // @see https://github.com/php-enqueue/enqueue-dev/issues/229
 //            $bunnyConfig['persistent'] = $this->config->isPersisted();
 //            if ($this->config->isPersisted()) {
 //                $bunnyConfig['path'] = 'enqueue';//$this->config->getOption('path', $this->config->getOption('vhost'));
 //            }
-
-            if ($this->config->getHeartbeat()) {
-                $bunnyConfig['heartbeat'] = $this->config->getHeartbeat();
-            }
 
             if (null !== $this->config->getOption('tcp_nodelay')) {
                 $bunnyConfig['tcp_nodelay'] = $this->config->getOption('tcp_nodelay');
