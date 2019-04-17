@@ -84,6 +84,8 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
         ], $delayedTopic->getArguments());
 
         $this->assertSame(['x-delay' => 10000], $delayedMessage->getProperties());
+        $this->assertArrayHasKey('x-delay', $delayedMessage->getHeaders());
+        $this->assertSame(10000, $delayedMessage->getHeaders()['x-delay']);
         $this->assertSame('the-routing-key', $delayedMessage->getRoutingKey());
     }
 
