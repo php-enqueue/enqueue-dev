@@ -35,7 +35,7 @@ class StompContext implements Context
 
     /**
      * @param BufferedStompClient|callable $stomp
-     * @param bool $useExchangePrefix
+     * @param bool                         $useExchangePrefix
      */
     public function __construct($stomp, $useExchangePrefix = true)
     {
