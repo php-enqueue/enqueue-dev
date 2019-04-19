@@ -79,7 +79,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('/amq/queue/name/routing-key', $destination->getQueueName());
     }
 
-    public function testShouldCreateTopicInstance()
+    public function testShouldCreateTopicInstanceWithExchangePrefix()
     {
         $context = new StompContext($this->createStompClientMock());
 
@@ -89,6 +89,18 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('/exchange/the name', $topic->getQueueName());
         $this->assertSame('/exchange/the name', $topic->getTopicName());
         $this->assertSame(StompDestination::TYPE_EXCHANGE, $topic->getType());
+    }
+
+    public function testShouldCreateTopicInstanceWithTopicPrefix()
+    {
+        $context = new StompContext($this->createStompClientMock(), false);
+
+        $topic = $context->createTopic('the name');
+
+        $this->assertInstanceOf(StompDestination::class, $topic);
+        $this->assertSame('/topic/the name', $topic->getQueueName());
+        $this->assertSame('/topic/the name', $topic->getTopicName());
+        $this->assertSame(StompDestination::TYPE_TOPIC, $topic->getType());
     }
 
     public function testCreateTopicShouldCreateDestinationIfNameIsFullDestinationString()

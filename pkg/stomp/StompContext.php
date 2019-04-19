@@ -24,14 +24,20 @@ class StompContext implements Context
     private $stomp;
 
     /**
+     * @var bool
+     */
+    private $useExchangePrefix;
+
+    /**
      * @var callable
      */
     private $stompFactory;
 
     /**
      * @param BufferedStompClient|callable $stomp
+     * @param bool $useExchangePrefix
      */
-    public function __construct($stomp)
+    public function __construct($stomp, $useExchangePrefix = true)
     {
         if ($stomp instanceof BufferedStompClient) {
             $this->stomp = $stomp;
@@ -40,6 +46,8 @@ class StompContext implements Context
         } else {
             throw new \InvalidArgumentException('The stomp argument must be either BufferedStompClient or callable that return BufferedStompClient.');
         }
+
+        $this->useExchangePrefix = $useExchangePrefix;
     }
 
     /**
@@ -84,7 +92,7 @@ class StompContext implements Context
     {
         if (0 !== strpos($name, '/')) {
             $destination = new StompDestination();
-            $destination->setType(StompDestination::TYPE_EXCHANGE);
+            $destination->setType($this->useExchangePrefix ? StompDestination::TYPE_EXCHANGE : StompDestination::TYPE_TOPIC);
             $destination->setStompName($name);
 
             return $destination;
