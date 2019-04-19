@@ -141,4 +141,9 @@ class PhpRedis implements Redis
     {
         $this->redis->del($key);
     }
+
+    public function llen(string $key): int
+    {
+        return $this->redis->llen($key);
+    }
 }

@@ -80,4 +80,11 @@ interface Redis
      * @throws ServerException
      */
     public function del(string $key): void;
+
+    /**
+     * @param string $key
+     *
+     * @return int
+     */
+    public function llen(string $key): int;
 }

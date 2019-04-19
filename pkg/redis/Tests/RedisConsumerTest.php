@@ -290,6 +290,30 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('aBody', $message->getBody());
     }
 
+    public function testShouldReturnNumberOfMessagesOnGetQueueLength()
+    {
+        $destination = new RedisDestination('aQueue');
+
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->once())
+            ->method('llen')
+            ->with('aQueue')
+            ->willReturn(1)
+        ;
+
+        $contextMock = $this->createContextMock();
+        $contextMock
+            ->expects($this->atLeastOnce())
+            ->method('getRedis')
+            ->willReturn($redisMock)
+        ;
+
+        $consumer = new RedisConsumer($contextMock, $destination);
+        $length = $consumer->getQueueLength();
+        $this->assertSame(1, $length);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|Redis
      */
