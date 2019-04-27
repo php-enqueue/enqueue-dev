@@ -58,9 +58,11 @@ class FsContext implements Context
     }
 
     /**
+     * @param mixed $body
+     *
      * @return FsMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         return new FsMessage($body, $properties, $headers);
     }

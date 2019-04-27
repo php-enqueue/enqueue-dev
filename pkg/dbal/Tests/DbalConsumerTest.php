@@ -217,11 +217,11 @@ class DbalConsumerTest extends TestCase
 
 class InvalidMessage implements Message
 {
-    public function getBody(): string
+    public function getBody()
     {
     }
 
-    public function setBody(string $body): void
+    public function setBody($body): void
     {
     }
 

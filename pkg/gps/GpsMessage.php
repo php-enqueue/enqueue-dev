@@ -10,7 +10,7 @@ use Interop\Queue\Message;
 class GpsMessage implements Message, \JsonSerializable
 {
     /**
-     * @var string
+     * @var string|int|float|array|\JsonSerializable
      */
     private $body;
 
@@ -34,7 +34,7 @@ class GpsMessage implements Message, \JsonSerializable
      */
     private $nativeMessage;
 
-    public function __construct(string $body = '', array $properties = [], array $headers = [])
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -43,12 +43,12 @@ class GpsMessage implements Message, \JsonSerializable
         $this->redelivered = false;
     }
 
-    public function getBody(): string
+    public function getBody()
     {
         return $this->body;
     }
 
-    public function setBody(string $body): void
+    public function setBody($body): void
     {
         $this->body = $body;
     }

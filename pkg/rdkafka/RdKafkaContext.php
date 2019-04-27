@@ -57,9 +57,11 @@ class RdKafkaContext implements Context
     }
 
     /**
+     * @param mixed $body
+     *
      * @return RdKafkaMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         return new RdKafkaMessage($body, $properties, $headers);
     }

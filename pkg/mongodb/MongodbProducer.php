@@ -57,8 +57,6 @@ class MongodbProducer implements Producer
             $message->setTimeToLive($this->timeToLive);
         }
 
-        $body = $message->getBody();
-
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
             (int) (microtime(true) * 10000)
@@ -66,7 +64,7 @@ class MongodbProducer implements Producer
 
         $mongoMessage = [
             'published_at' => $publishedAt,
-            'body' => $body,
+            'body' => $message->getBody(),
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
             'priority' => $message->getPriority(),

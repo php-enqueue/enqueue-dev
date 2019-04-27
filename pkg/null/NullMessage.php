@@ -37,7 +37,7 @@ class NullMessage implements Message
         $this->redelivered = false;
     }
 
-    public function setBody(string $body): void
+    public function setBody($body): void
     {
         $this->body = $body;
     }

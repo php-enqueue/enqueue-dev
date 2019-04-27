@@ -71,9 +71,11 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     }
 
     /**
+     * @param mixed $body
+     *
      * @return InteropAmqpMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         return new AmqpMessage($body, $properties, $headers);
     }

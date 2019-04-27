@@ -40,9 +40,11 @@ class GearmanContext implements Context
     }
 
     /**
+     * @param mixed $body
+     *
      * @return GearmanMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         return new GearmanMessage($body, $properties, $headers);
     }

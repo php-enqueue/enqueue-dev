@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Enqueue\Stomp;
 
+use Interop\Queue\Impl\StringBodyOnlyTrait;
 use Interop\Queue\Message;
 use Stomp\Transport\Frame;
 
 class StompMessage implements Message
 {
-    /**
-     * @var string
-     */
-    private $body;
+    use StringBodyOnlyTrait;
 
     /**
      * @var array
@@ -40,16 +38,6 @@ class StompMessage implements Message
         $this->properties = $properties;
         $this->headers = $headers;
         $this->redelivered = false;
-    }
-
-    public function setBody(string $body): void
-    {
-        $this->body = $body;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
     }
 
     public function setProperties(array $properties): void

@@ -64,7 +64,7 @@ class DbalContext implements Context
     /**
      * {@inheritdoc}
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         $message = new DbalMessage();
         $message->setBody($body);

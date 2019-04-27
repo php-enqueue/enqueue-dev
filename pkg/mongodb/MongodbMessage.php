@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace Enqueue\Mongodb;
 
+use Interop\Queue\Impl\StringBodyOnlyTrait;
 use Interop\Queue\Message;
 
 class MongodbMessage implements Message
 {
-    /**
-     * @var string
-     */
-    private $id;
+    use StringBodyOnlyTrait;
 
     /**
      * @var string
      */
-    private $body;
+    private $id;
 
     /**
      * @var array
@@ -73,16 +71,6 @@ class MongodbMessage implements Message
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function setBody(string $body): void
-    {
-        $this->body = $body;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
     }
 
     public function setProperties(array $properties): void
