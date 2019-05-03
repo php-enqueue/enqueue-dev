@@ -34,6 +34,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
 
     public function __construct(AmqpContext $context, bool $heartbeatOnTick)
     {
+        $this->subscribers = [];
         $this->context = $context;
         $this->heartbeatOnTick = $heartbeatOnTick;
     }
