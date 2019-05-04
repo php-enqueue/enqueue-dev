@@ -139,7 +139,7 @@ class BuildProcessorRegistryPassTest extends TestCase
         $this->assertRegExp('/service_locator\..*?\.enqueue\./', $locatorId);
 
         $match = [];
-        if (false == preg_match('/(service_locator\..*?)\.enqueue\./', $locatorId, $match)) {
+        if (false == preg_match('/(\.?service_locator\..*?)\.enqueue\./', $locatorId, $match)) {
             $this->fail('preg_match should not failed');
         }
 
