@@ -11,6 +11,9 @@ use Stomp\Network\Connection;
 
 class StompConnectionFactory implements ConnectionFactory
 {
+    const SCHEME_EXT_ACTIVEMQ = 'activemq';
+    const SCHEME_EXT_RABBITMQ = 'rabbitmq';
+
     /**
      * @var array
      */
@@ -66,13 +69,15 @@ class StompConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
+        $useExchangePrefix = self::SCHEME_EXT_RABBITMQ === $this->config['target'] ? true : false;
+
         if ($this->config['lazy']) {
             return new StompContext(function () {
                 return $this->establishConnection();
-            });
+            }, $useExchangePrefix);
         }
 
-        return new StompContext($this->establishConnection());
+        return new StompContext($this->establishConnection(), $useExchangePrefix);
     }
 
     private function establishConnection(): BufferedStompClient
@@ -103,7 +108,16 @@ class StompConnectionFactory implements ConnectionFactory
             throw new \LogicException(sprintf('The given DSN is not supported. Must start with "stomp:".'));
         }
 
+        $schemeExtension = current($dsn->getSchemeExtensions());
+        if (false === $schemeExtension) {
+            $schemeExtension = self::SCHEME_EXT_RABBITMQ;
+        }
+        if (self::SCHEME_EXT_ACTIVEMQ !== $schemeExtension && self::SCHEME_EXT_RABBITMQ !== $schemeExtension) {
+            throw new \LogicException(sprintf('The given DSN is not supported. The scheme extension "%s" provided is invalid. It must be one of "%s" or "%s".', $schemeExtension, self::SCHEME_EXT_ACTIVEMQ, self::SCHEME_EXT_RABBITMQ));
+        }
+
         return array_filter(array_replace($dsn->getQuery(), [
+            'target' => $schemeExtension,
             'host' => $dsn->getHost(),
             'port' => $dsn->getPort(),
             'login' => $dsn->getUser(),
@@ -120,6 +134,7 @@ class StompConnectionFactory implements ConnectionFactory
     private function defaultConfig(): array
     {
         return [
+            'target' => self::SCHEME_EXT_RABBITMQ,
             'host' => 'localhost',
             'port' => 61613,
             'login' => 'guest',

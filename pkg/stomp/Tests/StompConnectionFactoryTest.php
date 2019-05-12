@@ -25,6 +25,31 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(StompContext::class, $context);
 
         $this->assertAttributeEquals(null, 'stomp', $context);
+        $this->assertAttributeEquals(true, 'useExchangePrefix', $context);
         $this->assertInternalType('callable', $this->readAttribute($context, 'stompFactory'));
+    }
+
+    public function testShouldCreateRabbitMQContext()
+    {
+        $factory = new StompConnectionFactory('stomp+rabbitmq://');
+
+        $context = $factory->createContext();
+
+        $this->assertInstanceOf(StompContext::class, $context);
+
+        $this->assertAttributeEquals(null, 'stomp', $context);
+        $this->assertAttributeEquals(true, 'useExchangePrefix', $context);
+    }
+
+    public function testShouldCreateActiveMQContext()
+    {
+        $factory = new StompConnectionFactory('stomp+activemq://');
+
+        $context = $factory->createContext();
+
+        $this->assertInstanceOf(StompContext::class, $context);
+
+        $this->assertAttributeEquals(null, 'stomp', $context);
+        $this->assertAttributeEquals(false, 'useExchangePrefix', $context);
     }
 }

@@ -55,6 +55,7 @@ class StompConnectionFactoryConfigTest extends TestCase
         yield [
             null,
             [
+                'target' => 'rabbitmq',
                 'host' => 'localhost',
                 'port' => 61613,
                 'login' => 'guest',
@@ -71,6 +72,7 @@ class StompConnectionFactoryConfigTest extends TestCase
         yield [
             'stomp:',
             [
+                'target' => 'rabbitmq',
                 'host' => 'localhost',
                 'port' => 61613,
                 'login' => 'guest',
@@ -87,6 +89,7 @@ class StompConnectionFactoryConfigTest extends TestCase
         yield [
             [],
             [
+                'target' => 'rabbitmq',
                 'host' => 'localhost',
                 'port' => 61613,
                 'login' => 'guest',
@@ -103,6 +106,43 @@ class StompConnectionFactoryConfigTest extends TestCase
         yield [
             'stomp://localhost:1234?foo=bar&lazy=0&sync=true',
             [
+                'target' => 'rabbitmq',
+                'host' => 'localhost',
+                'port' => 1234,
+                'login' => 'guest',
+                'password' => 'guest',
+                'vhost' => '/',
+                'buffer_size' => 1000,
+                'connection_timeout' => 1,
+                'sync' => true,
+                'lazy' => false,
+                'foo' => 'bar',
+                'ssl_on' => false,
+            ],
+        ];
+
+        yield [
+            'stomp+activemq://localhost:1234?foo=bar&lazy=0&sync=true',
+            [
+                'target' => 'activemq',
+                'host' => 'localhost',
+                'port' => 1234,
+                'login' => 'guest',
+                'password' => 'guest',
+                'vhost' => '/',
+                'buffer_size' => 1000,
+                'connection_timeout' => 1,
+                'sync' => true,
+                'lazy' => false,
+                'foo' => 'bar',
+                'ssl_on' => false,
+            ],
+        ];
+
+        yield [
+            'stomp+rabbitmq://localhost:1234?foo=bar&lazy=0&sync=true',
+            [
+                'target' => 'rabbitmq',
                 'host' => 'localhost',
                 'port' => 1234,
                 'login' => 'guest',
@@ -120,6 +160,7 @@ class StompConnectionFactoryConfigTest extends TestCase
         yield [
             ['dsn' => 'stomp://localhost:1234/theVhost?foo=bar&lazy=0&sync=true', 'baz' => 'bazVal', 'foo' => 'fooVal'],
             [
+                'target' => 'rabbitmq',
                 'host' => 'localhost',
                 'port' => 1234,
                 'login' => 'guest',
@@ -138,6 +179,7 @@ class StompConnectionFactoryConfigTest extends TestCase
         yield [
             ['dsn' => 'stomp:///%2f'],
             [
+                'target' => 'rabbitmq',
                 'host' => 'localhost',
                 'port' => 61613,
                 'login' => 'guest',
@@ -154,6 +196,7 @@ class StompConnectionFactoryConfigTest extends TestCase
         yield [
             ['host' => 'localhost', 'port' => 1234, 'foo' => 'bar'],
             [
+                'target' => 'rabbitmq',
                 'host' => 'localhost',
                 'port' => 1234,
                 'login' => 'guest',

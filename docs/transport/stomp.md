@@ -36,6 +36,12 @@ $factory = new StompConnectionFactory('stomp:');
 // same as above
 $factory = new StompConnectionFactory([]);
 
+// connect via stomp to RabbitMQ (default) - the topic names are prefixed with /exchange
+$factory = new StompConnectionFactory('stomp+rabbitmq:');
+
+// connect via stomp to ActiveMQ - the topic names are prefixed with /topic
+$factory = new StompConnectionFactory('stomp+activemq:');
+
 // connect to stomp broker at example.com port 1000 using 
 $factory = new StompConnectionFactory([
     'host' => 'example.com',
