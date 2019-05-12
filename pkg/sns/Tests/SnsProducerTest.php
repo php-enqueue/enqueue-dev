@@ -127,6 +127,67 @@ class SnsProducerTest extends TestCase
     }
 
     /**
+     * @throws InvalidMessageException
+     */
+    public function testShouldPublishWithMergedAttributes()
+    {
+        $context = $this->createSnsContextMock();
+        $client = $this->createSnsClientMock();
+
+        $context
+            ->expects($this->once())
+            ->method('getSnsClient')
+            ->will($this->returnValue($client));
+
+        $expectedArgument = [
+            'Message' => 'message',
+            'MessageAttributes' => [
+                'Headers' => [
+                    'DataType' => 'String',
+                    'StringValue' => '[[],[]]',
+                ],
+                'Foo' => [
+                    'DataType' => 'String',
+                    'StringValue' => 'foo-value',
+                ],
+                'Bar' => [
+                    'DataType' => 'Binary',
+                    'BinaryValue' => 'bar-val',
+                ],
+            ],
+            'TopicArn' => '',
+            'MessageStructure' => 'structure',
+            'PhoneNumber' => 'phone',
+            'Subject' => 'subject',
+            'TargetArn' => 'target_arn',
+        ];
+
+        $client
+            ->expects($this->once())
+            ->method('publish')
+            ->with($this->identicalTo($expectedArgument))
+            ->willReturn(new Result(['MessageId' => 'theMessageId']));
+
+        $attributes = [
+            'Foo' => [
+                'DataType' => 'String',
+                'StringValue' => 'foo-value',
+            ],
+        ];
+
+        $message = new SnsMessage(
+            'message', [], [], $attributes, 'structure', 'phone',
+            'subject', 'target_arn'
+        );
+        $message->addAttribute('Bar', 'Binary', 'bar-val');
+
+        $destination = new SnsDestination('queue-name');
+
+        $producer = new SnsProducer($context);
+        $producer->send($destination, $message);
+    }
+
+    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|SnsContext
      */
     private function createSnsContextMock(): SnsContext
