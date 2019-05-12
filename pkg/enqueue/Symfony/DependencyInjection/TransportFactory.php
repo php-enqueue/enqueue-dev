@@ -117,7 +117,7 @@ final class TransportFactory
                 ->integerNode('receive_timeout')
                     ->min(0)
                     ->defaultValue(10000)
-                    ->info('the time in milliseconds queue consumer waits for a message (100 ms by default)')
+                    ->info('the time in milliseconds queue consumer waits for a message (10000 ms by default)')
                 ->end()
         ;
 
