@@ -155,6 +155,10 @@ class RdKafkaConsumer implements Consumer
     {
         $kafkaMessage = $this->consumer->consume($timeout);
 
+        if (null === $kafkaMessage) {
+            return null;
+        }
+
         switch ($kafkaMessage->err) {
             case RD_KAFKA_RESP_ERR__PARTITION_EOF:
             case RD_KAFKA_RESP_ERR__TIMED_OUT:
