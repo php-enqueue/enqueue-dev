@@ -13,7 +13,7 @@ abstract class WebTestCase extends BaseWebTestCase
     /**
      * @var Client
      */
-    protected $client;
+    protected static $client;
 
     /**
      * @var ContainerInterface
@@ -25,16 +25,19 @@ abstract class WebTestCase extends BaseWebTestCase
         parent::setUp();
 
         static::$class = null;
-
-        $this->client = static::createClient();
-
-        if (false == static::$container) {
-            static::$container = static::$kernel->getContainer();
-        }
+        static::$client = static::createClient();
+        static::$container = static::$kernel->getContainer();
 
         /** @var TraceableProducer $producer */
         $producer = static::$container->get('test_enqueue.client.default.traceable_producer');
         $producer->clearTraces();
+    }
+
+    protected function tearDown()
+    {
+        static::$client = null;
+        static::$kernel = null;
+        static::$container = null;
     }
 
     /**

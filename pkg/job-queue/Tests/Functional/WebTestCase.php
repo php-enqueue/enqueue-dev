@@ -11,7 +11,7 @@ abstract class WebTestCase extends BaseWebTestCase
     /**
      * @var Client
      */
-    protected $client;
+    protected static $client;
 
     /**
      * @var ContainerInterface
@@ -24,7 +24,7 @@ abstract class WebTestCase extends BaseWebTestCase
 
         static::$class = null;
 
-        $this->client = static::createClient();
+        static::$client = static::createClient();
 
         if (false == static::$container) {
             static::$container = static::$kernel->getContainer();
