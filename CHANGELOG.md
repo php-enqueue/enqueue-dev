@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.9.10](https://github.com/php-enqueue/enqueue-dev/tree/0.9.10) (2019-05-14)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.9...0.9.10)
+
+**Merged pull requests:**
+
+- \[client\] Lazy producer. [\#845](https://github.com/php-enqueue/enqueue-dev/pull/845) ([makasim](https://github.com/makasim))
+- \[kafka\] Fix consumption errors in kafka against recent versions in librdkafka/phprdkafka [\#842](https://github.com/php-enqueue/enqueue-dev/pull/842) ([Steveb-p](https://github.com/Steveb-p))
+- \[amqp-lib\] Fix un-initialized property use [\#836](https://github.com/php-enqueue/enqueue-dev/pull/836) ([Steveb-p](https://github.com/Steveb-p))
+- \[amqp-bunny\] Fix heartbeat configuration in bunny with 0 \(off\) value [\#820](https://github.com/php-enqueue/enqueue-dev/pull/820) ([nightlinus](https://github.com/nightlinus))
+- \[stomp\] Add support for using the /topic prefix instead of /exchange. [\#826](https://github.com/php-enqueue/enqueue-dev/pull/826) ([alessandroniciforo](https://github.com/alessandroniciforo))
+- \[sns\] Allow setting SNS message attributes, other fields [\#799](https://github.com/php-enqueue/enqueue-dev/pull/799) ([aldenw](https://github.com/aldenw))
+- Fixed docs [\#822](https://github.com/php-enqueue/enqueue-dev/pull/822) ([Toflar](https://github.com/Toflar))
+- Typo on the tag [\#818](https://github.com/php-enqueue/enqueue-dev/pull/818) ([appeltaert](https://github.com/appeltaert))
+
 ## [0.9.9](https://github.com/php-enqueue/enqueue-dev/tree/0.9.9) (2019-04-04)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.8...0.9.9)
 
