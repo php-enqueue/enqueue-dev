@@ -21,12 +21,14 @@ use Enqueue\Consumption\ChainExtension as ConsumptionChainExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Rpc\RpcFactory;
 use Enqueue\Symfony\Client\FlushSpoolProducerListener;
+use Enqueue\Symfony\Client\LazyProducer;
 use Enqueue\Symfony\ContainerProcessorRegistry;
 use Enqueue\Symfony\DependencyInjection\TransportFactory;
 use Enqueue\Symfony\DiUtils;
 use Interop\Queue\Context;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
@@ -119,14 +121,21 @@ final class ClientFactory
         ;
 
         $container->register($this->diUtils->format('producer'), Producer::class)
+            // @deprecated
             ->setPublic(true)
             ->addArgument($this->diUtils->reference('driver'))
             ->addArgument($this->diUtils->reference('rpc_factory'))
             ->addArgument($this->diUtils->reference('client_extensions'))
         ;
 
+        $lazyProducer = $container->register($this->diUtils->format('lazy_producer'), LazyProducer::class);
+        $lazyProducer->addArgument(ServiceLocatorTagPass::register($container, [
+            $this->diUtils->format('producer') => new Reference($this->diUtils->format('producer')),
+        ]));
+        $lazyProducer->addArgument($this->diUtils->format('producer'));
+
         $container->register($this->diUtils->format('spool_producer'), SpoolProducer::class)
-            ->addArgument($this->diUtils->reference('producer'))
+            ->addArgument($this->diUtils->reference('lazy_producer'))
         ;
 
         $container->register($this->diUtils->format('client_extensions'), ChainExtension::class)
@@ -200,12 +209,12 @@ final class ClientFactory
                 $this->diUtils->format('queue_consumer') => $this->diUtils->reference('queue_consumer'),
                 $this->diUtils->format('driver') => $this->diUtils->reference('driver'),
                 $this->diUtils->format('delegate_processor') => $this->diUtils->reference('delegate_processor'),
-                $this->diUtils->format('producer') => $this->diUtils->reference('producer'),
+                $this->diUtils->format('producer') => $this->diUtils->reference('lazy_producer'),
             ]));
         }
 
         if ($this->default) {
-            $container->setAlias(ProducerInterface::class, $this->diUtils->format('producer'));
+            $container->setAlias(ProducerInterface::class, $this->diUtils->format('lazy_producer'));
             $container->setAlias(SpoolProducer::class, $this->diUtils->format('spool_producer'));
 
             if (DiUtils::DEFAULT_CONFIG !== $this->diUtils->getConfigName()) {

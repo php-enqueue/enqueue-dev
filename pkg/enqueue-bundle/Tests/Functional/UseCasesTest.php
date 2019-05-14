@@ -372,9 +372,9 @@ class UseCasesTest extends WebTestCase
     {
         static::$class = null;
 
-        $this->client = static::createClient(['enqueue_config' => $enqueueConfig]);
-        $this->client->getKernel()->boot();
-        static::$kernel = $this->client->getKernel();
+        static::$client = static::createClient(['enqueue_config' => $enqueueConfig]);
+        static::$client->getKernel()->boot();
+        static::$kernel = static::$client->getKernel();
         static::$container = static::$kernel->getContainer();
 
         /** @var DriverInterface $driver */
