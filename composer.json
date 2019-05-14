@@ -102,7 +102,6 @@
   "config": {
     "bin-dir": "bin",
     "platform": {
-      "php": "7.3",
       "ext-amqp": "1.9.3",
       "ext-gearman": "2.0.3",
       "ext-rdkafka": "3.3",
