@@ -160,6 +160,16 @@ class InfluxDbStorage implements StatsStorage
             'status' => $stats->getStatus(),
         ];
 
+        $properties = $stats->getProperties();
+
+        if (false === empty($properties[Config::TOPIC])) {
+            $tags['topic'] = $properties[Config::TOPIC];
+        }
+
+        if (false === empty($properties[Config::COMMAND])) {
+            $tags['command'] = $properties[Config::COMMAND];
+        }
+
         $values = [
             'receivedAt' => $stats->getReceivedAtMs(),
             'processedAt' => $stats->getTimestampMs(),
