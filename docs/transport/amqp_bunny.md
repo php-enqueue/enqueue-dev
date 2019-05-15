@@ -25,6 +25,7 @@ Build on top of [bunny lib](https://github.com/jakubkulhan/bunny).
 * [Consume message](#consume-message)
 * [Subscription consumer](#subscription-consumer)
 * [Purge queue messages](#purge-queue-messages)
+* [Enable publisher confirms](#enable-publisher-confirms)
 
 ## Installation
 
@@ -265,6 +266,19 @@ $subscriptionConsumer->consume(2000); // 2 sec
 $queue = $context->createQueue('aQueue');
 
 $context->purgeQueue($queue);
+```
+
+## Enable publisher confirms
+
+If you use RabbitMQ and want to be sure your messages are received and persisted to the disk,
+you can turn on the [publisher confirms](https://www.rabbitmq.com/confirms.html#publisher-confirms).
+
+This way, after each published message, your PHP script will wait up to specified number
+of seconds to get confirmation (ACK frame) from RabbitMQ.
+
+```php
+<?php
+$factory = new AmqpConnectionFactory('amqp:?publisher_confirm_timeout=3');
 ```
 
 [back to index](../index.md)

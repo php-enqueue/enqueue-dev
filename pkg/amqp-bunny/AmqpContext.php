@@ -131,6 +131,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     {
         $producer = new AmqpProducer($this->getBunnyChannel(), $this);
         $producer->setDelayStrategy($this->delayStrategy);
+        if (isset($this->config['publisher_confirm_timeout'])) {
+            $producer->enableConfirmMode((float) $this->config['publisher_confirm_timeout']);
+        }
 
         return $producer;
     }

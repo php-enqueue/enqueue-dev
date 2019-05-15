@@ -3,6 +3,9 @@
 namespace Enqueue\AmqpBunny\Tests;
 
 use Bunny\Channel;
+use Bunny\ChannelModeEnum;
+use Bunny\Client;
+use Bunny\Protocol\MethodBasicAckFrame;
 use Enqueue\AmqpBunny\AmqpContext;
 use Enqueue\AmqpBunny\AmqpProducer;
 use Enqueue\AmqpTools\DelayStrategy;
@@ -199,6 +202,67 @@ class AmqpProducerTest extends TestCase
         $producer->send(new AmqpTopic('name'), $message);
     }
 
+    public function testShouldWaitForAckInConfirmMode()
+    {
+        $timeout = 1.2;
+
+        $channel = $this->createBunnyChannelMock();
+        $channel
+            ->expects($this->exactly(2))
+            ->method('publish')
+            ->with('body', [], 'topic', 'routing-key', false, false)
+            ->willReturnOnConsecutiveCalls(101, 102)
+        ;
+        $channel
+            ->method('getMode')
+            ->willReturnOnConsecutiveCalls(ChannelModeEnum::REGULAR, ChannelModeEnum::CONFIRM)
+        ;
+        $channel
+            ->expects($this->once())
+            ->method('confirmSelect')
+        ;
+        /** @var \Closure $listener */
+        $listener = null;
+        $channel
+            ->expects($this->once())
+            ->method('addAckListener')
+            ->willReturnCallback(function (\Closure $callback) use (&$listener) {
+                $listener = $callback;
+            })
+        ;
+        $client = $this->createClientMock();
+        $channel
+            ->expects($this->any())
+            ->method('getClient')
+            ->willReturn($client)
+        ;
+        $tag = 101;
+        $client
+            ->expects($this->exactly(2))
+            ->method('run')
+            ->with($timeout)
+            ->willReturnCallback(function () use (&$listener, &$tag) {
+                $frame = new MethodBasicAckFrame();
+                $frame->deliveryTag = $tag++;
+                call_user_func($listener, $frame);
+            })
+        ;
+        $client
+            ->expects($this->exactly(2))
+            ->method('stop')
+        ;
+
+        $topic = new AmqpTopic('topic');
+
+        $message = new AmqpMessage('body');
+        $message->setRoutingKey('routing-key');
+
+        $producer = new AmqpProducer($channel, $this->createContextMock());
+        $producer->enableConfirmMode($timeout);
+        $producer->send($topic, $message);
+        $producer->send($topic, $message);
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|Message
      */
@@ -237,5 +301,13 @@ class AmqpProducerTest extends TestCase
     private function createDelayStrategyMock()
     {
         return $this->createMock(DelayStrategy::class);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Client
+     */
+    private function createClientMock()
+    {
+        return $this->createMock(Client::class);
     }
 }
