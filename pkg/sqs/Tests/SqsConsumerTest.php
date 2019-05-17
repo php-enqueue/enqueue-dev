@@ -238,6 +238,47 @@ class SqsConsumerTest extends TestCase
         $consumer->reject($message, true);
     }
 
+    public function testShouldRejectMessageAndRequeueWithVisibilityTimeout()
+    {
+        $client = $this->createSqsClientMock();
+        $client
+            ->expects($this->once())
+            ->method('changeMessageVisibility')
+            ->with($this->identicalTo([
+                '@region' => 'theRegion',
+                'QueueUrl' => 'theQueueUrl',
+                'ReceiptHandle' => 'theReceipt',
+                'VisibilityTimeout' => 30,
+            ]))
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getSqsClient')
+            ->willReturn($client)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getQueueUrl')
+            ->willReturn('theQueueUrl')
+        ;
+        $context
+            ->expects($this->never())
+            ->method('createProducer')
+        ;
+
+        $message = new SqsMessage();
+        $message->setReceiptHandle('theReceipt');
+        $message->setRequeueVisibilityTimeout(30);
+
+        $destination = new SqsDestination('queue');
+        $destination->setRegion('theRegion');
+
+        $consumer = new SqsConsumer($context, $destination);
+        $consumer->reject($message, true);
+    }
+
     public function testShouldReceiveMessage()
     {
         $expectedAttributes = [
