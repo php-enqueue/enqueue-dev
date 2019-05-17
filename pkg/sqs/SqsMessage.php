@@ -48,6 +48,11 @@ class SqsMessage implements Message
      */
     private $receiptHandle;
 
+    /**
+     * @var int
+     */
+    private $requeueVisibilityTimeout;
+
     public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
@@ -55,6 +60,7 @@ class SqsMessage implements Message
         $this->headers = $headers;
         $this->redelivered = false;
         $this->delaySeconds = 0;
+        $this->requeueVisibilityTimeout = 0;
     }
 
     public function setBody(string $body): void
@@ -228,5 +234,20 @@ class SqsMessage implements Message
     public function getReceiptHandle(): ?string
     {
         return $this->receiptHandle;
+    }
+
+    /**
+     * The number of seconds before the message can be visible again when requeuing. Valid values: 0 to 43200. Maximum: 12 hours.
+     *
+     * Set requeue visibility timeout
+     */
+    public function setRequeueVisibilityTimeout(int $seconds): void
+    {
+        $this->requeueVisibilityTimeout = $seconds;
+    }
+
+    public function getRequeueVisibilityTimeout(): int
+    {
+        return $this->requeueVisibilityTimeout;
     }
 }
