@@ -18,7 +18,7 @@ You have to install monolog itself, queue interop handlers and one of [the trans
 For the simplicity we are going to install the filesystem based MQ.  
 
 ```
-composer require enqueue/monolog-queue-handler monolog/monlog enqueue/fs
+composer require enqueue/monolog-queue-handler monolog/monolog enqueue/fs
 ```
 
 ## Usage
