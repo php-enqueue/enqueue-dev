@@ -297,4 +297,4 @@ class ReindexProcessor implements Processor
 }
 ```
 
-[back to index](../index.md)
+[back to index](index.md)

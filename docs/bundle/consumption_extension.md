@@ -41,4 +41,4 @@ services:
             - { name: 'enqueue.consumption.extension', priority: 10 }
 ```
 
-[back to index](../index.md)
+[back to index](index.md)

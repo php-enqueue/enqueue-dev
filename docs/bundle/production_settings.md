@@ -36,4 +36,4 @@ redirect_stderr=true
 
 _**Note**: Pay attention to `--time-limit` it tells the command to exit after 5 minutes._
 
-[back to index](../index.md)
+[back to index](index.md)

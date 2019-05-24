@@ -87,4 +87,4 @@ class FooTest extends WebTestCase
 }
 ```
 
-[back to index](../index.md)
+[back to index](index.md)

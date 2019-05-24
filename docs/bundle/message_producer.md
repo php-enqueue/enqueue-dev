@@ -94,4 +94,4 @@ $spoolProducer->sendCommand('a_processor_name', 'Hello there!');
 $spoolProducer->flush();
 ```
 
-[back to index](../index.md)
+[back to index](index.md)

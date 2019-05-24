@@ -174,4 +174,4 @@ services:
 The `eventName` attribute accepts a regexp. You can do next `eventName: '/foo\..*?/'`. 
 It uses this transformer for all event with the name beginning with `foo.`
 
-[back to index](../index.md)
+[back to index](index.md)
