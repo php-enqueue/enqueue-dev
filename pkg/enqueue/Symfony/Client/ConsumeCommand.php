@@ -5,7 +5,6 @@ namespace Enqueue\Symfony\Client;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\ExitStatusExtension;
-use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Symfony\Consumption\ChooseLoggerCommandTrait;
@@ -18,7 +17,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConsumeCommand extends Command
@@ -154,7 +152,7 @@ class ConsumeCommand extends Command
 
     protected function getRuntimeExtensions(InputInterface $input, OutputInterface $output): ExtensionInterface
     {
-        $extensions = [new LoggerExtension(new ConsoleLogger($output))];
+        $extensions = [];
         $extensions = array_merge($extensions, $this->getLimitsExtensions($input, $output));
 
         $driver = $this->getDriver($input->getOption('client'));
