@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.9.11](https://github.com/php-enqueue/enqueue-dev/tree/0.9.11) (2019-05-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.10...0.9.11)
+
+**Merged pull requests:**
+
+- \[client\] Fix --logger option. Removed unintentionally set console logger. [\#861](https://github.com/php-enqueue/enqueue-dev/pull/861) ([makasim](https://github.com/makasim))
+- \[client\] Fix reference to logger service. [\#860](https://github.com/php-enqueue/enqueue-dev/pull/860) ([makasim](https://github.com/makasim))
+- \[consumption\] Fix bindCallback method will require new arg deprecation notice [\#859](https://github.com/php-enqueue/enqueue-dev/pull/859) ([makasim](https://github.com/makasim))
+- \[amqp-bunny\] Revert "Fix heartbeat configuration in bunny with 0 \(off\) value" [\#855](https://github.com/php-enqueue/enqueue-dev/pull/855) ([DamienHarper](https://github.com/DamienHarper))
+- \[sqs\] Requeue with a visibility timeout [\#852](https://github.com/php-enqueue/enqueue-dev/pull/852) ([deguif](https://github.com/deguif))
+- \[monitoring\] Send topic and command for consumed messages [\#849](https://github.com/php-enqueue/enqueue-dev/pull/849) ([mariusbalcytis](https://github.com/mariusbalcytis))
+- Fixed typo [\#856](https://github.com/php-enqueue/enqueue-dev/pull/856) ([samnela](https://github.com/samnela))
+
 ## [0.9.10](https://github.com/php-enqueue/enqueue-dev/tree/0.9.10) (2019-05-14)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.9...0.9.10)
 
