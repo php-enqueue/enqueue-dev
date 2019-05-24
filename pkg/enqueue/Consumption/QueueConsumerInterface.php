@@ -27,9 +27,8 @@ interface QueueConsumerInterface
 
     /**
      * @param string|InteropQueue $queueName
-     * @param mixed               $queue
      */
-    public function bindCallback($queue, callable $processor): self;
+    public function bindCallback($queueName, callable $processor): self;
 
     /**
      * Runtime extension - is an extension or a collection of extensions which could be set on runtime.
