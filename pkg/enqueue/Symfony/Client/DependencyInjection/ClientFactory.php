@@ -165,7 +165,7 @@ final class ClientFactory
             ->addArgument($this->diUtils->reference('context'))
             ->addArgument($this->diUtils->reference('consumption_extensions'))
             ->addArgument([])
-            ->addArgument($this->diUtils->reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
+            ->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE))
             ->addArgument($config['consumption']['receive_timeout'])
         ;
 
