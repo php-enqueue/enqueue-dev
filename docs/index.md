@@ -1,3 +1,10 @@
+---
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+
+layout: home
+---
+
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -37,7 +44,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 * [Job queue](#job-queue)
     - [Run unique job](job_queue/run_unique_job.md)
     - [Run sub job(s)](job_queue/run_sub_job.md)
-* [EnqueueBundle (Symfony)](#enqueue-bundle-symfony).  
+* [EnqueueBundle (Symfony)](#enqueue-bundle-symfony).
     - [Quick tour](bundle/quick_tour.md)
     - [Config reference](bundle/config_reference.md)
     - [Cli commands](bundle/cli_commands.md)
@@ -49,7 +56,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
     - [Consumption extension](bundle/consumption_extension.md)
     - [Production settings](bundle/production_settings.md)
     - [Debugging](bundle/debugging.md)
-    - [Functional testing](bundle/functional_testing.md) 
+    - [Functional testing](bundle/functional_testing.md)
 * [Laravel](#laravel)
     - [Quick tour](laravel/quick_tour.md)
     - [Queues](laravel/queues.md)
