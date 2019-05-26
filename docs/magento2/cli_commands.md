@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,7 +13,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Magento2. Cli commands
 
-The enqueue Magento extension provides several commands. 
+The enqueue Magento extension provides several commands.
 The most useful one `enqueue:consume` connects to the broker and process the messages.
 Other commands could be useful during debugging (like `enqueue:topics`) or deployment (like `enqueue:setup-broker`).
 

@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -20,9 +24,9 @@ until previous job has finished.
 
 ## Installation
 
-The easiest way to install Enqueue's job queues is to by requiring a `enqueue/job-queue-pack` pack. 
+The easiest way to install Enqueue's job queues is to by requiring a `enqueue/job-queue-pack` pack.
 It installs installs everything you need. It also configures everything for you If you are on Symfony Flex.
-  
+
 ```bash
 $ composer require enqueue/job-queue-pack=^0.8
 ```
@@ -45,7 +49,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Enqueue\Bundle\EnqueueBundle(),
         ];
-        
+
         return $bundles;
     }
 }
@@ -59,7 +63,7 @@ class AppKernel extends Kernel
 enqueue:
     default:
         # plus basic bundle configuration
-        
+
         job: true
 
 doctrine:
@@ -84,14 +88,14 @@ $ bin/console doctrine:schema:update
 ## Unique job
 
 Guarantee that there is only one job with such name running at a time.
-For example you have a task that builds a search index. 
+For example you have a task that builds a search index.
 It takes quite a lot of time and you don't want another instance of same task working at the same time.
-Here's how to do it: 
+Here's how to do it:
 
 * Write a job processor class:
 
 ```php
-<?php 
+<?php
 namespace App\Queue;
 
 use Interop\Queue\Message;
@@ -105,8 +109,8 @@ use Enqueue\Client\CommandSubscriberInterface;
 class SearchReindexProcessor implements Processor, CommandSubscriberInterface
 {
     private $jobRunner;
-    
-    public function __construct(JobRunner $jobRunner) 
+
+    public function __construct(JobRunner $jobRunner)
     {
         $this->jobRunner = $jobRunner;
     }
@@ -127,8 +131,8 @@ class SearchReindexProcessor implements Processor, CommandSubscriberInterface
 
         return $result ? self::ACK : self::REJECT;
     }
-    
-    public static function getSubscribedCommand() 
+
+    public static function getSubscribedCommand()
     {
         return 'search_reindex';
     }
@@ -174,7 +178,7 @@ use Interop\Queue\Message;
 use Interop\Queue\Context;
 use Interop\Queue\Processor;
 
-class Step1Processor implements Processor 
+class Step1Processor implements Processor
 {
     /**
      * @var JobRunner
@@ -217,7 +221,7 @@ class Step1Processor implements Processor
     }
 }
 
-class Step2Processor implements Processor 
+class Step2Processor implements Processor
 {
     /**
      * @var JobRunner
@@ -258,7 +262,7 @@ use Interop\Queue\Message;
 use Interop\Queue\Context;
 use Interop\Queue\Processor;
 
-class ReindexProcessor implements Processor 
+class ReindexProcessor implements Processor
 {
     /**
      * @var JobRunner

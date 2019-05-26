@@ -1,3 +1,8 @@
+---
+layout: default
+title: Quick tour
+nav_order: 2
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -8,7 +13,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 ---
 
 # Quick tour
- 
+
 * [Transport](#transport)
 * [Consumption](#consumption)
 * [Remote Procedure Call (RPC)](#remote-procedure-call-rpc)
@@ -18,13 +23,13 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ## Transport
 
-The transport layer or PSR (Enqueue message service) is a Message Oriented Middleware for sending messages between two or more clients. 
-It is a messaging component that allows applications to create, send, receive, and read messages. 
+The transport layer or PSR (Enqueue message service) is a Message Oriented Middleware for sending messages between two or more clients.
+It is a messaging component that allows applications to create, send, receive, and read messages.
 It allows the communication between different components of a distributed application to be loosely coupled, reliable, and asynchronous.
 
 PSR is inspired by JMS (Java Message Service). We tried to stay as close as possible to the [JSR 914](https://docs.oracle.com/javaee/7/api/javax/jms/package-summary.html) specification.
 For now it supports [AMQP](https://www.rabbitmq.com/tutorials/amqp-concepts.html) and [STOMP](https://stomp.github.io/) message queue protocols.
-You can connect to many modern brokers such as [RabbitMQ](https://www.rabbitmq.com/), [ActiveMQ](http://activemq.apache.org/) and others. 
+You can connect to many modern brokers such as [RabbitMQ](https://www.rabbitmq.com/), [ActiveMQ](http://activemq.apache.org/) and others.
 
 Produce a message:
 
@@ -65,11 +70,11 @@ $consumer->acknowledge($message);
 // $consumer->reject($message);
 ```
 
-## Consumption 
+## Consumption
 
-Consumption is a layer built on top of a transport functionality. 
-The goal of the component is to simply consume messages. 
-The `QueueConsumer` is main piece of the component it allows binding of message processors (or callbacks) to queues. 
+Consumption is a layer built on top of a transport functionality.
+The goal of the component is to simply consume messages.
+The `QueueConsumer` is main piece of the component it allows binding of message processors (or callbacks) to queues.
 The `consume` method starts the consumption process which last as long as it is not interrupted.
 
 ```php
@@ -85,22 +90,22 @@ $queueConsumer = new QueueConsumer($context);
 
 $queueConsumer->bindCallback('foo_queue', function(Message $message) {
     // process message
-    
+
     return Processor::ACK;
 });
 $queueConsumer->bindCallback('bar_queue', function(Message $message) {
     // process message
-    
+
     return Processor::ACK;
 });
 
 $queueConsumer->consume();
 ```
 
-There are bunch of [extensions](consumption/extensions.md) available. 
-This is an example of how you can add them. 
+There are bunch of [extensions](consumption/extensions.md) available.
+This is an example of how you can add them.
 The `SignalExtension` provides support of process signals, whenever you send SIGTERM for example it will correctly managed.
-The `LimitConsumptionTimeExtension` interrupts the consumption after given time. 
+The `LimitConsumptionTimeExtension` interrupts the consumption after given time.
 
 ```php
 <?php
@@ -137,7 +142,7 @@ $promise = $rpcClient->callAsync($queue, $message, 1);
 $replyMessage = $promise->receive();
 ```
 
-There is also extensions for the consumption component. 
+There is also extensions for the consumption component.
 It simplifies a server side of RPC.
 
 ```php
@@ -157,7 +162,7 @@ $queueConsumer = new QueueConsumer($context, new ChainExtension([
 
 $queueConsumer->bindCallback('foo', function(Message $message, Context $context) {
     $replyMessage = $context->createMessage('Hello');
-    
+
     return Result::reply($replyMessage);
 });
 
@@ -167,14 +172,14 @@ $queueConsumer->consume();
 ## Client
 
 It provides an easy to use high level abstraction.
-The goal of the component is to hide as much as possible low level details so you can concentrate on things that really matter. 
+The goal of the component is to hide as much as possible low level details so you can concentrate on things that really matter.
 For example, it configures a broker for you by creating queues, exchanges and bind them.
-It provides easy to use services for producing and processing messages. 
+It provides easy to use services for producing and processing messages.
 It supports unified format for setting message expiration, delay, timestamp, correlation id.
 It supports [message bus](http://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBus.html) so different applications can talk to each other.
- 
+
 Here's an example of how you can send and consume **event messages**.
- 
+
 ```php
 <?php
 use Enqueue\SimpleClient\SimpleClient;
@@ -187,7 +192,7 @@ $client = new SimpleClient('amqp:');
 $client = new SimpleClient('file://foo/bar');
 $client->bindTopic('a_foo_topic', function(Message $message) {
     echo $message->getBody().PHP_EOL;
-    
+
     // your event processor logic here
 });
 
@@ -195,11 +200,11 @@ $client->setupBroker();
 
 $client->sendEvent('a_foo_topic', 'message');
 
-// this is a blocking call, it'll consume message until it is interrupted 
+// this is a blocking call, it'll consume message until it is interrupted
 $client->consume();
 ```
 
-and **command messages**: 
+and **command messages**:
 
 ```php
 <?php
@@ -210,7 +215,7 @@ use Enqueue\Client\Config;
 use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\Result;
 
-// composer require enqueue/amqp-ext # or enqueue/amqp-bunny or enqueue/amqp-lib 
+// composer require enqueue/amqp-ext # or enqueue/amqp-bunny or enqueue/amqp-lib
 $client = new SimpleClient('amqp:');
 
 // composer require enqueue/fs
@@ -222,13 +227,13 @@ $client->bindCommand('bar_command', function(Message $message) {
 
 $client->bindCommand('baz_reply_command', function(Message $message, Context $context) {
     // your baz reply command processor logic here
-    
+
     return Result::reply($context->createMessage('theReplyBody'));
 });
 
 $client->setupBroker();
 
-// It is sent to one consumer.  
+// It is sent to one consumer.
 $client->sendCommand('bar_command', 'aMessageData');
 
 // It is possible to get reply
@@ -238,16 +243,16 @@ $promise = $client->sendCommand('bar_command', 'aMessageData', true);
 
 $replyMessage = $promise->receive(2000); // 2 sec
 
-// this is a blocking call, it'll consume message until it is interrupted 
+// this is a blocking call, it'll consume message until it is interrupted
 $client->consume([new ReplyExtension()]);
 ```
 
-Read more about events and commands [here](client/quick_tour.md#produce-message). 
+Read more about events and commands [here](client/quick_tour.md#produce-message).
 
 ## Cli commands
 
-The library provides handy commands out of the box. 
-They all build on top of [Symfony Console component](http://symfony.com/doc/current/components/console.html). 
+The library provides handy commands out of the box.
+They all build on top of [Symfony Console component](http://symfony.com/doc/current/components/console.html).
 The most useful is a consume command. There are two of them one from consumption component and the other from client one.
 
 Let's see how you can use consumption one:
@@ -265,7 +270,7 @@ use Enqueue\Symfony\Consumption\SimpleConsumeCommand;
 /** @var QueueConsumer $queueConsumer */
 
 $queueConsumer->bindCallback('a_queue', function(Message $message) {
-    // process message    
+    // process message
 });
 
 $consumeCommand = new SimpleConsumeCommand($queueConsumer);
@@ -277,7 +282,7 @@ $app->run();
 ```
 
 and starts the consumption from the console:
- 
+
 ```bash
 $ app.php consume
 ```

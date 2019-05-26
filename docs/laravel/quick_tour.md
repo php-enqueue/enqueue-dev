@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,11 +13,11 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Laravel Queue. Quick tour.
 
-The [enqueue/laravel-queue](https://github.com/php-enqueue/laravel-queue) is message queue bridge for Enqueue. You can use all transports built on top of [queue-interop](https://github.com/queue-interop/queue-interop) including [all supported](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/transport) by Enqueue.  
+The [enqueue/laravel-queue](https://github.com/php-enqueue/laravel-queue) is message queue bridge for Enqueue. You can use all transports built on top of [queue-interop](https://github.com/queue-interop/queue-interop) including [all supported](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/transport) by Enqueue.
 
 The package allows you to use queue interop transport the [laravel way](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/queues.md) as well as integrates the [enqueue simple client](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/quick_tour.md#enqueue-simple-client).
 
-**NOTE:** The part of this code was originally proposed as a PR to [laravel/framework#20148](https://github.com/laravel/framework/pull/20148). It was closed without much explanations, so I decided to open source it as a stand alone package. 
+**NOTE:** The part of this code was originally proposed as a PR to [laravel/framework#20148](https://github.com/laravel/framework/pull/20148). It was closed without much explanations, so I decided to open source it as a stand alone package.
 
 ## Install
 
@@ -40,7 +44,7 @@ return [
 ## Laravel queues
 
 At this stage you are already able to use [laravel queues](queues.md).
- 
+
 ## Enqueue Simple client
 
 If you want to use [enqueue/simple-client](https://github.com/php-enqueue/simple-client) in your Laravel application you have perform additional steps .
@@ -92,7 +96,7 @@ $app->resolving(SimpleClient::class, function (SimpleClient $client, $app) {
 
 ```
 
-Send message: 
+Send message:
 
 ```php
 <?php

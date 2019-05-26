@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,9 +13,9 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Async event dispatcher (Symfony)
 
-The doc shows how you can setup async event dispatching in plain PHP. 
+The doc shows how you can setup async event dispatching in plain PHP.
 If you are looking for the ways to use it in Symfony application [read this post instead](../bundle/async_events.md)
- 
+
 * [Installation](#installation)
 * [Configuration](#configuration)
 * [Dispatch event](#dispatch-event)
@@ -47,7 +51,7 @@ $context = (new FsConnectionFactory('file://'.__DIR__.'/queues'))->createContext
 $eventQueue = $context->createQueue('symfony_events');
 
 $registry = new SimpleRegistry(
-    ['the_event' => 'default'], 
+    ['the_event' => 'default'],
     ['default' => new PhpSerializerEventTransformer($context)]
 );
 

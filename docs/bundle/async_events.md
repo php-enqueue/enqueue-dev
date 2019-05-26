@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,9 +13,9 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Async events
 
-The EnqueueBundle allows you to dispatch events asynchronously. 
-Behind the scene it replaces your listener with one that sends a message to MQ. 
-The message contains the event object. 
+The EnqueueBundle allows you to dispatch events asynchronously.
+Behind the scene it replaces your listener with one that sends a message to MQ.
+The message contains the event object.
 The consumer, once it receives the message, restores the event and dispatches it to only async listeners.
 
 Async listeners benefits:
@@ -57,14 +61,14 @@ or to `kernel.event_subscriber`:
 ```yaml
 # app/config/config.yml
 
-services: 
+services:
     test_async_subscriber:
         class: 'AcmeBundle\Listener\TestAsyncSubscriber'
         tags:
             - { name: 'kernel.event_subscriber', async: true }
 ```
 
-That's basically it. The rest of the doc describes advanced features. 
+That's basically it. The rest of the doc describes advanced features.
 
 ## Advanced Usage.
 
@@ -87,8 +91,8 @@ services:
 
 The bundle uses [php serializer](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue-bundle/Events/PhpSerializerEventTransformer.php) transformer by default to pass events through MQ.
 You can write a transformer for each event type by implementing the `Enqueue\AsyncEventDispatcher\EventTransformer` interface.
-Consider the next example. It shows how to send an event that contains Doctrine entity as a subject  
- 
+Consider the next example. It shows how to send an event that contains Doctrine entity as a subject
+
 ```php
 <?php
 namespace AcmeBundle\Listener;
@@ -116,22 +120,22 @@ class FooEventTransformer implements EventTransformer
 
     /**
      * {@inheritdoc}
-     * 
+     *
      * @param GenericEvent $event
      */
     public function toMessage($eventName, Event $event = null)
     {
         $entity = $event->getSubject();
         $entityClass = get_class($entity);
-        
+
         $manager = $this->doctrine->getManagerForClass($entityClass);
         $meta = $manager->getClassMetadata($entityClass);
 
         $id = $meta->getIdentifierValues($entity);
-        
+
         $message = new Message();
         $message->setBody([
-            'entityClass' => $entityClass, 
+            'entityClass' => $entityClass,
             'entityId' => $id,
             'arguments' => $event->getArguments()
         ]);
@@ -145,14 +149,14 @@ class FooEventTransformer implements EventTransformer
     public function toEvent($eventName, QueueMessage $message)
     {
         $data = JSON::decode($message->getBody());
-        
+
         $entityClass = $data['entityClass'];
-        
+
         $manager = $this->doctrine->getManagerForClass($entityClass);
         if (false == $entity = $manager->find($entityClass, $data['entityId'])) {
             return Result::reject('The entity could not be found.');
         }
-        
+
         return new GenericEvent($entity, $data['arguments']);
     }
 }
@@ -171,7 +175,7 @@ services:
             - {name: 'enqueue.event_transformer', eventName: 'foo' }
 ```
 
-The `eventName` attribute accepts a regexp. You can do next `eventName: '/foo\..*?/'`. 
+The `eventName` attribute accepts a regexp. You can do next `eventName: '/foo\..*?/'`.
 It uses this transformer for all event with the name beginning with `foo.`
 
 [back to index](../index.md)

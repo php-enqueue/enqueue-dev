@@ -1,3 +1,8 @@
+---
+layout: default
+title: Messages
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -7,7 +12,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ---
 
-## Pull request to readonly repo. 
+## Pull request to readonly repo.
 
 Thanks for your pull request! We love contributions.
 
@@ -19,6 +24,6 @@ https://github.com/php-enqueue/enqueue-dev
 
 Read the contribution guide
 
-https://github.com/php-enqueue/enqueue-dev/blob/master/docs/contribution.md 
+https://github.com/php-enqueue/enqueue-dev/blob/master/docs/contribution.md
 
 Thank you for your contribution!

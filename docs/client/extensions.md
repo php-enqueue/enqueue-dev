@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -10,7 +14,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Client extensions.
 
 There is an ability to hook into sending process. You have to create an extension class that implements `Enqueue\Client\ExtensionInterface` interface.
-For example, `TimestampMessageExtension` extension adds timestamps every message before sending it to MQ. 
+For example, `TimestampMessageExtension` extension adds timestamps every message before sending it to MQ.
 
 ```php
 <?php
@@ -27,17 +31,17 @@ class TimestampMessageExtension implements ExtensionInterface
             $message->setTimestamp(time());
         }
     }
-    
+
     public function onPostSend($topic, Message $message)
     {
-        
+
     }
-} 
+}
 ```
 
 ## Symfony
 
-To use the extension in Symfony, you have to register it as a container service with a special tag. 
+To use the extension in Symfony, you have to register it as a container service with a special tag.
 
 ```yaml
 # config/services.yaml
@@ -46,9 +50,9 @@ services:
   timestamp_message_extension:
     class: Acme\TimestampMessageExtension
     tags:
-      - { name: 'enqueue.client.extension' }    
+      - { name: 'enqueue.client.extension' }
 ```
 
-You can add `priority` attribute with a number. The higher value you set the earlier the extension is called.  
+You can add `priority` attribute with a number. The higher value you set the earlier the extension is called.
 
 [back to index](../index.md)

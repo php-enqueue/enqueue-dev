@@ -1,3 +1,9 @@
+---
+layout: default
+title: Pheanstalk
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,8 +15,8 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Beanstalk (Pheanstalk) transport
 
-The transport uses [Beanstalkd](http://kr.github.io/beanstalkd/) job manager. 
-The transport uses [Pheanstalk](https://github.com/pda/pheanstalk) library internally.      
+The transport uses [Beanstalkd](http://kr.github.io/beanstalkd/) job manager.
+The transport uses [Pheanstalk](https://github.com/pda/pheanstalk) library internally.
 
 * [Installation](#installation)
 * [Create context](#create-context)
@@ -48,7 +54,7 @@ $factory = new PheanstalkConnectionFactory([
 
 $context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('beanstalk:')->createContext();
 ```
 
@@ -64,7 +70,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php
@@ -87,7 +93,7 @@ $consumer = $context->createConsumer($fooQueue);
 
 $message = $consumer->receive(2000); // wait for 2 seconds
 
-$message = $consumer->receiveNoWait(); // fetch message or return null immediately 
+$message = $consumer->receiveNoWait(); // fetch message or return null immediately
 
 // process a message
 

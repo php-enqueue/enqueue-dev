@@ -1,3 +1,9 @@
+---
+layout: default
+title: DBAL
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,8 +15,8 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Doctrine DBAL transport
 
-The transport uses [Doctrine DBAL](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/) library and SQL like server as a broker. 
-It creates a table there. Pushes and pops messages to\from that table. 
+The transport uses [Doctrine DBAL](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/) library and SQL like server as a broker.
+It creates a table there. Pushes and pops messages to\from that table.
 
 * [Installation](#installation)
 * [Init database](#init-database)
@@ -59,7 +65,7 @@ $factory = new ManagerRegistryConnectionFactory($registry, [
 
 $context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('mysql:')->createContext();
 ```
 
@@ -87,7 +93,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php
@@ -110,7 +116,7 @@ $message = $psrContext->createMessage('Hello world!');
 
 $psrContext->createProducer()
     ->setTimeToLive(60000) // 60 sec
-    // 
+    //
     ->send($fooQueue, $message)
 ;
 ```
@@ -126,7 +132,7 @@ $message = $psrContext->createMessage('Hello world!');
 
 $psrContext->createProducer()
     ->setDeliveryDelay(5000) // 5 sec
-    // 
+    //
     ->send($fooQueue, $message)
 ;
 ````
@@ -165,16 +171,16 @@ $barConsumer = $context->createConsumer($barQueue);
 $subscriptionConsumer = $context->createSubscriptionConsumer();
 $subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     $consumer->acknowledge($message);
-    
+
     return true;
 });
 $subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     $consumer->acknowledge($message);
-    
+
     return true;
 });
 

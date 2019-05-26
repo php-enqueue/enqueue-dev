@@ -1,3 +1,9 @@
+---
+layout: default
+title: STOMP
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -42,7 +48,7 @@ $factory = new StompConnectionFactory('stomp+rabbitmq:');
 // connect via stomp to ActiveMQ - the topic names are prefixed with /topic
 $factory = new StompConnectionFactory('stomp+activemq:');
 
-// connect to stomp broker at example.com port 1000 using 
+// connect to stomp broker at example.com port 1000 using
 $factory = new StompConnectionFactory([
     'host' => 'example.com',
     'port' => 1000,
@@ -54,11 +60,11 @@ $factory = new StompConnectionFactory('stomp://example.com:1000?login=theLogin')
 
 $context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('stomp:')->createContext();
 ```
 
-## Send message to topic 
+## Send message to topic
 
 ```php
 <?php
@@ -71,7 +77,7 @@ $fooTopic = $context->createTopic('foo');
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php

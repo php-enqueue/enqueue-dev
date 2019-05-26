@@ -1,3 +1,9 @@
+---
+layout: default
+title: Filesystem
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,10 +15,10 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Filesystem transport
 
-Use files on local filesystem as queues. 
-It creates a file per queue\topic. 
+Use files on local filesystem as queues.
+It creates a file per queue\topic.
 A message is a line inside the file.
-**Limitations** It works only in auto ack mode hence If consumer crashes the message is lost. Local by nature therefor messages are not visible on other servers.  
+**Limitations** It works only in auto ack mode hence If consumer crashes the message is lost. Local by nature therefor messages are not visible on other servers.
 
 * [Installation](#installation)
 * [Create context](#create-context)
@@ -57,7 +63,7 @@ $connectionFactory = new FsConnectionFactory([
 
 $context = $connectionFactory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('file:')->createContext();
 ```
 
@@ -73,7 +79,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php
@@ -96,7 +102,7 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setTimeToLive(60000) // 60 sec
-    //    
+    //
     ->send($fooQueue, $message)
 ;
 ```

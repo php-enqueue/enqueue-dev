@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -11,12 +15,12 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ## Supervisord
 
-As you may read in [quick tour](quick_tour.md) you have to run `enqueue:consume` in order to process messages 
+As you may read in [quick tour](quick_tour.md) you have to run `enqueue:consume` in order to process messages
 The php process is not designed to work for a long time. So it has to quit periodically.
-Or, the command may exit because of error or exception. 
+Or, the command may exit because of error or exception.
 Something has to bring it back and continue message consumption.
-We advise you to use [Supervisord](http://supervisord.org/) for that. 
-It starts processes and keep an eye on them while they are working. 
+We advise you to use [Supervisord](http://supervisord.org/) for that.
+It starts processes and keep an eye on them while they are working.
 
 
 Here an example of supervisord configuration.
