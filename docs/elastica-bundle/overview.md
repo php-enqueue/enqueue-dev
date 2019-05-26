@@ -1,6 +1,7 @@
 ---
 layout: default
-nav_exclude: true
+title: Elastica bundle
+nav_order: 4
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

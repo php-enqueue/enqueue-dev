@@ -1,6 +1,8 @@
 ---
 layout: default
-nav_exclude: true
+has_children: true
+title: Magento
+nav_order: 4
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

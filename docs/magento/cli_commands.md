@@ -1,6 +1,7 @@
 ---
 layout: default
-nav_exclude: true
+parent: Magento
+title: CLI commands
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

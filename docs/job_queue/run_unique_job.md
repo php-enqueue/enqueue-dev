@@ -1,6 +1,7 @@
 ---
 layout: default
-nav_exclude: true
+parent: Job Queue
+title: Run unique job
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

@@ -1,6 +1,7 @@
 ---
 layout: default
-nav_exclude: true
+parent: Laravel
+title: Queues
 ---
 <h2 align="center">Supporting Enqueue</h2>
 
