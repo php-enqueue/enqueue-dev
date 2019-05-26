@@ -114,9 +114,9 @@ Features:
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Quick tour](docs/quick_tour.md)
-* [Documentation](docs/index.md)
-* [Blog](docs/index.md#blogs)
+* [Quick tour](https://php-enqueue.github.io/enqueue-dev/quick_tour/)
+* [Documentation](https://php-enqueue.github.io/enqueue-dev/)
+* [Blog](https://php-enqueue.github.io/enqueue-dev/#blogs)
 * [Chat\Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
