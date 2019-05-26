@@ -1,6 +1,7 @@
 ---
 layout: default
-nav_exclude: true
+parent: Consumption
+title: Extensions
 ---
 <h2 align="center">Supporting Enqueue</h2>
 
@@ -14,7 +15,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Consumption extensions.
 
 You can learn how to register extensions in [quick tour](../quick_tour.md#consumption).
-There's dedicated [chapter](../bundle/consumption_extension.md) for how to add extension in Symfony app.
+There's dedicated [chapter](../symfony/consumption_extension.md) for how to add extension in Symfony app.
 
 ## [LoggerExtension](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue/Consumption/Extension/LoggerExtension.php)
 

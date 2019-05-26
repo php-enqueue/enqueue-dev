@@ -1,6 +1,7 @@
 ---
 layout: default
-nav_exclude: true
+parent: "Symfony bundle"
+title: Job queue
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

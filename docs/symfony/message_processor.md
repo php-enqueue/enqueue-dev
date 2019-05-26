@@ -1,6 +1,7 @@
 ---
 layout: default
-nav_exclude: true
+parent: "Symfony bundle"
+title: Message processor
 ---
 <h2 align="center">Supporting Enqueue</h2>
 
