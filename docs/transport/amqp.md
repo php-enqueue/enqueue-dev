@@ -1,3 +1,9 @@
+---
+layout: default
+title: AMQP
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -62,7 +68,7 @@ $factory = new AmqpConnectionFactory([
 // same as above but given as DSN string
 $factory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
-// SSL or secure connection 
+// SSL or secure connection
 $factory = new AmqpConnectionFactory([
     'dsn' => 'amqps:',
     'ssl_cacert' => '/path/to/cacert.pem',
@@ -72,15 +78,15 @@ $factory = new AmqpConnectionFactory([
 
 $context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('amqp:')->createContext();
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('amqp+ext:')->createContext();
 ```
 
 ## Declare topic.
 
-Declare topic operation creates a topic on a broker side. 
- 
+Declare topic operation creates a topic on a broker side.
+
 ```php
 <?php
 use Interop\Amqp\AmqpTopic;
@@ -97,8 +103,8 @@ $context->declareTopic($fooTopic);
 
 ## Declare queue.
 
-Declare queue operation creates a queue on a broker side. 
- 
+Declare queue operation creates a queue on a broker side.
+
 ```php
 <?php
 use Interop\Amqp\AmqpQueue;
@@ -115,7 +121,7 @@ $context->declareQueue($fooQueue);
 
 ## Bind queue to topic
 
-Connects a queue to the topic. So messages from that topic comes to the queue and could be processed. 
+Connects a queue to the topic. So messages from that topic comes to the queue and could be processed.
 
 ```php
 <?php
@@ -128,7 +134,7 @@ use Interop\Amqp\Impl\AmqpBind;
 $context->bind(new AmqpBind($fooTopic, $fooQueue));
 ```
 
-## Send message to topic 
+## Send message to topic
 
 ```php
 <?php
@@ -140,7 +146,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php
@@ -167,7 +173,7 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setPriority(5) // the higher priority the sooner a message gets to a consumer
-    //    
+    //
     ->send($fooQueue, $message)
 ;
 ```
@@ -183,14 +189,14 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setTimeToLive(60000) // 60 sec
-    //    
+    //
     ->send($fooQueue, $message)
 ;
 ```
 
 ## Send delayed message
 
-AMQP specification says nothing about message delaying hence the producer throws `DeliveryDelayNotSupportedException`. 
+AMQP specification says nothing about message delaying hence the producer throws `DeliveryDelayNotSupportedException`.
 Though the producer (and the context) accepts a delivery delay strategy and if it is set it uses it to send delayed message.
 The `enqueue/amqp-tools` package provides two RabbitMQ delay strategies, to use them you have to install that package
 
@@ -208,10 +214,10 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()
     ->setDelayStrategy(new RabbitMqDlxDelayStrategy())
     ->setDeliveryDelay(5000) // 5 sec
-    
+
     ->send($fooQueue, $message)
 ;
-````   
+````
 
 ## Consume message:
 
@@ -247,16 +253,16 @@ $barConsumer = $context->createConsumer($barQueue);
 $subscriptionConsumer = $context->createSubscriptionConsumer();
 $subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     $consumer->acknowledge($message);
-    
+
     return true;
 });
 $subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     $consumer->acknowledge($message);
-    
+
     return true;
 });
 

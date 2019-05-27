@@ -1,3 +1,9 @@
+---
+layout: default
+title: WAMP
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -11,7 +17,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 A transport for [Web Application Messaging Protocol](https://wamp-proto.org/).
 WAMP is an open standard WebSocket subprotocol.
-It uses internally Thruway PHP library [voryx/thruway](https://github.com/voryx/Thruway) 
+It uses internally Thruway PHP library [voryx/thruway](https://github.com/voryx/Thruway)
 
 * [Installation](#installation)
 * [Start the WAMP router](#start-the-wamp-router)
@@ -32,7 +38,7 @@ $ composer require enqueue/wamp
 $ php vendor/voryx/thruway/Examples/SimpleWsRouter.php
 ```
 
-Thruway is now running on 127.0.0.1 port 9090 
+Thruway is now running on 127.0.0.1 port 9090
 
 
 ## Create context
@@ -87,12 +93,12 @@ $barConsumer = $context->createConsumer($barQueue);
 $subscriptionConsumer = $context->createSubscriptionConsumer();
 $subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     return true;
 });
 $subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     return true;
 });
 

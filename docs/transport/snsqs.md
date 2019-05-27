@@ -1,4 +1,10 @@
- <h2 align="center">Supporting Enqueue</h2>
+---
+layout: default
+title: Amazon SNS-SQS
+parent: Transports
+nav_order: 3
+---
+<h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
 
@@ -15,7 +21,7 @@ enterprise integration pattern. As opposed to single SQS transport this adds abi
 with enqueue.
 
 A transport for [Amazon SQS](https://aws.amazon.com/sqs/) broker.
-It uses internally official [aws sdk library](https://packagist.org/packages/aws/aws-sdk-php) 
+It uses internally official [aws sdk library](https://packagist.org/packages/aws/aws-sdk-php)
 
 * [Installation](#installation)
 * [Create context](#create-context)
@@ -37,12 +43,12 @@ $ composer require enqueue/snsqs
 ```php
 <?php
 use Enqueue\SnsQs\SnsQsConnectionFactory;
- 
+
 $factory = new SnsQsConnectionFactory([
-    'key' => 'aKey',              
-    'secret' => 'aSecret',       
+    'key' => 'aKey',
+    'secret' => 'aSecret',
     'region' => 'aRegion',
-    
+
     // or you can segregate options using prefixes "sns_", "sqs_"
     'key' => 'aKey',              // common option for both SNS and SQS
     'sns_region' => 'aSnsRegion', // SNS transport option
@@ -54,7 +60,7 @@ $factory = new SnsQsConnectionFactory('snsqs:?key=aKey&secret=aSecret&region=aRe
 
 $context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('snsqs:')->createContext();
 ```
 
@@ -64,7 +70,7 @@ Declare topic, queue operation creates a topic, queue on a broker side.
 Bind creates connection between topic and queue. You publish message to
 the topic and topic sends message to each queue connected to the topic.
 
- 
+
 ```php
 <?php
 /** @var \Enqueue\SnsQs\SnsQsContext $context */
@@ -87,7 +93,7 @@ $context->bind($inTopic, $out2Queue);
 //$context->unbind(inTopic, $out1Queue);
 ```
 
-## Send message to topic 
+## Send message to topic
 
 ```php
 <?php
@@ -99,7 +105,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()->send($inTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 You can bypass topic and publish message directly to the queue
 
@@ -144,7 +150,7 @@ $context->purgeQueue($fooQueue);
 
 ## Queue from another AWS account
 
-SQS allows to use queues from another account. You could set it globally for all queues via option `queue_owner_aws_account_id` or 
+SQS allows to use queues from another account. You could set it globally for all queues via option `queue_owner_aws_account_id` or
 per queue using `SnsQsQueue::setQueueOwnerAWSAccountId` method.
 
 ```php
@@ -164,7 +170,7 @@ $queue->setQueueOwnerAWSAccountId('awsAccountId');
 ## Multi region examples
 
 Enqueue SNSQS provides a generic multi-region support. This enables users to specify which AWS Region to send a command to by setting region on SnsQsQueue.
-If not specified the default region is used. 
+If not specified the default region is used.
 
 ```php
 <?php

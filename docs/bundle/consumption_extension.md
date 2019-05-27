@@ -1,3 +1,8 @@
+---
+layout: default
+parent: "Symfony bundle"
+title: Consumption extension
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -23,7 +28,7 @@ use Enqueue\Consumption\Context\PostMessageReceived;
 class CountProcessedMessagesExtension implements PostMessageReceivedExtensionInterface
 {
     private $processedMessages = 0;
-    
+
     public function onPostMessageReceived(PostMessageReceived $context): void
     {
         $this->processedMessages += 1;

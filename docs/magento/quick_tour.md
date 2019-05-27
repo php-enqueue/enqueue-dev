@@ -1,3 +1,9 @@
+---
+layout: default
+has_children: true
+title: Magento
+nav_order: 4
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -27,10 +33,10 @@ _**Note**: You could use not only AMQP transport but any other [available](../tr
 
 ## Configuration
 
-At this stage we have configure the Enqueue extension in Magento backend. 
+At this stage we have configure the Enqueue extension in Magento backend.
 The config is here: `System -> Configuration -> Enqueue Message Queue`.
 Here's the example of Amqp transport that connects to RabbitMQ broker on localhost:
- 
+
 
 ![Сonfiguration](../images/magento_enqueue_configuration.jpeg)
 
@@ -46,8 +52,8 @@ Mage::helper('enqueue')->send('a_topic', 'aMessage');
 
 ## Message Consumption
 
-I assume you have `acme` Magento module properly created, configured and registered. 
-To consume messages you have to define a processor class first: 
+I assume you have `acme` Magento module properly created, configured and registered.
+To consume messages you have to define a processor class first:
 
 ```php
 <?php

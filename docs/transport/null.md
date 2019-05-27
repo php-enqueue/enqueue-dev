@@ -1,3 +1,9 @@
+---
+layout: default
+title: "Null"
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,7 +15,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # NULL transport
 
-This a special transport implementation, kind of stub. 
+This a special transport implementation, kind of stub.
 It does not send nor receive anything.
 Useful in tests for example.
 
