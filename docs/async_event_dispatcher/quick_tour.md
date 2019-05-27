@@ -14,7 +14,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Async event dispatcher (Symfony)
 
 The doc shows how you can setup async event dispatching in plain PHP.
-If you are looking for the ways to use it in Symfony application [read this post instead](../symfony/async_events.md)
+If you are looking for the ways to use it in Symfony application [read this post instead](../bundle/async_events.md)
 
 * [Installation](#installation)
 * [Configuration](#configuration)
