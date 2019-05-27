@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Client
+title: Quick tour
+nav_order: 1
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -42,12 +48,12 @@ There two types of message a client can produce: events and commands.
 Events are used to notify others about something, in other words it is an implementation of [publish-subscribe pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern), sometimes called "fire-and-forget" too.
 With events there is no way to get a reply as a producer is not aware of any subscribed consumers.
 Commands are used to request a job to be done. It is an implementation of one-to-one messaging pattern.
-A producer can request a reply from the consumer though it is up to the consumer whether send it or not. 
+A producer can request a reply from the consumer though it is up to the consumer whether send it or not.
 
-Commands work inside the app [scope](message_examples.md#scope) where events work inside the app scope as well as on [message bus](message_bus.md) scope.      
+Commands work inside the app [scope](message_examples.md#scope) where events work inside the app scope as well as on [message bus](message_bus.md) scope.
 
 Send event examples:
-  
+
 ```php
 <?php
 
@@ -70,7 +76,7 @@ $client->sendEvent('user_activated', new class() implements \JsonSerializable {
 ```
 
 Send command examples:
-  
+
 ```php
 <?php
 
@@ -100,7 +106,7 @@ use Interop\Queue\Processor;
 
 $client->bindTopic('a_bar_topic', function(Message $psrMessage) {
     // processing logic here
-    
+
     return Processor::ACK;
 });
 
@@ -140,13 +146,13 @@ $application->run();
 and run to see what is there:
 
 ```bash
-$ php bin/enqueue.php 
+$ php bin/enqueue.php
 ```
 
 or consume messages
 
 ```bash
-$ php bin/enqueue.php enqueue:consume -vvv --setup-broker 
+$ php bin/enqueue.php enqueue:consume -vvv --setup-broker
 ```
 
 [back to index](../index.md)

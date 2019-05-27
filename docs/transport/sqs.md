@@ -1,3 +1,9 @@
+---
+layout: default
+title: Amazon SQS
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -10,7 +16,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Amazon SQS transport
 
 A transport for [Amazon SQS](https://aws.amazon.com/sqs/) broker.
-It uses internally official [aws sdk library](https://packagist.org/packages/aws/aws-sdk-php) 
+It uses internally official [aws sdk library](https://packagist.org/packages/aws/aws-sdk-php)
 
 * [Installation](#installation)
 * [Create context](#create-context)
@@ -32,7 +38,7 @@ $ composer require enqueue/sqs
 ```php
 <?php
 use Enqueue\Sqs\SqsConnectionFactory;
- 
+
 $factory = new SqsConnectionFactory([
     'key' => 'aKey',
     'secret' => 'aSecret',
@@ -48,14 +54,14 @@ $context = $factory->createContext();
 $client = new Aws\Sqs\SqsClient([ /* ... */ ]);
 $factory = new SqsConnectionFactory($client);
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('sqs:')->createContext();
 ```
 
 ## Declare queue.
 
-Declare queue operation creates a queue on a broker side. 
- 
+Declare queue operation creates a queue on a broker side.
+
 ```php
 <?php
 /** @var \Enqueue\Sqs\SqsContext $context */
@@ -67,7 +73,7 @@ $context->declareQueue($fooQueue);
 //$context->deleteQueue($fooQueue);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php
@@ -90,7 +96,7 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setDeliveryDelay(60000) // 60 sec
-    
+
     ->send($fooQueue, $message)
 ;
 ```
@@ -125,7 +131,7 @@ $context->purgeQueue($fooQueue);
 
 ## Queue from another AWS account
 
-SQS allows to use queues from another account. You could set it globally for all queues via option `queue_owner_aws_account_id` or 
+SQS allows to use queues from another account. You could set it globally for all queues via option `queue_owner_aws_account_id` or
 per queue using `SqsDestination::setQueueOwnerAWSAccountId` method.
 
 ```php
@@ -145,8 +151,8 @@ $queue->setQueueOwnerAWSAccountId('awsAccountId');
 ## Multi region examples
 
 Enqueue SQS provides a generic multi-region support. This enables users to specify which AWS Region to send a command to by setting region on SqsDestination.
-You might need it to access SQS FIFO queue because they are not available for all regions. 
-If not specified the default region is used. 
+You might need it to access SQS FIFO queue because they are not available for all regions.
+If not specified the default region is used.
 
 ```php
 <?php

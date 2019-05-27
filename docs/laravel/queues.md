@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Laravel
+title: Queues
+nav_order: 2
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -10,7 +16,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Laravel Queue. Quick tour.
 
 The [LaravelQueue](https://github.com/php-enqueue/laravel-queue) package allows to use [queue-interop](https://github.com/queue-interop/queue-interop) compatible transports [the Laravel way](https://laravel.com/docs/5.4/queues).
-I suppose you already [installed and configured](quick_tour.md) the package so let's look what you have to do to make queue work.  
+I suppose you already [installed and configured](quick_tour.md) the package so let's look what you have to do to make queue work.
 
 ## Configure
 
@@ -64,16 +70,16 @@ $ php artisan queue:work interop
 return [
     // uncomment to set it as default
     // 'default' => env('QUEUE_DRIVER', 'interop'),
-    
+
     'connections' => [
         'interop' => [
             'driver' => 'interop',
-            
+
             // connects to localhost
             'dsn' => 'amqp:', //
-            
-            // could be "rabbitmq_dlx", "rabbitmq_delay_plugin", instance of DelayStrategy interface or null 
-            // 'delay_strategy' => 'rabbitmq_dlx' 
+
+            // could be "rabbitmq_dlx", "rabbitmq_delay_plugin", instance of DelayStrategy interface or null
+            // 'delay_strategy' => 'rabbitmq_dlx'
         ],
     ],
 ];

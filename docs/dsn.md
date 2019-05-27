@@ -1,3 +1,8 @@
+---
+layout: default
+title: DSN Parser
+nav_order: 92
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,12 +14,12 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ## DSN Parser.
 
-The [enqueue/dsn](https://github.com/php-enqueue/dsn) tool helps to parse DSN\URI string. 
-The tool is used by Enqueue transports to parse DSNs. 
+The [enqueue/dsn](https://github.com/php-enqueue/dsn) tool helps to parse DSN\URI string.
+The tool is used by Enqueue transports to parse DSNs.
 
 ## Installation
 
-```bash 
+```bash
 composer req enqueue/dsn 0.9.x
 ```
 
@@ -40,7 +45,7 @@ $dsn->getPort(); // 3306
 $dsn->getQueryString(); // 'connection_timeout=123'
 $dsn->getQuery(); // ['connection_timeout' => '123']
 $dsn->getString('connection_timeout'); // '123'
-$dsn->getDecimal('connection_timeout'); // 123  
+$dsn->getDecimal('connection_timeout'); // 123
 ```
 
 Parse Cluster DSN:
@@ -62,7 +67,7 @@ $dsns[0]->getPort(); // 3306
 $dsns[1]->getUser(); // 'user'
 $dsns[1]->getPassword(); // 'password'
 $dsns[1]->getHost(); // 'bar'
-$dsns[1]->getPort(); // 5678  
+$dsns[1]->getPort(); // 5678
 ```
 
 Some parts could be omitted:

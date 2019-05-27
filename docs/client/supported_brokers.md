@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Client
+title: Supported brokers
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -25,11 +31,11 @@ Here's the list of transports supported by Enqueue Client:
 | Kafka               | [enqueue/rdkafka](../transport/kafka.md)                   | kafka:                          |
 | Null                | [enqueue/null](../transport/null.md)                       | null:                           |
 
-Here's the list of protocols and Client features supported by them 
+Here's the list of protocols and Client features supported by them
 
 | Protocol       | Priority | Delay    | Expiration | Setup broker | Message bus |
 |:--------------:|:--------:|:--------:|:----------:|:------------:|:-----------:|
-| AMQP           |   No     |    No    |    Yes     |     Yes      |     Yes     |        
+| AMQP           |   No     |    No    |    Yes     |     Yes      |     Yes     |
 | RabbitMQ AMQP  |   Yes    |    Yes   |    Yes     |     Yes      |     Yes     |
 | STOMP          |   No     |    No    |    Yes     |     No       |     Yes**   |
 | RabbitMQ STOMP |   Yes    |    Yes   |    Yes     |     Yes***   |     Yes**   |

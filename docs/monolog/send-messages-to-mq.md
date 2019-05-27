@@ -1,3 +1,7 @@
+---
+layout: default
+nav_exclude: true
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -7,15 +11,15 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ---
 
-# Enqueue Monolog Handlers 
+# Enqueue Monolog Handlers
 
-The package provides handlers for [Monolog](https://github.com/Seldaek/monolog). 
-These handler allows to send logs to MQ using any [queue-interop](https://github.com/queue-interop/queue-interop) compatible transports. 
+The package provides handlers for [Monolog](https://github.com/Seldaek/monolog).
+These handler allows to send logs to MQ using any [queue-interop](https://github.com/queue-interop/queue-interop) compatible transports.
 
 ## Installation
 
 You have to install monolog itself, queue interop handlers and one of [the transports](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md#transports).
-For the simplicity we are going to install the filesystem based MQ.  
+For the simplicity we are going to install the filesystem based MQ.
 
 ```
 composer require enqueue/monolog-queue-handler monolog/monolog enqueue/fs
@@ -42,7 +46,7 @@ $log->warning('Foo');
 $log->error('Bar');
 ```
 
-the consumer may look like this: 
+the consumer may look like this:
 
 ```php
 <?php

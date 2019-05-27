@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Job Queue
+title: Run sub job
+nav_order: 2
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,9 +15,9 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ## Job queue. Run sub job
 
-It shows how you can create and run a sub job, which it is executed separately. 
-You can create as many sub jobs as you like. 
-They will be executed in parallel. 
+It shows how you can create and run a sub job, which it is executed separately.
+You can create as many sub jobs as you like.
+They will be executed in parallel.
 
 ```php
 <?php
@@ -27,7 +33,7 @@ class RootJobProcessor implements Processor
 {
     /** @var JobRunner */
     private $jobRunner;
-    
+
     /** @var  ProducerInterface */
     private $producer;
 

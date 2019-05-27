@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Magento 2
+title: Quick tour
+nav_order: 1
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -23,12 +29,12 @@ composer require "enqueue/magento2-enqueue:*@dev" "enqueue/amqp-ext"
 Run setup:upgrade so Magento2 picks up the installed module.
 
 ```bash
-php bin/magento setup:upgrade 
+php bin/magento setup:upgrade
 ```
 
 ## Configuration
 
-At this stage we have configure the Enqueue extension in Magento backend. 
+At this stage we have configure the Enqueue extension in Magento backend.
 The config is here: `Stores -> Configuration -> General -> Enqueue Message Queue`.
 Here's the example of Amqp transport that connects to RabbitMQ broker on localhost:
 
@@ -53,8 +59,8 @@ $replyMessage = $reply->receive(5000); // wait for 5 sec
 
 ## Message Consumption
 
-I assume you have `acme` Magento module properly created, configured and registered. 
-To consume messages you have to define a processor class first: 
+I assume you have `acme` Magento module properly created, configured and registered.
+To consume messages you have to define a processor class first:
 
 ```php
 <?php

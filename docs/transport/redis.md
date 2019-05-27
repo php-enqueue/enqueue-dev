@@ -1,3 +1,9 @@
+---
+layout: default
+title: Redis
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,9 +15,9 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Redis transport
 
-The transport uses [Redis](https://redis.io/) as a message broker. 
+The transport uses [Redis](https://redis.io/) as a message broker.
 It creates a collection (a queue or topic) there. Pushes messages to the tail of the collection and pops from the head.
-The transport works with [phpredis](https://github.com/phpredis/phpredis) php extension or [predis](https://github.com/nrk/predis) library. 
+The transport works with [phpredis](https://github.com/phpredis/phpredis) php extension or [predis](https://github.com/nrk/predis) library.
 Make sure you installed either of them
 
 Features:
@@ -20,10 +26,10 @@ Features:
 * Recovery&Redelivery support
 * Expiration support
 * Delaying support
-* Interchangeable with other Queue Interop implementations   
+* Interchangeable with other Queue Interop implementations
 * Supports Subscription consumer
- 
-Parts: 
+
+Parts:
 * [Installation](#installation)
 * [Create context](#create-context)
 * [Send message to topic](#send-message-to-topic)
@@ -67,7 +73,7 @@ $factory = new RedisConnectionFactory('redis:');
 // same as above
 $factory = new RedisConnectionFactory([]);
 
-// connect to Redis at example.com port 1000 using phpredis extension 
+// connect to Redis at example.com port 1000 using phpredis extension
 $factory = new RedisConnectionFactory([
     'host' => 'example.com',
     'port' => 1000,
@@ -79,7 +85,7 @@ $factory = new RedisConnectionFactory('redis+phpredis://example.com:1000');
 
 $context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('redis:')->createContext();
 
 // pass redis instance directly
@@ -87,7 +93,7 @@ $redis = new \Enqueue\Redis\PhpRedis([ /** redis connection options */ ]);
 $redis->connect();
 
 // Secure\TLS connection. Works only with predis library. Note second "S" in scheme.
-$factory = new RedisConnectionFactory('rediss+predis://user:pass@host/0'); 
+$factory = new RedisConnectionFactory('rediss+predis://user:pass@host/0');
 
 $factory = new RedisConnectionFactory($redis);
 ```
@@ -115,14 +121,14 @@ It gives you more control over vendor specific features.
 <?php
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\PRedis;
- 
+
 $config = [
     'host' => 'localhost',
     'port' => 6379,
     'predis_options' => [
         'prefix'  => 'ns:'
     ]
-]; 
+];
 
 $redis = new PRedis($config);
 
@@ -141,7 +147,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php
@@ -164,7 +170,7 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setTimeToLive(60000) // 60 sec
-    //    
+    //
     ->send($fooQueue, $message)
 ;
 ```
@@ -180,7 +186,7 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setDeliveryDelay(5000) // 5 sec
-    
+
     ->send($fooQueue, $message)
 ;
 ````
@@ -227,7 +233,7 @@ $context->deleteTopic($fooTopic);
 ## Connect Heroku Redis
 
 [Heroku Redis](https://devcenter.heroku.com/articles/heroku-redis) describes how to setup Redis instance on Heroku.
-To use it with Enqueue Redis you have to pass REDIS_URL to RedisConnectionFactory constructor.  
+To use it with Enqueue Redis you have to pass REDIS_URL to RedisConnectionFactory constructor.
 
 ```php
 <?php

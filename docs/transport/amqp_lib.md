@@ -1,3 +1,9 @@
+---
+layout: default
+title: AMQP Lib
+parent: Transports
+nav_order: 3
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -17,7 +23,7 @@ Features:
 * Delay strategies out of the box
 * Interchangeable with other AMQP Interop implementations
 * Fixes AMQPIOWaitException when signal is sent.
-* More reliable heartbeat implementations.   
+* More reliable heartbeat implementations.
 * Supports Subscription consumer
 
 Parts:
@@ -70,7 +76,7 @@ $factory = new AmqpConnectionFactory([
 // same as above but given as DSN string
 $factory = new AmqpConnectionFactory('amqp://user:pass@example.com:10000/%2f');
 
-// SSL or secure connection 
+// SSL or secure connection
 $factory = new AmqpConnectionFactory([
     'dsn' => 'amqps:',
     'ssl_cacert' => '/path/to/cacert.pem',
@@ -80,15 +86,15 @@ $factory = new AmqpConnectionFactory([
 
 $context = $factory->createContext();
 
-// if you have enqueue/enqueue library installed you can use a factory to build context from DSN 
+// if you have enqueue/enqueue library installed you can use a factory to build context from DSN
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('amqp:')->createContext();
 $context = (new \Enqueue\ConnectionFactoryFactory())->create('amqp+lib:')->createContext();
 ```
 
 ## Declare topic.
 
-Declare topic operation creates a topic on a broker side. 
- 
+Declare topic operation creates a topic on a broker side.
+
 ```php
 <?php
 use Interop\Amqp\AmqpTopic;
@@ -105,8 +111,8 @@ $context->declareTopic($fooTopic);
 
 ## Declare queue.
 
-Declare queue operation creates a queue on a broker side. 
- 
+Declare queue operation creates a queue on a broker side.
+
 ```php
 <?php
 use Interop\Amqp\AmqpQueue;
@@ -123,7 +129,7 @@ $context->declareQueue($fooQueue);
 
 ## Bind queue to topic
 
-Connects a queue to the topic. So messages from that topic comes to the queue and could be processed. 
+Connects a queue to the topic. So messages from that topic comes to the queue and could be processed.
 
 ```php
 <?php
@@ -136,7 +142,7 @@ use Interop\Amqp\Impl\AmqpBind;
 $context->bind(new AmqpBind($fooTopic, $fooQueue));
 ```
 
-## Send message to topic 
+## Send message to topic
 
 ```php
 <?php
@@ -148,7 +154,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-## Send message to queue 
+## Send message to queue
 
 ```php
 <?php
@@ -177,7 +183,7 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setPriority(5) // the higher priority the sooner a message gets to a consumer
-    //    
+    //
     ->send($fooQueue, $message)
 ;
 ```
@@ -193,14 +199,14 @@ $message = $context->createMessage('Hello world!');
 
 $context->createProducer()
     ->setTimeToLive(60000) // 60 sec
-    //    
+    //
     ->send($fooQueue, $message)
 ;
 ```
 
 ## Send delayed message
 
-AMQP specification says nothing about message delaying hence the producer throws `DeliveryDelayNotSupportedException`. 
+AMQP specification says nothing about message delaying hence the producer throws `DeliveryDelayNotSupportedException`.
 Though the producer (and the context) accepts a delivery delay strategy and if it is set it uses it to send delayed message.
 The `enqueue/amqp-tools` package provides two RabbitMQ delay strategies, to use them you have to install that package
 
@@ -218,7 +224,7 @@ $message = $context->createMessage('Hello world!');
 $context->createProducer()
     ->setDelayStrategy(new RabbitMqDlxDelayStrategy())
     ->setDeliveryDelay(5000) // 5 sec
-    
+
     ->send($fooQueue, $message)
 ;
 ````
@@ -257,16 +263,16 @@ $barConsumer = $context->createConsumer($barQueue);
 $subscriptionConsumer = $context->createSubscriptionConsumer();
 $subscriptionConsumer->subscribe($fooConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     $consumer->acknowledge($message);
-    
+
     return true;
 });
 $subscriptionConsumer->subscribe($barConsumer, function(Message $message, Consumer $consumer) {
     // process message
-    
+
     $consumer->acknowledge($message);
-    
+
     return true;
 });
 
@@ -287,15 +293,15 @@ $context->purgeQueue($queue);
 
 ## Long running task and heartbeat and timeouts
 
-AMQP relies on heartbeat feature to make sure consumer is still there. 
+AMQP relies on heartbeat feature to make sure consumer is still there.
 Basically consumer is expected to send heartbeat frames from time to time to RabbitMQ broker so the broker does not close the connection.
-It is not possible to implement heartbeat feature in PHP, due to its synchronous nature. 
+It is not possible to implement heartbeat feature in PHP, due to its synchronous nature.
 You could read more about the issues in post: [Keeping RabbitMQ connections alive in PHP](https://blog.mollie.com/keeping-rabbitmq-connections-alive-in-php-b11cb657d5fb).
 
 `enqueue/amqp-lib` address the issue by registering heartbeat call as a [tick callbacks](http://php.net/manual/en/function.register-tick-function.php).
-To make it work you have to wrapp your long running task by `decalre(ticks=1) {}`. 
-The number of ticks could be adjusted to your needs. 
-Calling it at every tick is not good. 
+To make it work you have to wrapp your long running task by `decalre(ticks=1) {}`.
+The number of ticks could be adjusted to your needs.
+Calling it at every tick is not good.
 
 Please note that it does not fix heartbeat issue if you spent most of the time on IO operation.
 
@@ -331,9 +337,9 @@ $subscriptionConsumer->consume(10000);
 
 
 function fetchHugeSet(): array {};
-``` 
+```
 
-Fixes partly `Invalid frame type 65` issue. 
+Fixes partly `Invalid frame type 65` issue.
 
 ```
 Error: Uncaught PhpAmqpLib\Exception\AMQPRuntimeException: Invalid frame type 65 in /some/path/vendor/php-amqplib/php-amqplib/PhpAmqpLib/Connection/AbstractConnection.php:528

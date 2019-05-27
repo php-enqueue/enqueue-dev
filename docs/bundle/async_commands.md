@@ -1,3 +1,9 @@
+---
+layout: default
+parent: "Symfony bundle"
+title: Async commands
+nav_order: 7
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -63,9 +69,9 @@ $promise = $producer->sendCommand(Commands::RUN_COMMAND, new RunCommand('debug:c
 
 // do other stuff.
 
-if ($replyMessage = $promise->receive(5000)) { 
+if ($replyMessage = $promise->receive(5000)) {
     $result = CommandResult::jsonUnserialize($replyMessage->getBody());
-    
+
     echo $result->getOutput();
 }
 ```
