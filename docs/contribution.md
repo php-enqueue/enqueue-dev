@@ -1,3 +1,9 @@
+---
+layout: default
+title: Contribution
+nav_order: 99
+---
+
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -9,8 +15,8 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 # Contribution
 
-To contribute you have to send a pull request to [enqueue-dev](https://github.com/php-enqueue/enqueue-dev) repository. 
-The pull requests to read only subtree split [repositories](https://github.com/php-enqueue/enqueue-dev/blob/master/bin/subtree-split#L46) will be closed. 
+To contribute you have to send a pull request to [enqueue-dev](https://github.com/php-enqueue/enqueue-dev) repository.
+The pull requests to read only subtree split [repositories](https://github.com/php-enqueue/enqueue-dev/blob/master/bin/subtree-split#L46) will be closed.
 
 ## Setup environment
 
@@ -37,10 +43,10 @@ or for a package only:
 ./bin/test.sh pkg/enqueue
 ```
 
-## Commit 
+## Commit
 
 When you try to commit changes `php-cs-fixer` is run. It fixes all coding style issues. Don't forget to stage them and commit everything.
-Once everything is done open a pull request on official repository. 
+Once everything is done open a pull request on official repository.
 
 ## WTF?!
 

@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Job queue
+nav_order: 8
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

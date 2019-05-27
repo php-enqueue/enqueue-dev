@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Message processor
+nav_order: 5
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

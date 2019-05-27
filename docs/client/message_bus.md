@@ -1,6 +1,8 @@
 ---
 layout: default
-nav_exclude: true
+parent: Client
+title: Message bus
+nav_order: 4
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Yii
+title: AMQP Interop driver
+nav_order: 1
+---
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -18,12 +24,12 @@ In order for it to work you should add any [amqp interop](https://github.com/que
 
 Advantages:
 
-* It would work with any amqp interop compatible transports, such as 
+* It would work with any amqp interop compatible transports, such as
 
     * [enqueue/amqp-ext](https://github.com/php-enqueue/amqp-ext) based on [PHP amqp extension](https://github.com/pdezwart/php-amqp)
     * [enqueue/amqp-lib](https://github.com/php-enqueue/amqp-lib) based on [php-amqplib/php-amqplib](https://github.com/php-amqplib/php-amqplib)
     * [enqueue/amqp-bunny](https://github.com/php-enqueue/amqp-bunny) based on [bunny](https://github.com/jakubkulhan/bunny)
-    
+
 * Supports priorities
 * Supports delays
 * Supports ttr
@@ -47,10 +53,10 @@ return [
             'password' => 'guest',
             'queueName' => 'queue',
             'driver' => yii\queue\amqp_interop\Queue::ENQUEUE_AMQP_LIB,
-            
+
             // or
             'dsn' => 'amqp://guest:guest@localhost:5672/%2F',
-            
+
             // or, same as above
             'dsn' => 'amqp:',
         ],

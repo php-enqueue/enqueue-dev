@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Async events
+nav_order: 6
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

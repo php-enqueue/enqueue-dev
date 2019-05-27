@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Async commands
+nav_order: 7
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

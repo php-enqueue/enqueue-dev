@@ -1,8 +1,8 @@
 ---
 layout: default
-has_children: true
-title: Magento
-nav_order: 4
+parent: Magento
+title: Quick tour
+nav_order: 1
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

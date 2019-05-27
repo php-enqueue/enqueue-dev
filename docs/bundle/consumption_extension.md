@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Consumption extension
+nav_order: 9
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

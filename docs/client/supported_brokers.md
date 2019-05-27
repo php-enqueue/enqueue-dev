@@ -1,6 +1,8 @@
 ---
 layout: default
-nav_exclude: true
+parent: Client
+title: Supported brokers
+nav_order: 3
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

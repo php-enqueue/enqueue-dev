@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Debugging
+nav_order: 11
 ---
 <h2 align="center">Supporting Enqueue</h2>
 
