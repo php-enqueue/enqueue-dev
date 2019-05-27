@@ -13,13 +13,13 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 [![Build Status](https://travis-ci.org/php-enqueue/gps.png?branch=master)](https://travis-ci.org/php-enqueue/gps)
 [![Total Downloads](https://poser.pugx.org/enqueue/gps/d/total.png)](https://packagist.org/packages/enqueue/gps)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/gps/version.png)](https://packagist.org/packages/enqueue/gps)
- 
-This is an implementation of Queue Interop specification. It allows you to send and consume message through Google Pub/Sub library.  
+
+This is an implementation of Queue Interop specification. It allows you to send and consume message through Google Pub/Sub library.
 
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
+* [Documentation](https://php-enqueue.github.io/transport/gps/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
