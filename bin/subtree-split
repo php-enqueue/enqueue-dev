@@ -44,6 +44,7 @@ function remote()
 }
 
 remote enqueue git@github.com:php-enqueue/enqueue.git
+remote php-enqueue git@github.com:php-enqueue/php-enqueue.github.io.git
 remote simple-client git@github.com:php-enqueue/simple-client.git
 remote stomp git@github.com:php-enqueue/stomp.git
 remote amqp-ext git@github.com:php-enqueue/amqp-ext.git
@@ -72,6 +73,7 @@ remote wamp git@github.com:php-enqueue/wamp.git
 remote monitoring git@github.com:php-enqueue/monitoring.git
 
 split 'pkg/enqueue' enqueue
+split 'docs' php-enqueue
 split 'pkg/simple-client' simple-client
 split 'pkg/stomp' stomp
 split 'pkg/amqp-ext' amqp-ext

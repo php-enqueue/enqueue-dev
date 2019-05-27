@@ -1,3 +1,11 @@
+---
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+
+layout: default
+title: Index
+---
+
 <h2 align="center">Supporting Enqueue</h2>
 
 Enqueue is an MIT-licensed open source project with its ongoing development made possible entirely by the support of community and our customers. If you'd like to join them, please consider:
@@ -49,7 +57,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
     - [Consumption extension](bundle/consumption_extension.md)
     - [Production settings](bundle/production_settings.md)
     - [Debugging](bundle/debugging.md)
-    - [Functional testing](bundle/functional_testing.md) 
+    - [Functional testing](bundle/functional_testing.md)
 * [Laravel](#laravel)
     - [Quick tour](laravel/quick_tour.md)
     - [Queues](laravel/queues.md)
@@ -91,3 +99,12 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 * [Yii PHP Framework has adopted AMQP Interop.](https://blog.forma-pro.com/yii-php-framework-has-adopted-amqp-interop-85ab47c9869f)
 * [(En)queue Symfony console commands](http://tech.yappa.be/enqueue-symfony-console-commands)
 * [From RabbitMq to PhpEnqueue via Symfony Messenger](https://medium.com/@stefanoalletti_40357/from-rabbitmq-to-phpenqueue-via-symfony-messenger-b8260d0e506c)
+
+## Contributing to this documentation
+
+To run this documentation locally, you can either create Jekyll environment on your local computer or use docker container.
+To run docker container you can use a command from repository root directory:
+```shell
+docker run -p 4000:4000 --rm --volume="${PWD}/docs:/srv/jekyll" -it jekyll/jekyll jekyll serve --watch
+```
+Documentation will then be available for you on http://localhost:4000/ once build completes and rebuild automatically on changes.
