@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Laravel
-has_children: true
-nav_order: 4
+parent: Laravel
+title: Quick tour
+nav_order: 1
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

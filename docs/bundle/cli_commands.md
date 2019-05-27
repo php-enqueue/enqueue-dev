@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: CLI commands
+nav_order: 3
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

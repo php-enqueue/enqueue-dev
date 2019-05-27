@@ -1,6 +1,8 @@
 ---
 layout: default
-nav_exclude: true
+parent: Client
+title: Extensions
+nav_order: 6
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

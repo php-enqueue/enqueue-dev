@@ -2,6 +2,7 @@
 layout: default
 parent: Magento
 title: CLI commands
+nav_order: 2
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

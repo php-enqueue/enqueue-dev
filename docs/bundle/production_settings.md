@@ -2,6 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Production settings
+nav_order: 10
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

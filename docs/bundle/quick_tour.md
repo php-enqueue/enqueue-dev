@@ -2,7 +2,7 @@
 layout: default
 parent: "Symfony bundle"
 title: Quick tour
-nav_order: -1
+nav_order: 1
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

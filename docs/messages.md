@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Messages
-nav_exclude: true
+nav_order: 90
 ---
 <h2 align="center">Supporting Enqueue</h2>
 

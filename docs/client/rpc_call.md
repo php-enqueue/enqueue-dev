@@ -1,6 +1,8 @@
 ---
 layout: default
-nav_exclude: true
+parent: Client
+title: RPC call
+nav_order: 5
 ---
 <h2 align="center">Supporting Enqueue</h2>
 
