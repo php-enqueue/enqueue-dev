@@ -44,7 +44,7 @@ function remote()
 }
 
 remote enqueue git@github.com:php-enqueue/enqueue.git
-remote php-enqueue git@github.com:php-enqueue/php-enqueue.git
+remote php-enqueue git@github.com:php-enqueue/php-enqueue.github.io.git
 remote simple-client git@github.com:php-enqueue/simple-client.git
 remote stomp git@github.com:php-enqueue/stomp.git
 remote amqp-ext git@github.com:php-enqueue/amqp-ext.git
