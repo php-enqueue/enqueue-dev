@@ -13,13 +13,13 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 [![Build Status](https://travis-ci.org/php-enqueue/sqs.png?branch=master)](https://travis-ci.org/php-enqueue/sqs)
 [![Total Downloads](https://poser.pugx.org/enqueue/sqs/d/total.png)](https://packagist.org/packages/enqueue/sqs)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/sqs/version.png)](https://packagist.org/packages/enqueue/sqs)
- 
-This is an implementation of Queue Interop specification. It allows you to send and consume message using [Amazon SQS](https://aws.amazon.com/sqs/) service.  
+
+This is an implementation of Queue Interop specification. It allows you to send and consume message using [Amazon SQS](https://aws.amazon.com/sqs/) service.
 
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/sqs.md)
+* [Documentation](https://php-enqueue.github.io/transport/sqs/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 

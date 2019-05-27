@@ -13,13 +13,13 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 [![Build Status](https://travis-ci.org/php-enqueue/snsqs.png?branch=master)](https://travis-ci.org/php-enqueue/snsqs)
 [![Total Downloads](https://poser.pugx.org/enqueue/snsqs/d/total.png)](https://packagist.org/packages/enqueue/snsqs)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/snsqs/version.png)](https://packagist.org/packages/enqueue/snsqs)
- 
+
 This is an implementation of Queue Interop specification. It allows you to send and consume message using [Amazon SNS-SQS](https://aws.amazon.com/snsqs/) service.
 
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/snsqs.md)
+* [Documentation](https://php-enqueue.github.io/transport/snsqs/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
