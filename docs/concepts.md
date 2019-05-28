@@ -63,8 +63,7 @@ It provides extension points which could be ad-hoc into processing flow. You can
 Enqueue Client is designed for as simple as possible developer experience. 
 It provides high-level, very opinionated API. 
 It manage all transport differences internally and even emulate missing features (like publish-subscribe).
-
-_*Note:* The client topic is NOT the same thing as transport one._
+Please note: Client has own logic for naming transport destinations. Expect a different transport queue\topic name from the Client topic, command name. The prefix behavior could be disabled.    
 
 - *Topic:* Send a message to the topic when you want to notify several subscribers that something has happened. There is no way to get subscriber results. Uses the router internally to deliver messages.
 - *Command:* guaranty that there is exactly one command processor\subscriber. Optionally, you can get a result. If there is not a command subscriber an exception is thrown. 
