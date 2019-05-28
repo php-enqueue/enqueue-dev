@@ -76,4 +76,4 @@ if ($replyMessage = $promise->receive(5000)) {
 }
 ```
 
-[back to index](../index.md)
+[back to index](index.md)

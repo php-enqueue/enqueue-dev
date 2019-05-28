@@ -172,4 +172,4 @@ Help:
   A worker that consumes message from a broker. To use this broker you have to explicitly set a queue to consume from and a message processor service
 ```
 
-[back to index](../index.md)
+[back to index](index.md)

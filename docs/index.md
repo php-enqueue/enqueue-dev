@@ -46,7 +46,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 * [Job queue](#job-queue)
     - [Run unique job](job_queue/run_unique_job.md)
     - [Run sub job(s)](job_queue/run_sub_job.md)
-* [EnqueueBundle (Symfony)](#enqueue-bundle-symfony).
+* [EnqueueBundle (Symfony)](bundle/index.md)
     - [Quick tour](bundle/quick_tour.md)
     - [Config reference](bundle/config_reference.md)
     - [Cli commands](bundle/cli_commands.md)

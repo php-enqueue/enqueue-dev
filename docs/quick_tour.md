@@ -20,6 +20,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 * [Client](#client)
 * [Cli commands](#cli-commands)
 * [Monitoring](#monitoring)
+* [Symfony bundle](#symfony)
 
 ## Transport
 
@@ -292,3 +293,7 @@ $ app.php consume
 There is a tool that can track sent\consumed messages as well as consumer performance. Read more [here](monitoring.md)
 
 [back to index](index.md)
+
+## Symfony
+
+Read more [here](bundle/quick_tour.md) about using Enqueue as a Symfony Bundle.

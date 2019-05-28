@@ -187,4 +187,4 @@ Now you can run a command and tell it to consume from a given queue and process 
 $ ./bin/console enqueue:transport:consume say_hello foo_queue -vvv
 ```
 
-[back to index](../index.md)
+[back to index](index.md)

@@ -84,4 +84,4 @@ You can add `-vvv` to see more information.
 
 ![Consume command verbosity](../images/consume_command_verbosity.png)
 
-[back to index](../index.md)
+[back to index](index.md)
