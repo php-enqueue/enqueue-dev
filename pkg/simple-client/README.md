@@ -19,7 +19,7 @@ The simple client takes Enqueue client classes and Symfony components and combin
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://php-enqueue.github.com/)
+* [Documentation](https://php-enqueue.github.io/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 

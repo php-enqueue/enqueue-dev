@@ -21,7 +21,7 @@ Read more about it in documentation
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://php-enqueue.github.com/)
+* [Documentation](https://php-enqueue.github.io/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 

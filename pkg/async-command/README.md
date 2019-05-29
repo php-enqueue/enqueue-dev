@@ -20,7 +20,7 @@ It allows to execute Symfony's command async by sending the request to message q
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://php-enqueue.github.com/)
+* [Documentation](https://php-enqueue.github.io/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
