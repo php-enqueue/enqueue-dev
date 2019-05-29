@@ -20,7 +20,7 @@ It allows to processes events in background by sending them to MQ.
 ## Resources
 
 * [Site](https://enqueue.forma-pro.com/)
-* [Documentation](https://php-enqueue.github.com/)
+* [Documentation](https://php-enqueue.github.io/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 

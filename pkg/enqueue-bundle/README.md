@@ -20,7 +20,7 @@ Integrates message queue components to Symfony application.
 
 * [Site](https://enqueue.forma-pro.com/)
 * [Quick tour](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/bundle/quick_tour.md)
-* [Documentation](https://php-enqueue.github.com/)
+* [Documentation](https://php-enqueue.github.io/)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
