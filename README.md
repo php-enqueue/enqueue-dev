@@ -98,7 +98,7 @@ Features:
 [![Total Downloads](https://poser.pugx.org/enqueue/null/d/total.png)](https://packagist.org/packages/enqueue/null/stats)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/null/version.png)](https://packagist.org/packages/enqueue/null)
     * [the others are coming](https://github.com/php-enqueue/enqueue-dev/issues/284)
-* [Symfony bundle](https://php-enqueue.github.io/symfony/quick_tour/)
+* [Symfony bundle](https://php-enqueue.github.io/bundle/quick_tour/)
 * [Magento1 extension](https://php-enqueue.github.io/magento/quick_tour/)
 * [Magento2 module](https://php-enqueue.github.io/magento2/quick_tour/)
 * [Laravel extension](https://php-enqueue.github.io/laravel/quick_tour/)
