@@ -81,6 +81,7 @@ class RdKafkaConsumer implements Consumer
     }
 
     /**
+     * @param int $timeout
      * @return RdKafkaMessage
      */
     public function receive(int $timeout = 0): ?Message
@@ -140,7 +141,8 @@ class RdKafkaConsumer implements Consumer
     }
 
     /**
-     * @param RdKafkaMessage $message
+     * @param Message $message
+     * @param bool $requeue
      */
     public function reject(Message $message, bool $requeue = false): void
     {
@@ -168,6 +170,12 @@ class RdKafkaConsumer implements Consumer
                 $message->setKey($kafkaMessage->key);
                 $message->setPartition($kafkaMessage->partition);
                 $message->setKafkaMessage($kafkaMessage);
+
+                // Merge headers passed from Kafka with possible earlier serialized payload headers. Prefer Kafka's.
+                // Note: Requires phprdkafka >= 3.1.0
+                if (isset($kafkaMessage->headers)) {
+                    $message->setHeaders(array_merge($message->getHeaders(), $kafkaMessage->headers));
+                }
 
                 return $message;
             default:

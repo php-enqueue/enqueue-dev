@@ -42,7 +42,12 @@ class RdKafkaProducer implements Producer
         $key = $message->getKey() ?: $destination->getKey() ?: null;
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
-        $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
+        // Note: Topic::producev method exists in phprdkafka >= 3.1.0
+        if (method_exists($topic, 'producev')) {
+            $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
+        } else {
+            $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
+        }
     }
 
     /**
