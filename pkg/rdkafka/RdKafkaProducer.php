@@ -43,6 +43,7 @@ class RdKafkaProducer implements Producer
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
         // Note: Topic::producev method exists in phprdkafka >= 3.1.0
+        // Headers in payload are maintained for backwards compatibility with apps that might run on lower phprdkafka version
         if (method_exists($topic, 'producev')) {
             $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
         } else {
