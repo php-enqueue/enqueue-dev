@@ -82,6 +82,7 @@ class RdKafkaConsumer implements Consumer
 
     /**
      * @param int $timeout
+     *
      * @return RdKafkaMessage
      */
     public function receive(int $timeout = 0): ?Message

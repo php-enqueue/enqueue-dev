@@ -45,7 +45,6 @@ class RdKafkaProducer implements Producer
         // Note: Topic::producev method exists in phprdkafka > 3.1.0
         // Headers in payload are maintained for backwards compatibility with apps that might run on lower phprdkafka version
         if (method_exists($topic, 'producev')) {
-
             // Phprdkafka <= 3.1.0 will fail calling `producev` on librdkafka 1.0.0 causing segfault
             if (version_compare($this->getLibrdKafkaVersion(), '1.0.0', '>=')
                 && version_compare(phpversion('rdkafka'), '3.1.0', '<=')) {
@@ -107,7 +106,7 @@ class RdKafkaProducer implements Producer
 
     private function getLibrdKafkaVersion(): string
     {
-        if (! defined('RD_KAFKA_VERSION')) {
+        if (!defined('RD_KAFKA_VERSION')) {
             throw new \RuntimeException('RD_KAFKA_VERSION constant is not defined. Phprdkafka is probably not installed');
         }
 
