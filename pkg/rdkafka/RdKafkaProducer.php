@@ -46,7 +46,7 @@ class RdKafkaProducer implements Producer
         // Headers in payload are maintained for backwards compatibility with apps that might run on lower phprdkafka version
         if (method_exists($topic, 'producev')) {
 
-            // Phprdkafka < 3.1.0 will fail calling `producev` on librdkafka 1.0.0 causing segfault
+            // Phprdkafka <= 3.1.0 will fail calling `producev` on librdkafka 1.0.0 causing segfault
             if (version_compare($this->getLibrdKafkaVersion(), '1.0.0', '>=')
                 && version_compare(phpversion('rdkafka'), '3.1.0', '<=')) {
                 trigger_error('Phprdkafka < 3.1.0 is incompatible with librdkafka 1.0.0 when calling `producev`', E_USER_WARNING);
