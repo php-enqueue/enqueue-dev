@@ -142,8 +142,8 @@ class RdKafkaConsumer implements Consumer
     }
 
     /**
-     * @param Message $message
-     * @param bool    $requeue
+     * @param RdKafkaMessage $message
+     * @param bool           $requeue
      */
     public function reject(Message $message, bool $requeue = false): void
     {
