@@ -21,6 +21,12 @@ composer install
 
 Once you did it you can work on a feature or bug fix.
 
+If you need, you can also use composer scripts to run code linting and static analysis:
+* For code style linting, run `composer run cs-lint`. Optionally add file names: 
+`composer run cs-lint pkg/null/NullTopic.php` for example.
+* You can also fix your code style with `composer run cs-fix`.
+* Static code analysis can be run using `composer run phpstan`. As above, you can pass specific files.
+
 ## Testing
 
 To run tests
