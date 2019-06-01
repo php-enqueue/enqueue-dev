@@ -56,6 +56,19 @@ class RdKafkaContext implements Context
         $this->setSerializer(new JsonSerializer());
     }
 
+    public static function getLibrdKafkaVersion(): string
+    {
+        if (!defined('RD_KAFKA_VERSION')) {
+            throw new \RuntimeException('RD_KAFKA_VERSION constant is not defined. Phprdkafka is probably not installed');
+        }
+
+        $major = (RD_KAFKA_VERSION & 0xFF000000) >> 24;
+        $minor = (RD_KAFKA_VERSION & 0x00FF0000) >> 16;
+        $patch = (RD_KAFKA_VERSION & 0x0000FF00) >> 8;
+
+        return "$major.$minor.$patch";
+    }
+
     /**
      * @return RdKafkaMessage
      */
