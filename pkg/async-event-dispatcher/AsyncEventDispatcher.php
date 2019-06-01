@@ -24,6 +24,10 @@ class AsyncEventDispatcher extends EventDispatcher
      */
     public function __construct(EventDispatcherInterface $trueEventDispatcher, AsyncListener $asyncListener)
     {
+        if (method_exists(parent::class, '__construct')) {
+            parent::__construct();
+        }
+
         $this->trueEventDispatcher = $trueEventDispatcher;
         $this->asyncListener = $asyncListener;
     }

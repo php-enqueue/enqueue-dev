@@ -131,7 +131,7 @@ function runPhpstan()
     $returnCode = null;
 
     exec(sprintf(
-        'docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon %s',
+        'docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -c phpstan.neon %s',
         implode(' ', getFilesToFix())
     ), $output, $returnCode);
 
