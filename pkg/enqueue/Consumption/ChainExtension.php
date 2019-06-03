@@ -117,7 +117,7 @@ class ChainExtension implements ExtensionInterface
             }
 
             if (false == $extensionValid) {
-                throw new \LogicException('Invalid extension given');
+                throw new \LogicException(sprintf('Invalid extension given %s', get_class($extension)));
             }
         });
     }
