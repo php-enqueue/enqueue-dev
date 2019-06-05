@@ -22,8 +22,7 @@ Other commands could be useful during debugging (like `enqueue:topics`) or deplo
 * [enqueue:consume](#enqueueconsume)
 * [enqueue:produce](#enqueueproduce)
 * [enqueue:setup-broker](#enqueuesetup-broker)
-* [enqueue:queues](#enqueuequeues)
-* [enqueue:topics](#enqueuetopics)
+* [enqueue:routes](#enqueueroutes)
 * [enqueue:transport:consume](#enqueuetransportconsume)
 
 ## enqueue:consume
