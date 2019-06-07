@@ -69,7 +69,7 @@ class SqsProducerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getSqsClient')
-            ->will($this->returnValue($client))
+            ->willReturn($client)
         ;
 
         $destination = new SqsDestination('queue-name');
@@ -116,7 +116,7 @@ class SqsProducerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getSqsClient')
-            ->will($this->returnValue($client))
+            ->willReturn($client)
         ;
 
         $destination = new SqsDestination('queue-name');
@@ -160,7 +160,7 @@ class SqsProducerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getSqsClient')
-            ->will($this->returnValue($client))
+            ->willReturn($client)
         ;
 
         $destination = new SqsDestination('queue-name');
@@ -206,7 +206,7 @@ class SqsProducerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getSqsClient')
-            ->will($this->returnValue($client))
+            ->willReturn($client)
         ;
 
         $destination = new SqsDestination('queue-name');

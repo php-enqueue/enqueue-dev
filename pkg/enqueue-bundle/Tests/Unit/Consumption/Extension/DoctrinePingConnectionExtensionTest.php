@@ -26,12 +26,12 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $connection
             ->expects($this->once())
             ->method('isConnected')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
         $connection
             ->expects($this->once())
             ->method('ping')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
         $connection
             ->expects($this->never())
@@ -52,7 +52,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $registry
             ->expects($this->once())
             ->method('getConnections')
-            ->will($this->returnValue([$connection]))
+            ->willReturn([$connection])
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
@@ -65,12 +65,12 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $connection
             ->expects($this->once())
             ->method('isConnected')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
         $connection
             ->expects($this->once())
             ->method('ping')
-            ->will($this->returnValue(false))
+            ->willReturn(false)
         ;
         $connection
             ->expects($this->once())
@@ -97,7 +97,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $registry
             ->expects($this->once())
             ->method('getConnections')
-            ->will($this->returnValue([$connection]))
+            ->willReturn([$connection])
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
@@ -110,7 +110,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $connection1
             ->expects($this->once())
             ->method('isConnected')
-            ->will($this->returnValue(false))
+            ->willReturn(false)
         ;
         $connection1
             ->expects($this->never())
@@ -122,12 +122,12 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $connection2
             ->expects($this->once())
             ->method('isConnected')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
         $connection2
             ->expects($this->once())
             ->method('ping')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $context = $this->createContext();
@@ -140,7 +140,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         $registry
             ->expects($this->once())
             ->method('getConnections')
-            ->will($this->returnValue([$connection1, $connection2]))
+            ->willReturn([$connection1, $connection2])
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);

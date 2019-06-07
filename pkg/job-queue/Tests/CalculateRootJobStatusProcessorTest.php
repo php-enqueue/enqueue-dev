@@ -103,7 +103,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('12345')
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $logger = $this->createLoggerMock();
@@ -146,7 +146,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('12345')
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $logger = $this->createLoggerMock();
@@ -156,7 +156,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('calculate')
             ->with($this->identicalTo($job))
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $producer = $this->createProducerMock();

@@ -39,7 +39,7 @@ class DelegateProcessorTest extends TestCase
             ->expects($this->once())
             ->method('process')
             ->with($this->identicalTo($message), $this->identicalTo($session))
-            ->will($this->returnValue('return-value'))
+            ->willReturn('return-value')
         ;
 
         $processorRegistry = $this->createProcessorRegistryMock();
@@ -47,7 +47,7 @@ class DelegateProcessorTest extends TestCase
             ->expects($this->once())
             ->method('get')
             ->with('processor-name')
-            ->will($this->returnValue($processor))
+            ->willReturn($processor)
         ;
 
         $processor = new DelegateProcessor($processorRegistry);

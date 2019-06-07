@@ -19,13 +19,13 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findOrCreateRootJob')
             ->with('owner-id', 'job-name', true)
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
             ->with('job-name')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
 
         $expChild = null;
@@ -57,12 +57,12 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateRootJob')
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->once())
@@ -85,12 +85,12 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateRootJob')
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->never())
@@ -111,12 +111,12 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateRootJob')
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->once())
@@ -142,12 +142,12 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateRootJob')
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->never())
@@ -173,12 +173,12 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateRootJob')
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->never())
@@ -205,12 +205,12 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateRootJob')
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->never())
@@ -239,12 +239,12 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateRootJob')
-            ->will($this->returnValue($root))
+            ->willReturn($root)
         ;
         $jobProcessor
             ->expects($this->once())
             ->method('findOrCreateChildJob')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->never())
@@ -271,7 +271,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findOrCreateChildJob')
             ->with('job-name', $this->identicalTo($root))
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
 
         $expRunner = null;
@@ -296,7 +296,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('job-id')
-            ->will($this->returnValue(null))
+            ->willReturn(null)
         ;
 
         $jobRunner = new JobRunner($jobProcessor);
@@ -318,7 +318,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('job-id')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
 
         $expRunner = null;
@@ -348,7 +348,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('job-id')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->once())
@@ -373,7 +373,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('job-id')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->once())
@@ -402,7 +402,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('job-id')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->never())
@@ -432,7 +432,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with('job-id')
-            ->will($this->returnValue($child))
+            ->willReturn($child)
         ;
         $jobProcessor
             ->expects($this->never())

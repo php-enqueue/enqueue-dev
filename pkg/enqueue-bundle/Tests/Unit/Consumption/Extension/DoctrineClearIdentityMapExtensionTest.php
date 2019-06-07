@@ -32,7 +32,7 @@ class DoctrineClearIdentityMapExtensionTest extends TestCase
         $registry
             ->expects($this->once())
             ->method('getManagers')
-            ->will($this->returnValue(['manager-name' => $manager]))
+            ->willReturn(['manager-name' => $manager])
         ;
 
         $context = $this->createContext();

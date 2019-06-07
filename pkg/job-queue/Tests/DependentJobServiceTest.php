@@ -38,11 +38,11 @@ class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
 
                 return true;
-            }))
+            })
         ;
 
         $context = new DependentJobContext($job);

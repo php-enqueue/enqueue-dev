@@ -61,9 +61,9 @@ class AmqpProducerTest extends TestCase
             ->expects($this->once())
             ->method('basic_publish')
             ->with($this->isInstanceOf(LibAMQPMessage::class), 'topic', 'routing-key')
-            ->will($this->returnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
+            ->willReturnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
                 $amqpMessage = $message;
-            }))
+            })
         ;
 
         $topic = new AmqpTopic('topic');
@@ -86,9 +86,9 @@ class AmqpProducerTest extends TestCase
             ->expects($this->once())
             ->method('basic_publish')
             ->with($this->isInstanceOf(LibAMQPMessage::class), $this->isEmpty(), 'queue')
-            ->will($this->returnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
+            ->willReturnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
                 $amqpMessage = $message;
-            }))
+            })
         ;
 
         $queue = new AmqpQueue('queue');
@@ -107,9 +107,9 @@ class AmqpProducerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_publish')
-            ->will($this->returnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
+            ->willReturnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
                 $amqpMessage = $message;
-            }))
+            })
         ;
 
         $producer = new AmqpProducer($channel, $this->createContextMock());
@@ -126,9 +126,9 @@ class AmqpProducerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_publish')
-            ->will($this->returnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
+            ->willReturnCallback(function (LibAMQPMessage $message) use (&$amqpMessage) {
                 $amqpMessage = $message;
-            }))
+            })
         ;
 
         $producer = new AmqpProducer($channel, $this->createContextMock());
