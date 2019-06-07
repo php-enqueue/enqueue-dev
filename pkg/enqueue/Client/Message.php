@@ -88,7 +88,7 @@ class Message
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getBody()
     {
@@ -96,7 +96,7 @@ class Message
     }
 
     /**
-     * @param null|string|int|float|array|\JsonSerializable $body
+     * @param string|int|float|array|\JsonSerializable|null $body
      */
     public function setBody($body)
     {

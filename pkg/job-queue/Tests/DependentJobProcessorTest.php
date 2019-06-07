@@ -84,7 +84,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -115,7 +115,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -151,7 +151,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -194,7 +194,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -239,7 +239,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $expectedMessage = null;
@@ -248,9 +248,9 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('sendEvent')
             ->with('topic-name', $this->isInstanceOf(Message::class))
-            ->will($this->returnCallback(function ($topic, Message $message) use (&$expectedMessage) {
+            ->willReturnCallback(function ($topic, Message $message) use (&$expectedMessage) {
                 $expectedMessage = $message;
-            }))
+            })
         ;
 
         $logger = $this->createLoggerMock();
@@ -287,7 +287,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $expectedMessage = null;
@@ -296,9 +296,9 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('sendEvent')
             ->with('topic-name', $this->isInstanceOf(Message::class))
-            ->will($this->returnCallback(function ($topic, Message $message) use (&$expectedMessage) {
+            ->willReturnCallback(function ($topic, Message $message) use (&$expectedMessage) {
                 $expectedMessage = $message;
-            }))
+            })
         ;
 
         $logger = $this->createLoggerMock();

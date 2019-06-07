@@ -13,8 +13,8 @@ use Interop\Queue\Queue;
 
 class DbalConsumer implements Consumer
 {
-    use ConsumerPollingTrait,
-        DbalConsumerHelperTrait;
+    use ConsumerPollingTrait;
+    use DbalConsumerHelperTrait;
 
     /**
      * @var DbalContext

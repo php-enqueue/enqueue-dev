@@ -79,12 +79,12 @@ class DbalConsumerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getDbalConnection')
-            ->will($this->returnValue($dbal))
+            ->willReturn($dbal)
         ;
         $context
             ->expects($this->once())
             ->method('getTableName')
-            ->will($this->returnValue('some-table-name'))
+            ->willReturn('some-table-name')
         ;
 
         $consumer = new DbalConsumer($context, $queue);
@@ -150,12 +150,12 @@ class DbalConsumerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getDbalConnection')
-            ->will($this->returnValue($dbal))
+            ->willReturn($dbal)
         ;
         $context
             ->expects($this->once())
             ->method('getTableName')
-            ->will($this->returnValue('some-table-name'))
+            ->willReturn('some-table-name')
         ;
 
         $consumer = new DbalConsumer($context, $queue);
@@ -182,7 +182,7 @@ class DbalConsumerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('createProducer')
-            ->will($this->returnValue($producerMock))
+            ->willReturn($producerMock)
         ;
 
         $consumer = new DbalConsumer($context, $queue);

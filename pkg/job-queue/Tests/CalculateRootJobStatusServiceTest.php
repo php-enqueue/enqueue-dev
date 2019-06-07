@@ -60,9 +60,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -92,9 +92,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -120,9 +120,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $em
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($em);
@@ -146,9 +146,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -179,9 +179,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -212,9 +212,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -245,9 +245,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -278,9 +278,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -311,9 +311,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);
@@ -344,9 +344,9 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $case = new CalculateRootJobStatusService($storage);

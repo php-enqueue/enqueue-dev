@@ -76,7 +76,7 @@ final class MessageResult
     }
 
     /**
-     * @return Result|null|object|string
+     * @return Result|object|string|null
      */
     public function getResult()
     {

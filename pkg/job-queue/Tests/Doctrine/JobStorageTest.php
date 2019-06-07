@@ -25,7 +25,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -33,12 +33,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -46,7 +46,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -65,7 +65,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -73,12 +73,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(false))
+            ->willReturn(false)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -86,12 +86,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->any())
             ->method('resetManager')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
 
         $storage = new JobStorage($doctrine, 'entity-class', 'unique_table');
@@ -106,7 +106,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue('expected\class\name'))
+            ->willReturn('expected\class\name')
         ;
 
         $em = $this->createEntityManagerMock();
@@ -114,12 +114,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -127,7 +127,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -156,7 +156,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -164,7 +164,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->once())
@@ -182,7 +182,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -190,7 +190,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -210,7 +210,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -218,7 +218,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->never())
@@ -236,7 +236,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -244,7 +244,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -267,16 +267,16 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
 
         $connection = $this->createConnectionMock();
         $connection
             ->expects($this->once())
             ->method('transactional')
-            ->will($this->returnCallback(function ($callback) use ($connection) {
+            ->willReturnCallback(function ($callback) use ($connection) {
                 $callback($connection);
-            }))
+            })
         ;
         $connection
             ->expects($this->once())
@@ -289,17 +289,17 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->once())
             ->method('getConnection')
-            ->will($this->returnValue($connection))
+            ->willReturn($connection)
         ;
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -307,7 +307,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -329,7 +329,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -337,12 +337,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -350,7 +350,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -378,13 +378,13 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
         $repository
             ->expects($this->once())
             ->method('find')
             ->with(12345, LockMode::PESSIMISTIC_WRITE)
-            ->will($this->returnValue($lockedJob))
+            ->willReturn($lockedJob)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -392,19 +392,19 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->once())
             ->method('transactional')
-            ->will($this->returnCallback(function ($callback) use ($em) {
+            ->willReturnCallback(function ($callback) use ($em) {
                 $callback($em);
-            }))
+            })
         ;
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -412,7 +412,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -439,9 +439,9 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $connection
             ->expects($this->once())
             ->method('transactional')
-            ->will($this->returnCallback(function ($callback) use ($connection) {
+            ->willReturnCallback(function ($callback) use ($connection) {
                 $callback($connection);
-            }))
+            })
         ;
         $connection
             ->expects($this->at(0))
@@ -458,7 +458,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -466,12 +466,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->once())
             ->method('getConnection')
-            ->will($this->returnValue($connection))
+            ->willReturn($connection)
         ;
         $em
             ->expects($this->once())
@@ -484,7 +484,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -492,7 +492,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())
@@ -528,12 +528,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $repository
             ->expects($this->once())
             ->method('getClassName')
-            ->will($this->returnValue(Job::class))
+            ->willReturn(Job::class)
         ;
         $repository
             ->expects($this->once())
             ->method('find')
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $em = $this->createEntityManagerMock();
@@ -541,24 +541,24 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getRepository')
             ->with('entity-class')
-            ->will($this->returnValue($repository))
+            ->willReturn($repository)
         ;
         $em
             ->expects($this->once())
             ->method('transactional')
-            ->will($this->returnCallback(function ($callback) use ($em) {
+            ->willReturnCallback(function ($callback) use ($em) {
                 $callback($em);
-            }))
+            })
         ;
         $em
             ->expects($this->exactly(2))
             ->method('getConnection')
-            ->will($this->returnValue($connection))
+            ->willReturn($connection)
         ;
         $em
             ->expects($this->any())
             ->method('isOpen')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
 
         $doctrine = $this->createDoctrineMock();
@@ -566,7 +566,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getManagerForClass')
             ->with('entity-class')
-            ->will($this->returnValue($em))
+            ->willReturn($em)
         ;
         $doctrine
             ->expects($this->never())

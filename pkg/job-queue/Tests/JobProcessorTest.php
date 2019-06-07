@@ -43,7 +43,7 @@ class JobProcessorTest extends TestCase
         $storage
             ->expects($this->once())
             ->method('createJob')
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
         $storage
             ->expects($this->once())
@@ -72,7 +72,7 @@ class JobProcessorTest extends TestCase
         $storage
             ->expects($this->once())
             ->method('createJob')
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
         $storage
             ->expects($this->once())
@@ -84,7 +84,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findRootJobByOwnerIdAndJobName')
             ->with('owner-id', 'job-name')
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
@@ -121,13 +121,13 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findChildJobByName')
             ->with('job-name', $this->identicalTo($job))
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
         $storage
             ->expects($this->once())
             ->method('findJobById')
             ->with(123)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
@@ -146,7 +146,7 @@ class JobProcessorTest extends TestCase
         $storage
             ->expects($this->once())
             ->method('createJob')
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
         $storage
             ->expects($this->once())
@@ -157,13 +157,13 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findChildJobByName')
             ->with('job-name', $this->identicalTo($job))
-            ->will($this->returnValue(null))
+            ->willReturn(null)
         ;
         $storage
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -210,7 +210,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
@@ -240,7 +240,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -280,7 +280,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
@@ -310,7 +310,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -350,7 +350,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
@@ -380,7 +380,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -420,7 +420,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
@@ -450,7 +450,7 @@ class JobProcessorTest extends TestCase
             ->expects($this->once())
             ->method('findJobById')
             ->with(12345)
-            ->will($this->returnValue($job))
+            ->willReturn($job)
         ;
 
         $producer = $this->createProducerMock();
@@ -505,9 +505,9 @@ class JobProcessorTest extends TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
@@ -526,9 +526,9 @@ class JobProcessorTest extends TestCase
         $storage
             ->expects($this->once())
             ->method('saveJob')
-            ->will($this->returnCallback(function (Job $job, $callback) {
+            ->willReturnCallback(function (Job $job, $callback) {
                 $callback($job);
-            }))
+            })
         ;
 
         $processor = new JobProcessor($storage, $this->createProducerMock());

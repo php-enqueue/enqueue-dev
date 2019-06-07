@@ -104,7 +104,7 @@ class MongodbConsumerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('createProducer')
-            ->will($this->returnValue($producerMock))
+            ->willReturn($producerMock)
         ;
 
         $consumer = new MongodbConsumer($context, $queue);

@@ -40,7 +40,7 @@ class JsonSerializerTest extends TestCase
     {
         $serializer = new JsonSerializer();
 
-        $resource = fopen(__FILE__, 'rb');
+        $resource = fopen(__FILE__, 'r');
 
         //guard
         $this->assertInternalType('resource', $resource);

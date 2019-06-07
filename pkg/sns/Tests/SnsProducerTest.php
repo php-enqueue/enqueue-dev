@@ -72,7 +72,7 @@ class SnsProducerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getSnsClient')
-            ->will($this->returnValue($client))
+            ->willReturn($client)
         ;
 
         $message = new SnsMessage('foo');
@@ -117,7 +117,7 @@ class SnsProducerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getSnsClient')
-            ->will($this->returnValue($client))
+            ->willReturn($client)
         ;
 
         $message = new SnsMessage('theBody', ['key' => 'value'], ['hkey' => 'hvaleu']);
@@ -137,7 +137,7 @@ class SnsProducerTest extends TestCase
         $context
             ->expects($this->once())
             ->method('getSnsClient')
-            ->will($this->returnValue($client));
+            ->willReturn($client);
 
         $expectedArgument = [
             'Message' => 'message',

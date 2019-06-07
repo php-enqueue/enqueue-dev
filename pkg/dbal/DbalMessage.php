@@ -49,7 +49,7 @@ class DbalMessage implements Message
     private $timeToLive;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $deliveryId;
 
