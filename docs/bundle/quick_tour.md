@@ -58,7 +58,14 @@ class Kernel extends BaseKernel
 
 ## Usage
 
-First, you have to configure a transport layer and set one to be default.
+First, you have to configure a transport layer.
+You can optionally configure multiple transports if you want to. One of them will automatically become the default,
+based on the following:
+1. If there is a transport named `default`, then it will become the default.
+2. First one specified otherwise.
+
+Default transport's services will be available to you in the usual Symfony container under their respective class
+interfaces (see below)
 
 ```yaml
 # app/config/config.yml
@@ -67,26 +74,47 @@ enqueue:
     default:
         transport: "amqp:"
         client: ~
+    some_other_transport:
+        transport: "amqp:"
+        client: ~
 ```
 
-Once you configured everything you can start producing messages:
+Once you configured everything you can start producing messages.
+As stated previously, default transport services are available in container. Here we are using `ProducerInterface` to
+produce message to the `default` transport.
 
 ```php
 <?php
+use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 
 /** @var ProducerInterface $producer **/
 $producer = $container->get(ProducerInterface::class);
 
+// If you want a different producer than default (for example the other specified in sample above) then use
+// $producer = $container->get('enqueue.client.some_other_transport.producer');
 
 // send event to many consumers
 $producer->sendEvent('aFooTopic', 'Something has happened');
+// You can also pass an instance of Enqueue\Client\Message as second argument if you need more flexibility.
+$properties = [];
+$headers = [];
+$message = new Message('Message body', $properties, $headers);
+$producer->sendEvent('aBarTopic', $message);
 
 // send command to ONE consumer
 $producer->sendCommand('aProcessorName', 'Something has happened');
 ```
 
-To consume messages you have to first create a message processor:
+To consume messages you have to first create a message processor.
+
+Example below shows how to create a Processor that will receive messages from `aFooTopic` topic (and only that one).
+It assumes that you're using default Symfony services configuration and this class is
+[autoconfigured](https://symfony.com/doc/current/service_container.html#the-autoconfigure-option). Otherwise you'll
+have to tag it manually. This is especially true if you're using multiple transports: if left autoconfigured, processor
+will be attached to the default transport only.
+
+Note: Topic in enqueue and topic on some transports (for example Kafka) are two different things.
 
 ```php
 <?php
@@ -113,13 +141,16 @@ class FooProcessor implements Processor, TopicSubscriberInterface
 }
 ```
 
-Register it as a container service and subscribe to the topic:
+Register it as a container service. Subscribe it to the topic if you are not using autowiring.
 
 ```yaml
 foo_message_processor:
     class: 'FooProcessor'
     tags:
         - { name: 'enqueue.topic_subscriber' }
+        # Use the variant below to attach to a specific client
+        # Also note that if you don't disable autoconfigure, above tag will be applied automatically for default client
+        # - { name: 'enqueue.topic_subsciber', client: 'some_other_transport' }
 ```
 
 Now you can start consuming messages:
@@ -127,6 +158,13 @@ Now you can start consuming messages:
 ```bash
 $ ./bin/console enqueue:consume --setup-broker -vvv
 ```
+
+You can select a specific client for consumption:
+
+```bash
+$ ./bin/console enqueue:consume --setup-broker --client="some_other_transport" -vvv
+```
+
 
 _**Note**: Add -vvv to find out what is going while you are consuming messages. There is a lot of valuable debug info there._
 
