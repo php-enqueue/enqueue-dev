@@ -113,11 +113,11 @@ class DbalContext implements Context
         $consumer = new DbalConsumer($this, $destination);
 
         if (isset($this->config['polling_interval'])) {
-            $consumer->setPollingInterval($this->config['polling_interval']);
+            $consumer->setPollingInterval((int) $this->config['polling_interval']);
         }
 
         if (isset($this->config['redelivery_delay'])) {
-            $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
+            $consumer->setRedeliveryDelay((int) $this->config['redelivery_delay']);
         }
 
         return $consumer;
