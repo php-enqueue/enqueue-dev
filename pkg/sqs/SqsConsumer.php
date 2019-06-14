@@ -188,6 +188,10 @@ class SqsConsumer implements Consumer
         $message->setBody($sqsMessage['Body']);
         $message->setReceiptHandle($sqsMessage['ReceiptHandle']);
 
+        if (isset($sqsMessage['Attributes'])) {
+            $message->setAttributes($sqsMessage['Attributes']);
+        }
+
         if (isset($sqsMessage['Attributes']['ApproximateReceiveCount'])) {
             $message->setRedelivered(((int) $sqsMessage['Attributes']['ApproximateReceiveCount']) > 1);
         }
