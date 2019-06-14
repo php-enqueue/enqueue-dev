@@ -16,6 +16,7 @@ class SqsMessageTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('', $message->getBody());
         $this->assertSame([], $message->getProperties());
         $this->assertSame([], $message->getHeaders());
+        $this->assertSame([], $message->getAttributes());
     }
 
     public function testCouldBeConstructedWithOptionalArguments()
@@ -89,5 +90,19 @@ class SqsMessageTest extends \PHPUnit\Framework\TestCase
         $message->setReceiptHandle('theId');
 
         $this->assertSame('theId', $message->getReceiptHandle());
+    }
+
+    public function testShouldAllowSettingAndGettingAttributes()
+    {
+        $message = new SqsMessage();
+        $message->setAttributes($attributes = [
+            'SenderId' => 'AROAX5IAWYILCTYIS3OZ5:foo@bar.com',
+            'ApproximateFirstReceiveTimestamp' => '1560512269481',
+            'ApproximateReceiveCount' => '2',
+            'SentTimestamp' => '1560512260079',
+        ]);
+
+        $this->assertSame($attributes, $message->getAttributes());
+        $this->assertSame($attributes['SenderId'], $message->getAttribute('SenderId'));
     }
 }
