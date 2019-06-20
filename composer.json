@@ -3,6 +3,11 @@
   "type": "project",
   "minimum-stability": "beta",
   "homepage": "https://enqueue.forma-pro.com/",
+  "scripts": {
+    "cs-fix": "bin/php-cs-fixer fix --config=.php_cs.php",
+    "cs-lint": "bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff",
+    "phpstan": "bin/phpstan analyse --memory-limit=512M -c phpstan.neon"
+  },
   "require": {
     "php": "^7.1.3",
 
