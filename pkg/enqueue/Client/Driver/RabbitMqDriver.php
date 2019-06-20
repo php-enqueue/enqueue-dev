@@ -19,7 +19,7 @@ class RabbitMqDriver extends AmqpDriver
 
         // we use isLazy to avoid collisions with 'lazy' which
         // is already used to meansomething else
-        if($config->getTransportOption('isLazy') == true) {
+        if (true == $config->getTransportOption('isLazy')) {
             $queue->setArguments(['x-queue-mode' => 'lazy']);
         }
 
