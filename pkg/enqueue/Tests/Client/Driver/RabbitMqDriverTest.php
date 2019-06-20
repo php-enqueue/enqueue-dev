@@ -62,6 +62,33 @@ class RabbitMqDriverTest extends TestCase
         $this->assertSame(['x-max-priority' => 4], $queue->getArguments());
     }
 
+    public function testShouldCreateLazyQueueifisLazySetinConfig()
+    {
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('createQueue')
+            ->willReturn($this->createQueue('aName'))
+        ;
+
+        $driver = $this->createDriver(
+            $context,
+            // presumably we pass in some isLazy check here
+            $this->createDummyConfig(),
+            new RouteCollection([])
+        );
+
+        /** @var AmqpQueue $queue */
+        $queue = $driver->createQueue('aName');
+
+        $this->assertSame([
+            'x-max-priority' => 4,
+            'x-queue-mode' => 'lazy',
+            ],
+            $queue->getArguments()
+        );
+    }
+
     protected function createDriver(...$args): DriverInterface
     {
         return new RabbitMqDriver(...$args);
