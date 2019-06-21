@@ -16,16 +16,14 @@ class RabbitMqDriver extends AmqpDriver
         $queue = parent::doCreateQueue($transportQueueName);
 
         $driverOptions = $config->getDriverOptions();
-        $islazyQueue = false;
-        $lazyQueueArray = array_filter($driverOptions, function ($arr) {
-            return array_key_exists('rabbit_mq_lazy_queues', $arr);
-        });
+        $lazyQueueArray = $driverOptions['rabbit_mq_lazy_queues'] ?? [];
+        $isLazyQueue = in_array($transportQueueName, $lazyQueueArray, true);
 
-        $islazyQueue = array_key_exists($transportQueueName, $lazyQueueArray[0]['rabbit_mq_lazy_queues']);
-
-        $queue->setArguments(['x-max-priority' => 4]);
-        if ($islazyQueue) {
-            $queue->setArguments(['x-queue-mode' => 'lazy']);
+        if (true == $isLazyQueue) {
+            $queue->setArguments(
+                ['x-queue-mode' => 'lazy', 'x-max-priority' => 4]);
+        } else {
+            $queue->setArguments(['x-max-priority' => 4]);
         }
 
         return $queue;

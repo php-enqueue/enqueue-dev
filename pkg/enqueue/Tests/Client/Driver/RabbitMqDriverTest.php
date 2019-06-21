@@ -68,25 +68,35 @@ class RabbitMqDriverTest extends TestCase
         $context
             ->expects($this->once())
             ->method('createQueue')
-            ->willReturn($this->createQueue('aName'))
+            ->willReturn($this->createQueue('aname'))
         ;
+
+        $config = Config::create(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            [
+                'dsn' => getenv('RABBITMQ_AMQP_DSN'),
+            ],
+            ['rabbit_mq_lazy_queues' => ['aname']]
+        );
 
         $driver = $this->createDriver(
             $context,
             // presumably we pass in some isLazy check here
-            $this->createDummyConfig(),
+            $config,
             new RouteCollection([])
         );
 
         /** @var AmqpQueue $queue */
-        $queue = $driver->createQueue('aName');
-
-        $this->assertSame([
-            'x-max-priority' => 4,
-            'x-queue-mode' => 'lazy',
-            ],
-            $queue->getArguments()
-        );
+        $queue = $driver->createQueue('aname');
+        $queueArguments = $queue->getArguments();
+        $this->assertSame($queueArguments['x-queue-mode'], 'lazy');
+        $this->assertSame($queueArguments['x-max-priority'], 4);
     }
 
     protected function createDriver(...$args): DriverInterface
