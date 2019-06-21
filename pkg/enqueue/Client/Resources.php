@@ -94,6 +94,12 @@ final class Resources
                 'packages' => ['enqueue/enqueue', 'enqueue/sqs'],
             ];
             $map[] = [
+                'schemes' => ['sns'],
+                'driverClass' => GenericDriver::class,
+                'requiredSchemeExtensions' => [],
+                'packages' => ['enqueue/enqueue', 'enqueue/sns'],
+            ];
+            $map[] = [
                 'schemes' => ['snsqs'],
                 'driverClass' => SnsQsDriver::class,
                 'requiredSchemeExtensions' => [],
