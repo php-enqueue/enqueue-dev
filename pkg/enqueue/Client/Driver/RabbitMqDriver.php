@@ -19,11 +19,10 @@ class RabbitMqDriver extends AmqpDriver
         $lazyQueueArray = $driverOptions['rabbit_mq_lazy_queues'] ?? [];
         $isLazyQueue = in_array($transportQueueName, $lazyQueueArray, true);
 
-        if (true == $isLazyQueue) {
-            $queue->setArguments(
-                ['x-queue-mode' => 'lazy', 'x-max-priority' => 4]);
-        } else {
-            $queue->setArguments(['x-max-priority' => 4]);
+        $queue->setArguments(['x-max-priority' => 4]);
+
+        if ($isLazyQueue) {
+            $queue->setArgument('x-queue-mode', 'lazy');
         }
 
         return $queue;
