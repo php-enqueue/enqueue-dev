@@ -66,10 +66,12 @@ class RabbitMqDriverTest extends TestCase
     {
         $context = $this->createContextMock();
         $context
-            ->expects($this->once())
+            ->expects($this->exactly(2)) // times
             ->method('createQueue')
-            ->willReturn($this->createQueue('aname'))
-        ;
+            ->will($this->onConsecutiveCalls(
+                $this->createQueue('aname'),
+                $this->createQueue('bname')
+            ));
 
         $config = Config::create(
             null,
@@ -96,38 +98,7 @@ class RabbitMqDriverTest extends TestCase
         $queueArguments = $queue->getArguments();
         $this->assertSame($queueArguments['x-queue-mode'], 'lazy');
         $this->assertSame($queueArguments['x-max-priority'], 4);
-    }
 
-    public function testShouldNotCreateLazyQueueIfNotSetAsLazyInConfig()
-    {
-        $context = $this->createContextMock();
-        $context
-            ->expects($this->once())
-            ->method('createQueue')
-            ->willReturn($this->createQueue('bname'))
-        ;
-
-        $config = Config::create(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            [
-                'dsn' => getenv('RABBITMQ_AMQP_DSN'),
-            ],
-            ['rabbit_mq_lazy_queues' => []]
-        );
-
-        $driver = $this->createDriver(
-            $context,
-            $config,
-            new RouteCollection([])
-        );
-
-        /** @var AmqpQueue $queue */
         $queue = $driver->createQueue('bname');
         $queueArguments = $queue->getArguments();
         $this->assertFalse(isset($queueArguments['x-queue-mode']));
