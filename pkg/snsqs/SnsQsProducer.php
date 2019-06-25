@@ -77,17 +77,28 @@ class SnsQsProducer implements Producer
         }
     }
 
+    /**
+     * Delivery delay is supported by SQSProducer.
+     *
+     * @param int|null $deliveryDelay
+     *
+     * @return Producer
+     */
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
-        $this->getSnsProducer()->setDeliveryDelay($deliveryDelay);
         $this->getSqsProducer()->setDeliveryDelay($deliveryDelay);
 
         return $this;
     }
 
+    /**
+     * Delivery delay is supported by SQSProducer.
+     *
+     * @return int|null
+     */
     public function getDeliveryDelay(): ?int
     {
-        return $this->getSnsProducer()->getDeliveryDelay();
+        return $this->getSqsProducer()->getDeliveryDelay();
     }
 
     public function setPriority(int $priority = null): Producer
