@@ -1,5 +1,38 @@
 # Change Log
 
+## [0.9.12](https://github.com/php-enqueue/enqueue-dev/tree/0.9.12) (2019-06-25)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.11...0.9.12)
+
+**Merged pull requests:**
+
+- \[SNSQS\] Fix issue with delay [\#909](https://github.com/php-enqueue/enqueue-dev/pull/909) ([uro](https://github.com/uro))
+- \[SNS\] Fix: Missing throw issue [\#908](https://github.com/php-enqueue/enqueue-dev/pull/908) ([uro](https://github.com/uro))
+- \[SNS\] Adding generic driver for schema SNS [\#906](https://github.com/php-enqueue/enqueue-dev/pull/906) ([Nyholm](https://github.com/Nyholm))
+- \[SQS\] deserialize sqs message attributes [\#901](https://github.com/php-enqueue/enqueue-dev/pull/901) ([bendavies](https://github.com/bendavies))
+- \[SNS\] Updates dependencies requirements for sns\(qs\) [\#899](https://github.com/php-enqueue/enqueue-dev/pull/899) ([xavismeh](https://github.com/xavismeh))
+- Cast int for redelivery\_delay and polling\_interval [\#896](https://github.com/php-enqueue/enqueue-dev/pull/896) ([linh4github](https://github.com/linh4github))
+- \[doc\] Move support note to an external include file [\#892](https://github.com/php-enqueue/enqueue-dev/pull/892) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Allow reading headers from Kafka Message headers [\#891](https://github.com/php-enqueue/enqueue-dev/pull/891) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Fix Code Style in all files [\#889](https://github.com/php-enqueue/enqueue-dev/pull/889) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Move "key concepts" to second position in menu. Fix typos. [\#886](https://github.com/php-enqueue/enqueue-dev/pull/886) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\]\[Bundle\] Expand quick tour for Symfony Bundle [\#885](https://github.com/php-enqueue/enqueue-dev/pull/885) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Fix link for cli commands [\#882](https://github.com/php-enqueue/enqueue-dev/pull/882) ([samnela](https://github.com/samnela))
+- Add composer runnable scripts for PHPStan & PHP-CS [\#881](https://github.com/php-enqueue/enqueue-dev/pull/881) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Fixed quick tour link [\#878](https://github.com/php-enqueue/enqueue-dev/pull/878) ([samnela](https://github.com/samnela))
+- \[doc\] Fix documentation links [\#877](https://github.com/php-enqueue/enqueue-dev/pull/877) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Add editor config settings for IDE's that support it [\#875](https://github.com/php-enqueue/enqueue-dev/pull/875) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Prefer github pages in packages' readme files [\#874](https://github.com/php-enqueue/enqueue-dev/pull/874) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Add Amazon SNS documentation placeholder [\#873](https://github.com/php-enqueue/enqueue-dev/pull/873) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Prefer github pages in readme [\#872](https://github.com/php-enqueue/enqueue-dev/pull/872) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Github Pages - Match topic order from index.md [\#870](https://github.com/php-enqueue/enqueue-dev/pull/870) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Github pages navigation structure [\#869](https://github.com/php-enqueue/enqueue-dev/pull/869) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Fixed the service id for Transport [\#868](https://github.com/php-enqueue/enqueue-dev/pull/868) ([samnela](https://github.com/samnela))
+- \[doc\] Use organization repository for doc hosting [\#867](https://github.com/php-enqueue/enqueue-dev/pull/867) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Switch documentation to github pages [\#866](https://github.com/php-enqueue/enqueue-dev/pull/866) ([Steveb-p](https://github.com/Steveb-p))
+- Prefer stable dependencies for development [\#865](https://github.com/php-enqueue/enqueue-dev/pull/865) ([Steveb-p](https://github.com/Steveb-p))
+- \[doc\] Key concepts [\#863](https://github.com/php-enqueue/enqueue-dev/pull/863) ([sylfabre](https://github.com/sylfabre))
+- \[doc\] Better Symfony doc nav [\#862](https://github.com/php-enqueue/enqueue-dev/pull/862) ([sylfabre](https://github.com/sylfabre))
+
 ## [0.9.11](https://github.com/php-enqueue/enqueue-dev/tree/0.9.11) (2019-05-24)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.10...0.9.11)
 
