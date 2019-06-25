@@ -87,6 +87,8 @@ class SnsProducer implements Producer
     }
 
     /**
+     * @throws DeliveryDelayNotSupportedException
+     *
      * @return SnsProducer
      */
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
@@ -95,7 +97,7 @@ class SnsProducer implements Producer
             return $this;
         }
 
-        DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
+        throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
     }
 
     public function getDeliveryDelay(): ?int
@@ -104,6 +106,8 @@ class SnsProducer implements Producer
     }
 
     /**
+     * @throws PriorityNotSupportedException
+     *
      * @return SnsProducer
      */
     public function setPriority(int $priority = null): Producer
@@ -121,6 +125,8 @@ class SnsProducer implements Producer
     }
 
     /**
+     * @throws TimeToLiveNotSupportedException
+     *
      * @return SnsProducer
      */
     public function setTimeToLive(int $timeToLive = null): Producer

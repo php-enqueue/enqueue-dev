@@ -10,8 +10,11 @@ use Enqueue\Sns\SnsMessage;
 use Enqueue\Sns\SnsProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\PriorityNotSupportedException;
+use Interop\Queue\Exception\TimeToLiveNotSupportedException;
 use Interop\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 
@@ -82,6 +85,48 @@ class SnsProducerTest extends TestCase
 
         $producer = new SnsProducer($context);
         $producer->send($destination, $message);
+    }
+
+    public function testShouldThrowIfsetTimeToLiveIsNotNull()
+    {
+        $this->expectException(TimeToLiveNotSupportedException::class);
+
+        $producer = new SnsProducer($this->createSnsContextMock());
+        $result = $producer->setTimeToLive();
+
+        $this->assertInstanceOf(SnsProducer::class, $result);
+
+        $this->expectExceptionMessage('The provider does not support time to live feature');
+
+        $producer->setTimeToLive(200);
+    }
+
+    public function testShouldThrowIfsetPriorityIsNotNull()
+    {
+        $this->expectException(PriorityNotSupportedException::class);
+
+        $producer = new SnsProducer($this->createSnsContextMock());
+        $result = $producer->setPriority();
+
+        $this->assertInstanceOf(SnsProducer::class, $result);
+
+        $this->expectExceptionMessage('The provider does not support priority feature');
+
+        $producer->setPriority(200);
+    }
+
+    public function testShouldThrowIfsetDeliveryDelayIsNotNull()
+    {
+        $this->expectException(DeliveryDelayNotSupportedException::class);
+
+        $producer = new SnsProducer($this->createSnsContextMock());
+        $result = $producer->setDeliveryDelay();
+
+        $this->assertInstanceOf(SnsProducer::class, $result);
+
+        $this->expectExceptionMessage('The provider does not support delivery delay feature');
+
+        $producer->setDeliveryDelay(200);
     }
 
     public function testShouldPublish()
