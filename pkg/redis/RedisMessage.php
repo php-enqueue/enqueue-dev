@@ -29,12 +29,12 @@ class RedisMessage implements Message
     private $redelivered;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $reservedKey;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $key;
 
@@ -187,7 +187,7 @@ class RedisMessage implements Message
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getReservedKey(): ?string
     {
@@ -195,15 +195,15 @@ class RedisMessage implements Message
     }
 
     /**
-     * @param string $reservedKey
+     * @param string|null $reservedKey
      */
-    public function setReservedKey(string $reservedKey)
+    public function setReservedKey(?string $reservedKey = null): void
     {
         $this->reservedKey = $reservedKey;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey(): ?string
     {
@@ -211,9 +211,9 @@ class RedisMessage implements Message
     }
 
     /**
-     * @param string $key
+     * @param string|null $key
      */
-    public function setKey(string $key): void
+    public function setKey(?string $key = null): void
     {
         $this->key = $key;
     }
