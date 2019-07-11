@@ -73,6 +73,11 @@ final class Configuration implements ConfigurationInterface
         }
 
         return (new ArrayNodeDefinition('async_commands'))
+            ->children()
+                ->booleanNode('enabled')->defaultFalse()->end()
+                ->integerNode('timeout')->min(0)->defaultValue(60)->end()
+                ->scalarNode('prefix')->defaultValue('')->end()
+            ->end()
             ->addDefaultsIfNotSet()
             ->canBeEnabled()
         ;

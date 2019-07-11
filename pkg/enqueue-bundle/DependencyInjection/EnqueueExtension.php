@@ -291,14 +291,18 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
 
     private function loadAsyncCommands(array $config, ContainerBuilder $container): void
     {
-        $configNames = [];
+        $configs = [];
         foreach ($config as $name => $modules) {
             if (false === empty($modules['async_commands']['enabled'])) {
-                $configNames[] = $name;
+                $configs[] = [
+                    'name' => $name,
+                    'timeout' => $modules['async_commands']['timeout'],
+                    'prefix' => $modules['async_commands']['prefix'],
+                ];
             }
         }
 
-        if (false == $configNames) {
+        if (false == $configs) {
             return;
         }
 
@@ -307,7 +311,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         }
 
         $extension = new AsyncCommandExtension();
-        $extension->load(['clients' => $configNames], $container);
+        $extension->load(['clients' => $configs], $container);
     }
 
     private function loadMessageQueueCollector(array $config, ContainerBuilder $container)

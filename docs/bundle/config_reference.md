@@ -62,6 +62,8 @@ enqueue:
             storage_factory_class: ~
         async_commands:
             enabled:              false
+            timeout:              60
+            prefix: ~
         job:
             enabled:              false
         async_events:
