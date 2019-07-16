@@ -6,7 +6,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\RetryableException;
-use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Uuid;
 
@@ -40,7 +39,7 @@ trait DbalConsumerHelperTrait
             ->addOrderBy('priority', 'asc')
             ->addOrderBy('published_at', 'asc')
             ->setParameter('queues', $queues, Connection::PARAM_STR_ARRAY)
-            ->setParameter('delayedUntil', $now, ParameterType::INTEGER)
+            ->setParameter('delayedUntil', $now, Type::INTEGER)
             ->setMaxResults(1);
 
         $update = $this->getConnection()->createQueryBuilder()
