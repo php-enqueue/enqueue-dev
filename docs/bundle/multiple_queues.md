@@ -1,7 +1,7 @@
 ---
 layout: default
 parent: "Symfony bundle"
-title: Functional testing
+title: Multiple queues
 nav_order: 13
 ---
 {% include support.md %}
