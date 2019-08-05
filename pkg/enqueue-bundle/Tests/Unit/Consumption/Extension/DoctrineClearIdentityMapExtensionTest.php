@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
 use Enqueue\Consumption\Context\MessageReceived;
@@ -11,7 +12,6 @@ use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class DoctrineClearIdentityMapExtensionTest extends TestCase
 {
@@ -59,11 +59,11 @@ class DoctrineClearIdentityMapExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RegistryInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
-    protected function createRegistryMock(): RegistryInterface
+    protected function createRegistryMock(): ManagerRegistry
     {
-        return $this->createMock(RegistryInterface::class);
+        return $this->createMock(ManagerRegistry::class);
     }
 
     /**
