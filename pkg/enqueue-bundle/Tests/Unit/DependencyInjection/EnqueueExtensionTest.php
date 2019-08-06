@@ -384,6 +384,42 @@ class EnqueueExtensionTest extends TestCase
         self::assertFalse($container->hasDefinition('enqueue.consumption.doctrine_clear_identity_map_extension'));
     }
 
+    public function testShouldLoadResetServicesExtensionServiceIfEnabled()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'reset_services_extension' => true,
+                ],
+            ],
+        ]], $container);
+
+        self::assertTrue($container->hasDefinition('enqueue.consumption.reset_services_extension'));
+    }
+
+    public function testShouldNotLoadResetServicesExtensionServiceIfDisabled()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'reset_services_extension' => false,
+                ],
+            ],
+        ]], $container);
+
+        self::assertFalse($container->hasDefinition('enqueue.consumption.reset_services_extension'));
+    }
+
     public function testShouldLoadSignalExtensionServiceIfEnabled()
     {
         $container = $this->getContainerBuilder(true);

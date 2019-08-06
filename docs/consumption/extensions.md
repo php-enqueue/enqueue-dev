@@ -22,6 +22,12 @@ It clears Doctrine's identity map after a message is processed. It reduce memory
 
 It test a database connection and if it is lost it does reconnect. Fixes "MySQL has gone away" errors.
 
+## [ResetServicesExtension](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue-bundle/Consumption/Extension/ResetServicesExtension.php)
+
+It resets all services with tag "kernel.reset".
+For example, this includes all monolog loggers if installed and will flush/clean all buffers,
+reset internal state, and get them back to a state in which they can receive log records again.
+
 ## [ReplyExtension](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue/Consumption/Extension/ReplyExtension.php)
 
 It comes with RPC code and simplifies reply logic.
