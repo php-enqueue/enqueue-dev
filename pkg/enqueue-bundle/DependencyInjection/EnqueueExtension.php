@@ -6,6 +6,7 @@ use Enqueue\AsyncCommand\DependencyInjection\AsyncCommandExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
+use Enqueue\Bundle\Consumption\Extension\ResetServicesExtension;
 use Enqueue\Bundle\Profiler\MessageQueueCollector;
 use Enqueue\Client\CommandSubscriberInterface;
 use Enqueue\Client\TopicSubscriberInterface;
@@ -136,6 +137,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         // extensions
         $this->loadDoctrinePingConnectionExtension($config, $container);
         $this->loadDoctrineClearIdentityMapExtension($config, $container);
+        $this->loadResetServicesExtension($config, $container);
         $this->loadSignalExtension($config, $container);
         $this->loadReplyExtension($config, $container);
     }
@@ -210,7 +212,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
         }
 
-        if (false == $configNames) {
+        if ([] === $configNames) {
             return;
         }
 
@@ -233,13 +235,35 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
         }
 
-        if (false == $configNames) {
+        if ([] === $configNames) {
             return;
         }
 
         $extension = $container->register('enqueue.consumption.doctrine_clear_identity_map_extension', DoctrineClearIdentityMapExtension::class)
             ->addArgument(new Reference('doctrine'))
         ;
+
+        foreach ($configNames as $name) {
+            $extension->addTag('enqueue.consumption_extension', ['client' => $name]);
+            $extension->addTag('enqueue.transport.consumption_extension', ['transport' => $name]);
+        }
+    }
+
+    private function loadResetServicesExtension(array $config, ContainerBuilder $container)
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if ($modules['extensions']['reset_services_extension']) {
+                $configNames[] = $name;
+            }
+        }
+
+        if ([] === $configNames) {
+            return;
+        }
+
+        $extension = $container->register('enqueue.consumption.reset_services_extension', ResetServicesExtension::class)
+            ->addArgument(new Reference('services_resetter'));
 
         foreach ($configNames as $name) {
             $extension->addTag('enqueue.consumption_extension', ['client' => $name]);
@@ -256,7 +280,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
         }
 
-        if (false == $configNames) {
+        if ([] === $configNames) {
             return;
         }
 
@@ -277,7 +301,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             }
         }
 
-        if (false == $configNames) {
+        if ([] === $configNames) {
             return;
         }
 

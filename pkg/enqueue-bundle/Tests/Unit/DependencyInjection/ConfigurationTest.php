@@ -336,6 +336,49 @@ class ConfigurationTest extends TestCase
         ], $config);
     }
 
+    public function testResetServicesExtensionShouldBeDisabledByDefault()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => null,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'default' => [
+                'extensions' => [
+                    'reset_services_extension' => false,
+                ],
+            ],
+        ], $config);
+    }
+
+    public function testResetServicesExtensionCouldBeEnabled()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'reset_services_extension' => true,
+                ],
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'default' => [
+                'extensions' => [
+                    'reset_services_extension' => true,
+                ],
+            ],
+        ], $config);
+    }
+
     public function testSignalExtensionShouldBeEnabledIfPcntlExtensionIsLoaded()
     {
         $isLoaded = function_exists('pcntl_signal_dispatch');
