@@ -336,6 +336,49 @@ class ConfigurationTest extends TestCase
         ], $config);
     }
 
+    public function testDoctrineOdmClearIdentityMapExtensionShouldBeDisabledByDefault()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => null,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'default' => [
+                'extensions' => [
+                    'doctrine_odm_clear_identity_map_extension' => false,
+                ],
+            ],
+        ], $config);
+    }
+
+    public function testDoctrineOdmClearIdentityMapExtensionCouldBeEnabled()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_odm_clear_identity_map_extension' => true,
+                ],
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'default' => [
+                'extensions' => [
+                    'doctrine_odm_clear_identity_map_extension' => true,
+                ],
+            ],
+        ], $config);
+    }
+
     public function testResetServicesExtensionShouldBeDisabledByDefault()
     {
         $configuration = new Configuration(true);
