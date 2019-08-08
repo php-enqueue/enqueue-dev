@@ -69,6 +69,7 @@ enqueue:
         extensions:
             doctrine_ping_connection_extension: false
             doctrine_clear_identity_map_extension: false
+            doctrine_odm_clear_identity_map_extension: false
             reset_services_extension: false
             signal_extension:     true
             reply_extension:      true
