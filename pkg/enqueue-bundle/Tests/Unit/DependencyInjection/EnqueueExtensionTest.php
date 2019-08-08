@@ -420,6 +420,42 @@ class EnqueueExtensionTest extends TestCase
         self::assertFalse($container->hasDefinition('enqueue.consumption.doctrine_odm_clear_identity_map_extension'));
     }
 
+    public function testShouldLoadDoctrineClosedEntityManagerExtensionServiceIfEnabled()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_closed_entity_manager_extension' => true,
+                ],
+            ],
+        ]], $container);
+
+        self::assertTrue($container->hasDefinition('enqueue.consumption.doctrine_closed_entity_manager_extension'));
+    }
+
+    public function testShouldNotLoadDoctrineClosedEntityManagerExtensionServiceIfDisabled()
+    {
+        $container = $this->getContainerBuilder(true);
+
+        $extension = new EnqueueExtension();
+
+        $extension->load([[
+            'default' => [
+                'transport' => [],
+                'extensions' => [
+                    'doctrine_closed_entity_manager_extension' => false,
+                ],
+            ],
+        ]], $container);
+
+        self::assertFalse($container->hasDefinition('enqueue.consumption.doctrine_closed_entity_manager_extension'));
+    }
+
     public function testShouldLoadResetServicesExtensionServiceIfEnabled()
     {
         $container = $this->getContainerBuilder(true);

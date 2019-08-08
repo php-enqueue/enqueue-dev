@@ -22,6 +22,10 @@ It clears Doctrine's identity map after a message is processed. It reduce memory
 
 It test a database connection and if it is lost it does reconnect. Fixes "MySQL has gone away" errors.
 
+## [DoctrineClosedEntityManagerExtension](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue-bundle/Consumption/Extension/DoctrineClosedEntityManagerExtension.php)
+
+The extension interrupts consumption if an entity manager has been closed.
+
 ## [ResetServicesExtension](https://github.com/php-enqueue/enqueue-dev/blob/master/pkg/enqueue-bundle/Consumption/Extension/ResetServicesExtension.php)
 
 It resets all services with tag "kernel.reset".
