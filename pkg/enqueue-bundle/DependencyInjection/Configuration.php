@@ -48,6 +48,7 @@ final class Configuration implements ConfigurationInterface
                         ->booleanNode('doctrine_ping_connection_extension')->defaultFalse()->end()
                         ->booleanNode('doctrine_clear_identity_map_extension')->defaultFalse()->end()
                         ->booleanNode('doctrine_odm_clear_identity_map_extension')->defaultFalse()->end()
+                        ->booleanNode('doctrine_closed_entity_manager_extension')->defaultFalse()->end()
                         ->booleanNode('reset_services_extension')->defaultFalse()->end()
                         ->booleanNode('signal_extension')->defaultValue(function_exists('pcntl_signal_dispatch'))->end()
                         ->booleanNode('reply_extension')->defaultTrue()->end()

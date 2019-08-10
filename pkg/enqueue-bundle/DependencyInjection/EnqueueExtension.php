@@ -5,6 +5,7 @@ namespace Enqueue\Bundle\DependencyInjection;
 use Enqueue\AsyncCommand\DependencyInjection\AsyncCommandExtension;
 use Enqueue\AsyncEventDispatcher\DependencyInjection\AsyncEventDispatcherExtension;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
+use Enqueue\Bundle\Consumption\Extension\DoctrineClosedEntityManagerExtension;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
 use Enqueue\Bundle\Consumption\Extension\ResetServicesExtension;
 use Enqueue\Bundle\Profiler\MessageQueueCollector;
@@ -138,6 +139,7 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $this->loadDoctrinePingConnectionExtension($config, $container);
         $this->loadDoctrineClearIdentityMapExtension($config, $container);
         $this->loadDoctrineOdmClearIdentityMapExtension($config, $container);
+        $this->loadDoctrineClosedEntityManagerExtension($config, $container);
         $this->loadResetServicesExtension($config, $container);
         $this->loadSignalExtension($config, $container);
         $this->loadReplyExtension($config, $container);
@@ -266,6 +268,28 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
         $extension = $container->register('enqueue.consumption.doctrine_odm_clear_identity_map_extension', DoctrineClearIdentityMapExtension::class)
             ->addArgument(new Reference('doctrine_mongodb'))
         ;
+
+        foreach ($configNames as $name) {
+            $extension->addTag('enqueue.consumption_extension', ['client' => $name]);
+            $extension->addTag('enqueue.transport.consumption_extension', ['transport' => $name]);
+        }
+    }
+
+    private function loadDoctrineClosedEntityManagerExtension(array $config, ContainerBuilder $container)
+    {
+        $configNames = [];
+        foreach ($config as $name => $modules) {
+            if ($modules['extensions']['doctrine_closed_entity_manager_extension']) {
+                $configNames[] = $name;
+            }
+        }
+
+        if ([] === $configNames) {
+            return;
+        }
+
+        $extension = $container->register('enqueue.consumption.doctrine_closed_entity_manager_extension', DoctrineClosedEntityManagerExtension::class)
+            ->addArgument(new Reference('doctrine'));
 
         foreach ($configNames as $name) {
             $extension->addTag('enqueue.consumption_extension', ['client' => $name]);

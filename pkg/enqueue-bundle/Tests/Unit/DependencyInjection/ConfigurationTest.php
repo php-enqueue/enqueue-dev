@@ -379,6 +379,49 @@ class ConfigurationTest extends TestCase
         ], $config);
     }
 
+    public function testDoctrineClosedEntityManagerExtensionShouldBeDisabledByDefault()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => null,
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'default' => [
+                'extensions' => [
+                    'doctrine_closed_entity_manager_extension' => false,
+                ],
+            ],
+        ], $config);
+    }
+
+    public function testDoctrineClosedEntityManagerExtensionCouldBeEnabled()
+    {
+        $configuration = new Configuration(true);
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration($configuration, [[
+            'default' => [
+                'transport' => null,
+                'extensions' => [
+                    'doctrine_closed_entity_manager_extension' => true,
+                ],
+            ],
+        ]]);
+
+        $this->assertArraySubset([
+            'default' => [
+                'extensions' => [
+                    'doctrine_closed_entity_manager_extension' => true,
+                ],
+            ],
+        ], $config);
+    }
+
     public function testResetServicesExtensionShouldBeDisabledByDefault()
     {
         $configuration = new Configuration(true);
