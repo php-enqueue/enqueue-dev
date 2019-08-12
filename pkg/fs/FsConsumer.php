@@ -208,7 +208,7 @@ class FsConsumer implements Consumer
             }
         }
 
-        if (substr_count($frame, $needle) == 1) {
+        if (1 == substr_count($frame, $needle)) {
             return $frame;
         }
 
