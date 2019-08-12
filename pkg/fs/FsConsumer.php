@@ -204,7 +204,9 @@ class FsConsumer implements Consumer
             if (substr_count($frame, $needle) > 1) {
                 $pos = strpos($frame, $needle);
                 $pos = strpos($frame, $needle, $pos + 1);
-                return rtrim(substr($frame, 0, $pos));
+                $frame = rtrim(substr($frame, 0, $pos));
+
+                return $frame;
             }
         }
 
