@@ -40,10 +40,10 @@ class FsConsumerTest extends TestCase
 
         $message = $consumer->receiveNoWait();
         $this->assertInstanceOf(FsMessage::class, $message);
-        $this->assertSame('third message', $message->getBody());
+        $this->assertSame('first message', $message->getBody());
 
         $this->assertSame(
-            '          |{"body":"first message","properties":[],"headers":[]}         |{"body":"second message","properties":[],"headers":[]}',
+            '         |{"body":"second message","properties":[],"headers":[]}          |{"body":"third message","properties":[],"headers":[]}',
             file_get_contents(sys_get_temp_dir().'/fs_test_queue')
         );
 
@@ -52,13 +52,13 @@ class FsConsumerTest extends TestCase
         $this->assertSame('second message', $message->getBody());
 
         $this->assertSame(
-            '          |{"body":"first message","properties":[],"headers":[]}',
+            '          |{"body":"third message","properties":[],"headers":[]}',
             file_get_contents(sys_get_temp_dir().'/fs_test_queue')
         );
 
         $message = $consumer->receiveNoWait();
         $this->assertInstanceOf(FsMessage::class, $message);
-        $this->assertSame('first message', $message->getBody());
+        $this->assertSame('third message', $message->getBody());
 
         $this->assertEmpty(file_get_contents(sys_get_temp_dir().'/fs_test_queue'));
 
@@ -85,10 +85,10 @@ class FsConsumerTest extends TestCase
         $producer->send($queue, $context->createMessage(str_repeat('b', 24)));
 
         $message = $consumer->receiveNoWait();
-        $this->assertSame(str_repeat('b', 24), $message->getBody());
+        $this->assertSame(str_repeat('a', 23), $message->getBody());
 
         $message = $consumer->receiveNoWait();
-        $this->assertSame(str_repeat('a', 23), $message->getBody());
+        $this->assertSame(str_repeat('b', 24), $message->getBody());
 
         $message = $consumer->receiveNoWait();
         $this->assertNull($message);
@@ -143,7 +143,7 @@ class FsConsumerTest extends TestCase
         $consumer = $context->createConsumer($queue);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The frame could start from either " " or "|". The malformed frame starts with """.');
+        $this->expectExceptionMessage('The frame size is "321" and it must divide exactly to 64 but it leaves a reminder "1".');
         $consumer->receiveNoWait();
     }
 
@@ -197,5 +197,35 @@ class FsConsumerTest extends TestCase
         $message = $consumer->receiveNoWait();
 
         $this->assertSame('                             |{"body":"aMessageData","properties":{"enqueue.topic_name":"user_updated"},"headers":{"content_type":"text\/plain","message_id":"90979b6c-d9ff-4b39-9938-878b83a95360","timestamp":1519899428,"reply_to":null,"correlation_id":""}}', $message->getBody());
+    }
+
+    public function testShouldAlwaysReadQueueAsFIFO()
+    {
+        $context = $this->fsContext;
+        $queue = $context->createQueue('fs_test_queue');
+        $context->purgeQueue($queue);
+
+        $message1 = $this->fsContext->createMessage('test 1');
+        $message2 = $this->fsContext->createMessage('test 2');
+
+        $producer = $context->createProducer();
+
+        $producer->send($queue, $message1);
+        $producer->send($queue, $message2);
+
+        $consumer = $context->createConsumer($queue);
+
+        $recMsg1 = $consumer->receiveNoWait();
+        $this->assertSame($message1->getBody(), $recMsg1->getBody());
+
+        $consumer->reject($message1, true);
+
+        $recMsg2 = $consumer->receiveNoWait();
+
+        $this->assertSame($message2->getBody(), $recMsg2->getBody());
+
+        $requeue = $consumer->receiveNoWait();
+
+        $this->assertSame($message1->getBody(), $requeue->getBody());
     }
 }

@@ -110,7 +110,7 @@ class FsConsumer implements Consumer
         $this->context->workWithFile($this->destination, 'c+', function (FsDestination $destination, $file) {
             $count = $this->preFetchCount;
             while ($count) {
-                $frame = $this->readFrame($file, 1);
+                $frame = $this->readFrame($file);
 
                 //guards
                 if ($frame && false == ('|' == $frame[0] || ' ' == $frame[0])) {
@@ -120,8 +120,15 @@ class FsConsumer implements Consumer
                     throw new \LogicException(sprintf('The frame size is "%d" and it must divide exactly to 64 but it leaves a reminder "%d".', strlen($frame), $reminder));
                 }
 
-                ftruncate($file, fstat($file)['size'] - strlen($frame));
+                fseek($file, strlen($frame), SEEK_SET);
+                $temp = tmpfile();
+                stream_copy_to_stream($file, $temp);
+                rewind($temp);
+                ftruncate($file, 0);
                 rewind($file);
+                stream_copy_to_stream($temp, $file);
+                rewind($file);
+                fclose($temp);
 
                 $rawMessage = str_replace('\|\{', '|{', $frame);
                 $rawMessage = substr(trim($rawMessage), 1);
@@ -182,33 +189,29 @@ class FsConsumer implements Consumer
 
     /**
      * @param resource $file
+     *
+     * @return string
      */
-    private function readFrame($file, int $frameNumber): string
+    private function readFrame($file): string
     {
         $frameSize = 64;
-        $offset = $frameNumber * $frameSize;
+        $needle = '|{';
+        $frame = '';
 
-        fseek($file, -$offset, SEEK_END);
-        $frame = fread($file, $frameSize);
-        if ('' == $frame) {
-            return '';
+        while (!feof($file)) {
+            $frame .= fread($file, $frameSize);
+
+            if (substr_count($frame, $needle) > 1) {
+                $pos = strpos($frame, $needle);
+                $pos = strpos($frame, $needle, $pos + 1);
+                return rtrim(substr($frame, 0, $pos));
+            }
         }
 
-        if (false !== strpos($frame, '|{')) {
+        if (substr_count($frame, $needle) == 1) {
             return $frame;
         }
 
-        $previousFrame = $this->readFrame($file, $frameNumber + 1);
-
-        if ('|' === substr($previousFrame, -1) && '{' === $frame[0]) {
-            $matched = [];
-            if (false === preg_match('/\ *?\|$/', $previousFrame, $matched)) {
-                throw new \LogicException('Something went completely wrong.');
-            }
-
-            return $matched[0].$frame;
-        }
-
-        return $previousFrame.$frame;
+        return '';
     }
 }
