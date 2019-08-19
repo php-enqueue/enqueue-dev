@@ -24,7 +24,8 @@ enqueue:
         async_commands:
             enabled: true
             timeout: 60
-            prefix: ~
+            command_name: ~
+            queue_name: ~
 ```
 
 ## Usage

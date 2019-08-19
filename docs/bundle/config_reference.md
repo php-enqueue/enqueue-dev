@@ -63,7 +63,8 @@ enqueue:
         async_commands:
             enabled:              false
             timeout:              60
-            prefix: ~
+            command_name:         ~
+            queue_name:           ~
         job:
             enabled:              false
         async_events:

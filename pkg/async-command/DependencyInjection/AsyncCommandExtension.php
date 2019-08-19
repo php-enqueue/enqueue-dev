@@ -16,7 +16,8 @@ class AsyncCommandExtension extends Extension
             if (!is_array($client)) {
                 $client = [
                     'name' => $client,
-                    'prefix' => '',
+                    'command_name' => Commands::RUN_COMMAND,
+                    'queue_name' => Commands::RUN_COMMAND,
                     'timeout' => 60,
                 ];
             }
@@ -26,8 +27,8 @@ class AsyncCommandExtension extends Extension
                 ->addArgument('%kernel.project_dir%', $client['timeout'])
                 ->addTag('enqueue.processor', [
                     'client' => $client['name'],
-                    'command' => $client['prefix'].Commands::RUN_COMMAND,
-                    'queue' => $client['prefix'].Commands::RUN_COMMAND,
+                    'command' => $client['command_name'] ?? Commands::RUN_COMMAND,
+                    'queue' => $client['queue_name'] ?? Commands::RUN_COMMAND,
                     'prefix_queue' => false,
                     'exclusive' => true,
                 ])

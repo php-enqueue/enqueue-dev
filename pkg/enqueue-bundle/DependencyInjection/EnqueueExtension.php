@@ -297,7 +297,8 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                 $configs[] = [
                     'name' => $name,
                     'timeout' => $modules['async_commands']['timeout'],
-                    'prefix' => $modules['async_commands']['prefix'],
+                    'command_name' => $modules['async_commands']['command_name'],
+                    'queue_name' => $modules['async_commands']['queue_name'],
                 ];
             }
         }
