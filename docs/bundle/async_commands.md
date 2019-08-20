@@ -21,7 +21,11 @@ $ composer require enqueue/async-command:0.9.x-dev
 
 enqueue:
     default:
-        async_commands: true
+        async_commands:
+            enabled: true
+            timeout: 60
+            command_name: ~
+            queue_name: ~
 ```
 
 ## Usage

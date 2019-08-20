@@ -28,4 +28,11 @@ class RunCommandProcessorTest extends TestCase
 
         $this->assertAttributeSame('aProjectDir', 'projectDir', $processor);
     }
+
+    public function testCouldBeConstructedWithTimeoutAsSecondArgument()
+    {
+        $processor = new RunCommandProcessor('aProjectDir', 60);
+
+        $this->assertAttributeSame(60, 'timeout', $processor);
+    }
 }

@@ -12,13 +12,19 @@ use Symfony\Component\Process\Process;
 final class RunCommandProcessor implements Processor
 {
     /**
+     * @var int
+     */
+    private $timeout;
+
+    /**
      * @var string
      */
     private $projectDir;
 
-    public function __construct(string $projectDir)
+    public function __construct(string $projectDir, int $timeout = 60)
     {
         $this->projectDir = $projectDir;
+        $this->timeout = $timeout;
     }
 
     public function process(Message $message, Context $context): Result
@@ -29,7 +35,7 @@ final class RunCommandProcessor implements Processor
         $consoleBin = file_exists($this->projectDir.'/bin/console') ? './bin/console' : './app/console';
 
         $process = new Process($phpBin.' '.$consoleBin.' '.$this->getCommandLine($command), $this->projectDir);
-
+        $process->setTimeout($this->timeout);
         $process->run();
 
         if ($message->getReplyTo()) {
