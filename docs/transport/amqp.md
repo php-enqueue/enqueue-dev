@@ -11,6 +11,11 @@ nav_order: 3
 Implements [AMQP specifications](https://www.rabbitmq.com/specification.html) and implements [amqp interop](https://github.com/queue-interop/amqp-interop) interfaces.
 Build on top of [php amqp extension](https://github.com/pdezwart/php-amqp).
 
+Drawbacks:
+* [heartbeats will not work properly](https://github.com/pdezwart/php-amqp#persistent-connection)
+* [signals will not be properly handled](https://github.com/pdezwart/php-amqp#keeping-track-of-the-workers)
+
+Parts:
 * [Installation](#installation)
 * [Create context](#create-context)
 * [Declare topic](#declare-topic)
