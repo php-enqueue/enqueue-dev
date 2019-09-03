@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.9.13](https://github.com/php-enqueue/enqueue-dev/tree/0.9.13) (2019-09-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.12...0.9.13)
+
+**Merged pull requests:**
+
+- docs: describe drawbacks of using amqp extension [\#942](https://github.com/php-enqueue/enqueue-dev/pull/942) ([gnumoksha](https://github.com/gnumoksha))
+- Add a service to reset doctrine/odm identity maps [\#933](https://github.com/php-enqueue/enqueue-dev/pull/933) ([Lctrs](https://github.com/Lctrs))
+- Add an extension to stop consumption on closed entity manager [\#932](https://github.com/php-enqueue/enqueue-dev/pull/932) ([Lctrs](https://github.com/Lctrs))
+- Add an extension to reset services [\#929](https://github.com/php-enqueue/enqueue-dev/pull/929) ([Lctrs](https://github.com/Lctrs))
+- \[DoctrineClearIdentityMapExtension\] allow instances of ManagerRegistry [\#927](https://github.com/php-enqueue/enqueue-dev/pull/927) ([Lctrs](https://github.com/Lctrs))
+- Link to documentation from logo [\#926](https://github.com/php-enqueue/enqueue-dev/pull/926) ([Steveb-p](https://github.com/Steveb-p))
+- DBAL Change ParameterType class to Type class [\#916](https://github.com/php-enqueue/enqueue-dev/pull/916) ([Nevoss](https://github.com/Nevoss))
+- async\_commands: extended configuration proposal [\#914](https://github.com/php-enqueue/enqueue-dev/pull/914) ([uro](https://github.com/uro))
+
 ## [0.9.12](https://github.com/php-enqueue/enqueue-dev/tree/0.9.12) (2019-06-25)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.11...0.9.12)
 
