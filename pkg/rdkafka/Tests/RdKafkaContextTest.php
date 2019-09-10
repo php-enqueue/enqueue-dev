@@ -69,4 +69,27 @@ class RdKafkaContextTest extends TestCase
 
         $this->assertSame($context->getSerializer(), $producer->getSerializer());
     }
+
+    public function testShouldNotCreateConsumerTwice()
+    {
+        $context = new RdKafkaContext([]);
+        $queue = $context->createQueue('aQueue');
+
+        $consumer = $context->createConsumer($queue);
+        $consumer2 = $context->createConsumer($queue);
+
+        $this->assertSame($consumer, $consumer2);
+    }
+
+    public function testShouldCreateTwoConsumers()
+    {
+        $context = new RdKafkaContext([]);
+        $queueA = $context->createQueue('aQueue');
+        $queueB = $context->createQueue('aQueue');
+
+        $consumer = $context->createConsumer($queueA);
+        $consumer2 = $context->createConsumer($queueB);
+
+        $this->assertNotSame($consumer, $consumer2);
+    }
 }
