@@ -72,7 +72,9 @@ class RdKafkaContextTest extends TestCase
 
     public function testShouldNotCreateConsumerTwice()
     {
-        $context = new RdKafkaContext([]);
+        $context = new RdKafkaContext(['global' => [
+            'group.id' => uniqid('', true),
+        ]]);
         $queue = $context->createQueue('aQueue');
 
         $consumer = $context->createConsumer($queue);
@@ -83,9 +85,11 @@ class RdKafkaContextTest extends TestCase
 
     public function testShouldCreateTwoConsumers()
     {
-        $context = new RdKafkaContext([]);
+        $context = new RdKafkaContext(['global' => [
+            'group.id' => uniqid('', true),
+        ]]);
         $queueA = $context->createQueue('aQueue');
-        $queueB = $context->createQueue('aQueue');
+        $queueB = $context->createQueue('bQueue');
 
         $consumer = $context->createConsumer($queueA);
         $consumer2 = $context->createConsumer($queueB);
