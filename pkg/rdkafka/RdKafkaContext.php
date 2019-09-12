@@ -133,6 +133,7 @@ class RdKafkaContext implements Context
     {
         $kafkaConsumers = $this->kafkaConsumers;
         $this->kafkaConsumers = [];
+        $this->rdKafkaConsumers = [];
 
         foreach ($kafkaConsumers as $kafkaConsumer) {
             $kafkaConsumer->unsubscribe();
