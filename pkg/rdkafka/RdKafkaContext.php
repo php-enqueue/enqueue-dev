@@ -57,6 +57,7 @@ class RdKafkaContext implements Context
     {
         $this->config = $config;
         $this->kafkaConsumers = [];
+        $this->rdKafkaConsumers = [];
 
         $this->setSerializer(new JsonSerializer());
     }
