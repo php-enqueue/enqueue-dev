@@ -146,6 +146,7 @@ class RdKafkaContext implements Context
         $major = (RD_KAFKA_VERSION & 0xFF000000) >> 24;
         $minor = (RD_KAFKA_VERSION & 0x00FF0000) >> 16;
         $patch = (RD_KAFKA_VERSION & 0x0000FF00) >> 8;
+
         return "$major.$minor.$patch";
     }
 

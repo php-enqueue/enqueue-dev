@@ -50,12 +50,13 @@ class RdKafkaProducer implements Producer
             if (version_compare(RdKafkaContext::getLibrdKafkaVersion(), '1.0.0', '>=')
                 && version_compare(phpversion('rdkafka'), '3.1.0', '<=')) {
                 trigger_error(
-                    'Phprdkafka <= 3.1.0 is incompatible with librdkafka 1.0.0 when calling `producev`. ' .
+                    'Phprdkafka <= 3.1.0 is incompatible with librdkafka 1.0.0 when calling `producev`. '.
                     'Falling back to `produce` (without message headers) instead.',
                     E_USER_WARNING
                 );
             } else {
                 $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
+
                 return;
             }
         }
