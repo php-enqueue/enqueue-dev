@@ -42,7 +42,7 @@ class RdKafkaProducer implements Producer
         $key = $message->getKey() ?: $destination->getKey() ?: null;
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
-        $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
+        $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
     }
 
     /**
