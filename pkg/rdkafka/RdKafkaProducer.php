@@ -42,7 +42,24 @@ class RdKafkaProducer implements Producer
         $key = $message->getKey() ?: $destination->getKey() ?: null;
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
-        $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
+
+        // Note: Topic::producev method exists in phprdkafka > 3.1.0
+        // Headers in payload are maintained for backwards compatibility with apps that might run on lower phprdkafka version
+        if (method_exists($topic, 'producev')) {
+            // Phprdkafka <= 3.1.0 will fail calling `producev` on librdkafka >= 1.0.0 causing segfault
+            if (version_compare(RdKafkaContext::getLibrdKafkaVersion(), '1.0.0', '>=')
+                && version_compare(phpversion('rdkafka'), '3.1.0', '<=')) {
+                trigger_error(
+                    'Phprdkafka <= 3.1.0 is incompatible with librdkafka 1.0.0 when calling `producev`',
+                    E_USER_WARNING
+                );
+            } else {
+                $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
+                return;
+            }
+        }
+
+        $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
     }
 
     /**
