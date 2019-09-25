@@ -46,12 +46,18 @@ class RdKafkaContext implements Context
     private $kafkaConsumers;
 
     /**
+     * @var RdKafkaConsumer[]
+     */
+    private $rdKafkaConsumers;
+
+    /**
      * @param array $config
      */
     public function __construct(array $config)
     {
         $this->config = $config;
         $this->kafkaConsumers = [];
+        $this->rdKafkaConsumers = [];
 
         $this->setSerializer(new JsonSerializer());
     }
@@ -102,26 +108,33 @@ class RdKafkaContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
 
-        $this->kafkaConsumers[] = $kafkaConsumer = new KafkaConsumer($this->getConf());
+        $queueName = $destination->getQueueName();
 
-        $consumer = new RdKafkaConsumer(
-            $kafkaConsumer,
-            $this,
-            $destination,
-            $this->getSerializer()
-        );
+        if (!isset($this->rdKafkaConsumers[$queueName])) {
+            $this->kafkaConsumers[] = $kafkaConsumer = new KafkaConsumer($this->getConf());
 
-        if (isset($this->config['commit_async'])) {
-            $consumer->setCommitAsync($this->config['commit_async']);
+            $consumer = new RdKafkaConsumer(
+                $kafkaConsumer,
+                $this,
+                $destination,
+                $this->getSerializer()
+            );
+
+            if (isset($this->config['commit_async'])) {
+                $consumer->setCommitAsync($this->config['commit_async']);
+            }
+
+            $this->rdKafkaConsumers[$queueName] = $consumer;
         }
 
-        return $consumer;
+        return $this->rdKafkaConsumers[$queueName];
     }
 
     public function close(): void
     {
         $kafkaConsumers = $this->kafkaConsumers;
         $this->kafkaConsumers = [];
+        $this->rdKafkaConsumers = [];
 
         foreach ($kafkaConsumers as $kafkaConsumer) {
             $kafkaConsumer->unsubscribe();
