@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use RdKafka\Message as VendorMessage;
-
+/**
+ * @deprecated Use ProduceMessageTransformer and/or ConsumeMessageTransformer instead
+ */
 interface Serializer
 {
     public function toString(RdKafkaMessage $message): string;
 
-    public function toMessage(VendorMessage $string): RdKafkaMessage;
+    public function toMessage(string $string): RdKafkaMessage;
 }

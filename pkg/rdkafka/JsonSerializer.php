@@ -6,6 +6,9 @@ namespace Enqueue\RdKafka;
 
 use RdKafka\Message as VendorMessage;
 
+/**
+ * @deprecated Use ProduceMessageTransformer and/or ConsumeMessageTransformer instead
+ */
 class JsonSerializer implements Serializer
 {
     public function toString(RdKafkaMessage $message): string
@@ -27,9 +30,9 @@ class JsonSerializer implements Serializer
         return $json;
     }
 
-    public function toMessage(VendorMessage $message): RdKafkaMessage
+    public function toMessage(string $string): RdKafkaMessage
     {
-        $data = json_decode($message->payload, true);
+        $data = json_decode($string, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \InvalidArgumentException(sprintf(
                 'The malformed json given. Error %s and message %s',
