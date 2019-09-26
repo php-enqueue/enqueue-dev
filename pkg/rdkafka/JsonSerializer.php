@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use RdKafka\Message as VendorMessage;
-
 /**
  * @deprecated Use ProduceMessageTransformer and/or ConsumeMessageTransformer instead
  */
