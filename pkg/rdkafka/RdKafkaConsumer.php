@@ -164,7 +164,7 @@ class RdKafkaConsumer implements Consumer
             case RD_KAFKA_RESP_ERR__TIMED_OUT:
                 break;
             case RD_KAFKA_RESP_ERR_NO_ERROR:
-                $message = $this->serializer->toMessage($kafkaMessage->payload);
+                $message = $this->serializer->toMessage($kafkaMessage);
                 $message->setKey($kafkaMessage->key);
                 $message->setPartition($kafkaMessage->partition);
                 $message->setKafkaMessage($kafkaMessage);
