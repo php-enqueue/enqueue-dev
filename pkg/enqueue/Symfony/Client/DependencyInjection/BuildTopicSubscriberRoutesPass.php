@@ -35,7 +35,7 @@ final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
                     throw new \LogicException('The topic subscriber tag could not be applied to a service created by factory.');
                 }
 
-                $processorClass = $processorDefinition->getClass();
+                $processorClass = $processorDefinition->getClass() ?? $serviceId;
                 if (false == class_exists($processorClass)) {
                     throw new \LogicException(sprintf('The processor class "%s" could not be found.', $processorClass));
                 }
