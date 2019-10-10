@@ -43,10 +43,11 @@ class ProduceCommandTest extends TestCase
         $command = new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
 
         $options = $command->getDefinition()->getOptions();
-        $this->assertCount(3, $options);
+        $this->assertCount(4, $options);
         $this->assertArrayHasKey('client', $options);
         $this->assertArrayHasKey('topic', $options);
         $this->assertArrayHasKey('command', $options);
+        $this->assertArrayHasKey('header', $options);
     }
 
     public function testShouldHaveExpectedAttributes()
@@ -141,14 +142,11 @@ class ProduceCommandTest extends TestCase
 
     public function testShouldSendCommandToDefaultTransport()
     {
-        $header = 'Content-Type: text/plain';
-        $payload = 'theMessage';
-
         $producerMock = $this->createProducerMock();
         $producerMock
             ->expects($this->once())
             ->method('sendCommand')
-            ->with('theCommand', new Message($payload, [], [$header]))
+            ->with('theCommand', 'theMessage')
         ;
         $producerMock
             ->expects($this->never())
@@ -161,8 +159,7 @@ class ProduceCommandTest extends TestCase
 
         $tester = new CommandTester($command);
         $tester->execute([
-            'message' => $payload,
-            '--header' => $header,
+            'message' => 'theMessage',
             '--command' => 'theCommand',
         ]);
     }
