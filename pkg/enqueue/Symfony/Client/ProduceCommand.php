@@ -57,7 +57,7 @@ class ProduceCommand extends Command
         $topic = $input->getOption('topic');
         $command = $input->getOption('command');
         $message = $input->getArgument('message');
-        $headers = $input->getOption('header');
+        $headers = (array) $input->getOption('header');
         $client = $input->getOption('client');
 
         if ($topic && $command) {
