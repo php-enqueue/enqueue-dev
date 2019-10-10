@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Symfony\Client;
 
+use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Container\Container;
 use Enqueue\Symfony\Client\ProduceCommand;
@@ -112,11 +113,14 @@ class ProduceCommandTest extends TestCase
 
     public function testShouldSendEventToDefaultTransport()
     {
+        $header = 'Content-Type: text/plain';
+        $payload = 'theMessage';
+
         $producerMock = $this->createProducerMock();
         $producerMock
             ->expects($this->once())
             ->method('sendEvent')
-            ->with('theTopic', 'theMessage')
+            ->with('theTopic', new Message($payload, [], [$header]))
         ;
         $producerMock
             ->expects($this->never())
@@ -129,18 +133,22 @@ class ProduceCommandTest extends TestCase
 
         $tester = new CommandTester($command);
         $tester->execute([
-            'message' => 'theMessage',
+            'message' => $payload,
+            '--header' => $header,
             '--topic' => 'theTopic',
         ]);
     }
 
     public function testShouldSendCommandToDefaultTransport()
     {
+        $header = 'Content-Type: text/plain';
+        $payload = 'theMessage';
+
         $producerMock = $this->createProducerMock();
         $producerMock
             ->expects($this->once())
             ->method('sendCommand')
-            ->with('theCommand', 'theMessage')
+            ->with('theCommand', new Message($payload, [], [$header]))
         ;
         $producerMock
             ->expects($this->never())
@@ -153,13 +161,17 @@ class ProduceCommandTest extends TestCase
 
         $tester = new CommandTester($command);
         $tester->execute([
-            'message' => 'theMessage',
+            'message' => $payload,
+            '--header' => $header,
             '--command' => 'theCommand',
         ]);
     }
 
     public function testShouldSendEventToFooTransport()
     {
+        $header = 'Content-Type: text/plain';
+        $payload = 'theMessage';
+
         $defaultProducerMock = $this->createProducerMock();
         $defaultProducerMock
             ->expects($this->never())
@@ -174,7 +186,7 @@ class ProduceCommandTest extends TestCase
         $fooProducerMock
             ->expects($this->once())
             ->method('sendEvent')
-            ->with('theTopic', 'theMessage')
+            ->with('theTopic', new Message($payload, [], [$header]))
         ;
         $fooProducerMock
             ->expects($this->never())
@@ -188,7 +200,8 @@ class ProduceCommandTest extends TestCase
 
         $tester = new CommandTester($command);
         $tester->execute([
-            'message' => 'theMessage',
+            'message' => $payload,
+            '--header' => $header,
             '--topic' => 'theTopic',
             '--client' => 'foo',
         ]);
