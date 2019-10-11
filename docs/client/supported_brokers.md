@@ -13,7 +13,7 @@ Here's the list of transports supported by Enqueue Client:
 | Transport           | Package                                                    |  DSN                            |
 |:-------------------:|:----------------------------------------------------------:|:-------------------------------:|
 | AMQP, RabbitMQ      | [enqueue/amqp-bunny](../transport/amqp_bunny.md)           | amqp: amqp+bunny:               |
-| AMQP, RabbitMQ      | [enqueue/amqp-lib](../transport/amqp_lib.md)               | amqp: amqp+lib:                 |
+| AMQP, RabbitMQ      | [enqueue/amqp-lib](../transport/amqp_lib.md)               | amqp: amqp+lib: amqp+rabbitmq:  |
 | AMQP, RabbitMQ      | [enqueue/amqp-ext](../transport/amqp.md)                   | amqp: amqp+ext:                 |
 | Doctrine DBAL       | [enqueue/dbal](../transport/dbal.md)                       | mysql: pgsql: pdo_pgsql etc     |
 | Filesystem          | [enqueue/fs](../transport/fs.md)                           | file:///foo/bar                 |
