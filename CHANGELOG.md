@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.9.14](https://github.com/php-enqueue/enqueue-dev/tree/0.9.14) (2019-10-14)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.13...0.9.14)
+
+**Merged pull requests:**
+
+- Fix deprecated heartbeat check method [\#967](https://github.com/php-enqueue/enqueue-dev/pull/967) ([ramunasd](https://github.com/ramunasd))
+- Add missing rabbitmq DSN example [\#966](https://github.com/php-enqueue/enqueue-dev/pull/966) ([ramunasd](https://github.com/ramunasd))
+- Fix empty class for autowired services \(Fix \#957\) [\#958](https://github.com/php-enqueue/enqueue-dev/pull/958) ([NicolasGuilloux](https://github.com/NicolasGuilloux))
+- Add header support for kafka [\#955](https://github.com/php-enqueue/enqueue-dev/pull/955) ([TiMESPLiNTER](https://github.com/TiMESPLiNTER))
+- Kafka singleton consumer [\#947](https://github.com/php-enqueue/enqueue-dev/pull/947) ([dirk39](https://github.com/dirk39))
+
 ## [0.9.13](https://github.com/php-enqueue/enqueue-dev/tree/0.9.13) (2019-09-03)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.12...0.9.13)
 
