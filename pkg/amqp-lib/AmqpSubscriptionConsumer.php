@@ -88,11 +88,13 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
     }
 
     /**
-     * @param AmqpConsumer $consumer
+     * @throws \InvalidArgumentException
+     * @throws StopBasicConsumptionException
+     * @throws Exception
      */
     public function subscribe(Consumer $consumer, callable $callback): void
     {
-        if (false == $consumer instanceof AmqpConsumer) {
+        if (!$consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
         }
 
@@ -130,7 +132,6 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
         }
 
         $consumer->setConsumerTag($consumerTag);
-
         $this->subscribers[$consumerTag] = [$consumer, $callback];
     }
 
@@ -139,25 +140,24 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
      */
     public function unsubscribe(Consumer $consumer): void
     {
-        if (false == $consumer instanceof AmqpConsumer) {
+        if (!$consumer instanceof AmqpConsumer) {
             throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
         }
 
-        if (false == $consumer->getConsumerTag()) {
+        $consumerTag = $consumer->getConsumerTag();
+        if (empty($consumerTag)) {
             return;
         }
 
-        $consumerTag = $consumer->getConsumerTag();
+        $this->context->getLibChannel()->basic_cancel($consumerTag, true, true);
 
-        $this->context->getLibChannel()->basic_cancel($consumerTag);
-
-        $consumer->setConsumerTag(null);
-        unset($this->subscribers[$consumerTag], $this->context->getLibChannel()->callbacks[$consumerTag]);
+        $consumer->setConsumerTag();
+        unset($this->subscribers[$consumerTag]);
     }
 
     public function unsubscribeAll(): void
     {
-        foreach ($this->subscribers as list($consumer)) {
+        foreach ($this->subscribers as [$consumer]) {
             $this->unsubscribe($consumer);
         }
     }
