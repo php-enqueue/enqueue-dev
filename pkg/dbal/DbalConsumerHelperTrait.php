@@ -129,9 +129,10 @@ trait DbalConsumerHelperTrait
             ->delete($this->getContext()->getTableName())
             ->andWhere('(time_to_live IS NOT NULL) AND (time_to_live < :now)')
             ->andWhere('delivery_id IS NULL')
-            ->andWhere('redelivered = false')
+            ->andWhere('redelivered = :redelivered')
 
             ->setParameter(':now', time(), Type::BIGINT)
+            ->setParameter('redelivered', false, Type::BOOLEAN)
         ;
 
         try {
