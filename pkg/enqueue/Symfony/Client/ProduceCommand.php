@@ -2,6 +2,7 @@
 
 namespace Enqueue\Symfony\Client;
 
+use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -44,6 +45,7 @@ class ProduceCommand extends Command
         $this
             ->setDescription('Sends an event to the topic')
             ->addArgument('message', InputArgument::REQUIRED, 'A message')
+            ->addOption('header', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'The message headers')
             ->addOption('client', 'c', InputOption::VALUE_OPTIONAL, 'The client to consume messages from.', $this->defaultClient)
             ->addOption('topic', null, InputOption::VALUE_OPTIONAL, 'The topic to send a message to')
             ->addOption('command', null, InputOption::VALUE_OPTIONAL, 'The command to send a message to')
@@ -55,6 +57,7 @@ class ProduceCommand extends Command
         $topic = $input->getOption('topic');
         $command = $input->getOption('command');
         $message = $input->getArgument('message');
+        $headers = (array) $input->getOption('header');
         $client = $input->getOption('client');
 
         if ($topic && $command) {
@@ -68,7 +71,7 @@ class ProduceCommand extends Command
         }
 
         if ($topic) {
-            $producer->sendEvent($topic, $message);
+            $producer->sendEvent($topic, new Message($message, [], $headers));
 
             $output->writeln('An event is sent');
         } elseif ($command) {

@@ -40,10 +40,11 @@ class SimpleProduceCommandTest extends TestCase
         $command = new SimpleProduceCommand($this->createProducerMock());
 
         $options = $command->getDefinition()->getOptions();
-        $this->assertCount(3, $options);
+        $this->assertCount(4, $options);
         $this->assertArrayHasKey('client', $options);
         $this->assertArrayHasKey('topic', $options);
         $this->assertArrayHasKey('command', $options);
+        $this->assertArrayHasKey('header', $options);
     }
 
     public function testShouldHaveExpectedAttributes()
