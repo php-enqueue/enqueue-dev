@@ -20,12 +20,24 @@ matrix:
     - php: 7.2
       sudo: false
       env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
+    - php: 7.2
+      sudo: false
+      env: SYMFONY_VERSION=5.0.* UNIT_TESTS=true
     - php: 7.3
       sudo: false
       env: SYMFONY_VERSION=4.1.* UNIT_TESTS=true
     - php: 7.3
       sudo: false
       env: SYMFONY_VERSION=4.2.* UNIT_TESTS=true
+    - php: 7.3
+      sudo: false
+      env: SYMFONY_VERSION=4.3.* UNIT_TESTS=true
+    - php: 7.3
+      sudo: false
+      env: SYMFONY_VERSION=4.4.* UNIT_TESTS=true
+    - php: 7.3
+      sudo: false
+      env: SYMFONY_VERSION=5.0.* UNIT_TESTS=true
     - php: 7.1
       services: docker
       sudo: required
@@ -66,12 +78,12 @@ script:
     - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/test.sh --exclude-group=rdkafka; fi
     - if [ "RDKAFKA_TESTS" = true ]; then bin/test.sh --group=rdkafka; fi
-    
+
 notifications:
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/3f8b3668e7792de23a49
-    on_success: change  
-    on_failure: always  
-    on_start: never     
+    on_success: change
+    on_failure: always
+    on_start: never
 
