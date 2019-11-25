@@ -159,8 +159,8 @@ class RdKafkaConsumer implements Consumer
         }
 
         switch ($kafkaMessage->err) {
+            // Older librdkafka versions returns message with EOF error when there is no message
             case RD_KAFKA_RESP_ERR__PARTITION_EOF:
-            case RD_KAFKA_RESP_ERR__TIMED_OUT:
                 return null;
             case RD_KAFKA_RESP_ERR_NO_ERROR:
                 $message = $this->serializer->toMessage($kafkaMessage->payload);
@@ -177,7 +177,6 @@ class RdKafkaConsumer implements Consumer
                 return $message;
             default:
                 throw new \LogicException($kafkaMessage->errstr(), $kafkaMessage->err);
-                break;
         }
     }
 }
