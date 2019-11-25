@@ -99,18 +99,17 @@ class RdKafkaConsumer implements Consumer
             $this->subscribed = true;
         }
 
-        $message = null;
         if ($timeout > 0) {
-            $message = $this->doReceive($timeout);
-        } else {
-            while (true) {
-                if ($message = $this->doReceive(500)) {
-                    break;
-                }
+            return $this->doReceive($timeout);
+        }
+
+        while (true) {
+            if ($message = $this->doReceive(500)) {
+                return $message;
             }
         }
 
-        return $message;
+        return null;
     }
 
     /**
@@ -162,7 +161,7 @@ class RdKafkaConsumer implements Consumer
         switch ($kafkaMessage->err) {
             case RD_KAFKA_RESP_ERR__PARTITION_EOF:
             case RD_KAFKA_RESP_ERR__TIMED_OUT:
-                break;
+                return null;
             case RD_KAFKA_RESP_ERR_NO_ERROR:
                 $message = $this->serializer->toMessage($kafkaMessage->payload);
                 $message->setKey($kafkaMessage->key);
@@ -180,7 +179,5 @@ class RdKafkaConsumer implements Consumer
                 throw new \LogicException($kafkaMessage->errstr(), $kafkaMessage->err);
                 break;
         }
-
-        return null;
     }
 }
