@@ -2,16 +2,16 @@
 
 namespace Enqueue\Doctrine;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Dsn\Dsn;
 use Interop\Queue\ConnectionFactory;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class DoctrineConnectionFactoryFactory implements ConnectionFactoryFactoryInterface
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $doctrine;
 
@@ -20,7 +20,7 @@ class DoctrineConnectionFactoryFactory implements ConnectionFactoryFactoryInterf
      */
     private $fallbackFactory;
 
-    public function __construct(RegistryInterface $doctrine, ConnectionFactoryFactoryInterface $fallbackFactory)
+    public function __construct(ManagerRegistry $doctrine, ConnectionFactoryFactoryInterface $fallbackFactory)
     {
         $this->doctrine = $doctrine;
         $this->fallbackFactory = $fallbackFactory;
