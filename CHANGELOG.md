@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.9.15](https://github.com/php-enqueue/enqueue-dev/tree/0.9.15) (2019-11-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.14...0.9.15)
+
+**Merged pull requests:**
+
+- Fix Incompatibility for doctrine [\#988](https://github.com/php-enqueue/enqueue-dev/pull/988) ([Baachi](https://github.com/Baachi))
+- Prefer early returns in consumer code [\#982](https://github.com/php-enqueue/enqueue-dev/pull/982) ([Steveb-p](https://github.com/Steveb-p))
+- \#977 - Fix issues with MS SQL server and dbal transport [\#979](https://github.com/php-enqueue/enqueue-dev/pull/979) ([NeilWhitworth](https://github.com/NeilWhitworth))
+- Add header support for Symfony's produce command [\#965](https://github.com/php-enqueue/enqueue-dev/pull/965) ([TiMESPLiNTER](https://github.com/TiMESPLiNTER))
+
 ## [0.9.14](https://github.com/php-enqueue/enqueue-dev/tree/0.9.14) (2019-10-14)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.13...0.9.14)
 
