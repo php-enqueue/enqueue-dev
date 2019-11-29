@@ -185,6 +185,10 @@ class SqsConsumer implements Consumer
     {
         $message = $this->context->createMessage();
 
+        if (isset($sqsMessage['MessageId'])) {
+            $message->setMessageId($sqsMessage['MessageId']);
+        }
+
         $message->setBody($sqsMessage['Body']);
         $message->setReceiptHandle($sqsMessage['ReceiptHandle']);
 
