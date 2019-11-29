@@ -293,6 +293,7 @@ class SqsConsumerTest extends TestCase
         $expectedSqsMessage = [
             'Body' => 'The Body',
             'ReceiptHandle' => 'The Receipt',
+            'MessageId' => 'theMessageId',
             'Attributes' => [
                 'SenderId' => 'AROAX5IAWYILCTYIS3OZ5:foo@bar.com',
                 'ApproximateFirstReceiveTimestamp' => '1560512269481',
@@ -337,7 +338,7 @@ class SqsConsumerTest extends TestCase
 
         $this->assertInstanceOf(SqsMessage::class, $result);
         $this->assertEquals('The Body', $result->getBody());
-        $this->assertEquals(['hkey' => 'hvalue'], $result->getHeaders());
+        $this->assertEquals(['hkey' => 'hvalue', 'message_id' => 'theMessageId'], $result->getHeaders());
         $this->assertEquals(['key' => 'value'], $result->getProperties());
         $this->assertEquals([
             'SenderId' => 'AROAX5IAWYILCTYIS3OZ5:foo@bar.com',
@@ -347,6 +348,7 @@ class SqsConsumerTest extends TestCase
         ], $result->getAttributes());
         $this->assertTrue($result->isRedelivered());
         $this->assertEquals('The Receipt', $result->getReceiptHandle());
+        $this->assertEquals('theMessageId', $result->getMessageId());
     }
 
     public function testShouldReceiveMessageWithCustomRegion()
@@ -368,6 +370,7 @@ class SqsConsumerTest extends TestCase
             ->willReturn(new Result(['Messages' => [[
                 'Body' => 'The Body',
                 'ReceiptHandle' => 'The Receipt',
+                'MessageId' => 'theMessageId',
                 'Attributes' => [
                     'ApproximateReceiveCount' => 3,
                 ],
