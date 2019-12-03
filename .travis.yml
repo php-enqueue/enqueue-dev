@@ -26,10 +26,10 @@ matrix:
     - php: 7.3
       sudo: false
       env: SYMFONY_VERSION=4.2.* UNIT_TESTS=true
-    - php: 7.4snapshot
+    - php: 7.4
       sudo: false
       env: SYMFONY_VERSION=4.1.* UNIT_TESTS=true
-    - php: 7.4snapshot
+    - php: 7.4
       sudo: false
       env: SYMFONY_VERSION=4.2.* UNIT_TESTS=true
     - php: 7.1
