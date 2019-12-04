@@ -64,7 +64,7 @@ Arguments:
   message                  A message
 
 Options:
-  -c, --client[=CLIENT]    The client to consume messages from. [default: "default"]
+  -c, --client[=CLIENT]    The client to send messages to. [default: "default"]
       --topic[=TOPIC]      The topic to send a message to
       --command[=COMMAND]  The command to send a message to
   -h, --help               Display this help message
