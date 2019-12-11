@@ -10,6 +10,7 @@ use Enqueue\Rpc\RpcClient;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Producer as InteropProducer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RpcClientTest extends TestCase
@@ -329,7 +330,7 @@ class RpcClientTest extends TestCase
     }
 
     /**
-     * @return Context|\PHPUnit_Framework_MockObject_MockObject|InteropProducer
+     * @return Context|MockObject|InteropProducer
      */
     private function createInteropProducerMock()
     {
@@ -337,7 +338,7 @@ class RpcClientTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return MockObject|Consumer
      */
     private function createConsumerMock()
     {
@@ -345,7 +346,7 @@ class RpcClientTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return MockObject|Context
      */
     private function createContextMock()
     {

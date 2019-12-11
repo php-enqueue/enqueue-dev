@@ -145,7 +145,7 @@ class MongodbSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @return MongodbContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return MongodbContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMongodbContextMock()
     {
@@ -155,7 +155,7 @@ class MongodbSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $queueName
      *
-     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConsumerStub($queueName = null)
     {

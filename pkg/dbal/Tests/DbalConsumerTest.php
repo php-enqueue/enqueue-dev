@@ -15,6 +15,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
@@ -175,7 +176,7 @@ class DbalConsumerTest extends TestCase
         $producerMock
             ->expects($this->once())
             ->method('send')
-            ->with($this->identicalTo($queue), $this->isInstanceOf($message))
+            ->with($this->identicalTo($queue), $this->isInstanceOf(DbalMessage::class))
         ;
 
         $context = $this->createContextMock();
@@ -191,7 +192,7 @@ class DbalConsumerTest extends TestCase
     }
 
     /**
-     * @return DbalProducer|\PHPUnit_Framework_MockObject_MockObject
+     * @return DbalProducer|MockObject
      */
     private function createProducerMock()
     {
@@ -199,7 +200,7 @@ class DbalConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DbalContext
+     * @return MockObject|DbalContext
      */
     private function createContextMock()
     {
@@ -207,7 +208,7 @@ class DbalConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DbalContext
+     * @return MockObject|DbalContext
      */
     private function createConectionMock()
     {

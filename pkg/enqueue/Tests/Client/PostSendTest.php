@@ -90,7 +90,7 @@ class PostSendTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createDriverMock(): DriverInterface
     {
@@ -98,7 +98,7 @@ class PostSendTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createProducerMock(): ProducerInterface
     {
@@ -106,7 +106,7 @@ class PostSendTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Destination
+     * @return \PHPUnit\Framework\MockObject\MockObject|Destination
      */
     private function createDestinationMock(): Destination
     {
@@ -114,7 +114,7 @@ class PostSendTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TransportMessage
+     * @return \PHPUnit\Framework\MockObject\MockObject|TransportMessage
      */
     private function createTransportMessageMock(): TransportMessage
     {

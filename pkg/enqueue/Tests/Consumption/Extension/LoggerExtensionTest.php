@@ -6,6 +6,7 @@ use Enqueue\Consumption\Context\InitLogger;
 use Enqueue\Consumption\Extension\LoggerExtension;
 use Enqueue\Consumption\InitLoggerExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -74,7 +75,7 @@ class LoggerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
+     * @return MockObject|LoggerInterface
      */
     protected function createLogger()
     {

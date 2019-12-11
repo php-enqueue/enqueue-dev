@@ -56,7 +56,7 @@ class GpsProducerTest extends TestCase
     }
 
     /**
-     * @return GpsContext|\PHPUnit_Framework_MockObject_MockObject|GpsContext
+     * @return GpsContext|\PHPUnit\Framework\MockObject\MockObject|GpsContext
      */
     private function createContextMock()
     {
@@ -64,7 +64,7 @@ class GpsProducerTest extends TestCase
     }
 
     /**
-     * @return PubSubClient|\PHPUnit_Framework_MockObject_MockObject|PubSubClient
+     * @return PubSubClient|\PHPUnit\Framework\MockObject\MockObject|PubSubClient
      */
     private function createPubSubClientMock()
     {
@@ -72,7 +72,7 @@ class GpsProducerTest extends TestCase
     }
 
     /**
-     * @return Topic|\PHPUnit_Framework_MockObject_MockObject|Topic
+     * @return Topic|\PHPUnit\Framework\MockObject\MockObject|Topic
      */
     private function createGTopicMock()
     {

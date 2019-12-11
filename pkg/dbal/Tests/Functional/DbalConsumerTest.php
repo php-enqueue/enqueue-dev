@@ -26,7 +26,7 @@ class DbalConsumerTest extends TestCase
         $this->context = $this->createDbalContext();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->context) {
             $this->context->close();

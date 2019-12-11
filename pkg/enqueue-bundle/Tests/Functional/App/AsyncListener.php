@@ -2,50 +2,53 @@
 
 namespace Enqueue\Bundle\Tests\Functional\App;
 
-use Enqueue\AsyncEventDispatcher\Commands;
-use Enqueue\AsyncEventDispatcher\Registry;
-use Enqueue\Client\Message;
-use Enqueue\Client\ProducerInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
+use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-class AsyncListener extends \Enqueue\AsyncEventDispatcher\AsyncListener
-{
+if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::class)) {
     /**
-     * @var ProducerInterface
+     * Symfony < 4.3
      */
-    private $producer;
-
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * @param ProducerInterface $producer
-     * @param Registry          $registry
-     */
-    public function __construct(ProducerInterface $producer, Registry $registry)
+    class AsyncListener extends AbstractAsyncListener
     {
-        $this->producer = $producer;
-        $this->registry = $registry;
+        /**
+         * @param Event  $event
+         * @param string $eventName
+         */
+        public function onEvent(Event $event, $eventName)
+        {
+            $this->onEventInternal($event, $eventName);
+        }
     }
-
+} elseif (class_exists(Event::class)) {
     /**
-     * @param Event  $event
-     * @param string $eventName
+     * Symfony >= 4.3 and < 5.0
      */
-    public function onEvent(Event $event = null, $eventName)
+    class AsyncListener extends AbstractAsyncListener
     {
-        if (false == $this->isSyncMode($eventName)) {
-            $transformerName = $this->registry->getTransformerNameForEvent($eventName);
-
-            $interopMessage = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
-            $message = new Message($interopMessage->getBody());
-            $message->setScope(Message::SCOPE_APP);
-            $message->setProperty('event_name', $eventName);
-            $message->setProperty('transformer_name', $transformerName);
-
-            $this->producer->sendCommand(Commands::DISPATCH_ASYNC_EVENTS, $message);
+        /**
+         * @param Event|ContractEvent $event
+         * @param string              $eventName
+         */
+        public function onEvent($event, $eventName)
+        {
+            $this->onEventInternal($event, $eventName);
+        }
+    }
+} else {
+    /**
+     * Symfony >= 5.0
+     */
+    class AsyncListener extends AbstractAsyncListener
+    {
+        /**
+         * @param ContractEvent $event
+         * @param string        $eventName
+         */
+        public function onEvent(ContractEvent $event, $eventName)
+        {
+            $this->onEventInternal($event, $eventName);
         }
     }
 }

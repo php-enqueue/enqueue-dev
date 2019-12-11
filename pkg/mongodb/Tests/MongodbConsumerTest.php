@@ -113,7 +113,7 @@ class MongodbConsumerTest extends TestCase
     }
 
     /**
-     * @return MongodbProducer|\PHPUnit_Framework_MockObject_MockObject
+     * @return MongodbProducer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createProducerMock()
     {
@@ -121,7 +121,7 @@ class MongodbConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MongodbContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|MongodbContext
      */
     private function createContextMock()
     {

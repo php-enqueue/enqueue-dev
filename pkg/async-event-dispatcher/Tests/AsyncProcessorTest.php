@@ -11,6 +11,7 @@ use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Processor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -97,7 +98,7 @@ class AsyncProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EventTransformer
+     * @return MockObject|EventTransformer
      */
     private function createEventTransformerMock()
     {
@@ -105,7 +106,7 @@ class AsyncProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AsyncEventDispatcher
+     * @return MockObject|AsyncEventDispatcher
      */
     private function createProxyEventDispatcherMock()
     {
@@ -113,7 +114,7 @@ class AsyncProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @return MockObject|Registry
      */
     private function createRegistryMock()
     {

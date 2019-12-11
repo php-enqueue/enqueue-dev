@@ -34,7 +34,7 @@ class SignalSocketHelperTest extends TestCase
         $this->signalHelper = new SignalSocketHelper();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

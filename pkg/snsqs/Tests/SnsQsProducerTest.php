@@ -115,7 +115,7 @@ class SnsQsProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SnsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|SnsContext
      */
     private function createSnsContextMock(): SnsContext
     {
@@ -123,7 +123,7 @@ class SnsQsProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SqsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsContext
      */
     private function createSqsContextMock(): SqsContext
     {

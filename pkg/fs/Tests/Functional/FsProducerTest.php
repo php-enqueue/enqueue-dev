@@ -22,7 +22,7 @@ class FsProducerTest extends TestCase
         file_put_contents(sys_get_temp_dir().'/fs_test_queue', '');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->fsContext->close();
     }

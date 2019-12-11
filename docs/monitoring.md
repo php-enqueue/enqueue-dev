@@ -294,7 +294,7 @@ There are available options (and all available metrics):
 Install additional packages:
 
 ```
-composer req thruway/pawl-transport:^0.5.0 voryx/thruway:^0.5.3
+composer req thruway/pawl-transport:^0.5.0 thruway/client:^0.5.0
 ```
 
 ```php

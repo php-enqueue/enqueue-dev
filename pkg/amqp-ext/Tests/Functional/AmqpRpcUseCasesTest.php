@@ -31,7 +31,7 @@ class AmqpRpcUseCasesTest extends TestCase
         $this->removeQueue('rpc.reply_test');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->amqpContext->close();
     }

@@ -166,7 +166,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|AmqpContext
      */
     private function createContextMock()
     {
@@ -174,7 +174,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TestProducer
+     * @return \PHPUnit\Framework\MockObject\MockObject|TestProducer
      */
     private function createProducerMock()
     {

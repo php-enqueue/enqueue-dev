@@ -11,6 +11,7 @@ use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
 use Enqueue\Null\NullMessage;
 use Interop\Queue\Context;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
@@ -317,7 +318,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return MockObject|Context
      */
     private function createContextMock()
     {
@@ -325,7 +326,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
+     * @return MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
      */
     private function createJobStorageMock()
     {
@@ -333,7 +334,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
+     * @return MockObject|ProducerInterface
      */
     private function createProducerMock()
     {
@@ -341,7 +342,7 @@ class DependentJobProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
+     * @return MockObject|LoggerInterface
      */
     private function createLoggerMock()
     {

@@ -10,6 +10,7 @@ use Interop\Amqp\Impl\AmqpTopic;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Wire\AMQPTable;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
@@ -350,7 +351,7 @@ class AmqpContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AbstractConnection
+     * @return MockObject|AbstractConnection
      */
     public function createConnectionMock()
     {
@@ -358,7 +359,7 @@ class AmqpContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AMQPChannel
+     * @return MockObject|AMQPChannel
      */
     public function createChannelMock()
     {

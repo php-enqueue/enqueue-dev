@@ -30,7 +30,7 @@ class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
         $this->removeQueue('stomp.rpc.reply_test');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->stompContext->close();
     }

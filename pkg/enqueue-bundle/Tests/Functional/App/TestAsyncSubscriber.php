@@ -10,7 +10,7 @@ class TestAsyncSubscriber implements EventSubscriberInterface
 {
     public $calls = [];
 
-    public function onEvent(Event $event, $eventName, EventDispatcherInterface $dispatcher)
+    public function onEvent($event, $eventName, EventDispatcherInterface $dispatcher)
     {
         $this->calls[] = func_get_args();
     }

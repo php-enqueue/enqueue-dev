@@ -291,7 +291,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Redis
+     * @return \PHPUnit\Framework\MockObject\MockObject|Redis
      */
     private function createRedisMock()
     {
@@ -299,7 +299,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RedisProducer
+     * @return \PHPUnit\Framework\MockObject\MockObject|RedisProducer
      */
     private function createProducerMock()
     {
@@ -307,7 +307,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RedisContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|RedisContext
      */
     private function createContextMock()
     {

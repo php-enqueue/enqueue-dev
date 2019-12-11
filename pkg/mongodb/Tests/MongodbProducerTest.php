@@ -43,7 +43,7 @@ class MongodbProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MongodbContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|MongodbContext
      */
     private function createContextMock()
     {

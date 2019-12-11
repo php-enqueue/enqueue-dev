@@ -19,6 +19,7 @@ use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -275,7 +276,7 @@ class ChainExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createLoggerMock(): LoggerInterface
     {
@@ -283,7 +284,7 @@ class ChainExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createInteropContextMock(): Context
     {
@@ -291,7 +292,7 @@ class ChainExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createInteropConsumerMock(): Consumer
     {
@@ -299,7 +300,7 @@ class ChainExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createInteropProcessorMock(): Processor
     {
@@ -307,7 +308,7 @@ class ChainExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExtensionInterface
+     * @return MockObject|ExtensionInterface
      */
     protected function createExtension()
     {
@@ -315,7 +316,7 @@ class ChainExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createSubscriptionConsumerMock(): SubscriptionConsumer
     {

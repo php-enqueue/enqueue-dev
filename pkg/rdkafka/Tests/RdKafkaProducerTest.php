@@ -206,7 +206,7 @@ class RdKafkaProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerTopic
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProducerTopic
      */
     private function createKafkaTopicMock()
     {
@@ -214,7 +214,7 @@ class RdKafkaProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return \PHPUnit\Framework\MockObject\MockObject|Producer
      */
     private function createKafkaProducerMock()
     {
@@ -222,7 +222,7 @@ class RdKafkaProducerTest extends TestCase
     }
 
     /**
-     * @return Serializer|\PHPUnit_Framework_MockObject_MockObject|Serializer
+     * @return Serializer|\PHPUnit\Framework\MockObject\MockObject|Serializer
      */
     private function createSerializerMock()
     {

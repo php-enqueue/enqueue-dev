@@ -9,6 +9,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Producer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DbalProducerTest extends TestCase
@@ -40,7 +41,7 @@ class DbalProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DbalContext
+     * @return MockObject|DbalContext
      */
     private function createContextMock()
     {

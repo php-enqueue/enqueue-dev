@@ -15,7 +15,7 @@ class SnsQsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
     use RetryTrait;
     use SnsQsFactoryTrait;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

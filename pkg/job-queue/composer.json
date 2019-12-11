@@ -13,12 +13,13 @@
         "doctrine/orm": "~2.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.5",
+        "phpunit/phpunit": "~7.5",
         "enqueue/test": "0.9.x-dev",
-        "doctrine/doctrine-bundle": "~1.2",
+        "doctrine/doctrine-bundle": "~1.2|^2",
         "symfony/browser-kit": "^3.4|^4|^5",
         "symfony/expression-language": "^3.4|^4|^5",
-        "symfony/framework-bundle": "^3.4|^4|^5"
+        "symfony/framework-bundle": "^3.4|^4|^5",
+        "symfony/yaml": "^3.4|^4|^5"
     },
     "support": {
         "email": "opensource@forma-pro.com",

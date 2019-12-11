@@ -128,7 +128,7 @@ class JobStorageTest extends WebTestCase
         $job2->setStatus(Job::STATUS_NEW);
         $job2->setCreatedAt(new \DateTime());
 
-        $this->setExpectedException(DuplicateJobException::class);
+        $this->expectException(DuplicateJobException::class);
 
         $this->getJobStorage()->saveJob($job2);
     }

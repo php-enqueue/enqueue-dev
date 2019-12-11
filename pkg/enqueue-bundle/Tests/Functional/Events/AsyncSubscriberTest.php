@@ -33,7 +33,7 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = static::$container->get('event_dispatcher');
 
-        $dispatcher->dispatch('test_async_subscriber', new GenericEvent('aSubject'));
+        $this->dispatch($dispatcher, new GenericEvent('aSubject'), 'test_async_subscriber');
 
         /** @var TestAsyncSubscriber $listener */
         $listener = static::$container->get('test_async_subscriber');
@@ -48,7 +48,7 @@ class AsyncSubscriberTest extends WebTestCase
 
         $event = new GenericEvent('theSubject', ['fooArg' => 'fooVal']);
 
-        $dispatcher->dispatch('test_async_subscriber', $event);
+        $this->dispatch($dispatcher, $event, 'test_async_subscriber');
 
         /** @var TraceableProducer $producer */
         $producer = static::$container->get('test_enqueue.client.default.producer');
@@ -66,9 +66,9 @@ class AsyncSubscriberTest extends WebTestCase
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = static::$container->get('event_dispatcher');
 
-        $dispatcher->dispatch('test_async_subscriber', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
-        $dispatcher->dispatch('test_async_subscriber', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
-        $dispatcher->dispatch('test_async_subscriber', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
+        $this->dispatch($dispatcher, new GenericEvent('theSubject', ['fooArg' => 'fooVal']), 'test_async_subscriber');
+        $this->dispatch($dispatcher, new GenericEvent('theSubject', ['fooArg' => 'fooVal']), 'test_async_subscriber');
+        $this->dispatch($dispatcher, new GenericEvent('theSubject', ['fooArg' => 'fooVal']), 'test_async_subscriber');
 
         /** @var TraceableProducer $producer */
         $producer = static::$container->get('test_enqueue.client.default.producer');
@@ -84,11 +84,11 @@ class AsyncSubscriberTest extends WebTestCase
         $dispatcher = static::$container->get('event_dispatcher');
 
         $eventName = 'anEvent'.uniqid();
-        $dispatcher->addListener($eventName, function (Event $event, $eventName, EventDispatcherInterface $dispatcher) {
-            $dispatcher->dispatch('test_async_subscriber', new GenericEvent('theSubject', ['fooArg' => 'fooVal']));
+        $dispatcher->addListener($eventName, function ($event, $eventName, EventDispatcherInterface $dispatcher) {
+            $this->dispatch($dispatcher, new GenericEvent('theSubject', ['fooArg' => 'fooVal']), 'test_async_subscriber');
         });
 
-        $dispatcher->dispatch($eventName);
+        $this->dispatch($dispatcher, new GenericEvent(), $eventName);
 
         /** @var TraceableProducer $producer */
         $producer = static::$container->get('test_enqueue.client.default.producer');
@@ -96,5 +96,16 @@ class AsyncSubscriberTest extends WebTestCase
         $traces = $producer->getCommandTraces(Commands::DISPATCH_ASYNC_EVENTS);
 
         $this->assertCount(1, $traces);
+    }
+
+    private function dispatch(EventDispatcherInterface $dispatcher, $event, $eventName): void
+    {
+        if (!class_exists(Event::class)) {
+            // Symfony 5
+            $dispatcher->dispatch($event, $eventName);
+        } else {
+            // Symfony < 5
+            $dispatcher->dispatch($eventName, $event);
+        }
     }
 }

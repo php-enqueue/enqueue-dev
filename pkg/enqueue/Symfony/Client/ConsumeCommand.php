@@ -87,7 +87,7 @@ class ConsumeCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $client = $input->getOption('client');
 
@@ -147,7 +147,7 @@ class ConsumeCommand extends Command
 
         $consumer->consume(new ChainExtension([$runtimeExtensionChain, $exitStatusExtension]));
 
-        return $exitStatusExtension->getExitStatus();
+        return $exitStatusExtension->getExitStatus() ?? 0;
     }
 
     protected function getRuntimeExtensions(InputInterface $input, OutputInterface $output): ExtensionInterface

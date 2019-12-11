@@ -5,6 +5,7 @@ namespace Enqueue\AmqpBunny\Tests;
 use Enqueue\AmqpBunny\AmqpContext;
 use Enqueue\AmqpBunny\AmqpSubscriptionConsumer;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpSubscriptionConsumerTest extends TestCase
@@ -22,7 +23,7 @@ class AmqpSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @return AmqpContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return AmqpContext|MockObject
      */
     private function createAmqpContextMock()
     {

@@ -12,6 +12,7 @@ use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
 use Enqueue\Null\NullMessage;
 use Interop\Queue\Context;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
@@ -176,7 +177,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
+     * @return MockObject|ProducerInterface
      */
     private function createProducerMock()
     {
@@ -184,7 +185,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return MockObject|Context
      */
     private function createContextMock()
     {
@@ -192,7 +193,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
+     * @return MockObject|LoggerInterface
      */
     private function createLoggerMock()
     {
@@ -200,7 +201,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|CalculateRootJobStatusService
+     * @return MockObject|CalculateRootJobStatusService
      */
     private function createCalculateRootJobStatusCaseMock()
     {
@@ -208,7 +209,7 @@ class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|JobStorage
+     * @return MockObject|JobStorage
      */
     private function createJobStorageMock()
     {

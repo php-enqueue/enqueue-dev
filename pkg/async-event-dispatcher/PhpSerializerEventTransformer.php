@@ -2,38 +2,50 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Interop\Queue\Context;
-use Interop\Queue\Message;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
+use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-class PhpSerializerEventTransformer implements EventTransformer
-{
+if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::class)) {
     /**
-     * @var Context
+     * Symfony < 4.3
      */
-    private $context;
-
-    /**
-     * @param Context $context
-     */
-    public function __construct(Context $context)
+    class PhpSerializerEventTransformer extends AbstractPhpSerializerEventTransformer implements EventTransformer
     {
-        $this->context = $context;
+        /**
+         * {@inheritdoc}
+         */
+        public function toMessage($eventName, Event $event = null)
+        {
+            return $this->context->createMessage(serialize($event));
+        }
     }
-
+} elseif (class_exists(Event::class)) {
     /**
-     * {@inheritdoc}
+     * Symfony >= 4.3 and < 5.0
      */
-    public function toMessage($eventName, Event $event = null)
+    class PhpSerializerEventTransformer extends AbstractPhpSerializerEventTransformer implements EventTransformer
     {
-        return $this->context->createMessage(serialize($event));
+        /**
+         * {@inheritdoc}
+         */
+        public function toMessage($eventName, $event = null)
+        {
+            return $this->context->createMessage(serialize($event));
+        }
     }
-
+} else {
     /**
-     * {@inheritdoc}
+     * Symfony >= 5.0
      */
-    public function toEvent($eventName, Message $message)
+    class PhpSerializerEventTransformer extends AbstractPhpSerializerEventTransformer implements EventTransformer
     {
-        return unserialize($message->getBody());
+        /**
+         * {@inheritdoc}
+         */
+        public function toMessage($eventName, ContractEvent $event = null)
+        {
+            return $this->context->createMessage(serialize($event));
+        }
     }
 }

@@ -77,7 +77,7 @@ class SimpleConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|QueueConsumerInterface
      */
     private function createQueueConsumerMock()
     {

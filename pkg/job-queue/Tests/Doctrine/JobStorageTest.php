@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityRepository;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class JobStorageTest extends \PHPUnit\Framework\TestCase
 {
@@ -136,11 +137,8 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
 
         $storage = new JobStorage($doctrine, 'entity-class', 'unique_table');
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Got unexpected job instance: expected: "expected\class\name", '.
-            'actual" "Enqueue\JobQueue\Job"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Got unexpected job instance: expected: "expected\class\name", actual" "Enqueue\JobQueue\Job"');
 
         $storage->saveJob(new Job());
     }
@@ -316,7 +314,8 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
 
         $storage = new JobStorage($doctrine, 'entity-class', 'unique_table');
 
-        $this->setExpectedException(DuplicateJobException::class, 'Duplicate job. ownerId:"owner-id", name:"job-name"');
+        $this->expectException(DuplicateJobException::class);
+        $this->expectExceptionMessage('Duplicate job. ownerId:"owner-id", name:"job-name"');
 
         $storage->saveJob($job);
     }
@@ -359,11 +358,8 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
 
         $storage = new JobStorage($doctrine, 'entity-class', 'unique_table');
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Is not possible to create new job with lock, only update is allowed'
-        );
-
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Is not possible to create new job with lock, only update is allowed');
         $storage->saveJob($job, function () {
         });
     }
@@ -579,7 +575,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     private function createDoctrineMock()
     {
@@ -587,7 +583,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     * @return MockObject|Connection
      */
     private function createConnectionMock()
     {
@@ -595,7 +591,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EntityManager
+     * @return MockObject|EntityManager
      */
     private function createEntityManagerMock()
     {
@@ -603,7 +599,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EntityRepository
+     * @return MockObject|EntityRepository
      */
     private function createRepositoryMock()
     {
@@ -611,7 +607,7 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|UniqueConstraintViolationException
+     * @return MockObject|UniqueConstraintViolationException
      */
     private function createUniqueConstraintViolationExceptionMock()
     {

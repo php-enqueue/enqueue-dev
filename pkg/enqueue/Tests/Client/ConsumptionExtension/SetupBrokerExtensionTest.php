@@ -8,6 +8,7 @@ use Enqueue\Consumption\Context\Start;
 use Enqueue\Consumption\StartExtensionInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context as InteropContext;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -61,7 +62,7 @@ class SetupBrokerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
+     * @return MockObject|DriverInterface
      */
     private function createDriverMock()
     {

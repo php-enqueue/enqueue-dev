@@ -11,6 +11,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
 use Pheanstalk\Pheanstalk;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PheanstalkProducerTest extends TestCase
@@ -66,7 +67,7 @@ class PheanstalkProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Pheanstalk
+     * @return MockObject|Pheanstalk
      */
     private function createPheanstalkMock()
     {

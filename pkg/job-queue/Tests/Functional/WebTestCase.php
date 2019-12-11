@@ -33,11 +33,11 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->startTransaction();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->rollbackTransaction();
-
         parent::tearDown();
+        static::ensureKernelShutdown();
     }
 
     /**

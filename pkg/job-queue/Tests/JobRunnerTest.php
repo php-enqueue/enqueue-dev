@@ -6,6 +6,7 @@ use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobProcessor;
 use Enqueue\JobQueue\JobRunner;
 use Enqueue\JobQueue\OrphanJobException;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class JobRunnerTest extends \PHPUnit\Framework\TestCase
 {
@@ -301,7 +302,8 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
 
         $jobRunner = new JobRunner($jobProcessor);
 
-        $this->setExpectedException(\LogicException::class, 'Job was not found. id: "job-id"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Job was not found. id: "job-id"');
 
         $jobRunner->runDelayed('job-id', function () {
         });
@@ -450,7 +452,7 @@ class JobRunnerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|JobProcessor
+     * @return MockObject|JobProcessor
      */
     private function createJobProcessorMock()
     {

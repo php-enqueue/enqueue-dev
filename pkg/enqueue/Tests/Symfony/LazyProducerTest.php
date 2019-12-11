@@ -116,7 +116,7 @@ class LazyProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProducerInterface
      */
     private function createProducerMock(): ProducerInterface
     {
@@ -124,7 +124,7 @@ class LazyProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ContainerInterface
      */
     private function createContainerMock(): ContainerInterface
     {

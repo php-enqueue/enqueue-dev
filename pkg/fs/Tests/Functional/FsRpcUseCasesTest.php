@@ -28,7 +28,7 @@ class FsRpcUseCasesTest extends TestCase
         new TempFile(sys_get_temp_dir().'/fs_reply_queue');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->fsContext->close();
     }

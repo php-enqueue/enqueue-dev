@@ -17,7 +17,7 @@ class LazyProducerTest extends WebTestCase
         // parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if (static::$kernel) {
             $fs = new Filesystem();

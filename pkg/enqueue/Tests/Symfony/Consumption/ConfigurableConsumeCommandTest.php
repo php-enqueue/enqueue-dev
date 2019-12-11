@@ -274,7 +274,7 @@ class ConfigurableConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropQueue
+     * @return \PHPUnit\Framework\MockObject\MockObject|InteropQueue
      */
     protected function createQueueMock()
     {
@@ -282,7 +282,7 @@ class ConfigurableConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit\Framework\MockObject\MockObject|Processor
      */
     protected function createProcessor()
     {
@@ -290,7 +290,7 @@ class ConfigurableConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|QueueConsumerInterface
      */
     protected function createQueueConsumerMock()
     {

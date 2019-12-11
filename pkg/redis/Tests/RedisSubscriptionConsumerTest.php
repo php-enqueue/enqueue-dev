@@ -142,7 +142,7 @@ class RedisSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @return RedisContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return RedisContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRedisContextMock()
     {
@@ -152,7 +152,7 @@ class RedisSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $queueName
      *
-     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConsumerStub($queueName = null)
     {

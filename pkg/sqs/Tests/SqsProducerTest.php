@@ -221,7 +221,7 @@ class SqsProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SqsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsContext
      */
     private function createSqsContextMock(): SqsContext
     {
@@ -229,7 +229,7 @@ class SqsProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SqsClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsClient
      */
     private function createSqsClientMock(): SqsClient
     {

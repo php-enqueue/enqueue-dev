@@ -7,11 +7,10 @@ framework:
     #translator:      { fallback: "%locale%" }
     test: ~
     assets: false
-    templating: false
     session:
         storage_id: session.storage.mock_file
     secret:          '%secret%'
-    router:          { resource: '%kernel.root_dir%/config/routing.yml' }
+    router:          { resource: '%kernel.project_dir%/config/routing.yml' }
     default_locale:  '%locale%'
 
 doctrine:
