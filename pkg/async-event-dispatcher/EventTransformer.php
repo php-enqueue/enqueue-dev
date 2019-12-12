@@ -4,38 +4,11 @@ namespace Enqueue\AsyncEventDispatcher;
 
 use Interop\Queue\Message;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::class)) {
+if (class_exists(Event::class)) {
     /**
-     * Symfony < 4.3.
-     */
-    interface EventTransformer
-    {
-        /**
-         * @param string $eventName
-         *
-         * @return Message
-         */
-        public function toMessage($eventName, Event $event = null);
-
-        /**
-         * If you able to transform message back to event return it.
-         * If you failed to transform for some reason you can return a string status.
-         *
-         * @param mixed $eventName
-         *
-         * @return Event|string|object
-         *
-         * @see Process constants) or an object that implements __toString method.
-         *      The object must have a __toString method is supposed to be used as Processor::process return value.
-         */
-        public function toEvent($eventName, Message $message);
-    }
-} elseif (class_exists(Event::class)) {
-    /**
-     * Symfony >= 4.3 and < 5.0.
+     * Symfony < 5.0.
      */
     interface EventTransformer
     {

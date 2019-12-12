@@ -7,28 +7,19 @@ matrix:
   include:
     - php: 7.1
       sudo: false
-      env: SYMFONY_VERSION=3.4.* PHPSTAN=true
+      env: SYMFONY_VERSION=4.3.* PHPSTAN=true
     - php: 7.1
       sudo: false
-      env: SYMFONY_VERSION=3.4.* PHP_CS_FIXER=true
+      env: SYMFONY_VERSION=4.3.* PHP_CS_FIXER=true
     - php: 7.1
       sudo: false
-      env: SYMFONY_VERSION=3.4.* UNIT_TESTS=true
-    - php: 7.1
-      sudo: false
-      env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
+      env: SYMFONY_VERSION=4.3.* UNIT_TESTS=true
     - php: 7.2
       sudo: false
-      env: SYMFONY_VERSION=4.0.* UNIT_TESTS=true
+      env: SYMFONY_VERSION=4.3.* UNIT_TESTS=true
     - php: 7.2
       sudo: false
       env: SYMFONY_VERSION=5.0.* UNIT_TESTS=true
-    - php: 7.3
-      sudo: false
-      env: SYMFONY_VERSION=4.1.* UNIT_TESTS=true
-    - php: 7.3
-      sudo: false
-      env: SYMFONY_VERSION=4.2.* UNIT_TESTS=true
     - php: 7.3
       sudo: false
       env: SYMFONY_VERSION=4.3.* UNIT_TESTS=true
@@ -39,13 +30,9 @@ matrix:
       sudo: false
       env: SYMFONY_VERSION=5.0.* UNIT_TESTS=true
     - php: 7.1
-      services: docker
-      sudo: required
-      env: SYMFONY_VERSION=3.4.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
-    - php: 7.1
       sudo: required
       services: docker
-      env: SYMFONY_VERSION=4.0.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=4.3.* FUNCTIONAL_TESTS=true PREPARE_CONTAINER=true
     - php: 7.3
       sudo: required
       services: docker
@@ -53,9 +40,9 @@ matrix:
     - php: 7.1
       sudo: required
       services: docker
-      env: SYMFONY_VERSION=3.4.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
+      env: SYMFONY_VERSION=4.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
   allow_failures:
-    - env: SYMFONY_VERSION=3.4.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
+    - env: SYMFONY_VERSION=4.3.* RDKAFKA_TESTS=true PREPARE_CONTAINER=true
 
 cache:
     directories:

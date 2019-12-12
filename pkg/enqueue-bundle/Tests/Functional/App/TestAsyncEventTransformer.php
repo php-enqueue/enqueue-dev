@@ -8,56 +8,11 @@ use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::class)) {
+if (class_exists(Event::class)) {
     /**
-     * Symfony < 4.3.
-     */
-    class TestAsyncEventTransformer implements EventTransformer
-    {
-        /**
-         * @var Context
-         */
-        private $context;
-
-        public function __construct(Context $context)
-        {
-            $this->context = $context;
-        }
-
-        public function toMessage($eventName, Event $event = null)
-        {
-            if (Event::class === get_class($event)) {
-                return $this->context->createMessage(json_encode(''));
-            }
-
-            /** @var GenericEvent $event */
-            if (false == $event instanceof GenericEvent) {
-                throw new \LogicException('Must be GenericEvent');
-            }
-
-            return $this->context->createMessage(json_encode([
-                'subject' => $event->getSubject(),
-                'arguments' => $event->getArguments(),
-            ]));
-        }
-
-        public function toEvent($eventName, Message $message)
-        {
-            $data = JSON::decode($message->getBody());
-
-            if ('' === $data) {
-                return new Event();
-            }
-
-            return new GenericEvent($data['subject'], $data['arguments']);
-        }
-    }
-} elseif (class_exists(Event::class)) {
-    /**
-     * Symfony >= 4.3 and < 5.0.
+     * Symfony < 5.0.
      */
     class TestAsyncEventTransformer implements EventTransformer
     {

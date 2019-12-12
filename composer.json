@@ -54,7 +54,7 @@
     "symfony/http-kernel": "^3.4|^4",
     "symfony/filesystem": "^3.4|^4",
     "symfony/framework-bundle": "^3.4|^4",
-    "symfony/yaml": "^3.4|^4|^5",
+    "symfony/yaml": "^4.3|^5",
     "empi89/php-amqp-stubs": "*@dev",
     "doctrine/doctrine-bundle": "~1.2|^2",
     "doctrine/mongodb-odm-bundle": "^3.5|^4",

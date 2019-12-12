@@ -16,8 +16,8 @@ parameters:
 		- pkg/simple-client/SimpleClient.php
 	ignoreErrors:
 		-
-			message: Class Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy not found.
+			message: '#Class Symfony\\Component\\EventDispatcher\\LegacyEventDispatcherProxy not found#'
 			path: %currentWorkingDirectory%/*
 		-
-			message: '#.*Symfony\Contracts\EventDispatcher\Event.*#'
+			message: '#.*Symfony\\Contracts\\EventDispatcher\\Event.*#'
 			path: %currentWorkingDirectory%/*
