@@ -104,7 +104,7 @@ class UseCasesTest extends TestCase
             echo "Async event\n";
         });
 
-        $this->dispatch($this->dispatcher, new GenericEvent(),'test_async');
+        $this->dispatch($this->dispatcher, new GenericEvent(), 'test_async');
         $this->processMessages();
 
         $this->expectOutputString("Sync event\nSend message for event: test_async\nAsync event\n");
@@ -115,7 +115,7 @@ class UseCasesTest extends TestCase
         $this->dispatcher->addListener('foo', function ($event, $name, EventDispatcherInterface $dispatcher) {
             echo "Foo event\n";
 
-            $this->dispatch($dispatcher, new GenericEvent(),'test_async');
+            $this->dispatch($dispatcher, new GenericEvent(), 'test_async');
         });
 
         $this->dispatcher->addListener('test_async', function () {
@@ -128,7 +128,7 @@ class UseCasesTest extends TestCase
             echo "Async event\n";
         });
 
-        $this->dispatch($this->dispatcher, new GenericEvent(),'foo');
+        $this->dispatch($this->dispatcher, new GenericEvent(), 'foo');
 
         $this->processMessages();
 
@@ -143,14 +143,14 @@ class UseCasesTest extends TestCase
         $this->asyncDispatcher->addListener('test_async', function ($event, $eventName, EventDispatcherInterface $dispatcher) {
             echo "Async event\n";
 
-            $this->dispatch($dispatcher, new GenericEvent(),'test_async_from_async');
+            $this->dispatch($dispatcher, new GenericEvent(), 'test_async_from_async');
         });
 
         $this->dispatcher->addListener('test_async_from_async', function ($event, $eventName, EventDispatcherInterface $dispatcher) {
             echo "Async event from event\n";
         });
 
-        $this->dispatch($this->dispatcher, new GenericEvent(),'test_async');
+        $this->dispatch($this->dispatcher, new GenericEvent(), 'test_async');
 
         $this->processMessages();
         $this->processMessages();
@@ -169,10 +169,10 @@ class UseCasesTest extends TestCase
         $this->asyncDispatcher->addListener('test_async', function ($event, $eventName, EventDispatcherInterface $dispatcher) {
             echo "Async event\n";
 
-            $this->dispatch($dispatcher, new GenericEvent(),'sync');
+            $this->dispatch($dispatcher, new GenericEvent(), 'sync');
         });
 
-        $this->dispatch($this->dispatcher, new GenericEvent(),'test_async');
+        $this->dispatch($this->dispatcher, new GenericEvent(), 'test_async');
 
         $this->processMessages();
 

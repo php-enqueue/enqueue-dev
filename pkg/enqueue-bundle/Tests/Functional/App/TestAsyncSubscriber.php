@@ -2,7 +2,6 @@
 
 namespace Enqueue\Bundle\Tests\Functional\App;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

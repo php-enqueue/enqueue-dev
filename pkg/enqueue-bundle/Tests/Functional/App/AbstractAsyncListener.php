@@ -21,10 +21,6 @@ abstract class AbstractAsyncListener extends \Enqueue\AsyncEventDispatcher\Async
      */
     protected $registry;
 
-    /**
-     * @param ProducerInterface $producer
-     * @param Registry          $registry
-     */
     public function __construct(ProducerInterface $producer, Registry $registry)
     {
         $this->producer = $producer;

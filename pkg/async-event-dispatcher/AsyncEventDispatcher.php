@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 
 if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::class)) {
     /**
-     * Symfony < 4.3
+     * Symfony < 4.3.
      */
     class AsyncEventDispatcher extends AbstractAsyncEventDispatcher
     {
@@ -28,7 +28,7 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
     }
 } elseif (class_exists(Event::class)) {
     /**
-     * Symfony >= 4.3 and < 5.0
+     * Symfony >= 4.3 and < 5.0.
      */
     class AsyncEventDispatcher extends AbstractAsyncEventDispatcher
     {
@@ -49,7 +49,7 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
     }
 } else {
     /**
-     * Symfony >= 5.0
+     * Symfony >= 5.0.
      */
     class AsyncEventDispatcher extends AbstractAsyncEventDispatcher
     {

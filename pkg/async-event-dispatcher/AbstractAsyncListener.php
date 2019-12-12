@@ -4,7 +4,6 @@ namespace Enqueue\AsyncEventDispatcher;
 
 use Interop\Queue\Context;
 use Interop\Queue\Queue;
-use Symfony\Component\EventDispatcher\Event;
 
 abstract class AbstractAsyncListener
 {
@@ -29,8 +28,6 @@ abstract class AbstractAsyncListener
     protected $syncMode;
 
     /**
-     * @param Context      $context
-     * @param Registry     $registry
      * @param Queue|string $eventQueue
      */
     public function __construct(Context $context, Registry $registry, $eventQueue)

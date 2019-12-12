@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
 if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::class)) {
     /**
-     * Symfony < 4.3
+     * Symfony < 4.3.
      */
     class AsyncListener extends AbstractAsyncListener
     {
@@ -18,7 +18,6 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
         }
 
         /**
-         * @param Event  $event
          * @param string $eventName
          */
         public function onEvent(Event $event, $eventName)
@@ -36,7 +35,7 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
     }
 } elseif (class_exists(Event::class)) {
     /**
-     * Symfony >= 4.3 and < 5.0
+     * Symfony >= 4.3 and < 5.0.
      */
     class AsyncListener extends AbstractAsyncListener
     {
@@ -68,7 +67,7 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
     }
 } else {
     /**
-     * Symfony >= 5.0
+     * Symfony >= 5.0.
      */
     class AsyncListener extends AbstractAsyncListener
     {
@@ -78,7 +77,6 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
         }
 
         /**
-         * @param Event  $event
          * @param string $eventName
          */
         public function onEvent(ContractEvent $event, $eventName)

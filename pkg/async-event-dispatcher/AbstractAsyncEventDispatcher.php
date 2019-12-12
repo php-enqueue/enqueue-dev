@@ -19,10 +19,6 @@ abstract class AbstractAsyncEventDispatcher extends EventDispatcher implements E
      */
     protected $asyncListener;
 
-    /**
-     * @param EventDispatcherInterface $trueEventDispatcher
-     * @param AsyncListener            $asyncListener
-     */
     public function __construct(EventDispatcherInterface $trueEventDispatcher, AsyncListener $asyncListener)
     {
         $this->trueEventDispatcher = $trueEventDispatcher;

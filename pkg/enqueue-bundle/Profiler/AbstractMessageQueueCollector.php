@@ -22,17 +22,6 @@ abstract class AbstractMessageQueueCollector extends DataCollector
         $this->producers[$name] = $producer;
     }
 
-    protected function collectInternal(Request $request, Response $response): void
-    {
-        $this->data = [];
-
-        foreach ($this->producers as $name => $producer) {
-            if ($producer instanceof TraceableProducer) {
-                $this->data[$name] = $producer->getTraces();
-            }
-        }
-    }
-
     public function getCount(): int
     {
         $count = 0;
@@ -93,5 +82,16 @@ abstract class AbstractMessageQueueCollector extends DataCollector
     public function reset()
     {
         $this->data = [];
+    }
+
+    protected function collectInternal(Request $request, Response $response): void
+    {
+        $this->data = [];
+
+        foreach ($this->producers as $name => $producer) {
+            if ($producer instanceof TraceableProducer) {
+                $this->data[$name] = $producer->getTraces();
+            }
+        }
     }
 }

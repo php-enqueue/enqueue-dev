@@ -9,13 +9,12 @@ use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
 if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::class)) {
     /**
-     * Symfony < 4.3
+     * Symfony < 4.3.
      */
     interface EventTransformer
     {
         /**
-         * @param string     $eventName
-         * @param Event|null $event
+         * @param string $eventName
          *
          * @return Message
          */
@@ -23,20 +22,20 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
 
         /**
          * If you able to transform message back to event return it.
-         * If you failed to transform for some reason you can return a string status (@param string $eventName
+         * If you failed to transform for some reason you can return a string status.
          *
-         * @param Message $message
+         * @param mixed $eventName
          *
          * @return Event|string|object
+         *
          * @see Process constants) or an object that implements __toString method.
          *      The object must have a __toString method is supposed to be used as Processor::process return value.
-         *
          */
         public function toEvent($eventName, Message $message);
     }
 } elseif (class_exists(Event::class)) {
     /**
-     * Symfony >= 4.3 and < 5.0
+     * Symfony >= 4.3 and < 5.0.
      */
     interface EventTransformer
     {
@@ -50,26 +49,25 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
 
         /**
          * If you able to transform message back to event return it.
-         * If you failed to transform for some reason you can return a string status (@param string $eventName
+         * If you failed to transform for some reason you can return a string status.
          *
-         * @param Message $message
+         * @param mixed $eventName
          *
          * @return ContractEvent|Event|string|object
+         *
          * @see Process constants) or an object that implements __toString method.
          *      The object must have a __toString method is supposed to be used as Processor::process return value.
-         *
          */
         public function toEvent($eventName, Message $message);
     }
 } else {
     /**
-     * Symfony >= 5.0
+     * Symfony >= 5.0.
      */
     interface EventTransformer
     {
         /**
-         * @param string             $eventName
-         * @param ContractEvent|null $event
+         * @param string $eventName
          *
          * @return Message
          */
@@ -77,14 +75,15 @@ if (class_exists(Event::class) && !class_exists(LegacyEventDispatcherProxy::clas
 
         /**
          * If you able to transform message back to event return it.
-         * If you failed to transform for some reason you can return a string status (@param string $eventName
+         * If you failed to transform for some reason you can return a string status.
          *
-         * @param Message $message
+         * @param mixed $eventNAme
+         * @param mixed $eventName
          *
          * @return ContractEvent|string|object
+         *
          * @see Process constants) or an object that implements __toString method.
          *      The object must have a __toString method is supposed to be used as Processor::process return value.
-         *
          */
         public function toEvent($eventName, Message $message);
     }

@@ -122,11 +122,7 @@ class ConsumeCommand extends Command
             $queues = [];
             foreach ($selectedQueues as $queue) {
                 if (false == array_key_exists($queue, $allQueues)) {
-                    throw new \LogicException(sprintf(
-                        'There is no such queue "%s". Available are "%s"',
-                        $queue,
-                        implode('", "', array_keys($allQueues))
-                    ));
+                    throw new \LogicException(sprintf('There is no such queue "%s". Available are "%s"', $queue, implode('", "', array_keys($allQueues))));
                 }
 
                 $queues[$queue] = $allQueues[$queue];

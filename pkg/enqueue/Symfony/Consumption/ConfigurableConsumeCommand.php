@@ -92,10 +92,7 @@ class ConfigurableConsumeCommand extends Command
         }
 
         if (empty($queues)) {
-            throw new \LogicException(sprintf(
-                'The queue is not provided. The processor must implement "%s" interface and it must return not empty array of queues or a queue set using as a second argument.',
-                QueueSubscriberInterface::class
-            ));
+            throw new \LogicException(sprintf('The queue is not provided. The processor must implement "%s" interface and it must return not empty array of queues or a queue set using as a second argument.', QueueSubscriberInterface::class));
         }
 
         $extensions = $this->getLimitsExtensions($input, $output);
