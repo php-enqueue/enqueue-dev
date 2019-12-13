@@ -59,7 +59,7 @@ class GearmanConsumer implements Consumer
                 $message = GearmanMessage::jsonUnserialize($job->workload());
             });
 
-            while ($this->worker->work());
+            $this->worker->work();
         } finally {
             restore_error_handler();
         }
