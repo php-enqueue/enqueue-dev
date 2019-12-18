@@ -8,6 +8,7 @@ use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\ConnectionFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ManagerRegistryConnectionFactoryTest extends TestCase
@@ -74,7 +75,7 @@ class ManagerRegistryConnectionFactoryTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     private function createManagerRegistryMock()
     {
@@ -82,7 +83,7 @@ class ManagerRegistryConnectionFactoryTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     * @return MockObject|Connection
      */
     private function createConnectionMock()
     {

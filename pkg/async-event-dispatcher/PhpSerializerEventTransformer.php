@@ -2,38 +2,29 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Interop\Queue\Context;
-use Interop\Queue\Message;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-class PhpSerializerEventTransformer implements EventTransformer
-{
+if (class_exists(Event::class)) {
     /**
-     * @var Context
+     * Symfony < 5.0.
      */
-    private $context;
-
-    /**
-     * @param Context $context
-     */
-    public function __construct(Context $context)
+    class PhpSerializerEventTransformer extends AbstractPhpSerializerEventTransformer implements EventTransformer
     {
-        $this->context = $context;
+        public function toMessage($eventName, $event = null)
+        {
+            return $this->context->createMessage(serialize($event));
+        }
     }
-
+} else {
     /**
-     * {@inheritdoc}
+     * Symfony >= 5.0.
      */
-    public function toMessage($eventName, Event $event = null)
+    class PhpSerializerEventTransformer extends AbstractPhpSerializerEventTransformer implements EventTransformer
     {
-        return $this->context->createMessage(serialize($event));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toEvent($eventName, Message $message)
-    {
-        return unserialize($message->getBody());
+        public function toMessage($eventName, ContractEvent $event = null)
+        {
+            return $this->context->createMessage(serialize($event));
+        }
     }
 }

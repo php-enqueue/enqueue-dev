@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
 use Enqueue\Consumption\Context\MessageReceived;
@@ -9,9 +10,9 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Message;
 use Interop\Queue\Processor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class DoctrinePingConnectionExtensionTest extends TestCase
 {
@@ -160,15 +161,15 @@ class DoctrinePingConnectionExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RegistryInterface
+     * @return MockObject|ManagerRegistry
      */
-    protected function createRegistryMock(): RegistryInterface
+    protected function createRegistryMock()
     {
-        return $this->createMock(RegistryInterface::class);
+        return $this->createMock(ManagerRegistry::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     * @return MockObject|Connection
      */
     protected function createConnectionMock(): Connection
     {

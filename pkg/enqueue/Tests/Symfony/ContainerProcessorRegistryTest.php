@@ -91,7 +91,7 @@ class ContainerProcessorRegistryTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createProcessorMock(): Processor
     {
@@ -99,7 +99,7 @@ class ContainerProcessorRegistryTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createContainerMock(): ContainerInterface
     {

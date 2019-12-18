@@ -180,7 +180,7 @@ class GpsConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|GpsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|GpsContext
      */
     private function createContextMock()
     {
@@ -188,7 +188,7 @@ class GpsConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PubSubClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|PubSubClient
      */
     private function createPubSubClientMock()
     {
@@ -196,7 +196,7 @@ class GpsConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Subscription
+     * @return \PHPUnit\Framework\MockObject\MockObject|Subscription
      */
     private function createSubscriptionMock()
     {

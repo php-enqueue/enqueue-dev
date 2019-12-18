@@ -166,7 +166,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|AmqpContext
      */
     private function createContextMock()
     {
@@ -174,7 +174,7 @@ class RabbitMqDelayPluginDelayStrategyTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TestProducer
+     * @return \PHPUnit\Framework\MockObject\MockObject|TestProducer
      */
     private function createProducerMock()
     {
@@ -194,25 +194,31 @@ class TestProducer implements AmqpProducer, DelayStrategy
 
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function getDeliveryDelay(): ?int
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setPriority(int $priority = null): Producer
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function getPriority(): ?int
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setTimeToLive(int $timeToLive = null): Producer
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function getTimeToLive(): ?int
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 }

@@ -24,7 +24,7 @@ class UseCasesTest extends WebTestCase
         // parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if ($this->getContext()) {
             $this->getContext()->close();

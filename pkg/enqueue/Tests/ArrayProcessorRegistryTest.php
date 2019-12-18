@@ -6,6 +6,7 @@ use Enqueue\ArrayProcessorRegistry;
 use Enqueue\ProcessorRegistryInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Processor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ArrayProcessorRegistryTest extends TestCase
@@ -51,7 +52,7 @@ class ArrayProcessorRegistryTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return MockObject|Processor
      */
     protected function createProcessorMock()
     {

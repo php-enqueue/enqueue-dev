@@ -12,6 +12,7 @@ use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConsumerTest extends TestCase
@@ -183,7 +184,7 @@ class AmqpConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return MockObject|AmqpContext
      */
     public function createContextMock()
     {
@@ -191,7 +192,7 @@ class AmqpConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AMQPChannel
+     * @return MockObject|AMQPChannel
      */
     public function createLibChannelMock()
     {

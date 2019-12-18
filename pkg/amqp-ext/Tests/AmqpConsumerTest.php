@@ -7,6 +7,7 @@ use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Queue\Consumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConsumerTest extends TestCase
@@ -24,7 +25,7 @@ class AmqpConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return MockObject|AmqpContext
      */
     private function createContext()
     {

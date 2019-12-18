@@ -7,6 +7,7 @@ use Enqueue\Client\MessagePriority;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -138,7 +139,7 @@ class MessageQueueCollectorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
+     * @return MockObject|ProducerInterface
      */
     protected function createProducerMock()
     {
@@ -146,7 +147,7 @@ class MessageQueueCollectorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TraceableProducer
+     * @return MockObject|TraceableProducer
      */
     protected function createTraceableProducerMock()
     {

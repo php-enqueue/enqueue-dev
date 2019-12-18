@@ -27,7 +27,7 @@ class PRedisCommonUseCasesTest extends TestCase
         $this->context->deleteTopic($this->context->createTopic('enqueue.test_topic'));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->context->close();
     }

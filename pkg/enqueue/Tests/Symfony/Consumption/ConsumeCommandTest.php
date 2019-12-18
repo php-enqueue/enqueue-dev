@@ -160,7 +160,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|QueueConsumerInterface
      */
     private function createQueueConsumerMock()
     {
@@ -168,7 +168,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createContextWithoutSubscriptionConsumerMock(): InteropContext
     {
@@ -183,7 +183,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|InteropContext
      */
     private function createContextStub(Consumer $consumer = null): InteropContext
     {
@@ -207,7 +207,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExtensionInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ExtensionInterface
      */
     private function createExtension()
     {
@@ -217,7 +217,7 @@ class ConsumeCommandTest extends TestCase
     /**
      * @param mixed|null $queue
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit\Framework\MockObject\MockObject|Consumer
      */
     private function createConsumerStub($queue = null): Consumer
     {

@@ -81,7 +81,7 @@ class SimpleProduceCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProducerInterface
      */
     private function createProducerMock()
     {

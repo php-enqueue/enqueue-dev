@@ -15,6 +15,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Processor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -242,7 +243,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
     {
@@ -257,7 +258,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createContextMock(): InteropContext
     {
@@ -265,7 +266,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createProcessorMock(): Processor
     {
@@ -275,7 +276,7 @@ class ExclusiveCommandExtensionTest extends TestCase
     /**
      * @param mixed $queue
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createConsumerStub($queue): Consumer
     {

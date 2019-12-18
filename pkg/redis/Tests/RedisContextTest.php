@@ -231,7 +231,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Redis
+     * @return \PHPUnit\Framework\MockObject\MockObject|Redis
      */
     private function createRedisMock()
     {

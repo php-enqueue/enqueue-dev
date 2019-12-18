@@ -9,6 +9,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Message;
 use Interop\Queue\Processor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetter;
@@ -52,7 +53,7 @@ class ResetServicesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     protected function createResetterMock(): ServicesResetter
     {

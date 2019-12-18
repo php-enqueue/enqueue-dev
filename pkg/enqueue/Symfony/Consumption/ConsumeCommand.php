@@ -57,7 +57,7 @@ class ConsumeCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $transport = $input->getOption('transport');
 
@@ -81,7 +81,7 @@ class ConsumeCommand extends Command
 
         $consumer->consume(new ChainExtension($extensions));
 
-        return $exitStatusExtension->getExitStatus();
+        return $exitStatusExtension->getExitStatus() ?? 0;
     }
 
     private function getQueueConsumer(string $name): QueueConsumerInterface

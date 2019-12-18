@@ -8,6 +8,7 @@ use Enqueue\Null\NullMessage;
 use Enqueue\ProcessorRegistryInterface;
 use Interop\Queue\Context;
 use Interop\Queue\Processor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DelegateProcessorTest extends TestCase
@@ -57,7 +58,7 @@ class DelegateProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProcessorRegistryInterface
+     * @return MockObject|ProcessorRegistryInterface
      */
     protected function createProcessorRegistryMock()
     {
@@ -65,7 +66,7 @@ class DelegateProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return MockObject|Context
      */
     protected function createContextMock()
     {
@@ -73,7 +74,7 @@ class DelegateProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return MockObject|Processor
      */
     protected function createProcessorMock()
     {

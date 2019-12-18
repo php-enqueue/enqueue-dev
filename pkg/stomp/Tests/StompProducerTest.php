@@ -100,7 +100,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Client
+     * @return \PHPUnit\Framework\MockObject\MockObject|Client
      */
     private function createStompClientMock()
     {

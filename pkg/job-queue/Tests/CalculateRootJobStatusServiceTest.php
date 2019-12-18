@@ -5,6 +5,7 @@ namespace Enqueue\JobQueue\Tests;
 use Enqueue\JobQueue\CalculateRootJobStatusService;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -153,10 +154,8 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 
         $case = new CalculateRootJobStatusService($storage);
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Got unsupported job status: id: "12345" status: "invalid-status"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Got unsupported job status: id: "12345" status: "invalid-status"');
 
         $case->calculate($childJob);
     }
@@ -356,7 +355,7 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
+     * @return MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
      */
     private function createJobStorageMock()
     {

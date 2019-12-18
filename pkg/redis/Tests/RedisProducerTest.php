@@ -104,7 +104,7 @@ class RedisProducerTest extends TestCase
             ->with(
                 'aDestination:delayed',
                 $this->isJson(),
-                $this->equalTo(time() + 5)
+                $this->equalTo(time() + 5, 1)
             )
         ;
 
@@ -128,7 +128,7 @@ class RedisProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RedisContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|RedisContext
      */
     private function createContextMock()
     {
@@ -136,7 +136,7 @@ class RedisProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Redis
+     * @return \PHPUnit\Framework\MockObject\MockObject|Redis
      */
     private function createRedisMock()
     {

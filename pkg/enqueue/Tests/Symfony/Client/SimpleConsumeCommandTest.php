@@ -104,7 +104,7 @@ class SimpleConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DelegateProcessor
+     * @return \PHPUnit\Framework\MockObject\MockObject|DelegateProcessor
      */
     private function createDelegateProcessorMock()
     {
@@ -112,7 +112,7 @@ class SimpleConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|QueueConsumerInterface
      */
     private function createQueueConsumerMock()
     {
@@ -120,7 +120,7 @@ class SimpleConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
     private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
     {

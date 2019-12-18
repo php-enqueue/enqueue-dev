@@ -272,7 +272,7 @@ class RdKafkaConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|KafkaConsumer
+     * @return \PHPUnit\Framework\MockObject\MockObject|KafkaConsumer
      */
     private function createKafkaConsumerMock()
     {
@@ -280,7 +280,7 @@ class RdKafkaConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RdKafkaContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|RdKafkaContext
      */
     private function createContextMock()
     {
@@ -288,7 +288,7 @@ class RdKafkaConsumerTest extends TestCase
     }
 
     /**
-     * @return Serializer|\PHPUnit_Framework_MockObject_MockObject|Serializer
+     * @return Serializer|\PHPUnit\Framework\MockObject\MockObject|Serializer
      */
     private function createSerializerMock()
     {

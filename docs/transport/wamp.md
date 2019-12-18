@@ -10,7 +10,7 @@ nav_order: 3
 
 A transport for [Web Application Messaging Protocol](https://wamp-proto.org/).
 WAMP is an open standard WebSocket subprotocol.
-It uses internally Thruway PHP library [voryx/thruway](https://github.com/voryx/Thruway)
+It uses internally Thruway PHP library [thruway/client](https://github.com/thruway/client)
 
 * [Installation](#installation)
 * [Start the WAMP router](#start-the-wamp-router)
@@ -27,7 +27,10 @@ $ composer require enqueue/wamp
 
 ## Start the WAMP router
 
+You can get a WAMP router with [Thruway](https://github.com/voryx/Thruway):
+
 ```bash
+$ composer require voryx/thruway
 $ php vendor/voryx/thruway/Examples/SimpleWsRouter.php
 ```
 

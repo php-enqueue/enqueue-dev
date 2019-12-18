@@ -24,7 +24,7 @@ class SqsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
      */
     private $context;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

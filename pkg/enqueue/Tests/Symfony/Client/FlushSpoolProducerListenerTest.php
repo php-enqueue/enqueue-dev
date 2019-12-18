@@ -58,7 +58,7 @@ class FlushSpoolProducerListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SpoolProducer
+     * @return \PHPUnit\Framework\MockObject\MockObject|SpoolProducer
      */
     private function createSpoolProducerMock()
     {

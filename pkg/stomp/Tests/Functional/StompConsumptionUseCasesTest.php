@@ -35,7 +35,7 @@ class StompConsumptionUseCasesTest extends \PHPUnit\Framework\TestCase
         $this->removeQueue('stomp.test');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->stompContext->close();
     }

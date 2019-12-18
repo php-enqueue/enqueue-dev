@@ -183,7 +183,7 @@ class MongodbContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Client
+     * @return \PHPUnit\Framework\MockObject\MockObject|Client
      */
     private function createClientMock()
     {

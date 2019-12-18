@@ -5,7 +5,9 @@ namespace Enqueue\AsyncEventDispatcher\Tests;
 use Enqueue\AsyncEventDispatcher\AsyncEventDispatcher;
 use Enqueue\AsyncEventDispatcher\AsyncListener;
 use Enqueue\Test\ClassExtensionTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -80,7 +82,13 @@ class ProxyEventDispatcherTest extends TestCase
 
             $asyncEventWasCalled = true;
 
-            func_get_arg(2)->dispatch('theOtherEvent');
+            if (!class_exists(Event::class)) {
+                // Symfony 5
+                func_get_arg(2)->dispatch(func_get_arg(0), 'theOtherEvent');
+            } else {
+                // Symfony < 5
+                func_get_arg(2)->dispatch('theOtherEvent');
+            }
         });
 
         $event = new GenericEvent();
@@ -113,7 +121,7 @@ class ProxyEventDispatcherTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AsyncListener
+     * @return MockObject|AsyncListener
      */
     private function createAsyncListenerMock()
     {

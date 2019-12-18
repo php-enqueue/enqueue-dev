@@ -36,7 +36,7 @@ class AmqpConsumptionUseCasesTest extends TestCase
         $this->removeQueue('amqp_ext.test');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->amqpContext->close();
     }

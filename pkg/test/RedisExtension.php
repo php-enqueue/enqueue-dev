@@ -6,13 +6,14 @@ use Enqueue\Redis\PhpRedis;
 use Enqueue\Redis\PRedis;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
+use PHPUnit\Framework\SkippedTestError;
 
 trait RedisExtension
 {
     private function buildPhpRedisContext(): RedisContext
     {
         if (false == getenv('PHPREDIS_DSN')) {
-            throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
+            throw new SkippedTestError('Functional tests are not allowed in this environment');
         }
 
         $config = getenv('PHPREDIS_DSN');
@@ -28,7 +29,7 @@ trait RedisExtension
     private function buildPRedisContext(): RedisContext
     {
         if (false == getenv('PREDIS_DSN')) {
-            throw new \PHPUnit_Framework_SkippedTestError('Functional tests are not allowed in this environment');
+            throw new SkippedTestError('Functional tests are not allowed in this environment');
         }
 
         $config = getenv('PREDIS_DSN');

@@ -10,9 +10,12 @@ use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Producer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
 class AsyncListenerTest extends TestCase
 {
@@ -68,7 +71,9 @@ class AsyncListenerTest extends TestCase
 
         $listener->syncMode('fooEvent');
 
-        $listener->onEvent(new Event(), 'fooEvent');
+        $eventClass = Kernel::VERSION_ID >= 50000 ? ContractEvent::class : Event::class;
+
+        $listener->onEvent(new $eventClass(), 'fooEvent');
         $listener->onEvent(new GenericEvent(), 'fooEvent');
     }
 
@@ -129,7 +134,7 @@ class AsyncListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EventTransformer
+     * @return MockObject|EventTransformer
      */
     private function createEventTransformerMock()
     {
@@ -137,7 +142,7 @@ class AsyncListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return MockObject|Producer
      */
     private function createProducerMock()
     {
@@ -145,7 +150,7 @@ class AsyncListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return MockObject|Context
      */
     private function createContextMock()
     {
@@ -153,7 +158,7 @@ class AsyncListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @return MockObject|Registry
      */
     private function createRegistryMock()
     {

@@ -1454,7 +1454,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createContextWithoutSubscriptionConsumerMock(): InteropContext
     {
@@ -1469,7 +1469,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|InteropContext
      */
     private function createContextStub(Consumer $consumer = null): InteropContext
     {
@@ -1493,7 +1493,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit\Framework\MockObject\MockObject|Processor
      */
     private function createProcessorMock()
     {
@@ -1501,7 +1501,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit\Framework\MockObject\MockObject|Processor
      */
     private function createProcessorStub()
     {
@@ -1516,7 +1516,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Message
+     * @return \PHPUnit\Framework\MockObject\MockObject|Message
      */
     private function createMessageMock(): Message
     {
@@ -1524,7 +1524,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExtensionInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ExtensionInterface
      */
     private function createExtension()
     {
@@ -1534,7 +1534,7 @@ class QueueConsumerTest extends TestCase
     /**
      * @param mixed|null $queue
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit\Framework\MockObject\MockObject|Consumer
      */
     private function createConsumerStub($queue = null): Consumer
     {
@@ -1553,7 +1553,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return SubscriptionConsumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return SubscriptionConsumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSubscriptionConsumerMock(): SubscriptionConsumer
     {

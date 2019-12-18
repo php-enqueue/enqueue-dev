@@ -48,7 +48,7 @@ class SetupBrokerCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $client = $input->getOption('client');
 
@@ -60,7 +60,7 @@ class SetupBrokerCommand extends Command
 
         $output->writeln('Broker set up');
 
-        return null;
+        return 0;
     }
 
     private function getDriver(string $client): DriverInterface

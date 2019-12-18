@@ -22,7 +22,7 @@ class FsConsumerTest extends TestCase
         $this->fsContext->purgeQueue($this->fsContext->createQueue('fs_test_queue'));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->fsContext->close();
     }
