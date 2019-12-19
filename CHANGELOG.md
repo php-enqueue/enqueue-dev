@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.10.0](https://github.com/php-enqueue/enqueue-dev/tree/0.10.0) (2019-12-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.15...0.10.0)
+
+**Merged pull requests:**
+
+- Symfony 5 [\#997](https://github.com/php-enqueue/enqueue-dev/pull/997) ([kuraobi](https://github.com/kuraobi))
+- Replace the Magento 1 code into the Magento 2 documentation [\#999](https://github.com/php-enqueue/enqueue-dev/pull/999) ([hochgenug](https://github.com/hochgenug))
+- Wrong parameter description [\#994](https://github.com/php-enqueue/enqueue-dev/pull/994) ([bramstroker](https://github.com/bramstroker))
+
 ## [0.9.15](https://github.com/php-enqueue/enqueue-dev/tree/0.9.15) (2019-11-28)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.14...0.9.15)
 
