@@ -8,8 +8,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Doctrine\DoctrineConnectionFactoryFactory;
+use PHPUnit\Framework\TestCase;
 
-class DoctrineConnectionFactoryFactoryTest extends \PHPUnit_Framework_TestCase
+class DoctrineConnectionFactoryFactoryTest extends TestCase
 {
     /**
      * @var ManagerRegistry|\Prophecy\Prophecy\ObjectProphecy

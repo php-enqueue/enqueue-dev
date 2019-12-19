@@ -9,7 +9,7 @@
         "php": "^7.1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.4.0"
+        "phpunit/phpunit": "~7.5"
     },
     "support": {
         "email": "opensource@forma-pro.com",
@@ -27,7 +27,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.9.x-dev"
+            "dev-master": "0.10.x-dev"
         }
     }
 }

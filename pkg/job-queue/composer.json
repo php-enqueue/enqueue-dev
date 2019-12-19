@@ -7,14 +7,14 @@
     "license": "MIT",
     "require": {
         "php": "^7.1.3",
-        "enqueue/enqueue": "^0.9",
-        "enqueue/null": "^0.9",
-        "queue-interop/queue-interop": "^0.7|^0.8",
+        "enqueue/enqueue": "^0.10",
+        "enqueue/null": "^0.10",
+        "queue-interop/queue-interop": "^0.8",
         "doctrine/orm": "~2.4"
     },
     "require-dev": {
         "phpunit/phpunit": "~7.5",
-        "enqueue/test": "0.9.x-dev",
+        "enqueue/test": "0.10.x-dev",
         "doctrine/doctrine-bundle": "~1.2|^2",
         "symfony/browser-kit": "^4.3|^5",
         "symfony/expression-language": "^4.3|^5",
@@ -37,7 +37,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.9.x-dev"
+            "dev-master": "0.10.x-dev"
         }
     }
 }

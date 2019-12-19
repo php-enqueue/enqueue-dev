@@ -10,7 +10,7 @@
         "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
     },
     "require": {
-        "enqueue/dsn": "^0.9"
+        "enqueue/dsn": "^0.10"
     },
     "autoload": {
         "psr-4": { "Enqueue\\Test\\": "" }
@@ -18,7 +18,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.9.x-dev"
+            "dev-master": "0.10.x-dev"
         }
     }
 }
