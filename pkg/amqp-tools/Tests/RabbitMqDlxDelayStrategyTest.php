@@ -12,6 +12,7 @@ use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Exception\InvalidDestinationException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RabbitMqDlxDelayStrategyTest extends TestCase
@@ -181,7 +182,7 @@ class RabbitMqDlxDelayStrategyTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return MockObject|AmqpContext
      */
     private function createContextMock()
     {
@@ -189,7 +190,7 @@ class RabbitMqDlxDelayStrategyTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpProducer
+     * @return MockObject|AmqpProducer
      */
     private function createProducerMock()
     {

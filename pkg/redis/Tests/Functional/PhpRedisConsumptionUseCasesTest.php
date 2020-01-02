@@ -27,7 +27,7 @@ class PhpRedisConsumptionUseCasesTest extends TestCase
         $this->context->deleteQueue($this->context->createQueue('enqueue.test_queue_reply'));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->context->close();
     }

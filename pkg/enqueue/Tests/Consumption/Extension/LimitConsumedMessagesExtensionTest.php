@@ -9,6 +9,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -160,7 +161,7 @@ class LimitConsumedMessagesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createInteropContextMock(): Context
     {
@@ -168,7 +169,7 @@ class LimitConsumedMessagesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createSubscriptionConsumerMock(): SubscriptionConsumer
     {
@@ -176,7 +177,7 @@ class LimitConsumedMessagesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createLoggerMock(): LoggerInterface
     {

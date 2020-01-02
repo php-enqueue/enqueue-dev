@@ -14,3 +14,10 @@ parameters:
 		- pkg/enqueue-bundle/DependencyInjection/Configuration.php
 		- pkg/enqueue/Tests/Symfony/DependencyInjection/TransportFactoryTest.php
 		- pkg/simple-client/SimpleClient.php
+	ignoreErrors:
+		-
+			message: '#Class Symfony\\Component\\EventDispatcher\\LegacyEventDispatcherProxy not found#'
+			path: %currentWorkingDirectory%/*
+		-
+			message: '#.*Symfony\\Contracts\\EventDispatcher\\Event.*#'
+			path: %currentWorkingDirectory%/*

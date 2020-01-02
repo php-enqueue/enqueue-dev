@@ -134,7 +134,7 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FsProducer
+     * @return \PHPUnit\Framework\MockObject\MockObject|FsProducer
      */
     private function createProducerMock()
     {
@@ -142,7 +142,7 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|FsContext
      */
     private function createContextMock()
     {

@@ -10,6 +10,7 @@ use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GearmanProducerTest extends TestCase
@@ -68,7 +69,7 @@ class GearmanProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\GearmanClient
+     * @return MockObject|\GearmanClient
      */
     private function createGearmanClientMock()
     {

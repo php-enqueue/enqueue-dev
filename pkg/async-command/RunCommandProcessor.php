@@ -34,7 +34,11 @@ final class RunCommandProcessor implements Processor
         $phpBin = (new PhpExecutableFinder())->find();
         $consoleBin = file_exists($this->projectDir.'/bin/console') ? './bin/console' : './app/console';
 
-        $process = new Process($phpBin.' '.$consoleBin.' '.$this->getCommandLine($command), $this->projectDir);
+        $process = new Process(array_merge(
+            [$phpBin, $consoleBin, $command->getCommand()],
+            $command->getArguments(),
+            $this->getCommandLineOptions($command)
+        ), $this->projectDir);
         $process->setTimeout($this->timeout);
         $process->run();
 
@@ -48,22 +52,15 @@ final class RunCommandProcessor implements Processor
     }
 
     /**
-     * @return string
+     * @return string[]
      */
-    private function getCommandLine(RunCommand $command): string
+    private function getCommandLineOptions(RunCommand $command): array
     {
-        $optionsString = '';
+        $options = [];
         foreach ($command->getOptions() as $name => $value) {
-            $optionsString .= " $name=$value";
+            $options[] = "$name=$value";
         }
-        $optionsString = trim($optionsString);
 
-        $argumentsString = '';
-        foreach ($command->getArguments() as $value) {
-            $argumentsString .= " $value";
-        }
-        $argumentsString = trim($argumentsString);
-
-        return trim($command->getCommand().' '.$argumentsString.' '.$optionsString);
+        return $options;
     }
 }

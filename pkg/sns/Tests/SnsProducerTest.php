@@ -233,7 +233,7 @@ class SnsProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SnsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|SnsContext
      */
     private function createSnsContextMock(): SnsContext
     {
@@ -241,7 +241,7 @@ class SnsProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SnsClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|SnsClient
      */
     private function createSnsClientMock(): SnsClient
     {

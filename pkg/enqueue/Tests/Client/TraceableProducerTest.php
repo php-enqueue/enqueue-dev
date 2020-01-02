@@ -366,7 +366,7 @@ class TraceableProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProducerInterface
      */
     protected function createProducerMock()
     {

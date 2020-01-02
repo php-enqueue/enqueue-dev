@@ -9,6 +9,7 @@ use Enqueue\AmqpBunny\AmqpSubscriptionConsumer;
 use Interop\Amqp\Impl\AmqpBind;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
@@ -244,7 +245,7 @@ class AmqpContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Channel
+     * @return MockObject|Channel
      */
     public function createChannelMock()
     {

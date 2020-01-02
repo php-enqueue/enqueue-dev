@@ -540,7 +540,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Protocol
+     * @return \PHPUnit\Framework\MockObject\MockObject|Protocol
      */
     private function createStompProtocolMock()
     {
@@ -548,7 +548,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|BufferedStompClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|BufferedStompClient
      */
     private function createStompClientMock()
     {

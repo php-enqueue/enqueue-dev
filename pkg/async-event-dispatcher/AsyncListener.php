@@ -2,86 +2,66 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Interop\Queue\Context;
-use Interop\Queue\Queue;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-class AsyncListener
-{
+if (class_exists(Event::class)) {
     /**
-     * @var Context
+     * Symfony < 5.0.
      */
-    private $context;
-
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * @var Queue
-     */
-    private $eventQueue;
-
-    /**
-     * @var bool
-     */
-    private $syncMode;
-
-    /**
-     * @param Context      $context
-     * @param Registry     $registry
-     * @param Queue|string $eventQueue
-     */
-    public function __construct(Context $context, Registry $registry, $eventQueue)
+    class AsyncListener extends AbstractAsyncListener
     {
-        $this->context = $context;
-        $this->registry = $registry;
-        $this->eventQueue = $eventQueue instanceof Queue ? $eventQueue : $context->createQueue($eventQueue);
+        /**
+         * @param Event|ContractEvent $event
+         * @param string              $eventName
+         */
+        public function __invoke($event, $eventName)
+        {
+            $this->onEvent($event, $eventName);
+        }
+
+        /**
+         * @param Event|ContractEvent $event
+         * @param string              $eventName
+         */
+        public function onEvent($event, $eventName)
+        {
+            if (false == isset($this->syncMode[$eventName])) {
+                $transformerName = $this->registry->getTransformerNameForEvent($eventName);
+
+                $message = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
+                $message->setProperty('event_name', $eventName);
+                $message->setProperty('transformer_name', $transformerName);
+
+                $this->context->createProducer()->send($this->eventQueue, $message);
+            }
+        }
     }
-
-    public function __invoke(Event $event, $eventName)
-    {
-        $this->onEvent($event, $eventName);
-    }
-
-    public function resetSyncMode()
-    {
-        $this->syncMode = [];
-    }
-
+} else {
     /**
-     * @param string $eventName
+     * Symfony >= 5.0.
      */
-    public function syncMode($eventName)
+    class AsyncListener extends AbstractAsyncListener
     {
-        $this->syncMode[$eventName] = true;
-    }
+        public function __invoke(ContractEvent $event, $eventName)
+        {
+            $this->onEvent($event, $eventName);
+        }
 
-    /**
-     * @param string $eventName
-     *
-     * @return bool
-     */
-    public function isSyncMode($eventName)
-    {
-        return isset($this->syncMode[$eventName]);
-    }
+        /**
+         * @param string $eventName
+         */
+        public function onEvent(ContractEvent $event, $eventName)
+        {
+            if (false == isset($this->syncMode[$eventName])) {
+                $transformerName = $this->registry->getTransformerNameForEvent($eventName);
 
-    /**
-     * @param Event  $event
-     * @param string $eventName
-     */
-    public function onEvent(Event $event, $eventName)
-    {
-        if (false == isset($this->syncMode[$eventName])) {
-            $transformerName = $this->registry->getTransformerNameForEvent($eventName);
+                $message = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
+                $message->setProperty('event_name', $eventName);
+                $message->setProperty('transformer_name', $transformerName);
 
-            $message = $this->registry->getTransformer($transformerName)->toMessage($eventName, $event);
-            $message->setProperty('event_name', $eventName);
-            $message->setProperty('transformer_name', $transformerName);
-
-            $this->context->createProducer()->send($this->eventQueue, $message);
+                $this->context->createProducer()->send($this->eventQueue, $message);
+            }
         }
     }
 }

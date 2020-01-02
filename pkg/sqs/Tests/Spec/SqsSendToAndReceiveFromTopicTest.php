@@ -24,7 +24,7 @@ class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
      */
     private $context;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

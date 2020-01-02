@@ -10,6 +10,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -23,7 +24,8 @@ class LimitConsumerMemoryExtensionTest extends TestCase
 
     public function testShouldThrowExceptionIfMemoryLimitIsNotInt()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, 'Expected memory limit is int but got: "double"');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected memory limit is int but got: "double"');
 
         new LimitConsumerMemoryExtension(0.0);
     }
@@ -176,7 +178,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createInteropContextMock(): Context
     {
@@ -184,7 +186,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createSubscriptionConsumerMock(): SubscriptionConsumer
     {
@@ -192,7 +194,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createLoggerMock(): LoggerInterface
     {

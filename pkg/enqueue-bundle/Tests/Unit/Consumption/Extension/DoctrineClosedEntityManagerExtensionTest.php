@@ -12,6 +12,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Message;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -189,7 +190,7 @@ class DoctrineClosedEntityManagerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     protected function createRegistryMock(array $managers): ManagerRegistry
     {
@@ -205,7 +206,7 @@ class DoctrineClosedEntityManagerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface
+     * @return MockObject|EntityManagerInterface
      */
     protected function createManagerMock(bool $open): EntityManagerInterface
     {

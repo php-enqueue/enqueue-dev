@@ -14,7 +14,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 [![Total Downloads](https://poser.pugx.org/enqueue/wamp/d/total.png)](https://packagist.org/packages/enqueue/wamp)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/wamp/version.png)](https://packagist.org/packages/enqueue/wamp)
 
-This is an implementation of [queue interop](https://github.com/queue-interop/queue-interop). It uses [Thruway](https://github.com/voryx/Thruway) internally.
+This is an implementation of [queue interop](https://github.com/queue-interop/queue-interop). It uses [Thruway](https://github.com/thruway/client) internally.
 
 ## Resources
 

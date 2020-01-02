@@ -39,7 +39,7 @@ class SqsCommonUseCasesTest extends TestCase
         $this->context->declareQueue($this->queue);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

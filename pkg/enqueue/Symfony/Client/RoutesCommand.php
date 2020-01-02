@@ -58,7 +58,7 @@ class RoutesCommand extends Command
         $this->driver = null;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $this->driver = $this->getDriver($input->getOption('client'));
@@ -112,7 +112,7 @@ class RoutesCommand extends Command
             $table->render();
         }
 
-        return null;
+        return 0;
     }
 
     private function formatSourceType(Route $route): string

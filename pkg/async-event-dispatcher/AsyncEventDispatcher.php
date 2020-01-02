@@ -3,55 +3,47 @@
 namespace Enqueue\AsyncEventDispatcher;
 
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AsyncEventDispatcher extends EventDispatcher
-{
+if (class_exists(Event::class)) {
     /**
-     * @var EventDispatcherInterface
+     * Symfony < 5.0.
      */
-    private $trueEventDispatcher;
-
-    /**
-     * @var AsyncListener
-     */
-    private $asyncListener;
-
-    /**
-     * @param EventDispatcherInterface $trueEventDispatcher
-     * @param AsyncListener            $asyncListener
-     */
-    public function __construct(EventDispatcherInterface $trueEventDispatcher, AsyncListener $asyncListener)
+    class AsyncEventDispatcher extends AbstractAsyncEventDispatcher
     {
-        $this->trueEventDispatcher = $trueEventDispatcher;
-        $this->asyncListener = $asyncListener;
-    }
+        /**
+         * {@inheritdoc}
+         */
+        public function dispatch($event, $eventName = null)
+        {
+            $this->parentDispatch($event, $eventName);
 
-    /**
-     * This method dispatches only those listeners that were marked as async.
-     *
-     * @param string     $eventName
-     * @param Event|null $event
-     */
-    public function dispatchAsyncListenersOnly($eventName, Event $event = null)
-    {
-        try {
-            $this->asyncListener->syncMode($eventName);
+            return $this->trueEventDispatcher->dispatch($event, $eventName);
+        }
 
-            parent::dispatch($eventName, $event);
-        } finally {
-            $this->asyncListener->resetSyncMode();
+        protected function parentDispatch($event, $eventName)
+        {
+            parent::dispatch($event, $eventName);
         }
     }
-
+} else {
     /**
-     * {@inheritdoc}
+     * Symfony >= 5.0.
      */
-    public function dispatch($eventName, Event $event = null)
+    class AsyncEventDispatcher extends AbstractAsyncEventDispatcher
     {
-        parent::dispatch($eventName, $event);
+        /**
+         * {@inheritdoc}
+         */
+        public function dispatch(object $event, string $eventName = null): object
+        {
+            $this->parentDispatch($event, $eventName);
 
-        $this->trueEventDispatcher->dispatch($eventName, $event);
+            return $this->trueEventDispatcher->dispatch($event, $eventName);
+        }
+
+        protected function parentDispatch($event, $eventName)
+        {
+            return parent::dispatch($event, $eventName);
+        }
     }
 }

@@ -448,7 +448,7 @@ class SqsConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SqsProducer
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsProducer
      */
     private function createProducerMock(): SqsProducer
     {
@@ -456,7 +456,7 @@ class SqsConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SqsClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsClient
      */
     private function createSqsClientMock(): SqsClient
     {
@@ -464,7 +464,7 @@ class SqsConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SqsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsContext
      */
     private function createContextMock(): SqsContext
     {

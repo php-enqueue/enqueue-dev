@@ -7,13 +7,13 @@
     "license": "MIT",
     "require": {
         "php": "^7.1.3",
-        "enqueue/enqueue": "^0.9",
+        "enqueue/enqueue": "^0.10",
         "ramsey/uuid": "^3",
-        "enqueue/dsn": "^0.9"
+        "enqueue/dsn": "^0.10"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.4.0",
-        "enqueue/test": "0.9.x-dev",
+        "phpunit/phpunit": "~7.5",
+        "enqueue/test": "0.10.x-dev",
         "influxdb/influxdb-php": "^1.14",
         "datadog/php-datadogstatsd": "^1.3",
         "thruway/client": "^0.5",
@@ -41,7 +41,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.9.x-dev"
+            "dev-master": "0.10.x-dev"
         }
     }
 }

@@ -1124,12 +1124,12 @@ trait GenericDriverTestsTrait
     abstract protected function createDriver(...$args): DriverInterface;
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     abstract protected function createContextMock(): Context;
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     abstract protected function createProducerMock(): InteropProducer;
 
@@ -1140,7 +1140,7 @@ trait GenericDriverTestsTrait
     abstract protected function createMessage(): InteropMessage;
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createContextStub(): Context
     {

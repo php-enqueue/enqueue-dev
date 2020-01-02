@@ -6,6 +6,7 @@ use Enqueue\JobQueue\DependentJobContext;
 use Enqueue\JobQueue\DependentJobService;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +25,8 @@ class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
 
         $service = new DependentJobService($this->createJobStorageMock());
 
-        $this->setExpectedException(\LogicException::class, 'Only root jobs allowed but got child. jobId: "12345"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Only root jobs allowed but got child. jobId: "12345"');
 
         $service->saveDependentJob($context);
     }
@@ -66,7 +68,7 @@ class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
+     * @return MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
      */
     private function createJobStorageMock()
     {

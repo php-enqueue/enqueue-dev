@@ -17,6 +17,7 @@ use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpProducerTest extends TestCase
@@ -200,7 +201,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Message
+     * @return MockObject|Message
      */
     private function createMessageMock()
     {
@@ -208,7 +209,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Destination
+     * @return MockObject|Destination
      */
     private function createDestinationMock()
     {
@@ -216,7 +217,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Channel
+     * @return MockObject|Channel
      */
     private function createBunnyChannelMock()
     {
@@ -224,7 +225,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return MockObject|AmqpContext
      */
     private function createContextMock()
     {
@@ -232,7 +233,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DelayStrategy
+     * @return MockObject|DelayStrategy
      */
     private function createDelayStrategyMock()
     {

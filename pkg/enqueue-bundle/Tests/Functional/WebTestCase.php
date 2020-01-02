@@ -33,11 +33,10 @@ abstract class WebTestCase extends BaseWebTestCase
         $producer->clearTraces();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
+        static::ensureKernelShutdown();
         static::$client = null;
-        static::$kernel = null;
-        static::$container = null;
     }
 
     /**

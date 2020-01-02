@@ -24,7 +24,7 @@ class MongodbConsumerTest extends TestCase
         $this->context = $this->buildMongodbContext();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->context) {
             $this->context->close();

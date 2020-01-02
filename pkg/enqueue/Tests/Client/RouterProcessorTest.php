@@ -195,7 +195,7 @@ class RouterProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
     {

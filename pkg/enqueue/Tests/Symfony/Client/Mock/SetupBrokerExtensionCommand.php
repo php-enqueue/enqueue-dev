@@ -29,12 +29,14 @@ class SetupBrokerExtensionCommand extends Command
         $this->configureSetupBrokerExtension();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->extension = $this->getSetupBrokerExtension($input, new GenericDriver(
             new NullContext(),
             Config::create(),
             new RouteCollection([])
         ));
+
+        return 0;
     }
 }

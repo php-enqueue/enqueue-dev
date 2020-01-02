@@ -113,7 +113,7 @@ class MongodbConsumerTest extends TestCase
     }
 
     /**
-     * @return MongodbProducer|\PHPUnit_Framework_MockObject_MockObject
+     * @return MongodbProducer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createProducerMock()
     {
@@ -121,7 +121,7 @@ class MongodbConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MongodbContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|MongodbContext
      */
     private function createContextMock()
     {
@@ -133,6 +133,7 @@ class InvalidMessage implements Message
 {
     public function getBody(): string
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setBody(string $body): void
@@ -145,6 +146,7 @@ class InvalidMessage implements Message
 
     public function getProperties(): array
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setProperty(string $name, $value): void
@@ -161,6 +163,7 @@ class InvalidMessage implements Message
 
     public function getHeaders(): array
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setHeader(string $name, $value): void
@@ -177,6 +180,7 @@ class InvalidMessage implements Message
 
     public function isRedelivered(): bool
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setCorrelationId(string $correlationId = null): void
@@ -185,6 +189,7 @@ class InvalidMessage implements Message
 
     public function getCorrelationId(): ?string
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setMessageId(string $messageId = null): void
@@ -193,10 +198,12 @@ class InvalidMessage implements Message
 
     public function getMessageId(): ?string
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function getTimestamp(): ?int
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 
     public function setTimestamp(int $timestamp = null): void
@@ -209,5 +216,6 @@ class InvalidMessage implements Message
 
     public function getReplyTo(): ?string
     {
+        throw new \BadMethodCallException('This should not be called directly');
     }
 }

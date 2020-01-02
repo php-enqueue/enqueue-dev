@@ -20,6 +20,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Processor;
 use Interop\Queue\Queue;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -230,7 +231,7 @@ class LogExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createConsumerStub(Queue $queue): Consumer
     {
@@ -245,7 +246,7 @@ class LogExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createContextMock(): Context
     {
@@ -253,7 +254,7 @@ class LogExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createProcessorMock(): Processor
     {
@@ -261,7 +262,7 @@ class LogExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
+     * @return MockObject|LoggerInterface
      */
     private function createLogger()
     {

@@ -61,13 +61,13 @@ To consume messages you have to define a processor class first:
 
 namespace Acme\Module\Helper\Async;
 
-use Interop\Queue\Context;
-use Interop\Queue\Message;
-use Interop\Queue\Processor;
+use Interop\Queue\PsrContext;
+use Interop\Queue\PsrMessage;
+use Interop\Queue\PsrProcessor;
 
 class Foo implements Processor
 {
-    public function process(Message $message, Context $context)
+    public function process(PsrMessage $message, PsrContext $context)
     {
         // do job
         // $message->getBody() -> 'payload'
@@ -83,7 +83,7 @@ than subscribe it to a topic or several topics:
 
 
 ```xml
-<!-- app/etc/local.xml -->
+<!-- app/code/Acme/Module/etc/config.xml -->
 
 <config>
   <default>
@@ -91,7 +91,7 @@ than subscribe it to a topic or several topics:
       <processors>
         <foo-processor>
           <topic>a_topic</topic>
-          <helper>acme/async_foo</helper>
+          <helper>Acme\Module\Helper\Async\foo</helper>
         </foo-processor>
       </processors>
     </enqueue>

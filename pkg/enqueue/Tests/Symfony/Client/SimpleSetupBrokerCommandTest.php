@@ -78,7 +78,7 @@ class SimpleSetupBrokerCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
     private function createClientDriverMock()
     {

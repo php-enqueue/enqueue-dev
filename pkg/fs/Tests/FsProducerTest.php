@@ -63,7 +63,7 @@ class FsProducerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FsContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|FsContext
      */
     private function createContextMock()
     {

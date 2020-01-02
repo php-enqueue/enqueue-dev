@@ -87,7 +87,7 @@ class GpsContextTest extends TestCase
     }
 
     /**
-     * @return PubSubClient|\PHPUnit_Framework_MockObject_MockObject|PubSubClient
+     * @return PubSubClient|\PHPUnit\Framework\MockObject\MockObject|PubSubClient
      */
     private function createPubSubClientMock()
     {

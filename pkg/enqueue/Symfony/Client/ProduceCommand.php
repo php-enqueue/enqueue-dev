@@ -52,7 +52,7 @@ class ProduceCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $topic = $input->getOption('topic');
         $command = $input->getOption('command');
@@ -82,7 +82,7 @@ class ProduceCommand extends Command
             throw new \LogicException('Either topic or command option should be set, none is set.');
         }
 
-        return null;
+        return 0;
     }
 
     private function getProducer(string $client): ProducerInterface

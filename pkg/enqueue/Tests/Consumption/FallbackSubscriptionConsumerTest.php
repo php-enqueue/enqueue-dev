@@ -229,7 +229,7 @@ class FallbackSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $body
      *
-     * @return InteropMessage|\PHPUnit_Framework_MockObject_MockObject
+     * @return InteropMessage|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMessageStub($body = null)
     {
@@ -246,7 +246,7 @@ class FallbackSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $queueName
      *
-     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConsumerStub($queueName = null)
     {

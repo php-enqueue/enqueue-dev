@@ -30,7 +30,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $this->removeExchange('amqp_ext.test_exchange');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->amqpContext->close();
     }

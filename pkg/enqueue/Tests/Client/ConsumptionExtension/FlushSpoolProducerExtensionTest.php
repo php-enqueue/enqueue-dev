@@ -12,6 +12,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -70,7 +71,7 @@ class FlushSpoolProducerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createInteropContextMock(): Context
     {
@@ -78,7 +79,7 @@ class FlushSpoolProducerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SpoolProducer
+     * @return MockObject|SpoolProducer
      */
     private function createSpoolProducerMock()
     {

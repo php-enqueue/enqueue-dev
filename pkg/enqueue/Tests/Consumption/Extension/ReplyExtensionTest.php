@@ -12,6 +12,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Producer as InteropProducer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -103,7 +104,7 @@ class ReplyExtensionTest extends TestCase
             ->with($replyQueue, $replyMessage)
         ;
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Context $contextMock */
+        /** @var MockObject|Context $contextMock */
         $contextMock = $this->createMock(Context::class);
         $contextMock
             ->expects($this->once())
@@ -129,7 +130,7 @@ class ReplyExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createInteropContextMock(): Context
     {
@@ -137,7 +138,7 @@ class ReplyExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createNeverUsedContextMock(): Context
     {

@@ -15,7 +15,7 @@ class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiv
     use RetryTrait;
     use SnsQsFactoryTrait;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

@@ -81,7 +81,7 @@ class StompManagementClientTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Client
+     * @return \PHPUnit\Framework\MockObject\MockObject|Client
      */
     private function createClientMock()
     {
@@ -89,7 +89,7 @@ class StompManagementClientTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Exchange
+     * @return \PHPUnit\Framework\MockObject\MockObject|Exchange
      */
     private function createExchangeMock()
     {
@@ -97,7 +97,7 @@ class StompManagementClientTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Queue
+     * @return \PHPUnit\Framework\MockObject\MockObject|Queue
      */
     private function createQueueMock()
     {
@@ -105,7 +105,7 @@ class StompManagementClientTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Binding
+     * @return \PHPUnit\Framework\MockObject\MockObject|Binding
      */
     private function createBindingMock()
     {

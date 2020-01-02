@@ -70,7 +70,7 @@ class RouteRecipientListProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropProducer
+     * @return \PHPUnit\Framework\MockObject\MockObject|InteropProducer
      */
     protected function createProducerMock()
     {
@@ -78,7 +78,7 @@ class RouteRecipientListProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Context
+     * @return \PHPUnit\Framework\MockObject\MockObject|Context
      */
     protected function createContextMock()
     {
@@ -86,7 +86,7 @@ class RouteRecipientListProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RecipientListRouterInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RecipientListRouterInterface
      */
     protected function createRecipientListRouterMock()
     {

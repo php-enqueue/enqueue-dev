@@ -222,7 +222,7 @@ class PheanstalkConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Pheanstalk
+     * @return \PHPUnit\Framework\MockObject\MockObject|Pheanstalk
      */
     private function createPheanstalkMock()
     {

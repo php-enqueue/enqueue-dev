@@ -10,6 +10,7 @@ use Enqueue\Dbal\DbalSubscriptionConsumer;
 use Interop\Queue\Consumer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DbalSubscriptionConsumerTest extends TestCase
@@ -145,7 +146,7 @@ class DbalSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @return DbalContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return DbalContext|MockObject
      */
     private function createDbalContextMock()
     {
@@ -155,7 +156,7 @@ class DbalSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $queueName
      *
-     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|MockObject
      */
     private function createConsumerStub($queueName = null)
     {
