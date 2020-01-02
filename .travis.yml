@@ -2,6 +2,7 @@ git:
     depth: 10
 
 language: php
+dist: bionic
 
 matrix:
   include:
