@@ -63,6 +63,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
+                'profile' => null,
                 'queue_owner_aws_account_id' => null,
             ],
         ];
@@ -78,6 +79,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
+                'profile' => null,
                 'queue_owner_aws_account_id' => null,
             ],
         ];
@@ -93,6 +95,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
+                'profile' => null,
                 'queue_owner_aws_account_id' => null,
             ],
         ];
@@ -108,6 +111,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
+                'profile' => null,
                 'queue_owner_aws_account_id' => null,
             ],
         ];
@@ -123,6 +127,23 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
+                'profile' => null,
+                'queue_owner_aws_account_id' => null,
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'sqs:?profile=staging&lazy=0'],
+            [
+                'key' => null,
+                'secret' => null,
+                'token' => null,
+                'region' => null,
+                'retries' => 3,
+                'version' => '2012-11-05',
+                'lazy' => false,
+                'endpoint' => null,
+                'profile' => 'staging',
                 'queue_owner_aws_account_id' => null,
             ],
         ];
@@ -138,6 +159,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
+                'profile' => null,
                 'queue_owner_aws_account_id' => null,
             ],
         ];
@@ -159,6 +181,25 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
+                'profile' => null,
+                'queue_owner_aws_account_id' => null,
+            ],
+        ];
+
+        yield [
+            [
+                'profile' => 'staging',
+            ],
+            [
+                'key' => null,
+                'secret' => null,
+                'token' => null,
+                'region' => null,
+                'retries' => 3,
+                'version' => '2012-11-05',
+                'lazy' => true,
+                'endpoint' => null,
+                'profile' => 'staging',
                 'queue_owner_aws_account_id' => null,
             ],
         ];

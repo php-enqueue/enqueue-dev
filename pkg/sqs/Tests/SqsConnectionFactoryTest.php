@@ -32,6 +32,7 @@ class SqsConnectionFactoryTest extends TestCase
             'retries' => 3,
             'version' => '2012-11-05',
             'endpoint' => null,
+            'profile' => null,
             'queue_owner_aws_account_id' => null,
         ], 'config', $factory);
     }
@@ -49,6 +50,7 @@ class SqsConnectionFactoryTest extends TestCase
             'retries' => 3,
             'version' => '2012-11-05',
             'endpoint' => null,
+            'profile' => null,
             'queue_owner_aws_account_id' => null,
         ], 'config', $factory);
     }

@@ -31,7 +31,8 @@ class SqsConnectionFactory implements ConnectionFactory
      *   'retries' => 3,              (int, default=int(3)) Configures the maximum number of allowed retries for a client (pass 0 to disable retries).
      *   'version' => '2012-11-05',   (string, required) The version of the webservice to utilize
      *   'lazy' => true,              Enable lazy connection (boolean)
-     *   'endpoint' => null           (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'endpoint' => null,          (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'profile' => null,           (string, default=null) The name of an AWS profile to used, if provided the SDK will attempt to read associated credentials from the ~/.aws/credentials file.
      *   'queue_owner_aws_account_id' The AWS account ID of the account that created the queue.
      * ].
      *
@@ -92,6 +93,10 @@ class SqsConnectionFactory implements ConnectionFactory
             $config['endpoint'] = $this->config['endpoint'];
         }
 
+        if (isset($this->config['profile'])) {
+            $config['profile'] = $this->config['profile'];
+        }
+
         if ($this->config['key'] && $this->config['secret']) {
             $config['credentials'] = [
                 'key' => $this->config['key'],
@@ -120,10 +125,7 @@ class SqsConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('sqs' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "sqs"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be "sqs"', $dsn->getSchemeProtocol()));
         }
 
         return array_filter(array_replace($dsn->getQuery(), [
@@ -135,6 +137,7 @@ class SqsConnectionFactory implements ConnectionFactory
             'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
+            'profile' => $dsn->getString('profile'),
             'queue_owner_aws_account_id' => $dsn->getString('queue_owner_aws_account_id'),
         ]), function ($value) { return null !== $value; });
     }
@@ -150,6 +153,7 @@ class SqsConnectionFactory implements ConnectionFactory
             'version' => '2012-11-05',
             'lazy' => true,
             'endpoint' => null,
+            'profile' => null,
             'queue_owner_aws_account_id' => null,
         ];
     }
