@@ -172,7 +172,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $queue->getArguments() ? new AMQPTable($queue->getArguments()) : null
         );
 
-        return $messageCount;
+        return $messageCount ?? 0;
     }
 
     public function deleteQueue(InteropAmqpQueue $queue): void
