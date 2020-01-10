@@ -161,6 +161,7 @@ class RdKafkaConsumer implements Consumer
         switch ($kafkaMessage->err) {
             case RD_KAFKA_RESP_ERR__PARTITION_EOF:
             case RD_KAFKA_RESP_ERR__TIMED_OUT:
+            case RD_KAFKA_RESP_ERR__TRANSPORT:
                 return null;
             case RD_KAFKA_RESP_ERR_NO_ERROR:
                 $message = $this->serializer->toMessage($kafkaMessage->payload);
