@@ -338,7 +338,7 @@ class SqsConsumerTest extends TestCase
 
         $this->assertInstanceOf(SqsMessage::class, $result);
         $this->assertEquals('The Body', $result->getBody());
-        $this->assertEquals(['hkey' => 'hvalue'], $result->getHeaders());
+        $this->assertEquals(['hkey' => 'hvalue', 'message_id' => 'theMessageId'], $result->getHeaders());
         $this->assertEquals(['key' => 'value'], $result->getProperties());
         $this->assertEquals([
             'SenderId' => 'AROAX5IAWYILCTYIS3OZ5:foo@bar.com',

@@ -102,7 +102,7 @@ class SqsCommonUseCasesTest extends TestCase
 
         $this->assertEquals(__METHOD__, $message->getBody());
         $this->assertEquals(['FooProperty' => 'FooVal'], $message->getProperties());
-        $this->assertEquals(['BarHeader' => 'BarVal'], $message->getHeaders());
+        $this->assertEquals('BarVal', $message->getHeaders()['BarHeader']);
         $this->assertNotNull($message->getMessageId());
     }
 

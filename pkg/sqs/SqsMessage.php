@@ -58,11 +58,6 @@ class SqsMessage implements Message
      */
     private $requeueVisibilityTimeout;
 
-    /**
-     * @var string|null
-     */
-    private $messageId;
-
     public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
@@ -171,12 +166,12 @@ class SqsMessage implements Message
 
     public function setMessageId(string $messageId = null): void
     {
-        $this->messageId = $messageId;
+        $this->setHeader('message_id', $messageId);
     }
 
     public function getMessageId(): ?string
     {
-        return $this->messageId;
+        return $this->getHeader('message_id');
     }
 
     public function getTimestamp(): ?int
