@@ -203,6 +203,8 @@ class SqsConsumer implements Consumer
             $message->setProperties($headers[1]);
         }
 
+        $message->setMessageId($sqsMessage['MessageId']);
+
         return $message;
     }
 }
