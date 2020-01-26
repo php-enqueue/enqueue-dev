@@ -30,9 +30,10 @@ class RdKafkaTopic implements Topic, Queue
      */
     private $key;
 
-    public function __construct(string $name)
+    public function __construct(string $name, ?TopicConf $conf = null)
     {
         $this->name = $name;
+        $this->conf = $conf;
     }
 
     public function getTopicName(): string

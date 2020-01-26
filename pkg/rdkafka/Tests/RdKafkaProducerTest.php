@@ -145,8 +145,7 @@ class RdKafkaProducerTest extends TestCase
 
         $producer = new RdKafkaProducer($kafkaProducer, $serializer);
 
-        $topic = new RdKafkaTopic('theQueueName');
-        $topic->setConf($conf);
+        $topic = new RdKafkaTopic('theQueueName', $conf);
 
         $producer->send($topic, new RdKafkaMessage());
     }

@@ -36,6 +36,11 @@ class RdKafkaContext implements Context
     private $conf;
 
     /**
+     * @var TopicConf
+     */
+    private $topicConf;
+
+    /**
      * @var Producer
      */
     private $producer;
@@ -75,7 +80,7 @@ class RdKafkaContext implements Context
      */
     public function createTopic(string $topicName): Topic
     {
-        return new RdKafkaTopic($topicName);
+        return new RdKafkaTopic($topicName, $this->getTopicConf());
     }
 
     /**
@@ -83,7 +88,7 @@ class RdKafkaContext implements Context
      */
     public function createQueue(string $queueName): Queue
     {
-        return new RdKafkaTopic($queueName);
+        return new RdKafkaTopic($queueName, $this->getTopicConf());
     }
 
     public function createTemporaryQueue(): Queue
@@ -176,20 +181,29 @@ class RdKafkaContext implements Context
         return $this->producer;
     }
 
-    private function getConf(): Conf
+    private function getTopicConf(): TopicConf
     {
-        if (null === $this->conf) {
-            $topicConf = new TopicConf();
+        if (null === $this->topicConf) {
+            $this->topicConf = new TopicConf();
 
             if (isset($this->config['topic']) && is_array($this->config['topic'])) {
                 foreach ($this->config['topic'] as $key => $value) {
-                    $topicConf->set($key, $value);
+                    $this->topicConf->set($key, $value);
                 }
             }
 
             if (isset($this->config['partitioner'])) {
-                $topicConf->setPartitioner($this->config['partitioner']);
+                $this->topicConf->setPartitioner($this->config['partitioner']);
             }
+
+        }
+
+        return $this->topicConf;
+    }
+
+    private function getConf(): Conf
+    {
+        if (null === $this->conf) {
 
             $this->conf = new Conf();
 
@@ -214,8 +228,6 @@ class RdKafkaContext implements Context
             if (isset($this->config['stats_cb'])) {
                 $this->conf->setStatsCb($this->config['stats_cb']);
             }
-
-            $this->conf->setDefaultTopicConf($topicConf);
         }
 
         return $this->conf;
