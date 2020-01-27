@@ -91,25 +91,19 @@ class DbalConnectionFactory implements ConnectionFactory
         return $this->connection;
     }
 
-    /**
-     * @param string     $dsn
-     * @param array|null $config
-     *
-     * @return array
-     */
     private function parseDsn(string $dsn, array $config = null): array
     {
         if (false === strpos($dsn, ':')) {
             throw new \LogicException(sprintf('The DSN is invalid. It does not have scheme separator ":".'));
         }
 
-        if (false === parse_url($dsn)) {
+        list($scheme) = explode(':', $dsn, 2);
+        $scheme = strtolower($scheme);
+
+        if (false === strpos($scheme, 'sqlite') && false === parse_url($dsn)) {
             throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
         }
 
-        list($scheme) = explode(':', $dsn, 2);
-
-        $scheme = strtolower($scheme);
         if (false == preg_match('/^[a-z\d+-.]*$/', $scheme)) {
             throw new \LogicException('The DSN is invalid. Scheme contains illegal symbols.');
         }
@@ -131,11 +125,7 @@ class DbalConnectionFactory implements ConnectionFactory
         ];
 
         if (false == isset($supported[$scheme])) {
-            throw new \LogicException(sprintf(
-                'The given DSN schema "%s" is not supported. There are supported schemes: "%s".',
-                $scheme,
-                implode('", "', array_keys($supported))
-            ));
+            throw new \LogicException(sprintf('The given DSN schema "%s" is not supported. There are supported schemes: "%s".', $scheme, implode('", "', array_keys($supported))));
         }
 
         $doctrineScheme = $supported[$scheme];
