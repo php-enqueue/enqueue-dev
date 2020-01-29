@@ -28,4 +28,32 @@ class DbalConnectionFactoryTest extends TestCase
         $this->assertAttributeEquals(null, 'connection', $context);
         $this->assertAttributeInternalType('callable', 'connectionFactory', $context);
     }
+
+    public function testShouldParseGenericDSN()
+    {
+        $factory = new DbalConnectionFactory('pgsql+pdo://foo@bar');
+
+        $context = $factory->createContext();
+
+        $this->assertInstanceOf(DbalContext::class, $context);
+
+        $config = $context->getConfig();
+        $this->assertArrayHasKey('connection', $config);
+        $this->assertArrayHasKey('url', $config['connection']);
+        $this->assertEquals('pdo_pgsql://foo@bar', $config['connection']['url']);
+    }
+
+    public function testShouldParseSqliteAbsolutePathDSN()
+    {
+        $factory = new DbalConnectionFactory('sqlite+pdo:////tmp/some.sq3');
+
+        $context = $factory->createContext();
+
+        $this->assertInstanceOf(DbalContext::class, $context);
+
+        $config = $context->getConfig();
+        $this->assertArrayHasKey('connection', $config);
+        $this->assertArrayHasKey('url', $config['connection']);
+        $this->assertEquals('pdo_sqlite:////tmp/some.sq3', $config['connection']['url']);
+    }
 }
