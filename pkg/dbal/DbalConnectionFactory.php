@@ -6,6 +6,7 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Enqueue\Dsn\Dsn;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
 
@@ -91,28 +92,9 @@ class DbalConnectionFactory implements ConnectionFactory
         return $this->connection;
     }
 
-    /**
-     * @param string     $dsn
-     * @param array|null $config
-     *
-     * @return array
-     */
     private function parseDsn(string $dsn, array $config = null): array
     {
-        if (false === strpos($dsn, ':')) {
-            throw new \LogicException(sprintf('The DSN is invalid. It does not have scheme separator ":".'));
-        }
-
-        if (false === parse_url($dsn)) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
-        }
-
-        list($scheme) = explode(':', $dsn, 2);
-
-        $scheme = strtolower($scheme);
-        if (false == preg_match('/^[a-z\d+-.]*$/', $scheme)) {
-            throw new \LogicException('The DSN is invalid. Scheme contains illegal symbols.');
-        }
+        $parsedDsn = Dsn::parseFirst($dsn);
 
         $supported = [
             'db2' => 'db2',
@@ -130,17 +112,13 @@ class DbalConnectionFactory implements ConnectionFactory
             'sqlite+pdo' => 'pdo_sqlite',
         ];
 
-        if (false == isset($supported[$scheme])) {
-            throw new \LogicException(sprintf(
-                'The given DSN schema "%s" is not supported. There are supported schemes: "%s".',
-                $scheme,
-                implode('", "', array_keys($supported))
-            ));
+        if ($parsedDsn && false == isset($supported[$parsedDsn->getScheme()])) {
+            throw new \LogicException(sprintf('The given DSN schema "%s" is not supported. There are supported schemes: "%s".', $parsedDsn->getScheme(), implode('", "', array_keys($supported))));
         }
 
-        $doctrineScheme = $supported[$scheme];
-
-        if ($scheme.':' === $dsn && is_array($config) && array_key_exists('connection', $config)) {
+        $doctrineScheme = $supported[$parsedDsn->getScheme()];
+        $dsnHasProtocolOnly = $parsedDsn->getScheme().':' === $dsn;
+        if ($dsnHasProtocolOnly && is_array($config) && array_key_exists('connection', $config)) {
             $default = [
                 'driver' => $doctrineScheme,
                 'host' => 'localhost',
@@ -158,9 +136,9 @@ class DbalConnectionFactory implements ConnectionFactory
         return [
             'lazy' => true,
             'connection' => [
-                'url' => $scheme.':' === $dsn ?
+                'url' => $dsnHasProtocolOnly ?
                     $doctrineScheme.'://root@localhost' :
-                    str_replace($scheme, $doctrineScheme, $dsn),
+                    str_replace($parsedDsn->getScheme(), $doctrineScheme, $dsn),
             ],
         ];
     }
