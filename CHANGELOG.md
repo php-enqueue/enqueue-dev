@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.10.1](https://github.com/php-enqueue/enqueue-dev/tree/0.10.1) (2020-01-31)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.0...0.10.1)
+
+**Merged pull requests:**
+
+- \[dbal\] fix: allow absolute paths for sqlite transport [\#1015](https://github.com/php-enqueue/enqueue-dev/pull/1015) ([cawolf](https://github.com/cawolf))
+- \[tests\] Add schema declaration to phpunit files [\#1014](https://github.com/php-enqueue/enqueue-dev/pull/1014) ([Steveb-p](https://github.com/Steveb-p))
+- \[rdkafka\] Catch consume error "Local: Broker transport failure" and continue consume [\#1009](https://github.com/php-enqueue/enqueue-dev/pull/1009) ([rdotter](https://github.com/rdotter))
+- \[sqs\] SQS Transport - Add support for AWS profiles. [\#1008](https://github.com/php-enqueue/enqueue-dev/pull/1008) ([bgaillard](https://github.com/bgaillard))
+- \[amqp\] fixes \#1003 Return value of Enqueue\AmqpLib\AmqpContext::declareQueue() must be of the type int [\#1004](https://github.com/php-enqueue/enqueue-dev/pull/1004) ([kalyabin](https://github.com/kalyabin))
+- \[gearman\] Gearman Consumer receive should only fetch one message [\#998](https://github.com/php-enqueue/enqueue-dev/pull/998) ([arep](https://github.com/arep))
+- \[sqs\] add messageId to the sqsMessage [\#992](https://github.com/php-enqueue/enqueue-dev/pull/992) ([BenoitLeveque](https://github.com/BenoitLeveque))
+
 ## [0.10.0](https://github.com/php-enqueue/enqueue-dev/tree/0.10.0) (2019-12-19)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.15...0.10.0)
 
