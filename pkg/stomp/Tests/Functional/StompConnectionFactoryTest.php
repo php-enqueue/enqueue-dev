@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Enqueue\Stomp\Tests\Functional;
-
 
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Test\RabbitmqStompExtension;
@@ -15,7 +13,7 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldNotCreateConnectionWithSendHeartbeat()
     {
-        $dsn = $this->getDsn() . '&send_heartbeat=2000';
+        $dsn = $this->getDsn().'?send_heartbeat=2000';
         $factory = new StompConnectionFactory($dsn);
         $this->expectException(HeartbeatException::class);
         $factory->createContext()->getStomp();
@@ -23,7 +21,7 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateConnectionWithSendHeartbeat()
     {
-        $dsn = $this->getDsn() . '&send_heartbeat=2000&read_timeout=1';
+        $dsn = $this->getDsn().'?send_heartbeat=2000&read_timeout=1';
         $factory = new StompConnectionFactory($dsn);
         $context = $factory->createContext();
 
@@ -35,7 +33,7 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateConnectionWithReceiveHeartbeat()
     {
-        $dsn = $this->getDsn() . '&receive_heartbeat=2000';
+        $dsn = $this->getDsn().'?receive_heartbeat=2000';
         $factory = new StompConnectionFactory($dsn);
         $context = $factory->createContext();
 
@@ -44,5 +42,4 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $observers);
         $this->assertInstanceOf(ServerAliveObserver::class, $observers[0]);
     }
-
 }

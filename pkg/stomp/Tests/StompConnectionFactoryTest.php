@@ -6,9 +6,6 @@ use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\ConnectionFactory;
-use Stomp\Network\Observer\Exception\HeartbeatException;
-use Stomp\Network\Observer\HeartbeatEmitter;
-use Stomp\Network\Observer\ServerAliveObserver;
 
 class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -55,5 +52,4 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertAttributeEquals(null, 'stomp', $context);
         $this->assertAttributeEquals(false, 'useExchangePrefix', $context);
     }
-
 }
