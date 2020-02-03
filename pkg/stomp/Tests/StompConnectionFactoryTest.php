@@ -58,14 +58,14 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldNotCreateConnectionWithSendHeartbeat()
     {
-        $factory = new StompConnectionFactory(['send_heartbeat' => 2000, 'host' => 'activemq']);
+        $factory = new StompConnectionFactory(['send_heartbeat' => 2000]);
         $this->expectException(HeartbeatException::class);
         $factory->createContext()->getStomp();
     }
 
     public function testShouldCreateConnectionWithSendHeartbeat()
     {
-        $factory = new StompConnectionFactory(['send_heartbeat' => 2000, 'host' => 'activemq', 'read_timeout' => 1]);
+        $factory = new StompConnectionFactory(['send_heartbeat' => 2000, 'read_timeout' => 1]);
         $context = $factory->createContext();
 
         $observers = $context->getStomp()->getConnection()->getObservers()->getObservers();
@@ -76,7 +76,7 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateConnectionWithReceiveHeartbeat()
     {
-        $factory = new StompConnectionFactory(['receive_heartbeat' => 2000, 'host' => 'activemq']);
+        $factory = new StompConnectionFactory(['receive_heartbeat' => 2000]);
         $context = $factory->createContext();
 
         $observers = $context->getStomp()->getConnection()->getObservers()->getObservers();
