@@ -56,32 +56,4 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertAttributeEquals(false, 'useExchangePrefix', $context);
     }
 
-    public function testShouldNotCreateConnectionWithSendHeartbeat()
-    {
-        $factory = new StompConnectionFactory(['send_heartbeat' => 2000]);
-        $this->expectException(HeartbeatException::class);
-        $factory->createContext()->getStomp();
-    }
-
-    public function testShouldCreateConnectionWithSendHeartbeat()
-    {
-        $factory = new StompConnectionFactory(['send_heartbeat' => 2000, 'read_timeout' => 1]);
-        $context = $factory->createContext();
-
-        $observers = $context->getStomp()->getConnection()->getObservers()->getObservers();
-        $this->assertAttributeEquals([2000, 0], 'heartbeat', $context->getStomp());
-        $this->assertCount(1, $observers);
-        $this->assertInstanceOf(HeartbeatEmitter::class, $observers[0]);
-    }
-
-    public function testShouldCreateConnectionWithReceiveHeartbeat()
-    {
-        $factory = new StompConnectionFactory(['receive_heartbeat' => 2000]);
-        $context = $factory->createContext();
-
-        $observers = $context->getStomp()->getConnection()->getObservers()->getObservers();
-        $this->assertAttributeEquals([0, 2000], 'heartbeat', $context->getStomp());
-        $this->assertCount(1, $observers);
-        $this->assertInstanceOf(ServerAliveObserver::class, $observers[0]);
-    }
 }
