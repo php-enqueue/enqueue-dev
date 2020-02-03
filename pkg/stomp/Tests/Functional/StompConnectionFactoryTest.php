@@ -7,6 +7,9 @@ use Enqueue\Test\RabbitmqStompExtension;
 use Stomp\Network\Observer\HeartbeatEmitter;
 use Stomp\Network\Observer\ServerAliveObserver;
 
+/**
+ * @group functional
+ */
 class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use RabbitmqStompExtension;
