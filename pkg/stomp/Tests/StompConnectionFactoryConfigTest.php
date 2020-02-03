@@ -66,6 +66,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'sync' => false,
                 'lazy' => true,
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -83,6 +87,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'sync' => false,
                 'lazy' => true,
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -100,6 +108,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'sync' => false,
                 'lazy' => true,
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -118,6 +130,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'foo' => 'bar',
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -136,6 +152,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'foo' => 'bar',
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -154,6 +174,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'foo' => 'bar',
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -173,6 +197,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'foo' => 'bar',
                 'ssl_on' => false,
                 'baz' => 'bazVal',
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -190,6 +218,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'sync' => false,
                 'lazy' => true,
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
 
@@ -208,6 +240,10 @@ class StompConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'foo' => 'bar',
                 'ssl_on' => false,
+                'write_timeout' => 3,
+                'read_timeout' => 60,
+                'send_heartbeat' => 0,
+                'receive_heartbeat' => 0,
             ],
         ];
     }
