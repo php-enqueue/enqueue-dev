@@ -4,6 +4,7 @@ namespace Enqueue\Stomp\Tests\Functional;
 
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Test\RabbitmqStompExtension;
+use Stomp\Network\Observer\Exception\HeartbeatException;
 use Stomp\Network\Observer\HeartbeatEmitter;
 use Stomp\Network\Observer\ServerAliveObserver;
 
