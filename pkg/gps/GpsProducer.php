@@ -27,16 +27,20 @@ class GpsProducer implements Producer
     }
 
     /**
-     * @param GpsTopic   $destination
-     * @param GpsMessage $message
+     * @param GpsTopic|GpsQueue $destination
+     * @param GpsMessage        $message
      */
     public function send(Destination $destination, Message $message): void
     {
-        InvalidDestinationException::assertDestinationInstanceOf($destination, GpsTopic::class);
+        $destination instanceof \Interop\Queue\Topic
+            ? InvalidDestinationException::assertDestinationInstanceOf($destination, GpsTopic::class)
+            : InvalidDestinationException::assertDestinationInstanceOf($destination, GpsQueue::class)
+        ;
         InvalidMessageException::assertMessageInstanceOf($message, GpsMessage::class);
 
+        $gpsTopicName = $destination instanceof GpsTopic ? $destination->getTopicName() : $destination->getQueueName();
         /** @var Topic $topic */
-        $topic = $this->context->getClient()->topic($destination->getTopicName());
+        $topic = $this->context->getClient()->topic($gpsTopicName);
         $topic->publish([
             'data' => json_encode($message),
         ]);
