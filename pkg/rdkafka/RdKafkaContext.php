@@ -36,7 +36,7 @@ class RdKafkaContext implements Context
     private $conf;
 
     /**
-     * @var Producer
+     * @var RdKafkaProducer
      */
     private $producer;
 
@@ -96,7 +96,23 @@ class RdKafkaContext implements Context
      */
     public function createProducer(): Producer
     {
-        return new RdKafkaProducer($this->getProducer(), $this->getSerializer());
+        if (!isset($this->producer)) {
+            $producer = new VendorProducer($this->getConf());
+
+            if (isset($this->config['log_level'])) {
+                $producer->setLogLevel($this->config['log_level']);
+            }
+
+            $this->producer = new RdKafkaProducer($producer, $this->getSerializer());
+
+            // Once created RdKafkaProducer can store messages internally that need to be delivered before PHP shuts
+            // down. Otherwise, we are bound to lose messages in transit.
+            // Note that it is generally preferable to call "close" method explicitly before shutdown starts, since
+            // otherwise we might not have access to some objects, like database connections.
+            register_shutdown_function([$this->producer, 'flush'], $this->config['shutdown_timeout'] ?? -1);
+        }
+
+        return $this->producer;
     }
 
     /**
@@ -139,6 +155,11 @@ class RdKafkaContext implements Context
         foreach ($kafkaConsumers as $kafkaConsumer) {
             $kafkaConsumer->unsubscribe();
         }
+
+        // Compatibility with phprdkafka 4.0.
+        if (isset($this->producer)) {
+            $this->producer->flush($this->config['shutdown_timeout'] ?? -1);
+        }
     }
 
     public function createSubscriptionConsumer(): SubscriptionConsumer
@@ -161,19 +182,6 @@ class RdKafkaContext implements Context
         $patch = (RD_KAFKA_VERSION & 0x0000FF00) >> 8;
 
         return "$major.$minor.$patch";
-    }
-
-    private function getProducer(): VendorProducer
-    {
-        if (null === $this->producer) {
-            $this->producer = new VendorProducer($this->getConf());
-
-            if (isset($this->config['log_level'])) {
-                $this->producer->setLogLevel($this->config['log_level']);
-            }
-        }
-
-        return $this->producer;
     }
 
     private function getConf(): Conf
