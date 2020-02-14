@@ -40,4 +40,15 @@ services:
             - { name: 'enqueue.consumption.extension', priority: 10 }
 ```
 
+When using multiple enqueue instances, you can apply extension to 
+specific or all instances by providing an additional tag attribute:
+
+```
+services:
+    app.enqueue.count_processed_messages_extension:
+        class: 'AppBundle\Enqueue\CountProcessedMessagesExtension'
+        tags:
+            - { name: 'enqueue.consumption.extension', priority: 10, client: 'all' }
+```
+
 [back to index](index.md)
