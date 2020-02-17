@@ -292,7 +292,7 @@ It is not possible to implement heartbeat feature in PHP, due to its synchronous
 You could read more about the issues in post: [Keeping RabbitMQ connections alive in PHP](https://blog.mollie.com/keeping-rabbitmq-connections-alive-in-php-b11cb657d5fb).
 
 `enqueue/amqp-lib` address the issue by registering heartbeat call as a [tick callbacks](http://php.net/manual/en/function.register-tick-function.php).
-To make it work you have to wrapp your long running task by `decalre(ticks=1) {}`.
+To make it work you have to wrapp your long running task by `declare(ticks=1) {}`.
 The number of ticks could be adjusted to your needs.
 Calling it at every tick is not good.
 
