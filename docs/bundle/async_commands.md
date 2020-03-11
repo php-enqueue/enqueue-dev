@@ -43,7 +43,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /** @var ProducerInterface $producer */
 $producer = $container->get(ProducerInterface::class);
 
-$producer->sendCommand(Commands::RUN_COMMAND, new RunCommand('debug:container'));
+$cmd = new RunCommand('debug:container', ['--tag=form.type']);
+$producer->sendCommand(Commands::RUN_COMMAND, $cmd);
 ```
 
 optionally you can get a command execution result:
