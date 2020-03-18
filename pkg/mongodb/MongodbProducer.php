@@ -110,7 +110,7 @@ class MongodbProducer implements Producer
             $collection = $this->context->getCollection();
             $collection->insertOne($mongoMessage);
         } catch (\Exception $e) {
-            throw new Exception('The transport has failed to send the message due to some internal error.', null, $e);
+            throw new Exception('The transport has failed to send the message due to some internal error.', $e->getCode(), $e);
         }
     }
 

@@ -27,7 +27,7 @@ class MongodbConnectionFactory implements ConnectionFactory
      *
      * or
      *
-     * mongodb://127.0.0.1:27017/dbname?polling_interval=1000&enqueue_collection=enqueue
+     * mongodb://127.0.0.1:27017/defaultauthdb?polling_interval=1000&enqueue_database=enqueue&enqueue_collection=enqueue
      *
      * @param array|string|null $config
      */
@@ -38,7 +38,10 @@ class MongodbConnectionFactory implements ConnectionFactory
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
         } elseif (is_array($config)) {
-            $config = $this->parseDsn(empty($config['dsn']) ? 'mongodb:' : $config['dsn']);
+            $config = array_replace(
+                $config,
+                $this->parseDsn(empty($config['dsn']) ? 'mongodb:' : $config['dsn'])
+            );
         } else {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
@@ -86,6 +89,8 @@ class MongodbConnectionFactory implements ConnectionFactory
             ];
         }
         $config['dsn'] = $dsn;
+        // FIXME this is NOT a dbname but rather authdb. But removing this would be a BC break.
+        // see: https://github.com/php-enqueue/enqueue-dev/issues/1027
         if (isset($parsedUrl['path']) && '/' !== $parsedUrl['path']) {
             $pathParts = explode('/', $parsedUrl['path']);
             //DB name
@@ -102,6 +107,9 @@ class MongodbConnectionFactory implements ConnectionFactory
             }
             if (!empty($queryParts['enqueue_collection'])) {
                 $config['collection_name'] = $queryParts['enqueue_collection'];
+            }
+            if (!empty($queryParts['enqueue_database'])) {
+                $config['dbname'] = $queryParts['enqueue_database'];
             }
         }
 
