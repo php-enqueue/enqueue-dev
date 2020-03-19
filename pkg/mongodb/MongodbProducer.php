@@ -77,10 +77,7 @@ class MongodbProducer implements Producer
         $delay = $message->getDeliveryDelay();
         if ($delay) {
             if (!is_int($delay)) {
-                throw new \LogicException(sprintf(
-                    'Delay must be integer but got: "%s"',
-                    is_object($delay) ? get_class($delay) : gettype($delay)
-                ));
+                throw new \LogicException(sprintf('Delay must be integer but got: "%s"', is_object($delay) ? get_class($delay) : gettype($delay)));
             }
 
             if ($delay <= 0) {
@@ -93,10 +90,7 @@ class MongodbProducer implements Producer
         $timeToLive = $message->getTimeToLive();
         if ($timeToLive) {
             if (!is_int($timeToLive)) {
-                throw new \LogicException(sprintf(
-                    'TimeToLive must be integer but got: "%s"',
-                    is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)
-                ));
+                throw new \LogicException(sprintf('TimeToLive must be integer but got: "%s"', is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)));
             }
 
             if ($timeToLive <= 0) {
@@ -110,7 +104,7 @@ class MongodbProducer implements Producer
             $collection = $this->context->getCollection();
             $collection->insertOne($mongoMessage);
         } catch (\Exception $e) {
-            throw new Exception('The transport has failed to send the message due to some internal error.', null, $e);
+            throw new Exception('The transport has failed to send the message due to some internal error.', $e->getCode(), $e);
         }
     }
 
