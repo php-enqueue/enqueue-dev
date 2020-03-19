@@ -77,11 +77,7 @@ class MongodbConnectionFactory implements ConnectionFactory
             'mongodb' => true,
         ];
         if (false == isset($parsedUrl['scheme'])) {
-            throw new \LogicException(sprintf(
-                'The given DSN schema "%s" is not supported. There are supported schemes: "%s".',
-                $parsedUrl['scheme'],
-                implode('", "', array_keys($supported))
-            ));
+            throw new \LogicException(sprintf('The given DSN schema "%s" is not supported. There are supported schemes: "%s".', $parsedUrl['scheme'], implode('", "', array_keys($supported))));
         }
         if ('mongodb:' === $dsn) {
             return [
