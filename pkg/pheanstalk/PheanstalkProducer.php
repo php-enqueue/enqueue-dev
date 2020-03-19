@@ -7,7 +7,6 @@ namespace Enqueue\Pheanstalk;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
-use Interop\Queue\Exception\PriorityNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
 use Pheanstalk\Pheanstalk;
@@ -18,6 +17,21 @@ class PheanstalkProducer implements Producer
      * @var Pheanstalk
      */
     private $pheanstalk;
+
+    /**
+     * @var int
+     */
+    private $deliveryDelay;
+
+    /**
+     * @var int
+     */
+    private $priority;
+
+    /**
+     * @var int
+     */
+    private $timeToLive;
 
     public function __construct(Pheanstalk $pheanstalk)
     {
@@ -35,18 +49,14 @@ class PheanstalkProducer implements Producer
 
         $rawMessage = json_encode($message);
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'Could not encode value into json. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
+            throw new \InvalidArgumentException(sprintf('Could not encode value into json. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
         $this->pheanstalk->useTube($destination->getName())->put(
             $rawMessage,
-            $message->getPriority(),
-            $message->getDelay(),
-            $message->getTimeToRun()
+            $this->resolvePriority($message),
+            $this->resolveDelay($message),
+            $this->resolveTimeToLive($message)
         );
     }
 
@@ -55,16 +65,14 @@ class PheanstalkProducer implements Producer
      */
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
-        if (null === $deliveryDelay) {
-            return $this;
-        }
+        $this->deliveryDelay = $deliveryDelay;
 
-        throw new \LogicException('Not implemented');
+        return $this;
     }
 
     public function getDeliveryDelay(): ?int
     {
-        return null;
+        return $this->deliveryDelay;
     }
 
     /**
@@ -72,16 +80,14 @@ class PheanstalkProducer implements Producer
      */
     public function setPriority(int $priority = null): Producer
     {
-        if (null === $priority) {
-            return $this;
-        }
+        $this->priority = $priority;
 
-        throw PriorityNotSupportedException::providerDoestNotSupportIt();
+        return $this;
     }
 
     public function getPriority(): ?int
     {
-        return null;
+        return $this->priority;
     }
 
     /**
@@ -89,15 +95,49 @@ class PheanstalkProducer implements Producer
      */
     public function setTimeToLive(int $timeToLive = null): Producer
     {
-        if (null === $timeToLive) {
-            return $this;
-        }
+        $this->timeToLive = $timeToLive;
 
-        throw new \LogicException('Not implemented');
+        return $this;
     }
 
     public function getTimeToLive(): ?int
     {
-        return null;
+        return $this->timeToLive;
+    }
+
+    private function resolvePriority(PheanstalkMessage $message): ?int
+    {
+        if (null === $this->priority) {
+            return $message->getPriority();
+        }
+
+        $priority = $this->priority;
+        $this->priority = null;
+
+        return $priority;
+    }
+
+    private function resolveDelay(PheanstalkMessage $message): ?int
+    {
+        if (null === $this->deliveryDelay) {
+            return $message->getDelay();
+        }
+
+        $delay = $this->deliveryDelay;
+        $this->deliveryDelay = null;
+
+        return $delay / 1000;
+    }
+
+    private function resolveTimeToLive(PheanstalkMessage $message): ?int
+    {
+        if (null === $this->timeToLive) {
+            return $message->getTimeToRun();
+        }
+
+        $ttl = $this->timeToLive;
+        $this->timeToLive = null;
+
+        return $ttl / 1000;
     }
 }
