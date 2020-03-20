@@ -52,11 +52,21 @@ class PheanstalkProducer implements Producer
             throw new \InvalidArgumentException(sprintf('Could not encode value into json. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
+        if (null !== $this->priority && null === $message->getHeader('priority')) {
+            $message->setPriority($this->priority);
+        }
+        if (null !== $this->deliveryDelay && null === $message->getHeader('delay')) {
+            $message->setDelay($this->deliveryDelay / 1000);
+        }
+        if (null !== $this->timeToLive && null === $message->getHeader('ttr')) {
+            $message->setTimeToRun($this->timeToLive / 1000);
+        }
+
         $this->pheanstalk->useTube($destination->getName())->put(
             $rawMessage,
-            $this->resolvePriority($message),
-            $this->resolveDelay($message),
-            $this->resolveTimeToLive($message)
+            $message->getPriority(),
+            $message->getDelay(),
+            $message->getTimeToRun()
         );
     }
 
@@ -103,41 +113,5 @@ class PheanstalkProducer implements Producer
     public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
-    }
-
-    private function resolvePriority(PheanstalkMessage $message): ?int
-    {
-        if (null === $this->priority) {
-            return $message->getPriority();
-        }
-
-        $priority = $this->priority;
-        $this->priority = null;
-
-        return $priority;
-    }
-
-    private function resolveDelay(PheanstalkMessage $message): ?int
-    {
-        if (null === $this->deliveryDelay) {
-            return $message->getDelay();
-        }
-
-        $delay = $this->deliveryDelay;
-        $this->deliveryDelay = null;
-
-        return $delay / 1000;
-    }
-
-    private function resolveTimeToLive(PheanstalkMessage $message): ?int
-    {
-        if (null === $this->timeToLive) {
-            return $message->getTimeToRun();
-        }
-
-        $ttl = $this->timeToLive;
-        $this->timeToLive = null;
-
-        return $ttl / 1000;
     }
 }
