@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.10.2](https://github.com/php-enqueue/enqueue-dev/tree/0.10.2) (2020-03-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.1...0.10.2)
+
+**Merged pull requests:**
+
+- Implement DeliveryDelay, Priority and TimeToLive in PheanstalkProducer [\#1033](https://github.com/php-enqueue/enqueue-dev/pull/1033) ([likeuntomurphy](https://github.com/likeuntomurphy))
+- fix\(mongodb\): Exception throwing fatal error, Broken handling of Mong… [\#1032](https://github.com/php-enqueue/enqueue-dev/pull/1032) ([josefsabl](https://github.com/josefsabl))
+- RUN\_COMMAND Option example [\#1030](https://github.com/php-enqueue/enqueue-dev/pull/1030) ([gam6itko](https://github.com/gam6itko))
+- typo [\#1026](https://github.com/php-enqueue/enqueue-dev/pull/1026) ([sebastianneubert](https://github.com/sebastianneubert))
+- Add extension tag parameter note [\#1023](https://github.com/php-enqueue/enqueue-dev/pull/1023) ([Steveb-p](https://github.com/Steveb-p))
+- STOMP. add additional configuration [\#1018](https://github.com/php-enqueue/enqueue-dev/pull/1018) ([versh23](https://github.com/versh23))
+
 ## [0.10.1](https://github.com/php-enqueue/enqueue-dev/tree/0.10.1) (2020-01-31)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.0...0.10.1)
 
