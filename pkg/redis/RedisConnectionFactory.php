@@ -87,10 +87,10 @@ class RedisConnectionFactory implements ConnectionFactory
         if ($this->config['lazy']) {
             return new RedisContext(function () {
                 return $this->createRedis();
-            }, $this->config['redelivery_delay']);
+            }, (int) $this->config['redelivery_delay']);
         }
 
-        return new RedisContext($this->createRedis(), $this->config['redelivery_delay']);
+        return new RedisContext($this->createRedis(), (int) $this->config['redelivery_delay']);
     }
 
     private function createRedis(): Redis
@@ -114,11 +114,7 @@ class RedisConnectionFactory implements ConnectionFactory
 
         $supportedSchemes = ['redis', 'rediss', 'tcp', 'tls', 'unix'];
         if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be one of "%s"',
-                $dsn->getSchemeProtocol(),
-                implode('", "', $supportedSchemes)
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be one of "%s"', $dsn->getSchemeProtocol(), implode('", "', $supportedSchemes)));
         }
 
         $database = $dsn->getDecimal('database');
