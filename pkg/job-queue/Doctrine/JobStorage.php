@@ -39,15 +39,22 @@ class JobStorage
     private $uniqueTableName;
 
     /**
-     * @param ManagerRegistry $doctrine
-     * @param string          $entityClass
-     * @param string          $uniqueTableName
+     * @var string
      */
-    public function __construct(ManagerRegistry $doctrine, $entityClass, $uniqueTableName)
+    private $entityManagerName;
+
+    /**
+     * @param ManagerRegistry $doctrine
+     * @param string $entityClass
+     * @param string $uniqueTableName
+     * @param $entityManagerName
+     */
+    public function __construct(ManagerRegistry $doctrine, $entityClass, $uniqueTableName, $entityManagerName)
     {
         $this->doctrine = $doctrine;
         $this->entityClass = $entityClass;
         $this->uniqueTableName = $uniqueTableName;
+        $this->entityManagerName = $entityManagerName;
     }
 
     /**
@@ -210,7 +217,9 @@ class JobStorage
     private function getEntityManager()
     {
         if (!$this->em) {
-            $this->em = $this->doctrine->getManagerForClass($this->entityClass);
+            $this->em = empty($this->entityManagerName)
+                ? $this->doctrine->getManagerForClass($this->entityClass)
+                : $this->doctrine->getManager($this->entityManagerName);
         }
         if (!$this->em->isOpen()) {
             $this->em = $this->doctrine->resetManager();

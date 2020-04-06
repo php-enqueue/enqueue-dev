@@ -9,6 +9,7 @@ services:
             - '@doctrine'
             - 'Enqueue\JobQueue\Doctrine\Entity\Job'
             - '%enqueue.job.unique_job_table_name%'
+            - '%enqueue.job.entity_manager_name%'
 
     # Deprecated. To be removed in 0.10.
     enqueue.job.storage:

@@ -98,6 +98,11 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                     throw new \LogicException('Job-queue supports only default configuration.');
                 }
 
+                $container->setParameter(
+                    'enqueue.job.entity_manager_name',
+                    $modules['job']['entity_manager_name']
+                );
+
                 $loader->load('job.yml');
             }
 
