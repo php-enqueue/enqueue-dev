@@ -44,7 +44,6 @@ class JobStorage
     private $entityManagerName;
 
     /**
-     * @param ManagerRegistry $doctrine
      * @param string $entityClass
      * @param string $uniqueTableName
      * @param $entityManagerName
@@ -97,7 +96,6 @@ class JobStorage
 
     /**
      * @param string $name
-     * @param Job    $rootJob
      *
      * @return Job
      */
@@ -126,20 +124,13 @@ class JobStorage
     }
 
     /**
-     * @param Job           $job
-     * @param \Closure|null $lockCallback
-     *
      * @throws DuplicateJobException
      */
     public function saveJob(Job $job, \Closure $lockCallback = null)
     {
         $class = $this->getEntityRepository()->getClassName();
         if (!$job instanceof $class) {
-            throw new \LogicException(sprintf(
-                'Got unexpected job instance: expected: "%s", actual" "%s"',
-                $class,
-                get_class($job)
-            ));
+            throw new \LogicException(sprintf('Got unexpected job instance: expected: "%s", actual" "%s"', $class, get_class($job)));
         }
 
         if ($lockCallback) {
@@ -182,11 +173,7 @@ class JobStorage
                             ]);
                         }
                     } catch (UniqueConstraintViolationException $e) {
-                        throw new DuplicateJobException(sprintf(
-                            'Duplicate job. ownerId:"%s", name:"%s"',
-                            $job->getOwnerId(),
-                            $job->getName()
-                        ));
+                        throw new DuplicateJobException(sprintf('Duplicate job. ownerId:"%s", name:"%s"', $job->getOwnerId(), $job->getName()));
                     }
 
                     $this->getEntityManager()->persist($job);
