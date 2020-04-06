@@ -67,6 +67,7 @@ enqueue:
             queue_name:           ~
         job:
             enabled:              false
+            entity_manager_name:  ~
         async_events:
             enabled:              false
         extensions:
