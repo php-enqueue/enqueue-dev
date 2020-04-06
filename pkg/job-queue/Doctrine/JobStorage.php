@@ -46,9 +46,9 @@ class JobStorage
     /**
      * @param string $entityClass
      * @param string $uniqueTableName
-     * @param $entityManagerName
+     * @param mixed  $entityManagerName
      */
-    public function __construct(ManagerRegistry $doctrine, $entityClass, $uniqueTableName, $entityManagerName)
+    public function __construct(ManagerRegistry $doctrine, $entityClass, $uniqueTableName, $entityManagerName = null)
     {
         $this->doctrine = $doctrine;
         $this->entityClass = $entityClass;
