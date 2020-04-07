@@ -73,7 +73,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
         return $this->config;
     }
 
-    private function establishConnection(): AbstractConnection
+    protected function establishConnection(): AbstractConnection
     {
         if (false == $this->connection) {
             if ($this->config->getOption('stream')) {
