@@ -50,7 +50,7 @@ class SnsQsProducer implements Producer
     {
         InvalidMessageException::assertMessageInstanceOf($message, SnsQsMessage::class);
 
-        if (false == $destination instanceof SnsQsTopic && false == $destination instanceof SnsQsQueue) {
+        if (!$destination instanceof SnsQsTopic && !$destination instanceof SnsQsQueue) {
             throw new InvalidDestinationException(sprintf(
                 'The destination must be an instance of [%s|%s] but got %s.',
                 SnsQsTopic::class, SnsQsQueue::class,

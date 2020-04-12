@@ -28,9 +28,9 @@ class SnsQsConnectionFactory implements ConnectionFactory
      *   'secret' => null,            AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'token' => null,             AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'region' => null,            (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
-     *   'version' => '2012-11-05',   (string, required) The version of the webservice to utilize
      *   'lazy' => true,              Enable lazy connection (boolean)
      *   'endpoint' => null           (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'profile' => null,           (string, default=null) The name of an AWS profile to used, if provided the SDK will attempt to read associated credentials from the ~/.aws/credentials file.
      * ].
      *
      * or
@@ -96,7 +96,7 @@ class SnsQsConnectionFactory implements ConnectionFactory
     {
         // set default options
         foreach ($options as $key => $value) {
-            if (false === in_array(substr($key, 0, 4), ['sns_', 'sqs_'], true)) {
+            if (!in_array(substr($key, 0, 4), ['sns_', 'sqs_'], true)) {
                 $this->snsConfig[$key] = $value;
                 $this->sqsConfig[$key] = $value;
             }

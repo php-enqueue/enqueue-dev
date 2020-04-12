@@ -128,7 +128,7 @@ class SnsContext implements Context
 
     public function getTopicArn(SnsDestination $destination): string
     {
-        if (false == array_key_exists($destination->getTopicName(), $this->topicArns)) {
+        if (!array_key_exists($destination->getTopicName(), $this->topicArns)) {
             $this->declareTopic($destination);
         }
 

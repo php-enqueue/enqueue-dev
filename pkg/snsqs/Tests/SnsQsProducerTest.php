@@ -30,13 +30,14 @@ class SnsQsProducerTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new SnsQsProducer($this->createSnsContextMock(), $this->createSqsContextMock());
+        $producer = new SnsQsProducer($this->createSnsContextMock(), $this->createSqsContextMock());
+        $this->assertInstanceOf(SnsQsProducer::class, $producer);
     }
 
     public function testShouldThrowIfMessageIsInvalidType()
     {
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\SnsQs\SnsQsMessage but it is Double\Message\P4');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\SnsQs\SnsQsMessage but it is Double\Message\P1');
 
         $producer = new SnsQsProducer($this->createSnsContextMock(), $this->createSqsContextMock());
 
