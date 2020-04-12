@@ -163,7 +163,7 @@ class SnsQsContext implements Context
 
     public function unbind(SnsQsTopic $topic, SnsQsQueue $queue): void
     {
-        $this->getSnsContext()->unsubscibe(new SnsUnsubscribe(
+        $this->getSnsContext()->unsubscribe(new SnsUnsubscribe(
             $topic,
             $this->getSqsContext()->getQueueArn($queue),
             SnsSubscribe::PROTOCOL_SQS

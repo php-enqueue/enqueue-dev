@@ -79,11 +79,7 @@ class SnsProducer implements Producer
 
         $result = $this->context->getSnsClient()->publish($arguments);
 
-        if (false == $result->hasKey('MessageId')) {
-            throw new \RuntimeException('Message was not sent');
-        }
-
-        $message->setSnsMessageId((string) $result->get('MessageId'));
+        $message->setSnsMessageId($result->getMessageId());
     }
 
     /**

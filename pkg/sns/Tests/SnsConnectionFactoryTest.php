@@ -2,7 +2,7 @@
 
 namespace Enqueue\Sns\Tests;
 
-use Aws\Sns\SnsClient as AwsSnsClient;
+use AsyncAws\Sns\SnsClient as AwsSnsClient;
 use Enqueue\Sns\SnsClient;
 use Enqueue\Sns\SnsConnectionFactory;
 use Enqueue\Sns\SnsContext;
@@ -29,8 +29,8 @@ class SnsConnectionFactoryTest extends TestCase
             'secret' => null,
             'token' => null,
             'region' => null,
-            'version' => '2010-03-31',
             'endpoint' => null,
+            'profile' => null,
         ], 'config', $factory);
     }
 
@@ -44,8 +44,8 @@ class SnsConnectionFactoryTest extends TestCase
             'secret' => null,
             'token' => null,
             'region' => null,
-            'version' => '2010-03-31',
             'endpoint' => null,
+            'profile' => null,
         ], 'config', $factory);
     }
 

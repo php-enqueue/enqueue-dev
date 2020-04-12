@@ -16,7 +16,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The config must be either an array of options, a DSN string, null or instance of Aws\Sns\SnsClient');
+        $this->expectExceptionMessage('The config must be either an array of options, a DSN string, null or instance of AsyncAws\Sns\SnsClient');
 
         new SnsConnectionFactory(new \stdClass());
     }
@@ -59,9 +59,9 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'profile' => null,
             ],
         ];
 
@@ -72,9 +72,9 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'profile' => null,
             ],
         ];
 
@@ -85,9 +85,9 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'profile' => null,
             ],
         ];
 
@@ -98,9 +98,9 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'profile' => null,
             ],
         ];
 
@@ -111,9 +111,9 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'profile' => null,
             ],
         ];
 
@@ -124,9 +124,9 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'profile' => null,
             ],
         ];
 
@@ -137,15 +137,16 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'token' => 'theToken',
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
+                'profile' => 'theProfile',
             ],
             [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
+                'profile' => 'theProfile',
             ],
         ];
     }

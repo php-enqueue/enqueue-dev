@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace Enqueue\Sns;
 
-use Aws\MultiRegionClient;
-use Aws\Result;
-use Aws\Sns\SnsClient as AwsSnsClient;
+use AsyncAws\Sns\Result\CreateTopicResponse;
+use AsyncAws\Sns\Result\ListSubscriptionsByTopicResponse;
+use AsyncAws\Sns\Result\PublishResponse;
+use AsyncAws\Sns\Result\SubscribeResponse;
+use AsyncAws\Sns\SnsClient as AwsSnsClient;
 
 class SnsClient
 {
     /**
      * @var AwsSnsClient
      */
-    private $singleClient;
-
-    /**
-     * @var MultiRegionClient
-     */
-    private $multiClient;
+    private $client;
 
     /**
      * @var callable
@@ -26,119 +23,63 @@ class SnsClient
     private $inputClient;
 
     /**
-     * @param AwsSnsClient|MultiRegionClient|callable $inputClient
+     * @param AwsSnsClient|callable $inputClient
      */
     public function __construct($inputClient)
     {
         $this->inputClient = $inputClient;
     }
 
-    public function createTopic(array $args): Result
+    public function createTopic(array $args): CreateTopicResponse
     {
-        return $this->callApi('createTopic', $args);
+        return $this->getAWSClient()->CreateTopic($args);
     }
 
-    public function deleteTopic(string $topicArn): Result
+    public function deleteTopic(string $topicArn): void
     {
-        return $this->callApi('DeleteTopic', [
+        $this->getAWSClient()->DeleteTopic([
             'TopicArn' => $topicArn,
         ]);
     }
 
-    public function publish(array $args): Result
+    public function publish(array $args): PublishResponse
     {
-        return $this->callApi('publish', $args);
+        return $this->getAWSClient()->Publish($args);
     }
 
-    public function subscribe(array $args): Result
+    public function subscribe(array $args): SubscribeResponse
     {
-        return $this->callApi('subscribe', $args);
+        return $this->getAWSClient()->Subscribe($args);
     }
 
-    public function unsubscribe(array $args): Result
+    public function unsubscribe(array $args): void
     {
-        return $this->callApi('unsubscribe', $args);
+        $this->getAWSClient()->Unsubscribe($args);
     }
 
-    public function listSubscriptionsByTopic(array $args): Result
+    public function listSubscriptionsByTopic(array $args): ListSubscriptionsByTopicResponse
     {
-        return $this->callApi('ListSubscriptionsByTopic', $args);
+        return $this->getAWSClient()->ListSubscriptionsByTopic($args);
     }
 
     public function getAWSClient(): AwsSnsClient
     {
-        $this->resolveClient();
-
-        if ($this->singleClient) {
-            return $this->singleClient;
-        }
-
-        if ($this->multiClient) {
-            $mr = new \ReflectionMethod($this->multiClient, 'getClientFromPool');
-            $mr->setAccessible(true);
-            $singleClient = $mr->invoke($this->multiClient, $this->multiClient->getRegion());
-            $mr->setAccessible(false);
-
-            return $singleClient;
-        }
-
-        throw new \LogicException('The multi or single client must be set');
-    }
-
-    private function callApi(string $name, array $args): Result
-    {
-        $this->resolveClient();
-
-        if ($this->singleClient) {
-            if (false == empty($args['@region'])) {
-                throw new \LogicException('Cannot send message to another region because transport is configured with single aws client');
-            }
-
-            unset($args['@region']);
-
-            return call_user_func([$this->singleClient, $name], $args);
-        }
-
-        if ($this->multiClient) {
-            return call_user_func([$this->multiClient, $name], $args);
-        }
-
-        throw new \LogicException('The multi or single client must be set');
-    }
-
-    private function resolveClient(): void
-    {
-        if ($this->singleClient || $this->multiClient) {
-            return;
+        if ($this->client) {
+            return $this->client;
         }
 
         $client = $this->inputClient;
-        if ($client instanceof MultiRegionClient) {
-            $this->multiClient = $client;
+        if (is_callable($client)) {
+            $client = $client();
+        }
 
-            return;
-        } elseif ($client instanceof AwsSnsClient) {
-            $this->singleClient = $client;
-
-            return;
-        } elseif (is_callable($client)) {
-            $client = call_user_func($client);
-            if ($client instanceof MultiRegionClient) {
-                $this->multiClient = $client;
-
-                return;
-            }
-            if ($client instanceof AwsSnsClient) {
-                $this->singleClient = $client;
-
-                return;
-            }
+        if ($client instanceof AwsSnsClient) {
+            return $this->client = $client;
         }
 
         throw new \LogicException(sprintf(
-            'The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"',
+            'The input client must be an instance of "%s" or a callable that returns it. Got "%s"',
             AwsSnsClient::class,
-            MultiRegionClient::class,
             is_object($client) ? get_class($client) : gettype($client)
         ));
     }

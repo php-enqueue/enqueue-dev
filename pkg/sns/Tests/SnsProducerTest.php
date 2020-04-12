@@ -2,7 +2,9 @@
 
 namespace Enqueue\Sns\Tests;
 
-use Aws\Result;
+use AsyncAws\Core\Result;
+use AsyncAws\Core\Test\ResultMockFactory;
+use AsyncAws\Sns\Result\PublishResponse;
 use Enqueue\Sns\SnsClient;
 use Enqueue\Sns\SnsContext;
 use Enqueue\Sns\SnsDestination;
@@ -62,7 +64,7 @@ class SnsProducerTest extends TestCase
         $client
             ->expects($this->once())
             ->method('publish')
-            ->willReturn(new Result())
+            ->willReturn(ResultMockFactory::createFailing(PublishResponse::class, 400))
         ;
 
         $context = $this->createSnsContextMock();
@@ -81,7 +83,7 @@ class SnsProducerTest extends TestCase
         $message = new SnsMessage('foo');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Message was not sent');
+        $this->expectExceptionMessageRegExp('/HTTP 400 returned/');
 
         $producer = new SnsProducer($context);
         $producer->send($destination, $message);
@@ -149,7 +151,7 @@ class SnsProducerTest extends TestCase
             ->expects($this->once())
             ->method('publish')
             ->with($this->identicalTo($expectedArguments))
-            ->willReturn(new Result(['MessageId' => 'theMessageId']))
+            ->willReturn(ResultMockFactory::create(PublishResponse::class, ['MessageId' => 'theMessageId']))
         ;
 
         $context = $this->createSnsContextMock();
@@ -211,7 +213,7 @@ class SnsProducerTest extends TestCase
             ->expects($this->once())
             ->method('publish')
             ->with($this->identicalTo($expectedArgument))
-            ->willReturn(new Result(['MessageId' => 'theMessageId']));
+            ->willReturn(ResultMockFactory::create(PublishResponse::class, ['MessageId' => 'theMessageId']));
 
         $attributes = [
             'Foo' => [

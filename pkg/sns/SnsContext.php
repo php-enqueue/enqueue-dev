@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Enqueue\Sns;
 
-use Aws\Sns\SnsClient as AwsSnsClient;
+use AsyncAws\Sns\ValueObject\Subscription;
+use AsyncAws\Sns\SnsClient as AwsSnsClient;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
@@ -70,11 +71,7 @@ class SnsContext implements Context
             'Name' => $destination->getQueueName(),
         ]);
 
-        if (false == $result->hasKey('TopicArn')) {
-            throw new \RuntimeException(sprintf('Cannot create topic. topicName: "%s"', $destination->getTopicName()));
-        }
-
-        $this->topicArns[$destination->getTopicName()] = (string) $result->get('TopicArn');
+        $this->topicArns[$destination->getTopicName()] = $result->getTopicArn();
     }
 
     public function deleteTopic(SnsDestination $destination): void
@@ -87,8 +84,8 @@ class SnsContext implements Context
     public function subscribe(SnsSubscribe $subscribe): void
     {
         foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {
-            if ($subscription['Protocol'] === $subscribe->getProtocol()
-                && $subscription['Endpoint'] === $subscribe->getEndpoint()) {
+            if ($subscription->getProtocol() === $subscribe->getProtocol()
+                && $subscription->getEndpoint() === $subscribe->getEndpoint()) {
                 return;
             }
         }
@@ -102,43 +99,31 @@ class SnsContext implements Context
         ]);
     }
 
-    public function unsubscibe(SnsUnsubscribe $unsubscribe): void
+    public function unsubscribe(SnsUnsubscribe $unsubscribe): void
     {
         foreach ($this->getSubscriptions($unsubscribe->getTopic()) as $subscription) {
-            if ($subscription['Protocol'] != $unsubscribe->getProtocol()) {
+            if ($subscription->getProtocol() !== $unsubscribe->getProtocol()) {
                 continue;
             }
 
-            if ($subscription['Endpoint'] != $unsubscribe->getEndpoint()) {
+            if ($subscription->getEndpoint() !== $unsubscribe->getEndpoint()) {
                 continue;
             }
 
             $this->client->unsubscribe([
-                'SubscriptionArn' => $subscription['SubscriptionArn'],
+                'SubscriptionArn' => $subscription->getSubscriptionArn(),
             ]);
         }
     }
 
+    /**
+     * @return Subscription[]
+     */
     public function getSubscriptions(SnsDestination $destination): array
     {
-        $args = [
-            'TopicArn' => $this->getTopicArn($destination),
-        ];
-
-        $subscriptions = [];
-        while (true) {
-            $result = $this->client->listSubscriptionsByTopic($args);
-
-            $subscriptions = array_merge($subscriptions, $result->get('Subscriptions'));
-
-            if (false == $result->hasKey('NextToken')) {
-                break;
-            }
-
-            $args['NextToken'] = $result->get('NextToken');
-        }
-
-        return $subscriptions;
+        return \iterator_to_array(
+            $this->client->listSubscriptionsByTopic(['TopicArn' => $this->getTopicArn($destination)])
+        );
     }
 
     public function getTopicArn(SnsDestination $destination): string
