@@ -2,7 +2,10 @@
 
 namespace Enqueue\Sqs\Tests;
 
-use Aws\Result;
+use AsyncAws\Core\Test\ResultMockFactory;
+use AsyncAws\Sqs\Result\ReceiveMessageResult;
+use AsyncAws\Sqs\Result\SendMessageResult;
+use AsyncAws\Sqs\ValueObject\Message as AwsMessage;
 use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsConsumer;
 use Enqueue\Sqs\SqsContext;
@@ -26,7 +29,9 @@ class SqsConsumerTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new SqsConsumer($this->createContextMock(), new SqsDestination('queue'));
+        $consumer = new SqsConsumer($this->createContextMock(), new SqsDestination('queue'));
+
+        $this->assertInstanceOf(Consumer::class, $consumer);
     }
 
     public function testShouldReturnInstanceOfDestination()
@@ -313,7 +318,7 @@ class SqsConsumerTest extends TestCase
             ->expects($this->once())
             ->method('receiveMessage')
             ->with($this->identicalTo($expectedAttributes))
-            ->willReturn(new Result(['Messages' => [$expectedSqsMessage]]))
+            ->willReturn(ResultMockFactory::create(ReceiveMessageResult::class, ['Messages' => [AwsMessage::create($expectedSqsMessage)]]));
         ;
 
         $context = $this->createContextMock();
@@ -367,7 +372,7 @@ class SqsConsumerTest extends TestCase
             ->expects($this->once())
             ->method('receiveMessage')
             ->with($this->identicalTo($expectedAttributes))
-            ->willReturn(new Result(['Messages' => [[
+            ->willReturn(ResultMockFactory::create(ReceiveMessageResult::class, ['Messages' => [AwsMessage::create([
                 'Body' => 'The Body',
                 'ReceiptHandle' => 'The Receipt',
                 'MessageId' => 'theMessageId',
@@ -380,7 +385,7 @@ class SqsConsumerTest extends TestCase
                         'DataType' => 'String',
                     ],
                 ],
-            ]]]))
+            ])]]))
         ;
 
         $context = $this->createContextMock();
@@ -425,7 +430,7 @@ class SqsConsumerTest extends TestCase
             ->expects($this->once())
             ->method('receiveMessage')
             ->with($this->identicalTo($expectedAttributes))
-            ->willReturn(new Result())
+            ->willReturn(ResultMockFactory::create(ReceiveMessageResult::class))
         ;
 
         $context = $this->createContextMock();

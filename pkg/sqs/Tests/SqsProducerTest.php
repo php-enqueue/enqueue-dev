@@ -2,7 +2,9 @@
 
 namespace Enqueue\Sqs\Tests;
 
-use Aws\Result;
+use AsyncAws\Core\Test\ResultMockFactory;
+use AsyncAws\Sqs\Result\CreateQueueResult;
+use AsyncAws\Sqs\Result\SendMessageResult;
 use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
@@ -26,7 +28,9 @@ class SqsProducerTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new SqsProducer($this->createSqsContextMock());
+        $producer = new SqsProducer($this->createSqsContextMock());
+
+        $this->assertInstanceOf(SqsProducer::class, $producer);
     }
 
     public function testShouldThrowIfBodyOfInvalidType()
@@ -57,7 +61,7 @@ class SqsProducerTest extends TestCase
         $client
             ->expects($this->once())
             ->method('sendMessage')
-            ->willReturn(new Result())
+            ->willReturn(ResultMockFactory::createFailing(SendMessageResult::class, 400))
         ;
 
         $context = $this->createSqsContextMock();
@@ -76,7 +80,7 @@ class SqsProducerTest extends TestCase
         $message = new SqsMessage('foo');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Message was not sent');
+        $this->expectExceptionMessageRegExp('/HTTP 400 returned/');
 
         $producer = new SqsProducer($context);
         $producer->send($destination, $message);
@@ -104,7 +108,7 @@ class SqsProducerTest extends TestCase
             ->expects($this->once())
             ->method('sendMessage')
             ->with($this->identicalTo($expectedArguments))
-            ->willReturn(new Result(['MessageId' => 'theMessageId']))
+            ->willReturn(ResultMockFactory::create(SendMessageResult::class, ['MessageId' => 'theMessageId']))
         ;
 
         $context = $this->createSqsContextMock();
@@ -148,7 +152,7 @@ class SqsProducerTest extends TestCase
             ->expects($this->once())
             ->method('sendMessage')
             ->with($this->identicalTo($expectedArguments))
-            ->willReturn(new Result(['MessageId' => 'theMessageId']))
+            ->willReturn(ResultMockFactory::create(SendMessageResult::class, ['MessageId' => 'theMessageId']))
         ;
 
         $context = $this->createSqsContextMock();
@@ -194,7 +198,7 @@ class SqsProducerTest extends TestCase
             ->expects($this->once())
             ->method('sendMessage')
             ->with($this->identicalTo($expectedArguments))
-            ->willReturn(new Result(['MessageId' => 'theMessageId']))
+            ->willReturn(ResultMockFactory::create(SendMessageResult::class, ['MessageId' => 'theMessageId']))
         ;
 
         $context = $this->createSqsContextMock();

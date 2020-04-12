@@ -44,7 +44,7 @@ $factory = new SqsConnectionFactory('sqs:?key=aKey&secret=aSecret&region=aRegion
 $context = $factory->createContext();
 
 // using a pre-configured client
-$client = new Aws\Sqs\SqsClient([ /* ... */ ]);
+$client = new AsyncAws\Sqs\SqsClient([ /* ... */ ]);
 $factory = new SqsConnectionFactory($client);
 
 // if you have enqueue/enqueue library installed you can use a factory to build context from DSN

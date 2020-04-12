@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use Aws\Sdk;
-use Aws\Sqs\SqsClient as AwsSqsClient;
+use AsyncAws\Sqs\SqsClient as AwsSqsClient;
 use Enqueue\Dsn\Dsn;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
@@ -28,8 +27,6 @@ class SqsConnectionFactory implements ConnectionFactory
      *   'secret' => null,            AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'token' => null,             AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'region' => null,            (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
-     *   'retries' => 3,              (int, default=int(3)) Configures the maximum number of allowed retries for a client (pass 0 to disable retries).
-     *   'version' => '2012-11-05',   (string, required) The version of the webservice to utilize
      *   'lazy' => true,              Enable lazy connection (boolean)
      *   'endpoint' => null,          (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
      *   'profile' => null,           (string, default=null) The name of an AWS profile to used, if provided the SDK will attempt to read associated credentials from the ~/.aws/credentials file.
@@ -84,8 +81,6 @@ class SqsConnectionFactory implements ConnectionFactory
         }
 
         $config = [
-            'version' => $this->config['version'],
-            'retries' => $this->config['retries'],
             'region' => $this->config['region'],
         ];
 
@@ -98,18 +93,16 @@ class SqsConnectionFactory implements ConnectionFactory
         }
 
         if ($this->config['key'] && $this->config['secret']) {
-            $config['credentials'] = [
-                'key' => $this->config['key'],
-                'secret' => $this->config['secret'],
-            ];
+            $config['accessKeyId'] = $this->config['key'];
+            $config['accessKeySecret'] = $this->config['secret'];
 
             if ($this->config['token']) {
-                $config['credentials']['token'] = $this->config['token'];
+                $config['sessionToken'] = $this->config['token'];
             }
         }
 
         $establishConnection = function () use ($config) {
-            return (new Sdk(['Sqs' => $config]))->createMultiRegionSqs();
+            return new AwsSqsClient($config);
         };
 
         $this->client = $this->config['lazy'] ?
@@ -133,8 +126,6 @@ class SqsConnectionFactory implements ConnectionFactory
             'secret' => $dsn->getString('secret'),
             'token' => $dsn->getString('token'),
             'region' => $dsn->getString('region'),
-            'retries' => $dsn->getDecimal('retries'),
-            'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
             'profile' => $dsn->getString('profile'),
@@ -149,8 +140,6 @@ class SqsConnectionFactory implements ConnectionFactory
             'secret' => null,
             'token' => null,
             'region' => null,
-            'retries' => 3,
-            'version' => '2012-11-05',
             'lazy' => true,
             'endpoint' => null,
             'profile' => null,

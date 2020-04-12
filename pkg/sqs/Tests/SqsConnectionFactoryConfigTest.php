@@ -16,7 +16,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The config must be either an array of options, a DSN string, null or instance of Aws\Sqs\SqsClient');
+        $this->expectExceptionMessage('The config must be either an array of options, a DSN string, null or instance of AsyncAws\Sqs\SqsClient');
 
         new SqsConnectionFactory(new \stdClass());
     }
@@ -59,8 +59,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
@@ -75,8 +73,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
@@ -91,8 +87,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
@@ -107,8 +101,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
@@ -123,8 +115,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
@@ -139,8 +129,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
                 'profile' => 'staging',
@@ -155,8 +143,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
@@ -177,8 +163,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
                 'profile' => null,
@@ -195,8 +179,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'retries' => 3,
-                'version' => '2012-11-05',
                 'lazy' => true,
                 'endpoint' => null,
                 'profile' => 'staging',

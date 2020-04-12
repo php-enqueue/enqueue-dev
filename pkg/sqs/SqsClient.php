@@ -4,154 +4,96 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use Aws\MultiRegionClient;
-use Aws\Result;
-use Aws\Sqs\SqsClient as AwsSqsClient;
+use AsyncAws\Sqs\Result\CreateQueueResult;
+use AsyncAws\Sqs\Result\GetQueueAttributesResult;
+use AsyncAws\Sqs\Result\GetQueueUrlResult;
+use AsyncAws\Sqs\Result\ReceiveMessageResult;
+use AsyncAws\Sqs\Result\SendMessageResult;
+use AsyncAws\Sqs\SqsClient as AwsSqsClient;
 
 class SqsClient
 {
     /**
      * @var AwsSqsClient
      */
-    private $singleClient;
+    private $client;
 
     /**
-     * @var MultiRegionClient
-     */
-    private $multiClient;
-
-    /**
-     * @var callable
+     * @var AwsSqsClient|callable
      */
     private $inputClient;
 
     /**
-     * @param AwsSqsClient|MultiRegionClient|callable $inputClient
+     * @param AwsSqsClient|callable $inputClient
      */
     public function __construct($inputClient)
     {
         $this->inputClient = $inputClient;
     }
 
-    public function deleteMessage(array $args): Result
+    public function deleteMessage(array $args): void
     {
-        return $this->callApi('deleteMessage', $args);
+        $this->getAWSClient()->deleteMessage($args);
     }
 
-    public function receiveMessage(array $args): Result
+    public function receiveMessage(array $args): ReceiveMessageResult
     {
-        return $this->callApi('receiveMessage', $args);
+        return $this->getAWSClient()->receiveMessage($args);
     }
 
-    public function changeMessageVisibility(array $args): Result
+    public function changeMessageVisibility(array $args): void
     {
-        return $this->callApi('changeMessageVisibility', $args);
+        $this->getAWSClient()->changeMessageVisibility($args);
     }
 
-    public function purgeQueue(array $args): Result
+    public function purgeQueue(array $args): void
     {
-        return $this->callApi('purgeQueue', $args);
+        $this->getAWSClient()->purgeQueue($args);
     }
 
-    public function getQueueUrl(array $args): Result
+    public function getQueueUrl(array $args): GetQueueUrlResult
     {
-        return $this->callApi('getQueueUrl', $args);
+        return $this->getAWSClient()->getQueueUrl($args);
     }
 
-    public function getQueueAttributes(array $args): Result
+    public function getQueueAttributes(array $args): GetQueueAttributesResult
     {
-        return $this->callApi('getQueueAttributes', $args);
+        return $this->getAWSClient()->getQueueAttributes($args);
     }
 
-    public function createQueue(array $args): Result
+    public function createQueue(array $args): CreateQueueResult
     {
-        return $this->callApi('createQueue', $args);
+        return $this->getAWSClient()->createQueue($args);
     }
 
-    public function deleteQueue(array $args): Result
+    public function deleteQueue(array $args): void
     {
-        return $this->callApi('deleteQueue', $args);
+        $this->getAWSClient()->deleteQueue($args);
     }
 
-    public function sendMessage(array $args): Result
+    public function sendMessage(array $args): SendMessageResult
     {
-        return $this->callApi('sendMessage', $args);
+        return $this->getAWSClient()->sendMessage($args);
     }
 
     public function getAWSClient(): AwsSqsClient
     {
-        $this->resolveClient();
-
-        if ($this->singleClient) {
-            return $this->singleClient;
-        }
-
-        if ($this->multiClient) {
-            $mr = new \ReflectionMethod($this->multiClient, 'getClientFromPool');
-            $mr->setAccessible(true);
-            $singleClient = $mr->invoke($this->multiClient, $this->multiClient->getRegion());
-            $mr->setAccessible(false);
-
-            return $singleClient;
-        }
-
-        throw new \LogicException('The multi or single client must be set');
-    }
-
-    private function callApi(string $name, array $args): Result
-    {
-        $this->resolveClient();
-
-        if ($this->singleClient) {
-            if (false == empty($args['@region'])) {
-                throw new \LogicException('Cannot send message to another region because transport is configured with single aws client');
-            }
-
-            unset($args['@region']);
-
-            return call_user_func([$this->singleClient, $name], $args);
-        }
-
-        if ($this->multiClient) {
-            return call_user_func([$this->multiClient, $name], $args);
-        }
-
-        throw new \LogicException('The multi or single client must be set');
-    }
-
-    private function resolveClient(): void
-    {
-        if ($this->singleClient || $this->multiClient) {
-            return;
+        if ($this->client) {
+            return $this->client;
         }
 
         $client = $this->inputClient;
-        if ($client instanceof MultiRegionClient) {
-            $this->multiClient = $client;
+        if (is_callable($client)) {
+            $client = $client();
+        }
 
-            return;
-        } elseif ($client instanceof AwsSqsClient) {
-            $this->singleClient = $client;
-
-            return;
-        } elseif (is_callable($client)) {
-            $client = call_user_func($client);
-            if ($client instanceof MultiRegionClient) {
-                $this->multiClient = $client;
-
-                return;
-            }
-            if ($client instanceof AwsSqsClient) {
-                $this->singleClient = $client;
-
-                return;
-            }
+        if ($client instanceof AwsSqsClient) {
+            return $this->client = $client;
         }
 
         throw new \LogicException(sprintf(
-            'The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"',
+            'The input client must be an instance of "%s" or a callable that returns it. Got "%s"',
             AwsSqsClient::class,
-            MultiRegionClient::class,
             is_object($client) ? get_class($client) : gettype($client)
         ));
     }

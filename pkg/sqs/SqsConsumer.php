@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
+use AsyncAws\Sqs\ValueObject\Message as AwsMessage;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
@@ -32,7 +33,7 @@ class SqsConsumer implements Consumer
     private $maxNumberOfMessages;
 
     /**
-     * @var array
+     * @var AwsMessage[]
      */
     private $messages;
 
@@ -169,10 +170,7 @@ class SqsConsumer implements Consumer
         }
 
         $result = $this->context->getSqsClient()->receiveMessage($arguments);
-
-        if ($result->hasKey('Messages')) {
-            $this->messages = $result->get('Messages');
-        }
+        $this->messages = $result->getMessages();
 
         if ($message = array_pop($this->messages)) {
             return $this->convertMessage($message);
@@ -181,29 +179,27 @@ class SqsConsumer implements Consumer
         return null;
     }
 
-    protected function convertMessage(array $sqsMessage): SqsMessage
+    protected function convertMessage(AwsMessage $sqsMessage): SqsMessage
     {
         $message = $this->context->createMessage();
 
-        $message->setBody($sqsMessage['Body']);
-        $message->setReceiptHandle($sqsMessage['ReceiptHandle']);
+        $message->setBody($sqsMessage->getBody());
+        $message->setReceiptHandle($sqsMessage->getReceiptHandle());
+        $message->setAttributes($attributes = $sqsMessage->getAttributes());
 
-        if (isset($sqsMessage['Attributes'])) {
-            $message->setAttributes($sqsMessage['Attributes']);
+        if (isset($attributes['ApproximateReceiveCount'])) {
+            $message->setRedelivered(((int) $attributes['ApproximateReceiveCount']) > 1);
         }
 
-        if (isset($sqsMessage['Attributes']['ApproximateReceiveCount'])) {
-            $message->setRedelivered(((int) $sqsMessage['Attributes']['ApproximateReceiveCount']) > 1);
-        }
-
-        if (isset($sqsMessage['MessageAttributes']['Headers'])) {
-            $headers = json_decode($sqsMessage['MessageAttributes']['Headers']['StringValue'], true);
+        $attributes = $sqsMessage->getMessageAttributes();
+        if (isset($attributes['Headers'])) {
+            $headers = json_decode($attributes['Headers']->getStringValue(), true);
 
             $message->setHeaders($headers[0]);
             $message->setProperties($headers[1]);
         }
 
-        $message->setMessageId($sqsMessage['MessageId']);
+        $message->setMessageId($sqsMessage->getMessageId());
 
         return $message;
     }

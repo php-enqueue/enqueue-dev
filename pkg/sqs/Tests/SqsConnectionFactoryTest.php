@@ -2,7 +2,7 @@
 
 namespace Enqueue\Sqs\Tests;
 
-use Aws\Sqs\SqsClient as AwsSqsClient;
+use AsyncAws\Sqs\SqsClient as AwsSqsClient;
 use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
@@ -29,8 +29,6 @@ class SqsConnectionFactoryTest extends TestCase
             'secret' => null,
             'token' => null,
             'region' => null,
-            'retries' => 3,
-            'version' => '2012-11-05',
             'endpoint' => null,
             'profile' => null,
             'queue_owner_aws_account_id' => null,
@@ -47,8 +45,6 @@ class SqsConnectionFactoryTest extends TestCase
             'secret' => null,
             'token' => null,
             'region' => null,
-            'retries' => 3,
-            'version' => '2012-11-05',
             'endpoint' => null,
             'profile' => null,
             'queue_owner_aws_account_id' => null,

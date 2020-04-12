@@ -71,11 +71,7 @@ class SqsProducer implements Producer
             $arguments['MessageGroupId'] = $message->getMessageGroupId();
         }
 
-        $result = $this->context->getSqsClient()->sendMessage($arguments);
-
-        if (false == $result->hasKey('MessageId')) {
-            throw new \RuntimeException('Message was not sent');
-        }
+        $this->context->getSqsClient()->sendMessage($arguments)->resolve();
     }
 
     /**

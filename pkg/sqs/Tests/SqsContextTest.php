@@ -2,7 +2,13 @@
 
 namespace Enqueue\Sqs\Tests;
 
-use Aws\Result;
+use AsyncAws\Core\Result;
+use AsyncAws\Core\Test\ResultMockFactory;
+use AsyncAws\Sqs\Result\CreateQueueResult;
+use AsyncAws\Sqs\Result\GetQueueAttributesResult;
+use AsyncAws\Sqs\Result\GetQueueUrlResult;
+use AsyncAws\Sqs\Result\ReceiveMessageResult;
+use AsyncAws\Sqs\Result\SendMessageResult;
 use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsConsumer;
 use Enqueue\Sqs\SqsContext;
@@ -27,7 +33,9 @@ class SqsContextTest extends TestCase
 
     public function testCouldBeConstructedWithSqsClientAsFirstArgument()
     {
-        new SqsContext($this->createSqsClientMock(), []);
+        $context = new SqsContext($this->createSqsClientMock(), []);
+
+        $this->assertInstanceOf(SqsContext::class, $context);
     }
 
     public function testShouldAllowCreateEmptyMessage()
@@ -132,7 +140,7 @@ class SqsContextTest extends TestCase
                 'Attributes' => [],
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(CreateQueueResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -155,7 +163,7 @@ class SqsContextTest extends TestCase
                 'Attributes' => [],
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(CreateQueueResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -178,13 +186,13 @@ class SqsContextTest extends TestCase
                 '@region' => null,
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
         $sqsClient
             ->expects($this->once())
             ->method('deleteQueue')
             ->with($this->identicalTo(['QueueUrl' => 'theQueueUrl']))
-            ->willReturn(new Result())
+            ->willReturn(ResultMockFactory::create(Result::class))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -206,13 +214,13 @@ class SqsContextTest extends TestCase
                 '@region' => 'theRegion',
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
         $sqsClient
             ->expects($this->once())
             ->method('deleteQueue')
             ->with($this->identicalTo(['QueueUrl' => 'theQueueUrl']))
-            ->willReturn(new Result())
+            ->willReturn(ResultMockFactory::create(Result::class))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -235,7 +243,7 @@ class SqsContextTest extends TestCase
                 '@region' => null,
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
         $sqsClient
             ->expects($this->once())
@@ -244,7 +252,7 @@ class SqsContextTest extends TestCase
                 '@region' => null,
                 'QueueUrl' => 'theQueueUrl',
             ]))
-            ->willReturn(new Result())
+            ->willReturn(ResultMockFactory::create(Result::class))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -266,7 +274,7 @@ class SqsContextTest extends TestCase
                 '@region' => 'theRegion',
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
         $sqsClient
             ->expects($this->once())
@@ -275,7 +283,7 @@ class SqsContextTest extends TestCase
                 '@region' => 'theRegion',
                 'QueueUrl' => 'theQueueUrl',
             ]))
-            ->willReturn(new Result())
+            ->willReturn(ResultMockFactory::create(Result::class))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -298,7 +306,7 @@ class SqsContextTest extends TestCase
                 '@region' => null,
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -318,7 +326,7 @@ class SqsContextTest extends TestCase
                 '@region' => 'theRegion',
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
         $sqsClient
             ->expects($this->once())
@@ -328,7 +336,7 @@ class SqsContextTest extends TestCase
                 'QueueUrl' => 'theQueueUrl',
                 'AttributeNames' => ['QueueArn'],
             ]))
-            ->willReturn(new Result([
+            ->willReturn(ResultMockFactory::create(GetQueueAttributesResult::class, [
                 'Attributes' => [
                     'QueueArn' => 'theQueueArn',
                 ],
@@ -353,7 +361,7 @@ class SqsContextTest extends TestCase
                 '@region' => 'theRegion',
                 'QueueName' => 'aQueueName',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -377,7 +385,7 @@ class SqsContextTest extends TestCase
                 'QueueName' => 'aQueueName',
                 'QueueOwnerAWSAccountId' => 'anotherAWSAccountID',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -398,7 +406,7 @@ class SqsContextTest extends TestCase
                 'QueueName' => 'aQueueName',
                 'QueueOwnerAWSAccountId' => 'anotherAWSAccountID',
             ]))
-            ->willReturn(new Result(['QueueUrl' => 'theQueueUrl']))
+            ->willReturn(ResultMockFactory::create(GetQueueUrlResult::class, ['QueueUrl' => 'theQueueUrl']))
         ;
 
         $context = new SqsContext($sqsClient, [
@@ -409,29 +417,6 @@ class SqsContextTest extends TestCase
         $queue->setQueueOwnerAWSAccountId('anotherAWSAccountID');
 
         $context->getQueueUrl($queue);
-    }
-
-    public function testShouldThrowExceptionIfGetQueueUrlResultHasNoQueueUrlProperty()
-    {
-        $sqsClient = $this->createSqsClientMock();
-        $sqsClient
-            ->expects($this->once())
-            ->method('getQueueUrl')
-            ->with($this->identicalTo([
-                '@region' => null,
-                'QueueName' => 'aQueueName',
-            ]))
-            ->willReturn(new Result([]))
-        ;
-
-        $context = new SqsContext($sqsClient, [
-            'queue_owner_aws_account_id' => null,
-        ]);
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('QueueUrl cannot be resolved. queueName: "aQueueName"');
-
-        $context->getQueueUrl(new SqsDestination('aQueueName'));
     }
 
     /**
