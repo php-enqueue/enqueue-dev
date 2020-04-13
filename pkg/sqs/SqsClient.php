@@ -4,96 +4,156 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use AsyncAws\Sqs\Result\CreateQueueResult;
-use AsyncAws\Sqs\Result\GetQueueAttributesResult;
-use AsyncAws\Sqs\Result\GetQueueUrlResult;
-use AsyncAws\Sqs\Result\ReceiveMessageResult;
-use AsyncAws\Sqs\Result\SendMessageResult;
-use AsyncAws\Sqs\SqsClient as AwsSqsClient;
+use Aws\MultiRegionClient;
+use Aws\Result;
+use Aws\Sqs\SqsClient as AwsSqsClient;
+
+@trigger_error(sprintf('The class "%s" is deprecated since 0.10. Use "%s" instead.', __CLASS__, SqsAsyncClient::class), E_USER_DEPRECATED);
 
 class SqsClient
 {
     /**
      * @var AwsSqsClient
      */
-    private $client;
+    private $singleClient;
 
     /**
-     * @var AwsSqsClient|callable
+     * @var MultiRegionClient
+     */
+    private $multiClient;
+
+    /**
+     * @var callable
      */
     private $inputClient;
 
     /**
-     * @param AwsSqsClient|callable $inputClient
+     * @param AwsSqsClient|MultiRegionClient|callable $inputClient
      */
     public function __construct($inputClient)
     {
         $this->inputClient = $inputClient;
     }
 
-    public function deleteMessage(array $args): void
+    public function deleteMessage(array $args): Result
     {
-        $this->getAWSClient()->deleteMessage($args);
+        return $this->callApi('deleteMessage', $args);
     }
 
-    public function receiveMessage(array $args): ReceiveMessageResult
+    public function receiveMessage(array $args): Result
     {
-        return $this->getAWSClient()->receiveMessage($args);
+        return $this->callApi('receiveMessage', $args);
     }
 
-    public function changeMessageVisibility(array $args): void
+    public function changeMessageVisibility(array $args): Result
     {
-        $this->getAWSClient()->changeMessageVisibility($args);
+        return $this->callApi('changeMessageVisibility', $args);
     }
 
-    public function purgeQueue(array $args): void
+    public function purgeQueue(array $args): Result
     {
-        $this->getAWSClient()->purgeQueue($args);
+        return $this->callApi('purgeQueue', $args);
     }
 
-    public function getQueueUrl(array $args): GetQueueUrlResult
+    public function getQueueUrl(array $args): Result
     {
-        return $this->getAWSClient()->getQueueUrl($args);
+        return $this->callApi('getQueueUrl', $args);
     }
 
-    public function getQueueAttributes(array $args): GetQueueAttributesResult
+    public function getQueueAttributes(array $args): Result
     {
-        return $this->getAWSClient()->getQueueAttributes($args);
+        return $this->callApi('getQueueAttributes', $args);
     }
 
-    public function createQueue(array $args): CreateQueueResult
+    public function createQueue(array $args): Result
     {
-        return $this->getAWSClient()->createQueue($args);
+        return $this->callApi('createQueue', $args);
     }
 
-    public function deleteQueue(array $args): void
+    public function deleteQueue(array $args): Result
     {
-        $this->getAWSClient()->deleteQueue($args);
+        return $this->callApi('deleteQueue', $args);
     }
 
-    public function sendMessage(array $args): SendMessageResult
+    public function sendMessage(array $args): Result
     {
-        return $this->getAWSClient()->sendMessage($args);
+        return $this->callApi('sendMessage', $args);
     }
 
     public function getAWSClient(): AwsSqsClient
     {
-        if ($this->client) {
-            return $this->client;
+        $this->resolveClient();
+
+        if ($this->singleClient) {
+            return $this->singleClient;
+        }
+
+        if ($this->multiClient) {
+            $mr = new \ReflectionMethod($this->multiClient, 'getClientFromPool');
+            $mr->setAccessible(true);
+            $singleClient = $mr->invoke($this->multiClient, $this->multiClient->getRegion());
+            $mr->setAccessible(false);
+
+            return $singleClient;
+        }
+
+        throw new \LogicException('The multi or single client must be set');
+    }
+
+    private function callApi(string $name, array $args): Result
+    {
+        $this->resolveClient();
+
+        if ($this->singleClient) {
+            if (false == empty($args['@region'])) {
+                throw new \LogicException('Cannot send message to another region because transport is configured with single aws client');
+            }
+
+            unset($args['@region']);
+
+            return call_user_func([$this->singleClient, $name], $args);
+        }
+
+        if ($this->multiClient) {
+            return call_user_func([$this->multiClient, $name], $args);
+        }
+
+        throw new \LogicException('The multi or single client must be set');
+    }
+
+    private function resolveClient(): void
+    {
+        if ($this->singleClient || $this->multiClient) {
+            return;
         }
 
         $client = $this->inputClient;
-        if (is_callable($client)) {
-            $client = $client();
-        }
+        if ($client instanceof MultiRegionClient) {
+            $this->multiClient = $client;
 
-        if ($client instanceof AwsSqsClient) {
-            return $this->client = $client;
+            return;
+        } elseif ($client instanceof AwsSqsClient) {
+            $this->singleClient = $client;
+
+            return;
+        } elseif (is_callable($client)) {
+            $client = call_user_func($client);
+            if ($client instanceof MultiRegionClient) {
+                $this->multiClient = $client;
+
+                return;
+            }
+            if ($client instanceof AwsSqsClient) {
+                $this->singleClient = $client;
+
+                return;
+            }
         }
 
         throw new \LogicException(sprintf(
-            'The input client must be an instance of "%s" or a callable that returns it. Got "%s"',
+            'The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"',
             AwsSqsClient::class,
+            MultiRegionClient::class,
             is_object($client) ? get_class($client) : gettype($client)
         ));
     }

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use AsyncAws\Sqs\SqsClient as AwsSqsClient;
+use AsyncAws\Sqs\SqsClient as AsyncAwsSqsClient;
+use Aws\Sqs\SqsClient as AwsSqsClient;
 use Enqueue\Dsn\Dsn;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
@@ -17,7 +18,7 @@ class SqsConnectionFactory implements ConnectionFactory
     private $config;
 
     /**
-     * @var SqsClient
+     * @var SqsClient|SqsAsyncClient
      */
     private $client;
 
@@ -27,7 +28,6 @@ class SqsConnectionFactory implements ConnectionFactory
      *   'secret' => null,            AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'token' => null,             AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'region' => null,            (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
-     *   'lazy' => true,              Enable lazy connection (boolean)
      *   'endpoint' => null,          (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
      *   'profile' => null,           (string, default=null) The name of an AWS profile to used, if provided the SDK will attempt to read associated credentials from the ~/.aws/credentials file.
      *   'queue_owner_aws_account_id' The AWS account ID of the account that created the queue.
@@ -38,10 +38,16 @@ class SqsConnectionFactory implements ConnectionFactory
      * sqs:
      * sqs::?key=aKey&secret=aSecret&token=aToken
      *
-     * @param array|string|AwsSqsClient|null $config
+     * @param array|string|AwsSqsClient|AsyncAwsSqsClient|null $config
      */
     public function __construct($config = 'sqs:')
     {
+        if ($config instanceof AsyncAwsSqsClient) {
+            $this->client = new SqsAsyncClient($config);
+            $this->config = $this->defaultConfig();
+
+            return;
+        }
         if ($config instanceof AwsSqsClient) {
             $this->client = new SqsClient($config);
             $this->config = ['lazy' => false] + $this->defaultConfig();
@@ -60,7 +66,7 @@ class SqsConnectionFactory implements ConnectionFactory
                 unset($config['dsn']);
             }
         } else {
-            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSqsClient::class));
+            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AsyncAwsSqsClient::class));
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
@@ -74,7 +80,12 @@ class SqsConnectionFactory implements ConnectionFactory
         return new SqsContext($this->establishConnection(), $this->config);
     }
 
-    private function establishConnection(): SqsClient
+    /**
+     * @todo in 0.11 restore return typehint
+     *
+     * @return SqsAsyncClient|SqsClient
+     */
+    private function establishConnection()
     {
         if ($this->client) {
             return $this->client;
@@ -101,16 +112,7 @@ class SqsConnectionFactory implements ConnectionFactory
             }
         }
 
-        $establishConnection = function () use ($config) {
-            return new AwsSqsClient($config);
-        };
-
-        $this->client = $this->config['lazy'] ?
-            new SqsClient($establishConnection) :
-            new SqsClient($establishConnection())
-        ;
-
-        return $this->client;
+        return $this->client = new SqsAsyncClient(new AsyncAwsSqsClient($config));
     }
 
     private function parseDsn(string $dsn): array
@@ -126,7 +128,6 @@ class SqsConnectionFactory implements ConnectionFactory
             'secret' => $dsn->getString('secret'),
             'token' => $dsn->getString('token'),
             'region' => $dsn->getString('region'),
-            'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
             'profile' => $dsn->getString('profile'),
             'queue_owner_aws_account_id' => $dsn->getString('queue_owner_aws_account_id'),
@@ -140,7 +141,6 @@ class SqsConnectionFactory implements ConnectionFactory
             'secret' => null,
             'token' => null,
             'region' => null,
-            'lazy' => true,
             'endpoint' => null,
             'profile' => null,
             'queue_owner_aws_account_id' => null,

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Enqueue\Sns;
 
-use AsyncAws\Sns\SnsClient as AwsSnsClient;
+use AsyncAws\Sns\SnsClient as AsyncAwsSnsClient;
+use Aws\Sns\SnsClient as AwsSnsClient;
 use Enqueue\Dsn\Dsn;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
@@ -17,7 +18,7 @@ class SnsConnectionFactory implements ConnectionFactory
     private $config;
 
     /**
-     * @var SnsClient
+     * @var SnsClient|SnsAsyncClient
      */
     private $client;
 
@@ -27,7 +28,6 @@ class SnsConnectionFactory implements ConnectionFactory
      *   'secret' => null,            AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'token' => null,             AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'region' => null,            (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
-     *   'lazy' => true,              Enable lazy connection (boolean)
      *   'endpoint' => null           (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
      *   'profile' => null,           (string, default=null) The name of an AWS profile to used, if provided the SDK will attempt to read associated credentials from the ~/.aws/credentials file.
      * ].
@@ -37,10 +37,16 @@ class SnsConnectionFactory implements ConnectionFactory
      * sns:
      * sns::?key=aKey&secret=aSecret&token=aToken
      *
-     * @param array|string|AwsSnsClient|null $config
+     * @param array|string|AwsSnsClient|AsyncAwsSnsClient|null $config
      */
     public function __construct($config = 'sns:')
     {
+        if ($config instanceof AsyncAwsSnsClient) {
+            $this->client = new SnsAsyncClient($config);
+            $this->config = $this->defaultConfig();
+
+            return;
+        }
         if ($config instanceof AwsSnsClient) {
             $this->client = new SnsClient($config);
             $this->config = ['lazy' => false] + $this->defaultConfig();
@@ -59,7 +65,7 @@ class SnsConnectionFactory implements ConnectionFactory
                 unset($config['dsn']);
             }
         } else {
-            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
+            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AsyncAwsSnsClient::class));
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
@@ -73,7 +79,12 @@ class SnsConnectionFactory implements ConnectionFactory
         return new SnsContext($this->establishConnection(), $this->config);
     }
 
-    private function establishConnection(): SnsClient
+    /**
+     * @todo in 0.11 restore return typehint
+     *
+     * @return SnsAsyncClient|SnsClient
+     */
+    private function establishConnection()
     {
         if ($this->client) {
             return $this->client;
@@ -100,16 +111,7 @@ class SnsConnectionFactory implements ConnectionFactory
             }
         }
 
-        $establishConnection = function () use ($config) {
-            return new AwsSnsClient($config);
-        };
-
-        $this->client = $this->config['lazy'] ?
-            new SnsClient($establishConnection) :
-            new SnsClient($establishConnection())
-        ;
-
-        return $this->client;
+        return $this->client = new SnsAsyncClient(new AsyncAwsSnsClient($config));
     }
 
     private function parseDsn(string $dsn): array
@@ -125,7 +127,6 @@ class SnsConnectionFactory implements ConnectionFactory
             'secret' => $dsn->getString('secret'),
             'token' => $dsn->getString('token'),
             'region' => $dsn->getString('region'),
-            'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
             'profile' => $dsn->getString('profile'),
         ]), function ($value) { return null !== $value; });
@@ -138,7 +139,6 @@ class SnsConnectionFactory implements ConnectionFactory
             'secret' => null,
             'token' => null,
             'region' => null,
-            'lazy' => true,
             'endpoint' => null,
             'profile' => null,
         ];

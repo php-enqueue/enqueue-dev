@@ -59,7 +59,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
@@ -73,7 +72,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
@@ -87,7 +85,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
@@ -95,13 +92,12 @@ class SqsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            'sqs:?key=theKey&secret=theSecret&token=theToken&lazy=0',
+            'sqs:?key=theKey&secret=theSecret&token=theToken',
             [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
@@ -109,13 +105,12 @@ class SqsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            ['dsn' => 'sqs:?key=theKey&secret=theSecret&token=theToken&lazy=0'],
+            ['dsn' => 'sqs:?key=theKey&secret=theSecret&token=theToken'],
             [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
@@ -123,13 +118,12 @@ class SqsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            ['dsn' => 'sqs:?profile=staging&lazy=0'],
+            ['dsn' => 'sqs:?profile=staging'],
             [
                 'key' => null,
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => null,
                 'profile' => 'staging',
                 'queue_owner_aws_account_id' => null,
@@ -137,13 +131,12 @@ class SqsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            ['key' => 'theKey', 'secret' => 'theSecret', 'token' => 'theToken', 'lazy' => false],
+            ['key' => 'theKey', 'secret' => 'theSecret', 'token' => 'theToken'],
             [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
@@ -155,7 +148,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
-                'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
             ],
             [
@@ -163,7 +155,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
@@ -179,7 +170,6 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => true,
                 'endpoint' => null,
                 'profile' => 'staging',
                 'queue_owner_aws_account_id' => null,

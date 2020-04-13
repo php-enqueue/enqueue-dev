@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
+use AsyncAws\Core\Result;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
@@ -71,7 +72,18 @@ class SqsProducer implements Producer
             $arguments['MessageGroupId'] = $message->getMessageGroupId();
         }
 
-        $this->context->getSqsClient()->sendMessage($arguments)->resolve();
+        $result = $this->context->getSqsClient()->sendMessage($arguments);
+
+        if ($result instanceof Result) {
+            $result->resolve();
+
+            return;
+        }
+
+        // @todo in 0.11 remove below code
+        if (false == $result->hasKey('MessageId')) {
+            throw new \RuntimeException('Message was not sent');
+        }
     }
 
     /**

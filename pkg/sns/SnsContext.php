@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Enqueue\Sns;
 
+use Aws\Sns\SnsClient as AwsSnsClient;
 use AsyncAws\Sns\ValueObject\Subscription;
-use AsyncAws\Sns\SnsClient as AwsSnsClient;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
@@ -21,7 +21,7 @@ use Interop\Queue\Topic;
 class SnsContext implements Context
 {
     /**
-     * @var SnsClient
+     * @var SnsClient|SnsAsyncClient
      */
     private $client;
 
@@ -32,8 +32,15 @@ class SnsContext implements Context
 
     private $topicArns;
 
-    public function __construct(SnsClient $client, array $config)
+    /**
+     * @param SnsClient|SnsAsyncClient $client
+     */
+    public function __construct($client, array $config)
     {
+        if ($client instanceof SnsClient) {
+            @trigger_error(sprintf('Using a "%s" in "%s" is deprecated since 0.10, use "%s" instead.', SnsClient::class, __CLASS__, SnsAsyncClient::class), E_USER_DEPRECATED);
+        }
+
         $this->client = $client;
         $this->config = $config;
 
@@ -71,7 +78,16 @@ class SnsContext implements Context
             'Name' => $destination->getQueueName(),
         ]);
 
-        $this->topicArns[$destination->getTopicName()] = $result->getTopicArn();
+        if ($this->client instanceof SnsAsyncClient) {
+            $this->topicArns[$destination->getTopicName()] = $result->getTopicArn();
+        }
+
+        // @todo in 0.11 remove below code
+        if (false == $result->hasKey('TopicArn')) {
+            throw new \RuntimeException(sprintf('Cannot create topic. topicName: "%s"', $destination->getTopicName()));
+        }
+
+        $this->topicArns[$destination->getTopicName()] = (string) $result->get('TopicArn');
     }
 
     public function deleteTopic(SnsDestination $destination): void
@@ -83,10 +99,19 @@ class SnsContext implements Context
 
     public function subscribe(SnsSubscribe $subscribe): void
     {
-        foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {
-            if ($subscription->getProtocol() === $subscribe->getProtocol()
-                && $subscription->getEndpoint() === $subscribe->getEndpoint()) {
-                return;
+        if ($this->client instanceof SnsAsyncClient) {
+            foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {
+                if ($subscription->getProtocol() === $subscribe->getProtocol()
+                    && $subscription->getEndpoint() === $subscribe->getEndpoint()) {
+                    return;
+                }
+            }
+        } else {
+            foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {
+                if ($subscription['Protocol'] === $subscribe->getProtocol()
+                    && $subscription['Endpoint'] === $subscribe->getEndpoint()) {
+                    return;
+                }
             }
         }
 
@@ -101,29 +126,70 @@ class SnsContext implements Context
 
     public function unsubscribe(SnsUnsubscribe $unsubscribe): void
     {
+        if ($this->client instanceof SnsAsyncClient) {
+            foreach ($this->getSubscriptions($unsubscribe->getTopic()) as $subscription) {
+                if ($subscription->getProtocol() !== $unsubscribe->getProtocol()) {
+                    continue;
+                }
+
+                if ($subscription->getEndpoint() !== $unsubscribe->getEndpoint()) {
+                    continue;
+                }
+
+                $this->client->unsubscribe([
+                    'SubscriptionArn' => $subscription->getSubscriptionArn(),
+                ]);
+            }
+
+            return;
+        }
+
+        // @todo in 0.11 remove below code
         foreach ($this->getSubscriptions($unsubscribe->getTopic()) as $subscription) {
-            if ($subscription->getProtocol() !== $unsubscribe->getProtocol()) {
+            if ($subscription['Protocol'] != $unsubscribe->getProtocol()) {
                 continue;
             }
 
-            if ($subscription->getEndpoint() !== $unsubscribe->getEndpoint()) {
+            if ($subscription['Endpoint'] != $unsubscribe->getEndpoint()) {
                 continue;
             }
 
             $this->client->unsubscribe([
-                'SubscriptionArn' => $subscription->getSubscriptionArn(),
+                'SubscriptionArn' => $subscription['SubscriptionArn'],
             ]);
         }
     }
 
     /**
-     * @return Subscription[]
+     * @todo in 0.11 remove typehint "array[]"
+     *
+     * @return array[]|Subscription[]
      */
-    public function getSubscriptions(SnsDestination $destination): array
+    public function getSubscriptions(SnsDestination $destination): iterable
     {
-        return \iterator_to_array(
-            $this->client->listSubscriptionsByTopic(['TopicArn' => $this->getTopicArn($destination)])
-        );
+        if ($this->client instanceof SnsAsyncClient) {
+            return $this->client->listSubscriptionsByTopic(['TopicArn' => $this->getTopicArn($destination)]);
+        }
+
+        // @todo in 0.11 remove below code
+        $args = [
+            'TopicArn' => $this->getTopicArn($destination),
+        ];
+
+        $subscriptions = [];
+        while (true) {
+            $result = $this->client->listSubscriptionsByTopic($args);
+
+            $subscriptions = array_merge($subscriptions, $result->get('Subscriptions'));
+
+            if (false == $result->hasKey('NextToken')) {
+                break;
+            }
+
+            $args['NextToken'] = $result->get('NextToken');
+        }
+
+        return $subscriptions;
     }
 
     public function getTopicArn(SnsDestination $destination): string
@@ -173,12 +239,26 @@ class SnsContext implements Context
         throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
     }
 
+    /**
+     * @deprecated
+     */
     public function getAwsSnsClient(): AwsSnsClient
     {
+        @trigger_error('The method is deprecated since 0.10. Do not use pkg\'s internal dependencies.', E_USER_DEPRECATED);
+
+        if (!$this->client instanceof SnsClient) {
+            throw new \InvalidArgumentException(sprintf('The injected client in "%s" is a "%s", can not provide a "%s".', __CLASS__, \get_class($this->client), AwsSnsClient::class));
+        }
+
         return $this->client->getAWSClient();
     }
 
-    public function getSnsClient(): SnsClient
+    /**
+     * @internal
+     *
+     * @return SnsAsyncClient|SnsClient
+     */
+    public function getSnsClient()
     {
         return $this->client;
     }

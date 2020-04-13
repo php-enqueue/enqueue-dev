@@ -59,7 +59,6 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
             ],
@@ -72,7 +71,6 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
             ],
@@ -85,46 +83,42 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => null,
                 'token' => null,
                 'region' => null,
-                'lazy' => true,
                 'endpoint' => null,
                 'profile' => null,
             ],
         ];
 
         yield [
-            'sns:?key=theKey&secret=theSecret&token=theToken&lazy=0',
+            'sns:?key=theKey&secret=theSecret&token=theToken',
             [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
             ],
         ];
 
         yield [
-            ['dsn' => 'sns:?key=theKey&secret=theSecret&token=theToken&lazy=0'],
+            ['dsn' => 'sns:?key=theKey&secret=theSecret&token=theToken'],
             [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
             ],
         ];
 
         yield [
-            ['key' => 'theKey', 'secret' => 'theSecret', 'token' => 'theToken', 'lazy' => false],
+            ['key' => 'theKey', 'secret' => 'theSecret', 'token' => 'theToken'],
             [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => null,
                 'profile' => null,
             ],
@@ -135,7 +129,6 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
-                'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
                 'profile' => 'theProfile',
             ],
@@ -144,7 +137,6 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'secret' => 'theSecret',
                 'token' => 'theToken',
                 'region' => null,
-                'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
                 'profile' => 'theProfile',
             ],

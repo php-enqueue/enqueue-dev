@@ -3,7 +3,7 @@
 namespace Enqueue\Sns\Tests;
 
 use AsyncAws\Sns\SnsClient as AwsSnsClient;
-use Enqueue\Sns\SnsClient;
+use Enqueue\Sns\SnsAsyncClient;
 use Enqueue\Sns\SnsConnectionFactory;
 use Enqueue\Sns\SnsContext;
 use Enqueue\Test\ClassExtensionTrait;
@@ -24,7 +24,6 @@ class SnsConnectionFactoryTest extends TestCase
         $factory = new SnsConnectionFactory([]);
 
         $this->assertAttributeEquals([
-            'lazy' => true,
             'key' => null,
             'secret' => null,
             'token' => null,
@@ -39,7 +38,6 @@ class SnsConnectionFactoryTest extends TestCase
         $factory = new SnsConnectionFactory(['key' => 'theKey']);
 
         $this->assertAttributeEquals([
-            'lazy' => true,
             'key' => 'theKey',
             'secret' => null,
             'token' => null,
@@ -60,20 +58,7 @@ class SnsConnectionFactoryTest extends TestCase
         $this->assertInstanceOf(SnsContext::class, $context);
 
         $client = $this->readAttribute($context, 'client');
-        $this->assertInstanceOf(SnsClient::class, $client);
-        $this->assertAttributeSame($awsClient, 'inputClient', $client);
-    }
-
-    public function testShouldCreateLazyContext()
-    {
-        $factory = new SnsConnectionFactory(['lazy' => true]);
-
-        $context = $factory->createContext();
-
-        $this->assertInstanceOf(SnsContext::class, $context);
-
-        $client = $this->readAttribute($context, 'client');
-        $this->assertInstanceOf(SnsClient::class, $client);
-        $this->assertAttributeInstanceOf(\Closure::class, 'inputClient', $client);
+        $this->assertInstanceOf(SnsAsyncClient::class, $client);
+        $this->assertAttributeSame($awsClient, 'client', $client);
     }
 }

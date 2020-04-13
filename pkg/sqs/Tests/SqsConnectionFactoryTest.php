@@ -2,8 +2,9 @@
 
 namespace Enqueue\Sqs\Tests;
 
+use AsyncAws\Sqs\SqsClient;
 use AsyncAws\Sqs\SqsClient as AwsSqsClient;
-use Enqueue\Sqs\SqsClient;
+use Enqueue\Sqs\SqsAsyncClient;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\ClassExtensionTrait;
@@ -24,7 +25,6 @@ class SqsConnectionFactoryTest extends TestCase
         $factory = new SqsConnectionFactory([]);
 
         $this->assertAttributeEquals([
-            'lazy' => true,
             'key' => null,
             'secret' => null,
             'token' => null,
@@ -40,7 +40,6 @@ class SqsConnectionFactoryTest extends TestCase
         $factory = new SqsConnectionFactory(['key' => 'theKey']);
 
         $this->assertAttributeEquals([
-            'lazy' => true,
             'key' => 'theKey',
             'secret' => null,
             'token' => null,
@@ -62,20 +61,20 @@ class SqsConnectionFactoryTest extends TestCase
         $this->assertInstanceOf(SqsContext::class, $context);
 
         $client = $this->readAttribute($context, 'client');
-        $this->assertInstanceOf(SqsClient::class, $client);
-        $this->assertAttributeSame($awsClient, 'inputClient', $client);
+        $this->assertInstanceOf(SqsAsyncClient::class, $client);
+        $this->assertAttributeSame($awsClient, 'client', $client);
     }
 
     public function testShouldCreateLazyContext()
     {
-        $factory = new SqsConnectionFactory(['lazy' => true]);
+        $factory = new SqsConnectionFactory();
 
         $context = $factory->createContext();
 
         $this->assertInstanceOf(SqsContext::class, $context);
 
         $client = $this->readAttribute($context, 'client');
-        $this->assertInstanceOf(SqsClient::class, $client);
-        $this->assertAttributeInstanceOf(\Closure::class, 'inputClient', $client);
+        $this->assertInstanceOf(SqsAsyncClient::class, $client);
+        $this->assertAttributeInstanceOf(SqsClient::class, 'client', $client);
     }
 }

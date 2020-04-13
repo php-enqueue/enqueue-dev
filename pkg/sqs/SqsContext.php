@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
-use AsyncAws\Sqs\SqsClient as AwsSqsClient;
+use Aws\Sqs\SqsClient as AwsSqsClient;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
@@ -20,7 +20,7 @@ use Interop\Queue\Topic;
 class SqsContext implements Context
 {
     /**
-     * @var SqsClient
+     * @var SqsClient|SqsAsyncClient
      */
     private $client;
 
@@ -39,8 +39,15 @@ class SqsContext implements Context
      */
     private $config;
 
-    public function __construct(SqsClient $client, array $config)
+    /**
+     * @param SqsClient|SqsAsyncClient $client
+     */
+    public function __construct($client, array $config)
     {
+        if ($client instanceof SqsClient) {
+            @trigger_error(sprintf('Using a "%s" in "%s" is deprecated since 0.10, use "%s" instead.', SqsClient::class, __CLASS__, SqsAsyncClient::class), E_USER_DEPRECATED);
+        }
+
         $this->client = $client;
         $this->config = $config;
 
@@ -119,12 +126,26 @@ class SqsContext implements Context
         throw SubscriptionConsumerNotSupportedException::providerDoestNotSupportIt();
     }
 
+    /**
+     * @deprecated
+     */
     public function getAwsSqsClient(): AwsSqsClient
     {
+        @trigger_error('The method is deprecated since 0.10. Do not use pkg\'s internal dependencies.', E_USER_DEPRECATED);
+
+        if (!$this->client instanceof SqsClient) {
+            throw new \InvalidArgumentException(sprintf('The injected client in "%s" is a "%s", can not provide a "%s".', __CLASS__, \get_class($this->client), AwsSqsClient::class));
+        }
+
         return $this->client->getAWSClient();
     }
 
-    public function getSqsClient(): SqsClient
+    /**
+     * @internal
+     *
+     * @return SqsAsyncClient|SqsClient
+     */
+    public function getSqsClient()
     {
         return $this->client;
     }
@@ -158,7 +179,16 @@ class SqsContext implements Context
 
         $result = $this->client->getQueueUrl($arguments);
 
-        return $this->queueUrls[$destination->getQueueName()] = (string) $result->getQueueUrl();
+        if ($this->client instanceof SqsAsyncClient) {
+            return $this->queueUrls[$destination->getQueueName()] = (string) $result->getQueueUrl();
+        }
+
+        // @todo in 0.11 remove below code
+        if (false == $result->hasKey('QueueUrl')) {
+            throw new \RuntimeException(sprintf('QueueUrl cannot be resolved. queueName: "%s"', $destination->getQueueName()));
+        }
+
+        return $this->queueUrls[$destination->getQueueName()] = (string) $result->get('QueueUrl');
     }
 
     public function getQueueArn(SqsDestination $destination): string
@@ -175,12 +205,20 @@ class SqsContext implements Context
 
         $result = $this->client->getQueueAttributes($arguments);
 
-        $arn = $result->getAttributes()['QueueArn'] ?? null;
-        if (!$arn) {
+        if ($this->client instanceof SqsAsyncClient) {
+            if (null === ($arn = $result->getAttributes()['QueueArn'] ?? null)) {
+                throw new \RuntimeException(sprintf('QueueArn cannot be resolved. queueName: "%s"', $destination->getQueueName()));
+            }
+
+            return $this->queueArns[$destination->getQueueName()] = $arn;
+        }
+
+        // @todo in 0.11 remove below code
+        if (false == $arn = $result->search('Attributes.QueueArn')) {
             throw new \RuntimeException(sprintf('QueueArn cannot be resolved. queueName: "%s"', $destination->getQueueName()));
         }
 
-        return $this->queueArns[$destination->getQueueName()] = $arn;
+        return $this->queueArns[$destination->getQueueName()] = (string) $arn;
     }
 
     public function declareQueue(SqsDestination $dest): void
@@ -191,7 +229,18 @@ class SqsContext implements Context
             'QueueName' => $dest->getQueueName(),
         ]);
 
-        $this->queueUrls[$dest->getQueueName()] = $result->getQueueUrl();
+        if ($this->client instanceof SqsAsyncClient) {
+            $this->queueUrls[$dest->getQueueName()] = $result->getQueueUrl();
+
+            return;
+        }
+
+        // @todo in 0.11 remove below code
+        if (false == $result->hasKey('QueueUrl')) {
+            throw new \RuntimeException(sprintf('Cannot create queue. queueName: "%s"', $dest->getQueueName()));
+        }
+
+        $this->queueUrls[$dest->getQueueName()] = $result->get('QueueUrl');
     }
 
     public function deleteQueue(SqsDestination $dest): void

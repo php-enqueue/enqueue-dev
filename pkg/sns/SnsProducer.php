@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Sns;
 
+use AsyncAws\Sns\Result\PublishResponse;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
 use Interop\Queue\Exception\InvalidDestinationException;
@@ -78,8 +79,18 @@ class SnsProducer implements Producer
         }
 
         $result = $this->context->getSnsClient()->publish($arguments);
+        if ($result instanceof PublishResponse) {
+            $message->setSnsMessageId($result->getMessageId());
 
-        $message->setSnsMessageId($result->getMessageId());
+            return;
+        }
+
+        // @todo in 0.11 remove below code
+        if (false == $result->hasKey('MessageId')) {
+            throw new \RuntimeException('Message was not sent');
+        }
+
+        $message->setSnsMessageId((string) $result->get('MessageId'));
     }
 
     /**

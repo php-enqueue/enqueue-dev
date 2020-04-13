@@ -2,7 +2,7 @@
 
 namespace Enqueue\Sns\Tests\Spec;
 
-use Enqueue\Sns\SnsClient;
+use Enqueue\Sns\SnsAsyncClient;
 use Enqueue\Sns\SnsContext;
 use Interop\Queue\Spec\ContextSpec;
 
@@ -18,7 +18,7 @@ class SnsContextTest extends ContextSpec
 
     protected function createContext()
     {
-        $client = $this->createMock(SnsClient::class);
+        $client = $this->createMock(SnsAsyncClient::class);
 
         return new SnsContext($client, []);
     }

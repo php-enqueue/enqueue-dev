@@ -6,7 +6,7 @@ use AsyncAws\Core\Test\ResultMockFactory;
 use AsyncAws\Sqs\Result\ReceiveMessageResult;
 use AsyncAws\Sqs\Result\SendMessageResult;
 use AsyncAws\Sqs\ValueObject\Message as AwsMessage;
-use Enqueue\Sqs\SqsClient;
+use Enqueue\Sqs\SqsAsyncClient;
 use Enqueue\Sqs\SqsConsumer;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
@@ -464,11 +464,11 @@ class SqsConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|SqsClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsAsyncClient
      */
-    private function createSqsClientMock(): SqsClient
+    private function createSqsClientMock(): SqsAsyncClient
     {
-        return $this->createMock(SqsClient::class);
+        return $this->createMock(SqsAsyncClient::class);
     }
 
     /**

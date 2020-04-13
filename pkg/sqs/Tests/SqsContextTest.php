@@ -9,7 +9,7 @@ use AsyncAws\Sqs\Result\GetQueueAttributesResult;
 use AsyncAws\Sqs\Result\GetQueueUrlResult;
 use AsyncAws\Sqs\Result\ReceiveMessageResult;
 use AsyncAws\Sqs\Result\SendMessageResult;
-use Enqueue\Sqs\SqsClient;
+use Enqueue\Sqs\SqsAsyncClient;
 use Enqueue\Sqs\SqsConsumer;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
@@ -420,10 +420,10 @@ class SqsContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|SqsClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|SqsAsyncClient
      */
-    private function createSqsClientMock(): SqsClient
+    private function createSqsClientMock(): SqsAsyncClient
     {
-        return $this->createMock(SqsClient::class);
+        return $this->createMock(SqsAsyncClient::class);
     }
 }

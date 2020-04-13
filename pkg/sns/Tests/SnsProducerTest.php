@@ -2,10 +2,9 @@
 
 namespace Enqueue\Sns\Tests;
 
-use AsyncAws\Core\Result;
 use AsyncAws\Core\Test\ResultMockFactory;
 use AsyncAws\Sns\Result\PublishResponse;
-use Enqueue\Sns\SnsClient;
+use Enqueue\Sns\SnsAsyncClient;
 use Enqueue\Sns\SnsContext;
 use Enqueue\Sns\SnsDestination;
 use Enqueue\Sns\SnsMessage;
@@ -243,10 +242,10 @@ class SnsProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|SnsClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|SnsAsyncClient
      */
-    private function createSnsClientMock(): SnsClient
+    private function createSnsClientMock(): SnsAsyncClient
     {
-        return $this->createMock(SnsClient::class);
+        return $this->createMock(SnsAsyncClient::class);
     }
 }
