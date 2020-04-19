@@ -9,7 +9,7 @@ nav_order: 95
 # Monitoring.
 
 Enqueue provides a tool for monitoring message queues.
-With it, you can control how many messages were sent, how many processed successfuly or failed.
+With it, you can control how many messages were sent, how many processed successfully or failed.
 How many consumers are working, their up time, processed messages stats, memory usage and system load.
 The tool could be integrated with virtually any analytics and monitoring platform.
 There are several integration:

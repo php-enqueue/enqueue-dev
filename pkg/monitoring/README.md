@@ -12,7 +12,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 Queue Monitoring tool. Track sent, consumed messages. Consumers performances. 
 
 * Could be used with any message queue library.
-* Could be intergrated to any PHP framework
+* Could be integrated to any PHP framework
 * Could send stats to any analytical platform
 * Supports Datadog, InfluxDb, Grafana and WAMP out of the box.
 * Provides integration for Enqueue 
