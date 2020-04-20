@@ -29,9 +29,6 @@ class RedisProducer implements Producer
      */
     private $deliveryDelay;
 
-    /**
-     * @param RedisContext $context
-     */
     public function __construct(RedisContext $context)
     {
         $this->context = $context;
@@ -46,7 +43,10 @@ class RedisProducer implements Producer
         InvalidDestinationException::assertDestinationInstanceOf($destination, RedisDestination::class);
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
-        $message->setMessageId(Uuid::uuid4()->toString());
+        if (!$message->getMessageId()) {
+            $message->setMessageId(Uuid::uuid4()->toString());
+        }
+
         $message->setHeader('attempts', 0);
 
         if (null !== $this->timeToLive && null === $message->getTimeToLive()) {

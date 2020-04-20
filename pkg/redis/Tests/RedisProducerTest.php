@@ -127,6 +127,35 @@ class RedisProducerTest extends TestCase
         $producer->send($destination, $message);
     }
 
+    public function testShouldNotReplaceMessageId()
+    {
+        $redisMock = $this->createRedisMock();
+        $redisMock
+            ->expects($this->once())
+            ->method('lpush')
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getRedis')
+            ->willReturn($redisMock)
+        ;
+        $context
+            ->expects($this->once())
+            ->method('getSerializer')
+            ->willReturn(new JsonSerializer())
+        ;
+
+        $producer = new RedisProducer($context);
+        $message = new RedisMessage();
+        $message->setMessageId('aMessageId');
+
+        $producer->send(new RedisDestination('aDestination'), $message);
+
+        $this->assertSame('aMessageId', $message->getMessageId());
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|RedisContext
      */
