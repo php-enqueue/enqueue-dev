@@ -15,12 +15,10 @@ trait RedisConsumerHelperTrait
 
     /**
      * @param RedisDestination[] $queues
-     * @param int                $timeout
-     * @param int                $redeliveryDelay
      *
-     * @return RedisMessage|null
+     * @throws ServerException
      */
-    protected function receiveMessage(array $queues, int $timeout, int $redeliveryDelay): ?RedisMessage
+    protected function receiveMessage(array $queues, int $timeout, int $initialDelay, int $redeliveryDelay): ?RedisMessage
     {
         $startAt = time();
         $thisTimeout = $timeout;
@@ -41,7 +39,7 @@ trait RedisConsumerHelperTrait
 
             $this->pushQueueNameBack($result->getKey());
 
-            if ($message = $this->processResult($result, $redeliveryDelay)) {
+            if ($message = $this->processResult($result, $initialDelay, $redeliveryDelay)) {
                 return $message;
             }
 
@@ -51,18 +49,18 @@ trait RedisConsumerHelperTrait
         return null;
     }
 
-    protected function receiveMessageNoWait(RedisDestination $destination, int $redeliveryDelay): ?RedisMessage
+    protected function receiveMessageNoWait(RedisDestination $destination, int $initialDelay, int $redeliveryDelay): ?RedisMessage
     {
         $this->migrateExpiredMessages([$destination->getName()]);
 
         if ($result = $this->getContext()->getRedis()->rpop($destination->getName())) {
-            return $this->processResult($result, $redeliveryDelay);
+            return $this->processResult($result, $initialDelay, $redeliveryDelay);
         }
 
         return null;
     }
 
-    protected function processResult(RedisResult $result, int $redeliveryDelay): ?RedisMessage
+    protected function processResult(RedisResult $result, int $initialDelay, int $redeliveryDelay): ?RedisMessage
     {
         $message = $this->getContext()->getSerializer()->toMessage($result->getMessage());
 
@@ -80,7 +78,7 @@ trait RedisConsumerHelperTrait
         $message->setReservedKey($this->getContext()->getSerializer()->toString($message));
 
         $reservedQueue = $result->getKey().':reserved';
-        $redeliveryAt = $now + $redeliveryDelay;
+        $redeliveryAt = $now + ($message->isRedelivered() ? $redeliveryDelay : $initialDelay);
 
         $this->getContext()->getRedis()->zadd($reservedQueue, $message->getReservedKey(), $redeliveryAt);
 

@@ -40,6 +40,8 @@ class RedisConnectionFactory implements ConnectionFactory
      *  'ssl' => could be any of http://fi2.php.net/manual/en/context.ssl.php#refsect1-context.ssl-options
      *  'redelivery_delay' => Default 300 sec. Returns back message into the queue if message was not acknowledged or rejected after this delay.
      *                        It could happen if consumer has failed with fatal error or even if message processing is slow and takes more than this time.
+     *  'initial_delay' => Defaults to redelivery_delay. Returns back message into the queue if message was not acknowledged or rejected after this delay only for the 1st message processing attempt.
+     *                     If you know your message processing can be slow and take more time, you can increase this parameter.
      * ].
      *
      * or
@@ -84,13 +86,17 @@ class RedisConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
+        $initialDelay = null === $this->config['initial_delay']
+            ? (int) $this->config['redelivery_delay']
+            : (int) $this->config['initial_delay'];
+
         if ($this->config['lazy']) {
             return new RedisContext(function () {
                 return $this->createRedis();
-            }, (int) $this->config['redelivery_delay']);
+            }, $initialDelay, (int) $this->config['redelivery_delay']);
         }
 
-        return new RedisContext($this->createRedis(), (int) $this->config['redelivery_delay']);
+        return new RedisContext($this->createRedis(), $initialDelay, (int) $this->config['redelivery_delay']);
     }
 
     private function createRedis(): Redis
@@ -157,6 +163,7 @@ class RedisConnectionFactory implements ConnectionFactory
             'predis_options' => null,
             'ssl' => null,
             'redelivery_delay' => 300,
+            'initial_delay' => null,
         ];
     }
 }

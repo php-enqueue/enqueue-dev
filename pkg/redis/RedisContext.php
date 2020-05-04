@@ -35,26 +35,27 @@ class RedisContext implements Context
     private $redeliveryDelay = 300;
 
     /**
+     * @var int
+     */
+    private $initialDelay = 300;
+
+    /**
      * Callable must return instance of Redis once called.
      *
      * @param Redis|callable $redis
-     * @param int            $redeliveryDelay
      */
-    public function __construct($redis, int $redeliveryDelay)
+    public function __construct($redis, int $initialDelay, int $redeliveryDelay)
     {
         if ($redis instanceof Redis) {
             $this->redis = $redis;
         } elseif (is_callable($redis)) {
             $this->redisFactory = $redis;
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The $redis argument must be either %s or callable that returns %s once called.',
-                Redis::class,
-                Redis::class
-            ));
+            throw new \InvalidArgumentException(sprintf('The $redis argument must be either %s or callable that returns %s once called.', Redis::class, Redis::class));
         }
 
         $this->redeliveryDelay = $redeliveryDelay;
+        $this->initialDelay = $initialDelay;
         $this->setSerializer(new JsonSerializer());
     }
 
@@ -126,6 +127,7 @@ class RedisContext implements Context
 
         $consumer = new RedisConsumer($this, $destination);
         $consumer->setRedeliveryDelay($this->redeliveryDelay);
+        $consumer->setInitialDelay($this->initialDelay);
 
         return $consumer;
     }
@@ -137,6 +139,7 @@ class RedisContext implements Context
     {
         $consumer = new RedisSubscriptionConsumer($this);
         $consumer->setRedeliveryDelay($this->redeliveryDelay);
+        $consumer->setInitialDelay($this->initialDelay);
 
         return $consumer;
     }
@@ -159,11 +162,7 @@ class RedisContext implements Context
         if (false == $this->redis) {
             $redis = call_user_func($this->redisFactory);
             if (false == $redis instanceof Redis) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of %s. It returned %s',
-                    Redis::class,
-                    is_object($redis) ? get_class($redis) : gettype($redis)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of %s. It returned %s', Redis::class, is_object($redis) ? get_class($redis) : gettype($redis)));
             }
 
             $this->redis = $redis;

@@ -29,8 +29,10 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     private $redeliveryDelay = 300;
 
     /**
-     * @param RedisContext $context
+     * @var int|null
      */
+    private $initialDelay;
+
     public function __construct(RedisContext $context)
     {
         $this->context = $context;
@@ -45,12 +47,22 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         return $this->redeliveryDelay;
     }
 
-    /**
-     * @param int $delay
-     */
     public function setRedeliveryDelay(int $delay): void
     {
         $this->redeliveryDelay = $delay;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInitialDelay(): ?int
+    {
+        return $this->initialDelay;
+    }
+
+    public function setInitialDelay(int $initialDelay): void
+    {
+        $this->initialDelay = $initialDelay;
     }
 
     public function consume(int $timeout = 0): void
@@ -69,7 +81,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
         }
 
         while (true) {
-            if ($message = $this->receiveMessage($queues, $timeout ?: 5, $this->redeliveryDelay)) {
+            if ($message = $this->receiveMessage($queues, $timeout ?: 5, $this->initialDelay, $this->redeliveryDelay)) {
                 list($consumer, $callback) = $this->subscribers[$message->getKey()];
 
                 if (false === call_user_func($callback, $message, $consumer)) {

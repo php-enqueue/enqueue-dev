@@ -28,6 +28,11 @@ class RedisConsumer implements Consumer
      */
     private $redeliveryDelay = 300;
 
+    /**
+     * @var int
+     */
+    private $initialDelay = 300;
+
     public function __construct(RedisContext $context, RedisDestination $queue)
     {
         $this->context = $context;
@@ -42,12 +47,22 @@ class RedisConsumer implements Consumer
         return $this->redeliveryDelay;
     }
 
-    /**
-     * @param int $delay
-     */
     public function setRedeliveryDelay(int $delay): void
     {
         $this->redeliveryDelay = $delay;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInitialDelay(): ?int
+    {
+        return $this->initialDelay;
+    }
+
+    public function setInitialDelay(int $initialDelay): void
+    {
+        $this->initialDelay = $initialDelay;
     }
 
     /**
@@ -73,7 +88,7 @@ class RedisConsumer implements Consumer
             }
         }
 
-        return $this->receiveMessage([$this->queue], $timeout, $this->redeliveryDelay);
+        return $this->receiveMessage([$this->queue], $timeout, $this->initialDelay, $this->redeliveryDelay);
     }
 
     /**
@@ -81,7 +96,7 @@ class RedisConsumer implements Consumer
      */
     public function receiveNoWait(): ?Message
     {
-        return $this->receiveMessageNoWait($this->queue, $this->redeliveryDelay);
+        return $this->receiveMessageNoWait($this->queue, $this->initialDelay, $this->redeliveryDelay);
     }
 
     /**
