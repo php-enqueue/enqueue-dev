@@ -61,9 +61,20 @@ enqueue:
 
         job: true
         
-        # by default bundle will add a default orm mapping configuration 
-        # if you define custom mappings, you can specify which entity manager to use here 
-        entity_manager_name: ~
+        # if you configure doctrine mapping yourself, disable default mapping
+        default_mapping: false
+
+doctrine:
+    # plus basic bundle configuration
+
+    orm:
+        mappings:
+            EnqueueJobQueue:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/vendor/enqueue/job-queue/Doctrine/mapping'
+                prefix: 'Enqueue\JobQueue\Doctrine\Entity'
+
 ```
 
 * Run doctrine schema update command

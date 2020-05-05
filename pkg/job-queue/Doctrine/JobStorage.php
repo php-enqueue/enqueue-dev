@@ -46,14 +46,12 @@ class JobStorage
     /**
      * @param string $entityClass
      * @param string $uniqueTableName
-     * @param mixed  $entityManagerName
      */
-    public function __construct(ManagerRegistry $doctrine, $entityClass, $uniqueTableName, $entityManagerName = null)
+    public function __construct(ManagerRegistry $doctrine, $entityClass, $uniqueTableName)
     {
         $this->doctrine = $doctrine;
         $this->entityClass = $entityClass;
         $this->uniqueTableName = $uniqueTableName;
-        $this->entityManagerName = $entityManagerName;
     }
 
     /**
@@ -204,9 +202,7 @@ class JobStorage
     private function getEntityManager()
     {
         if (!$this->em) {
-            $this->em = empty($this->entityManagerName)
-                ? $this->doctrine->getManagerForClass($this->entityClass)
-                : $this->doctrine->getManager($this->entityManagerName);
+            $this->em = $this->doctrine->getManagerForClass($this->entityClass);
         }
         if (!$this->em->isOpen()) {
             $this->em = $this->doctrine->resetManager();

@@ -98,11 +98,6 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
                     throw new \LogicException('Job-queue supports only default configuration.');
                 }
 
-                $container->setParameter(
-                    'enqueue.job.entity_manager_name',
-                    $modules['job']['entity_manager_name']
-                );
-
                 $loader->load('job.yml');
             }
 
@@ -174,6 +169,14 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
 
         if (!isset($bundles['DoctrineBundle'])) {
             return;
+        }
+
+        foreach ($container->getExtensionConfig('enqueue') as $modules) {
+            foreach ($modules as $config) {
+                if (isset($config['job']) && false === $config['job']['default_mapping']) {
+                    return;
+                }
+            }
         }
 
         foreach ($container->getExtensionConfig('doctrine') as $config) {

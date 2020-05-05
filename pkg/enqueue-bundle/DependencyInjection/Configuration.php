@@ -95,7 +95,7 @@ final class Configuration implements ConfigurationInterface
 
         return (new ArrayNodeDefinition('job'))
             ->children()
-                ->scalarNode('entity_manager_name')->defaultNull()->end()
+                ->booleanNode('default_mapping')->defaultTrue()->end()
             ->end()
             ->addDefaultsIfNotSet()
             ->canBeEnabled()
