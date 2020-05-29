@@ -50,10 +50,10 @@ class PromiseTest extends TestCase
         $receiveInvoked = false;
         $receivePromise = null;
         $receiveTimeout = null;
-        $receivecb = function ($promise, $timout) use (&$receiveInvoked, &$receivePromise, &$receiveTimeout) {
+        $receivecb = function ($promise, $timeout) use (&$receiveInvoked, &$receivePromise, &$receiveTimeout) {
             $receiveInvoked = true;
             $receivePromise = $promise;
-            $receiveTimeout = $timout;
+            $receiveTimeout = $timeout;
         };
 
         $promise = new Promise($receivecb, function () {}, function () {});
