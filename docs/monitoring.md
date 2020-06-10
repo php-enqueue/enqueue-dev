@@ -20,7 +20,7 @@ We are working on a JS\WAMP based real-time UI tool, for more information please
 
 ![Grafana Monitoring](images/grafana_monitoring.jpg)
 
-[contact us](opensource@forma-pro.com) if need a Grafana template such as on the picture.
+[contact us](mailto:opensource@forma-pro.com) if need a Grafana template such as on the picture.
 
 * [Installation](#installation)
 * [Track sent messages](#track-sent-messages)
