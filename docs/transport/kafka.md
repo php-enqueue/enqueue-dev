@@ -154,7 +154,7 @@ Set your enqueue to use rdkafka as your transport
 
 enqueue:
     default:
-        transport: "rdkafka:"
+        transport: "kafka:"
         client: ~
 ```
 
@@ -168,7 +168,7 @@ options are identical to those found at https://github.com/edenhill/librdkafka/b
 enqueue:
     default:
         transport:
-            dsn: "rdkafka://"
+            dsn: "kafka://"
             global:
                 ### Make sure this is unique for each application / consumer group and does not change
                 ### Otherwise, Kafka won't be able to track your last offset and will always start according to
