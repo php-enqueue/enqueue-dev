@@ -75,6 +75,9 @@ class RdKafkaConsumer implements Consumer
         $this->offset = $offset;
     }
 
+    /**
+     * @return RdKafkaTopic
+     */
     public function getQueue(): Queue
     {
         return $this->topic;
