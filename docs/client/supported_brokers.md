@@ -28,7 +28,7 @@ Here's the list of transports supported by Enqueue Client:
 | STOMP, RabbitMQ       | [enqueue/stomp](../transport/stomp.md)                     | stomp:                          |
 | WAMP                  | [enqueue/wamp](../transport/wamp.md)                       | wamp:                           |
 
-Here's the list of protocols and Client features supported by them
+## Transport Features
 
 | Protocol       | Priority | Delay    | Expiration | Setup broker | Message bus | Heartbeat |
 |:--------------:|:--------:|:--------:|:----------:|:------------:|:-----------:|:---------:|
