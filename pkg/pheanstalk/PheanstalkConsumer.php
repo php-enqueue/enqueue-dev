@@ -111,7 +111,9 @@ class PheanstalkConsumer implements Consumer
         $stats = $this->pheanstalk->statsJob($job);
 
         $message = PheanstalkMessage::jsonUnserialize($job->getData());
-        $message->setRedelivered($stats['reserves'] > 1);
+        if (isset($stats['reserves'])) {
+            $message->setRedelivered($stats['reserves'] > 1);
+        }
         $message->setJob($job);
 
         return $message;
