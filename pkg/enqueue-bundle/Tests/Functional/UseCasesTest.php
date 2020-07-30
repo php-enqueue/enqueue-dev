@@ -220,7 +220,7 @@ class UseCasesTest extends WebTestCase
 
         $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
-        $message = $consumer->receive(100);
+        $message = $consumer->receive(500);
         $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
