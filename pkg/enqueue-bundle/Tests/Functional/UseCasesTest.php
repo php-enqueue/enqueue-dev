@@ -18,6 +18,8 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class UseCasesTest extends WebTestCase
 {
+    const RECEIVE_TIMEOUT = 500;
+
     public function setUp()
     {
         // do not call parent::setUp.
@@ -172,7 +174,7 @@ class UseCasesTest extends WebTestCase
 
         $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
-        $message = $consumer->receive(100);
+        $message = $consumer->receive(self::RECEIVE_TIMEOUT);
         $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
@@ -192,7 +194,7 @@ class UseCasesTest extends WebTestCase
 
         $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
-        $message = $consumer->receive(100);
+        $message = $consumer->receive(self::RECEIVE_TIMEOUT);
         $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
@@ -220,7 +222,7 @@ class UseCasesTest extends WebTestCase
 
         $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
-        $message = $consumer->receive(500);
+        $message = $consumer->receive(self::RECEIVE_TIMEOUT);
         $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
@@ -247,7 +249,7 @@ class UseCasesTest extends WebTestCase
 
         $consumer = $this->getContext()->createConsumer($this->getTestQueue());
 
-        $message = $consumer->receive(100);
+        $message = $consumer->receive(self::RECEIVE_TIMEOUT);
         $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
 
