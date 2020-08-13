@@ -16,9 +16,7 @@ trait CreateDbalContextTrait
 
         $context = $factory->createContext();
 
-        if ($context->getDbalConnection()->getSchemaManager()->tablesExist([$context->getTableName()])) {
-            $context->getDbalConnection()->getSchemaManager()->dropTable($context->getTableName());
-        }
+        $context->dropDataBaseTable();
 
         $context->createDataBaseTable();
 

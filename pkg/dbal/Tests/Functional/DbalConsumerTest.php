@@ -169,6 +169,20 @@ class DbalConsumerTest extends TestCase
         $this->assertSame(1, $this->getQuerySize());
     }
 
+    public function testShouldCreateAndDropTable(): void
+    {
+        $sm = $this->context->getDbalConnection()->getSchemaManager();
+
+        // The table initially exists (see setUp() and createDbalContext()).
+        $this->assertTrue($sm->tablesExist($tableNames = [$this->context->getTableName()]));
+
+        $this->context->dropDataBaseTable();
+        $this->assertFalse($sm->tablesExist($tableNames));
+
+        $this->context->createDataBaseTable();
+        $this->assertTrue($sm->tablesExist($tableNames));
+    }
+
     private function getQuerySize(): int
     {
         return (int) $this->context->getDbalConnection()

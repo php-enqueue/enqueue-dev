@@ -245,4 +245,14 @@ class DbalContext implements Context
 
         $sm->createTable($table);
     }
+
+    public function dropDataBaseTable(): void
+    {
+        $sm = $this->getDbalConnection()->getSchemaManager();
+        if (!$sm->tablesExist([$tableName = $this->getTableName()])) {
+            return;
+        }
+
+        $sm->dropTable($tableName);
+    }
 }
