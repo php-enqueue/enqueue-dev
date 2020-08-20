@@ -15,7 +15,7 @@ You can do it by defining a command which returns something.
 ## The consumer side
 
 On the consumer side we have to register a command processor which computes the result and send it back to the sender.
-Pay attention that you have to add reply extension. It wont work without it.
+Pay attention that you have to add reply extension. It won't work without it.
 
 Of course it is possible to implement rpc server side based on transport classes only. That would require a bit more work to do.
 

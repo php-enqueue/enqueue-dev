@@ -11,7 +11,7 @@
         "queue-interop/queue-interop": "^0.8",
         "enqueue/null": "^0.10",
         "enqueue/dsn": "^0.10",
-        "ramsey/uuid": "^2|^3.5",
+        "ramsey/uuid": "^2|^3.5|^4",
         "psr/log": "^1",
         "psr/container": "^1"
     },

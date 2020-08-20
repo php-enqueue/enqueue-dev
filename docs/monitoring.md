@@ -9,7 +9,7 @@ nav_order: 95
 # Monitoring.
 
 Enqueue provides a tool for monitoring message queues.
-With it, you can control how many messages were sent, how many processed successfuly or failed.
+With it, you can control how many messages were sent, how many processed successfully or failed.
 How many consumers are working, their up time, processed messages stats, memory usage and system load.
 The tool could be integrated with virtually any analytics and monitoring platform.
 There are several integration:
@@ -20,7 +20,7 @@ We are working on a JS\WAMP based real-time UI tool, for more information please
 
 ![Grafana Monitoring](images/grafana_monitoring.jpg)
 
-[contact us](opensource@forma-pro.com) if need a Grafana template such as on the picture.
+[contact us](mailto:opensource@forma-pro.com) if need a Grafana template such as on the picture.
 
 * [Installation](#installation)
 * [Track sent messages](#track-sent-messages)

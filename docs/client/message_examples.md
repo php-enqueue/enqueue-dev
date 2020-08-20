@@ -16,7 +16,7 @@ nav_order: 2
 
 ## Scope
 
-There are two two types possible scopes: `Message:SCOPE_MESSAGE_BUS` and `Message::SCOPE_APP`.
+There are two types possible scopes: `Message:SCOPE_MESSAGE_BUS` and `Message::SCOPE_APP`.
 The first one instructs the client send messages (if driver supports) to the message bus so other apps can consume those messages.
 The second in turns limits the message to the application that sent it. No other apps could receive it.
 

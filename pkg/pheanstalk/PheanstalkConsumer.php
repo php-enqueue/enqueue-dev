@@ -91,10 +91,8 @@ class PheanstalkConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, PheanstalkMessage::class);
 
         if (false == $message->getJob()) {
-            throw new \LogicException(sprintf(
-                'The message could not be %s because it does not have job set.',
-                $requeue ? 'requeued' : 'rejected'
-            ));
+            $state = $requeue ? 'requeued' : 'rejected';
+            throw new \LogicException(sprintf('The message could not be %s because it does not have job set.', $state));
         }
 
         if ($requeue) {
@@ -111,7 +109,9 @@ class PheanstalkConsumer implements Consumer
         $stats = $this->pheanstalk->statsJob($job);
 
         $message = PheanstalkMessage::jsonUnserialize($job->getData());
-        $message->setRedelivered($stats['reserves'] > 1);
+        if (isset($stats['reserves'])) {
+            $message->setRedelivered($stats['reserves'] > 1);
+        }
         $message->setJob($job);
 
         return $message;
