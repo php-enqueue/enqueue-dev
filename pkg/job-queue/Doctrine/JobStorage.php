@@ -39,11 +39,6 @@ class JobStorage
     private $uniqueTableName;
 
     /**
-     * @var string
-     */
-    private $entityManagerName;
-
-    /**
      * @param string $entityClass
      * @param string $uniqueTableName
      */
