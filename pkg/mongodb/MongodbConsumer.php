@@ -109,6 +109,7 @@ class MongodbConsumer implements Consumer
         InvalidMessageException::assertMessageInstanceOf($message, MongodbMessage::class);
 
         if ($requeue) {
+            $message->setRedelivered(true);
             $this->context->createProducer()->send($this->queue, $message);
 
             return;
