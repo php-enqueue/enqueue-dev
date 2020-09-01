@@ -220,7 +220,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getTarget()->getTopicName(),
                 $bind->getRoutingKey(),
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
-                $bind->getArguments()
+                new AMQPTable($bind->getArguments())
             );
         // bind exchange to queue
         } else {
@@ -229,7 +229,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
-                $bind->getArguments()
+                new AMQPTable($bind->getArguments())
             );
         }
     }
