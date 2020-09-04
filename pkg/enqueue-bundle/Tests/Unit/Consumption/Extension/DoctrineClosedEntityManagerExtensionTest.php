@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClosedEntityManagerExtension;
 use Enqueue\Consumption\Context\PostConsume;
