@@ -45,6 +45,11 @@ class RdKafkaConsumer implements Consumer
      */
     private $offset;
 
+    /**
+     * @var ConsumeMessageTransformer
+     */
+    private $consumeMessageTransformer;
+
     public function __construct(KafkaConsumer $consumer, RdKafkaContext $context, RdKafkaTopic $topic, Serializer $serializer)
     {
         $this->consumer = $consumer;
@@ -167,7 +172,12 @@ class RdKafkaConsumer implements Consumer
             case RD_KAFKA_RESP_ERR__TRANSPORT:
                 return null;
             case RD_KAFKA_RESP_ERR_NO_ERROR:
-                $message = $this->serializer->toMessage($kafkaMessage->payload);
+                if (null !== $this->serializer) {
+                    $message = $this->serializer->toMessage($kafkaMessage->payload);
+                } else {
+                    $message = new RdKafkaMessage($kafkaMessage->payload);
+                }
+
                 $message->setKey($kafkaMessage->key);
                 $message->setPartition($kafkaMessage->partition);
                 $message->setKafkaMessage($kafkaMessage);
@@ -178,10 +188,17 @@ class RdKafkaConsumer implements Consumer
                     $message->setHeaders(array_merge($message->getHeaders(), $kafkaMessage->headers));
                 }
 
+                $this->consumeMessageTransformer->transformConsumeMessage($message);
+
                 return $message;
             default:
                 throw new \LogicException($kafkaMessage->errstr(), $kafkaMessage->err);
                 break;
         }
+    }
+
+    public function setMessageTransformer(ConsumeMessageTransformer $messageTransformer): void
+    {
+        $this->consumeMessageTransformer = $messageTransformer;
     }
 }

@@ -21,6 +21,11 @@ class RdKafkaProducer implements Producer
      */
     private $producer;
 
+    /**
+     * @var ProduceMessageTransformer
+     */
+    private $produceMessageTransformer;
+
     public function __construct(VendorProducer $producer, Serializer $serializer)
     {
         $this->producer = $producer;
@@ -38,7 +43,15 @@ class RdKafkaProducer implements Producer
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
         $partition = $message->getPartition() ?: $destination->getPartition() ?: RD_KAFKA_PARTITION_UA;
-        $payload = $this->serializer->toString($message);
+
+        if (null !== $this->serializer) {
+            $payload = $this->serializer->toString($message);
+        } else {
+            $payload = $message->getBody();
+        }
+
+        $this->produceMessageTransformer->transformProduceMessage($message);
+
         $key = $message->getKey() ?: $destination->getKey() ?: null;
 
         $topic = $this->producer->newTopic($destination->getTopicName(), $destination->getConf());
@@ -110,5 +123,10 @@ class RdKafkaProducer implements Producer
     public function getTimeToLive(): ?int
     {
         return null;
+    }
+
+    public function setMessageTransformer(ProduceMessageTransformer $messageTransformer): void
+    {
+        $this->produceMessageTransformer = $messageTransformer;
     }
 }

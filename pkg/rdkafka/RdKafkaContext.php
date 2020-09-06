@@ -51,6 +51,16 @@ class RdKafkaContext implements Context
     private $rdKafkaConsumers;
 
     /**
+     * @var ConsumeMessageTransformer
+     */
+    private $consumeMessageTransformer;
+
+    /**
+     * @var ProduceMessageTransformer
+     */
+    private $produceMessageTransformer;
+
+    /**
      * @param array $config
      */
     public function __construct(array $config)
@@ -60,6 +70,11 @@ class RdKafkaContext implements Context
         $this->rdKafkaConsumers = [];
 
         $this->setSerializer(new JsonSerializer());
+
+        $messageTransformer = new NullMessageTransformer();
+
+        $this->consumeMessageTransformer = $messageTransformer;
+        $this->produceMessageTransformer = $messageTransformer;
     }
 
     /**
@@ -96,7 +111,11 @@ class RdKafkaContext implements Context
      */
     public function createProducer(): Producer
     {
-        return new RdKafkaProducer($this->getProducer(), $this->getSerializer());
+        $producer = new RdKafkaProducer($this->getProducer(), $this->getSerializer());
+
+        $producer->setMessageTransformer($this->produceMessageTransformer);
+
+        return $producer;
     }
 
     /**
@@ -119,6 +138,8 @@ class RdKafkaContext implements Context
                 $destination,
                 $this->getSerializer()
             );
+
+            $consumer->setMessageTransformer($this->consumeMessageTransformer);
 
             if (isset($this->config['commit_async'])) {
                 $consumer->setCommitAsync($this->config['commit_async']);
