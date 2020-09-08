@@ -171,11 +171,14 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             return;
         }
 
-        foreach ($container->getExtensionConfig('enqueue') as $modules) {
-            foreach ($modules as $config) {
-                if (isset($config['job']) && false === $config['job']['default_mapping']) {
-                    return;
-                }
+        $config = $this->processConfiguration(
+            new Configuration(false),
+            $container->getExtensionConfig('enqueue')
+        );
+
+        foreach ($config as $name => $modules) {
+            if (isset($modules['job']) && false === $modules['job']['default_mapping']) {
+                return;
             }
         }
 
