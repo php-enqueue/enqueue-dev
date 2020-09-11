@@ -7,3 +7,5 @@ permalink: /transport
 ---
 
 {:toc}
+
+[Feature Comparison Table](../client/supported_brokers.md#transport-features)

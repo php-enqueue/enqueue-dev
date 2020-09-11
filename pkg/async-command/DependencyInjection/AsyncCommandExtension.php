@@ -24,7 +24,8 @@ class AsyncCommandExtension extends Extension
 
             $id = sprintf('enqueue.async_command.%s.run_command_processor', $client['name']);
             $container->register($id, RunCommandProcessor::class)
-                ->addArgument('%kernel.project_dir%', $client['timeout'])
+                ->addArgument('%kernel.project_dir%')
+                ->addArgument($client['timeout'])
                 ->addTag('enqueue.processor', [
                     'client' => $client['name'],
                     'command' => $client['command_name'] ?? Commands::RUN_COMMAND,
