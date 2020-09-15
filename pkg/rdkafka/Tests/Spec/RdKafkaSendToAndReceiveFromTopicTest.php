@@ -19,9 +19,14 @@ class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 
         $topic = $this->createTopic($context, uniqid('', true));
 
-        $consumer = $context->createConsumer($topic);
-
         $expectedBody = __CLASS__.time();
+        $producer = $context->createProducer();
+        $producer->send($topic, $context->createMessage($expectedBody));
+
+        // Calling close causes Producer to flush (wait for messages to be delivered to Kafka)
+        $context->close();
+
+        $consumer = $context->createConsumer($topic);
 
         $context->createProducer()->send($topic, $context->createMessage($expectedBody));
 
@@ -47,8 +52,6 @@ class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
         ];
 
         $context = (new RdKafkaConnectionFactory($config))->createContext();
-
-        sleep(3);
 
         return $context;
     }

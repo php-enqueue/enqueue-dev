@@ -78,7 +78,7 @@ script:
     - if [ "$PHPSTAN" = true ] && [ ! -z "${PKG_PHP_CHANGED_FILES}" ]; then docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon -- ${PKG_PHP_CHANGED_FILES[@]} ; fi
     - if [ "$UNIT_TESTS" = true ]; then bin/phpunit --exclude-group=functional; fi
     - if [ "$FUNCTIONAL_TESTS" = true ]; then bin/test.sh --exclude-group=rdkafka; fi
-    - if [ "RDKAFKA_TESTS" = true ]; then bin/test.sh --group=rdkafka; fi
+    - if [ "$RDKAFKA_TESTS" = true ]; then bin/test.sh --group=rdkafka; fi
 
 notifications:
   webhooks:

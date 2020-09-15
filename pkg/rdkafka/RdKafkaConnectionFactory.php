@@ -28,6 +28,7 @@ class RdKafkaConnectionFactory implements ConnectionFactory
      *     'partitioner' => null,                          // https://arnaud-lb.github.io/php-rdkafka/phpdoc/rdkafka-topicconf.setpartitioner.html
      *     'log_level' => null,
      *     'commit_async' => false,
+     *     'shutdown_timeout' => -1,                       // https://github.com/arnaud-lb/php-rdkafka#proper-shutdown
      * ]
      *
      * or
