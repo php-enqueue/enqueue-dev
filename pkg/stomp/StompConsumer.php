@@ -9,6 +9,7 @@ use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
 use Stomp\Client;
+use Stomp\Exception\ErrorFrameException;
 use Stomp\Transport\Frame;
 
 class StompConsumer implements Consumer
@@ -96,16 +97,22 @@ class StompConsumer implements Consumer
     {
         $this->subscribe();
 
-        if (0 === $timeout) {
-            while (true) {
-                if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 100)) {
+        try {
+            if (0 === $timeout) {
+                while (true) {
+                    if ($message = $this->stomp->readMessageFrame($this->subscriptionId, 100)) {
+                        return $this->convertMessage($message);
+                    }
+                }
+            }
+            else {
+                if ($message = $this->stomp->readMessageFrame($this->subscriptionId, $timeout)) {
                     return $this->convertMessage($message);
                 }
             }
-        } else {
-            if ($message = $this->stomp->readMessageFrame($this->subscriptionId, $timeout)) {
-                return $this->convertMessage($message);
-            }
+        }
+        catch (ErrorFrameException $e) {
+            throw new \Exception($e->getMessage() . "\n" . $e->getFrame()->getBody());
         }
 
         return null;
@@ -143,10 +150,11 @@ class StompConsumer implements Consumer
 
         $nackFrame = $this->stomp->getProtocol()->getNackFrame($message->getFrame());
 
-        // rabbitmq STOMP protocol extension
-        $nackFrame->addHeaders([
-            'requeue' => $requeue ? 'true' : 'false',
-        ]);
+        if ($this->queue->getExtensionType() === ExtensionType::RABBITMQ) {
+            $nackFrame->addHeaders([
+                'requeue' => $requeue ? 'true' : 'false',
+            ]);
+        }
 
         $this->stomp->sendFrame($nackFrame);
     }
@@ -168,13 +176,32 @@ class StompConsumer implements Consumer
                 $this->ackMode
             );
 
-            // rabbitmq STOMP protocol extension
             $headers = $this->queue->getHeaders();
-            $headers['prefetch-count'] = $this->prefetchCount;
-            $headers = StompHeadersEncoder::encode($headers);
 
-            foreach ($headers as $key => $value) {
-                $frame[$key] = $value;
+            if ($this->queue->getExtensionType() === ExtensionType::RABBITMQ) {
+
+                $headers['prefetch-count'] = $this->prefetchCount;
+                $headers = StompHeadersEncoder::encode($headers);
+
+                foreach ($headers as $key => $value) {
+                    $frame[$key] = $value;
+                }
+            }
+
+            if ($this->queue->getExtensionType() === ExtensionType::ARTEMIS) {
+
+                $subscriptionName = "{$this->subscriptionId}-{$this->queue->getStompName()}";
+
+                $artemisHeaders = [];
+
+                $artemisHeaders['client-id'] = true ? $this->subscriptionId : null;
+                $artemisHeaders['durable-subscription-name'] = true ? $subscriptionName : null;
+
+                $artemisHeaders = StompHeadersEncoder::encode(array_filter($artemisHeaders));
+
+                foreach ($artemisHeaders as $key => $value) {
+                    $frame[$key] = $value;
+                }
             }
 
             $this->stomp->sendFrame($frame);
@@ -187,7 +214,7 @@ class StompConsumer implements Consumer
             throw new \LogicException(sprintf('Frame is not MESSAGE frame but: "%s"', $frame->getCommand()));
         }
 
-        list($headers, $properties) = StompHeadersEncoder::decode($frame->getHeaders());
+        [$headers, $properties] = StompHeadersEncoder::decode($frame->getHeaders());
 
         $redelivered = isset($headers['redelivered']) && 'true' === $headers['redelivered'];
 

@@ -39,14 +39,25 @@ class StompDestination implements Topic, Queue
      * @var array
      */
     private $headers;
+    /**
+     * @var string
+     */
+    private string $extensionType;
 
-    public function __construct()
+    public function __construct(string $extensionType)
     {
         $this->headers = [
             self::HEADER_DURABLE => false,
             self::HEADER_AUTO_DELETE => true,
             self::HEADER_EXCLUSIVE => false,
         ];
+
+        $this->extensionType = $extensionType;
+    }
+
+    public function getExtensionType(): string
+    {
+        return $this->extensionType;
     }
 
     public function getStompName(): string
@@ -63,6 +74,10 @@ class StompDestination implements Topic, Queue
     {
         if (empty($this->getStompName())) {
             throw new \LogicException('Destination name is not set');
+        }
+
+        if ($this->extensionType === ExtensionType::ARTEMIS) {
+            return $this->getStompName();
         }
 
         $name = '/'.$this->getType().'/'.$this->getStompName();

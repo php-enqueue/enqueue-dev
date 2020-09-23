@@ -13,8 +13,11 @@ use Stomp\Network\Observer\ServerAliveObserver;
 
 class StompConnectionFactory implements ConnectionFactory
 {
-    const SCHEME_EXT_ACTIVEMQ = 'activemq';
-    const SCHEME_EXT_RABBITMQ = 'rabbitmq';
+    const SUPPORTED_SCHEMES = [
+        ExtensionType::ACTIVEMQ,
+        ExtensionType::RABBITMQ,
+        ExtensionType::ARTEMIS,
+    ];
 
     /**
      * @var array
@@ -71,15 +74,14 @@ class StompConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
-        $useExchangePrefix = self::SCHEME_EXT_RABBITMQ === $this->config['target'] ? true : false;
-
         if ($this->config['lazy']) {
-            return new StompContext(function () {
-                return $this->establishConnection();
-            }, $useExchangePrefix);
+            return new StompContext(
+                fn () => $this->establishConnection(),
+                $this->config['target']
+            );
         }
 
-        return new StompContext($this->establishConnection(), $useExchangePrefix);
+        return new StompContext($this->establishConnection(), $this->config['target']);
     }
 
     private function establishConnection(): BufferedStompClient
@@ -123,10 +125,11 @@ class StompConnectionFactory implements ConnectionFactory
 
         $schemeExtension = current($dsn->getSchemeExtensions());
         if (false === $schemeExtension) {
-            $schemeExtension = self::SCHEME_EXT_RABBITMQ;
+            $schemeExtension = ExtensionType::RABBITMQ;
         }
-        if (self::SCHEME_EXT_ACTIVEMQ !== $schemeExtension && self::SCHEME_EXT_RABBITMQ !== $schemeExtension) {
-            throw new \LogicException(sprintf('The given DSN is not supported. The scheme extension "%s" provided is invalid. It must be one of "%s" or "%s".', $schemeExtension, self::SCHEME_EXT_ACTIVEMQ, self::SCHEME_EXT_RABBITMQ));
+
+        if (false === in_array($schemeExtension, self::SUPPORTED_SCHEMES)) {
+            throw new \LogicException(sprintf('The given DSN is not supported. The scheme extension "%s" provided is not supported. It must be one of %s.', $schemeExtension, implode(', ', self::SUPPORTED_SCHEMES)));
         }
 
         return array_filter(array_replace($dsn->getQuery(), [
@@ -151,7 +154,7 @@ class StompConnectionFactory implements ConnectionFactory
     private function defaultConfig(): array
     {
         return [
-            'target' => self::SCHEME_EXT_RABBITMQ,
+            'target' => ExtensionType::RABBITMQ,
             'host' => 'localhost',
             'port' => 61613,
             'login' => 'guest',

@@ -24,6 +24,11 @@ class StompContext implements Context
     private $stomp;
 
     /**
+     * @var string
+     */
+    private $extensionType;
+
+    /**
      * @var bool
      */
     private $useExchangePrefix;
@@ -35,9 +40,9 @@ class StompContext implements Context
 
     /**
      * @param BufferedStompClient|callable $stomp
-     * @param bool                         $useExchangePrefix
+     * @param string                       $extensionType
      */
-    public function __construct($stomp, $useExchangePrefix = true)
+    public function __construct($stomp, string $extensionType)
     {
         if ($stomp instanceof BufferedStompClient) {
             $this->stomp = $stomp;
@@ -47,7 +52,8 @@ class StompContext implements Context
             throw new \InvalidArgumentException('The stomp argument must be either BufferedStompClient or callable that return BufferedStompClient.');
         }
 
-        $this->useExchangePrefix = $useExchangePrefix;
+        $this->extensionType = $extensionType;
+        $this->useExchangePrefix = true;
     }
 
     /**
@@ -64,7 +70,7 @@ class StompContext implements Context
     public function createQueue(string $name): Queue
     {
         if (0 !== strpos($name, '/')) {
-            $destination = new StompDestination();
+            $destination = new StompDestination($this->extensionType);
             $destination->setType(StompDestination::TYPE_QUEUE);
             $destination->setStompName($name);
 
@@ -91,7 +97,7 @@ class StompContext implements Context
     public function createTopic(string $name): Topic
     {
         if (0 !== strpos($name, '/')) {
-            $destination = new StompDestination();
+            $destination = new StompDestination($this->extensionType);
             $destination->setType($this->useExchangePrefix ? StompDestination::TYPE_EXCHANGE : StompDestination::TYPE_TOPIC);
             $destination->setStompName($name);
 
@@ -151,7 +157,7 @@ class StompContext implements Context
             $routingKey = $pieces[1];
         }
 
-        $destination = new StompDestination();
+        $destination = new StompDestination($this->extensionType);
         $destination->setType($type);
         $destination->setStompName($name);
         $destination->setRoutingKey($routingKey);
