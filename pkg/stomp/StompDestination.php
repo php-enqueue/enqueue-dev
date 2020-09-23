@@ -42,7 +42,7 @@ class StompDestination implements Topic, Queue
     /**
      * @var string
      */
-    private string $extensionType;
+    private $extensionType;
 
     public function __construct(string $extensionType)
     {
@@ -76,7 +76,7 @@ class StompDestination implements Topic, Queue
             throw new \LogicException('Destination name is not set');
         }
 
-        if ($this->extensionType === ExtensionType::ARTEMIS) {
+        if (ExtensionType::ARTEMIS === $this->extensionType) {
             return $this->getStompName();
         }
 

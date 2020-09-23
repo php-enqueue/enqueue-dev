@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Enqueue\Stomp;
 
 use Interop\Queue\Consumer;
+use Interop\Queue\Exception\Exception;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
@@ -104,15 +105,13 @@ class StompConsumer implements Consumer
                         return $this->convertMessage($message);
                     }
                 }
-            }
-            else {
+            } else {
                 if ($message = $this->stomp->readMessageFrame($this->subscriptionId, $timeout)) {
                     return $this->convertMessage($message);
                 }
             }
-        }
-        catch (ErrorFrameException $e) {
-            throw new \Exception($e->getMessage() . "\n" . $e->getFrame()->getBody());
+        } catch (ErrorFrameException $e) {
+            throw new Exception($e->getMessage()."\n".$e->getFrame()->getBody(), null, $e);
         }
 
         return null;
@@ -150,7 +149,7 @@ class StompConsumer implements Consumer
 
         $nackFrame = $this->stomp->getProtocol()->getNackFrame($message->getFrame());
 
-        if ($this->queue->getExtensionType() === ExtensionType::RABBITMQ) {
+        if (ExtensionType::RABBITMQ === $this->queue->getExtensionType()) {
             $nackFrame->addHeaders([
                 'requeue' => $requeue ? 'true' : 'false',
             ]);
@@ -178,19 +177,15 @@ class StompConsumer implements Consumer
 
             $headers = $this->queue->getHeaders();
 
-            if ($this->queue->getExtensionType() === ExtensionType::RABBITMQ) {
-
+            if (ExtensionType::RABBITMQ === $this->queue->getExtensionType()) {
                 $headers['prefetch-count'] = $this->prefetchCount;
                 $headers = StompHeadersEncoder::encode($headers);
 
                 foreach ($headers as $key => $value) {
                     $frame[$key] = $value;
                 }
-            }
-
-            if ($this->queue->getExtensionType() === ExtensionType::ARTEMIS) {
-
-                $subscriptionName = "{$this->subscriptionId}-{$this->queue->getStompName()}";
+            } elseif (ExtensionType::ARTEMIS === $this->queue->getExtensionType()) {
+                $subscriptionName = $this->subscriptionId.'-'.$this->queue->getStompName();
 
                 $artemisHeaders = [];
 
@@ -214,7 +209,7 @@ class StompConsumer implements Consumer
             throw new \LogicException(sprintf('Frame is not MESSAGE frame but: "%s"', $frame->getCommand()));
         }
 
-        [$headers, $properties] = StompHeadersEncoder::decode($frame->getHeaders());
+        list($headers, $properties) = StompHeadersEncoder::decode($frame->getHeaders());
 
         $redelivered = isset($headers['redelivered']) && 'true' === $headers['redelivered'];
 

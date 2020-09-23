@@ -76,7 +76,7 @@ class StompConnectionFactory implements ConnectionFactory
     {
         if ($this->config['lazy']) {
             return new StompContext(
-                fn () => $this->establishConnection(),
+                function () { return $this->establishConnection(); },
                 $this->config['target']
             );
         }
@@ -128,7 +128,7 @@ class StompConnectionFactory implements ConnectionFactory
             $schemeExtension = ExtensionType::RABBITMQ;
         }
 
-        if (false === in_array($schemeExtension, self::SUPPORTED_SCHEMES)) {
+        if (false === in_array($schemeExtension, self::SUPPORTED_SCHEMES, true)) {
             throw new \LogicException(sprintf('The given DSN is not supported. The scheme extension "%s" provided is not supported. It must be one of %s.', $schemeExtension, implode(', ', self::SUPPORTED_SCHEMES)));
         }
 
