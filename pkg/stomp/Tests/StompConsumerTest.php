@@ -3,6 +3,7 @@
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\BufferedStompClient;
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
@@ -557,7 +558,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
 
     private function createDummyDestination(): StompDestination
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setStompName('aName');
         $destination->setType(StompDestination::TYPE_QUEUE);
 

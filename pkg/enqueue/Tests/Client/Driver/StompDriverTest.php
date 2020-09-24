@@ -9,6 +9,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\RouteCollection;
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
@@ -127,7 +128,7 @@ class StompDriverTest extends TestCase
      */
     protected function createQueue(string $name): InteropQueue
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName($name);
 
@@ -139,7 +140,7 @@ class StompDriverTest extends TestCase
      */
     protected function createTopic(string $name): InteropTopic
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_TOPIC);
         $destination->setStompName($name);
 

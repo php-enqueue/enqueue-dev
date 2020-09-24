@@ -2,6 +2,7 @@
 
 namespace Enqueue\Stomp\Tests;
 
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Queue;
@@ -19,7 +20,7 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldReturnDestinationStringWithRoutingKey()
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_AMQ_QUEUE);
         $destination->setStompName('name');
         $destination->setRoutingKey('routing-key');
@@ -32,7 +33,7 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldReturnDestinationStringWithoutRoutingKey()
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_TOPIC);
         $destination->setStompName('name');
 
@@ -47,7 +48,7 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Destination name is not set');
 
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName('');
 
@@ -59,7 +60,7 @@ class StompDestinationTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Invalid destination type: "invalid-type"');
 
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType('invalid-type');
     }
 }
