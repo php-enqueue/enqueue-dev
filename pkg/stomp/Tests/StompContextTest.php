@@ -94,7 +94,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateTopicInstanceWithTopicPrefix()
     {
-        $context = new StompContext($this->createStompClientMock(), ExtensionType::ARTEMIS);
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::ACTIVEMQ);
 
         $topic = $context->createTopic('the name');
 
