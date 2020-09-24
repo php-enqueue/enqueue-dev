@@ -52,7 +52,7 @@ class StompContext implements Context
         }
 
         $this->extensionType = $extensionType;
-        $this->useExchangePrefix = true;
+        $this->useExchangePrefix = ExtensionType::RABBITMQ === $extensionType ? true : false;
     }
 
     /**
