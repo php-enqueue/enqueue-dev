@@ -1,5 +1,32 @@
 # Change Log
 
+## [0.10.4](https://github.com/php-enqueue/enqueue-dev/tree/0.10.4) (2020-09-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.3...0.10.4)
+
+**Merged pull requests:**
+
+- \[stomp\] Add first pass for Apache ActiveMQ Artemis support [\#1091](https://github.com/php-enqueue/enqueue-dev/pull/1091) ([atrauzzi](https://github.com/atrauzzi))
+- \[amqp\]Solves binding Headers Exchange with Queue using custom arguments [\#1087](https://github.com/php-enqueue/enqueue-dev/pull/1087) ([dgafka](https://github.com/dgafka))
+- \[async-command\] Fix service definition to apply the timeout [\#1084](https://github.com/php-enqueue/enqueue-dev/pull/1084) ([jcrombez](https://github.com/jcrombez))
+- \[mongodb\] fix\(MongoDB\) Redelivery not working \(fixes \#1077\) [\#1078](https://github.com/php-enqueue/enqueue-dev/pull/1078) ([josefsabl](https://github.com/josefsabl))
+- Add php 7.3 and 7.4 travis env to every package [\#1076](https://github.com/php-enqueue/enqueue-dev/pull/1076) ([snapshotpl](https://github.com/snapshotpl))
+- Docs: update Supported Brokers [\#1074](https://github.com/php-enqueue/enqueue-dev/pull/1074) ([Nebual](https://github.com/Nebual))
+- \[rdkafka\] Compatibility with Phprdkafka 4.0 [\#959](https://github.com/php-enqueue/enqueue-dev/pull/959) ([Steveb-p](https://github.com/Steveb-p))
+
+## [0.10.3](https://github.com/php-enqueue/enqueue-dev/tree/0.10.3) (2020-07-31)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.2...0.10.3)
+
+**Merged pull requests:**
+
+- Allow to install ramsey/uuid:^4 [\#1075](https://github.com/php-enqueue/enqueue-dev/pull/1075) ([snapshotpl](https://github.com/snapshotpl))
+- chore: add typehint to RdKafkaConsumer\#getQueue [\#1071](https://github.com/php-enqueue/enqueue-dev/pull/1071) ([qkdreyer](https://github.com/qkdreyer))
+- Fixes typo on client messages exemples doc [\#1065](https://github.com/php-enqueue/enqueue-dev/pull/1065) ([brunousml](https://github.com/brunousml))
+- Fix contact us link [\#1058](https://github.com/php-enqueue/enqueue-dev/pull/1058) ([andrew-demb](https://github.com/andrew-demb))
+- Fix typos [\#1049](https://github.com/php-enqueue/enqueue-dev/pull/1049) ([pgrimaud](https://github.com/pgrimaud))
+- Added support for ramsey/uuid 4.0 [\#1043](https://github.com/php-enqueue/enqueue-dev/pull/1043) ([a-menshchikov](https://github.com/a-menshchikov))
+- Changed: cast redelivery\_delay to int [\#1034](https://github.com/php-enqueue/enqueue-dev/pull/1034) ([balabis](https://github.com/balabis))
+- Add php 7.4 to test matrix [\#991](https://github.com/php-enqueue/enqueue-dev/pull/991) ([snapshotpl](https://github.com/snapshotpl))
+
 ## [0.10.2](https://github.com/php-enqueue/enqueue-dev/tree/0.10.2) (2020-03-20)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.1...0.10.2)
 
