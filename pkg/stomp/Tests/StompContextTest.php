@@ -3,6 +3,7 @@
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\BufferedStompClient;
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
@@ -24,14 +25,14 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCouldBeCreatedWithRequiredArguments()
     {
-        new StompContext($this->createStompClientMock());
+        new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
     }
 
     public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
     {
         new StompContext(function () {
             return $this->createStompClientMock();
-        });
+        }, ExtensionType::RABBITMQ);
     }
 
     public function testThrowIfNeitherCallbackNorExtChannelAsFirstArgument()
@@ -39,12 +40,12 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The stomp argument must be either BufferedStompClient or callable that return BufferedStompClient.');
 
-        new StompContext(new \stdClass());
+        new StompContext(new \stdClass(), ExtensionType::RABBITMQ);
     }
 
     public function testShouldCreateMessageInstance()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $message = $context->createMessage('the body', ['key' => 'value'], ['hkey' => 'hvalue']);
 
@@ -56,7 +57,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateQueueInstance()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $queue = $context->createQueue('the name');
 
@@ -68,7 +69,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateQueueShouldCreateDestinationIfNameIsFullDestinationString()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $destination = $context->createQueue('/amq/queue/name/routing-key');
 
@@ -81,7 +82,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateTopicInstanceWithExchangePrefix()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $topic = $context->createTopic('the name');
 
@@ -93,7 +94,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldCreateTopicInstanceWithTopicPrefix()
     {
-        $context = new StompContext($this->createStompClientMock(), false);
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $topic = $context->createTopic('the name');
 
@@ -105,7 +106,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateTopicShouldCreateDestinationIfNameIsFullDestinationString()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $destination = $context->createTopic('/amq/queue/name/routing-key');
 
@@ -121,20 +122,20 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InvalidDestinationException::class);
         $this->expectExceptionMessage('The destination must be an instance of');
 
-        $session = new StompContext($this->createStompClientMock());
+        $session = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $session->createConsumer($this->createMock(Queue::class));
     }
 
     public function testShouldCreateMessageConsumerInstance()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $this->assertInstanceOf(StompConsumer::class, $context->createConsumer($this->createDummyDestination()));
     }
 
     public function testShouldCreateMessageProducerInstance()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $this->assertInstanceOf(StompProducer::class, $context->createProducer());
     }
@@ -147,7 +148,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
             ->method('disconnect')
         ;
 
-        $context = new StompContext($client);
+        $context = new StompContext($client, ExtensionType::RABBITMQ);
 
         $context->createProducer();
         $context->createConsumer($this->createDummyDestination());
@@ -160,7 +161,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Destination name is invalid, cant find type: "/invalid-type/name"');
 
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $context->createDestination('/invalid-type/name');
     }
 
@@ -169,7 +170,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Destination name is invalid, found extra / char: "/queue/name/routing-key/extra');
 
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $context->createDestination('/queue/name/routing-key/extra');
     }
 
@@ -178,7 +179,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Destination name is invalid, name is empty: "/queue/"');
 
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $context->createDestination('/queue/');
     }
 
@@ -187,13 +188,13 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Destination name is invalid, routing key is empty: "/queue/name/"');
 
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $context->createDestination('/queue/name/');
     }
 
     public function testCreateDestinationShouldParseStringAndCreateDestination()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $destination = $context->createDestination('/amq/queue/name/routing-key');
 
         $this->assertEquals('amq/queue', $destination->getType());
@@ -204,7 +205,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateTemporaryQueue()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $tempQueue = $context->createTemporaryQueue();
 
         $this->assertEquals('temp-queue', $tempQueue->getType());
@@ -215,7 +216,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateTemporaryQueuesWithUniqueNames()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
         $fooTempQueue = $context->createTemporaryQueue();
         $barTempQueue = $context->createTemporaryQueue();
 
@@ -227,7 +228,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     public function testShouldGetBufferedStompClient()
     {
-        $context = new StompContext($this->createStompClientMock());
+        $context = new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
 
         $this->assertInstanceOf(BufferedStompClient::class, $context->getStomp());
     }
@@ -242,7 +243,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
 
     private function createDummyDestination(): StompDestination
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setStompName('aName');
         $destination->setType(StompDestination::TYPE_QUEUE);
 

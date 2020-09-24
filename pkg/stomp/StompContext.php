@@ -40,7 +40,6 @@ class StompContext implements Context
 
     /**
      * @param BufferedStompClient|callable $stomp
-     * @param string                       $extensionType
      */
     public function __construct($stomp, string $extensionType)
     {
@@ -205,10 +204,7 @@ class StompContext implements Context
         if (false == $this->stomp) {
             $stomp = call_user_func($this->stompFactory);
             if (false == $stomp instanceof BufferedStompClient) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of BufferedStompClient. It returns %s',
-                    is_object($stomp) ? get_class($stomp) : gettype($stomp)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of BufferedStompClient. It returns %s', is_object($stomp) ? get_class($stomp) : gettype($stomp)));
             }
 
             $this->stomp = $stomp;
