@@ -20,9 +20,6 @@ class StompProducer implements Producer
      */
     private $stomp;
 
-    /**
-     * @param Client $stomp
-     */
     public function __construct(Client $stomp)
     {
         $this->stomp = $stomp;
@@ -45,9 +42,12 @@ class StompProducer implements Producer
         $this->stomp->send($destination->getQueueName(), $stompMessage);
     }
 
+    /**
+     * @return $this|Producer
+     */
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
-        if (null === $deliveryDelay) {
+        if (empty($deliveryDelay)) {
             return $this;
         }
 
@@ -59,9 +59,14 @@ class StompProducer implements Producer
         return null;
     }
 
+    /**
+     * @throws PriorityNotSupportedException
+     *
+     * @return $this|Producer
+     */
     public function setPriority(int $priority = null): Producer
     {
-        if (null === $priority) {
+        if (empty($priority)) {
             return $this;
         }
 
@@ -73,9 +78,12 @@ class StompProducer implements Producer
         return null;
     }
 
+    /**
+     * @return $this|Producer
+     */
     public function setTimeToLive(int $timeToLive = null): Producer
     {
-        if (null === $timeToLive) {
+        if (empty($timeToLive)) {
             return $this;
         }
 
