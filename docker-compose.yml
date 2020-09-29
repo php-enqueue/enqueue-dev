@@ -122,7 +122,7 @@ services:
       - '9090:9090'
 
   localstack:
-    image: 'localstack/localstack:latest'
+    image: 'localstack/localstack:0.8.10'
     ports:
       - '4576:4576'
       - '4575:4575'
