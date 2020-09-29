@@ -26,7 +26,7 @@
     "psr/container": "^1",
     "makasim/temp-file": "^0.2",
     "google/cloud-pubsub": "^0.6.1|^1.0",
-    "doctrine/orm": ">2.4,<2.7.0",
+    "doctrine/orm": "2.7.0",
     "mongodb/mongodb": "^1.2",
     "pda/pheanstalk": "^3",
     "aws/aws-sdk-php": "^3.26",
