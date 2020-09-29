@@ -11,6 +11,7 @@ use Interop\Queue\Exception\PriorityNotSupportedException;
 use Interop\Queue\Message;
 use Interop\Queue\Producer;
 use Stomp\Client;
+use Stomp\Exception\ConnectionException;
 use Stomp\Transport\Message as StompLibMessage;
 
 class StompProducer implements Producer
@@ -39,7 +40,18 @@ class StompProducer implements Producer
 
         $stompMessage = new StompLibMessage($message->getBody(), $headers);
 
-        $this->stomp->send($destination->getQueueName(), $stompMessage);
+        try {
+            $this->stomp->send($destination->getQueueName(), $stompMessage);
+        } catch (ConnectionException $ex) {
+            if (!$this->stomp->isConnected()) {
+                throw $ex;
+            }
+
+            $this->stomp->disconnect(true);
+            $this->stomp->connect();
+
+            $this->stomp->send($destination->getQueueName(), $stompMessage);
+        }
     }
 
     /**
