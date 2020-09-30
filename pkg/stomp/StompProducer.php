@@ -51,8 +51,6 @@ class StompProducer implements Producer
             $this->stomp->connect();
 
             $this->stomp->send($destination->getQueueName(), $stompMessage);
-        } finally {
-            $this->stomp->disconnect();
         }
     }
 
