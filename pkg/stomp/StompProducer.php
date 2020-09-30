@@ -47,10 +47,12 @@ class StompProducer implements Producer
                 throw $ex;
             }
 
-            $this->stomp->disconnect(true);
+            $this->stomp->disconnect();
             $this->stomp->connect();
 
             $this->stomp->send($destination->getQueueName(), $stompMessage);
+        } finally {
+            $this->stomp->disconnect();
         }
     }
 
