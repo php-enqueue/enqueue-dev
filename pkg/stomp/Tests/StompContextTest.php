@@ -144,7 +144,7 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
     {
         $client = $this->createStompClientMock();
         $client
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('disconnect')
         ;
 
