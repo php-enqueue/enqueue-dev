@@ -42,6 +42,9 @@ class StompProducer implements Producer
         $this->stomp->send($destination->getQueueName(), $stompMessage);
     }
 
+    /**
+     * @return $this|Producer
+     */
     public function setDeliveryDelay(int $deliveryDelay = null): Producer
     {
         if (empty($deliveryDelay)) {
@@ -56,6 +59,11 @@ class StompProducer implements Producer
         return null;
     }
 
+    /**
+     * @throws PriorityNotSupportedException
+     *
+     * @return $this|Producer
+     */
     public function setPriority(int $priority = null): Producer
     {
         if (empty($priority)) {
@@ -70,6 +78,9 @@ class StompProducer implements Producer
         return null;
     }
 
+    /**
+     * @return $this|Producer
+     */
     public function setTimeToLive(int $timeToLive = null): Producer
     {
         if (empty($timeToLive)) {
