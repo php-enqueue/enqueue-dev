@@ -19,7 +19,6 @@ use Interop\Queue\Topic;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer as VendorProducer;
-use RdKafka\TopicConf;
 
 class RdKafkaContext implements Context
 {
