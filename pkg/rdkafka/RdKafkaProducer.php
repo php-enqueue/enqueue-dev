@@ -56,12 +56,14 @@ class RdKafkaProducer implements Producer
                 );
             } else {
                 $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
+                $this->producer->poll(0);
 
                 return;
             }
         }
 
         $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
+        $this->producer->poll(0);
     }
 
     /**
