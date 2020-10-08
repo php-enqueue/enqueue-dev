@@ -5,18 +5,10 @@ RUN set -x && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php7.3-dev php7.3-redis php7.3-pgsql git python
 
-RUN set -x && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests php7.3-dev librabbitmq-dev make  && \
-    mkdir -p $HOME/php-amqp && \
-    cd $HOME/php-amqp && \
-    git clone https://github.com/pdezwart/php-amqp.git . && git checkout v1.10.2 && \
-    phpize --clean && phpize && ./configure && make install
-
 ## librdkafka
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests g++ php-pear php7.3-dev && \
+    apt-get install -y --no-install-recommends --no-install-suggests g++ php-pear php7.3-dev make && \
     mkdir -p $HOME/librdkafka && \
     cd $HOME/librdkafka && \
     git clone https://github.com/edenhill/librdkafka.git . && \
