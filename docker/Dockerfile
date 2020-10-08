@@ -20,7 +20,7 @@ RUN set -x && \
     mkdir -p $HOME/librdkafka && \
     cd $HOME/librdkafka && \
     git clone https://github.com/edenhill/librdkafka.git . && \
-    git checkout v0.11.6 && \
+    git checkout v1.0.0 && \
     ./configure && make && make install && \
     pecl install rdkafka && \
     echo "extension=rdkafka.so" > /etc/php/7.2/cli/conf.d/10-rdkafka.ini && \
