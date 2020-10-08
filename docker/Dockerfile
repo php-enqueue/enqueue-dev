@@ -10,7 +10,7 @@ RUN set -x && \
     apt-get install -y --no-install-recommends --no-install-suggests php-dev librabbitmq-dev make  && \
     mkdir -p $HOME/php-amqp && \
     cd $HOME/php-amqp && \
-    git clone https://github.com/pdezwart/php-amqp.git . && git checkout v1.9.3 && \
+    git clone https://github.com/pdezwart/php-amqp.git . && git checkout v1.10.2 && \
     phpize --clean && phpize && ./configure && make install
 
 ## librdkafka
