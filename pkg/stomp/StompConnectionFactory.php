@@ -74,14 +74,14 @@ class StompConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
-        if ($this->config['lazy']) {
-            return new StompContext(
-                function () { return $this->establishConnection(); },
-                $this->config['target']
-            );
-        }
+        $stomp = $this->config['lazy']
+            ? function () { return $this->establishConnection(); }
+        : $this->establishConnection();
 
-        return new StompContext($this->establishConnection(), $this->config['target']);
+        $target = $this->config['target'];
+        $detectTransientConnections = (bool) $this->config['detect_transient_connections'];
+
+        return new StompContext($stomp, $target, $detectTransientConnections);
     }
 
     private function establishConnection(): BufferedStompClient

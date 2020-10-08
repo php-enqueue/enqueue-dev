@@ -45,9 +45,8 @@ class StompContext implements Context
 
     /**
      * @param BufferedStompClient|callable $stomp
-     * @param mixed                        $transient
      */
-    public function __construct($stomp, string $extensionType, $transient = true)
+    public function __construct($stomp, string $extensionType, bool $detectTransientConnections = false)
     {
         if ($stomp instanceof BufferedStompClient) {
             $this->stomp = $stomp;
@@ -59,7 +58,7 @@ class StompContext implements Context
 
         $this->extensionType = $extensionType;
         $this->useExchangePrefix = ExtensionType::RABBITMQ === $extensionType;
-        $this->transient = $transient;
+        $this->transient = $detectTransientConnections;
     }
 
     /**
@@ -190,7 +189,7 @@ class StompContext implements Context
      */
     public function createProducer(): Producer
     {
-        if ($this->transient && true == $this->stomp) {
+        if ($this->transient && $this->stomp) {
             $this->stomp->disconnect();
         }
 
