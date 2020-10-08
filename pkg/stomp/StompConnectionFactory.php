@@ -169,6 +169,7 @@ class StompConnectionFactory implements ConnectionFactory
             'read_timeout' => 60,
             'send_heartbeat' => 0,
             'receive_heartbeat' => 0,
+            'detect_transient_connections' => false,
         ];
     }
 }
