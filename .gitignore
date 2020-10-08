@@ -9,6 +9,9 @@ bin/jp.php
 bin/php-parse
 bin/google-cloud-batch
 bin/thruway
+bin/phpstan.phar
+bin/var-dump-server
+bin/yaml-lint
 vendor
 var
 .php_cs
