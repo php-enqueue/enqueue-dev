@@ -39,9 +39,14 @@ class StompContext implements Context
     private $stompFactory;
 
     /**
+     * @var bool
+     */
+    private $transient;
+
+    /**
      * @param BufferedStompClient|callable $stomp
      */
-    public function __construct($stomp, string $extensionType)
+    public function __construct($stomp, string $extensionType, bool $detectTransientConnections = false)
     {
         if ($stomp instanceof BufferedStompClient) {
             $this->stomp = $stomp;
@@ -53,6 +58,7 @@ class StompContext implements Context
 
         $this->extensionType = $extensionType;
         $this->useExchangePrefix = ExtensionType::RABBITMQ === $extensionType;
+        $this->transient = $detectTransientConnections;
     }
 
     /**
@@ -173,6 +179,8 @@ class StompContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
 
+        $this->transient = false;
+
         return new StompConsumer($this->getStomp(), $destination);
     }
 
@@ -181,6 +189,10 @@ class StompContext implements Context
      */
     public function createProducer(): Producer
     {
+        if ($this->transient && $this->stomp) {
+            $this->stomp->disconnect();
+        }
+
         return new StompProducer($this->getStomp());
     }
 
@@ -202,14 +214,20 @@ class StompContext implements Context
     public function getStomp(): BufferedStompClient
     {
         if (false == $this->stomp) {
-            $stomp = call_user_func($this->stompFactory);
-            if (false == $stomp instanceof BufferedStompClient) {
-                throw new \LogicException(sprintf('The factory must return instance of BufferedStompClient. It returns %s', is_object($stomp) ? get_class($stomp) : gettype($stomp)));
-            }
-
-            $this->stomp = $stomp;
+            $this->stomp = $this->createStomp();
         }
 
         return $this->stomp;
+    }
+
+    private function createStomp(): BufferedStompClient
+    {
+        $stomp = call_user_func($this->stompFactory);
+
+        if (false == $stomp instanceof BufferedStompClient) {
+            throw new \LogicException(sprintf('The factory must return instance of BufferedStompClient. It returns %s', is_object($stomp) ? get_class($stomp) : gettype($stomp)));
+        }
+
+        return $stomp;
     }
 }
