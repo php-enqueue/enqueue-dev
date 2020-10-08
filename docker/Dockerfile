@@ -3,7 +3,7 @@ FROM formapro/nginx-php-fpm:7.3-latest-all-exts
 ## libs
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php7.3-dev php7.3-redis php7.3-pgsql git python
+    apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php7.3-dev php7.3-redis php7.3-pgsql git python php-amqp
 
 ## librdkafka
 RUN set -x && \
