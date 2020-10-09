@@ -19,7 +19,6 @@ use Interop\Queue\Topic;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer as VendorProducer;
-use RdKafka\TopicConf;
 
 class RdKafkaContext implements Context
 {
@@ -184,19 +183,17 @@ class RdKafkaContext implements Context
     private function getConf(): Conf
     {
         if (null === $this->conf) {
-            $topicConf = new TopicConf();
+            $this->conf = new Conf();
 
             if (isset($this->config['topic']) && is_array($this->config['topic'])) {
                 foreach ($this->config['topic'] as $key => $value) {
-                    $topicConf->set($key, $value);
+                    $this->conf->set($key, $value);
                 }
             }
 
             if (isset($this->config['partitioner'])) {
-                $topicConf->setPartitioner($this->config['partitioner']);
+                $this->conf->set('partitioner', $this->config['partitioner']);
             }
-
-            $this->conf = new Conf();
 
             if (isset($this->config['global']) && is_array($this->config['global'])) {
                 foreach ($this->config['global'] as $key => $value) {
@@ -219,8 +216,6 @@ class RdKafkaContext implements Context
             if (isset($this->config['stats_cb'])) {
                 $this->conf->setStatsCb($this->config['stats_cb']);
             }
-
-            $this->conf->setDefaultTopicConf($topicConf);
         }
 
         return $this->conf;
