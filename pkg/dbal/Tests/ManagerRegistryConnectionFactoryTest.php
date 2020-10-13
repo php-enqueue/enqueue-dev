@@ -2,8 +2,8 @@
 
 namespace Enqueue\Dbal\Tests;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
