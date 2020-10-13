@@ -2,6 +2,7 @@
 
 namespace Enqueue\Stomp\Tests;
 
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
@@ -40,7 +41,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
 
         $producer = new StompProducer($this->createStompClientMock());
 
-        $producer->send(new StompDestination(), $this->createMock(Message::class));
+        $producer->send(new StompDestination(ExtensionType::RABBITMQ), $this->createMock(Message::class));
     }
 
     public function testShouldSendMessage()
@@ -54,7 +55,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
 
         $producer = new StompProducer($client);
 
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName('name');
 
@@ -77,7 +78,7 @@ class StompProducerTest extends \PHPUnit\Framework\TestCase
 
         $message = new StompMessage('', ['key' => 'value'], ['hkey' => false]);
 
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName('name');
 

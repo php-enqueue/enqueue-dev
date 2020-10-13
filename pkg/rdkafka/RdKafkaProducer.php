@@ -47,7 +47,8 @@ class RdKafkaProducer implements Producer
         // Headers in payload are maintained for backwards compatibility with apps that might run on lower phprdkafka version
         if (method_exists($topic, 'producev')) {
             // Phprdkafka <= 3.1.0 will fail calling `producev` on librdkafka >= 1.0.0 causing segfault
-            if (version_compare(RdKafkaContext::getLibrdKafkaVersion(), '1.0.0', '>=')
+            // Since we are forcing to use at least librdkafka:1.0.0, no need to check the lib version anymore
+            if (false !== phpversion('rdkafka')
                 && version_compare(phpversion('rdkafka'), '3.1.0', '<=')) {
                 trigger_error(
                     'Phprdkafka <= 3.1.0 is incompatible with librdkafka 1.0.0 when calling `producev`. '.
@@ -56,12 +57,14 @@ class RdKafkaProducer implements Producer
                 );
             } else {
                 $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
+                $this->producer->poll(0);
 
                 return;
             }
         }
 
         $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
+        $this->producer->poll(0);
     }
 
     /**
@@ -110,5 +113,13 @@ class RdKafkaProducer implements Producer
     public function getTimeToLive(): ?int
     {
         return null;
+    }
+
+    public function flush(int $timeout): void
+    {
+        // Flush method is exposed in phprdkafka 4.0
+        if (method_exists($this->producer, 'flush')) {
+            $this->producer->flush($timeout);
+        }
     }
 }

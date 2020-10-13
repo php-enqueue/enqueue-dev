@@ -12,6 +12,7 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
@@ -47,7 +48,7 @@ class RabbitMqStompDriverTest extends TestCase
 
     public function testShouldCreateAndReturnStompQueueInstance()
     {
-        $expectedQueue = new StompDestination();
+        $expectedQueue = new StompDestination(ExtensionType::RABBITMQ);
 
         $context = $this->createContextMock();
         $context
@@ -185,10 +186,10 @@ class RabbitMqStompDriverTest extends TestCase
 
     public function shouldSendMessageToDelayExchangeIfDelaySet()
     {
-        $queue = new StompDestination();
+        $queue = new StompDestination(ExtensionType::RABBITMQ);
         $queue->setStompName('queueName');
 
-        $delayTopic = new StompDestination();
+        $delayTopic = new StompDestination(ExtensionType::RABBITMQ);
         $delayTopic->setStompName('delayTopic');
 
         $transportMessage = new StompMessage();
@@ -339,7 +340,7 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($this->any())
             ->method('createQueue')
             ->willReturnCallback(function (string $name) {
-                $destination = new StompDestination();
+                $destination = new StompDestination(ExtensionType::RABBITMQ);
                 $destination->setType(StompDestination::TYPE_QUEUE);
                 $destination->setStompName($name);
 
@@ -431,7 +432,7 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($this->any())
             ->method('createQueue')
             ->willReturnCallback(function (string $name) {
-                $destination = new StompDestination();
+                $destination = new StompDestination(ExtensionType::RABBITMQ);
                 $destination->setType(StompDestination::TYPE_QUEUE);
                 $destination->setStompName($name);
 
@@ -442,7 +443,7 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($this->any())
             ->method('createTopic')
             ->willReturnCallback(function (string $name) {
-                $destination = new StompDestination();
+                $destination = new StompDestination(ExtensionType::RABBITMQ);
                 $destination->setType(StompDestination::TYPE_TOPIC);
                 $destination->setStompName($name);
 
@@ -503,7 +504,7 @@ class RabbitMqStompDriverTest extends TestCase
      */
     protected function createQueue(string $name): InteropQueue
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName($name);
 
@@ -515,7 +516,7 @@ class RabbitMqStompDriverTest extends TestCase
      */
     protected function createTopic(string $name): InteropTopic
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_TOPIC);
         $destination->setStompName($name);
 
