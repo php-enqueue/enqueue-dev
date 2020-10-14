@@ -2,8 +2,8 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
 use Enqueue\Consumption\Context\MessageReceived;
 use Interop\Queue\Consumer;

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Doctrine;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Dsn\Dsn;

@@ -2,8 +2,8 @@
 
 namespace Enqueue\Bundle\Consumption\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\MessageReceivedExtensionInterface;
 

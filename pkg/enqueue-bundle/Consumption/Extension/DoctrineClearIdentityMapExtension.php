@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Consumption\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\MessageReceivedExtensionInterface;
 
@@ -13,9 +13,6 @@ class DoctrineClearIdentityMapExtension implements MessageReceivedExtensionInter
      */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;

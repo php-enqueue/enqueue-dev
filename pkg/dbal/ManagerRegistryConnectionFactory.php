@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;
 
@@ -28,9 +28,6 @@ class ManagerRegistryConnectionFactory implements ConnectionFactory
      *   'polling_interval' => 1000,    - How often query for new messages (milliseconds)
      *   'lazy' => true,                - Use lazy database connection (boolean)
      * ].
-     *
-     * @param ManagerRegistry $registry
-     * @param array           $config
      */
     public function __construct(ManagerRegistry $registry, array $config = [])
     {
