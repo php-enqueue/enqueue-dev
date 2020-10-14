@@ -19,13 +19,19 @@ class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 
         $topic = $this->createTopic($context, uniqid('', true));
 
-        $consumer = $context->createConsumer($topic);
-
         $expectedBody = __CLASS__.time();
+        $producer = $context->createProducer();
+        $producer->send($topic, $context->createMessage($expectedBody));
+
+        // Calling close causes Producer to flush (wait for messages to be delivered to Kafka)
+        $context->close();
+
+        $consumer = $context->createConsumer($topic);
 
         $context->createProducer()->send($topic, $context->createMessage($expectedBody));
 
-        $message = $consumer->receive(10000); // 10 sec
+        // Initial balancing can take some time, so we want to make sure the timeout is high enough
+        $message = $consumer->receive(15000); // 15 sec
 
         $this->assertInstanceOf(Message::class, $message);
         $consumer->acknowledge($message);
@@ -42,13 +48,11 @@ class RdKafkaSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
                 'enable.auto.commit' => 'false',
             ],
             'topic' => [
-                'auto.offset.reset' => 'beginning',
+                'auto.offset.reset' => 'earliest',
             ],
         ];
 
         $context = (new RdKafkaConnectionFactory($config))->createContext();
-
-        sleep(3);
 
         return $context;
     }

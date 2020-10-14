@@ -48,7 +48,7 @@ $context = $factory->createContext();
 ```php
 <?php
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /** @var ManagerRegistry $registry */
 

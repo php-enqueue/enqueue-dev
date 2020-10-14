@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Enqueue\Tests;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Doctrine\DoctrineConnectionFactoryFactory;

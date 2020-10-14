@@ -2,7 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Bundle\Consumption\Extension\ResetServicesExtension;
 use Enqueue\Consumption\Context\MessageReceived;
 use Interop\Queue\Consumer;

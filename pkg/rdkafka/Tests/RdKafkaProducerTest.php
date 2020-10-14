@@ -69,6 +69,11 @@ class RdKafkaProducerTest extends TestCase
             ->with('theQueueName')
             ->willReturn($kafkaTopic)
         ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
+        ;
 
         $serializer = $this->createSerializerMock();
         $serializer
@@ -98,6 +103,11 @@ class RdKafkaProducerTest extends TestCase
             ->method('newTopic')
             ->with('theQueueName', null)
             ->willReturn($kafkaTopic)
+        ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
         ;
 
         $serializer = $this->createSerializerMock();
@@ -134,6 +144,11 @@ class RdKafkaProducerTest extends TestCase
             ->method('newTopic')
             ->with('theQueueName', $this->identicalTo($conf))
             ->willReturn($kafkaTopic)
+        ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
         ;
 
         $serializer = $this->createSerializerMock();
@@ -188,6 +203,11 @@ class RdKafkaProducerTest extends TestCase
             ->expects($this->once())
             ->method('newTopic')
             ->willReturn($kafkaTopic)
+        ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
         ;
 
         $serializer = $this->createSerializerMock();

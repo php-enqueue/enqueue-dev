@@ -2,8 +2,8 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClosedEntityManagerExtension;
 use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PostMessageReceived;

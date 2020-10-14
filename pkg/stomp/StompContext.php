@@ -24,6 +24,11 @@ class StompContext implements Context
     private $stomp;
 
     /**
+     * @var string
+     */
+    private $extensionType;
+
+    /**
      * @var bool
      */
     private $useExchangePrefix;
@@ -34,10 +39,14 @@ class StompContext implements Context
     private $stompFactory;
 
     /**
-     * @param BufferedStompClient|callable $stomp
-     * @param bool                         $useExchangePrefix
+     * @var bool
      */
-    public function __construct($stomp, $useExchangePrefix = true)
+    private $transient;
+
+    /**
+     * @param BufferedStompClient|callable $stomp
+     */
+    public function __construct($stomp, string $extensionType, bool $detectTransientConnections = false)
     {
         if ($stomp instanceof BufferedStompClient) {
             $this->stomp = $stomp;
@@ -47,7 +56,9 @@ class StompContext implements Context
             throw new \InvalidArgumentException('The stomp argument must be either BufferedStompClient or callable that return BufferedStompClient.');
         }
 
-        $this->useExchangePrefix = $useExchangePrefix;
+        $this->extensionType = $extensionType;
+        $this->useExchangePrefix = ExtensionType::RABBITMQ === $extensionType;
+        $this->transient = $detectTransientConnections;
     }
 
     /**
@@ -64,7 +75,7 @@ class StompContext implements Context
     public function createQueue(string $name): Queue
     {
         if (0 !== strpos($name, '/')) {
-            $destination = new StompDestination();
+            $destination = new StompDestination($this->extensionType);
             $destination->setType(StompDestination::TYPE_QUEUE);
             $destination->setStompName($name);
 
@@ -91,7 +102,7 @@ class StompContext implements Context
     public function createTopic(string $name): Topic
     {
         if (0 !== strpos($name, '/')) {
-            $destination = new StompDestination();
+            $destination = new StompDestination($this->extensionType);
             $destination->setType($this->useExchangePrefix ? StompDestination::TYPE_EXCHANGE : StompDestination::TYPE_TOPIC);
             $destination->setStompName($name);
 
@@ -151,7 +162,7 @@ class StompContext implements Context
             $routingKey = $pieces[1];
         }
 
-        $destination = new StompDestination();
+        $destination = new StompDestination($this->extensionType);
         $destination->setType($type);
         $destination->setStompName($name);
         $destination->setRoutingKey($routingKey);
@@ -168,6 +179,8 @@ class StompContext implements Context
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, StompDestination::class);
 
+        $this->transient = false;
+
         return new StompConsumer($this->getStomp(), $destination);
     }
 
@@ -176,6 +189,10 @@ class StompContext implements Context
      */
     public function createProducer(): Producer
     {
+        if ($this->transient && $this->stomp) {
+            $this->stomp->disconnect();
+        }
+
         return new StompProducer($this->getStomp());
     }
 
@@ -197,17 +214,20 @@ class StompContext implements Context
     public function getStomp(): BufferedStompClient
     {
         if (false == $this->stomp) {
-            $stomp = call_user_func($this->stompFactory);
-            if (false == $stomp instanceof BufferedStompClient) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of BufferedStompClient. It returns %s',
-                    is_object($stomp) ? get_class($stomp) : gettype($stomp)
-                ));
-            }
-
-            $this->stomp = $stomp;
+            $this->stomp = $this->createStomp();
         }
 
         return $this->stomp;
+    }
+
+    private function createStomp(): BufferedStompClient
+    {
+        $stomp = call_user_func($this->stompFactory);
+
+        if (false == $stomp instanceof BufferedStompClient) {
+            throw new \LogicException(sprintf('The factory must return instance of BufferedStompClient. It returns %s', is_object($stomp) ? get_class($stomp) : gettype($stomp)));
+        }
+
+        return $stomp;
     }
 }

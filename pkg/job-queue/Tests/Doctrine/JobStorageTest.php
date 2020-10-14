@@ -2,12 +2,12 @@
 
 namespace Enqueue\JobQueue\Tests\Doctrine;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;

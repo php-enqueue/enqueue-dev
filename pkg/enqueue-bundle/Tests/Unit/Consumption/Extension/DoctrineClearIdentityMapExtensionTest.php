@@ -2,8 +2,8 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Enqueue\Bundle\Consumption\Extension\DoctrineClearIdentityMapExtension;
 use Enqueue\Consumption\Context\MessageReceived;
 use Interop\Queue\Consumer;

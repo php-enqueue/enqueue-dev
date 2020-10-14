@@ -19,7 +19,6 @@ use Interop\Queue\Topic;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer as VendorProducer;
-use RdKafka\TopicConf;
 
 class RdKafkaContext implements Context
 {
@@ -36,7 +35,7 @@ class RdKafkaContext implements Context
     private $conf;
 
     /**
-     * @var Producer
+     * @var RdKafkaProducer
      */
     private $producer;
 
@@ -50,9 +49,6 @@ class RdKafkaContext implements Context
      */
     private $rdKafkaConsumers;
 
-    /**
-     * @param array $config
-     */
     public function __construct(array $config)
     {
         $this->config = $config;
@@ -96,7 +92,23 @@ class RdKafkaContext implements Context
      */
     public function createProducer(): Producer
     {
-        return new RdKafkaProducer($this->getProducer(), $this->getSerializer());
+        if (!isset($this->producer)) {
+            $producer = new VendorProducer($this->getConf());
+
+            if (isset($this->config['log_level'])) {
+                $producer->setLogLevel($this->config['log_level']);
+            }
+
+            $this->producer = new RdKafkaProducer($producer, $this->getSerializer());
+
+            // Once created RdKafkaProducer can store messages internally that need to be delivered before PHP shuts
+            // down. Otherwise, we are bound to lose messages in transit.
+            // Note that it is generally preferable to call "close" method explicitly before shutdown starts, since
+            // otherwise we might not have access to some objects, like database connections.
+            register_shutdown_function([$this->producer, 'flush'], $this->config['shutdown_timeout'] ?? -1);
+        }
+
+        return $this->producer;
     }
 
     /**
@@ -139,6 +151,11 @@ class RdKafkaContext implements Context
         foreach ($kafkaConsumers as $kafkaConsumer) {
             $kafkaConsumer->unsubscribe();
         }
+
+        // Compatibility with phprdkafka 4.0.
+        if (isset($this->producer)) {
+            $this->producer->flush($this->config['shutdown_timeout'] ?? -1);
+        }
     }
 
     public function createSubscriptionConsumer(): SubscriptionConsumer
@@ -163,35 +180,20 @@ class RdKafkaContext implements Context
         return "$major.$minor.$patch";
     }
 
-    private function getProducer(): VendorProducer
-    {
-        if (null === $this->producer) {
-            $this->producer = new VendorProducer($this->getConf());
-
-            if (isset($this->config['log_level'])) {
-                $this->producer->setLogLevel($this->config['log_level']);
-            }
-        }
-
-        return $this->producer;
-    }
-
     private function getConf(): Conf
     {
         if (null === $this->conf) {
-            $topicConf = new TopicConf();
+            $this->conf = new Conf();
 
             if (isset($this->config['topic']) && is_array($this->config['topic'])) {
                 foreach ($this->config['topic'] as $key => $value) {
-                    $topicConf->set($key, $value);
+                    $this->conf->set($key, $value);
                 }
             }
 
             if (isset($this->config['partitioner'])) {
-                $topicConf->setPartitioner($this->config['partitioner']);
+                $this->conf->set('partitioner', $this->config['partitioner']);
             }
-
-            $this->conf = new Conf();
 
             if (isset($this->config['global']) && is_array($this->config['global'])) {
                 foreach ($this->config['global'] as $key => $value) {
@@ -214,8 +216,6 @@ class RdKafkaContext implements Context
             if (isset($this->config['stats_cb'])) {
                 $this->conf->setStatsCb($this->config['stats_cb']);
             }
-
-            $this->conf->setDefaultTopicConf($topicConf);
         }
 
         return $this->conf;

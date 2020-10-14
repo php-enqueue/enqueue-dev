@@ -28,6 +28,7 @@ class RdKafkaConnectionFactory implements ConnectionFactory
      *     'partitioner' => null,                          // https://arnaud-lb.github.io/php-rdkafka/phpdoc/rdkafka-topicconf.setpartitioner.html
      *     'log_level' => null,
      *     'commit_async' => false,
+     *     'shutdown_timeout' => -1,                       // https://github.com/arnaud-lb/php-rdkafka#proper-shutdown
      * ]
      *
      * or
@@ -38,6 +39,10 @@ class RdKafkaConnectionFactory implements ConnectionFactory
      */
     public function __construct($config = 'kafka:')
     {
+        if (version_compare(RdKafkaContext::getLibrdKafkaVersion(), '1.0.0', '<')) {
+            throw new \RuntimeException('You must install librdkafka:1.0.0 or higher');
+        }
+
         if (empty($config) || 'kafka:' === $config) {
             $config = [];
         } elseif (is_string($config)) {
