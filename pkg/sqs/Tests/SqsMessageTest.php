@@ -104,5 +104,7 @@ class SqsMessageTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($attributes, $message->getAttributes());
         $this->assertSame($attributes['SenderId'], $message->getAttribute('SenderId'));
+        $this->assertSame($attributes['SentTimestamp'], $message->getAttribute('SentTimestamp'));
+        $this->assertSame((int) $attributes['SentTimestamp'], $message->getTimestamp());
     }
 }
