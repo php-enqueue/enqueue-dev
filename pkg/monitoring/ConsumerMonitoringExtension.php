@@ -19,8 +19,8 @@ use Enqueue\Consumption\PreSubscribeExtensionInterface;
 use Enqueue\Consumption\ProcessorExceptionExtensionInterface;
 use Enqueue\Consumption\Result;
 use Enqueue\Consumption\StartExtensionInterface;
+use Enqueue\Util\UUID;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 
 class ConsumerMonitoringExtension implements StartExtensionInterface, PreSubscribeExtensionInterface, PreConsumeExtensionInterface, EndExtensionInterface, ProcessorExceptionExtensionInterface, MessageReceivedExtensionInterface, MessageResultExtensionInterface
 {
@@ -82,7 +82,7 @@ class ConsumerMonitoringExtension implements StartExtensionInterface, PreSubscri
 
     public function onStart(Start $context): void
     {
-        $this->consumerId = Uuid::uuid4()->toString();
+        $this->consumerId = UUID::generate();
 
         $this->queues = [];
 
