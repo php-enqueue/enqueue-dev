@@ -176,9 +176,15 @@ class SqsMessage implements Message
 
     public function getTimestamp(): ?int
     {
-        $value = $this->getHeader('timestamp');
+        if (null !== $value = $this->getHeader('timestamp')) {
+            return (int) $value;
+        }
 
-        return null === $value ? null : (int) $value;
+        if (null !== $value = $this->getAttribute('SentTimestamp')) {
+            return (int) $value;
+        }
+
+        return null;
     }
 
     public function setTimestamp(int $timestamp = null): void
