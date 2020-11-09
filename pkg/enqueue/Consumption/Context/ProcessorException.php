@@ -26,7 +26,7 @@ final class ProcessorException
     private $message;
 
     /**
-     * @var \Exception
+     * @var \Throwable
      */
     private $exception;
 
@@ -44,7 +44,7 @@ final class ProcessorException
      */
     private $logger;
 
-    public function __construct(Context $context, Consumer $consumer, Message $message, \Exception $exception, int $receivedAt, LoggerInterface $logger)
+    public function __construct(Context $context, Consumer $consumer, Message $message, \Throwable $exception, int $receivedAt, LoggerInterface $logger)
     {
         $this->context = $context;
         $this->consumer = $consumer;
@@ -69,7 +69,7 @@ final class ProcessorException
         return $this->message;
     }
 
-    public function getException(): \Exception
+    public function getException(): \Throwable
     {
         return $this->exception;
     }
