@@ -15,8 +15,7 @@ class JobRunner
     private $rootJob;
 
     /**
-     * @param JobProcessor $jobProcessor
-     * @param Job          $rootJob
+     * @param Job $rootJob
      */
     public function __construct(JobProcessor $jobProcessor, Job $rootJob = null)
     {
@@ -25,9 +24,8 @@ class JobRunner
     }
 
     /**
-     * @param string   $ownerId
-     * @param string   $name
-     * @param callable $runCallback
+     * @param string $ownerId
+     * @param string $name
      *
      * @throws \Throwable|\Exception if $runCallback triggers an exception
      *
@@ -54,11 +52,7 @@ class JobRunner
             try {
                 $this->jobProcessor->failChildJob($childJob);
             } catch (\Throwable $t) {
-                throw new OrphanJobException(sprintf(
-                    'Job cleanup failed. ID: "%s" Name: "%s"',
-                    $childJob->getId(),
-                    $childJob->getName()
-                ), 0, $e);
+                throw new OrphanJobException(sprintf('Job cleanup failed. ID: "%s" Name: "%s"', $childJob->getId(), $childJob->getName()), 0, $e);
             }
 
             throw $e;
@@ -74,8 +68,7 @@ class JobRunner
     }
 
     /**
-     * @param string   $name
-     * @param callable $startCallback
+     * @param string $name
      *
      * @return mixed
      */
@@ -89,8 +82,7 @@ class JobRunner
     }
 
     /**
-     * @param string   $jobId
-     * @param callable $runCallback
+     * @param string $jobId
      *
      * @return mixed
      */

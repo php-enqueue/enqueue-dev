@@ -171,6 +171,18 @@ final class EnqueueExtension extends Extension implements PrependExtensionInterf
             return;
         }
 
+        $config = $container->getExtensionConfig('enqueue');
+
+        if (!empty($config)) {
+            $processedConfig = $this->processConfiguration(new Configuration(false), $config);
+
+            foreach ($processedConfig as $name => $modules) {
+                if (isset($modules['job']) && false === $modules['job']['default_mapping']) {
+                    return;
+                }
+            }
+        }
+
         foreach ($container->getExtensionConfig('doctrine') as $config) {
             // do not register mappings if dbal not configured.
             if (!empty($config['dbal'])) {

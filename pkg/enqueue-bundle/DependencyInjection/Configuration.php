@@ -94,6 +94,12 @@ final class Configuration implements ConfigurationInterface
         }
 
         return (new ArrayNodeDefinition('job'))
+            ->children()
+                ->booleanNode('default_mapping')
+                    ->defaultTrue()
+                    ->info('Adds bundle\'s default Job entity mapping to application\'s entity manager')
+                ->end()
+            ->end()
             ->addDefaultsIfNotSet()
             ->canBeEnabled()
         ;

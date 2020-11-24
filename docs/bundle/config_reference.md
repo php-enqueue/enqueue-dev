@@ -67,6 +67,7 @@ enqueue:
             queue_name:           ~
         job:
             enabled:              false
+            default_mapping:      true
         async_events:
             enabled:              false
         extensions:

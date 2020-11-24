@@ -20,8 +20,6 @@ class DependentJobService
     }
 
     /**
-     * @param Job $job
-     *
      * @return DependentJobContext
      */
     public function createDependentJobContext(Job $job)
@@ -29,16 +27,10 @@ class DependentJobService
         return new DependentJobContext($job);
     }
 
-    /**
-     * @param DependentJobContext $context
-     */
     public function saveDependentJob(DependentJobContext $context)
     {
         if (!$context->getJob()->isRoot()) {
-            throw new \LogicException(sprintf(
-                'Only root jobs allowed but got child. jobId: "%s"',
-                $context->getJob()->getId()
-            ));
+            throw new \LogicException(sprintf('Only root jobs allowed but got child. jobId: "%s"', $context->getJob()->getId()));
         }
 
         $this->jobStorage->saveJob($context->getJob(), function (Job $job) use ($context) {

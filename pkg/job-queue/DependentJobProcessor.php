@@ -30,11 +30,6 @@ class DependentJobProcessor implements Processor, TopicSubscriberInterface
      */
     private $logger;
 
-    /**
-     * @param JobStorage        $jobStorage
-     * @param ProducerInterface $producer
-     * @param LoggerInterface   $logger
-     */
     public function __construct(JobStorage $jobStorage, ProducerInterface $producer, LoggerInterface $logger)
     {
         $this->jobStorage = $jobStorage;

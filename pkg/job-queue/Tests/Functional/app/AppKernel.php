@@ -36,9 +36,6 @@ class AppKernel extends Kernel
         return sys_get_temp_dir().'/EnqueueJobQueue/cache/logs';
     }
 
-    /**
-     * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
-     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config.yml');

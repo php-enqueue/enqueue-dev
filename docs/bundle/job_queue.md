@@ -60,6 +60,10 @@ enqueue:
         # plus basic bundle configuration
 
         job: true
+        
+        # adds bundle's default Job entity mapping to application's entity manager.
+        # set it to false when using your own mapped entities for jobs.
+        default_mapping: true
 
 doctrine:
     # plus basic bundle configuration

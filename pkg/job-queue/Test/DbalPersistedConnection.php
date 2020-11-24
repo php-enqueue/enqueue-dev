@@ -102,9 +102,6 @@ class DbalPersistedConnection extends Connection
         static::$persistedTransactionNestingLevels[$this->getConnectionId()] = $level;
     }
 
-    /**
-     * @param DriverConnection $connection
-     */
     protected function persistConnection(DriverConnection $connection)
     {
         static::$persistedConnections[$this->getConnectionId()] = $connection;

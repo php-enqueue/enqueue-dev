@@ -237,8 +237,6 @@ class Job
      * Do not call from the outside.
      *
      * @internal
-     *
-     * @param \DateTime $createdAt
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -258,8 +256,6 @@ class Job
      * Do not call from the outside.
      *
      * @internal
-     *
-     * @param \DateTime $startedAt
      */
     public function setStartedAt(\DateTime $startedAt)
     {
@@ -279,8 +275,6 @@ class Job
      * Do not call from the outside.
      *
      * @internal
-     *
-     * @param \DateTime $stoppedAt
      */
     public function setStoppedAt(\DateTime $stoppedAt)
     {
@@ -324,9 +318,6 @@ class Job
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data)
     {
         $this->data = $data;
