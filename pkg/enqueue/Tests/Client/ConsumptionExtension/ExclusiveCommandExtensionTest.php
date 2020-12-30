@@ -15,6 +15,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Processor;
+use Interop\Queue\Queue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -51,7 +52,7 @@ class ExclusiveCommandExtensionTest extends TestCase
 
         $messageReceived = new MessageReceived(
             $this->createContextMock(),
-            $this->createConsumerStub(null),
+            $this->createConsumerStub(),
             $message,
             $this->createProcessorMock(),
             1,
@@ -245,13 +246,13 @@ class ExclusiveCommandExtensionTest extends TestCase
     /**
      * @return MockObject
      */
-    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
+    private function createDriverStub(?RouteCollection $routeCollection = null): DriverInterface
     {
         $driver = $this->createMock(DriverInterface::class);
         $driver
             ->expects($this->any())
             ->method('getRouteCollection')
-            ->willReturn($routeCollection)
+            ->willReturn($routeCollection ?? new RouteCollection([]))
         ;
 
         return $driver;
@@ -278,13 +279,13 @@ class ExclusiveCommandExtensionTest extends TestCase
      *
      * @return MockObject
      */
-    private function createConsumerStub($queue): Consumer
+    private function createConsumerStub(?Queue $queue = null): Consumer
     {
         $consumerMock = $this->createMock(Consumer::class);
         $consumerMock
             ->expects($this->any())
             ->method('getQueue')
-            ->willReturn($queue)
+            ->willReturn($queue ?? new NullQueue('queue'))
         ;
 
         return $consumerMock;
