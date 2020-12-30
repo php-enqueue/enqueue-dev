@@ -14,6 +14,7 @@ use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 
 trait GenericDriverTestsTrait
 {
@@ -1191,10 +1192,10 @@ trait GenericDriverTestsTrait
     protected function assertClientMessage(Message $clientMessage): void
     {
         $this->assertSame('body', $clientMessage->getBody());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'hkey' => 'hval',
         ], $clientMessage->getHeaders());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'pkey' => 'pval',
             Config::CONTENT_TYPE => 'theContentType',
             Config::EXPIRE => '22',
