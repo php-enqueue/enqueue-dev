@@ -32,15 +32,6 @@ class RouterProcessorTest extends TestCase
         $this->assertClassFinal(RouterProcessor::class);
     }
 
-    public function testCouldBeConstructedWithDriver()
-    {
-        $driver = $this->createDriverStub();
-
-        $processor = new RouterProcessor($driver);
-
-        $this->assertAttributeSame($driver, 'driver', $processor);
-    }
-
     public function testShouldRejectIfTopicNotSet()
     {
         $router = new RouterProcessor($this->createDriverStub());
@@ -197,13 +188,13 @@ class RouterProcessorTest extends TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
+    private function createDriverStub(?RouteCollection $routeCollection = null): DriverInterface
     {
         $driver = $this->createMock(DriverInterface::class);
         $driver
             ->expects($this->any())
             ->method('getRouteCollection')
-            ->willReturn($routeCollection)
+            ->willReturn($routeCollection ?? new RouteCollection([]))
         ;
 
         return $driver;
