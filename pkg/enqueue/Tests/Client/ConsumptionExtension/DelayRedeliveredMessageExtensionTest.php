@@ -15,6 +15,7 @@ use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Destination;
 use Interop\Queue\Message as TransportMessage;
 use Interop\Queue\Processor;
+use Interop\Queue\Queue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -173,13 +174,13 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
      *
      * @return MockObject
      */
-    private function createConsumerStub($queue): Consumer
+    private function createConsumerStub(?Queue $queue = null): Consumer
     {
         $consumerMock = $this->createMock(Consumer::class);
         $consumerMock
             ->expects($this->any())
             ->method('getQueue')
-            ->willReturn($queue)
+            ->willReturn($queue ?? new NullQueue('queue'))
         ;
 
         return $consumerMock;
