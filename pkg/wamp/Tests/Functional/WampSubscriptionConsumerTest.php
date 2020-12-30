@@ -16,7 +16,7 @@ class WampSubscriptionConsumerTest extends TestCase
 {
     use WampExtension;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Logger::set(new NullLogger());
     }
