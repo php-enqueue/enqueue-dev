@@ -25,7 +25,7 @@ class DoctrineConnectionFactoryFactoryTest extends TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->prophesize(ManagerRegistry::class);
         $this->fallbackFactory = $this->prophesize(ConnectionFactoryFactoryInterface::class);

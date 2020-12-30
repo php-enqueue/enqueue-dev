@@ -26,7 +26,7 @@ class SqsConsumptionUseCasesTest extends TestCase
      */
     private $context;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

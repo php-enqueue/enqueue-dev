@@ -27,7 +27,7 @@ class SqsCommonUseCasesTest extends TestCase
      */
     private $queueName;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
