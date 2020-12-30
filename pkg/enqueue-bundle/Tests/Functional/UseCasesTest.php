@@ -20,7 +20,7 @@ class UseCasesTest extends WebTestCase
 {
     const RECEIVE_TIMEOUT = 500;
 
-    public function setUp()
+    public function setUp(): void
     {
         // do not call parent::setUp.
         // parent::setUp();

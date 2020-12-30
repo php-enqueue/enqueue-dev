@@ -29,7 +29,7 @@ class AmqpConsumptionUseCasesTest extends TestCase
      */
     private $amqpContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->amqpContext = $this->buildAmqpContext();
 

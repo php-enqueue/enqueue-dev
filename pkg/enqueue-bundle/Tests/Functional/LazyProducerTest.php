@@ -11,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class LazyProducerTest extends WebTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         // do not call parent::setUp.
         // parent::setUp();

@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class AsyncListenerTest extends WebTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

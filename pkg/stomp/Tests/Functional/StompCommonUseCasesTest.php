@@ -20,7 +20,7 @@ class StompCommonUseCasesTest extends \PHPUnit\Framework\TestCase
      */
     private $stompContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->stompContext = $this->buildStompContext();
 

@@ -16,7 +16,7 @@ class SignalSocketHelperTest extends TestCase
 
     private $backupSigIntHandler;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
