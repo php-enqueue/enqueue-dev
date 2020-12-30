@@ -106,7 +106,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
 
         $messageReceived = new MessageReceived(
             $this->createContextMock(),
-            $this->createConsumerStub(null),
+            $this->createConsumerStub(new NullQueue('queue')),
             $message,
             $this->createProcessorMock(),
             1,
@@ -132,7 +132,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
 
         $messageReceived = new MessageReceived(
             $this->createContextMock(),
-            $this->createConsumerStub(null),
+            $this->createConsumerStub(new NullQueue('queue')),
             $message,
             $this->createProcessorMock(),
             1,
