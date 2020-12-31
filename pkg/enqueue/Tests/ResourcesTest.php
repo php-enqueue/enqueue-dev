@@ -28,7 +28,7 @@ class ResourcesTest extends TestCase
     {
         $availableConnections = Resources::getAvailableConnections();
 
-        $this->assertInternalType('array', $availableConnections);
+        $this->assertIsArray($availableConnections);
         $this->assertArrayHasKey(RedisConnectionFactory::class, $availableConnections);
 
         $connectionInfo = $availableConnections[RedisConnectionFactory::class];
@@ -46,7 +46,7 @@ class ResourcesTest extends TestCase
     {
         $availableConnections = Resources::getKnownConnections();
 
-        $this->assertInternalType('array', $availableConnections);
+        $this->assertIsArray($availableConnections);
         $this->assertArrayHasKey(RedisConnectionFactory::class, $availableConnections);
 
         $connectionInfo = $availableConnections[RedisConnectionFactory::class];
@@ -93,12 +93,12 @@ class ResourcesTest extends TestCase
         Resources::addConnection('theConnectionClass', ['foo'], [], 'foo');
 
         $knownConnections = Resources::getKnownConnections();
-        $this->assertInternalType('array', $knownConnections);
+        $this->assertIsArray($knownConnections);
         $this->assertArrayHasKey('theConnectionClass', $knownConnections);
 
         $availableConnections = Resources::getAvailableConnections();
 
-        $this->assertInternalType('array', $availableConnections);
+        $this->assertIsArray($availableConnections);
         $this->assertArrayNotHasKey('theConnectionClass', $availableConnections);
     }
 
@@ -115,7 +115,7 @@ class ResourcesTest extends TestCase
 
         $availableConnections = Resources::getAvailableConnections();
 
-        $this->assertInternalType('array', $availableConnections);
+        $this->assertIsArray($availableConnections);
         $this->assertArrayHasKey($connectionClass, $availableConnections);
 
         $connectionInfo = $availableConnections[$connectionClass];
@@ -133,7 +133,7 @@ class ResourcesTest extends TestCase
     {
         $availableConnections = Resources::getKnownConnections();
 
-        $this->assertInternalType('array', $availableConnections);
+        $this->assertIsArray($availableConnections);
         $this->assertArrayHasKey(WampConnectionFactory::class, $availableConnections);
 
         $connectionInfo = $availableConnections[WampConnectionFactory::class];

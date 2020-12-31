@@ -116,7 +116,7 @@ OUTPUT;
             '--client' => 'foo',
         ]);
 
-        $this->assertContains('Found 1 routes', $tester->getDisplay());
+        $this->assertStringContainsString('Found 1 routes', $tester->getDisplay());
     }
 
     public function testThrowIfClientNotFound()

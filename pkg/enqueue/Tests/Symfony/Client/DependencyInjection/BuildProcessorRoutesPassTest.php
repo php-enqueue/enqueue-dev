@@ -112,7 +112,7 @@ class BuildProcessorRoutesPassTest extends TestCase
 
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
     }
 
@@ -136,7 +136,7 @@ class BuildProcessorRoutesPassTest extends TestCase
 
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
     }
 
@@ -160,7 +160,7 @@ class BuildProcessorRoutesPassTest extends TestCase
 
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
     }
 
@@ -180,7 +180,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
 
         $this->assertEquals(
@@ -212,7 +212,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
 
         $this->assertEquals(
@@ -244,7 +244,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
 
         $this->assertEquals(
@@ -279,7 +279,7 @@ class BuildProcessorRoutesPassTest extends TestCase
         $pass = new BuildProcessorRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        $this->assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(3, $routeCollection->getArgument(0));
 
         $this->assertEquals(

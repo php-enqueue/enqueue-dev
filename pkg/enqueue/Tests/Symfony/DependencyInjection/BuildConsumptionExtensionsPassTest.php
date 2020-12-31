@@ -72,7 +72,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $extensions->getArgument(0));
+        $this->assertIsArray($extensions->getArgument(0));
         $this->assertEquals([
             new Reference('aFooExtension'),
             new Reference('aBarExtension'),
@@ -99,7 +99,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $extensions->getArgument(0));
+        $this->assertIsArray($extensions->getArgument(0));
         $this->assertEquals([
             new Reference('aFooExtension'),
         ], $extensions->getArgument(0));
@@ -125,7 +125,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $extensions->getArgument(0));
+        $this->assertIsArray($extensions->getArgument(0));
         $this->assertEquals([
             new Reference('aFooExtension'),
         ], $extensions->getArgument(0));
@@ -151,7 +151,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $extensions->getArgument(0));
+        $this->assertIsArray($extensions->getArgument(0));
         $this->assertEquals([
             new Reference('aFooExtension'),
             new Reference('aBarExtension'),
@@ -247,7 +247,7 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $extensions->getArgument(0));
+        $this->assertIsArray($extensions->getArgument(0));
         $this->assertCount(4, $extensions->getArgument(0));
     }
 
@@ -275,12 +275,12 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $pass = new BuildConsumptionExtensionsPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $fooExtensions->getArgument(0));
+        $this->assertIsArray($fooExtensions->getArgument(0));
         $this->assertEquals([
             new Reference('aFooExtension'),
         ], $fooExtensions->getArgument(0));
 
-        $this->assertInternalType('array', $barExtensions->getArgument(0));
+        $this->assertIsArray($barExtensions->getArgument(0));
         $this->assertEquals([
             new Reference('aBarExtension'),
         ], $barExtensions->getArgument(0));
