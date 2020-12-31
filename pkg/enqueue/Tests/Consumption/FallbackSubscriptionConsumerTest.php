@@ -23,32 +23,6 @@ class FallbackSubscriptionConsumerTest extends TestCase
         new FallbackSubscriptionConsumer();
     }
 
-    public function testShouldInitSubscribersPropertyWithEmptyArray()
-    {
-        $subscriptionConsumer = new FallbackSubscriptionConsumer();
-
-        $this->assertAttributeSame([], 'subscribers', $subscriptionConsumer);
-    }
-
-    public function testShouldAddConsumerAndCallbackToSubscribersPropertyOnSubscribe()
-    {
-        $subscriptionConsumer = new FallbackSubscriptionConsumer();
-
-        $fooCallback = function () {};
-        $fooConsumer = $this->createConsumerStub('foo_queue');
-
-        $barCallback = function () {};
-        $barConsumer = $this->createConsumerStub('bar_queue');
-
-        $subscriptionConsumer->subscribe($fooConsumer, $fooCallback);
-        $subscriptionConsumer->subscribe($barConsumer, $barCallback);
-
-        $this->assertAttributeSame([
-            'foo_queue' => [$fooConsumer, $fooCallback],
-            'bar_queue' => [$barConsumer, $barCallback],
-        ], 'subscribers', $subscriptionConsumer);
-    }
-
     public function testThrowsIfTrySubscribeAnotherConsumerToAlreadySubscribedQueue()
     {
         $subscriptionConsumer = new FallbackSubscriptionConsumer();
@@ -66,6 +40,34 @@ class FallbackSubscriptionConsumerTest extends TestCase
         $subscriptionConsumer->subscribe($barConsumer, $barCallback);
     }
 
+    public function testShouldRemoveAllSubscriberOnUnsubscribeAllCall()
+    {
+        $subscriptionConsumer = new FallbackSubscriptionConsumer();
+
+        $subscriptionConsumer->subscribe($this->createConsumerStub('foo_queue'), function () {});
+        $subscriptionConsumer->subscribe($this->createConsumerStub('bar_queue'), function () {});
+
+        $subscriptionConsumer->unsubscribeAll();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('No subscribers');
+        $subscriptionConsumer->consume();
+    }
+
+    public function testShouldRemoveSubscriberOnUnsubscribeCall()
+    {
+        $subscriptionConsumer = new FallbackSubscriptionConsumer();
+
+        $consumer = $this->createConsumerStub('foo_queue');
+        $subscriptionConsumer->subscribe($consumer, function () {});
+
+        $subscriptionConsumer->unsubscribe($consumer);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('No subscribers');
+        $subscriptionConsumer->consume();
+    }
+
     public function testShouldAllowSubscribeSameConsumerAndCallbackSecondTime()
     {
         $subscriptionConsumer = new FallbackSubscriptionConsumer();
@@ -75,67 +77,6 @@ class FallbackSubscriptionConsumerTest extends TestCase
 
         $subscriptionConsumer->subscribe($fooConsumer, $fooCallback);
         $subscriptionConsumer->subscribe($fooConsumer, $fooCallback);
-    }
-
-    public function testShouldRemoveSubscribedConsumerOnUnsubscribeCall()
-    {
-        $subscriptionConsumer = new FallbackSubscriptionConsumer();
-
-        $fooConsumer = $this->createConsumerStub('foo_queue');
-        $barConsumer = $this->createConsumerStub('bar_queue');
-
-        $subscriptionConsumer->subscribe($fooConsumer, function () {});
-        $subscriptionConsumer->subscribe($barConsumer, function () {});
-
-        // guard
-        $this->assertAttributeCount(2, 'subscribers', $subscriptionConsumer);
-
-        $subscriptionConsumer->unsubscribe($fooConsumer);
-
-        $this->assertAttributeCount(1, 'subscribers', $subscriptionConsumer);
-    }
-
-    public function testShouldDoNothingIfTryUnsubscribeNotSubscribedQueueName()
-    {
-        $subscriptionConsumer = new FallbackSubscriptionConsumer();
-
-        $subscriptionConsumer->subscribe($this->createConsumerStub('foo_queue'), function () {});
-
-        // guard
-        $this->assertAttributeCount(1, 'subscribers', $subscriptionConsumer);
-
-        $subscriptionConsumer->unsubscribe($this->createConsumerStub('bar_queue'));
-
-        $this->assertAttributeCount(1, 'subscribers', $subscriptionConsumer);
-    }
-
-    public function testShouldDoNothingIfTryUnsubscribeNotSubscribedConsumer()
-    {
-        $subscriptionConsumer = new FallbackSubscriptionConsumer();
-
-        $subscriptionConsumer->subscribe($this->createConsumerStub('foo_queue'), function () {});
-
-        // guard
-        $this->assertAttributeCount(1, 'subscribers', $subscriptionConsumer);
-
-        $subscriptionConsumer->unsubscribe($this->createConsumerStub('foo_queue'));
-
-        $this->assertAttributeCount(1, 'subscribers', $subscriptionConsumer);
-    }
-
-    public function testShouldRemoveAllSubscriberOnUnsubscribeAllCall()
-    {
-        $subscriptionConsumer = new FallbackSubscriptionConsumer();
-
-        $subscriptionConsumer->subscribe($this->createConsumerStub('foo_queue'), function () {});
-        $subscriptionConsumer->subscribe($this->createConsumerStub('bar_queue'), function () {});
-
-        // guard
-        $this->assertAttributeCount(2, 'subscribers', $subscriptionConsumer);
-
-        $subscriptionConsumer->unsubscribeAll();
-
-        $this->assertAttributeCount(0, 'subscribers', $subscriptionConsumer);
     }
 
     public function testShouldConsumeMessagesFromTwoQueuesInExpectedOrder()
