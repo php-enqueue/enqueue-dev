@@ -51,41 +51,6 @@ class QueueConsumerTest extends TestCase
         new QueueConsumer($this->createContextStub(), $this->createExtension());
     }
 
-    public function testShouldSetEmptyArrayToBoundProcessorsPropertyInConstructor()
-    {
-        $consumer = new QueueConsumer($this->createContextStub(), null, [], null, 0);
-
-        $this->assertAttributeSame([], 'boundProcessors', $consumer);
-    }
-
-    public function testShouldSetProvidedBoundProcessorsToThePropertyInConstructor()
-    {
-        $boundProcessors = [
-            new BoundProcessor(new NullQueue('foo'), $this->createProcessorMock()),
-            new BoundProcessor(new NullQueue('bar'), $this->createProcessorMock()),
-        ];
-
-        $consumer = new QueueConsumer($this->createContextStub(), null, $boundProcessors, null, 0);
-
-        $this->assertAttributeSame($boundProcessors, 'boundProcessors', $consumer);
-    }
-
-    public function testShouldSetNullLoggerIfNoneProvidedInConstructor()
-    {
-        $consumer = new QueueConsumer($this->createContextStub(), null, [], null, 0);
-
-        $this->assertAttributeInstanceOf(NullLogger::class, 'logger', $consumer);
-    }
-
-    public function testShouldSetProvidedLoggerToThePropertyInConstructor()
-    {
-        $expectedLogger = $this->createMock(LoggerInterface::class);
-
-        $consumer = new QueueConsumer($this->createContextStub(), null, [], $expectedLogger, 0);
-
-        $this->assertAttributeSame($expectedLogger, 'logger', $consumer);
-    }
-
     public function testShouldAllowGetContextSetInConstructor()
     {
         $expectedContext = $this->createContextStub();
@@ -119,22 +84,6 @@ class QueueConsumerTest extends TestCase
         $consumer->bind(new NullQueue('theQueueName'), $processorMock);
     }
 
-    public function testShouldAllowBindProcessorToQueue()
-    {
-        $queue = new NullQueue('theQueueName');
-        $processorMock = $this->createProcessorMock();
-
-        $consumer = new QueueConsumer($this->createContextStub());
-
-        $consumer->bind($queue, $processorMock);
-
-        $this->assertAttributeEquals(
-            ['theQueueName' => new BoundProcessor($queue, $processorMock)],
-            'boundProcessors',
-            $consumer
-        );
-    }
-
     public function testThrowIfQueueNeitherInstanceOfQueueNorString()
     {
         $processorMock = $this->createProcessorMock();
@@ -155,37 +104,6 @@ class QueueConsumerTest extends TestCase
         $this->assertSame(123456, $consumer->getReceiveTimeout());
     }
 
-    public function testShouldAllowBindCallbackToQueueName()
-    {
-        $callback = function () {
-        };
-
-        $queueName = 'theQueueName';
-        $queue = new NullQueue($queueName);
-
-        $context = $this->createContextWithoutSubscriptionConsumerMock();
-        $context
-            ->expects($this->once())
-            ->method('createQueue')
-            ->with($queueName)
-            ->willReturn($queue)
-        ;
-
-        $consumer = new QueueConsumer($context);
-
-        $consumer->bindCallback($queueName, $callback);
-
-        $boundProcessors = $this->readAttribute($consumer, 'boundProcessors');
-
-        $this->assertInternalType('array', $boundProcessors);
-        $this->assertCount(1, $boundProcessors);
-        $this->assertArrayHasKey($queueName, $boundProcessors);
-
-        $this->assertInstanceOf(BoundProcessor::class, $boundProcessors[$queueName]);
-        $this->assertSame($queue, $boundProcessors[$queueName]->getQueue());
-        $this->assertInstanceOf(CallbackProcessor::class, $boundProcessors[$queueName]->getProcessor());
-    }
-
     public function testShouldReturnSelfOnBind()
     {
         $processorMock = $this->createProcessorMock();
@@ -203,7 +121,6 @@ class QueueConsumerTest extends TestCase
         $contextSubscriptionConsumer
             ->expects($this->once())
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $fallbackSubscriptionConsumer = $this->createSubscriptionConsumerMock();
@@ -251,7 +168,6 @@ class QueueConsumerTest extends TestCase
         $fallbackSubscriptionConsumer
             ->expects($this->once())
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -288,7 +204,6 @@ class QueueConsumerTest extends TestCase
             ->expects($this->once())
             ->method('consume')
             ->with(12345)
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -319,7 +234,6 @@ class QueueConsumerTest extends TestCase
         $subscriptionConsumerMock
             ->expects($this->exactly(5))
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -1546,7 +1460,7 @@ class QueueConsumerTest extends TestCase
         $consumerMock
             ->expects($this->any())
             ->method('getQueue')
-            ->willReturn($queue)
+            ->willReturn($queue ?? new NullQueue('queue'))
         ;
 
         return $consumerMock;
