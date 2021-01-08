@@ -4,6 +4,7 @@ namespace Enqueue\Gps\Tests;
 
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class GpsConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
@@ -47,7 +49,7 @@ class GpsConnectionFactoryConfigTest extends TestCase
     {
         $factory = new GpsConnectionFactory($config);
 
-        $this->assertAttributeEquals($expectedConfig, 'config', $factory);
+        self::assertEquals($expectedConfig, $this->readAttribute($factory, 'config'));
     }
 
     public static function provideConfigs()
