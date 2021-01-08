@@ -111,7 +111,7 @@ class StompConsumer implements Consumer
                 }
             }
         } catch (ErrorFrameException $e) {
-            throw new Exception($e->getMessage()."\n".$e->getFrame()->getBody(), null, $e);
+            throw new Exception($e->getMessage()."\n".$e->getFrame()->getBody(), 0, $e);
         }
 
         return null;
