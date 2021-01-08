@@ -76,7 +76,7 @@ class SignalSocketHelperTest extends TestCase
 
         $handlers = $this->readAttribute($this->signalHelper, 'handlers');
 
-        $this->assertInternalType('array', $handlers);
+        $this->assertIsArray($handlers);
         $this->assertArrayHasKey(SIGTERM, $handlers);
         $this->assertSame($handler, $handlers[SIGTERM]);
     }
