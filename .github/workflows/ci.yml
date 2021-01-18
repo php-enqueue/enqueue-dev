@@ -1,5 +1,5 @@
 name: CI
-on: [push, pull_request]
+on: [pull_request]
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -61,8 +61,6 @@ jobs:
             experimental: true
 
     name: PHP ${{ matrix.php }} tests on Sf ${{ matrix.symfony_version }}, phpstan=${{ matrix.stan }}, cs=${{ matrix.cs_fixer }}, unit=${{ matrix.unit_tests }}, func=${{ matrix.functional_tests }}, rdkafka=${{ matrix.rdkafka_tests }}
-    env:
-      SYMFONY_VERSION: ${{ matrix.symfony_version }}
 
     steps:
       - uses: actions/checkout@v2
