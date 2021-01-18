@@ -83,7 +83,7 @@ jobs:
 
       - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
 
-      - run: composer install
+      - run: composer install --no-progress
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
