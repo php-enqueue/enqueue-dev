@@ -5,6 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        php: [false]
+        symfony_version: [false]
         experimental: [false]
         stan: [false]
         cs_fixer: [false]
