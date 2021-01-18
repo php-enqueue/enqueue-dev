@@ -93,4 +93,4 @@ jobs:
         if: ${{ matrix.functional_tests == true }}
 
       - run: then bin/test.sh --group=rdkafka
-        if: ${{ matrix.rdkafka == true }}
+        if: ${{ matrix.rdkafka_tests == true }}
