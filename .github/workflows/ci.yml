@@ -83,7 +83,7 @@ jobs:
       - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection
         if: ${{ matrix.php_cs_fixer == true }}
 
-      - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon
+      - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon pkg
         if: ${{ matrix.phpstan == true }}
 
       - run: bin/phpunit --exclude-group=functional
