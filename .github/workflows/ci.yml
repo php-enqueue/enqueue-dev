@@ -6,8 +6,8 @@ jobs:
     strategy:
       matrix:
         experimental: [false]
-        phpstan: [false]
-        php_cs_fixer: [false]
+        stan: [false]
+        cs_fixer: [false]
         unit_tests: [false]
         functional_tests: [false]
         prepare_container: [false]
@@ -15,10 +15,10 @@ jobs:
         include:
           - php: 7.1
             symfony_version: 4.3.*
-            phpstan: true
+            stan: true
           - php: 7.1
             symfony_version: 4.3.*
-            php_cs_fixer: true
+            cs_fixer: true
           - php: 7.1
             symfony_version: 4.3.*
             unit_tests: true
@@ -59,7 +59,11 @@ jobs:
             rdkafka_tests: true
             prepare_container: true
             experimental: true
-    name: PHP ${{ matrix.php }} tests on Sf ${{ matrix.symfony_version }}, phpstan=${{ matrix.phpstan }}, cs=${{ matrix.php_cs_fixer }}, unit=${{ matrix.unit_tests }}, func=${{ matrix.functional_tests }}, rdkafka=${{ matrix.rdkafka_tests }}
+
+    name: PHP ${{ matrix.php }} tests on Sf ${{ matrix.symfony_version }}, phpstan=${{ matrix.stan }}, cs=${{ matrix.cs_fixer }}, unit=${{ matrix.unit_tests }}, func=${{ matrix.functional_tests }}, rdkafka=${{ matrix.rdkafka_tests }}
+    env:
+      SYMFONY_VERSION: ${{ matrix.symfony_version }}
+
     steps:
       - uses: actions/checkout@v2
 
@@ -87,10 +91,10 @@ jobs:
         if: ${{ matrix.prepare_container == true }}
 
       - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection
-        if: ${{ matrix.php_cs_fixer == true }}
+        if: ${{ matrix.cs_fixer == true }}
 
       - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon pkg
-        if: ${{ matrix.phpstan == true }}
+        if: ${{ matrix.stan == true }}
 
       - run: bin/phpunit --exclude-group=functional
         if: ${{ matrix.unit_tests == true }}
