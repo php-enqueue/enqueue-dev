@@ -5,7 +5,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['7.1', '7.2', '7.3', '7.4']
         experimental: [false]
         include:
           - php: 7.1
@@ -54,15 +53,7 @@ jobs:
             rdkafka_tests: true
             prepare_container: true
             experimental: true
-    name: PHP ${{ matrix.php }} tests on Symfony ${{ matrix.symfony_version }}
-    env:
-      SYMFONY_VERSION: ${{ matrix.symfony_version }}
-      PHPSTAN: ${{ matrix.phpstan }}
-      PHP_CS_FIXER: ${{ matrix.php_cs_fixer }}
-      UNIT_TESTS: ${{ matrix.unit_tests }}
-      FUNCTIONAL_TESTS: ${{ matrix.functional_tests }}
-      PREPARE_CONTAINER: ${{ matrix.prepare_container }}
-      RDKAFKA_TESTS: ${{ matrix.rdkafka_tests }}
+    name: PHP ${{ matrix.php }} tests on Sf ${{ matrix.symfony_version }}, phpstan=${{ matrix.phpstan }}, cs=${{ matrix.php_cs_fixer }}, unit=${{ matrix.unit_tests }}, func=${{ matrix.functional_tests }}, rdkafka=${{ matrix.rdkafka_tests }}
     steps:
       - uses: actions/checkout@v2
 
