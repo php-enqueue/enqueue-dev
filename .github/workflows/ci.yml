@@ -77,7 +77,7 @@ jobs:
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
-      - run: bin/dev
+      - run: bin/dev -b
         if: ${{ matrix.prepare_container == true }}
 
       - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection
