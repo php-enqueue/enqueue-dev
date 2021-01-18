@@ -9,7 +9,7 @@ jobs:
 
       - name: Set changed files
         run: |
-          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "${{ github.base_ref }}..${{ github.head_ref }}")"
+          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "origin/${{ github.base_ref }}..${{ github.head_ref }}")"
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -43,7 +43,7 @@ jobs:
 
       - name: Set changed files
         run: |
-          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "${{ github.base_ref }}..${{ github.head_ref }}")"
+          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "origin/${{ github.base_ref }}..${{ github.head_ref }}")"
 
       - name: Get Composer Cache Directory
         id: composer-cache
