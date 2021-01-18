@@ -9,7 +9,8 @@ jobs:
 
       - name: Set changed files
         run: |
-          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "${{ github.base_ref }} ${{ github.sha }}")"
+          echo "ALL_CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRTUXB ${{ github.base_ref }}..${{ github.sha }});"
+          echo 'PKG_PHP_CHANGED_FILES=$(echo "$ALL_CHANGED_FILES" | grep -E "^pkg\/" | grep -E ".*?\.php$");'
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -43,7 +44,8 @@ jobs:
 
       - name: Set changed files
         run: |
-          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "${{ github.base_ref }} ${{ github.sha }}")"
+          echo "ALL_CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRTUXB ${{ github.base_ref }}..${{ github.sha }});"
+          echo 'PKG_PHP_CHANGED_FILES=$(echo "$ALL_CHANGED_FILES" | grep -E "^pkg\/" | grep -E ".*?\.php$");'
 
       - name: Get Composer Cache Directory
         id: composer-cache
