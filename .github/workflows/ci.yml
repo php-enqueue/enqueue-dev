@@ -1,0 +1,105 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.1', '7.2', '7.3', '7.4']
+        experimental: [false]
+        include:
+          - php: 7.1
+            symfony_version: 4.3.*
+            phpstan: true
+          - php: 7.1
+            symfony_version: 4.3.*
+            php_cs_fixer: true
+          - php: 7.1
+            symfony_version: 4.3.*
+            unit_tests: true
+          - php: 7.2
+            symfony_version: 4.3.*
+            unit_tests: true
+          - php: 7.2
+            symfony_version: 5.0.*
+            unit_tests: true
+          - php: 7.3
+            symfony_version: 4.3.*
+            unit_tests: true
+          - php: 7.3
+            symfony_version: 4.4.*
+            unit_tests: true
+          - php: 7.3
+            symfony_version: 5.0.*
+            unit_tests: true
+          - php: 7.4
+            symfony_version: 4.3.*
+            unit_tests: true
+          - php: 7.4
+            symfony_version: 4.4.*
+            unit_tests: true
+          - php: 7.4
+            symfony_version: 5.0.*
+            unit_tests: true
+          - php: 7.1
+            symfony_version: 4.3.*
+            functional_tests: true
+            prepare_container: true
+          - php: 7.3
+            symfony_version: 5.0.*
+            functional_tests: true
+            prepare_container: true
+          - php: 7.1
+            symfony_version: 4.3.*
+            rdkafka_tests: true
+            prepare_container: true
+            experimental: true
+    name: PHP ${{ matrix.php }} tests on Symfony ${{ matrix.symfony_version }}
+    env:
+      SYMFONY_VERSION: ${{ matrix.symfony_version }}
+      PHPSTAN: ${{ matrix.phpstan }}
+      PHP_CS_FIXER: ${{ matrix.php_cs_fixer }}
+      UNIT_TESTS: ${{ matrix.unit_tests }}
+      FUNCTIONAL_TESTS: ${{ matrix.functional_tests }}
+      PREPARE_CONTAINER: ${{ matrix.prepare_container }}
+      RDKAFKA_TESTS: ${{ matrix.rdkafka_tests }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: mongodb, redis, :xdebug
+          ini-values: memory_limit=2048M
+
+      - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
+
+      - run: composer install
+
+      - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
+
+      - run: bin/dev
+        if: ${{ matrix.prepare_container == true }}
+
+      - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection
+        if: ${{ matrix.php_cs_fixer == true }}
+
+      - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon
+        if: ${{ matrix.phpstan == true }}
+
+      - run: bin/phpunit --exclude-group=functional
+        if: ${{ matrix.unit_tests == true }}
+
+      - run: bin/test.sh --exclude-group=rdkafka
+        if: ${{ matrix.functional_tests == true }}
+
+      - run: then bin/test.sh --group=rdkafka
+        if: ${{ matrix.rdkafka == true }}
