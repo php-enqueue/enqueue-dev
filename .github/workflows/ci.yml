@@ -95,7 +95,7 @@ jobs:
       - run: bin/dev -b
         if: ${{ matrix.prepare_container == true }}
 
-      - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection
+      - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v
         if: ${{ matrix.cs_fixer == true }}
 
       - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon pkg
