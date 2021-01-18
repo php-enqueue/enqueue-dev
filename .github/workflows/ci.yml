@@ -6,6 +6,12 @@ jobs:
     strategy:
       matrix:
         experimental: [false]
+        phpstan: [false]
+        php_cs_fixer: [false]
+        unit_tests: [false]
+        functional_tests: [false]
+        prepare_container: [false]
+        rdkafka_tests: [false]
         include:
           - php: 7.1
             symfony_version: 4.3.*
@@ -92,5 +98,5 @@ jobs:
       - run: bin/test.sh --exclude-group=rdkafka
         if: ${{ matrix.functional_tests == true }}
 
-      - run: then bin/test.sh --group=rdkafka
+      - run: bin/test.sh --group=rdkafka
         if: ${{ matrix.rdkafka_tests == true }}
