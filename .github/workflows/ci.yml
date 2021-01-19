@@ -7,9 +7,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set changed files
-        run: |
-          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "origin/${{ github.base_ref }}..${{ github.head_ref }}")"
+      - uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            pkg/**/*.php
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -33,7 +34,9 @@ jobs:
       - run: php ./bin/fix-symfony-version.php "4.3.*"
       - run: composer install --no-progress
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
-      - run: if [ ! -z "${PKG_PHP_CHANGED_FILES}" ]; then docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon --error-format=github -- ${PKG_PHP_CHANGED_FILES[@]} ; fi
+
+      - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon --error-format=github -- ${{ env.GIT_DIFF_FILTERED }}
+        if: env.GIT_DIFF_FILTERED
 
   code_style_check:
     name: Code style check
@@ -41,9 +44,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set changed files
-        run: |
-          echo "PKG_PHP_CHANGED_FILES=$(./bin/git-find-changed-php-files.sh "origin/${{ github.base_ref }}..${{ github.head_ref }}")"
+      - uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            pkg/**/*.php
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -67,7 +71,9 @@ jobs:
       - run: php ./bin/fix-symfony-version.php "4.3.*"
       - run: composer install --no-progress
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
-      - run: if [ ! -z "${PKG_PHP_CHANGED_FILES}" ]; then ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection  -- ${PKG_PHP_CHANGED_FILES[@]} ; fi
+
+      - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection -- ${{ env.GIT_DIFF_FILTERED }}
+        if: env.GIT_DIFF_FILTERED
 
   tests:
     runs-on: ubuntu-latest
