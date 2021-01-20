@@ -1,0 +1,165 @@
+name: CI
+on: [pull_request]
+jobs:
+  static_analysis:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            pkg/**/*.php
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.1'
+          coverage: none
+          extensions: mongodb, redis, :xdebug
+          ini-values: memory_limit=2048M
+
+      - run: php ./bin/fix-symfony-version.php "4.3.*"
+      - run: composer install --no-progress
+      - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
+
+      - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon --error-format=github -- ${{ env.GIT_DIFF_FILTERED }}
+        if: env.GIT_DIFF_FILTERED
+
+  code_style_check:
+    name: Code style check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            pkg/**/*.php
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.1'
+          coverage: none
+          extensions: mongodb, redis, :xdebug
+          ini-values: memory_limit=2048M
+
+      - run: php ./bin/fix-symfony-version.php "4.3.*"
+      - run: composer install --no-progress
+      - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
+
+      - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection -- ${{ env.GIT_DIFF_FILTERED }}
+        if: env.GIT_DIFF_FILTERED
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4']
+        symfony_version: ['4.3.*']
+        experimental: [false]
+        unit_tests: [true]
+        functional_tests: [false]
+        prepare_container: [false]
+        rdkafka_tests: [false]
+        include:
+          - php: 7.1
+            symfony_version: 4.3.*
+          - php: 7.2
+            symfony_version: 4.3.*
+          - php: 7.2
+            symfony_version: 5.0.*
+          - php: 7.3
+            symfony_version: 4.3.*
+          - php: 7.3
+            symfony_version: 4.4.*
+          - php: 7.3
+            symfony_version: 5.0.*
+          - php: 7.4
+            symfony_version: 4.3.*
+          - php: 7.4
+            symfony_version: 4.4.*
+          - php: 7.4
+            symfony_version: 5.0.*
+          - php: 7.1
+            symfony_version: 4.3.*
+            unit_tests: false
+            functional_tests: true
+            prepare_container: true
+          - php: 7.3
+            symfony_version: 5.0.*
+            unit_tests: false
+            functional_tests: true
+            prepare_container: true
+          - php: 7.1
+            symfony_version: 4.3.*
+            unit_tests: false
+            rdkafka_tests: true
+            prepare_container: true
+            experimental: true
+
+    name: PHP ${{ matrix.php }} tests on Sf ${{ matrix.symfony_version }}, unit=${{ matrix.unit_tests }}, func=${{ matrix.functional_tests }}, rdkafka=${{ matrix.rdkafka_tests }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: mongodb, redis, :xdebug
+          ini-values: memory_limit=2048M
+
+      - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
+
+      - run: composer install --no-progress
+
+      - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
+
+      - run: bin/dev -b
+        if: matrix.prepare_container
+
+      - run: bin/phpunit --exclude-group=functional
+        if: matrix.unit_tests
+
+      - run: bin/test.sh --exclude-group=rdkafka
+        if: matrix.functional_tests
+
+      - run: bin/test.sh --group=rdkafka
+        if: matrix.rdkafka_tests
