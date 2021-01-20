@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.10.6](https://github.com/php-enqueue/enqueue-dev/tree/0.10.6) (2020-10-16)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.5...0.10.6)
+
+**Merged pull requests:**
+
+- fixing issue \#1085 [\#1105](https://github.com/php-enqueue/enqueue-dev/pull/1105) ([nivpenso](https://github.com/nivpenso))
+- Fix DoctrineConnectionFactoryFactory due to doctrine/common changes [\#1089](https://github.com/php-enqueue/enqueue-dev/pull/1089) ([kdefives](https://github.com/kdefives))
+
+## [0.10.5](https://github.com/php-enqueue/enqueue-dev/tree/0.10.5) (2020-10-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.4...0.10.5)
+
+**Merged pull requests:**
+
+- update image [\#1104](https://github.com/php-enqueue/enqueue-dev/pull/1104) ([nick-zh](https://github.com/nick-zh))
+- \[rdkafka\]use supported librdkafka version of ext [\#1103](https://github.com/php-enqueue/enqueue-dev/pull/1103) ([nick-zh](https://github.com/nick-zh))
+- \[rdkafka\] add non-blocking poll call to serve cb's [\#1102](https://github.com/php-enqueue/enqueue-dev/pull/1102) ([nick-zh](https://github.com/nick-zh))
+- \[rdkafka\] remove topic conf, deprecated [\#1101](https://github.com/php-enqueue/enqueue-dev/pull/1101) ([nick-zh](https://github.com/nick-zh))
+- \[stomp\] Fix - Add automatic reconnect support for STOMP producers [\#1099](https://github.com/php-enqueue/enqueue-dev/pull/1099) ([atrauzzi](https://github.com/atrauzzi))
+- fix localstack version \(one that worked\) [\#1094](https://github.com/php-enqueue/enqueue-dev/pull/1094) ([makasim](https://github.com/makasim))
+- Allow false-y values for unsupported options [\#1093](https://github.com/php-enqueue/enqueue-dev/pull/1093) ([atrauzzi](https://github.com/atrauzzi))
+- Lock doctrine perisistence version. Fix tests. [\#1092](https://github.com/php-enqueue/enqueue-dev/pull/1092) ([makasim](https://github.com/makasim))
+
 ## [0.10.4](https://github.com/php-enqueue/enqueue-dev/tree/0.10.4) (2020-09-24)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.3...0.10.4)
 
