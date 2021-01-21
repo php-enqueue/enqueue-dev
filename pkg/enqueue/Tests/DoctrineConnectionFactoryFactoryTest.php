@@ -9,9 +9,12 @@ use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Doctrine\DoctrineConnectionFactoryFactory;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DoctrineConnectionFactoryFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var ManagerRegistry|\Prophecy\Prophecy\ObjectProphecy
      */
