@@ -12,7 +12,7 @@ use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use Psr\Log\Test\TestLogger;
 
 class DoctrinePingConnectionExtensionTest extends TestCase
 {
@@ -44,20 +44,20 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $context = $this->createContext();
-        $context->getLogger()
-            ->expects($this->never())
-            ->method('debug')
-        ;
 
         $registry = $this->createRegistryMock();
         $registry
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getConnections')
             ->willReturn([$connection])
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
         $extension->onMessageReceived($context);
+
+        /** @var TestLogger $logger */
+        $logger = $context->getLogger();
+        self::assertFalse($logger->hasDebugRecords());
     }
 
     public function testShouldDoesReconnectIfConnectionFailed()
@@ -83,16 +83,6 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $context = $this->createContext();
-        $context->getLogger()
-            ->expects($this->at(0))
-            ->method('debug')
-            ->with('[DoctrinePingConnectionExtension] Connection is not active trying to reconnect.')
-        ;
-        $context->getLogger()
-            ->expects($this->at(1))
-            ->method('debug')
-            ->with('[DoctrinePingConnectionExtension] Connection is active now.')
-        ;
 
         $registry = $this->createRegistryMock();
         $registry
@@ -103,6 +93,19 @@ class DoctrinePingConnectionExtensionTest extends TestCase
 
         $extension = new DoctrinePingConnectionExtension($registry);
         $extension->onMessageReceived($context);
+
+        /** @var TestLogger $logger */
+        $logger = $context->getLogger();
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[DoctrinePingConnectionExtension] Connection is not active trying to reconnect.'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[DoctrinePingConnectionExtension] Connection is active now.'
+            )
+        );
     }
 
     public function testShouldSkipIfConnectionWasNotOpened()
@@ -156,7 +159,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             $this->createMock(Message::class),
             $this->createMock(Processor::class),
             1,
-            $this->createMock(LoggerInterface::class)
+            new TestLogger()
         );
     }
 
