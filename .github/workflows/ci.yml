@@ -80,47 +80,79 @@ jobs:
     strategy:
       matrix:
         php: ['7.4']
-        symfony_version: ['4.3.*']
-        experimental: [false]
-        unit_tests: [true]
-        functional_tests: [false]
-        prepare_container: [false]
-        rdkafka_tests: [false]
         include:
           - php: 7.1
             symfony_version: 4.3.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.2
             symfony_version: 4.3.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.2
             symfony_version: 5.0.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.3
             symfony_version: 4.3.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.3
             symfony_version: 4.4.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.3
             symfony_version: 5.0.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.4
             symfony_version: 4.3.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.4
             symfony_version: 4.4.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
           - php: 7.4
             symfony_version: 5.0.*
-          - php: 7.1
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
+          - php: 7.3 # same as in the container
             symfony_version: 4.3.*
             unit_tests: false
             functional_tests: true
+            rdkafka_tests: false
             prepare_container: true
-          - php: 7.3
+          - php: 7.3 # same as in the container
             symfony_version: 5.0.*
             unit_tests: false
             functional_tests: true
+            rdkafka_tests: false
             prepare_container: true
-          - php: 7.1
+          - php: 7.3 # same as in the container
             symfony_version: 4.3.*
             unit_tests: false
+            functional_tests: false
             rdkafka_tests: true
             prepare_container: true
-            experimental: true
 
     name: PHP ${{ matrix.php }} tests on Sf ${{ matrix.symfony_version }}, unit=${{ matrix.unit_tests }}, func=${{ matrix.functional_tests }}, rdkafka=${{ matrix.rdkafka_tests }}
 
