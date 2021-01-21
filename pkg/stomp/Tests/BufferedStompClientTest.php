@@ -128,12 +128,12 @@ class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
 
         $connection = $this->createStompConnectionMock();
         $connection
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('readFrame')
             ->willReturn($frame)
         ;
         $connection
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('readFrame')
             ->willReturn(false)
         ;
@@ -159,12 +159,12 @@ class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
 
         $connection = $this->createStompConnectionMock();
         $connection
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('readFrame')
             ->willReturn($frame1)
         ;
         $connection
-            ->expects($this->at(3))
+            ->expects(self::once())
             ->method('readFrame')
             ->willReturn($frame2)
         ;

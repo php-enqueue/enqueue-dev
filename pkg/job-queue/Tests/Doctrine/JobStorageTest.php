@@ -440,12 +440,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
             })
         ;
         $connection
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('insert')
             ->with('unique_table', ['name' => 'owner-id'])
         ;
         $connection
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('insert')
             ->with('unique_table', ['name' => 'job-name'])
         ;
@@ -510,12 +510,12 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
 
         $connection = $this->createConnectionMock();
         $connection
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('delete')
             ->with('unique_table', ['name' => 'owner-id'])
         ;
         $connection
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('delete')
             ->with('unique_table', ['name' => 'job-name'])
         ;

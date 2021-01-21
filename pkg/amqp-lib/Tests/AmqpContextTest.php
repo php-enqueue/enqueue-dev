@@ -322,12 +322,12 @@ class AmqpContextTest extends TestCase
     {
         $channel = $this->createChannelMock();
         $channel
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('basic_qos')
             ->with($this->identicalTo(0), $this->identicalTo(1), $this->isFalse())
         ;
         $channel
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('basic_qos')
             ->with($this->identicalTo(123), $this->identicalTo(456), $this->isTrue())
         ;

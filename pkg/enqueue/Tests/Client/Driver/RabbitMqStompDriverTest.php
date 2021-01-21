@@ -196,12 +196,12 @@ class RabbitMqStompDriverTest extends TestCase
 
         $producer = $this->createProducerMock();
         $producer
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('setDeliveryDelay')
             ->with(10000)
         ;
         $producer
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('setDeliveryDelay')
             ->with(null)
         ;
@@ -299,7 +299,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $managementClient = $this->createManagementClientMock();
         $managementClient
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('declareExchange')
             ->with('aprefix.router', [
                 'type' => 'fanout',
@@ -308,7 +308,7 @@ class RabbitMqStompDriverTest extends TestCase
             ])
         ;
         $managementClient
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('declareQueue')
             ->with('aprefix.default', [
                 'durable' => true,
@@ -319,12 +319,12 @@ class RabbitMqStompDriverTest extends TestCase
             ])
         ;
         $managementClient
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('bind')
             ->with('aprefix.router', 'aprefix.default', 'aprefix.default')
         ;
         $managementClient
-            ->expects($this->at(3))
+            ->expects(self::once())
             ->method('declareQueue')
             ->with('aprefix.default', [
                 'durable' => true,
@@ -399,7 +399,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $managementClient = $this->createManagementClientMock();
         $managementClient
-            ->expects($this->at(4))
+            ->expects(self::once())
             ->method('declareExchange')
             ->with('aprefix.default.delayed', [
                 'type' => 'x-delayed-message',
@@ -411,7 +411,7 @@ class RabbitMqStompDriverTest extends TestCase
             ])
         ;
         $managementClient
-            ->expects($this->at(5))
+            ->expects(self::once())
             ->method('bind')
             ->with('aprefix.default.delayed', 'aprefix.default', 'aprefix.default')
         ;

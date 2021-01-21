@@ -22,6 +22,7 @@ use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpDriverTest extends TestCase
@@ -190,54 +191,54 @@ class AmqpDriverTest extends TestCase
         $context = $this->createContextMock();
         // setup router
         $context
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('createTopic')
             ->willReturn($routerTopic)
         ;
         $context
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('declareTopic')
             ->with($this->identicalTo($routerTopic))
         ;
 
         $context
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('createQueue')
             ->willReturn($routerQueue)
         ;
         $context
-            ->expects($this->at(3))
+            ->expects(self::once())
             ->method('declareQueue')
             ->with($this->identicalTo($routerQueue))
         ;
 
         $context
-            ->expects($this->at(4))
+            ->expects(self::once())
             ->method('bind')
             ->with($this->isInstanceOf(AmqpBind::class))
         ;
 
         // setup processor with default queue
         $context
-            ->expects($this->at(5))
+            ->expects(self::once())
             ->method('createQueue')
             ->with($this->getDefaultQueueTransportName())
             ->willReturn($processorWithDefaultQueue)
         ;
         $context
-            ->expects($this->at(6))
+            ->expects(self::once())
             ->method('declareQueue')
             ->with($this->identicalTo($processorWithDefaultQueue))
         ;
 
         $context
-            ->expects($this->at(7))
+            ->expects(self::once())
             ->method('createQueue')
             ->with($this->getCustomQueueTransportName())
             ->willReturn($processorWithCustomQueue)
         ;
         $context
-            ->expects($this->at(8))
+            ->expects(self::once())
             ->method('declareQueue')
             ->with($this->identicalTo($processorWithCustomQueue))
         ;
@@ -290,7 +291,7 @@ class AmqpDriverTest extends TestCase
     }
 
     /**
-     * @return AmqpContext
+     * @return AmqpContext|MockObject
      */
     protected function createContextMock(): Context
     {
@@ -298,7 +299,7 @@ class AmqpDriverTest extends TestCase
     }
 
     /**
-     * @return AmqpProducer
+     * @return AmqpProducer|MockObject
      */
     protected function createProducerMock(): InteropProducer
     {

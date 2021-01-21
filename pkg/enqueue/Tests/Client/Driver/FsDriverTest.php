@@ -44,23 +44,23 @@ class FsDriverTest extends TestCase
         $context = $this->createContextMock();
         // setup router
         $context
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('createQueue')
             ->willReturn($routerQueue)
         ;
         $context
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('declareDestination')
             ->with($this->identicalTo($routerQueue))
         ;
         // setup processor queue
         $context
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('createQueue')
             ->willReturn($processorQueue)
         ;
         $context
-            ->expects($this->at(3))
+            ->expects(self::once())
             ->method('declareDestination')
             ->with($this->identicalTo($processorQueue))
         ;

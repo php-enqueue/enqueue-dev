@@ -326,7 +326,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('onPreSendEvent')
             ->willReturnCallback(function (PreSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -364,7 +364,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('onPreSendEvent')
             ->willReturnCallback(function (PreSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -402,7 +402,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('onDriverPreSend')
             ->willReturnCallback(function (DriverPreSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -434,7 +434,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('onDriverPreSend')
             ->willReturnCallback(function (DriverPreSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -466,7 +466,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('onPostSend')
             ->willReturnCallback(function (PostSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -498,7 +498,7 @@ class ProducerSendEventTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('onDriverPreSend')
             ->willReturnCallback(function (PostSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());

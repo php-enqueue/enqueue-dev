@@ -46,35 +46,35 @@ class GpsDriverTest extends TestCase
         $context = $this->createContextMock();
         // setup router
         $context
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('createTopic')
             ->willReturn($routerTopic)
         ;
         $context
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('createQueue')
             ->willReturn($routerQueue)
         ;
         $context
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('subscribe')
             ->with($this->identicalTo($routerTopic), $this->identicalTo($routerQueue))
         ;
         $context
-            ->expects($this->at(3))
+            ->expects(self::once())
             ->method('createQueue')
             ->with($this->getDefaultQueueTransportName())
             ->willReturn($processorQueue)
         ;
         // setup processor queue
         $context
-            ->expects($this->at(4))
+            ->expects(self::once())
             ->method('createTopic')
             ->with($this->getDefaultQueueTransportName())
             ->willReturn($processorTopic)
         ;
         $context
-            ->expects($this->at(5))
+            ->expects(self::once())
             ->method('subscribe')
             ->with($this->identicalTo($processorTopic), $this->identicalTo($processorQueue))
         ;

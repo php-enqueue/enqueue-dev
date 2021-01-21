@@ -68,17 +68,17 @@ class SpoolProducerTest extends TestCase
 
         $realProducer = $this->createProducerMock();
         $realProducer
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('sendEvent')
             ->with('foo_topic', 'first')
         ;
         $realProducer
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('sendEvent')
             ->with('bar_topic', ['second'])
         ;
         $realProducer
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('sendEvent')
             ->with('baz_topic', $this->identicalTo($message))
         ;
@@ -103,17 +103,17 @@ class SpoolProducerTest extends TestCase
 
         $realProducer = $this->createProducerMock();
         $realProducer
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('sendCommand')
             ->with('foo_command', 'first')
         ;
         $realProducer
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('sendCommand')
             ->with('bar_command', ['second'])
         ;
         $realProducer
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('sendCommand')
             ->with('baz_command', $this->identicalTo($message))
         ;

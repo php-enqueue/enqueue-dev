@@ -161,17 +161,17 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     {
         $redisMock = $this->createRedisMock();
         $redisMock
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('del')
             ->with('aQueueName')
         ;
         $redisMock
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('del')
             ->with('aQueueName:delayed')
         ;
         $redisMock
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('del')
             ->with('aQueueName:reserved')
         ;
@@ -201,17 +201,17 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     {
         $redisMock = $this->createRedisMock();
         $redisMock
-            ->expects($this->at(0))
+            ->expects(self::once())
             ->method('del')
             ->with('aTopicName')
         ;
         $redisMock
-            ->expects($this->at(1))
+            ->expects(self::once())
             ->method('del')
             ->with('aTopicName:delayed')
         ;
         $redisMock
-            ->expects($this->at(2))
+            ->expects(self::once())
             ->method('del')
             ->with('aTopicName:reserved')
         ;
