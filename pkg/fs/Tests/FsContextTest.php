@@ -192,7 +192,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
 
         $queue = $context->createQueue($tmpFile->getFilename());
 
-        $this->assertFileNotExists((string) $tmpFile);
+        $this->assertFileDoesNotExist((string) $tmpFile);
 
         $context->declareDestination($queue);
 

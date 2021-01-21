@@ -18,10 +18,12 @@ use Interop\Queue\Message;
 use Interop\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class SnsQsProducerTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ProphecyTrait;
 
     public function testShouldImplementProducerInterface()
     {
