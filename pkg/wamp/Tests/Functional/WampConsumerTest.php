@@ -19,7 +19,7 @@ class WampConsumerTest extends TestCase
     use WampExtension;
     use RetryTrait;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Logger::set(new NullLogger());
     }
