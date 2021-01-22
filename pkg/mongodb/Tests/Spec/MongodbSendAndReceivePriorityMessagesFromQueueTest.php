@@ -18,7 +18,7 @@ class MongodbSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceiveP
 
     private $publishedAt;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

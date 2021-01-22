@@ -53,7 +53,7 @@ class UseCasesTest extends TestCase
      */
     protected $asyncProcessor;
 
-    public function setUp()
+    public function setUp(): void
     {
         (new Filesystem())->remove(__DIR__.'/queues/');
 

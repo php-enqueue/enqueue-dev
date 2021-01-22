@@ -57,7 +57,7 @@ class FooTest extends WebTestCase
     /** @var  \Symfony\Bundle\FrameworkBundle\Client */
     private $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = static::createClient();
     }

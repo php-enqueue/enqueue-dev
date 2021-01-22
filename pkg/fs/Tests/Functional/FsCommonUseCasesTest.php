@@ -17,7 +17,7 @@ class FsCommonUseCasesTest extends \PHPUnit\Framework\TestCase
      */
     private $fsContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir()]))->createContext();
 

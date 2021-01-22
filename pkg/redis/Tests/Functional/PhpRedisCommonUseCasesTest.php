@@ -19,7 +19,7 @@ class PhpRedisCommonUseCasesTest extends TestCase
      */
     private $context;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->context = $this->buildPhpRedisContext();
 
