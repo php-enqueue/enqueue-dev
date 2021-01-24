@@ -5,6 +5,7 @@ namespace Enqueue\Mongodb\Tests;
 use Enqueue\Mongodb\MongodbConnectionFactory;
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 class MongodbConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {

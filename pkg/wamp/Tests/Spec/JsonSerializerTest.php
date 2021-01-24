@@ -43,7 +43,7 @@ class JsonSerializerTest extends TestCase
         $resource = fopen(__FILE__, 'r');
 
         //guard
-        $this->assertInternalType('resource', $resource);
+        $this->assertIsResource($resource);
 
         $message = new WampMessage('theBody', ['aProp' => $resource]);
 

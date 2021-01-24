@@ -4,6 +4,7 @@ namespace Enqueue\Stomp\Tests\Functional;
 
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Test\RabbitmqStompExtension;
+use Enqueue\Test\ReadAttributeTrait;
 use Stomp\Network\Observer\Exception\HeartbeatException;
 use Stomp\Network\Observer\HeartbeatEmitter;
 use Stomp\Network\Observer\ServerAliveObserver;
@@ -14,6 +15,7 @@ use Stomp\Network\Observer\ServerAliveObserver;
 class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use RabbitmqStompExtension;
+    use ReadAttributeTrait;
 
     public function testShouldNotCreateConnectionWithSendHeartbeat()
     {

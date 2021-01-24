@@ -206,7 +206,6 @@ class QueueConsumerTest extends TestCase
         $contextSubscriptionConsumer
             ->expects($this->once())
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $fallbackSubscriptionConsumer = $this->createSubscriptionConsumerMock();
@@ -254,7 +253,6 @@ class QueueConsumerTest extends TestCase
         $fallbackSubscriptionConsumer
             ->expects($this->once())
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -291,7 +289,6 @@ class QueueConsumerTest extends TestCase
             ->expects($this->once())
             ->method('consume')
             ->with(12345)
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -322,7 +319,6 @@ class QueueConsumerTest extends TestCase
         $subscriptionConsumerMock
             ->expects($this->exactly(5))
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();

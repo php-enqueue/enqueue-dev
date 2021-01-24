@@ -4,6 +4,7 @@ namespace Enqueue\Gearman\Tests;
 
 use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class GearmanConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()

@@ -3,6 +3,7 @@
 namespace Enqueue\RdKafka\Tests;
 
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,6 +11,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RdKafkaConnectionFactoryTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
         $this->expectException(\LogicException::class);

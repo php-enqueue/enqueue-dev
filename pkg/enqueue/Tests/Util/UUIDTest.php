@@ -11,7 +11,7 @@ class UUIDTest extends TestCase
     {
         $uuid = UUID::generate();
 
-        $this->assertInternalType('string', $uuid);
+        $this->assertIsString($uuid);
         $this->assertEquals(36, strlen($uuid));
     }
 
