@@ -4,6 +4,7 @@ namespace Enqueue\RdKafka\Tests;
 
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class RdKafkaConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
@@ -39,7 +41,7 @@ class RdKafkaConnectionFactoryConfigTest extends TestCase
     {
         $factory = new RdKafkaConnectionFactory($config);
 
-        $config = $this->getObjectAttribute($factory, 'config');
+        $config = $this->readAttribute($factory, 'config');
 
         $this->assertNotEmpty($config['global']['group.id']);
 

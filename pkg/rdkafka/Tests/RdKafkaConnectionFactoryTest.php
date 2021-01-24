@@ -41,7 +41,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
     {
         $factory = new RdKafkaConnectionFactory(null);
 
-        $config = $this->getObjectAttribute($factory, 'config');
+        $config = $this->readAttribute($factory, 'config');
 
         $this->assertNotEmpty($config['global']['group.id']);
 
@@ -58,7 +58,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
     {
         $factory = new RdKafkaConnectionFactory('kafka:');
 
-        $config = $this->getObjectAttribute($factory, 'config');
+        $config = $this->readAttribute($factory, 'config');
 
         $this->assertNotEmpty($config['global']['group.id']);
 
