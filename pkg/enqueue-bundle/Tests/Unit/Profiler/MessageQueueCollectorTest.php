@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\Profiler;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Enqueue\Bundle\Profiler\MessageQueueCollector;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\ProducerInterface;
@@ -59,7 +60,7 @@ class MessageQueueCollectorTest extends TestCase
 
         $collector->collect(new Request(), new Response());
 
-        $this->assertArraySubset(
+        Assert::assertArraySubset(
             [
                 'foo' => [
                     [

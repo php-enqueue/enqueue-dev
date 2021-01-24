@@ -3,10 +3,13 @@
 namespace Enqueue\AmqpTools\Tests;
 
 use Enqueue\AmqpTools\SignalSocketHelper;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 class SignalSocketHelperTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     /**
      * @var SignalSocketHelper
      */
@@ -76,7 +79,7 @@ class SignalSocketHelperTest extends TestCase
 
         $handlers = $this->readAttribute($this->signalHelper, 'handlers');
 
-        $this->assertInternalType('array', $handlers);
+        self::assertIsArray($handlers);
         $this->assertArrayHasKey(SIGTERM, $handlers);
         $this->assertSame($handler, $handlers[SIGTERM]);
     }

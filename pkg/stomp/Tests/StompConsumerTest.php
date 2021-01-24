@@ -8,6 +8,7 @@ use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
@@ -17,6 +18,7 @@ use Stomp\Transport\Frame;
 class StompConsumerTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementMessageConsumerInterface()
     {

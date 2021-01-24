@@ -96,7 +96,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
 
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
     }
 
@@ -120,7 +120,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
 
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
     }
 
@@ -144,7 +144,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
 
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
     }
 
@@ -166,7 +166,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $pass = new BuildTopicSubscriberRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(1, $routeCollection->getArgument(0));
 
         $this->assertEquals(
@@ -222,7 +222,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $pass = new BuildTopicSubscriberRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(2, $routeCollection->getArgument(0));
 
         $this->assertEquals(
@@ -265,7 +265,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $pass = new BuildTopicSubscriberRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(2, $routeCollection->getArgument(0));
 
         $this->assertEquals(
@@ -332,7 +332,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $pass = new BuildTopicSubscriberRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(3, $routeCollection->getArgument(0));
 
         $this->assertEquals(
@@ -379,7 +379,7 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $pass = new BuildTopicSubscriberRoutesPass();
         $pass->process($container);
 
-        $this->assertInternalType('array', $routeCollection->getArgument(0));
+        self::assertIsArray($routeCollection->getArgument(0));
         $this->assertCount(2, $routeCollection->getArgument(0));
 
         $this->assertEquals(

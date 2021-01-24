@@ -5,11 +5,13 @@ namespace Enqueue\Stomp\Tests;
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
 
 class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {
@@ -26,7 +28,7 @@ class StompConnectionFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertAttributeEquals(null, 'stomp', $context);
         $this->assertAttributeEquals(true, 'useExchangePrefix', $context);
-        $this->assertInternalType('callable', $this->readAttribute($context, 'stompFactory'));
+        self::assertIsCallable($this->readAttribute($context, 'stompFactory'));
     }
 
     public function testShouldCreateRabbitMQContext()
