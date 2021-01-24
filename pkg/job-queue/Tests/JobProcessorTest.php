@@ -60,8 +60,14 @@ class JobProcessorTest extends TestCase
 
         $this->assertSame($job, $result);
         $this->assertEquals(Job::STATUS_NEW, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getCreatedAt(), '', 1);
-        $this->assertEquals(new \DateTime(), $job->getStartedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getCreatedAt()->getTimestamp()
+        );
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStartedAt()->getTimestamp()
+        );
         $this->assertNull($job->getStoppedAt());
         $this->assertEquals('job-name', $job->getName());
         $this->assertEquals('owner-id', $job->getOwnerId());
@@ -183,7 +189,10 @@ class JobProcessorTest extends TestCase
 
         $this->assertSame($job, $result);
         $this->assertEquals(Job::STATUS_NEW, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getCreatedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getCreatedAt()->getTimestamp()
+        );
         $this->assertNull($job->getStartedAt());
         $this->assertNull($job->getStoppedAt());
         $this->assertEquals('job-name', $job->getName());
@@ -256,7 +265,10 @@ class JobProcessorTest extends TestCase
         $processor->startChildJob($job);
 
         $this->assertEquals(Job::STATUS_RUNNING, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStartedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStartedAt()->getTimestamp()
+        );
     }
 
     public function testSuccessChildJobShouldThrowIfRootJob()
@@ -325,7 +337,10 @@ class JobProcessorTest extends TestCase
         $processor->successChildJob($job);
 
         $this->assertEquals(Job::STATUS_SUCCESS, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testFailChildJobShouldThrowIfRootJob()
@@ -394,7 +409,10 @@ class JobProcessorTest extends TestCase
         $processor->failChildJob($job);
 
         $this->assertEquals(Job::STATUS_FAILED, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testCancelChildJobShouldThrowIfRootJob()
@@ -463,8 +481,14 @@ class JobProcessorTest extends TestCase
         $processor->cancelChildJob($job);
 
         $this->assertEquals(Job::STATUS_CANCELLED, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStoppedAt(), '', 1);
-        $this->assertEquals(new \DateTime(), $job->getStartedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStoppedAt()->getTimestamp()
+        );
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStartedAt()->getTimestamp()
+        );
     }
 
     public function testInterruptRootJobShouldThrowIfNotRootJob()
@@ -536,7 +560,10 @@ class JobProcessorTest extends TestCase
         $processor->interruptRootJob($rootJob, true);
 
         $this->assertTrue($rootJob->isInterrupted());
-        $this->assertEquals(new \DateTime(), $rootJob->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $rootJob->getStoppedAt()->getTimestamp()
+        );
     }
 
     /**

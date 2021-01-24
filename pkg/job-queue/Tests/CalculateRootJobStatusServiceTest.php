@@ -102,7 +102,10 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $case->calculate($childJob);
 
         $this->assertEquals($stopStatus, $rootJob->getStatus());
-        $this->assertEquals(new \DateTime(), $rootJob->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $rootJob->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testShouldSetStoppedAtOnlyIfWasNotSet()
@@ -129,7 +132,10 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $case = new CalculateRootJobStatusService($em);
         $case->calculate($childJob);
 
-        $this->assertEquals(new \DateTime('2012-12-12 12:12:12'), $rootJob->getStoppedAt());
+        $this->assertEquals(
+            (new \DateTime('2012-12-12 12:12:12'))->getTimestamp(),
+            $rootJob->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testShouldThrowIfInvalidStatus()
