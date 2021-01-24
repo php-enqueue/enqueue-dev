@@ -13,6 +13,7 @@ use Enqueue\Consumption\Result;
 use Enqueue\Null\NullContext;
 use Enqueue\Null\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Destination;
 use Interop\Queue\Message as TransportMessage;
 use Interop\Queue\Processor;
@@ -21,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 class RouterProcessorTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementProcessorInterface()
     {
@@ -195,15 +197,15 @@ class RouterProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
-    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
+    private function createDriverStub(?RouteCollection $routeCollection = null): DriverInterface
     {
         $driver = $this->createMock(DriverInterface::class);
         $driver
             ->expects($this->any())
             ->method('getRouteCollection')
-            ->willReturn($routeCollection)
+            ->willReturn($routeCollection ?? new RouteCollection([]))
         ;
 
         return $driver;

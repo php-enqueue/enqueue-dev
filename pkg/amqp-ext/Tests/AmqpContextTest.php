@@ -9,6 +9,7 @@ use Enqueue\AmqpExt\AmqpSubscriptionConsumer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
@@ -20,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 class AmqpContextTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementQueueInteropContextInterface()
     {

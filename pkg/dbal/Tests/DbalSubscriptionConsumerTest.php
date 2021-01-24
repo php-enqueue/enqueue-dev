@@ -7,6 +7,7 @@ namespace Enqueue\Dbal\Tests;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalSubscriptionConsumer;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
@@ -15,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 class DbalSubscriptionConsumerTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(DbalSubscriptionConsumer::class);

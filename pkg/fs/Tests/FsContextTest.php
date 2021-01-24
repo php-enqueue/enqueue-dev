@@ -9,6 +9,7 @@ use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Makasim\File\TempFile;
@@ -16,6 +17,7 @@ use Makasim\File\TempFile;
 class FsContextTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementContextInterface()
     {

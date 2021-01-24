@@ -331,7 +331,7 @@ OUTPUT;
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
     private function createDriverStub(Config $config, RouteCollection $routeCollection): DriverInterface
     {

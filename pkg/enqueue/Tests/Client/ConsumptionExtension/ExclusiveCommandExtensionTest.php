@@ -252,7 +252,7 @@ class ExclusiveCommandExtensionTest extends TestCase
         $driver
             ->expects($this->any())
             ->method('getRouteCollection')
-            ->willReturn($routeCollection ?? new RouteCollection())
+            ->willReturn($routeCollection ?? new RouteCollection([]))
         ;
 
         return $driver;

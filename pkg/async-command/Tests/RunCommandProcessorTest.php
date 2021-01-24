@@ -3,11 +3,14 @@
 namespace Enqueue\AsyncCommand\Tests;
 
 use Enqueue\AsyncCommand\RunCommandProcessor;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;
 
 class RunCommandProcessorTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testShouldImplementProcessorInterface()
     {
         $rc = new \ReflectionClass(RunCommandProcessor::class);
