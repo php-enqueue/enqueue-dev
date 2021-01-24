@@ -1537,6 +1537,9 @@ class QueueConsumerTest extends TestCase
      */
     private function createConsumerStub($queue = null): Consumer
     {
+        if ($queue === null) {
+            $queue = 'queue';
+        }
         if (is_string($queue)) {
             $queue = new NullQueue($queue);
         }

@@ -73,7 +73,7 @@ class ManagerRegistryConnectionFactoryTest extends TestCase
         $this->assertInstanceOf(DbalContext::class, $context);
 
         $this->assertAttributeEquals(null, 'connection', $context);
-        $this->assertAttributeInternalType('callable', 'connectionFactory', $context);
+        $this->assertIsCallable($this->readAttribute($context, 'connectionFactory'));
     }
 
     /**

@@ -523,8 +523,8 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $fooConsumer = new StompConsumer($this->createStompClientMock(), $destination);
         $barConsumer = new StompConsumer($this->createStompClientMock(), $destination);
 
-        $this->assertAttributeNotEmpty('subscriptionId', $fooConsumer);
-        $this->assertAttributeNotEmpty('subscriptionId', $barConsumer);
+        $this->assertNotEmpty($this->readAttribute($fooConsumer, 'subscriptionId'));
+        $this->assertNotEmpty($this->readAttribute($barConsumer, 'subscriptionId'));
 
         $fooSubscriptionId = $this->readAttribute($fooConsumer, 'subscriptionId');
         $barSubscriptionId = $this->readAttribute($barConsumer, 'subscriptionId');

@@ -67,7 +67,7 @@ class RedisProducerTest extends TestCase
                 $this->assertNotEmpty($message['headers']['message_id']);
                 $this->assertSame(0, $message['headers']['attempts']);
 
-                return true;
+                return 1;
             })
         ;
 
