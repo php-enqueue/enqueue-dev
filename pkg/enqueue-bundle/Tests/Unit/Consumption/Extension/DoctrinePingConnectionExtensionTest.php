@@ -135,10 +135,6 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $context = $this->createContext();
-        $context->getLogger()
-            ->expects($this->never())
-            ->method('debug')
-        ;
 
         $registry = $this->createRegistryMock();
         $registry
@@ -149,6 +145,10 @@ class DoctrinePingConnectionExtensionTest extends TestCase
 
         $extension = new DoctrinePingConnectionExtension($registry);
         $extension->onMessageReceived($context);
+
+        /** @var TestLogger $logger */
+        $logger = $context->getLogger();
+        $this->assertFalse($logger->hasDebugRecords());
     }
 
     protected function createContext(): MessageReceived

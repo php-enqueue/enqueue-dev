@@ -499,7 +499,7 @@ class ProducerSendEventTest extends TestCase
 
         $extension
             ->expects(self::once())
-            ->method('onDriverPreSend')
+            ->method('onPostSend')
             ->willReturnCallback(function (PostSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
                 $this->assertSame($producer, $context->getProducer());
