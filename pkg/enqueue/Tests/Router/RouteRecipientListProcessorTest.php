@@ -45,12 +45,12 @@ class RouteRecipientListProcessorTest extends TestCase
 
         $producerMock = $this->createProducerMock();
         $producerMock
-            ->expects(self::once())
+            ->expects($this->at(0))
             ->method('send')
             ->with($this->identicalTo($fooRecipient->getDestination()), $this->identicalTo($fooRecipient->getMessage()))
         ;
         $producerMock
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('send')
             ->with($this->identicalTo($barRecipient->getDestination()), $this->identicalTo($barRecipient->getMessage()))
         ;

@@ -163,17 +163,17 @@ class ConfigurableConsumeCommandTest extends TestCase
 
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(0))
             ->method('bind')
             ->with('queue-name', $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('bind')
             ->with('another-queue-name', $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(2))
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -205,17 +205,17 @@ class ConfigurableConsumeCommandTest extends TestCase
 
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(0))
             ->method('bind')
             ->with('fooSubscribedQueues', $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('bind')
             ->with('barSubscribedQueues', $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(2))
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;

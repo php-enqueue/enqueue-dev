@@ -47,17 +47,17 @@ class RdKafkaDriverTest extends TestCase
         $context = $this->createContextMock();
 
         $context
-            ->expects(self::once())
+            ->expects($this->at(0))
             ->method('createQueue')
             ->willReturn($routerTopic)
         ;
         $context
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('createQueue')
             ->willReturn($routerQueue)
         ;
         $context
-            ->expects(self::once())
+            ->expects($this->at(2))
             ->method('createQueue')
             ->willReturn($processorTopic)
         ;

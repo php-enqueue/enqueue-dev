@@ -42,25 +42,25 @@ class SqsDriverTest extends TestCase
         $context = $this->createContextMock();
         // setup router
         $context
-            ->expects(self::once())
+            ->expects($this->at(0))
             ->method('createQueue')
             ->with('aprefix_dot_default')
             ->willReturn($routerQueue)
         ;
         $context
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('declareQueue')
             ->with($this->identicalTo($routerQueue))
         ;
         // setup processor queue
         $context
-            ->expects(self::once())
+            ->expects($this->at(2))
             ->method('createQueue')
             ->with('aprefix_dot_default')
             ->willReturn($processorQueue)
         ;
         $context
-            ->expects(self::once())
+            ->expects($this->at(3))
             ->method('declareQueue')
             ->with($this->identicalTo($processorQueue))
         ;

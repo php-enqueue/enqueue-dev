@@ -269,13 +269,13 @@ class ConsumeCommandTest extends TestCase
 
         $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects(self::once())
+            ->expects($this->at(3))
             ->method('createQueue')
             ->with('default', true)
             ->willReturn($defaultQueue)
         ;
         $driver
-            ->expects(self::once())
+            ->expects($this->at(4))
             ->method('createQueue')
             ->with('custom', true)
             ->willReturn($customQueue)
@@ -283,17 +283,17 @@ class ConsumeCommandTest extends TestCase
 
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(0))
             ->method('bind')
             ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('bind')
             ->with($this->identicalTo($customQueue), $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(2))
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -408,13 +408,13 @@ class ConsumeCommandTest extends TestCase
 
         $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects(self::once())
+            ->expects($this->at(3))
             ->method('createQueue')
             ->with('default', true)
             ->willReturn($defaultQueue)
         ;
         $driver
-            ->expects(self::once())
+            ->expects($this->at(4))
             ->method('createQueue', true)
             ->with('custom')
             ->willReturn($customQueue)
@@ -422,17 +422,17 @@ class ConsumeCommandTest extends TestCase
 
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(0))
             ->method('bind')
             ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('bind')
             ->with($this->identicalTo($customQueue), $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(2))
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -473,7 +473,7 @@ class ConsumeCommandTest extends TestCase
             ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
         ;
         $consumer
-            ->expects(self::once())
+            ->expects($this->at(1))
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -513,19 +513,19 @@ class ConsumeCommandTest extends TestCase
 
         $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects(self::once())
+            ->expects($this->at(3))
             ->method('createQueue', true)
             ->with('default')
             ->willReturn($queue)
         ;
         $driver
-            ->expects(self::once())
+            ->expects($this->at(4))
             ->method('createQueue', true)
             ->with('fooQueue')
             ->willReturn($queue)
         ;
         $driver
-            ->expects(self::once())
+            ->expects($this->at(5))
             ->method('createQueue', true)
             ->with('ololoQueue')
             ->willReturn($queue)
