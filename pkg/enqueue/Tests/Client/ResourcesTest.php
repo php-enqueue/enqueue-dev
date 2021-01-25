@@ -28,7 +28,7 @@ class ResourcesTest extends TestCase
     {
         $availableDrivers = Resources::getAvailableDrivers();
 
-        $this->assertInternalType('array', $availableDrivers);
+        self::assertIsArray($availableDrivers);
         $this->assertGreaterThan(0, count($availableDrivers));
 
         $driverInfo = $availableDrivers[0];
@@ -50,7 +50,7 @@ class ResourcesTest extends TestCase
     {
         $availableDrivers = Resources::getAvailableDrivers();
 
-        $this->assertInternalType('array', $availableDrivers);
+        self::assertIsArray($availableDrivers);
         $this->assertGreaterThan(0, count($availableDrivers));
 
         $driverInfo = $availableDrivers[1];
@@ -72,7 +72,7 @@ class ResourcesTest extends TestCase
     {
         $knownDrivers = Resources::getAvailableDrivers();
 
-        $this->assertInternalType('array', $knownDrivers);
+        self::assertIsArray($knownDrivers);
         $this->assertGreaterThan(0, count($knownDrivers));
 
         $driverInfo = $knownDrivers[0];

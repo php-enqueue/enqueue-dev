@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class AsyncProcessorTest extends WebTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

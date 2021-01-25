@@ -7,12 +7,14 @@ use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class SqsConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {

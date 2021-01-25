@@ -122,13 +122,13 @@ class SimpleConsumeCommandTest extends TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
-    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
+    private function createDriverStub(?RouteCollection $routeCollection = null): DriverInterface
     {
         $driverMock = $this->createMock(DriverInterface::class);
         $driverMock
             ->expects($this->any())
             ->method('getRouteCollection')
-            ->willReturn($routeCollection)
+            ->willReturn($routeCollection ?? new RouteCollection([]))
         ;
 
         $driverMock

@@ -2,6 +2,7 @@
 
 namespace Enqueue\Bundle\Tests\Unit\DependencyInjection;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Enqueue\Bundle\DependencyInjection\Configuration;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
@@ -222,7 +223,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'job' => [
                     'enabled' => false,
@@ -243,7 +244,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'job' => true,
             ],
@@ -261,7 +262,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_ping_connection_extension' => false,
@@ -284,7 +285,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_ping_connection_extension' => true,
@@ -304,7 +305,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_clear_identity_map_extension' => false,
@@ -327,7 +328,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_clear_identity_map_extension' => true,
@@ -347,7 +348,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_odm_clear_identity_map_extension' => false,
@@ -370,7 +371,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_odm_clear_identity_map_extension' => true,
@@ -390,7 +391,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_closed_entity_manager_extension' => false,
@@ -413,7 +414,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'doctrine_closed_entity_manager_extension' => true,
@@ -433,7 +434,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'reset_services_extension' => false,
@@ -456,7 +457,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'reset_services_extension' => true,
@@ -478,7 +479,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'signal_extension' => $isLoaded,
@@ -501,7 +502,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'signal_extension' => false,
@@ -521,7 +522,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'reply_extension' => true,
@@ -544,7 +545,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'extensions' => [
                     'reply_extension' => false,
@@ -564,7 +565,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'async_events' => [
                     'enabled' => false,
@@ -586,7 +587,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'async_events' => [
                     'enabled' => true,
@@ -603,7 +604,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'async_events' => [
                     'enabled' => true,
@@ -623,7 +624,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'consumption' => [
                     'receive_timeout' => 10000,
@@ -646,7 +647,7 @@ class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'default' => [
                 'consumption' => [
                     'receive_timeout' => 456,
@@ -657,6 +658,6 @@ class ConfigurationTest extends TestCase
 
     private function assertConfigEquals(array $expected, array $actual): void
     {
-        $this->assertArraySubset($expected, $actual, false, var_export($actual, true));
+        Assert::assertArraySubset($expected, $actual, false, var_export($actual, true));
     }
 }

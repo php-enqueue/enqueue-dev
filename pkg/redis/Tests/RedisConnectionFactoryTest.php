@@ -5,12 +5,14 @@ namespace Enqueue\Redis\Tests;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class RedisConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {
@@ -26,6 +28,6 @@ class RedisConnectionFactoryTest extends TestCase
         $this->assertInstanceOf(RedisContext::class, $context);
 
         $this->assertAttributeEquals(null, 'redis', $context);
-        $this->assertInternalType('callable', $this->readAttribute($context, 'redisFactory'));
+        self::assertIsCallable($this->readAttribute($context, 'redisFactory'));
     }
 }

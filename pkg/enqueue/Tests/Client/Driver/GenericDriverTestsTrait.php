@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client\Driver;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
@@ -1191,10 +1192,10 @@ trait GenericDriverTestsTrait
     protected function assertClientMessage(Message $clientMessage): void
     {
         $this->assertSame('body', $clientMessage->getBody());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'hkey' => 'hval',
         ], $clientMessage->getHeaders());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'pkey' => 'pval',
             Config::CONTENT_TYPE => 'theContentType',
             Config::EXPIRE => '22',

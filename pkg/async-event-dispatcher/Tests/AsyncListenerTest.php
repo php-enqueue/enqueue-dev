@@ -8,6 +8,7 @@ use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Producer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 class AsyncListenerTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testCouldBeConstructedWithContextAndRegistryAndEventQueueAsString()
     {

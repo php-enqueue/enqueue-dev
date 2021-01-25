@@ -67,7 +67,7 @@ class RedisProducerTest extends TestCase
                 $this->assertNotEmpty($message['headers']['message_id']);
                 $this->assertSame(0, $message['headers']['attempts']);
 
-                return true;
+                return 1;
             })
         ;
 
@@ -104,7 +104,7 @@ class RedisProducerTest extends TestCase
             ->with(
                 'aDestination:delayed',
                 $this->isJson(),
-                $this->equalTo(time() + 5, 1)
+                $this->equalTo(time() + 5)
             )
         ;
 

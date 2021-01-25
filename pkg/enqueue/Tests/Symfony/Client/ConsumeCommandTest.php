@@ -605,13 +605,13 @@ class ConsumeCommandTest extends TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
-    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
+    private function createDriverStub(?RouteCollection $routeCollection = null): DriverInterface
     {
         $driverMock = $this->createMock(DriverInterface::class);
         $driverMock
             ->expects($this->any())
             ->method('getRouteCollection')
-            ->willReturn($routeCollection)
+            ->willReturn($routeCollection ?? new RouteCollection([]))
         ;
 
         $driverMock
@@ -677,6 +677,9 @@ class ConsumeCommandTest extends TestCase
      */
     private function createConsumerStub($queue = null): Consumer
     {
+        if (null === $queue) {
+            $queue = 'queue';
+        }
         if (is_string($queue)) {
             $queue = new NullQueue($queue);
         }

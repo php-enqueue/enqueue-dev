@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client\Driver;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Enqueue\Client\Config;
 use Enqueue\Client\Driver\GenericDriver;
 use Enqueue\Client\DriverInterface;
@@ -60,7 +61,7 @@ class GenericDriverTest extends TestCase
     protected function assertTransportMessage(InteropMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'hkey' => 'hval',
             'message_id' => 'theMessageId',
             'timestamp' => 1000,

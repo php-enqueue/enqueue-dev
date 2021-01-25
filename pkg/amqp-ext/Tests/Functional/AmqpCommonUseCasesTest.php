@@ -14,15 +14,15 @@ use PHPUnit\Framework\TestCase;
  */
 class AmqpCommonUseCasesTest extends TestCase
 {
-    use RabbitmqAmqpExtension;
     use RabbitManagementExtensionTrait;
+    use RabbitmqAmqpExtension;
 
     /**
      * @var AmqpContext
      */
     private $amqpContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->amqpContext = $this->buildAmqpContext();
 
@@ -30,7 +30,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $this->removeExchange('amqp_ext.test_exchange');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->amqpContext->close();
     }
@@ -128,7 +128,7 @@ class AmqpCommonUseCasesTest extends TestCase
     public function testProduceAndReceiveOneMessageSentDirectlyToTopic()
     {
         $topic = $this->amqpContext->createTopic('amqp_ext.test_exchange');
-        $topic->setType(AMQP_EX_TYPE_FANOUT);
+        $topic->setType(\AMQP_EX_TYPE_FANOUT);
         $this->amqpContext->declareTopic($topic);
 
         $queue = $this->amqpContext->createQueue('amqp_ext.test');
@@ -153,7 +153,7 @@ class AmqpCommonUseCasesTest extends TestCase
     public function testConsumerReceiveMessageFromTopicDirectly()
     {
         $topic = $this->amqpContext->createTopic('amqp_ext.test_exchange');
-        $topic->setType(AMQP_EX_TYPE_FANOUT);
+        $topic->setType(\AMQP_EX_TYPE_FANOUT);
 
         $this->amqpContext->declareTopic($topic);
 
@@ -176,7 +176,7 @@ class AmqpCommonUseCasesTest extends TestCase
     public function testConsumerReceiveMessageWithZeroTimeout()
     {
         $topic = $this->amqpContext->createTopic('amqp_ext.test_exchange');
-        $topic->setType(AMQP_EX_TYPE_FANOUT);
+        $topic->setType(\AMQP_EX_TYPE_FANOUT);
 
         $this->amqpContext->declareTopic($topic);
 

@@ -78,7 +78,7 @@ class SetupBrokerCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute([]);
 
-        $this->assertContains('Broker set up', $tester->getDisplay());
+        $this->assertStringContainsString('Broker set up', $tester->getDisplay());
     }
 
     public function testShouldCallRequestedClientDriverSetupBrokerMethod()
@@ -105,7 +105,7 @@ class SetupBrokerCommandTest extends TestCase
             '--client' => 'foo',
         ]);
 
-        $this->assertContains('Broker set up', $tester->getDisplay());
+        $this->assertStringContainsString('Broker set up', $tester->getDisplay());
     }
 
     public function testShouldThrowIfClientNotFound()

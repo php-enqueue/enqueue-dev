@@ -26,11 +26,11 @@ class RoutesCommandTest extends WebTestCase
         $tester->execute([]);
 
         $this->assertSame(0, $tester->getStatusCode());
-        $this->assertContains('| topic', $tester->getDisplay());
-        $this->assertContains('| theTopic', $tester->getDisplay());
-        $this->assertContains('| default (prefixed)', $tester->getDisplay());
-        $this->assertContains('| test_topic_subscriber_processor', $tester->getDisplay());
-        $this->assertContains('| (hidden)', $tester->getDisplay());
+        $this->assertStringContainsString('| topic', $tester->getDisplay());
+        $this->assertStringContainsString('| theTopic', $tester->getDisplay());
+        $this->assertStringContainsString('| default (prefixed)', $tester->getDisplay());
+        $this->assertStringContainsString('| test_topic_subscriber_processor', $tester->getDisplay());
+        $this->assertStringContainsString('| (hidden)', $tester->getDisplay());
     }
 
     public function testShouldDisplayCommands()
@@ -42,10 +42,10 @@ class RoutesCommandTest extends WebTestCase
         $tester->execute([]);
 
         $this->assertSame(0, $tester->getStatusCode());
-        $this->assertContains('| command', $tester->getDisplay());
-        $this->assertContains('| theCommand', $tester->getDisplay());
-        $this->assertContains('| test_command_subscriber_processor', $tester->getDisplay());
-        $this->assertContains('| default (prefixed)', $tester->getDisplay());
-        $this->assertContains('| (hidden)', $tester->getDisplay());
+        $this->assertStringContainsString('| command', $tester->getDisplay());
+        $this->assertStringContainsString('| theCommand', $tester->getDisplay());
+        $this->assertStringContainsString('| test_command_subscriber_processor', $tester->getDisplay());
+        $this->assertStringContainsString('| default (prefixed)', $tester->getDisplay());
+        $this->assertStringContainsString('| (hidden)', $tester->getDisplay());
     }
 }

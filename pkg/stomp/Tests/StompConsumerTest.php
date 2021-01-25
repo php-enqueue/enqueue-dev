@@ -8,6 +8,7 @@ use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
@@ -17,6 +18,7 @@ use Stomp\Transport\Frame;
 class StompConsumerTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementMessageConsumerInterface()
     {
@@ -521,8 +523,8 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $fooConsumer = new StompConsumer($this->createStompClientMock(), $destination);
         $barConsumer = new StompConsumer($this->createStompClientMock(), $destination);
 
-        $this->assertAttributeNotEmpty('subscriptionId', $fooConsumer);
-        $this->assertAttributeNotEmpty('subscriptionId', $barConsumer);
+        $this->assertNotEmpty($this->readAttribute($fooConsumer, 'subscriptionId'));
+        $this->assertNotEmpty($this->readAttribute($barConsumer, 'subscriptionId'));
 
         $fooSubscriptionId = $this->readAttribute($fooConsumer, 'subscriptionId');
         $barSubscriptionId = $this->readAttribute($barConsumer, 'subscriptionId');

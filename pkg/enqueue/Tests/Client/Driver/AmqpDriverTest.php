@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client\Driver;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Enqueue\Client\Config;
 use Enqueue\Client\Driver\AmqpDriver;
 use Enqueue\Client\Driver\GenericDriver;
@@ -312,9 +313,6 @@ class AmqpDriverTest extends TestCase
         return new AmqpQueue($name);
     }
 
-    /**
-     * @return AmqpTopic
-     */
     protected function createTopic(string $name): AmqpTopic
     {
         return new AmqpTopic($name);
@@ -336,7 +334,7 @@ class AmqpDriverTest extends TestCase
     protected function assertTransportMessage(InteropMessage $transportMessage): void
     {
         $this->assertSame('body', $transportMessage->getBody());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'hkey' => 'hval',
             'delivery_mode' => AmqpMessage::DELIVERY_MODE_PERSISTENT,
             'content_type' => 'ContentType',

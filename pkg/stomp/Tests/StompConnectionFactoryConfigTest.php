@@ -4,6 +4,7 @@ namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\StompConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class StompConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {

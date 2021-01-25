@@ -24,7 +24,7 @@ use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use Psr\Log\Test\TestLogger;
 
 class RabbitMqStompDriverTest extends TestCase
 {
@@ -281,14 +281,15 @@ class RabbitMqStompDriverTest extends TestCase
             $this->createManagementClientMock()
         );
 
-        $logger = $this->createLoggerMock();
-        $logger
-            ->expects($this->once())
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Could not setup broker. The option `management_plugin_installed` is not enabled. Please enable that option and install rabbit management plugin')
-        ;
+        $logger = new TestLogger();
 
         $driver->setupBroker($logger);
+
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Could not setup broker. The option `management_plugin_installed` is not enabled. Please enable that option and install rabbit management plugin'
+            )
+        );
     }
 
     public function testShouldSetupBroker()
@@ -366,29 +367,30 @@ class RabbitMqStompDriverTest extends TestCase
             $managementClient
         );
 
-        $logger = $this->createLoggerMock();
-        $logger
-            ->expects($this->at(0))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare router exchange: aprefix.router')
-        ;
-        $logger
-            ->expects($this->at(1))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare router queue: aprefix.default')
-        ;
-        $logger
-            ->expects($this->at(2))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind router queue to exchange: aprefix.default -> aprefix.router')
-        ;
-        $logger
-            ->expects($this->at(3))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare processor queue: aprefix.default')
-        ;
+        $logger = new TestLogger();
 
         $driver->setupBroker($logger);
+
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare router exchange: aprefix.router'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare router queue: aprefix.default'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Bind router queue to exchange: aprefix.default -> aprefix.router'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare processor queue: aprefix.default'
+            )
+        );
     }
 
     public function testSetupBrokerShouldCreateDelayExchangeIfEnabled()
@@ -458,19 +460,20 @@ class RabbitMqStompDriverTest extends TestCase
             $managementClient
         );
 
-        $logger = $this->createLoggerMock();
-        $logger
-            ->expects($this->at(4))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare delay exchange: aprefix.default.delayed')
-        ;
-        $logger
-            ->expects($this->at(5))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: aprefix.default -> aprefix.default.delayed')
-        ;
+        $logger = new TestLogger();
 
         $driver->setupBroker($logger);
+
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare delay exchange: aprefix.default.delayed'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Bind processor queue to delay exchange: aprefix.default -> aprefix.default.delayed'
+            )
+        );
     }
 
     protected function createDriver(...$args): DriverInterface
@@ -583,13 +586,5 @@ class RabbitMqStompDriverTest extends TestCase
     private function createManagementClientMock(): StompManagementClient
     {
         return $this->createMock(StompManagementClient::class);
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|LoggerInterface
-     */
-    private function createLoggerMock()
-    {
-        return $this->createMock(LoggerInterface::class);
     }
 }

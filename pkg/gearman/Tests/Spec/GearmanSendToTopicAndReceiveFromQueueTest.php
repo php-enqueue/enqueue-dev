@@ -13,7 +13,7 @@ class GearmanSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFro
 {
     private $time;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->time = time();
     }

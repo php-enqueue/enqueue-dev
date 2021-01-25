@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Enqueue\Client\Message;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
@@ -45,7 +46,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendEvent('aFooTopic', 'aFooBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             [
                 'topic' => 'aFooTopic',
                 'command' => null,
@@ -70,7 +71,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendEvent('aFooTopic', ['foo' => 'fooVal', 'bar' => 'barVal']);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             [
                 'topic' => 'aFooTopic',
                 'command' => null,
@@ -106,7 +107,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendEvent('aFooTopic', $message);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             [
                 'topic' => 'aFooTopic',
                 'command' => null,
@@ -168,7 +169,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendCommand('aFooCommand', 'aFooBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             [
                 'topic' => null,
                 'command' => 'aFooCommand',
@@ -193,7 +194,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendCommand('aFooCommand', ['foo' => 'fooVal', 'bar' => 'barVal']);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             [
                 'topic' => null,
                 'command' => 'aFooCommand',
@@ -229,7 +230,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendCommand('aFooCommand', $message);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             [
                 'topic' => null,
                 'command' => 'aFooCommand',
@@ -275,7 +276,7 @@ class TraceableProducerTest extends TestCase
         $producer->sendEvent('aFooTopic', 'aFooBody');
         $producer->sendEvent('aFooTopic', 'aFooBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
                 ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
                 ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
         ], $producer->getTraces());
@@ -288,7 +289,7 @@ class TraceableProducerTest extends TestCase
         $producer->sendEvent('aFooTopic', 'aFooBody');
         $producer->sendEvent('aBarTopic', 'aBarBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
             ['topic' => 'aBarTopic', 'body' => 'aBarBody'],
         ], $producer->getTraces());
@@ -301,11 +302,11 @@ class TraceableProducerTest extends TestCase
         $producer->sendEvent('aFooTopic', 'aFooBody');
         $producer->sendEvent('aBarTopic', 'aBarBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
         ], $producer->getTopicTraces('aFooTopic'));
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             ['topic' => 'aBarTopic', 'body' => 'aBarBody'],
         ], $producer->getTopicTraces('aBarTopic'));
     }
@@ -317,7 +318,7 @@ class TraceableProducerTest extends TestCase
         $producer->sendCommand('aFooCommand', 'aFooBody');
         $producer->sendCommand('aFooCommand', 'aFooBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             ['command' => 'aFooCommand', 'body' => 'aFooBody'],
             ['command' => 'aFooCommand', 'body' => 'aFooBody'],
         ], $producer->getTraces());
@@ -330,7 +331,7 @@ class TraceableProducerTest extends TestCase
         $producer->sendCommand('aFooCommand', 'aFooBody');
         $producer->sendCommand('aBarCommand', 'aBarBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             ['command' => 'aFooCommand', 'body' => 'aFooBody'],
             ['command' => 'aBarCommand', 'body' => 'aBarBody'],
         ], $producer->getTraces());
@@ -343,11 +344,11 @@ class TraceableProducerTest extends TestCase
         $producer->sendCommand('aFooCommand', 'aFooBody');
         $producer->sendCommand('aBarCommand', 'aBarBody');
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             ['command' => 'aFooCommand', 'body' => 'aFooBody'],
         ], $producer->getCommandTraces('aFooCommand'));
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             ['command' => 'aBarCommand', 'body' => 'aBarBody'],
         ], $producer->getCommandTraces('aBarCommand'));
     }

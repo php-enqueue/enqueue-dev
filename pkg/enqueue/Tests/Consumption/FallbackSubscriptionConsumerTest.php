@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\FallbackSubscriptionConsumer;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Queue as InteropQueue;
@@ -11,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 class FallbackSubscriptionConsumerTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(FallbackSubscriptionConsumer::class);

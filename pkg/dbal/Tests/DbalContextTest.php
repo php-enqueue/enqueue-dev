@@ -9,6 +9,7 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
@@ -19,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 class DbalContextTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementContextInterface()
     {

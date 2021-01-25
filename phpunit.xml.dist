@@ -2,7 +2,7 @@
 
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.5/phpunit.xsd"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
     backupGlobals="false"
     backupStaticAttributes="false"
     colors="true"
@@ -129,12 +129,12 @@
         <env name="SHELL_VERBOSITY" value="-1"/>
     </php>
 
-    <filter>
-        <whitelist>
+    <coverage>
+        <include>
             <directory suffix=".php">.</directory>
-            <exclude>
-                <directory>./vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <directory>./vendor</directory>
+        </exclude>
+    </coverage>
 </phpunit>

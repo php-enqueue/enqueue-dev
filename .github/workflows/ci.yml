@@ -26,7 +26,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.1'
+          php-version: '7.4'
           coverage: none
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
@@ -63,7 +63,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.1'
+          php-version: '7.4'
           coverage: none
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
@@ -78,27 +78,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php: ['7.4']
         include:
-          - php: 7.1
-            symfony_version: 4.3.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.2
-            symfony_version: 4.3.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.2
-            symfony_version: 5.0.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
           - php: 7.3
             symfony_version: 4.3.*
             unit_tests: true

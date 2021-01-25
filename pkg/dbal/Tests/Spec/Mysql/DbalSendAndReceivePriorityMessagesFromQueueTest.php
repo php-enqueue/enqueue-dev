@@ -16,7 +16,7 @@ class DbalSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceivePrio
 
     private $publishedAt;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

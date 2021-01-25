@@ -18,7 +18,7 @@ abstract class WebTestCase extends BaseWebTestCase
      */
     protected static $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

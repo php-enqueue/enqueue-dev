@@ -23,7 +23,7 @@ class FlushSpoolProducerListenerTest extends TestCase
     {
         $events = FlushSpoolProducerListener::getSubscribedEvents();
 
-        $this->assertInternalType('array', $events);
+        self::assertIsArray($events);
         $this->assertArrayHasKey(KernelEvents::TERMINATE, $events);
 
         $this->assertEquals('flushMessages', $events[KernelEvents::TERMINATE]);
@@ -33,7 +33,7 @@ class FlushSpoolProducerListenerTest extends TestCase
     {
         $events = FlushSpoolProducerListener::getSubscribedEvents();
 
-        $this->assertInternalType('array', $events);
+        self::assertIsArray($events);
         $this->assertArrayHasKey(ConsoleEvents::TERMINATE, $events);
 
         $this->assertEquals('flushMessages', $events[ConsoleEvents::TERMINATE]);

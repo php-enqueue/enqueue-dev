@@ -6,12 +6,12 @@
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
     "require": {
-        "php": "^7.1.3",
+        "php": "^7.3",
         "enqueue/enqueue": "^0.10",
         "enqueue/dsn": "^0.10"
     },
     "require-dev": {
-        "phpunit/phpunit": "~7.5",
+        "phpunit/phpunit": "^9.5",
         "enqueue/test": "0.10.x-dev",
         "influxdb/influxdb-php": "^1.14",
         "datadog/php-datadogstatsd": "^1.3",

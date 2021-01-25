@@ -6,12 +6,14 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\LegacyFilesystemLock;
 use Enqueue\Fs\Lock;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Makasim\File\TempFile;
 use PHPUnit\Framework\TestCase;
 
 class LegacyFilesystemLockTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementLockInterface()
     {

@@ -7,6 +7,7 @@ namespace Enqueue\Mongodb\Tests;
 use Enqueue\Mongodb\MongodbConsumer;
 use Enqueue\Mongodb\MongodbContext;
 use Enqueue\Mongodb\MongodbSubscriptionConsumer;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
@@ -14,6 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class MongodbSubscriptionConsumerTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(MongodbSubscriptionConsumer::class);

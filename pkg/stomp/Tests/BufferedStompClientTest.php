@@ -4,6 +4,7 @@ namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\BufferedStompClient;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Enqueue\Test\WriteAttributeTrait;
 use Stomp\Client;
 use Stomp\Network\Connection;
@@ -12,6 +13,7 @@ use Stomp\Transport\Frame;
 class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
     use WriteAttributeTrait;
 
     public function testShouldExtendLibStompClient()

@@ -15,10 +15,11 @@ use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Destination;
 use Interop\Queue\Message as TransportMessage;
 use Interop\Queue\Processor;
+use Interop\Queue\Queue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Psr\Log\Test\TestLogger;
 
 class DelayRedeliveredMessageExtensionTest extends TestCase
 {
@@ -54,20 +55,7 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
             ->willReturn($delayedMessage)
         ;
 
-        $logger = $this->createLoggerMock();
-        $logger
-            ->expects(self::at(0))
-            ->method('debug')
-            ->with('[DelayRedeliveredMessageExtension] Send delayed message')
-        ;
-        $logger
-            ->expects(self::at(1))
-            ->method('debug')
-            ->with(
-                '[DelayRedeliveredMessageExtension] '.
-                'Reject redelivered original message by setting reject status to context.'
-            )
-        ;
+        $logger = new TestLogger();
 
         $messageReceived = new MessageReceived(
             $this->createContextMock(),
@@ -92,6 +80,16 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
         $this->assertEquals([
             'enqueue.redelivery_count' => 1,
         ], $delayedMessage->getProperties());
+
+        self::assertTrue(
+            $logger->hasDebugThatContains('[DelayRedeliveredMessageExtension] Send delayed message')
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[DelayRedeliveredMessageExtension] '.
+                'Reject redelivered original message by setting reject status to context.'
+            )
+        );
     }
 
     public function testShouldDoNothingIfMessageIsNotRedelivered()
@@ -169,28 +167,18 @@ class DelayRedeliveredMessageExtensionTest extends TestCase
     }
 
     /**
-     * @param mixed $queue
-     *
-     * @return MockObject
+     * @return MockObject|Consumer
      */
-    private function createConsumerStub($queue): Consumer
+    private function createConsumerStub(?Queue $queue): Consumer
     {
         $consumerMock = $this->createMock(Consumer::class);
         $consumerMock
             ->expects($this->any())
             ->method('getQueue')
-            ->willReturn($queue)
+            ->willReturn($queue ?? new NullQueue('queue'))
         ;
 
         return $consumerMock;
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function createLoggerMock(): LoggerInterface
-    {
-        return $this->createMock(LoggerInterface::class);
     }
 
     private function createDriverSendResult(): DriverSendResult

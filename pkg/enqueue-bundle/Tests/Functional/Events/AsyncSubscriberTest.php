@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class AsyncSubscriberTest extends WebTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

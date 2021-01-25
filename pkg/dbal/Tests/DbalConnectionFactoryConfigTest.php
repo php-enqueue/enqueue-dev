@@ -4,6 +4,7 @@ namespace Enqueue\Dbal\Tests;
 
 use Enqueue\Dbal\DbalConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class DbalConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {

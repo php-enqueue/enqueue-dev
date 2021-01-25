@@ -7,12 +7,14 @@ use Enqueue\Sns\SnsClient;
 use Enqueue\Sns\SnsConnectionFactory;
 use Enqueue\Sns\SnsContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class SnsConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {

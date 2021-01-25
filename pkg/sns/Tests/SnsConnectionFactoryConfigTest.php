@@ -4,6 +4,7 @@ namespace Enqueue\Sns\Tests;
 
 use Enqueue\Sns\SnsConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class SnsConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {

@@ -6,12 +6,14 @@ use Enqueue\AsyncEventDispatcher\ContainerAwareRegistry;
 use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\AsyncEventDispatcher\Registry;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 
 class ContainerAwareRegistryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementRegistryInterface()
     {

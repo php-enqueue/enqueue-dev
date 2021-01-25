@@ -6,12 +6,14 @@ use Enqueue\AmqpExt\AmqpConnectionFactory;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpTools\RabbitMqDlxDelayStrategy;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {
@@ -34,6 +36,6 @@ class AmqpConnectionFactoryTest extends TestCase
         $this->assertInstanceOf(AmqpContext::class, $context);
 
         $this->assertAttributeEquals(null, 'extChannel', $context);
-        $this->assertInternalType('callable', $this->readAttribute($context, 'extChannelFactory'));
+        self::assertIsCallable($this->readAttribute($context, 'extChannelFactory'));
     }
 }
