@@ -11,7 +11,7 @@
         "stomp-php/stomp-php": "^4",
         "queue-interop/queue-interop": "^0.8",
         "php-http/guzzle6-adapter": "^1.1",
-        "php-http/client-common": "^1.7@dev",
+        "php-http/client-common": "^2.2.1",
         "richardfullmer/rabbitmq-management-api": "^2.0"
     },
     "require-dev": {
