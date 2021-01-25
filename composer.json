@@ -8,6 +8,12 @@
     "cs-lint": "bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff",
     "phpstan": "bin/phpstan analyse --memory-limit=512M -c phpstan.neon"
   },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/andrewmy/rabbitmq-management-api.git"
+    }
+  ],
   "require": {
     "php": "^7.3|^8.0",
 
@@ -33,7 +39,7 @@
     "stomp-php/stomp-php": "^4",
     "php-http/guzzle6-adapter": "^1.1",
     "php-http/client-common": "^2.2.1",
-    "richardfullmer/rabbitmq-management-api": "^2.0",
+    "richardfullmer/rabbitmq-management-api": "dev-http-client-2 as 2.1.0",
     "predis/predis": "^1.1",
     "thruway/client": "^0.5.0",
     "thruway/pawl-transport": "^0.5.0",
