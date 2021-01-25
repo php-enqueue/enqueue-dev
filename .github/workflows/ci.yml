@@ -23,10 +23,9 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "4.3.*"
+      - run: php ./bin/fix-symfony-version.php "5.2.*"
 
       - uses: "ramsey/composer-install@v1"
-
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon --error-format=github -- ${{ env.GIT_DIFF_FILTERED }}
@@ -50,10 +49,9 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "4.3.*"
+      - run: php ./bin/fix-symfony-version.php "5.2.*"
 
       - uses: "ramsey/composer-install@v1"
-
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection -- ${{ env.GIT_DIFF_FILTERED }}
@@ -98,6 +96,12 @@ jobs:
             prepare_container: false
           - php: 7.4
             symfony_version: 5.0.*
+            unit_tests: true
+            functional_tests: false
+            rdkafka_tests: false
+            prepare_container: false
+          - php: 7.4
+            symfony_version: 5.2.*
             unit_tests: true
             functional_tests: false
             rdkafka_tests: false
