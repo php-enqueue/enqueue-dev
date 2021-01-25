@@ -113,7 +113,11 @@ class ConfigurationTest extends TestCase
         $processor = new Processor();
 
         $this->expectException(InvalidTypeException::class);
-        $this->expectExceptionMessage('Invalid type for path "enqueue.default.client.driver_options". Expected array, but got string');
+        // Exception messages vary slightly between versions
+        $this->expectExceptionMessageMatches(
+            '/Invalid type for path "enqueue\.default\.client\.driver_options"\. Expected "?array"?, but got "?string"?/'
+        );
+
         $processor->processConfiguration($configuration, [[
             'default' => [
                 'transport' => 'null:',
