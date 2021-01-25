@@ -2,7 +2,12 @@ version: '2'
 
 services:
   dev:
-    image: enqueue/dev:latest
+    # when image publishing gets sorted:
+    # image: enqueue/dev:${PHP_VERSION}
+    build:
+      context: docker
+      args:
+        - PHP_VERSION=${PHP_VERSION:7.3}
     depends_on:
       - rabbitmq
       - mysql
