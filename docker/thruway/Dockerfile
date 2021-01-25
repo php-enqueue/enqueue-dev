@@ -1,4 +1,4 @@
-FROM formapro/nginx-php-fpm:latest-all-exts
+FROM makasim/nginx-php-fpm:latest-all-exts
 
 RUN mkdir -p /thruway
 WORKDIR /thruway

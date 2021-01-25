@@ -1,5 +1,5 @@
 ARG PHP_VERSION=7.3
-FROM formapro/nginx-php-fpm:${PHP_VERSION}-latest-all-exts
+FROM makasim/nginx-php-fpm:${PHP_VERSION}-latest-all-exts
 
 ARG PHP_VERSION
 
