@@ -8,7 +8,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "queue-interop/queue-interop": "^0.8",
-        "doctrine/dbal": "^2.6",
+        "doctrine/dbal": "^2.12",
         "ramsey/uuid": "^3|^4"
     },
     "require-dev": {

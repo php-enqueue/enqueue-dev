@@ -20,7 +20,7 @@
     "queue-interop/queue-interop": "^0.7|^0.8",
     "bunny/bunny": "^0.2.4|^0.3|^0.4",
     "php-amqplib/php-amqplib": "^2.7",
-    "doctrine/dbal": "^2.6,<2.10",
+    "doctrine/dbal": "^2.12",
     "ramsey/uuid": "^2|^3.5|^4.0",
     "psr/log": "^1",
     "psr/container": "^1",
