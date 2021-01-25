@@ -16,8 +16,8 @@ use Thruway\Logging\Logger;
  */
 class WampConsumerTest extends TestCase
 {
-    use WampExtension;
     use RetryTrait;
+    use WampExtension;
 
     public static function setUpBeforeClass(): void
     {

@@ -92,9 +92,6 @@ class RabbitMqDriverTest extends TestCase
         return new AmqpQueue($name);
     }
 
-    /**
-     * @return AmqpTopic
-     */
     protected function createTopic(string $name): AmqpTopic
     {
         return new AmqpTopic($name);

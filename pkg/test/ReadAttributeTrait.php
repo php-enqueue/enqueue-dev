@@ -21,7 +21,7 @@ trait ReadAttributeTrait
         string $attribute,
         ?string $class = null
     ): ReflectionProperty {
-        if ($class === null) {
+        if (null === $class) {
             $class = get_class($object);
         }
 
@@ -29,7 +29,7 @@ trait ReadAttributeTrait
             return new ReflectionProperty($class, $attribute);
         } catch (\ReflectionException $exception) {
             $parentClass = get_parent_class($object);
-            if ($parentClass === false) {
+            if (false === $parentClass) {
                 throw $exception;
             }
 

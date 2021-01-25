@@ -11,15 +11,15 @@ use PHPUnit\Framework\TestCase;
  */
 class PhpRedisConsumptionUseCasesTest extends TestCase
 {
-    use RedisExtension;
     use ConsumptionUseCasesTrait;
+    use RedisExtension;
 
     /**
      * @var RedisContext
      */
     private $context;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->context = $this->buildPhpRedisContext();
 
@@ -27,7 +27,7 @@ class PhpRedisConsumptionUseCasesTest extends TestCase
         $this->context->deleteQueue($this->context->createQueue('enqueue.test_queue_reply'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->context->close();
     }

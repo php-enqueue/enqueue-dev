@@ -21,22 +21,22 @@ use PHPUnit\Framework\TestCase;
  */
 class AmqpConsumptionUseCasesTest extends TestCase
 {
-    use RabbitmqAmqpExtension;
     use RabbitManagementExtensionTrait;
+    use RabbitmqAmqpExtension;
 
     /**
      * @var AmqpContext
      */
     private $amqpContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->amqpContext = $this->buildAmqpContext();
 
         $this->removeQueue('amqp_ext.test');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->amqpContext->close();
     }

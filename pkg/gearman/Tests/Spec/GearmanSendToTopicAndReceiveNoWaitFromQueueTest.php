@@ -13,7 +13,7 @@ class GearmanSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndRece
 {
     private $time;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->time = time();
     }

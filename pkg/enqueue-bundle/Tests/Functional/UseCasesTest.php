@@ -20,13 +20,13 @@ class UseCasesTest extends WebTestCase
 {
     const RECEIVE_TIMEOUT = 500;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         // do not call parent::setUp.
         // parent::setUp();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         if ($this->getContext()) {
             $this->getContext()->close();

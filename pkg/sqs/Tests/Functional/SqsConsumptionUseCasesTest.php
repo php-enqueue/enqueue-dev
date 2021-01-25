@@ -18,8 +18,8 @@ use PHPUnit\Framework\TestCase;
 
 class SqsConsumptionUseCasesTest extends TestCase
 {
-    use SqsExtension;
     use RetryTrait;
+    use SqsExtension;
 
     /**
      * @var SqsContext

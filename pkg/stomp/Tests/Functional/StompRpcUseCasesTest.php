@@ -14,15 +14,15 @@ use Enqueue\Test\RabbitmqStompExtension;
  */
 class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
 {
-    use RabbitmqStompExtension;
     use RabbitManagementExtensionTrait;
+    use RabbitmqStompExtension;
 
     /**
      * @var StompContext
      */
     private $stompContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->stompContext = $this->buildStompContext();
 
@@ -30,7 +30,7 @@ class StompRpcUseCasesTest extends \PHPUnit\Framework\TestCase
         $this->removeQueue('stomp.rpc.reply_test');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->stompContext->close();
     }

@@ -677,7 +677,7 @@ class ConsumeCommandTest extends TestCase
      */
     private function createConsumerStub($queue = null): Consumer
     {
-        if ($queue === null) {
+        if (null === $queue) {
             $queue = 'queue';
         }
         if (is_string($queue)) {

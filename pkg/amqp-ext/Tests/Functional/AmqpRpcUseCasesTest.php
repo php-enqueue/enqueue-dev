@@ -15,15 +15,15 @@ use PHPUnit\Framework\TestCase;
  */
 class AmqpRpcUseCasesTest extends TestCase
 {
-    use RabbitmqAmqpExtension;
     use RabbitManagementExtensionTrait;
+    use RabbitmqAmqpExtension;
 
     /**
      * @var AmqpContext
      */
     private $amqpContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->amqpContext = $this->buildAmqpContext();
 
@@ -31,7 +31,7 @@ class AmqpRpcUseCasesTest extends TestCase
         $this->removeQueue('rpc.reply_test');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->amqpContext->close();
     }

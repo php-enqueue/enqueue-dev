@@ -21,7 +21,7 @@ class DbalConsumerTest extends TestCase
      */
     private $context;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->context = $this->createDbalContext();
     }

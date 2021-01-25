@@ -11,13 +11,13 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class LazyProducerTest extends WebTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         // do not call parent::setUp.
         // parent::setUp();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         if (static::$kernel) {
             $fs = new Filesystem();

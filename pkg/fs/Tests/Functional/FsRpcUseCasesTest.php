@@ -20,7 +20,7 @@ class FsRpcUseCasesTest extends TestCase
      */
     private $fsContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir()]))->createContext();
 
@@ -28,7 +28,7 @@ class FsRpcUseCasesTest extends TestCase
         new TempFile(sys_get_temp_dir().'/fs_reply_queue');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->fsContext->close();
     }

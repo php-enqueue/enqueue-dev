@@ -15,14 +15,14 @@ class FsConsumerTest extends TestCase
      */
     private $fsContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir()]))->createContext();
 
         $this->fsContext->purgeQueue($this->fsContext->createQueue('fs_test_queue'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->fsContext->close();
     }

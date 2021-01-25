@@ -14,15 +14,15 @@ use PHPUnit\Framework\TestCase;
  */
 class AmqpCommonUseCasesTest extends TestCase
 {
-    use RabbitmqAmqpExtension;
     use RabbitManagementExtensionTrait;
+    use RabbitmqAmqpExtension;
 
     /**
      * @var AmqpContext
      */
     private $amqpContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->amqpContext = $this->buildAmqpContext();
 
@@ -30,7 +30,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $this->removeExchange('amqp_ext.test_exchange');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->amqpContext->close();
     }

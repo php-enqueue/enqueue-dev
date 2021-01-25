@@ -20,22 +20,22 @@ use Interop\Queue\Processor;
  */
 class StompConsumptionUseCasesTest extends \PHPUnit\Framework\TestCase
 {
-    use RabbitmqStompExtension;
     use RabbitManagementExtensionTrait;
+    use RabbitmqStompExtension;
 
     /**
      * @var StompContext
      */
     private $stompContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->stompContext = $this->buildStompContext();
 
         $this->removeQueue('stomp.test');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->stompContext->close();
     }

@@ -17,14 +17,14 @@ class FsCommonUseCasesTest extends \PHPUnit\Framework\TestCase
      */
     private $fsContext;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->fsContext = (new FsConnectionFactory(['path' => sys_get_temp_dir()]))->createContext();
 
         new TempFile(sys_get_temp_dir().'/fs_test_queue');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->fsContext->close();
     }

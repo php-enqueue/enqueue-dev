@@ -13,7 +13,7 @@ class PheanstalkSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceive
 {
     private $time;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->time = time();
     }
