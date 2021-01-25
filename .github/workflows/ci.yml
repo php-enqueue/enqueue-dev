@@ -124,19 +124,19 @@ jobs:
             functional_tests: false
             rdkafka_tests: true
             prepare_container: true
-          - php: 8.0
+          - php: "8.0"
             symfony_version: 5.2.*
             unit_tests: true
             functional_tests: false
             rdkafka_tests: false
             prepare_container: false
-          - php: 8.0
+          - php: "8.0"
             symfony_version: 5.2.*
             unit_tests: false
             functional_tests: true
             rdkafka_tests: false
             prepare_container: true
-          - php: 8.0
+          - php: "8.0"
             symfony_version: 5.2.*
             unit_tests: false
             rdkafka_tests: true
