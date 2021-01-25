@@ -6,7 +6,7 @@
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
     "require": {
-        "php": "^7.3",
+        "php": "^7.3|^8.0",
         "enqueue/enqueue": "^0.10",
         "enqueue/dsn": "^0.10"
     },
