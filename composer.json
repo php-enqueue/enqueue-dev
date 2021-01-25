@@ -37,7 +37,7 @@
     "pda/pheanstalk": "^3",
     "aws/aws-sdk-php": "^3.26",
     "stomp-php/stomp-php": "^4",
-    "php-http/guzzle6-adapter": "^1.1",
+    "php-http/guzzle7-adapter": "^0.1.1",
     "php-http/client-common": "^2.2.1",
     "richardfullmer/rabbitmq-management-api": "dev-http-client-2 as 2.1.0",
     "predis/predis": "^1.1",
