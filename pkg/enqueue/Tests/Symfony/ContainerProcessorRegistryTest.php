@@ -71,7 +71,7 @@ class ContainerProcessorRegistryTest extends TestCase
         $this->expectException(\TypeError::class);
         // Exception messages vary slightly between versions
         $this->expectExceptionMessageMatches(
-            '/Enqueue\\Symfony\\ContainerProcessorRegistry::get\(\) .+ Interop\\Queue\\Processor, .*stdClass returned/'
+            '/Enqueue\\Symfony\\ContainerProcessorRegistry\:\:get\(\).+ Interop\\Queue\\Processor, .*stdClass returned/'
         );
 
         $registry->get('processor-name');
