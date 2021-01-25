@@ -104,7 +104,7 @@ class RedisProducerTest extends TestCase
             ->with(
                 'aDestination:delayed',
                 $this->isJson(),
-                $this->equalTo(time() + 5, 1)
+                $this->equalTo(time() + 5)
             )
         ;
 
