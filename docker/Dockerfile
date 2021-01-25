@@ -6,12 +6,12 @@ ARG PHP_VERSION
 ## libs
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php-dev php${PHP_VERSION}-redis php${PHP_VERSION}-pgsql git python php-amqp
+    apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php${PHP_VERSION}-dev php${PHP_VERSION}-redis php${PHP_VERSION}-pgsql git python php${PHP_VERSION}-amqp
 
 ## librdkafka
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests g++ php-pear php${PHP_VERSION}-dev make && \
+    apt-get install -y --no-install-recommends --no-install-suggests g++ php${PHP_VERSION}-pear php${PHP_VERSION}-dev make && \
     mkdir -p $HOME/librdkafka && \
     cd $HOME/librdkafka && \
     git clone https://github.com/edenhill/librdkafka.git . && \
