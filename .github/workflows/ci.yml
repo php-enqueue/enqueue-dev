@@ -162,7 +162,7 @@ jobs:
 
       - run: bin/dev -b
         env:
-          PHP_VERSION: ${{ matrix.php }}
+          PHP_VERSION: "${{ matrix.php }}"
         if: matrix.prepare_container
 
       - run: bin/phpunit --exclude-group=functional

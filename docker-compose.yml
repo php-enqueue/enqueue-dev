@@ -7,7 +7,7 @@ services:
     build:
       context: docker
       args:
-        PHP_VERSION: ${PHP_VERSION:-7.3}
+        PHP_VERSION: "${PHP_VERSION:-7.3}"
     depends_on:
       - rabbitmq
       - mysql
