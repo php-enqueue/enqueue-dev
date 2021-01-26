@@ -5,7 +5,6 @@ ARG PHP_VERSION
 
 ## libs
 RUN set -x && \
-    pecl channel-update pecl.php.net && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         wget \
@@ -22,6 +21,7 @@ RUN set -x && \
         php${PHP_VERSION}-amqp \
         libgearman-dev \
     && \
+    pecl channel-update pecl.php.net && \
     pecl install gearman && \
     echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/10-gearman.ini && \
     echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/10-gearman.ini
