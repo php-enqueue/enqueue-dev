@@ -20,6 +20,7 @@ RUN set -x && \
         python \
         php${PHP_VERSION}-amqp \
         libgearman-dev \
+        php-pear \
     && \
     pecl channel-update pecl.php.net && \
     pecl install gearman && \
@@ -29,7 +30,10 @@ RUN set -x && \
 ## librdkafka
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests g++ php-pear php${PHP_VERSION}-dev make && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
+        g++ \
+        make \
+    && \
     mkdir -p $HOME/librdkafka && \
     cd $HOME/librdkafka && \
     git clone https://github.com/edenhill/librdkafka.git . && \
