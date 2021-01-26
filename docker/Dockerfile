@@ -5,8 +5,26 @@ ARG PHP_VERSION
 
 ## libs
 RUN set -x && \
+    pecl channel-update pecl.php.net && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests wget curl openssl ca-certificates nano netcat php${PHP_VERSION}-dev php${PHP_VERSION}-redis php${PHP_VERSION}-pgsql git python php${PHP_VERSION}-amqp
+    apt-get install -y --no-install-recommends --no-install-suggests \
+        wget \
+        curl \
+        openssl \
+        ca-certificates \
+        nano \
+        netcat \
+        php${PHP_VERSION}-dev \
+        php${PHP_VERSION}-redis \
+        php${PHP_VERSION}-pgsql \
+        git \
+        python \
+        php${PHP_VERSION}-amqp \
+        libgearman-dev \
+    && \
+    pecl install gearman && \
+    echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/10-gearman.ini && \
+    echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/10-gearman.ini
 
 ## librdkafka
 RUN set -x && \
