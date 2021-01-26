@@ -21,6 +21,7 @@ RUN set -x && \
         php${PHP_VERSION}-amqp \
         libgearman-dev \
         php-pear \
+        make \
     && \
     pecl channel-update pecl.php.net && \
     pecl install gearman && \
@@ -32,7 +33,6 @@ RUN set -x && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         g++ \
-        make \
     && \
     mkdir -p $HOME/librdkafka && \
     cd $HOME/librdkafka && \
