@@ -12,10 +12,6 @@
     {
       "type": "git",
       "url": "https://github.com/andrewmy/php-rabbitmq-management-api.git"
-    },
-    {
-      "type": "git",
-      "url": "https://github.com/andrewmy/stomp-php.git"
     }
   ],
   "require": {
@@ -40,7 +36,7 @@
     "mongodb/mongodb": "^1.2",
     "pda/pheanstalk": "^3",
     "aws/aws-sdk-php": "^3.26",
-    "stomp-php/stomp-php": "dev-php-8-travis as 4.6.1",
+    "stomp-php/stomp-php": "^4|^5",
     "php-http/guzzle7-adapter": "^0.1.1",
     "php-http/client-common": "^2.2.1",
     "richardfullmer/rabbitmq-management-api": "dev-http-client-2 as 2.1.0",
