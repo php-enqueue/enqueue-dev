@@ -51,19 +51,19 @@ class SnsConnectionFactory implements ConnectionFactory
 
         if (empty($config)) {
             $config = [];
-        } elseif (is_string($config)) {
+        } elseif (\is_string($config)) {
             $config = $this->parseDsn($config);
-        } elseif (is_array($config)) {
-            if (array_key_exists('dsn', $config)) {
-                $config = array_replace_recursive($config, $this->parseDsn($config['dsn']));
+        } elseif (\is_array($config)) {
+            if (\array_key_exists('dsn', $config)) {
+                $config = \array_replace_recursive($config, $this->parseDsn($config['dsn']));
 
                 unset($config['dsn']);
             }
         } else {
-            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
+            throw new \LogicException(\sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
         }
 
-        $this->config = array_replace($this->defaultConfig(), $config);
+        $this->config = \array_replace($this->defaultConfig(), $config);
     }
 
     /**
@@ -87,6 +87,10 @@ class SnsConnectionFactory implements ConnectionFactory
 
         if (isset($this->config['endpoint'])) {
             $config['endpoint'] = $this->config['endpoint'];
+        }
+
+        if (isset($this->config['profile'])) {
+            $config['profile'] = $this->config['profile'];
         }
 
         if ($this->config['key'] && $this->config['secret']) {
@@ -117,13 +121,10 @@ class SnsConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('sns' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "sns"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(\sprintf('The given scheme protocol "%s" is not supported. It must be "sns"', $dsn->getSchemeProtocol()));
         }
 
-        return array_filter(array_replace($dsn->getQuery(), [
+        return \array_filter(\array_replace($dsn->getQuery(), [
             'key' => $dsn->getString('key'),
             'secret' => $dsn->getString('secret'),
             'token' => $dsn->getString('token'),

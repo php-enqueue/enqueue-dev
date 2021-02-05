@@ -14,6 +14,7 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;
+use Enqueue\Sns\SnsConnectionFactory;
 use Enqueue\SnsQs\SnsQsConnectionFactory;
 use Enqueue\Sqs\SqsConnectionFactory;
 use Enqueue\Stomp\StompConnectionFactory;
@@ -42,7 +43,7 @@ final class Resources
 
         $availableMap = [];
         foreach ($map as $connectionClass => $item) {
-            if (class_exists($connectionClass)) {
+            if (\class_exists($connectionClass)) {
                 $availableMap[$connectionClass] = $item;
             }
         }
@@ -156,6 +157,10 @@ final class Resources
                 'schemes' => ['sqs'],
                 'supportedSchemeExtensions' => [],
                 'package' => 'enqueue/sqs', ];
+            $map[SnsConnectionFactory::class] = [
+                'schemes' => ['sns'],
+                'supportedSchemeExtensions' => [],
+                'package' => 'enqueue/sns', ];
             $map[SnsQsConnectionFactory::class] = [
                 'schemes' => ['snsqs'],
                 'supportedSchemeExtensions' => [],
@@ -183,9 +188,9 @@ final class Resources
 
     public static function addConnection(string $connectionFactoryClass, array $schemes, array $extensions, string $package): void
     {
-        if (class_exists($connectionFactoryClass)) {
+        if (\class_exists($connectionFactoryClass)) {
             if (false == (new \ReflectionClass($connectionFactoryClass))->implementsInterface(ConnectionFactory::class)) {
-                throw new \InvalidArgumentException(sprintf('The connection factory class "%s" must implement "%s" interface.', $connectionFactoryClass, ConnectionFactory::class));
+                throw new \InvalidArgumentException(\sprintf('The connection factory class "%s" must implement "%s" interface.', $connectionFactoryClass, ConnectionFactory::class));
             }
         }
 
