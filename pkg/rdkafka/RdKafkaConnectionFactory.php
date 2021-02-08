@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-use Interop\Queue\ConnectionFactory;
+use Enqueue\Dsn\Dsn;
 use Interop\Queue\Context;
 
-class RdKafkaConnectionFactory implements ConnectionFactory
+final class RdKafkaConnectionFactory implements RdKafkaConnectionFactoryInterface
 {
     /**
      * @var array
@@ -39,7 +39,7 @@ class RdKafkaConnectionFactory implements ConnectionFactory
      */
     public function __construct($config = 'kafka:')
     {
-        if (version_compare(RdKafkaContext::getLibrdKafkaVersion(), '1.0.0', '<')) {
+        if (version_compare($this->getLibrdKafkaVersion(), '1.0.0', '<')) {
             throw new \RuntimeException('You must install librdkafka:1.0.0 or higher');
         }
 
@@ -47,8 +47,7 @@ class RdKafkaConnectionFactory implements ConnectionFactory
             $config = [];
         } elseif (is_string($config)) {
             $config = $this->parseDsn($config);
-        } elseif (is_array($config)) {
-        } else {
+        } elseif (!is_array($config)) {
             throw new \LogicException('The config must be either an array of options, a DSN string or null');
         }
 
@@ -56,42 +55,32 @@ class RdKafkaConnectionFactory implements ConnectionFactory
     }
 
     /**
-     * @return RdKafkaContext
+     * @return RdKafkaContextInterface
      */
     public function createContext(): Context
     {
         return new RdKafkaContext($this->config);
     }
 
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
     private function parseDsn(string $dsn): array
     {
-        $dsnConfig = parse_url($dsn);
-        if (false === $dsnConfig) {
-            throw new \LogicException(sprintf('Failed to parse DSN "%s"', $dsn));
+        $dsn = Dsn::parseFirst($dsn);
+
+        if ('kafka' !== $dsn->getSchemeProtocol()) {
+            throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be "kafka" only.', $dsn->getSchemeProtocol()));
         }
 
-        $dsnConfig = array_replace([
-            'scheme' => null,
-            'host' => null,
-            'port' => null,
-            'user' => null,
-            'pass' => null,
-            'path' => null,
-            'query' => null,
-        ], $dsnConfig);
+        $config = $dsn->getQuery();
 
-        if ('kafka' !== $dsnConfig['scheme']) {
-            throw new \LogicException(sprintf('The given DSN scheme "%s" is not supported. Could be "kafka" only.', $dsnConfig['scheme']));
-        }
+        $broker = $dsn->getHost();
 
-        $config = [];
-        if ($dsnConfig['query']) {
-            parse_str($dsnConfig['query'], $config);
-        }
-
-        $broker = $dsnConfig['host'];
-        if ($dsnConfig['port']) {
-            $broker .= ':'.$dsnConfig['port'];
+        if (null !== $dsn->getPort()) {
+            $broker .= ':'.$dsn->getPort();
         }
 
         $config['global']['metadata.broker.list'] = $broker;
@@ -107,5 +96,17 @@ class RdKafkaConnectionFactory implements ConnectionFactory
                 'metadata.broker.list' => 'localhost:9092',
             ],
         ];
+    }
+
+    private function getLibrdKafkaVersion(): string
+    {
+        if (!defined('RD_KAFKA_VERSION')) {
+            throw new \RuntimeException('RD_KAFKA_VERSION constant is not defined. Phprdkafka is probably not installed');
+        }
+        $major = (RD_KAFKA_VERSION & 0xFF000000) >> 24;
+        $minor = (RD_KAFKA_VERSION & 0x00FF0000) >> 16;
+        $patch = (RD_KAFKA_VERSION & 0x0000FF00) >> 8;
+
+        return "$major.$minor.$patch";
     }
 }

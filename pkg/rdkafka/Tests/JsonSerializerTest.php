@@ -4,7 +4,8 @@ namespace Enqueue\RdKafka\Tests;
 
 use Enqueue\RdKafka\JsonSerializer;
 use Enqueue\RdKafka\RdKafkaMessage;
-use Enqueue\RdKafka\Serializer;
+use Enqueue\RdKafka\RdKafkaMessageInterface;
+use Enqueue\RdKafka\SerializerInterface;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -17,12 +18,14 @@ class JsonSerializerTest extends TestCase
 
     public function testShouldImplementSerializerInterface()
     {
-        $this->assertClassImplements(Serializer::class, JsonSerializer::class);
+        $this->assertClassImplements(SerializerInterface::class, JsonSerializer::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
     {
-        new JsonSerializer();
+        $serializer = new JsonSerializer();
+
+        $this->assertInstanceOf(JsonSerializer::class, $serializer);
     }
 
     public function testShouldConvertMessageToJsonString()
@@ -58,7 +61,7 @@ class JsonSerializerTest extends TestCase
 
         $message = $serializer->toMessage('{"body":"theBody","properties":{"aProp":"aPropVal"},"headers":{"aHeader":"aHeaderVal"}}');
 
-        $this->assertInstanceOf(RdKafkaMessage::class, $message);
+        $this->assertInstanceOf(RdKafkaMessageInterface::class, $message);
 
         $this->assertSame('theBody', $message->getBody());
         $this->assertSame(['aProp' => 'aPropVal'], $message->getProperties());

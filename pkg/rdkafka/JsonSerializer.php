@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Enqueue\RdKafka;
 
-class JsonSerializer implements Serializer
+class JsonSerializer implements SerializerInterface
 {
-    public function toString(RdKafkaMessage $message): string
+    public function toString(RdKafkaMessageInterface $message): string
     {
         $json = json_encode([
             'body' => $message->getBody(),
@@ -25,7 +25,7 @@ class JsonSerializer implements Serializer
         return $json;
     }
 
-    public function toMessage(string $string): RdKafkaMessage
+    public function toMessage(string $string): RdKafkaMessageInterface
     {
         $data = json_decode($string, true);
         if (JSON_ERROR_NONE !== json_last_error()) {

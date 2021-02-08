@@ -6,7 +6,7 @@ use Enqueue\RdKafka\RdKafkaConsumer;
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\RdKafkaMessage;
 use Enqueue\RdKafka\RdKafkaTopic;
-use Enqueue\RdKafka\Serializer;
+use Enqueue\RdKafka\SerializerInterface;
 use PHPUnit\Framework\TestCase;
 use RdKafka\KafkaConsumer;
 use RdKafka\Message;
@@ -18,12 +18,14 @@ class RdKafkaConsumerTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new RdKafkaConsumer(
+        $consumer = new RdKafkaConsumer(
             $this->createKafkaConsumerMock(),
             $this->createContextMock(),
             new RdKafkaTopic(''),
             $this->createSerializerMock()
         );
+
+        $this->assertInstanceOf(RdKafkaConsumer::class, $consumer);
     }
 
     public function testShouldReturnQueueSetInConstructor()
@@ -288,10 +290,10 @@ class RdKafkaConsumerTest extends TestCase
     }
 
     /**
-     * @return Serializer|\PHPUnit\Framework\MockObject\MockObject|Serializer
+     * @return SerializerInterface|\PHPUnit\Framework\MockObject\MockObject|SerializerInterface
      */
     private function createSerializerMock()
     {
-        return $this->createMock(Serializer::class);
+        return $this->createMock(SerializerInterface::class);
     }
 }

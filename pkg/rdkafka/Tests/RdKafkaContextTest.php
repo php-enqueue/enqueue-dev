@@ -5,7 +5,7 @@ namespace Enqueue\RdKafka\Tests;
 use Enqueue\Null\NullQueue;
 use Enqueue\RdKafka\JsonSerializer;
 use Enqueue\RdKafka\RdKafkaContext;
-use Enqueue\RdKafka\Serializer;
+use Enqueue\RdKafka\SerializerInterface;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +43,7 @@ class RdKafkaContextTest extends TestCase
     {
         $context = new RdKafkaContext([]);
 
-        $expectedSerializer = $this->createMock(Serializer::class);
+        $expectedSerializer = $this->createMock(SerializerInterface::class);
 
         $context->setSerializer($expectedSerializer);
 

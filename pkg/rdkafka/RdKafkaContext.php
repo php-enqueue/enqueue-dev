@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Enqueue\RdKafka;
 
 use Interop\Queue\Consumer;
-use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\PurgeQueueNotSupportedException;
@@ -20,7 +19,7 @@ use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer as VendorProducer;
 
-class RdKafkaContext implements Context
+class RdKafkaContext implements RdKafkaContextInterface
 {
     use SerializerAwareTrait;
 
@@ -59,7 +58,7 @@ class RdKafkaContext implements Context
     }
 
     /**
-     * @return RdKafkaMessage
+     * @return RdKafkaMessageInterface
      */
     public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
@@ -166,18 +165,6 @@ class RdKafkaContext implements Context
     public function purgeQueue(Queue $queue): void
     {
         throw PurgeQueueNotSupportedException::providerDoestNotSupportIt();
-    }
-
-    public static function getLibrdKafkaVersion(): string
-    {
-        if (!defined('RD_KAFKA_VERSION')) {
-            throw new \RuntimeException('RD_KAFKA_VERSION constant is not defined. Phprdkafka is probably not installed');
-        }
-        $major = (RD_KAFKA_VERSION & 0xFF000000) >> 24;
-        $minor = (RD_KAFKA_VERSION & 0x00FF0000) >> 16;
-        $patch = (RD_KAFKA_VERSION & 0x0000FF00) >> 8;
-
-        return "$major.$minor.$patch";
     }
 
     private function getConf(): Conf

@@ -21,7 +21,7 @@ class RdKafkaConsumer implements Consumer
     private $consumer;
 
     /**
-     * @var RdKafkaContext
+     * @var RdKafkaContextInterface
      */
     private $context;
 
@@ -45,8 +45,12 @@ class RdKafkaConsumer implements Consumer
      */
     private $offset;
 
-    public function __construct(KafkaConsumer $consumer, RdKafkaContext $context, RdKafkaTopic $topic, Serializer $serializer)
-    {
+    public function __construct(
+        KafkaConsumer $consumer,
+        RdKafkaContextInterface $context,
+        RdKafkaTopic $topic,
+        SerializerInterface $serializer
+    ) {
         $this->consumer = $consumer;
         $this->context = $context;
         $this->topic = $topic;
@@ -84,7 +88,7 @@ class RdKafkaConsumer implements Consumer
     }
 
     /**
-     * @return RdKafkaMessage
+     * @return RdKafkaMessageInterface
      */
     public function receive(int $timeout = 0): ?Message
     {
@@ -116,7 +120,7 @@ class RdKafkaConsumer implements Consumer
     }
 
     /**
-     * @return RdKafkaMessage
+     * @return RdKafkaMessageInterface
      */
     public function receiveNoWait(): ?Message
     {
@@ -124,11 +128,11 @@ class RdKafkaConsumer implements Consumer
     }
 
     /**
-     * @param RdKafkaMessage $message
+     * @param RdKafkaMessageInterface $message
      */
     public function acknowledge(Message $message): void
     {
-        InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
+        InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessageInterface::class);
 
         if (false == $message->getKafkaMessage()) {
             throw new \LogicException('The message could not be acknowledged because it does not have kafka message set.');
@@ -142,7 +146,7 @@ class RdKafkaConsumer implements Consumer
     }
 
     /**
-     * @param RdKafkaMessage $message
+     * @param RdKafkaMessageInterface $message
      */
     public function reject(Message $message, bool $requeue = false): void
     {
@@ -153,7 +157,7 @@ class RdKafkaConsumer implements Consumer
         }
     }
 
-    private function doReceive(int $timeout): ?RdKafkaMessage
+    private function doReceive(int $timeout): ?RdKafkaMessageInterface
     {
         $kafkaMessage = $this->consumer->consume($timeout);
 

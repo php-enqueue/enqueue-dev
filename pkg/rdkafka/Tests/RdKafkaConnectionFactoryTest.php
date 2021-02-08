@@ -21,7 +21,7 @@ class RdKafkaConnectionFactoryTest extends TestCase
         new RdKafkaConnectionFactory(new \stdClass());
     }
 
-    public function testThrowIfSchemeIsNotBeanstalkAmqp()
+    public function testThrowIfSchemeIsNotKafka()
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The given DSN scheme "http" is not supported. Could be "kafka" only.');
@@ -32,9 +32,9 @@ class RdKafkaConnectionFactoryTest extends TestCase
     public function testThrowIfDsnCouldNotBeParsed()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Failed to parse DSN "kafka://:@/"');
+        $this->expectExceptionMessage('The DSN is invalid. It does not have scheme separator ":".');
 
-        new RdKafkaConnectionFactory('kafka://:@/');
+        new RdKafkaConnectionFactory('kafka//');
     }
 
     public function testShouldBeExpectedDefaultConfig()

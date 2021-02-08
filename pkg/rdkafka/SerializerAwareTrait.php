@@ -7,22 +7,22 @@ namespace Enqueue\RdKafka;
 trait SerializerAwareTrait
 {
     /**
-     * @var Serializer
+     * @var SerializerInterface|null
      */
     private $serializer;
 
     /**
-     * @param Serializer $serializer
+     * @param SerializerInterface $serializer
      */
-    public function setSerializer(Serializer $serializer)
+    public function setSerializer(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
     }
 
     /**
-     * @return Serializer
+     * @return SerializerInterface|null
      */
-    public function getSerializer()
+    public function getSerializer(): ?SerializerInterface
     {
         return $this->serializer;
     }

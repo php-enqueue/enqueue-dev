@@ -21,7 +21,7 @@ class RdKafkaProducer implements Producer
      */
     private $producer;
 
-    public function __construct(VendorProducer $producer, Serializer $serializer)
+    public function __construct(VendorProducer $producer, SerializerInterface $serializer)
     {
         $this->producer = $producer;
 
@@ -29,13 +29,13 @@ class RdKafkaProducer implements Producer
     }
 
     /**
-     * @param RdKafkaTopic   $destination
-     * @param RdKafkaMessage $message
+     * @param RdKafkaTopic $destination
+     * @param RdKafkaMessageInterface $message
      */
     public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
-        InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
+        InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessageInterface::class);
 
         $partition = $message->getPartition() ?: $destination->getPartition() ?: RD_KAFKA_PARTITION_UA;
         $payload = $this->serializer->toString($message);
