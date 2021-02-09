@@ -1,5 +1,9 @@
 name: CI
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
 jobs:
   static_analysis:
     name: Static analysis
@@ -12,18 +16,6 @@ jobs:
           PATTERNS: |
             pkg/**/*.php
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
@@ -32,7 +24,9 @@ jobs:
           ini-values: memory_limit=2048M
 
       - run: php ./bin/fix-symfony-version.php "4.3.*"
-      - run: composer install --no-progress
+
+      - uses: "ramsey/composer-install@v1"
+
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon --error-format=github -- ${{ env.GIT_DIFF_FILTERED }}
@@ -49,18 +43,6 @@ jobs:
           PATTERNS: |
             pkg/**/*.php
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
@@ -69,7 +51,9 @@ jobs:
           ini-values: memory_limit=2048M
 
       - run: php ./bin/fix-symfony-version.php "4.3.*"
-      - run: composer install --no-progress
+
+      - uses: "ramsey/composer-install@v1"
+
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection -- ${{ env.GIT_DIFF_FILTERED }}
@@ -142,18 +126,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -163,7 +135,7 @@ jobs:
 
       - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
 
-      - run: composer install --no-progress
+      - uses: "ramsey/composer-install@v1"
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
