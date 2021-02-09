@@ -25,10 +25,7 @@ RUN set -x && \
         php-pear \
         make \
     && \
-    pecl channel-update pecl.php.net && \
-    pecl install gearman && \
-    echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/10-gearman.ini && \
-    echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/10-gearman.ini
+    pecl channel-update pecl.php.net
 
 ## librdkafka
 RUN set -x && \
