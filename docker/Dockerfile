@@ -28,9 +28,9 @@ RUN set -x && \
     && \
     pecl channel-update pecl.php.net && \
     pecl install gearman && \
-    if [ ! -f /etc/php/${PHP_VERSION}/cli/conf.d/10-gearman.ini ]; then \
-        echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/10-gearman.ini && \
-        echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/10-gearman.ini \
+    if [ ! -f /etc/php/${PHP_VERSION}/cli/conf.d/20-gearman.ini ]; then \
+        echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-gearman.ini && \
+        echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/20-gearman.ini \
         ; \
     fi;
 
