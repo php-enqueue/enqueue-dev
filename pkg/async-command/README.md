@@ -10,7 +10,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Symfony Async Command.
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://travis-ci.org/php-enqueue/async-command.png?branch=master)](https://travis-ci.org/php-enqueue/async-command)
+[![Build Status](https://img.shields.io/github/workflow/status/php-enqueue/async-command/CI)](https://github.com/php-enqueue/async-command/actions?query=workflow%3ACI)
 [![Total Downloads](https://poser.pugx.org/enqueue/async-command/d/total.png)](https://packagist.org/packages/enqueue/async-command)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/async-command/version.png)](https://packagist.org/packages/enqueue/async-command)
 

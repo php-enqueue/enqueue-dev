@@ -10,7 +10,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # AMQP tools
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://travis-ci.org/php-enqueue/amqp-tools.png?branch=master)](https://travis-ci.org/php-enqueue/amqp-tools)
+[![Build Status](https://img.shields.io/github/workflow/status/php-enqueue/amqp-tools/CI)](https://github.com/php-enqueue/amqp-tools/actions?query=workflow%3ACI)
 [![Total Downloads](https://poser.pugx.org/enqueue/amqp-tools/d/total.png)](https://packagist.org/packages/enqueue/amqp-tools)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/amqp-tools/version.png)](https://packagist.org/packages/enqueue/amqp-tools)
 
