@@ -19,6 +19,7 @@ RUN set -x && \
         git \
         python \
         php${PHP_VERSION}-amqp \
+        php${PHP_VERSION}-xml \
         libgearman-dev \
         php-pear \
         make \
