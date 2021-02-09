@@ -20,6 +20,7 @@ RUN set -x && \
         python \
         php${PHP_VERSION}-amqp \
         php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-mysql \
         libgearman-dev \
         php-pear \
         make \
