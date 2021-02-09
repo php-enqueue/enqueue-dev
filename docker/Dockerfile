@@ -21,12 +21,18 @@ RUN set -x && \
         php${PHP_VERSION}-amqp \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-mysql \
+        php${PHP_VERSION}-curl \
         libgearman-dev \
         php-pear \
         make \
     && \
     pecl channel-update pecl.php.net && \
-    pecl install gearman
+    pecl install gearman && \
+    if [ ! -f /etc/php/${PHP_VERSION}/cli/conf.d/10-gearman.ini ]; then \
+        echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/10-gearman.ini && \
+        echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/10-gearman.ini \
+        ; \
+    fi;
 
 ## librdkafka
 RUN set -x && \
