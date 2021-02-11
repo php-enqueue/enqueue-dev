@@ -66,7 +66,8 @@ jobs:
       matrix:
         php: ['7.3', '7.4']
         symfony_version: ['4.3.*', '4.4.*', '5.0.*']
-    name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}
+        dependencies: ['lowest', 'highest']
+    name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
     steps:
       - uses: actions/checkout@v2
@@ -81,6 +82,8 @@ jobs:
       - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
 
       - uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
@@ -93,9 +96,10 @@ jobs:
       matrix:
         php: ['7.3'] # same as in the container
         symfony_version: ['4.3.*', '5.0.*']
+        dependencies: ['lowest', 'highest']
         rdkafka_action: ['exclude-group', 'group']
 
-    name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, rdkafka_action=${{ matrix.rdkafka_action }}
+    name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, rdkafka_action=${{ matrix.rdkafka_action }}, deps=${{ matrix.dependencies }}
 
     steps:
       - uses: actions/checkout@v2
@@ -110,6 +114,8 @@ jobs:
       - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
 
       - uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
