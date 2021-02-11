@@ -59,92 +59,43 @@ jobs:
       - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection -- ${{ env.GIT_DIFF_FILTERED }}
         if: env.GIT_DIFF_FILTERED
 
-  tests:
+  unit_tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4']
-        include:
-          - php: 7.3
-            symfony_version: 4.3.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.3
-            symfony_version: 4.4.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.3
-            symfony_version: 5.0.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.4
-            symfony_version: 4.3.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.4
-            symfony_version: 4.4.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.4
-            symfony_version: 5.0.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.4
-            symfony_version: 5.2.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: 7.3 # same as in the container
-            symfony_version: 4.3.*
-            unit_tests: false
-            functional_tests: true
-            rdkafka_tests: false
-            prepare_container: true
-          - php: 7.3 # same as in the container
-            symfony_version: 5.0.*
-            unit_tests: false
-            functional_tests: true
-            rdkafka_tests: false
-            prepare_container: true
-          - php: 7.3 # same as in the container
-            symfony_version: 4.3.*
-            unit_tests: false
-            functional_tests: false
-            rdkafka_tests: true
-            prepare_container: true
-          - php: "8.0"
-            symfony_version: 5.2.*
-            unit_tests: true
-            functional_tests: false
-            rdkafka_tests: false
-            prepare_container: false
-          - php: "8.0"
-            symfony_version: 5.2.*
-            unit_tests: false
-            functional_tests: true
-            rdkafka_tests: false
-            prepare_container: true
-          - php: "8.0"
-            symfony_version: 5.2.*
-            unit_tests: false
-            rdkafka_tests: true
-            prepare_container: true
+        php: ['7.3', '7.4']
+        symfony_version: ['4.3.*', '4.4.*', '5.0.*']
+    name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}
 
-    name: PHP ${{ matrix.php }} tests on Sf ${{ matrix.symfony_version }}, unit=${{ matrix.unit_tests }}, func=${{ matrix.functional_tests }}, rdkafka=${{ matrix.rdkafka_tests }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: mongodb, redis, :xdebug
+          ini-values: memory_limit=2048M
+
+      - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
+
+      - uses: "ramsey/composer-install@v1"
+
+      - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
+
+      - run: bin/phpunit --exclude-group=functional
+
+  functional_tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.3'] # same as in the container
+        symfony_version: ['4.3.*', '5.0.*']
+        rdkafka_action: ['exclude-group', 'group']
+
+    name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, rdkafka_action=${{ matrix.rdkafka_action }}
 
     steps:
       - uses: actions/checkout@v2
@@ -163,15 +114,5 @@ jobs:
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: bin/dev -b
-        env:
-          PHP_VERSION: "${{ matrix.php }}"
-        if: matrix.prepare_container
 
-      - run: bin/phpunit --exclude-group=functional
-        if: matrix.unit_tests
-
-      - run: bin/test.sh --exclude-group=rdkafka
-        if: matrix.functional_tests
-
-      - run: bin/test.sh --group=rdkafka
-        if: matrix.rdkafka_tests
+      - run: bin/test.sh --${{ matrix.rdkafka_action }}=rdkafka
