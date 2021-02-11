@@ -15,7 +15,7 @@
         "enqueue/test": "0.10.x-dev",
         "enqueue/null": "0.10.x-dev",
         "queue-interop/queue-spec": "^0.6.2",
-        "kwn/php-rdkafka-stubs": "^1.0.2 | ^2.0"
+        "kwn/php-rdkafka-stubs": "^2.0.3"
     },
     "support": {
         "email": "opensource@forma-pro.com",
