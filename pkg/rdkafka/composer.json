@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
-        "ext-rdkafka": "^3.0.3|^4.0|^5.0",
+        "ext-rdkafka": "^4.0|^5.0",
         "queue-interop/queue-interop": "^0.8"
     },
     "require-dev": {
