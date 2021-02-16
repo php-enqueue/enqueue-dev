@@ -5,6 +5,12 @@
     "keywords": ["messaging", "queue", "stomp"],
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/andrewmy/php-rabbitmq-management-api.git"
+        }
+    ],
     "require": {
         "php": "^7.3|^8.0",
         "enqueue/dsn": "^0.10",
