@@ -101,7 +101,7 @@ jobs:
 
       - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
 
-      - run: composer install --no-progress ${{ matrix.dependencies }}
+      - run: composer update --no-progress ${{ matrix.dependencies }}
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
@@ -148,7 +148,7 @@ jobs:
 
       - run: php ./bin/fix-symfony-version.php "${{ matrix.symfony_version }}"
 
-      - run: composer install --no-progress ${{ matrix.dependencies }}
+      - run: composer update --no-progress ${{ matrix.dependencies }}
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
