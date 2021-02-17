@@ -67,6 +67,14 @@ jobs:
         php: ['7.3', '7.4', '8.0']
         symfony_version: ['4.3.*', '4.4.*', '5.0.*', '5.2.*']
         dependencies: ['lowest', 'highest']
+        exclude:
+          - php: '8.0'
+            symfony_version: '4.3.*'
+          - php: '8.0'
+            symfony_version: '4.4.*'
+          - php: '8.0'
+            symfony_version: '5.0.*'
+
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
     steps:
