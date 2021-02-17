@@ -33,7 +33,6 @@ class DbalPersistedConnection extends Connection
 
         if ($this->hasPersistedConnection()) {
             $this->_conn = $this->getPersistedConnection();
-            $this->setConnected(true);
         } else {
             parent::connect();
             $this->persistConnection($this->_conn);
@@ -64,22 +63,6 @@ class DbalPersistedConnection extends Connection
     public function rollBack()
     {
         $this->wrapTransactionNestingLevel('rollBack');
-    }
-
-    /**
-     * @param bool $connected
-     */
-    protected function setConnected($connected)
-    {
-        $rc = new \ReflectionClass(Connection::class);
-        $rp = $rc->hasProperty('isConnected') ?
-            $rc->getProperty('isConnected') :
-            $rc->getProperty('_isConnected')
-        ;
-
-        $rp->setAccessible(true);
-        $rp->setValue($this, $connected);
-        $rp->setAccessible(false);
     }
 
     /**
