@@ -6,7 +6,7 @@ set -e
 while getopts "bustefdp" OPTION; do
   case $OPTION in
     b)
-      docker-compose pull && docker-compose build
+      docker-compose pull -q && docker-compose build
       ;;
     u)
       docker-compose up
