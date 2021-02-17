@@ -64,8 +64,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.3', '7.4']
-        symfony_version: ['4.3.*', '4.4.*', '5.0.*']
+        php: ['7.3', '7.4', '8.0']
+        symfony_version: ['4.3.*', '4.4.*', '5.0.*', '5.2.*']
         dependencies: ['lowest', 'highest']
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -94,8 +94,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.3'] # same as in the container
-        symfony_version: ['4.3.*', '5.0.*']
+        php: ['7.3', '8.0'] # same as in the container
+        symfony_version: ['4.3.*', '5.0.*', '5.2.*']
         dependencies: ['lowest', 'highest']
         rdkafka_action: ['exclude-group', 'group']
 
