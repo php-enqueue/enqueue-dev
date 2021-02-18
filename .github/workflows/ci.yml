@@ -43,6 +43,18 @@ jobs:
           PATTERNS: |
             pkg/**/*.php
 
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-cs-check-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            composer-cs-check-
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
@@ -52,7 +64,7 @@ jobs:
 
       - run: php ./bin/fix-symfony-version.php "5.2.*"
 
-      - uses: "ramsey/composer-install@v1"
+      - run: composer update --no-progress
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
