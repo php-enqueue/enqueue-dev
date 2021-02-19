@@ -62,9 +62,11 @@ class StompContext implements Context
     }
 
     /**
+     * @param mixed $body
+     *
      * @return StompMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         return new StompMessage($body, $properties, $headers);
     }

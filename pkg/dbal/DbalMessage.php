@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
+use Interop\Queue\Impl\StringBodyOnlyTrait;
 use Interop\Queue\Message;
 
 class DbalMessage implements Message
 {
-    /**
-     * @var string
-     */
-    private $body;
+    use StringBodyOnlyTrait;
 
     /**
      * @var array
@@ -82,16 +80,6 @@ class DbalMessage implements Message
         $this->deliveryDelay = null;
         $this->deliveryId = null;
         $this->redeliverAfter = null;
-    }
-
-    public function setBody(string $body): void
-    {
-        $this->body = $body;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
     }
 
     public function setProperties(array $properties): void

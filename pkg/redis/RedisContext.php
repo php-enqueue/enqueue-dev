@@ -59,9 +59,11 @@ class RedisContext implements Context
     }
 
     /**
+     * @param mixed $body
+     *
      * @return RedisMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         return new RedisMessage($body, $properties, $headers);
     }

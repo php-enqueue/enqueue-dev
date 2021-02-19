@@ -62,8 +62,6 @@ class DbalProducer implements Producer
             $message->setTimeToLive($this->timeToLive);
         }
 
-        $body = $message->getBody();
-
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
             (int) (microtime(true) * 10000)
@@ -72,7 +70,7 @@ class DbalProducer implements Producer
         $dbalMessage = [
             'id' => Uuid::uuid4(),
             'published_at' => $publishedAt,
-            'body' => $body,
+            'body' => $message->getBody(),
             'headers' => JSON::encode($message->getHeaders()),
             'properties' => JSON::encode($message->getProperties()),
             'priority' => -1 * $message->getPriority(),

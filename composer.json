@@ -22,8 +22,8 @@
     "ext-mongodb": "^1.5",
     "ext-rdkafka": "^3.0.3|^4.0|^5.0",
 
-    "queue-interop/amqp-interop": "^0.8",
-    "queue-interop/queue-interop": "^0.7|^0.8",
+    "queue-interop/amqp-interop": "dev-master",
+    "queue-interop/queue-interop": "dev-master",
     "bunny/bunny": "^0.2.4|^0.3|^0.4",
     "php-amqplib/php-amqplib": "^2.7",
     "doctrine/dbal": "^2.12",
@@ -71,6 +71,16 @@
     "dms/phpunit-arraysubset-asserts": "^0.2.1",
     "phpspec/prophecy-phpunit": "^2.0"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/Sevavietl/queue-interop"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/Sevavietl/amqp-interop"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Enqueue\\AmqpBunny\\": "pkg/amqp-bunny/",

@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Enqueue\Sqs;
 
+use Interop\Queue\Impl\StringBodyOnlyTrait;
 use Interop\Queue\Message;
 
 class SqsMessage implements Message
 {
-    /**
-     * @var string
-     */
-    private $body;
+    use StringBodyOnlyTrait;
 
     /**
      * @var array
@@ -67,16 +65,6 @@ class SqsMessage implements Message
         $this->redelivered = false;
         $this->delaySeconds = 0;
         $this->requeueVisibilityTimeout = 0;
-    }
-
-    public function setBody(string $body): void
-    {
-        $this->body = $body;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
     }
 
     public function setProperties(array $properties): void

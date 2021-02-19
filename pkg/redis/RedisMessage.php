@@ -9,7 +9,7 @@ use Interop\Queue\Message;
 class RedisMessage implements Message
 {
     /**
-     * @var string
+     * @var mixed
      */
     private $body;
 
@@ -38,7 +38,7 @@ class RedisMessage implements Message
      */
     private $key;
 
-    public function __construct(string $body = '', array $properties = [], array $headers = [])
+    public function __construct($body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
@@ -47,12 +47,12 @@ class RedisMessage implements Message
         $this->redelivered = false;
     }
 
-    public function getBody(): string
+    public function getBody()
     {
         return $this->body;
     }
 
-    public function setBody(string $body): void
+    public function setBody($body): void
     {
         $this->body = $body;
     }

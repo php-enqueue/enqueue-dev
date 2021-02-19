@@ -74,9 +74,11 @@ class SnsQsContext implements Context
     }
 
     /**
+     * @param mixed $body
+     *
      * @return SnsQsMessage
      */
-    public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
+    public function createMessage($body = '', array $properties = [], array $headers = []): Message
     {
         return new SnsQsMessage($body, $properties, $headers);
     }
