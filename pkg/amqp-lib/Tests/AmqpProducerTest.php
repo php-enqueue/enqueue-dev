@@ -25,7 +25,10 @@ class AmqpProducerTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock());
+        self::assertInstanceOf(
+            AmqpProducer::class,
+            new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock())
+        );
     }
 
     public function testShouldImplementProducerInterface()
