@@ -17,7 +17,7 @@
         "enqueue/test": "0.10.x-dev",
         "enqueue/null": "0.10.x-dev",
         "queue-interop/queue-spec": "^0.6.2"
-    }
+    },
     "support": {
         "email": "opensource@forma-pro.com",
         "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
