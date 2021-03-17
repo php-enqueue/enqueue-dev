@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.10.9](https://github.com/php-enqueue/enqueue-dev/tree/0.10.9) (2021-03-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.8...0.10.9)
+
+**Merged pull requests:**
+
+- Upgrade php-amqplib to v3.0 [\#1146](https://github.com/php-enqueue/enqueue-dev/pull/1146) ([masterjus](https://github.com/masterjus))
+- Split tests into different matrices; fix highest/lowest dependencies [\#1139](https://github.com/php-enqueue/enqueue-dev/pull/1139) ([andrewmy](https://github.com/andrewmy))
+
 ## [0.10.8](https://github.com/php-enqueue/enqueue-dev/tree/0.10.8) (2021-02-17)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.7...0.10.8)
 
