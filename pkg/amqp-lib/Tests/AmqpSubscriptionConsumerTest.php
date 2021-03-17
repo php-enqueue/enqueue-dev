@@ -19,7 +19,10 @@ class AmqpSubscriptionConsumerTest extends TestCase
 
     public function testCouldBeConstructedWithAmqpContextAndHeartbeatOnTickAsArguments()
     {
-        new AmqpSubscriptionConsumer($this->createAmqpContextMock(), $heartbeatOnTick = true);
+        self::assertInstanceOf(
+            AmqpSubscriptionConsumer::class,
+            new AmqpSubscriptionConsumer($this->createAmqpContextMock(), $heartbeatOnTick = true)
+        );
     }
 
     /**

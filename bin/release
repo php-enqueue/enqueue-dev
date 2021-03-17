@@ -18,7 +18,7 @@ rm ./CHANGELOG_FUTURE.md
 
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
-git add CHANGELOG.md && git commit -m "Release $1" -S && git push origin "$CURRENT_BRANCH"
+git add CHANGELOG.md && git commit -s -m "Release $1" -S && git push origin "$CURRENT_BRANCH"
 
 ./bin/subtree-split
 
@@ -43,7 +43,7 @@ do
         if [[ -z "$LAST_RELEASE" ]]; then
             echo "There has not been any releases. Releasing $1";
 
-            git tag $1 -s -m "Release $1"
+            git tag $1 -a -s -m "Release $1"
             git push origin --tags
         else
             echo "Last release $LAST_RELEASE";
@@ -53,7 +53,7 @@ do
             if [[ ! -z "$CHANGES_SINCE_LAST_RELEASE" ]]; then
                 echo "There are changes since last release. Releasing $1";
 
-                git tag $1 -s -m "Release $1"
+                git tag $1 -s  -m "Release $1"
                 git push origin --tags
             else
                 echo "No change since last release.";

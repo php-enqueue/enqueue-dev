@@ -1,5 +1,37 @@
 # Change Log
 
+## [0.10.9](https://github.com/php-enqueue/enqueue-dev/tree/0.10.9) (2021-03-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.8...0.10.9)
+
+**Merged pull requests:**
+
+- Upgrade php-amqplib to v3.0 [\#1146](https://github.com/php-enqueue/enqueue-dev/pull/1146) ([masterjus](https://github.com/masterjus))
+- Split tests into different matrices; fix highest/lowest dependencies [\#1139](https://github.com/php-enqueue/enqueue-dev/pull/1139) ([andrewmy](https://github.com/andrewmy))
+
+## [0.10.8](https://github.com/php-enqueue/enqueue-dev/tree/0.10.8) (2021-02-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.7...0.10.8)
+
+**Merged pull requests:**
+
+- Fix package CI [\#1138](https://github.com/php-enqueue/enqueue-dev/pull/1138) ([andrewmy](https://github.com/andrewmy))
+- add sns driver + use profile to establish connection [\#1134](https://github.com/php-enqueue/enqueue-dev/pull/1134) ([fbaudry](https://github.com/fbaudry))
+- Add PHP 8 [\#1132](https://github.com/php-enqueue/enqueue-dev/pull/1132) ([andrewmy](https://github.com/andrewmy))
+
+## [0.10.7](https://github.com/php-enqueue/enqueue-dev/tree/0.10.7) (2021-02-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.6...0.10.7)
+
+**Merged pull requests:**
+
+- PHPUnit 9.5 [\#1131](https://github.com/php-enqueue/enqueue-dev/pull/1131) ([andrewmy](https://github.com/andrewmy))
+- Fix the build matrix [\#1130](https://github.com/php-enqueue/enqueue-dev/pull/1130) ([andrewmy](https://github.com/andrewmy))
+- Disable Travis CI [\#1129](https://github.com/php-enqueue/enqueue-dev/pull/1129) ([makasim](https://github.com/makasim))
+- Add GitHub Action CI [\#1127](https://github.com/php-enqueue/enqueue-dev/pull/1127) ([andrewmy](https://github.com/andrewmy))
+- Allow ext-rdkafka 5 [\#1126](https://github.com/php-enqueue/enqueue-dev/pull/1126) ([andrewmy](https://github.com/andrewmy))
+- Fix - Bad parameter for exception [\#1124](https://github.com/php-enqueue/enqueue-dev/pull/1124) ([atrauzzi](https://github.com/atrauzzi))
+- \[fix\] queue consumption: catch throwable for processing errors [\#1114](https://github.com/php-enqueue/enqueue-dev/pull/1114) ([macghriogair](https://github.com/macghriogair))
+- Ramsey dependency removed in favor to \Enqueue\Util\UUID::generate [\#1110](https://github.com/php-enqueue/enqueue-dev/pull/1110) ([inri13666](https://github.com/inri13666))
+- Added: ability to choose different entity manager [\#1081](https://github.com/php-enqueue/enqueue-dev/pull/1081) ([balabis](https://github.com/balabis))
+
 ## [0.10.6](https://github.com/php-enqueue/enqueue-dev/tree/0.10.6) (2020-10-16)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.5...0.10.6)
 

@@ -25,6 +25,7 @@ RUN set -x && \
         libgearman-dev \
         php-pear \
         make \
+        unzip \
     && \
     pecl channel-update pecl.php.net && \
     pecl install gearman && \
@@ -55,5 +56,7 @@ RUN chmod u+x /usr/local/bin/entrypoint.sh
 
 RUN mkdir -p /mqdev
 WORKDIR /mqdev
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 CMD /usr/local/bin/entrypoint.sh
