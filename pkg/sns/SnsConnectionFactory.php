@@ -136,28 +136,8 @@ class SnsConnectionFactory implements ConnectionFactory
             'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
-            'topic_arns' => $this->extractTopicArns($dsn->getString('topic_arns')),
+            'topic_arns' => $dsn->getArray('topic_arns', [])->toArray(),
         ]), function ($value) { return null !== $value; });
-    }
-
-    private function extractTopicArns(?string $topicArns): array
-    {
-        if (!$topicArns) {
-            return [];
-        }
-
-        return array_column(
-            array_map(function ($topic) {
-                list($name, $arn) = explode('|', $topic);
-
-                return [
-                    'name' => $name,
-                    'arn' => $arn,
-                ];
-            }, explode(';', $topicArns)),
-            'arn',
-            'name'
-        );
     }
 
     private function defaultConfig(): array
