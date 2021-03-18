@@ -31,12 +31,11 @@ class SnsContext implements Context
 
     private $topicArns;
 
-    public function __construct(SnsClient $client, array $config)
+    public function __construct(SnsClient $client, array $config, array $topicArns = [])
     {
         $this->client = $client;
         $this->config = $config;
-
-        $this->topicArns = [];
+        $this->topicArns = $topicArns;
     }
 
     /**

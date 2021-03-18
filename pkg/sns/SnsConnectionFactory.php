@@ -24,13 +24,14 @@ class SnsConnectionFactory implements ConnectionFactory
 
     /**
      * $config = [
-     *   'key' => null                AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
+     *   'key' => null,               AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'secret' => null,            AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'token' => null,             AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'region' => null,            (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
      *   'version' => '2012-11-05',   (string, required) The version of the webservice to utilize
      *   'lazy' => true,              Enable lazy connection (boolean)
-     *   'endpoint' => null           (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'endpoint' => null,          (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'topic_arns' => [],          (array<string>) The list of existing topic arns
      * ].
      *
      * or
@@ -71,7 +72,7 @@ class SnsConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
-        return new SnsContext($this->establishConnection(), $this->config);
+        return new SnsContext($this->establishConnection(), $this->config, $this->config['topic_arns']);
     }
 
     private function establishConnection(): SnsClient
@@ -132,6 +133,9 @@ class SnsConnectionFactory implements ConnectionFactory
             'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
+            'topic_arns' => ($topicArns = $dsn->getString('topic_arns'))
+                ? array_filter(explode(',', $topicArns))
+                : [],
         ]), function ($value) { return null !== $value; });
     }
 
@@ -145,6 +149,7 @@ class SnsConnectionFactory implements ConnectionFactory
             'version' => '2010-03-31',
             'lazy' => true,
             'endpoint' => null,
+            'topic_arns' => [],
         ];
     }
 }

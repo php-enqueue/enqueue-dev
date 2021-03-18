@@ -64,6 +64,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'topic_arns' => [],
             ],
         ];
 
@@ -77,6 +78,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'topic_arns' => [],
             ],
         ];
 
@@ -90,6 +92,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'topic_arns' => [],
             ],
         ];
 
@@ -103,6 +106,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'topic_arns' => [],
             ],
         ];
 
@@ -116,6 +120,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'topic_arns' => [],
             ],
         ];
 
@@ -129,6 +134,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'topic_arns' => [],
             ],
         ];
 
@@ -148,6 +154,24 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
+                'topic_arns' => [],
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'sns:?topic_arns=arn:aws:sns:us-east-1:123456789012:topic1,arn:aws:sns:us-west-2:123456789012:topic2'],
+            [
+                'key' => null,
+                'secret' => null,
+                'token' => null,
+                'region' => null,
+                'version' => '2010-03-31',
+                'lazy' => true,
+                'endpoint' => null,
+                'topic_arns' => [
+                    'arn:aws:sns:us-east-1:123456789012:topic1',
+                    'arn:aws:sns:us-west-2:123456789012:topic2',
+                ],
             ],
         ];
     }

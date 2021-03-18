@@ -33,6 +33,7 @@ class SnsConnectionFactoryTest extends TestCase
             'region' => null,
             'version' => '2010-03-31',
             'endpoint' => null,
+             'topic_arns' => [],
         ], 'config', $factory);
     }
 
@@ -48,6 +49,7 @@ class SnsConnectionFactoryTest extends TestCase
             'region' => null,
             'version' => '2010-03-31',
             'endpoint' => null,
+             'topic_arns' => [],
         ], 'config', $factory);
     }
 
