@@ -35,8 +35,7 @@ class SnsContext implements Context
     {
         $this->client = $client;
         $this->config = $config;
-
-        $this->topicArns = [];
+        $this->topicArns = $config['topic_arns'];
     }
 
     /**

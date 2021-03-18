@@ -20,6 +20,6 @@ class SnsContextTest extends ContextSpec
     {
         $client = $this->createMock(SnsClient::class);
 
-        return new SnsContext($client, []);
+        return new SnsContext($client, ['topic_arns' => []]);
     }
 }
