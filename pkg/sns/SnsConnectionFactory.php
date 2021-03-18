@@ -31,7 +31,7 @@ class SnsConnectionFactory implements ConnectionFactory
      *   'version' => '2012-11-05',   (string, required) The version of the webservice to utilize
      *   'lazy' => true,              Enable lazy connection (boolean)
      *   'endpoint' => null,          (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
-     *   'topic_arns' => [],          (array<string>) The list of existing topic arns
+     *   'topic_arns' => [],          (array<string,string>) The list of existing topic arns
      * ].
      *
      * or
