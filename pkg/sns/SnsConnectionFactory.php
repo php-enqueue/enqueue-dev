@@ -60,9 +60,6 @@ class SnsConnectionFactory implements ConnectionFactory
 
                 unset($config['dsn']);
             }
-            if (\array_key_exists('topic_arns', $config) && \is_string($config['topic_arns'])) {
-                $config['topic_arns'] = $this->extractTopicArns($config['topic_arns']);
-            }
         } else {
             throw new \LogicException(\sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
         }
