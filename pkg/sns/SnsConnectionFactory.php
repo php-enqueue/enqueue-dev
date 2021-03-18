@@ -60,6 +60,9 @@ class SnsConnectionFactory implements ConnectionFactory
 
                 unset($config['dsn']);
             }
+            if (\array_key_exists('topic_arns', $config) && \is_string($config['topic_arns'])) {
+                $config['topic_arns'] = $this->extractTopicArns($config['topic_arns']);
+            }
         } else {
             throw new \LogicException(\sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
         }
@@ -133,10 +136,28 @@ class SnsConnectionFactory implements ConnectionFactory
             'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
-            'topic_arns' => ($topicArns = $dsn->getString('topic_arns'))
-                ? array_filter(explode(',', $topicArns))
-                : [],
+            'topic_arns' => $this->extractTopicArns($dsn->getString('topic_arns')),
         ]), function ($value) { return null !== $value; });
+    }
+
+    private function extractTopicArns(?string $topicArns): array
+    {
+        if (!$topicArns) {
+            return [];
+        }
+
+        return array_column(
+            array_map(function ($topic) {
+                list ($name, $arn) = explode('|', $topic);
+
+                return [
+                    'name' => $name,
+                    'arn' => $arn,
+                ];
+            }, explode(';', $topicArns)),
+            'arn',
+            'name'
+        );
     }
 
     private function defaultConfig(): array

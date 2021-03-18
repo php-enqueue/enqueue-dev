@@ -159,7 +159,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
         ];
 
         yield [
-            ['dsn' => 'sns:?topic_arns=arn:aws:sns:us-east-1:123456789012:topic1,arn:aws:sns:us-west-2:123456789012:topic2'],
+            ['dsn' => 'sns:?topic_arns=topic1|arn:aws:sns:us-east-1:123456789012:topic1;topic2|arn:aws:sns:us-west-2:123456789012:topic2'],
             [
                 'key' => null,
                 'secret' => null,
@@ -169,8 +169,8 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'endpoint' => null,
                 'topic_arns' => [
-                    'arn:aws:sns:us-east-1:123456789012:topic1',
-                    'arn:aws:sns:us-west-2:123456789012:topic2',
+                    'topic1' => 'arn:aws:sns:us-east-1:123456789012:topic1',
+                    'topic2' => 'arn:aws:sns:us-west-2:123456789012:topic2',
                 ],
             ],
         ];
