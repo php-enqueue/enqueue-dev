@@ -75,7 +75,7 @@ class SnsConnectionFactory implements ConnectionFactory
      */
     public function createContext(): Context
     {
-        return new SnsContext($this->establishConnection(), $this->config, $this->config['topic_arns']);
+        return new SnsContext($this->establishConnection(), $this->config);
     }
 
     private function establishConnection(): SnsClient
@@ -148,7 +148,7 @@ class SnsConnectionFactory implements ConnectionFactory
 
         return array_column(
             array_map(function ($topic) {
-                list ($name, $arn) = explode('|', $topic);
+                list($name, $arn) = explode('|', $topic);
 
                 return [
                     'name' => $name,
