@@ -55,7 +55,12 @@ class RdKafkaContext implements Context
         $this->kafkaConsumers = [];
         $this->rdKafkaConsumers = [];
 
-        $this->setSerializer(new JsonSerializer());
+        // Check for custom Serializers passed via the $config
+        if (! empty($config)) {
+            $this->setSerializer(new $config['serializer']());
+        } else {
+            $this->setSerializer(new JsonSerializer());
+        }
     }
 
     /**
