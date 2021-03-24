@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.10.10](https://github.com/php-enqueue/enqueue-dev/tree/0.10.10) (2021-03-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.9...0.10.10)
+
+**Merged pull requests:**
+
+- \[sns\] added possibility to define already existing topics \(prevent create topic call\) \#1022 [\#1147](https://github.com/php-enqueue/enqueue-dev/pull/1147) ([paramonov](https://github.com/paramonov))
+- \[gps\] Add support for consuming message from external publisher in non-standard format [\#1118](https://github.com/php-enqueue/enqueue-dev/pull/1118) ([maciejzgadzaj](https://github.com/maciejzgadzaj))
+
 ## [0.10.9](https://github.com/php-enqueue/enqueue-dev/tree/0.10.9) (2021-03-17)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.8...0.10.9)
 
