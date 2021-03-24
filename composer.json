@@ -17,11 +17,6 @@
   "require": {
     "php": "^7.3|^8.0",
 
-    "ext-amqp": "^1.9.3",
-    "ext-gearman": "^2.0",
-    "ext-mongodb": "^1.5",
-    "ext-rdkafka": "^4.0|^5.0",
-
     "queue-interop/amqp-interop": "^0.8.2",
     "queue-interop/queue-interop": "^0.8.1",
     "bunny/bunny": "^0.4|^0.5",
