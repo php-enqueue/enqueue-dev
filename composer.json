@@ -33,7 +33,6 @@
     "stomp-php/stomp-php": "^4.5|^5",
     "php-http/guzzle7-adapter": "^0.1.1",
     "php-http/client-common": "^2.2.1",
-    "richardfullmer/rabbitmq-management-api": "^2.1.0",
     "predis/predis": "^1.1",
     "thruway/client": "^0.5",
     "thruway/pawl-transport": "^0.5.1",
