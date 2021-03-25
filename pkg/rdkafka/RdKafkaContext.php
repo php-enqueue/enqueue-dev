@@ -190,6 +190,13 @@ class RdKafkaContext implements Context
         if (null === $this->conf) {
             $this->conf = new Conf();
 
+            if (array_key_exists('sasl_enable', $this->config) && true === $this->config['sasl_enable']) {
+                $this->conf->set('sasl.mechanisms', 'PLAIN');
+                $this->conf->set('sasl.username', $this->config['sasl_plain_username']);
+                $this->conf->set('sasl.password', $this->config['sasl_plain_password']);
+                $this->conf->set('security.protocol', $this->config['security_protocol']);
+            }
+
             if (isset($this->config['topic']) && is_array($this->config['topic'])) {
                 foreach ($this->config['topic'] as $key => $value) {
                     $this->conf->set($key, $value);
