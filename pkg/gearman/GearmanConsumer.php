@@ -25,12 +25,23 @@ class GearmanConsumer implements Consumer
      */
     private $context;
 
+    /**
+     * Message content.
+     *
+     * @var mixed
+     */
+    private $message;
+
     public function __construct(GearmanContext $context, GearmanDestination $destination)
     {
         $this->context = $context;
         $this->destination = $destination;
 
         $this->worker = $context->createWorker();
+
+        $this->worker->addFunction($this->destination->getName(), function (\GearmanJob $job) {
+            $this->message = GearmanMessage::jsonUnserialize($job->workload());
+        });
     }
 
     /**
@@ -53,18 +64,14 @@ class GearmanConsumer implements Consumer
         $this->worker->setTimeout($timeout);
 
         try {
-            $message = null;
-
-            $this->worker->addFunction($this->destination->getName(), function (\GearmanJob $job) use (&$message) {
-                $message = GearmanMessage::jsonUnserialize($job->workload());
-            });
+            $this->message = null;
 
             $this->worker->work();
         } finally {
             restore_error_handler();
         }
 
-        return $message;
+        return $this->message;
     }
 
     /**
