@@ -46,6 +46,7 @@ class DbalContext implements Context
         $this->config = array_replace([
             'table_name' => 'enqueue',
             'polling_interval' => null,
+            'subscription_interval' => null,
         ], $config);
 
         if ($connection instanceof Connection) {
@@ -133,6 +134,10 @@ class DbalContext implements Context
 
         if (isset($this->config['redelivery_delay'])) {
             $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
+        }
+
+        if (isset($this->config['subscription_interval'])) {
+            $consumer->setSubscriptionInterval($this->config['subscription_interval']);
         }
 
         return $consumer;
