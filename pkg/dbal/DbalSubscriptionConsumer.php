@@ -37,6 +37,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     private $redeliveryDelay;
 
     /**
+     * Time to wait between subscription requests in milliseconds.
+     *
+     * @var int
+     */
+    private $subscriptionInterval = 200;
+
+    /**
      * @param DbalContext $context
      */
     public function __construct(DbalContext $context)
@@ -59,6 +66,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     public function setRedeliveryDelay(int $redeliveryDelay): self
     {
         $this->redeliveryDelay = $redeliveryDelay;
+
+        return $this;
+    }
+
+    public function setSubscriptionInterval(int $subscriptionInterval): self
+    {
+        $this->subscriptionInterval = $subscriptionInterval;
 
         return $this;
     }
@@ -92,7 +106,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                  * @var DbalConsumer
                  * @var callable     $callback
                  */
-                list($consumer, $callback) = $this->subscribers[$message->getQueue()];
+                [$consumer, $callback] = $this->subscribers[$message->getQueue()];
 
                 if (false === call_user_func($callback, $message, $consumer)) {
                     return;
@@ -102,7 +116,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             } else {
                 $currentQueueNames = [];
 
-                usleep(200000); // 200ms
+                usleep($this->subscriptionInterval * 1000); // 200ms
             }
 
             if ($timeout && microtime(true) >= $now + $timeout) {
