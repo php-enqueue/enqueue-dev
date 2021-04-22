@@ -35,6 +35,34 @@ class SnsQsConsumer implements Consumer
         $this->queue = $queue;
     }
 
+    public function getVisibilityTimeout(): ?int
+    {
+        return $this->consumer->getVisibilityTimeout();
+    }
+
+    /**
+     * The duration (in seconds) that the received messages are hidden from subsequent retrieve
+     * requests after being retrieved by a ReceiveMessage request.
+     */
+    public function setVisibilityTimeout(int $visibilityTimeout = null): void
+    {
+        $this->consumer->setVisibilityTimeout($visibilityTimeout);
+    }
+
+    public function getMaxNumberOfMessages(): int
+    {
+        return $this->consumer->getMaxNumberOfMessages();
+    }
+
+    /**
+     * The maximum number of messages to return. Amazon SQS never returns more messages than this value
+     * (however, fewer messages might be returned). Valid values are 1 to 10. Default is 1.
+     */
+    public function setMaxNumberOfMessages(int $maxNumberOfMessages): void
+    {
+        $this->consumer->setMaxNumberOfMessages($maxNumberOfMessages);
+    }
+
     public function getQueue(): Queue
     {
         return $this->queue;
