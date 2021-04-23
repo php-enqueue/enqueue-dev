@@ -97,6 +97,7 @@ class ConnectionConfig
             'ssl_cert' => '',
             'ssl_key' => '',
             'ssl_passphrase' => '',
+            'connection_name' => null,
         ];
         $this->schemeExtensions = [];
 
@@ -171,6 +172,7 @@ class ConnectionConfig
         $config['ssl_cert'] = (string) $config['ssl_cert'];
         $config['ssl_key'] = (string) $config['ssl_key'];
         $config['ssl_passphrase'] = (string) $config['ssl_passphrase'];
+        $config['connection_name'] = null !== $config['connection_name'] ? (string) $config['connection_name'] : null;
 
         $this->config = $config;
 
@@ -346,6 +348,14 @@ class ConnectionConfig
     }
 
     /**
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return $this->getOption('connection_name');
+    }
+
+    /**
      * @param string $name
      * @param mixed  $default
      *
@@ -423,6 +433,7 @@ class ConnectionConfig
             'ssl_cert' => $dsn->getString('ssl_cert'),
             'ssl_key' => $dsn->getString('ssl_key'),
             'ssl_passphrase' => $dsn->getString('ssl_passphrase'),
+            'connection_name' => $dsn->getString('connection_name'),
         ]), function ($value) { return null !== $value; });
 
         return array_map(function ($value) {
