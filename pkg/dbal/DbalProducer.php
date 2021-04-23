@@ -111,7 +111,7 @@ class DbalProducer implements Producer
                 throw new \LogicException(sprintf('TimeToLive must be positive integer but got: "%s"', $timeToLive));
             }
 
-            $dbalMessage['time_to_live'] = time() + (int) $timeToLive / 1000;
+            $dbalMessage['time_to_live'] = time() + (int) ($timeToLive / 1000);
         }
 
         try {
