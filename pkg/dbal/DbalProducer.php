@@ -35,9 +35,6 @@ class DbalProducer implements Producer
      */
     private $context;
 
-    /**
-     * @param DbalContext $context
-     */
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
@@ -85,10 +82,7 @@ class DbalProducer implements Producer
         $delay = $message->getDeliveryDelay();
         if ($delay) {
             if (!is_int($delay)) {
-                throw new \LogicException(sprintf(
-                    'Delay must be integer but got: "%s"',
-                    is_object($delay) ? get_class($delay) : gettype($delay)
-                ));
+                throw new \LogicException(sprintf('Delay must be integer but got: "%s"', is_object($delay) ? get_class($delay) : gettype($delay)));
             }
 
             if ($delay <= 0) {
@@ -101,17 +95,14 @@ class DbalProducer implements Producer
         $timeToLive = $message->getTimeToLive();
         if ($timeToLive) {
             if (!is_int($timeToLive)) {
-                throw new \LogicException(sprintf(
-                    'TimeToLive must be integer but got: "%s"',
-                    is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)
-                ));
+                throw new \LogicException(sprintf('TimeToLive must be integer but got: "%s"', is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)));
             }
 
             if ($timeToLive <= 0) {
                 throw new \LogicException(sprintf('TimeToLive must be positive integer but got: "%s"', $timeToLive));
             }
 
-            $dbalMessage['time_to_live'] = time() + (int) $timeToLive / 1000;
+            $dbalMessage['time_to_live'] = time() + (int) ($timeToLive / 1000);
         }
 
         try {
