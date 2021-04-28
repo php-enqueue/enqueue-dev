@@ -39,14 +39,13 @@ class DbalContext implements Context
      * Callable must return instance of Doctrine\DBAL\Connection once called.
      *
      * @param Connection|callable $connection
-     * @param array               $config
      */
     public function __construct($connection, array $config = [])
     {
         $this->config = array_replace([
             'table_name' => 'enqueue',
             'polling_interval' => null,
-            'subscription_interval' => null,
+            'subscription_polling_interval' => null,
         ], $config);
 
         if ($connection instanceof Connection) {
@@ -54,11 +53,7 @@ class DbalContext implements Context
         } elseif (is_callable($connection)) {
             $this->connectionFactory = $connection;
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The connection argument must be either %s or callable that returns %s.',
-                Connection::class,
-                Connection::class
-            ));
+            throw new \InvalidArgumentException(sprintf('The connection argument must be either %s or callable that returns %s.', Connection::class, Connection::class));
         }
     }
 
@@ -136,8 +131,8 @@ class DbalContext implements Context
             $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
         }
 
-        if (isset($this->config['subscription_interval'])) {
-            $consumer->setSubscriptionInterval($this->config['subscription_interval']);
+        if (isset($this->config['subscription_polling_interval'])) {
+            $consumer->setPollingInterval($this->config['subscription_polling_interval']);
         }
 
         return $consumer;
@@ -207,10 +202,7 @@ class DbalContext implements Context
         if (false == $this->connection) {
             $connection = call_user_func($this->connectionFactory);
             if (false == $connection instanceof Connection) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of Doctrine\DBAL\Connection. It returns %s',
-                    is_object($connection) ? get_class($connection) : gettype($connection)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of Doctrine\DBAL\Connection. It returns %s', is_object($connection) ? get_class($connection) : gettype($connection)));
             }
 
             $this->connection = $connection;

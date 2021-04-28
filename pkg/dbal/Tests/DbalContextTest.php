@@ -39,6 +39,7 @@ class DbalContextTest extends TestCase
         $this->assertAttributeEquals([
             'table_name' => 'enqueue',
             'polling_interval' => null,
+            'subscription_polling_interval' => null,
         ], 'config', $factory);
     }
 
@@ -47,11 +48,13 @@ class DbalContextTest extends TestCase
         $factory = new DbalContext($this->createConnectionMock(), [
             'table_name' => 'theTableName',
             'polling_interval' => 12345,
+            'subscription_polling_interval' => 12345,
         ]);
 
         $this->assertAttributeEquals([
             'table_name' => 'theTableName',
             'polling_interval' => 12345,
+            'subscription_polling_interval' => 12345,
         ], 'config', $factory);
     }
 
