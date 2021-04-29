@@ -89,7 +89,7 @@ class DbalProducer implements Producer
                 throw new \LogicException(sprintf('Delay must be positive integer but got: "%s"', $delay));
             }
 
-            $dbalMessage['delayed_until'] = time() + (int) $delay / 1000;
+            $dbalMessage['delayed_until'] = time() + (int) ($delay / 1000);
         }
 
         $timeToLive = $message->getTimeToLive();
