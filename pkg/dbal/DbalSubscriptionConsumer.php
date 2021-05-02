@@ -11,6 +11,7 @@ use Interop\Queue\SubscriptionConsumer;
 class DbalSubscriptionConsumer implements SubscriptionConsumer
 {
     use DbalConsumerHelperTrait;
+    use DbalTypeResolverTrait;
 
     /**
      * @var DbalContext

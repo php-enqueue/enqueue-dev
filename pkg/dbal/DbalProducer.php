@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
-use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\Exception;
 use Interop\Queue\Exception\InvalidDestinationException;
@@ -15,6 +14,8 @@ use Ramsey\Uuid\Uuid;
 
 class DbalProducer implements Producer
 {
+    use DbalTypeResolverTrait;
+
     /**
      * @var int|null
      */
@@ -107,18 +108,18 @@ class DbalProducer implements Producer
 
         try {
             $rowsAffected = $this->context->getDbalConnection()->insert($this->context->getTableName(), $dbalMessage, [
-                'id' => Type::GUID,
-                'published_at' => Type::INTEGER,
-                'body' => Type::TEXT,
-                'headers' => Type::TEXT,
-                'properties' => Type::TEXT,
-                'priority' => Type::SMALLINT,
-                'queue' => Type::STRING,
-                'time_to_live' => Type::INTEGER,
-                'delayed_until' => Type::INTEGER,
-                'redelivered' => Type::SMALLINT,
-                'delivery_id' => Type::STRING,
-                'redeliver_after' => Type::BIGINT,
+                'id' => static::resolveDbalType('GUID'),
+                'published_at' => static::resolveDbalType('INTEGER'),
+                'body' => static::resolveDbalType('TEXT'),
+                'headers' => static::resolveDbalType('TEXT'),
+                'properties' => static::resolveDbalType('TEXT'),
+                'priority' => static::resolveDbalType('SMALLINT'),
+                'queue' => static::resolveDbalType('STRING'),
+                'time_to_live' => static::resolveDbalType('INTEGER'),
+                'delayed_until' => static::resolveDbalType('INTEGER'),
+                'redelivered' => static::resolveDbalType('SMALLINT'),
+                'delivery_id' => static::resolveDbalType('STRING'),
+                'redeliver_after' => static::resolveDbalType('BIGINT'),
             ]);
 
             if (1 !== $rowsAffected) {

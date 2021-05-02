@@ -15,6 +15,7 @@ class DbalConsumer implements Consumer
 {
     use ConsumerPollingTrait;
     use DbalConsumerHelperTrait;
+    use DbalTypeResolverTrait;
 
     /**
      * @var DbalContext
