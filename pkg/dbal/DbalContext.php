@@ -19,6 +19,8 @@ use Interop\Queue\Topic;
 
 class DbalContext implements Context
 {
+    use DbalTypeResolverTrait;
+
     /**
      * @var Connection
      */
