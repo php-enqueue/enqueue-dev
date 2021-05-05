@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Enqueue\Dbal\Tests;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Types;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
