@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Enqueue\Dbal\Tests;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Type;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
-use Enqueue\Dbal\DbalTypeResolverTrait;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
@@ -22,7 +22,6 @@ use Ramsey\Uuid\Uuid;
 class DbalConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
-    use DbalTypeResolverTrait;
 
     public function testShouldImplementConsumerInterface()
     {
@@ -73,7 +72,7 @@ class DbalConsumerTest extends TestCase
             ->with(
                 'some-table-name',
                 ['delivery_id' => $deliveryId->toString()],
-                ['delivery_id' => static::resolveDbalType('GUID')]
+                ['delivery_id' => Type::GUID]
             )
         ;
 
@@ -144,7 +143,7 @@ class DbalConsumerTest extends TestCase
             ->with(
                 'some-table-name',
                 ['delivery_id' => $deliveryId->toString()],
-                ['delivery_id' => static::resolveDbalType('GUID')]
+                ['delivery_id' => Type::GUID]
             )
         ;
 

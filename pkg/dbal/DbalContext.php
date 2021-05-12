@@ -6,6 +6,7 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
@@ -19,8 +20,6 @@ use Interop\Queue\Topic;
 
 class DbalContext implements Context
 {
-    use DbalTypeResolverTrait;
-
     /**
      * @var Connection
      */
@@ -184,7 +183,7 @@ class DbalContext implements Context
         $this->getDbalConnection()->delete(
             $this->getTableName(),
             ['queue' => $queue->getQueueName()],
-            ['queue' => static::resolveDbalType('STRING')]
+            ['queue' => Type::STRING]
         );
     }
 
@@ -222,18 +221,18 @@ class DbalContext implements Context
 
         $table = new Table($this->getTableName());
 
-        $table->addColumn('id', static::resolveDbalType('GUID'), ['length' => 16, 'fixed' => true]);
-        $table->addColumn('published_at', static::resolveDbalType('BIGINT'));
-        $table->addColumn('body', static::resolveDbalType('TEXT'), ['notnull' => false]);
-        $table->addColumn('headers', static::resolveDbalType('TEXT'), ['notnull' => false]);
-        $table->addColumn('properties', static::resolveDbalType('TEXT'), ['notnull' => false]);
-        $table->addColumn('redelivered', static::resolveDbalType('BOOLEAN'), ['notnull' => false]);
-        $table->addColumn('queue', static::resolveDbalType('STRING'));
-        $table->addColumn('priority', static::resolveDbalType('SMALLINT'), ['notnull' => false]);
-        $table->addColumn('delayed_until', static::resolveDbalType('BIGINT'), ['notnull' => false]);
-        $table->addColumn('time_to_live', static::resolveDbalType('BIGINT'), ['notnull' => false]);
-        $table->addColumn('delivery_id', static::resolveDbalType('GUID'), ['length' => 16, 'fixed' => true, 'notnull' => false]);
-        $table->addColumn('redeliver_after', static::resolveDbalType('BIGINT'), ['notnull' => false]);
+        $table->addColumn('id', Type::GUID, ['length' => 16, 'fixed' => true]);
+        $table->addColumn('published_at', Type::BIGINT);
+        $table->addColumn('body', Type::TEXT, ['notnull' => false]);
+        $table->addColumn('headers', Type::TEXT, ['notnull' => false]);
+        $table->addColumn('properties', Type::TEXT, ['notnull' => false]);
+        $table->addColumn('redelivered', Type::BOOLEAN, ['notnull' => false]);
+        $table->addColumn('queue', Type::STRING);
+        $table->addColumn('priority', Type::SMALLINT, ['notnull' => false]);
+        $table->addColumn('delayed_until', Type::BIGINT, ['notnull' => false]);
+        $table->addColumn('time_to_live', Type::BIGINT, ['notnull' => false]);
+        $table->addColumn('delivery_id', Type::GUID, ['length' => 16, 'fixed' => true, 'notnull' => false]);
+        $table->addColumn('redeliver_after', Type::BIGINT, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['priority', 'published_at', 'queue', 'delivery_id', 'delayed_until', 'id']);
