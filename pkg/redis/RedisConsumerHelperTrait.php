@@ -34,7 +34,7 @@ trait RedisConsumerHelperTrait
         while ($expires > time()) {
             $this->migrateExpiredMessages($this->queueNames);
 
-            if (false == $result = $this->getContext()->getRedis()->brpop($this->queueNames, $thisTimeout)) {
+            if (false == $result = $this->getContext()->getRedis()->brpop($this->queueNames, $expires - time())) {
                 return null;
             }
 
