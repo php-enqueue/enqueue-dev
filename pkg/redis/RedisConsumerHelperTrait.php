@@ -22,8 +22,7 @@ trait RedisConsumerHelperTrait
      */
     protected function receiveMessage(array $queues, int $timeout, int $redeliveryDelay): ?RedisMessage
     {
-        $startAt = time();
-        $thisTimeout = $timeout;
+        $expires = time() + $timeout;
 
         if (null === $this->queueNames) {
             $this->queueNames = [];
@@ -32,7 +31,7 @@ trait RedisConsumerHelperTrait
             }
         }
 
-        while ($thisTimeout > 0) {
+        while ($expires > time()) {
             $this->migrateExpiredMessages($this->queueNames);
 
             if (false == $result = $this->getContext()->getRedis()->brpop($this->queueNames, $thisTimeout)) {
@@ -44,8 +43,6 @@ trait RedisConsumerHelperTrait
             if ($message = $this->processResult($result, $redeliveryDelay)) {
                 return $message;
             }
-
-            $thisTimeout -= time() - $startAt;
         }
 
         return null;
