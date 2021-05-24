@@ -37,7 +37,7 @@ class ResetServicesExtensionTest extends TestCase
         ;
 
         $extension = new ResetServicesExtension($resetter);
-        $extension->onMessageReceived($context);
+        $extension->onPostMessageReceived($context);
     }
 
     protected function createContext(): MessageReceived
