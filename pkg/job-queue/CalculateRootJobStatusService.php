@@ -69,6 +69,7 @@ class CalculateRootJobStatusService
         $success = 0;
 
         foreach ($jobs as $job) {
+            $this->jobStorage->refreshedJobEntity($job);
             switch ($job->getStatus()) {
                 case Job::STATUS_NEW:
                     $new++;

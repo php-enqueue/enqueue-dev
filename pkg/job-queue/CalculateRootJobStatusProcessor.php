@@ -48,7 +48,6 @@ class CalculateRootJobStatusProcessor implements Processor, CommandSubscriberInt
 
     public function process(Message $message, Context $context)
     {
-        $this->jobStorage->clearJobCache();
         $data = JSON::decode($message->getBody());
 
         if (!isset($data['jobId'])) {
