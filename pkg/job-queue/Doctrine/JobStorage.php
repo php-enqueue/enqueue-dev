@@ -182,7 +182,7 @@ class JobStorage
     /**
      * @param Job $job
      */
-    public function refreshedJobEntity($job)
+    public function refreshJobEntity($job)
     {
         $this->getEntityManager()->refresh($job);
     }
