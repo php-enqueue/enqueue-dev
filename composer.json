@@ -26,7 +26,7 @@
     "queue-interop/queue-interop": "^0.8.1",
     "bunny/bunny": "^0.4|^0.5",
     "php-amqplib/php-amqplib": "^2.12.1",
-    "doctrine/dbal": "^2.12",
+    "doctrine/dbal": "^2.12|^3.1",
     "ramsey/uuid": "^3.5|^4",
     "psr/log": "^1.1",
     "psr/container": "^1",

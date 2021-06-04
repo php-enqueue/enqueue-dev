@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
-use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\Exception;
 use Interop\Queue\Exception\InvalidDestinationException;
@@ -107,18 +106,18 @@ class DbalProducer implements Producer
 
         try {
             $rowsAffected = $this->context->getDbalConnection()->insert($this->context->getTableName(), $dbalMessage, [
-                'id' => Type::GUID,
-                'published_at' => Type::INTEGER,
-                'body' => Type::TEXT,
-                'headers' => Type::TEXT,
-                'properties' => Type::TEXT,
-                'priority' => Type::SMALLINT,
-                'queue' => Type::STRING,
-                'time_to_live' => Type::INTEGER,
-                'delayed_until' => Type::INTEGER,
-                'redelivered' => Type::SMALLINT,
-                'delivery_id' => Type::STRING,
-                'redeliver_after' => Type::BIGINT,
+                'id' => DbalType::GUID,
+                'published_at' => DbalType::INTEGER,
+                'body' => DbalType::TEXT,
+                'headers' => DbalType::TEXT,
+                'properties' => DbalType::TEXT,
+                'priority' => DbalType::SMALLINT,
+                'queue' => DbalType::STRING,
+                'time_to_live' => DbalType::INTEGER,
+                'delayed_until' => DbalType::INTEGER,
+                'redelivered' => DbalType::SMALLINT,
+                'delivery_id' => DbalType::STRING,
+                'redeliver_after' => DbalType::BIGINT,
             ]);
 
             if (1 !== $rowsAffected) {
