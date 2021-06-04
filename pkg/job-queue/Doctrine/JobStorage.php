@@ -58,13 +58,18 @@ class JobStorage
     {
         $qb = $this->getEntityRepository()->createQueryBuilder('job');
 
-        return $qb
+        $job = $qb
             ->addSelect('rootJob')
             ->leftJoin('job.rootJob', 'rootJob')
             ->where('job = :id')
             ->setParameter('id', $id)
             ->getQuery()->getOneOrNullResult()
         ;
+        if ($job) {
+            $this->refreshJobEntity($job);
+        }
+
+        return $job;
     }
 
     /**
@@ -177,6 +182,14 @@ class JobStorage
                 $this->getEntityManager()->flush();
             }
         }
+    }
+
+    /**
+     * @param Job $job
+     */
+    public function refreshJobEntity($job)
+    {
+        $this->getEntityManager()->refresh($job);
     }
 
     /**
