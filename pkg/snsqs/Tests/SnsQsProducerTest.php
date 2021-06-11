@@ -3,6 +3,7 @@
 namespace Enqueue\SnsQs\Tests;
 
 use Enqueue\Sns\SnsContext;
+use Enqueue\Sns\SnsMessage;
 use Enqueue\Sns\SnsProducer;
 use Enqueue\SnsQs\SnsQsMessage;
 use Enqueue\SnsQs\SnsQsProducer;
@@ -91,6 +92,7 @@ class SnsQsProducerTest extends TestCase
     public function testShouldSendSnsTopicMessageToSnsProducer()
     {
         $snsMock = $this->createSnsContextMock();
+        $snsMock->method('createMessage')->willReturn(new SnsMessage());
         $destination = new SnsQsTopic('');
 
         $snsProducerStub = $this->prophesize(SnsProducer::class);
