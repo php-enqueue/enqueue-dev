@@ -95,10 +95,6 @@ class RdKafkaContext implements Context
         if (!isset($this->producer)) {
             $producer = new VendorProducer($this->getConf());
 
-            if (isset($this->config['log_level'])) {
-                $producer->setLogLevel($this->config['log_level']);
-            }
-
             $this->producer = new RdKafkaProducer($producer, $this->getSerializer());
 
             // Once created RdKafkaProducer can store messages internally that need to be delivered before PHP shuts
