@@ -66,6 +66,11 @@ class RdKafkaConsumer implements Consumer
         $this->commitAsync = $async;
     }
 
+    public function getOffset(): ?int
+    {
+        return $this->offset;
+    }
+
     public function setOffset(int $offset = null): void
     {
         if ($this->subscribed) {
