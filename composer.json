@@ -42,7 +42,7 @@
     "php-http/client-common": "^2.2.1",
     "richardfullmer/rabbitmq-management-api": "^2.1.1",
     "predis/predis": "^1.1",
-    "thruway/client": "^0.5",
+    "thruway/client": "^0.5.5",
     "thruway/pawl-transport": "^0.5.1",
     "influxdb/influxdb-php": "^1.14",
     "datadog/php-datadogstatsd": "^1.3",
