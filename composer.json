@@ -49,8 +49,9 @@
     "guzzlehttp/guzzle": "^7.0.1",
     "php-http/discovery": "^1.13",
     "voryx/thruway-common": "^1.0.1",
-    "react/dns": "^1.0",
-    "react/event-loop": "^1.0"
+    "react/dns": "^1.4",
+    "react/event-loop": "^1.2",
+    "react/promise": "^2.8"
   },
   "require-dev": {
     "ext-pcntl": "*",
