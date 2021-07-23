@@ -159,5 +159,7 @@ jobs:
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: bin/dev -b
+        env:
+          PHP_VERSION: ${{ matrix.php }}
 
       - run: bin/test.sh --${{ matrix.rdkafka_action }}=rdkafka
