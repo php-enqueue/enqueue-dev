@@ -120,7 +120,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.3', '8.0'] # same as in the container
+        php: ['7.4', '8.0'] # same as in the container
         symfony_version: ['4.4.*', '5.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         rdkafka_action: ['exclude-group', 'group']
@@ -159,5 +159,7 @@ jobs:
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: bin/dev -b
+        env:
+          PHP_VERSION: ${{ matrix.php }}
 
       - run: bin/test.sh --${{ matrix.rdkafka_action }}=rdkafka
