@@ -15,7 +15,7 @@
         "enqueue/test": "0.10.x-dev",
         "influxdb/influxdb-php": "^1.14",
         "datadog/php-datadogstatsd": "^1.3",
-        "thruway/client": "^0.5",
+        "thruway/client": "^0.5.5",
         "thruway/pawl-transport": "^0.5",
         "voryx/thruway-common": "^1.0.1"
     },
