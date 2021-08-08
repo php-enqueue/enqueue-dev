@@ -238,6 +238,7 @@ class DbalContext implements Context
 
         $table->addIndex(['redeliver_after', 'delivery_id']);
         $table->addIndex(['time_to_live', 'delivery_id']);
+        $table->addIndex(['delivery_id']);
 
         $sm->createTable($table);
     }
