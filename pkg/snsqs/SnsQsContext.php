@@ -131,7 +131,7 @@ class SnsQsContext implements Context
 
     public function setTopicArn(SnsQsTopic $topic, string $arn): void
     {
-        $this->getSnsContext()->setTopicArn($topic);
+        $this->getSnsContext()->setTopicArn($topic, $arn);
     }
 
     public function deleteTopic(SnsQsTopic $topic): void
