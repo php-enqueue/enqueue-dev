@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.10.13](https://github.com/php-enqueue/enqueue-dev/tree/0.10.13) (2021-08-25)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.12...0.10.13)
+
+**Merged pull requests:**
+
+- \[SNSQS\] added possibility to send message attributes using snsqs transport [\#1195](https://github.com/php-enqueue/enqueue-dev/pull/1195) ([onatskyy](https://github.com/onatskyy))
+- Add in missing arg [\#1194](https://github.com/php-enqueue/enqueue-dev/pull/1194) ([gdsmith](https://github.com/gdsmith))
+- \#1190 add index on delivery\_id to prevent slow queries [\#1191](https://github.com/php-enqueue/enqueue-dev/pull/1191) ([commercewerft](https://github.com/commercewerft))
+- Add setTopicArn methods to SnsContext and SnsQsContext [\#1189](https://github.com/php-enqueue/enqueue-dev/pull/1189) ([gdsmith](https://github.com/gdsmith))
+
 ## [0.10.11](https://github.com/php-enqueue/enqueue-dev/tree/0.10.11) (2021-04-28)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.10...0.10.11)
 
