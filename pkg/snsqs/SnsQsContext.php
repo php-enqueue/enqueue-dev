@@ -53,11 +53,7 @@ class SnsQsContext implements Context
         } elseif (is_callable($snsContext)) {
             $this->snsContextFactory = $snsContext;
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The $snsContext argument must be either %s or callable that returns %s once called.',
-                SnsContext::class,
-                SnsContext::class
-            ));
+            throw new \InvalidArgumentException(sprintf('The $snsContext argument must be either %s or callable that returns %s once called.', SnsContext::class, SnsContext::class));
         }
 
         if ($sqsContext instanceof SqsContext) {
@@ -65,11 +61,7 @@ class SnsQsContext implements Context
         } elseif (is_callable($sqsContext)) {
             $this->sqsContextFactory = $sqsContext;
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The $sqsContext argument must be either %s or callable that returns %s once called.',
-                SqsContext::class,
-                SqsContext::class
-            ));
+            throw new \InvalidArgumentException(sprintf('The $sqsContext argument must be either %s or callable that returns %s once called.', SqsContext::class, SqsContext::class));
         }
     }
 
@@ -137,6 +129,11 @@ class SnsQsContext implements Context
         $this->getSnsContext()->declareTopic($topic);
     }
 
+    public function setTopicArn(SnsQsTopic $topic, string $arn): void
+    {
+        $this->getSnsContext()->setTopicArn($topic, $arn);
+    }
+
     public function deleteTopic(SnsQsTopic $topic): void
     {
         $this->getSnsContext()->deleteTopic($topic);
@@ -181,11 +178,7 @@ class SnsQsContext implements Context
         if (null === $this->snsContext) {
             $context = call_user_func($this->snsContextFactory);
             if (false == $context instanceof SnsContext) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of %s. It returned %s',
-                    SnsContext::class,
-                    is_object($context) ? get_class($context) : gettype($context)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of %s. It returned %s', SnsContext::class, is_object($context) ? get_class($context) : gettype($context)));
             }
 
             $this->snsContext = $context;
@@ -199,11 +192,7 @@ class SnsQsContext implements Context
         if (null === $this->sqsContext) {
             $context = call_user_func($this->sqsContextFactory);
             if (false == $context instanceof SqsContext) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of %s. It returned %s',
-                    SqsContext::class,
-                    is_object($context) ? get_class($context) : gettype($context)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of %s. It returned %s', SqsContext::class, is_object($context) ? get_class($context) : gettype($context)));
             }
 
             $this->sqsContext = $context;
