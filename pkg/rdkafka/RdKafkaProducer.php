@@ -37,7 +37,7 @@ class RdKafkaProducer implements Producer
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
-        $partition = $message->getPartition() ?: $destination->getPartition() ?: RD_KAFKA_PARTITION_UA;
+        $partition = $this->getPartition($destination, $message);
         $payload = $this->serializer->toString($message);
         $key = $message->getKey() ?: $destination->getKey() ?: null;
 
@@ -53,17 +53,17 @@ class RdKafkaProducer implements Producer
                 trigger_error(
                     'Phprdkafka <= 3.1.0 is incompatible with librdkafka 1.0.0 when calling `producev`. '.
                     'Falling back to `produce` (without message headers) instead.',
-                    E_USER_WARNING
+                    \E_USER_WARNING
                 );
             } else {
-                $topic->producev($partition, 0 /* must be 0 */, $payload, $key, $message->getHeaders());
+                $topic->producev($partition, 0 /* must be 0 */ , $payload, $key, $message->getHeaders());
                 $this->producer->poll(0);
 
                 return;
             }
         }
 
-        $topic->produce($partition, 0 /* must be 0 */, $payload, $key);
+        $topic->produce($partition, 0 /* must be 0 */ , $payload, $key);
         $this->producer->poll(0);
     }
 
@@ -121,5 +121,22 @@ class RdKafkaProducer implements Producer
         if (method_exists($this->producer, 'flush')) {
             $this->producer->flush($timeout);
         }
+    }
+
+    /**
+     * @param RdKafkaTopic   $destination
+     * @param RdKafkaMessage $message
+     */
+    private function getPartition(Destination $destination, Message $message): int
+    {
+        if (null !== $message->getPartition()) {
+            return $message->getPartition();
+        }
+
+        if (null !== $destination->getPartition()) {
+            return $destination->getPartition();
+        }
+
+        return \RD_KAFKA_PARTITION_UA;
     }
 }
