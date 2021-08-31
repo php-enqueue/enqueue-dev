@@ -28,6 +28,22 @@ class RdKafkaProducer implements Producer
         $this->setSerializer($serializer);
     }
 
+
+    /**
+     * @param RdKafkaTopic   $destination
+     * @param RdKafkaMessage $message
+     */
+    private function getPartition(Destination $destination, Message $message): int
+    {
+        if (!is_null($message->getPartition())) {
+            return $message->getPartition();
+        }
+        if (!is_null($destination->getPartition())) {
+            return $destination->getPartition();
+        }
+        return RD_KAFKA_PARTITION_UA;
+    }
+
     /**
      * @param RdKafkaTopic   $destination
      * @param RdKafkaMessage $message
@@ -37,7 +53,7 @@ class RdKafkaProducer implements Producer
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
-        $partition = $message->getPartition() ?: $destination->getPartition() ?: RD_KAFKA_PARTITION_UA;
+        $partition = $this->getPartition($destination, $message);
         $payload = $this->serializer->toString($message);
         $key = $message->getKey() ?: $destination->getKey() ?: null;
 
