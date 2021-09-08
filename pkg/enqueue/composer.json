@@ -12,7 +12,7 @@
         "enqueue/null": "^0.10",
         "enqueue/dsn": "^0.10",
         "ramsey/uuid": "^3.5|^4",
-        "psr/log": "^1",
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
         "psr/container": "^1"
     },
     "require-dev": {

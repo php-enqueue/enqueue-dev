@@ -28,7 +28,7 @@
     "php-amqplib/php-amqplib": "^3.0",
     "doctrine/dbal": "^2.12|^3.1",
     "ramsey/uuid": "^3.5|^4",
-    "psr/log": "^1.1",
+    "psr/log": "^1.1 || ^2.0 || ^3.0",
     "psr/container": "^1",
     "makasim/temp-file": "^0.2",
     "google/cloud-pubsub": "^1.4.3",
