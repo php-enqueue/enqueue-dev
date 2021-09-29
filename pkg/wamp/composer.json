@@ -9,11 +9,12 @@
         "php": "^7.3|^8.0",
         "queue-interop/queue-interop": "^0.8.1",
         "enqueue/dsn": "^0.10.8",
-        "thruway/client": "^0.5",
+        "thruway/client": "^0.5.5",
         "thruway/pawl-transport": "^0.5.1",
         "voryx/thruway-common": "^1.0.1",
-        "react/dns": "^1.0",
-        "react/event-loop": "^1.0"
+        "react/dns": "^1.4",
+        "react/event-loop": "^1.2",
+        "react/promise": "^2.8"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
@@ -34,10 +35,13 @@
             "/Tests/"
         ]
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "extra": {
         "branch-alias": {
             "dev-master": "0.10.x-dev"
         }
+    },
+    "config": {
+        "prefer-stable": true
     }
 }

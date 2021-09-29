@@ -6,7 +6,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
@@ -39,14 +38,13 @@ class DbalContext implements Context
      * Callable must return instance of Doctrine\DBAL\Connection once called.
      *
      * @param Connection|callable $connection
-     * @param array               $config
      */
     public function __construct($connection, array $config = [])
     {
         $this->config = array_replace([
             'table_name' => 'enqueue',
             'polling_interval' => null,
-            'subscription_interval' => null,
+            'subscription_polling_interval' => null,
         ], $config);
 
         if ($connection instanceof Connection) {
@@ -54,11 +52,7 @@ class DbalContext implements Context
         } elseif (is_callable($connection)) {
             $this->connectionFactory = $connection;
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The connection argument must be either %s or callable that returns %s.',
-                Connection::class,
-                Connection::class
-            ));
+            throw new \InvalidArgumentException(sprintf('The connection argument must be either %s or callable that returns %s.', Connection::class, Connection::class));
         }
     }
 
@@ -136,8 +130,8 @@ class DbalContext implements Context
             $consumer->setRedeliveryDelay($this->config['redelivery_delay']);
         }
 
-        if (isset($this->config['subscription_interval'])) {
-            $consumer->setSubscriptionInterval($this->config['subscription_interval']);
+        if (isset($this->config['subscription_polling_interval'])) {
+            $consumer->setPollingInterval($this->config['subscription_polling_interval']);
         }
 
         return $consumer;
@@ -188,7 +182,7 @@ class DbalContext implements Context
         $this->getDbalConnection()->delete(
             $this->getTableName(),
             ['queue' => $queue->getQueueName()],
-            ['queue' => Type::STRING]
+            ['queue' => DbalType::STRING]
         );
     }
 
@@ -207,10 +201,7 @@ class DbalContext implements Context
         if (false == $this->connection) {
             $connection = call_user_func($this->connectionFactory);
             if (false == $connection instanceof Connection) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of Doctrine\DBAL\Connection. It returns %s',
-                    is_object($connection) ? get_class($connection) : gettype($connection)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of Doctrine\DBAL\Connection. It returns %s', is_object($connection) ? get_class($connection) : gettype($connection)));
             }
 
             $this->connection = $connection;
@@ -229,24 +220,25 @@ class DbalContext implements Context
 
         $table = new Table($this->getTableName());
 
-        $table->addColumn('id', Type::GUID, ['length' => 16, 'fixed' => true]);
-        $table->addColumn('published_at', Type::BIGINT);
-        $table->addColumn('body', Type::TEXT, ['notnull' => false]);
-        $table->addColumn('headers', Type::TEXT, ['notnull' => false]);
-        $table->addColumn('properties', Type::TEXT, ['notnull' => false]);
-        $table->addColumn('redelivered', Type::BOOLEAN, ['notnull' => false]);
-        $table->addColumn('queue', Type::STRING);
-        $table->addColumn('priority', Type::SMALLINT, ['notnull' => false]);
-        $table->addColumn('delayed_until', Type::BIGINT, ['notnull' => false]);
-        $table->addColumn('time_to_live', Type::BIGINT, ['notnull' => false]);
-        $table->addColumn('delivery_id', Type::GUID, ['length' => 16, 'fixed' => true, 'notnull' => false]);
-        $table->addColumn('redeliver_after', Type::BIGINT, ['notnull' => false]);
+        $table->addColumn('id', DbalType::GUID, ['length' => 16, 'fixed' => true]);
+        $table->addColumn('published_at', DbalType::BIGINT);
+        $table->addColumn('body', DbalType::TEXT, ['notnull' => false]);
+        $table->addColumn('headers', DbalType::TEXT, ['notnull' => false]);
+        $table->addColumn('properties', DbalType::TEXT, ['notnull' => false]);
+        $table->addColumn('redelivered', DbalType::BOOLEAN, ['notnull' => false]);
+        $table->addColumn('queue', DbalType::STRING);
+        $table->addColumn('priority', DbalType::SMALLINT, ['notnull' => false]);
+        $table->addColumn('delayed_until', DbalType::BIGINT, ['notnull' => false]);
+        $table->addColumn('time_to_live', DbalType::BIGINT, ['notnull' => false]);
+        $table->addColumn('delivery_id', DbalType::GUID, ['length' => 16, 'fixed' => true, 'notnull' => false]);
+        $table->addColumn('redeliver_after', DbalType::BIGINT, ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['priority', 'published_at', 'queue', 'delivery_id', 'delayed_until', 'id']);
 
         $table->addIndex(['redeliver_after', 'delivery_id']);
         $table->addIndex(['time_to_live', 'delivery_id']);
+        $table->addIndex(['delivery_id']);
 
         $sm->createTable($table);
     }

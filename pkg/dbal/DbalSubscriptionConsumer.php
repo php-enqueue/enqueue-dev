@@ -41,11 +41,8 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
      *
      * @var int
      */
-    private $subscriptionInterval = 200;
+    private $pollingInterval = 200;
 
-    /**
-     * @param DbalContext $context
-     */
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
@@ -70,9 +67,14 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         return $this;
     }
 
-    public function setSubscriptionInterval(int $subscriptionInterval): self
+    public function getPollingInterval(): int
     {
-        $this->subscriptionInterval = $subscriptionInterval;
+        return $this->pollingInterval;
+    }
+
+    public function setPollingInterval(int $msec): self
+    {
+        $this->pollingInterval = $msec;
 
         return $this;
     }
@@ -116,7 +118,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             } else {
                 $currentQueueNames = [];
 
-                usleep($this->subscriptionInterval * 1000); // 200ms
+                usleep($this->getPollingInterval() * 1000);
             }
 
             if ($timeout && microtime(true) >= $now + $timeout) {

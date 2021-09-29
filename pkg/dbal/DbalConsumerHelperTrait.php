@@ -6,7 +6,6 @@ namespace Enqueue\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\RetryableException;
-use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Uuid;
 
 trait DbalConsumerHelperTrait
@@ -39,7 +38,7 @@ trait DbalConsumerHelperTrait
             ->addOrderBy('priority', 'asc')
             ->addOrderBy('published_at', 'asc')
             ->setParameter('queues', $queues, Connection::PARAM_STR_ARRAY)
-            ->setParameter('delayedUntil', $now, Type::INTEGER)
+            ->setParameter('delayedUntil', $now, DbalType::INTEGER)
             ->setMaxResults(1);
 
         $update = $this->getConnection()->createQueryBuilder()
@@ -48,8 +47,8 @@ trait DbalConsumerHelperTrait
             ->set('redeliver_after', ':redeliverAfter')
             ->andWhere('id = :messageId')
             ->andWhere('delivery_id IS NULL')
-            ->setParameter('deliveryId', $deliveryId, Type::GUID)
-            ->setParameter('redeliverAfter', $now + $redeliveryDelay, Type::BIGINT)
+            ->setParameter('deliveryId', $deliveryId, DbalType::GUID)
+            ->setParameter('redeliverAfter', $now + $redeliveryDelay, DbalType::BIGINT)
         ;
 
         while (microtime(true) < $endAt) {
@@ -60,14 +59,14 @@ trait DbalConsumerHelperTrait
                 }
 
                 $update
-                    ->setParameter('messageId', $result['id'], Type::GUID);
+                    ->setParameter('messageId', $result['id'], DbalType::GUID);
 
                 if ($update->execute()) {
                     $deliveredMessage = $this->getConnection()->createQueryBuilder()
                         ->select('*')
                         ->from($this->getContext()->getTableName())
                         ->andWhere('delivery_id = :deliveryId')
-                        ->setParameter('deliveryId', $deliveryId, Type::GUID)
+                        ->setParameter('deliveryId', $deliveryId, DbalType::GUID)
                         ->setMaxResults(1)
                         ->execute()
                         ->fetch();
@@ -103,9 +102,9 @@ trait DbalConsumerHelperTrait
             ->set('redelivered', ':redelivered')
             ->andWhere('redeliver_after < :now')
             ->andWhere('delivery_id IS NOT NULL')
-            ->setParameter(':now', time(), Type::BIGINT)
-            ->setParameter('deliveryId', null, Type::GUID)
-            ->setParameter('redelivered', true, Type::BOOLEAN)
+            ->setParameter(':now', time(), DbalType::BIGINT)
+            ->setParameter('deliveryId', null, DbalType::GUID)
+            ->setParameter('redelivered', true, DbalType::BOOLEAN)
         ;
 
         try {
@@ -131,8 +130,8 @@ trait DbalConsumerHelperTrait
             ->andWhere('delivery_id IS NULL')
             ->andWhere('redelivered = :redelivered')
 
-            ->setParameter(':now', time(), Type::BIGINT)
-            ->setParameter('redelivered', false, Type::BOOLEAN)
+            ->setParameter(':now', time(), DbalType::BIGINT)
+            ->setParameter('redelivered', false, DbalType::BOOLEAN)
         ;
 
         try {
@@ -153,7 +152,7 @@ trait DbalConsumerHelperTrait
         $this->getConnection()->delete(
             $this->getContext()->getTableName(),
             ['delivery_id' => $deliveryId],
-            ['delivery_id' => Type::GUID]
+            ['delivery_id' => DbalType::GUID]
         );
     }
 }

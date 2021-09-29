@@ -1,5 +1,28 @@
 # Change Log
 
+## [0.10.13](https://github.com/php-enqueue/enqueue-dev/tree/0.10.13) (2021-08-25)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.12...0.10.13)
+
+**Merged pull requests:**
+
+- \[SNSQS\] added possibility to send message attributes using snsqs transport [\#1195](https://github.com/php-enqueue/enqueue-dev/pull/1195) ([onatskyy](https://github.com/onatskyy))
+- Add in missing arg [\#1194](https://github.com/php-enqueue/enqueue-dev/pull/1194) ([gdsmith](https://github.com/gdsmith))
+- \#1190 add index on delivery\_id to prevent slow queries [\#1191](https://github.com/php-enqueue/enqueue-dev/pull/1191) ([commercewerft](https://github.com/commercewerft))
+- Add setTopicArn methods to SnsContext and SnsQsContext [\#1189](https://github.com/php-enqueue/enqueue-dev/pull/1189) ([gdsmith](https://github.com/gdsmith))
+
+## [0.10.11](https://github.com/php-enqueue/enqueue-dev/tree/0.10.11) (2021-04-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.10...0.10.11)
+
+**Merged pull requests:**
+
+- Perform at least once delivery when rejecting with requeue [\#1165](https://github.com/php-enqueue/enqueue-dev/pull/1165) ([dgafka](https://github.com/dgafka))
+- Fix dbal delivery delay to always keep integer value [\#1161](https://github.com/php-enqueue/enqueue-dev/pull/1161) ([dgafka](https://github.com/dgafka))
+- Add SqsConsumer methods to SnsQsConsumer [\#1160](https://github.com/php-enqueue/enqueue-dev/pull/1160) ([gdsmith](https://github.com/gdsmith))
+- add subscription\_interval as config for dbal subscription consumer [\#1159](https://github.com/php-enqueue/enqueue-dev/pull/1159) ([mordilion](https://github.com/mordilion))
+- register worker callback only once, move to constructor [\#1157](https://github.com/php-enqueue/enqueue-dev/pull/1157) ([cturbelin](https://github.com/cturbelin))
+- Try to change doctrine/orm version for supporting 2.8 \(PHP 8 support\). [\#1155](https://github.com/php-enqueue/enqueue-dev/pull/1155) ([GothShoot](https://github.com/GothShoot))
+- sns context - fallback for not breaking BC with 10.10 previous versions [\#1149](https://github.com/php-enqueue/enqueue-dev/pull/1149) ([bafor](https://github.com/bafor))
+
 ## [0.10.10](https://github.com/php-enqueue/enqueue-dev/tree/0.10.10) (2021-03-24)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.9...0.10.10)
 

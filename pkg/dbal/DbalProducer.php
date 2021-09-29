@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Enqueue\Dbal;
 
-use Doctrine\DBAL\Types\Type;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\Exception;
 use Interop\Queue\Exception\InvalidDestinationException;
@@ -35,9 +34,6 @@ class DbalProducer implements Producer
      */
     private $context;
 
-    /**
-     * @param DbalContext $context
-     */
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
@@ -85,49 +81,43 @@ class DbalProducer implements Producer
         $delay = $message->getDeliveryDelay();
         if ($delay) {
             if (!is_int($delay)) {
-                throw new \LogicException(sprintf(
-                    'Delay must be integer but got: "%s"',
-                    is_object($delay) ? get_class($delay) : gettype($delay)
-                ));
+                throw new \LogicException(sprintf('Delay must be integer but got: "%s"', is_object($delay) ? get_class($delay) : gettype($delay)));
             }
 
             if ($delay <= 0) {
                 throw new \LogicException(sprintf('Delay must be positive integer but got: "%s"', $delay));
             }
 
-            $dbalMessage['delayed_until'] = time() + (int) $delay / 1000;
+            $dbalMessage['delayed_until'] = time() + (int) ($delay / 1000);
         }
 
         $timeToLive = $message->getTimeToLive();
         if ($timeToLive) {
             if (!is_int($timeToLive)) {
-                throw new \LogicException(sprintf(
-                    'TimeToLive must be integer but got: "%s"',
-                    is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)
-                ));
+                throw new \LogicException(sprintf('TimeToLive must be integer but got: "%s"', is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)));
             }
 
             if ($timeToLive <= 0) {
                 throw new \LogicException(sprintf('TimeToLive must be positive integer but got: "%s"', $timeToLive));
             }
 
-            $dbalMessage['time_to_live'] = time() + (int) $timeToLive / 1000;
+            $dbalMessage['time_to_live'] = time() + (int) ($timeToLive / 1000);
         }
 
         try {
             $rowsAffected = $this->context->getDbalConnection()->insert($this->context->getTableName(), $dbalMessage, [
-                'id' => Type::GUID,
-                'published_at' => Type::INTEGER,
-                'body' => Type::TEXT,
-                'headers' => Type::TEXT,
-                'properties' => Type::TEXT,
-                'priority' => Type::SMALLINT,
-                'queue' => Type::STRING,
-                'time_to_live' => Type::INTEGER,
-                'delayed_until' => Type::INTEGER,
-                'redelivered' => Type::SMALLINT,
-                'delivery_id' => Type::STRING,
-                'redeliver_after' => Type::BIGINT,
+                'id' => DbalType::GUID,
+                'published_at' => DbalType::INTEGER,
+                'body' => DbalType::TEXT,
+                'headers' => DbalType::TEXT,
+                'properties' => DbalType::TEXT,
+                'priority' => DbalType::SMALLINT,
+                'queue' => DbalType::STRING,
+                'time_to_live' => DbalType::INTEGER,
+                'delayed_until' => DbalType::INTEGER,
+                'redelivered' => DbalType::SMALLINT,
+                'delivery_id' => DbalType::STRING,
+                'redeliver_after' => DbalType::BIGINT,
             ]);
 
             if (1 !== $rowsAffected) {
