@@ -94,16 +94,11 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $now = time();
         $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
-        $currentQueueNames = [];
         while (true) {
-            if (empty($currentQueueNames)) {
-                $currentQueueNames = $queueNames;
-            }
-
             $this->removeExpiredMessages();
             $this->redeliverMessages();
 
-            if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {
+            if ($message = $this->fetchMessage($queueNames, $redeliveryDelay)) {
                 /**
                  * @var DbalConsumer
                  * @var callable     $callback
@@ -113,11 +108,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                 if (false === call_user_func($callback, $message, $consumer)) {
                     return;
                 }
-
-                unset($currentQueueNames[$message->getQueue()]);
             } else {
-                $currentQueueNames = [];
-
                 usleep($this->getPollingInterval() * 1000);
             }
 
