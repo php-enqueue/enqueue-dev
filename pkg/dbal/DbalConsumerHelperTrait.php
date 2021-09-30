@@ -29,6 +29,24 @@ trait DbalConsumerHelperTrait
 
         $endAt = microtime(true) + 0.2; // add 200ms
 
+        $queryParameters = [
+            'queues' => $queues,
+            'delayedUntil' => $now,
+        ];
+        $queryParametersTypes = [
+            'queues' => Connection::PARAM_STR_ARRAY,
+            'delayedUntil' => DbalType::INTEGER,
+        ];
+
+        $i = 0;
+        $orderByQueues = [];
+        foreach ($queues as $queue) {
+            $parameterName = 'queue'.$i;
+            $orderByQueues[] = sprintf('WHEN queue = :%s THEN %d', $parameterName, $i++);
+            $queryParameters[$parameterName] = $queue;
+            $queryParametersTypes[$parameterName] = DbalType::STRING;
+        }
+
         $select = $this->getConnection()->createQueryBuilder()
             ->select('id')
             ->from($this->getContext()->getTableName())
@@ -36,9 +54,9 @@ trait DbalConsumerHelperTrait
             ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
             ->andWhere('delivery_id IS NULL')
             ->addOrderBy('priority', 'asc')
+            ->addOrderBy('CASE '.implode(' ', $orderByQueues).' ELSE -1 END')
             ->addOrderBy('published_at', 'asc')
-            ->setParameter('queues', $queues, Connection::PARAM_STR_ARRAY)
-            ->setParameter('delayedUntil', $now, DbalType::INTEGER)
+            ->setParameters($queryParameters, $queryParametersTypes)
             ->setMaxResults(1);
 
         $update = $this->getConnection()->createQueryBuilder()

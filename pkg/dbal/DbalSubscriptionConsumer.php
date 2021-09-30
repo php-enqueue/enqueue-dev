@@ -87,8 +87,9 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
 
         $queueNames = [];
         foreach (array_keys($this->subscribers) as $queueName) {
-            $queueNames[$queueName] = $queueName;
+            $queueNames[] = $queueName;
         }
+        $queueNames = array_unique($queueNames);
 
         $timeout /= 1000;
         $now = time();
@@ -114,7 +115,10 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                     return;
                 }
 
-                unset($currentQueueNames[$message->getQueue()]);
+                $queueNames = array_filter($queueNames, static function ($queueName) use ($message) {
+                    return $message->getQueue() !== $queueName;
+                });
+                $queueNames[] = $message->getQueue();
             } else {
                 $currentQueueNames = [];
 
