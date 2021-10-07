@@ -30,16 +30,17 @@ trait DbalConsumerHelperTrait
         $endAt = microtime(true) + 0.2; // add 200ms
 
         $select = $this->getConnection()->createQueryBuilder()
-            ->select('id')
+            ->select('MIN(id)')
+            ->addSelect('queue')
             ->from($this->getContext()->getTableName())
             ->andWhere('queue IN (:queues)')
             ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
             ->andWhere('delivery_id IS NULL')
             ->addOrderBy('priority', 'asc')
             ->addOrderBy('published_at', 'asc')
+            ->groupBy('queue')
             ->setParameter('queues', $queues, Connection::PARAM_STR_ARRAY)
-            ->setParameter('delayedUntil', $now, DbalType::INTEGER)
-            ->setMaxResults(1);
+            ->setParameter('delayedUntil', $now, DbalType::INTEGER);
 
         $update = $this->getConnection()->createQueryBuilder()
             ->update($this->getContext()->getTableName())
@@ -53,7 +54,12 @@ trait DbalConsumerHelperTrait
 
         while (microtime(true) < $endAt) {
             try {
-                $result = $select->execute()->fetch();
+                $results = $select->execute()->fetch();
+                if (empty($results)) {
+                    return null;
+                }
+
+                $result = $this->getResultByQueueList($results, $queues);
                 if (empty($result)) {
                     return null;
                 }
@@ -154,5 +160,18 @@ trait DbalConsumerHelperTrait
             ['delivery_id' => $deliveryId],
             ['delivery_id' => DbalType::GUID]
         );
+    }
+
+    private function getResultByQueueList(array $results, array $queues): ?array
+    {
+        $results = array_combine(array_column($results, 'queue'), $results);
+
+        foreach ($queues as $queue) {
+            if (isset($results[$queue])) {
+                return $results[$queue];
+            }
+        }
+
+        return null;
     }
 }
