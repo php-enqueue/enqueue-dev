@@ -29,18 +29,6 @@ trait DbalConsumerHelperTrait
 
         $endAt = microtime(true) + 0.2; // add 200ms
 
-        $select = $this->getConnection()->createQueryBuilder()
-            ->select('MIN(id) as id', 'queue')
-            ->from($this->getContext()->getTableName())
-            ->andWhere('queue IN (:queues)')
-            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
-            ->andWhere('delivery_id IS NULL')
-            ->addOrderBy('priority', 'asc')
-            ->addOrderBy('published_at', 'asc')
-            ->groupBy('queue')
-            ->setParameter('queues', $queues, Connection::PARAM_STR_ARRAY)
-            ->setParameter('delayedUntil', $now, DbalType::INTEGER);
-
         $update = $this->getConnection()->createQueryBuilder()
             ->update($this->getContext()->getTableName())
             ->set('delivery_id', ':deliveryId')
@@ -53,12 +41,7 @@ trait DbalConsumerHelperTrait
 
         while (microtime(true) < $endAt) {
             try {
-                $results = $select->execute()->fetch();
-                if (empty($results)) {
-                    return null;
-                }
-
-                $result = $this->getResultByQueueList($results, $queues);
+                $result = $this->getResultByQueueList($queues, $now);
                 if (empty($result)) {
                     return null;
                 }
@@ -161,13 +144,26 @@ trait DbalConsumerHelperTrait
         );
     }
 
-    private function getResultByQueueList(array $results, array $queues): ?array
+    private function getResultByQueueList(array $queues, int $now): ?array
     {
-        $results = array_combine(array_column($results, 'queue'), $results);
+        $select = $this->getConnection()->createQueryBuilder()
+            ->select('id')
+            ->from($this->getContext()->getTableName())
+            ->andWhere('queue = :queue')
+            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
+            ->andWhere('delivery_id IS NULL')
+            ->addOrderBy('priority', 'asc')
+            ->addOrderBy('published_at', 'asc')
+            ->setParameter('delayedUntil', $now, DbalType::INTEGER)
+            ->setMaxResults(1);
 
         foreach ($queues as $queue) {
-            if (isset($results[$queue])) {
-                return $results[$queue];
+            $select->setParameter('queue', $queue, DbalType::STRING);
+
+            $result = $select->execute()->fetch();
+
+            if (!empty($result)) {
+                return $result;
             }
         }
 
