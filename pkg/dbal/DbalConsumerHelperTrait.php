@@ -30,8 +30,7 @@ trait DbalConsumerHelperTrait
         $endAt = microtime(true) + 0.2; // add 200ms
 
         $select = $this->getConnection()->createQueryBuilder()
-            ->select('MIN(id)')
-            ->addSelect('queue')
+            ->select('MIN(id) as id', 'queue')
             ->from($this->getContext()->getTableName())
             ->andWhere('queue IN (:queues)')
             ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
