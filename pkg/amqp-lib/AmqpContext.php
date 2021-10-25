@@ -299,14 +299,14 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      */
     public function convertMessage(LibAMQPMessage $amqpMessage): InteropAmqpMessage
     {
-        $headers = new AMQPTable($amqpMessage->get_properties());
-        $headers = $headers->getNativeData();
+        $amqpTable = new AMQPTable($amqpMessage->get_properties());
+        $properties = $amqpTable->getNativeData();
 
-        $properties = [];
-        if (isset($headers['application_headers'])) {
-            $properties = $headers['application_headers'];
+        $headers = [];
+        if (isset($properties['application_headers'])) {
+            $headers = $properties['application_headers'];
         }
-        unset($headers['application_headers']);
+        unset($properties['application_headers']);
 
         $message = new AmqpMessage($amqpMessage->getBody(), $properties, $headers);
         $message->setDeliveryTag((int) $amqpMessage->delivery_info['delivery_tag']);
