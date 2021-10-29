@@ -22,8 +22,10 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: none
 
-      - run: php Tests/fix_composer_json.php
-
       - uses: "ramsey/composer-install@v1"
+        with: # ext-rdkafka not needed for tests, and a pain to install on CI;
+          composer-options: "--ignore-platform-req=ext-rdkafka"
+
+      - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
       - run: vendor/bin/phpunit --exclude-group=functional
