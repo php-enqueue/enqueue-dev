@@ -3,8 +3,6 @@
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\DriverException;
-use Doctrine\DBAL\Exception\ConnectionLost;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
@@ -79,14 +77,10 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->willReturn(true)
         ;
 
-        $exception = class_exists(DriverException::class)
-            ? new ConnectionLost('message', $this->createMock(DriverException::class))
-            : new ConnectionLost($this->createMock(Doctrine\DBAL\Driver\Exception::class), null);
-
         $connection
             ->expects($this->once())
             ->method('getDatabasePlatform')
-            ->willThrowException($exception)
+            ->willThrowException(new \Exception())
         ;
         $connection
             ->expects($this->once())

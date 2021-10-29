@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\MessageReceivedExtensionInterface;
 use ErrorException;
+use Throwable;
 
 class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterface
 {
@@ -58,7 +59,7 @@ class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterfa
             $connection->executeQuery($dummySelectSQL);
 
             return true;
-        } catch (ErrorException | ConnectionLost $exception) {
+        } catch (Throwable $exception) {
             return false;
         } finally {
             restore_error_handler();
