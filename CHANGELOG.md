@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.10.14](https://github.com/php-enqueue/enqueue-dev/tree/0.10.14) (2021-10-29)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.13...0.10.14)
+
+**Merged pull requests:**
+
+- Fix passed parameters for compatibility with newest version of dbal [\#1203](https://github.com/php-enqueue/enqueue-dev/pull/1203) ([dgafka](https://github.com/dgafka))
+- Allow psr/log v2 and v3 [\#1198](https://github.com/php-enqueue/enqueue-dev/pull/1198) ([snapshotpl](https://github.com/snapshotpl))
+- Fix partition's choice for the cases when partition number is zero [\#1196](https://github.com/php-enqueue/enqueue-dev/pull/1196) ([rodrigosarmentopicpay](https://github.com/rodrigosarmentopicpay))
+- Added getter for offset field in RdKafkaConsumer class [\#1184](https://github.com/php-enqueue/enqueue-dev/pull/1184) ([DigitVE](https://github.com/DigitVE))
+
 ## [0.10.13](https://github.com/php-enqueue/enqueue-dev/tree/0.10.13) (2021-08-25)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.12...0.10.13)
 
