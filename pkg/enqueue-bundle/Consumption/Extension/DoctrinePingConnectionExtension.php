@@ -3,9 +3,11 @@
 namespace Enqueue\Bundle\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\ConnectionLost;
 use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\MessageReceivedExtensionInterface;
+use ErrorException;
 
 class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterface
 {
@@ -27,7 +29,7 @@ class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterfa
                 continue;
             }
 
-            if ($connection->ping()) {
+            if ($this->ping($connection)) {
                 continue;
             }
 
@@ -41,6 +43,25 @@ class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterfa
             $context->getLogger()->debug(
                 '[DoctrinePingConnectionExtension] Connection is active now.'
             );
+        }
+    }
+
+    private function ping(Connection $connection): bool
+    {
+        set_error_handler(static function (int $severity, string $message, string $file, int $line): bool {
+            throw new ErrorException($message, $severity, $severity, $file, $line);
+        });
+
+        try {
+            $dummySelectSQL = $connection->getDatabasePlatform()->getDummySelectSQL();
+
+            $connection->executeQuery($dummySelectSQL);
+
+            return true;
+        } catch (ErrorException | ConnectionLost $exception) {
+            return false;
+        } finally {
+            restore_error_handler();
         }
     }
 }

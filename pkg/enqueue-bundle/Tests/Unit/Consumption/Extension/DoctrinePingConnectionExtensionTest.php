@@ -3,6 +3,9 @@
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Exception\ConnectionLost;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
 use Enqueue\Consumption\Context\MessageReceived;
@@ -29,10 +32,17 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('isConnected')
             ->willReturn(true)
         ;
+
+        $abstractPlatform = $this->createMock(AbstractPlatform::class);
+        $abstractPlatform->expects($this->once())
+            ->method('getDummySelectSQL')
+            ->willReturn('dummy')
+        ;
+
         $connection
             ->expects($this->once())
-            ->method('ping')
-            ->willReturn(true)
+            ->method('getDatabasePlatform')
+            ->willReturn($abstractPlatform)
         ;
         $connection
             ->expects($this->never())
@@ -70,8 +80,8 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
         $connection
             ->expects($this->once())
-            ->method('ping')
-            ->willReturn(false)
+            ->method('getDatabasePlatform')
+            ->willThrowException(new ConnectionLost('message', $this->createMock(DriverException::class)))
         ;
         $connection
             ->expects($this->once())
@@ -128,10 +138,16 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('isConnected')
             ->willReturn(true)
         ;
+        $abstractPlatform = $this->createMock(AbstractPlatform::class);
+        $abstractPlatform->expects($this->once())
+            ->method('getDummySelectSQL')
+            ->willReturn('dummy')
+        ;
+
         $connection2
             ->expects($this->once())
-            ->method('ping')
-            ->willReturn(true)
+            ->method('getDatabasePlatform')
+            ->willReturn($abstractPlatform)
         ;
 
         $context = $this->createContext();
