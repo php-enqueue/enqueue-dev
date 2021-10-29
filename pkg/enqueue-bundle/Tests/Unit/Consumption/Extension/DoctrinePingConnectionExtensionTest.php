@@ -127,7 +127,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
         $connection1
             ->expects($this->never())
-            ->method('ping')
+            ->method('getDatabasePlatform')
         ;
 
         // 2nd connection was opened in the past
