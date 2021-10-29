@@ -78,10 +78,15 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('isConnected')
             ->willReturn(true)
         ;
+
+        $exception = class_exists(DriverException::class)
+            ? new ConnectionLost('message', $this->createMock(DriverException::class))
+            : new ConnectionLost($this->createMock(Doctrine\DBAL\Driver\Exception::class), null);
+
         $connection
             ->expects($this->once())
             ->method('getDatabasePlatform')
-            ->willThrowException(new ConnectionLost('message', $this->createMock(DriverException::class)))
+            ->willThrowException($exception)
         ;
         $connection
             ->expects($this->once())
