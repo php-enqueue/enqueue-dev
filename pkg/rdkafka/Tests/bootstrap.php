@@ -12,8 +12,5 @@ if (false == file_exists($kafkaStubsDir)) {
     }
 }
 
-// Pretend that a high version was installed, opposed to 0.8.5 from kwn/php-rdkafka-stubs
-const RD_KAFKA_VERSION = 42424242;
-
 include_once $kafkaStubsDir.'/stubs/constants.php';
 include_once $kafkaStubsDir.'/stubs/functions.php';
