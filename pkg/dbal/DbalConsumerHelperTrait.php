@@ -90,7 +90,7 @@ trait DbalConsumerHelperTrait
             ->set('redelivered', ':redelivered')
             ->andWhere('redeliver_after < :now')
             ->andWhere('delivery_id IS NOT NULL')
-            ->setParameter(':now', time(), DbalType::BIGINT)
+            ->setParameter('now', time(), DbalType::BIGINT)
             ->setParameter('deliveryId', null, DbalType::GUID)
             ->setParameter('redelivered', true, DbalType::BOOLEAN)
         ;
@@ -118,7 +118,7 @@ trait DbalConsumerHelperTrait
             ->andWhere('delivery_id IS NULL')
             ->andWhere('redelivered = :redelivered')
 
-            ->setParameter(':now', time(), DbalType::BIGINT)
+            ->setParameter('now', time(), DbalType::BIGINT)
             ->setParameter('redelivered', false, DbalType::BOOLEAN)
         ;
 

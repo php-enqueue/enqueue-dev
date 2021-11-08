@@ -173,7 +173,7 @@ class DbalConsumerTest extends TestCase
     {
         return (int) $this->context->getDbalConnection()
             ->executeQuery('SELECT count(*) FROM '.$this->context->getTableName())
-            ->fetchColumn(0)
+            ->fetchOne()
         ;
     }
 }
