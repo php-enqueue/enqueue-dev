@@ -70,6 +70,36 @@ class SnsDestination implements Topic, Queue
         return $this->getAttribute('DeliveryPolicy');
     }
 
+    /**
+     * Only FIFO.
+     *
+     * Designates a topic as FIFO. You can provide this attribute only during queue creation.
+     * You can't change it for an existing topic. When you set this attribute, you must provide aMessageGroupId
+     * explicitly.
+     * For more information, see https://docs.aws.amazon.com/sns/latest/dg/sns-fifo-topics.html
+     *
+     * @param bool $enable
+     */
+    public function setFifoTopic(bool $enable): void
+    {
+        $value = $enable ? 'true' : null;
+
+        $this->setAttribute('FifoTopic', $value);
+    }
+
+    /**
+     * Only FIFO.
+     *
+     *  Enables content-based deduplication.
+     *  For more information, see: https://docs.aws.amazon.com/sns/latest/dg/fifo-message-dedup.html
+     */
+    public function setContentBasedDeduplication(bool $enable): void
+    {
+        $value = $enable ? 'true' : null;
+
+        $this->setAttribute('ContentBasedDeduplication', $value);
+    }
+
     public function getAttributes(): array
     {
         return $this->attributes;

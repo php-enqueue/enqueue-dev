@@ -43,6 +43,16 @@ class SnsMessage implements Message
     private $targetArn;
 
     /**
+     * @var string|null
+     */
+    private $messageGroupId;
+
+    /**
+     * @var string|null
+     */
+    private $messageDeduplicationId;
+
+    /**
      * SnsMessage constructor.
      *
      * See AWS documentation for message attribute structure.
@@ -219,5 +229,49 @@ class SnsMessage implements Message
     public function setTargetArn(?string $targetArn): void
     {
         $this->targetArn = $targetArn;
+    }
+
+    /**
+     * Only FIFO.
+     *
+     * The tag that specifies that a message belongs to a specific message group. Messages that belong to the same
+     * message group are processed in a FIFO manner (however, messages in different message groups might be processed
+     * out of order).
+     * To interleave multiple ordered streams within a single queue, use MessageGroupId values (for example, session
+     * data for multiple users). In this scenario, multiple readers can process the queue, but the session data
+     * of each user is processed in a FIFO fashion.
+     * For more information, see: https://docs.aws.amazon.com/sns/latest/dg/fifo-message-grouping.html
+     *
+     * @param string|null $id
+     */
+    public function setMessageGroupId(string $id = null): void
+    {
+        $this->messageGroupId = $id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMessageGroupId(): ?string
+    {
+        return $this->messageGroupId;
+    }
+
+    /**
+     * Only FIFO.
+     *
+     * The token used for deduplication of sent messages. If a message with a particular MessageDeduplicationId is
+     * sent successfully, any messages sent with the same MessageDeduplicationId are accepted successfully but
+     * aren't delivered during the 5-minute deduplication interval.
+     * For more information, see https://docs.aws.amazon.com/sns/latest/dg/fifo-message-dedup.html
+     */
+    public function setMessageDeduplicationId(string $id = null): void
+    {
+        $this->messageDeduplicationId = $id;
+    }
+
+    public function getMessageDeduplicationId(): ?string
+    {
+        return $this->messageDeduplicationId;
     }
 }
