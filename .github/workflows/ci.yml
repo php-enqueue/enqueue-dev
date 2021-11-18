@@ -29,6 +29,7 @@ jobs:
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
+      - run: cd docker && docker build --rm --force-rm --no-cache --pull --tag "enqueue/dev:latest" -f Dockerfile .
       - run: docker run --workdir="/mqdev" -v "`pwd`:/mqdev" --rm enqueue/dev:latest php -d memory_limit=1024M bin/phpstan analyse -l 1 -c phpstan.neon --error-format=github -- ${{ env.GIT_DIFF_FILTERED }}
         if: env.GIT_DIFF_FILTERED
 
