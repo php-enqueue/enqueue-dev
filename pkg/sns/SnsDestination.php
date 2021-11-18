@@ -77,8 +77,6 @@ class SnsDestination implements Topic, Queue
      * You can't change it for an existing topic. When you set this attribute, you must provide aMessageGroupId
      * explicitly.
      * For more information, see https://docs.aws.amazon.com/sns/latest/dg/sns-fifo-topics.html
-     *
-     * @param bool $enable
      */
     public function setFifoTopic(bool $enable): void
     {
