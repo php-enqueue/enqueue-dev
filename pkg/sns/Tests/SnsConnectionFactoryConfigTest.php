@@ -65,6 +65,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'endpoint' => null,
                 'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -79,6 +80,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'endpoint' => null,
                 'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -93,6 +95,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => true,
                 'endpoint' => null,
                 'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -107,6 +110,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'endpoint' => null,
                 'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -121,6 +125,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'endpoint' => null,
                 'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -135,6 +140,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'endpoint' => null,
                 'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -155,6 +161,7 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
                 'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -171,6 +178,25 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'topic_arns' => [
                     'topic1' => 'arn:aws:sns:us-east-1:123456789012:topic1',
                     'topic2' => 'arn:aws:sns:us-west-2:123456789012:topic2',
+                ],
+                'http' => [],
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'sns:?http[timeout]=5&http[connect_timeout]=2'],
+            [
+                'key' => null,
+                'secret' => null,
+                'token' => null,
+                'region' => null,
+                'version' => '2010-03-31',
+                'lazy' => true,
+                'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [
+                    'timeout' => '5',
+                    'connect_timeout' => '2',
                 ],
             ],
         ];
