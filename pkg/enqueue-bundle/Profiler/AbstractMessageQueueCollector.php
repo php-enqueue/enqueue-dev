@@ -71,7 +71,7 @@ abstract class AbstractMessageQueueCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'enqueue.message_queue';
     }
