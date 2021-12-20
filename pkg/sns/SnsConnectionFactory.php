@@ -105,6 +105,10 @@ class SnsConnectionFactory implements ConnectionFactory
             }
         }
 
+        if (isset($this->config['http'])) {
+            $config['http'] = $this->config['http'];
+        }
+
         $establishConnection = function () use ($config) {
             return (new Sdk(['Sns' => $config]))->createMultiRegionSns();
         };
@@ -134,6 +138,7 @@ class SnsConnectionFactory implements ConnectionFactory
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
             'topic_arns' => $dsn->getArray('topic_arns', [])->toArray(),
+            'http' => $dsn->getArray('http', [])->toArray(),
         ]), function ($value) { return null !== $value; });
     }
 
@@ -148,6 +153,7 @@ class SnsConnectionFactory implements ConnectionFactory
             'lazy' => true,
             'endpoint' => null,
             'topic_arns' => [],
+            'http' => [],
         ];
     }
 }

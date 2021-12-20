@@ -43,20 +43,21 @@ class SnsMessage implements Message
     private $targetArn;
 
     /**
+     * @var string|null
+     */
+    private $messageGroupId;
+
+    /**
+     * @var string|null
+     */
+    private $messageDeduplicationId;
+
+    /**
      * SnsMessage constructor.
      *
      * See AWS documentation for message attribute structure.
      *
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sns-2010-03-31.html#shape-messageattributevalue
-     *
-     * @param string      $body
-     * @param array       $properties
-     * @param array       $headers
-     * @param array|null  $messageAttributes
-     * @param string|null $messageStructure
-     * @param string|null $phoneNumber
-     * @param string|null $subject
-     * @param string|null $targetArn
      */
     public function __construct(
         string $body = '',
@@ -79,89 +80,58 @@ class SnsMessage implements Message
         $this->redelivered = false;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSnsMessageId(): ?string
     {
         return $this->snsMessageId;
     }
 
-    /**
-     * @param string|null $snsMessageId
-     */
     public function setSnsMessageId(?string $snsMessageId): void
     {
         $this->snsMessageId = $snsMessageId;
     }
 
-    /**
-     * @return string|null
-     */
     public function getMessageStructure(): ?string
     {
         return $this->messageStructure;
     }
 
-    /**
-     * @param string|null $messageStructure
-     */
     public function setMessageStructure(?string $messageStructure): void
     {
         $this->messageStructure = $messageStructure;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;
     }
 
-    /**
-     * @param string|null $phoneNumber
-     */
     public function setPhoneNumber(?string $phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSubject(): ?string
     {
         return $this->subject;
     }
 
-    /**
-     * @param string|null $subject
-     */
     public function setSubject(?string $subject): void
     {
         $this->subject = $subject;
     }
 
-    /**
-     * @return array|null
-     */
     public function getMessageAttributes(): ?array
     {
         return $this->messageAttributes;
     }
 
-    /**
-     * @param array|null $messageAttributes
-     */
     public function setMessageAttributes(?array $messageAttributes): void
     {
         $this->messageAttributes = $messageAttributes;
     }
 
     /**
-     * @param string $name
-     * @param null   $default
+     * @param null $default
      *
      * @return array|null
      */
@@ -177,9 +147,6 @@ class SnsMessage implements Message
      *        'DataType' => '<string>', // REQUIRED
      *        'StringValue' => '<string>',
      *     ].
-     *
-     * @param string     $name
-     * @param array|null $attribute
      */
     public function setAttribute(string $name, ?array $attribute): void
     {
@@ -191,7 +158,6 @@ class SnsMessage implements Message
     }
 
     /**
-     * @param string                          $name
      * @param string                          $dataType String, String.Array, Number, or Binary
      * @param string|resource|StreamInterface $value
      */
@@ -205,19 +171,52 @@ class SnsMessage implements Message
         ];
     }
 
-    /**
-     * @return string|null
-     */
     public function getTargetArn(): ?string
     {
         return $this->targetArn;
     }
 
-    /**
-     * @param string|null $targetArn
-     */
     public function setTargetArn(?string $targetArn): void
     {
         $this->targetArn = $targetArn;
+    }
+
+    /**
+     * Only FIFO.
+     *
+     * The tag that specifies that a message belongs to a specific message group. Messages that belong to the same
+     * message group are processed in a FIFO manner (however, messages in different message groups might be processed
+     * out of order).
+     * To interleave multiple ordered streams within a single queue, use MessageGroupId values (for example, session
+     * data for multiple users). In this scenario, multiple readers can process the queue, but the session data
+     * of each user is processed in a FIFO fashion.
+     * For more information, see: https://docs.aws.amazon.com/sns/latest/dg/fifo-message-grouping.html
+     */
+    public function setMessageGroupId(string $id = null): void
+    {
+        $this->messageGroupId = $id;
+    }
+
+    public function getMessageGroupId(): ?string
+    {
+        return $this->messageGroupId;
+    }
+
+    /**
+     * Only FIFO.
+     *
+     * The token used for deduplication of sent messages. If a message with a particular MessageDeduplicationId is
+     * sent successfully, any messages sent with the same MessageDeduplicationId are accepted successfully but
+     * aren't delivered during the 5-minute deduplication interval.
+     * For more information, see https://docs.aws.amazon.com/sns/latest/dg/fifo-message-dedup.html
+     */
+    public function setMessageDeduplicationId(string $id = null): void
+    {
+        $this->messageDeduplicationId = $id;
+    }
+
+    public function getMessageDeduplicationId(): ?string
+    {
+        return $this->messageDeduplicationId;
     }
 }

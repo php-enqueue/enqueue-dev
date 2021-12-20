@@ -67,6 +67,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -83,6 +84,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -99,6 +101,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -115,6 +118,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -131,6 +135,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -147,6 +152,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => 'staging',
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -163,6 +169,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -185,6 +192,7 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => 'http://localstack:1111',
                 'profile' => null,
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
             ],
         ];
 
@@ -203,6 +211,27 @@ class SqsConnectionFactoryConfigTest extends TestCase
                 'endpoint' => null,
                 'profile' => 'staging',
                 'queue_owner_aws_account_id' => null,
+                'http' => [],
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'sqs:?http[timeout]=5&http[connect_timeout]=2'],
+            [
+                'key' => null,
+                'secret' => null,
+                'token' => null,
+                'region' => null,
+                'retries' => 3,
+                'version' => '2012-11-05',
+                'lazy' => true,
+                'endpoint' => null,
+                'profile' => null,
+                'queue_owner_aws_account_id' => null,
+                'http' => [
+                    'timeout' => '5',
+                    'connect_timeout' => '2',
+                ],
             ],
         ];
     }

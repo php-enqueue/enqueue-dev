@@ -77,6 +77,14 @@ class SnsProducer implements Producer
             $arguments['TargetArn'] = $targetArn;
         }
 
+        if ($messageGroupId = $message->getMessageGroupId()) {
+            $arguments['MessageGroupId'] = $messageGroupId;
+        }
+
+        if ($messageDeduplicationId = $message->getMessageDeduplicationId()) {
+            $arguments['MessageDeduplicationId'] = $messageDeduplicationId;
+        }
+
         $result = $this->context->getSnsClient()->publish($arguments);
 
         if (false == $result->hasKey('MessageId')) {

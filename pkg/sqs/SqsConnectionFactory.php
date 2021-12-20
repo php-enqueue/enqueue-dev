@@ -108,6 +108,10 @@ class SqsConnectionFactory implements ConnectionFactory
             }
         }
 
+        if (isset($this->config['http'])) {
+            $config['http'] = $this->config['http'];
+        }
+
         $establishConnection = function () use ($config) {
             return (new Sdk(['Sqs' => $config]))->createMultiRegionSqs();
         };
@@ -139,6 +143,7 @@ class SqsConnectionFactory implements ConnectionFactory
             'endpoint' => $dsn->getString('endpoint'),
             'profile' => $dsn->getString('profile'),
             'queue_owner_aws_account_id' => $dsn->getString('queue_owner_aws_account_id'),
+            'http' => $dsn->getArray('http', [])->toArray(),
         ]), function ($value) { return null !== $value; });
     }
 
@@ -155,6 +160,7 @@ class SqsConnectionFactory implements ConnectionFactory
             'endpoint' => null,
             'profile' => null,
             'queue_owner_aws_account_id' => null,
+            'http' => [],
         ];
     }
 }
