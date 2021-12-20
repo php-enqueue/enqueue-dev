@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.10.15](https://github.com/php-enqueue/enqueue-dev/tree/0.10.15) (2021-12-11)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.14...0.10.15)
+
+**Merged pull requests:**
+
+- feat\(snsqs\): allow client http configuration for sns and sqs [\#1216](https://github.com/php-enqueue/enqueue-dev/pull/1216) ([eortiz-tracktik](https://github.com/eortiz-tracktik))
+- Add FIFO logic to SNS [\#1214](https://github.com/php-enqueue/enqueue-dev/pull/1214) ([kate-simozhenko](https://github.com/kate-simozhenko))
+- Fix falling tests [\#1211](https://github.com/php-enqueue/enqueue-dev/pull/1211) ([snapshotpl](https://github.com/snapshotpl))
+- RdKafka; Replace composer-modifying for testing with --ignore-platform-req argument [\#1210](https://github.com/php-enqueue/enqueue-dev/pull/1210) ([maartenderie](https://github.com/maartenderie))
+- Allow psr/container v2 [\#1206](https://github.com/php-enqueue/enqueue-dev/pull/1206) ([ADmad](https://github.com/ADmad))
+
 ## [0.10.14](https://github.com/php-enqueue/enqueue-dev/tree/0.10.14) (2021-10-29)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.13...0.10.14)
 

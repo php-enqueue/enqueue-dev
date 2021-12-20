@@ -36,6 +36,7 @@ class SqsConnectionFactoryTest extends TestCase
             'endpoint' => null,
             'profile' => null,
             'queue_owner_aws_account_id' => null,
+            'http' => [],
         ], 'config', $factory);
     }
 
@@ -54,6 +55,7 @@ class SqsConnectionFactoryTest extends TestCase
             'endpoint' => null,
             'profile' => null,
             'queue_owner_aws_account_id' => null,
+            'http' => [],
         ], 'config', $factory);
     }
 
