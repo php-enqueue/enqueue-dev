@@ -14,9 +14,6 @@ class FlushSpoolProducerListener implements EventSubscriberInterface
      */
     private $producer;
 
-    /**
-     * @param SpoolProducer $producer
-     */
     public function __construct(SpoolProducer $producer)
     {
         $this->producer = $producer;
