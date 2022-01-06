@@ -16,7 +16,7 @@ class Container implements ContainerInterface
         $this->services = $services;
     }
 
-    public function get($id)
+    public function get(string $id)
     {
         if (false == $this->has($id)) {
             throw new NotFoundException(sprintf('The service "%s" not found.', $id));
@@ -25,7 +25,7 @@ class Container implements ContainerInterface
         return $this->services[$id];
     }
 
-    public function has($id)
+    public function has(string $id)
     {
         return array_key_exists($id, $this->services);
     }
