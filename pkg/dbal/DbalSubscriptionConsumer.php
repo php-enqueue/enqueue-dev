@@ -87,21 +87,29 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
 
         $queueNames = [];
         foreach (array_keys($this->subscribers) as $queueName) {
-            $queueNames[] = $queueName;
+            $queueNames[$queueName] = $queueName;
         }
-        $queueNames = array_unique($queueNames);
 
         $timeout /= 1000;
         $now = time();
         $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
+        $currentQueueNames = [];
+        $queueConsumed = false;
         while (true) {
+            if (empty($currentQueueNames)) {
+                $currentQueueNames = $queueNames;
+                $queueConsumed = false;
+            }
+
             $this->removeExpiredMessages();
             $this->redeliverMessages();
 
-            if ($message = $this->fetchMessage($queueNames, $redeliveryDelay)) {
+            if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {
+                $queueConsumed = true;
+
                 /**
-                 * @var DbalConsumer
+                 * @var DbalConsumer $consumer
                  * @var callable     $callback
                  */
                 [$consumer, $callback] = $this->subscribers[$message->getQueue()];
@@ -110,12 +118,13 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
                     return;
                 }
 
-                $queueNames = array_filter($queueNames, static function ($queueName) use ($message) {
-                    return $message->getQueue() !== $queueName;
-                });
-                $queueNames[] = $message->getQueue();
+                unset($currentQueueNames[$message->getQueue()]);
             } else {
-                usleep($this->getPollingInterval() * 1000);
+                $currentQueueNames = [];
+
+                if (!$queueConsumed) {
+                    usleep($this->getPollingInterval() * 1000);
+                }
             }
 
             if ($timeout && microtime(true) >= $now + $timeout) {

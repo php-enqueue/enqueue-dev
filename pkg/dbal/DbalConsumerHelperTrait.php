@@ -29,6 +29,18 @@ trait DbalConsumerHelperTrait
 
         $endAt = microtime(true) + 0.2; // add 200ms
 
+        $select = $this->getConnection()->createQueryBuilder()
+            ->select('id')
+            ->from($this->getContext()->getTableName())
+            ->andWhere('queue IN (:queues)')
+            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
+            ->andWhere('delivery_id IS NULL')
+            ->addOrderBy('priority', 'asc')
+            ->addOrderBy('published_at', 'asc')
+            ->setParameter('queues', $queues, Connection::PARAM_STR_ARRAY)
+            ->setParameter('delayedUntil', $now, DbalType::INTEGER)
+            ->setMaxResults(1);
+
         $update = $this->getConnection()->createQueryBuilder()
             ->update($this->getContext()->getTableName())
             ->set('delivery_id', ':deliveryId')
@@ -41,7 +53,7 @@ trait DbalConsumerHelperTrait
 
         while (microtime(true) < $endAt) {
             try {
-                $result = $this->getResultByQueueList($queues, $now);
+                $result = $select->execute()->fetch();
                 if (empty($result)) {
                     return null;
                 }
@@ -142,31 +154,5 @@ trait DbalConsumerHelperTrait
             ['delivery_id' => $deliveryId],
             ['delivery_id' => DbalType::GUID]
         );
-    }
-
-    private function getResultByQueueList(array $queues, int $now): ?array
-    {
-        $select = $this->getConnection()->createQueryBuilder()
-            ->select('id')
-            ->from($this->getContext()->getTableName())
-            ->andWhere('queue = :queue')
-            ->andWhere('delayed_until IS NULL OR delayed_until <= :delayedUntil')
-            ->andWhere('delivery_id IS NULL')
-            ->addOrderBy('priority', 'asc')
-            ->addOrderBy('published_at', 'asc')
-            ->setParameter('delayedUntil', $now, DbalType::INTEGER)
-            ->setMaxResults(1);
-
-        foreach ($queues as $queue) {
-            $select->setParameter('queue', $queue, DbalType::STRING);
-
-            $result = $select->execute()->fetch();
-
-            if (!empty($result)) {
-                return $result;
-            }
-        }
-
-        return null;
     }
 }
