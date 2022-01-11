@@ -6,7 +6,7 @@ namespace Enqueue\RdKafka;
 
 class JsonSerializer implements Serializer
 {
-    public function toString(RdKafkaMessage $message): string
+    public function toString(RdKafkaMessage $message): ?string
     {
         $json = json_encode([
             'body' => $message->getBody(),
@@ -14,26 +14,22 @@ class JsonSerializer implements Serializer
             'headers' => $message->getHeaders(),
         ]);
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
+        if (\JSON_ERROR_NONE !== json_last_error()) {
+            throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
         return $json;
     }
 
-    public function toMessage(string $string): RdKafkaMessage
+    public function toMessage(?string $string): RdKafkaMessage
     {
-        $data = json_decode($string, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
+        if (null !== $string) {
+            $data = json_decode($string, true);
+            if (\JSON_ERROR_NONE !== json_last_error()) {
+                throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
+            }
+        } else {
+            $data = ['body' => null, 'properties' => null, 'headers' => 'headers'];
         }
 
         return new RdKafkaMessage($data['body'], $data['properties'], $data['headers']);
