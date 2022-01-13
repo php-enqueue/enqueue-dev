@@ -65,5 +65,7 @@ class TopicsCommand extends Command
         $output->writeln(sprintf('Found %s topics', $count));
         $output->writeln('');
         $table->render();
+
+        return 0;
     }
 }

@@ -113,6 +113,8 @@ class ConsumeMessagesCommand extends Command
         }
 
         $this->consumer->consume($this->getRuntimeExtensions($input, $output));
+
+        return 0;
     }
 
     /**

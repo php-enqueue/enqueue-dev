@@ -34,5 +34,7 @@ class QueueConsumerOptionsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->setQueueConsumerOptions($this->consumer, $input);
+
+        return 0;
     }
 }

@@ -50,5 +50,7 @@ class ProduceMessageCommand extends Command
         );
 
         $output->writeln('Message is sent');
+
+        return 0;
     }
 }

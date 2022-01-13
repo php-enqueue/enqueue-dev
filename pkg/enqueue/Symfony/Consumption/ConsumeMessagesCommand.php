@@ -61,5 +61,7 @@ class ConsumeMessagesCommand extends Command implements ContainerAwareInterface
         $runtimeExtensions = new ChainExtension($extensions);
 
         $this->consumer->consume($runtimeExtensions);
+
+        return 0;
     }
 }

@@ -69,5 +69,7 @@ class QueuesCommand extends Command
         $output->writeln(sprintf('Found %s destinations', $count));
         $output->writeln('');
         $table->render();
+
+        return 0;
     }
 }

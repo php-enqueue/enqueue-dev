@@ -96,5 +96,7 @@ class ContainerAwareConsumeMessagesCommand extends Command implements ContainerA
         }
 
         $this->consumer->consume($runtimeExtensions);
+
+        return 0;
     }
 }

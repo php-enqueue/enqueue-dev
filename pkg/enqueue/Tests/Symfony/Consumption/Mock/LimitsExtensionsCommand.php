@@ -28,5 +28,7 @@ class LimitsExtensionsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->extensions = $this->getLimitsExtensions($input, $output);
+
+        return 0;
     }
 }

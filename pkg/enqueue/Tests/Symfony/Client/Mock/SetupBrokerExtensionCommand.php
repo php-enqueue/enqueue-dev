@@ -36,5 +36,7 @@ class SetupBrokerExtensionCommand extends Command
             Config::create(),
             new QueueMetaRegistry(Config::create(), [])
         ));
+
+        return 0;
     }
 }
