@@ -23,13 +23,13 @@ class JsonSerializer implements Serializer
 
     public function toMessage(?string $string): RdKafkaMessage
     {
-        if (null !== $string) {
-            $data = json_decode($string, true);
-            if (\JSON_ERROR_NONE !== json_last_error()) {
-                throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
-            }
-        } else {
-            $data = ['body' => null, 'properties' => null, 'headers' => 'headers'];
+        if (null === $string) {
+            return new RdKafkaMessage(null, null, null);
+        }
+
+        $data = json_decode($string, true);
+        if (\JSON_ERROR_NONE !== json_last_error()) {
+            throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
         return new RdKafkaMessage($data['body'], $data['properties'], $data['headers']);
