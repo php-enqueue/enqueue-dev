@@ -24,7 +24,9 @@ RUN set -x && \
         php${PHP_VERSION}-curl \
         make \
         g++ \
-        unzip
+        unzip \
+    && \
+    update-alternatives --install /usr/bin/php php /usr/bin/php${PHP_VERSION} 100
 
 ## gearman
 RUN set -x && \
