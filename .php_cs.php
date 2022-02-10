@@ -1,6 +1,6 @@
 <?php
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setRules(array(
         '@Symfony' => true,
@@ -8,9 +8,13 @@ return PhpCsFixer\Config::create()
         'array_syntax' => array('syntax' => 'short'),
         'combine_consecutive_unsets' => true,
         // one should use PHPUnit methods to set up expected exception instead of annotations
-        'general_phpdoc_annotation_remove' => array('expectedException', 'expectedExceptionMessage', 'expectedExceptionMessageRegExp'),
+        'general_phpdoc_annotation_remove' => ['annotations' =>
+            ['expectedException', 'expectedExceptionMessage', 'expectedExceptionMessageRegExp']
+        ],
         'heredoc_to_nowdoc' => true,
-        'no_extra_consecutive_blank_lines' => array('break', 'continue', 'extra', 'return', 'throw', 'use', 'parenthesis_brace_block', 'square_brace_block', 'curly_brace_block'),
+        'no_extra_blank_lines' => ['tokens' => [
+            'break', 'continue', 'extra', 'return', 'throw', 'use', 'parenthesis_brace_block', 'square_brace_block', 'curly_brace_block']
+        ],
         'no_unreachable_default_argument_value' => true,
         'no_useless_else' => true,
         'no_useless_return' => true,
@@ -18,7 +22,7 @@ return PhpCsFixer\Config::create()
         'ordered_imports' => true,
         'phpdoc_add_missing_param_annotation' => true,
         'phpdoc_order' => true,
-        'psr4' => true,
+        'psr_autoloading' => true,
         'strict_param' => true,
         'native_function_invocation' => false,
     ))

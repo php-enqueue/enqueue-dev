@@ -10,6 +10,7 @@ use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullMessage;
 use Enqueue\Null\NullQueue;
+use Enqueue\Test\TestLogger;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Destination;
@@ -19,7 +20,6 @@ use Interop\Queue\Queue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Psr\Log\Test\TestLogger;
 
 class DelayRedeliveredMessageExtensionTest extends TestCase
 {

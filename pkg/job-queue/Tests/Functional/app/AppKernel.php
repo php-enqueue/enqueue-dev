@@ -7,10 +7,7 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
-    /**
-     * @return array
-     */
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         $bundles = [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
@@ -20,28 +17,28 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
-    /**
-     * @return string
-     */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sys_get_temp_dir().'/EnqueueJobQueue/cache';
     }
 
-    /**
-     * @return string
-     */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return sys_get_temp_dir().'/EnqueueJobQueue/cache/logs';
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        if (self::VERSION_ID < 60000) {
+            $loader->load(__DIR__.'/config/config-sf5.yml');
+
+            return;
+        }
+
         $loader->load(__DIR__.'/config/config.yml');
     }
 
-    protected function getContainerClass()
+    protected function getContainerClass(): string
     {
         return parent::getContainerClass().'JobQueue';
     }
