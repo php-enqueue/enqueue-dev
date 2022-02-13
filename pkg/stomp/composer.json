@@ -5,12 +5,6 @@
     "keywords": ["messaging", "queue", "stomp"],
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/andrewmy/php-rabbitmq-management-api.git"
-        }
-    ],
     "require": {
         "php": "^7.3|^8.0",
         "enqueue/dsn": "^0.10",
@@ -18,7 +12,7 @@
         "queue-interop/queue-interop": "^0.8",
         "php-http/guzzle7-adapter": "^0.1.1",
         "php-http/client-common": "^2.2.1",
-        "richardfullmer/rabbitmq-management-api": "^2.1.1",
+        "andrewmy/rabbitmq-management-api": "^2.1.2",
         "guzzlehttp/guzzle": "^7.0.1",
         "php-http/discovery": "^1.13"
     },
