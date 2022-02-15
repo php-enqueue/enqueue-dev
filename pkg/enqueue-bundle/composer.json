@@ -20,12 +20,6 @@
         "source": "https://github.com/php-enqueue/enqueue-dev",
         "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/andrewmy/php-rabbitmq-management-api.git"
-        }
-    ],
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "enqueue/stomp": "0.10.x-dev",
