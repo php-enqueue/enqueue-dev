@@ -86,7 +86,7 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncListener'
         public: true
         tags:
-            - { name: 'kernel.event_listener', async: true, event: 'test_async', method: 'onEvent' }
+            - { name: 'kernel.event_listener', async: true, event: 'test_async', method: 'onEvent', dispatcher: 'enqueue.events.event_dispatcher' }
 
     test_command_subscriber_processor:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestCommandSubscriberProcessor'
@@ -110,7 +110,7 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncSubscriber'
         public: true
         tags:
-            - { name: 'kernel.event_subscriber', async: true }
+            - { name: 'kernel.event_subscriber', async: true, dispatcher: 'enqueue.events.event_dispatcher' }
 
     test_async_event_transformer:
         class: 'Enqueue\Bundle\Tests\Functional\App\TestAsyncEventTransformer'
