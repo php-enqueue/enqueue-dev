@@ -26,4 +26,4 @@ jobs:
         with:
           composer-options: "--prefer-source"
 
-      - run: vendor/bin/phpunit --exlude-group=functional
+      - run: vendor/bin/phpunit --exclude-group=functional
