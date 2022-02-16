@@ -39,7 +39,7 @@ enqueue:
 
 ## Usage
 
-To make your listener async you have add `async: true` attribute to the tag `kernel.event_listener`, like this:
+To make your listener async you have add `async: true` (every version) and `dispatcher: 'enqueue.events.event_dispatcher'` (since Symfony 5.3) attributes to the tag `kernel.event_listener`, like this:
 
 ```yaml
 # app/config/config.yml
@@ -48,7 +48,7 @@ services:
     acme.foo_listener:
         class: 'AcmeBundle\Listener\FooListener'
         tags:
-            - { name: 'kernel.event_listener', async: true, event: 'foo', method: 'onEvent' }
+            - { name: 'kernel.event_listener', async: true, event: 'foo', method: 'onEvent', dispatcher: 'enqueue.events.event_dispatcher' }
 ```
 
 or to `kernel.event_subscriber`:
@@ -60,7 +60,7 @@ services:
     test_async_subscriber:
         class: 'AcmeBundle\Listener\TestAsyncSubscriber'
         tags:
-            - { name: 'kernel.event_subscriber', async: true }
+            - { name: 'kernel.event_subscriber', async: true, dispatcher: 'enqueue.events.event_dispatcher' }
 ```
 
 That's basically it. The rest of the doc describes advanced features.
@@ -78,7 +78,7 @@ services:
         public: false
         arguments: ['@enqueue.transport.default.context', '@enqueue.events.registry', 'a_queue_name']
         tags:
-          - { name: 'kernel.event_listener', event: 'foo', method: 'onEvent' }
+          - { name: 'kernel.event_listener', event: 'foo', method: 'onEvent', dispatcher: 'enqueue.events.event_dispatcher' }
 ```
 
 
