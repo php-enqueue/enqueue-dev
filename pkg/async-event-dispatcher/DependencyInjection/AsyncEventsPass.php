@@ -4,9 +4,7 @@ namespace Enqueue\AsyncEventDispatcher\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Kernel;
 
 class AsyncEventsPass implements CompilerPassInterface
 {
