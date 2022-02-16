@@ -13,10 +13,8 @@ use Interop\Queue\Context;
 use Interop\Queue\Producer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class AsyncListenerTest extends TestCase
 {
@@ -73,9 +71,7 @@ class AsyncListenerTest extends TestCase
 
         $listener->syncMode('fooEvent');
 
-        $eventClass = Kernel::VERSION_ID >= 50000 ? ContractEvent::class : Event::class;
-
-        $listener->onEvent(new $eventClass(), 'fooEvent');
+        $listener->onEvent(new Event(), 'fooEvent');
         $listener->onEvent(new GenericEvent(), 'fooEvent');
     }
 

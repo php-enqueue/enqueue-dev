@@ -17,10 +17,10 @@
         "phpunit/phpunit": "^9.5",
         "enqueue/test": "0.10.x-dev",
         "doctrine/doctrine-bundle": "^2.0",
-        "symfony/browser-kit": "^4.3|^5|^6.0",
-        "symfony/expression-language": "^4.3|^5|^6.0",
-        "symfony/framework-bundle": "^4.3|^5|^6.0",
-        "symfony/yaml": "^4.3|^5|^6.0"
+        "symfony/browser-kit": "^5.1|^6.0",
+        "symfony/expression-language": "^5.1|^6.0",
+        "symfony/framework-bundle": "^5.1|^6.0",
+        "symfony/yaml": "^5.1|^6.0"
     },
     "support": {
         "email": "opensource@forma-pro.com",

@@ -22,9 +22,6 @@ class AsyncEventsPass implements CompilerPassInterface
 
         $defaultClient = $container->getParameter('enqueue.default_client');
 
-        // TODO: Remove when dropping Symfony < 5.3
-        $useLegacyDispatcherConfig = (Kernel::VERSION_ID < 50300);
-
         $registeredToEvent = [];
         foreach ($container->findTaggedServiceIds('kernel.event_listener') as $serviceId => $tagAttributes) {
             foreach ($tagAttributes as $tagAttribute) {
@@ -34,13 +31,6 @@ class AsyncEventsPass implements CompilerPassInterface
 
                 $event = $tagAttribute['event'];
 
-                $service = $container->getDefinition($serviceId);
-
-                if ($useLegacyDispatcherConfig) {
-                    $service->clearTag('kernel.event_listener');
-                    $service->addTag('enqueue.async_event_listener', $tagAttribute);
-                }
-
                 if (false == isset($registeredToEvent[$event])) {
                     $container->getDefinition('enqueue.events.async_listener')
                         ->addTag('kernel.event_listener', [
@@ -49,15 +39,13 @@ class AsyncEventsPass implements CompilerPassInterface
                         ])
                     ;
 
-                    if (!$useLegacyDispatcherConfig) {
-                        $container->getDefinition('enqueue.events.async_listener')
-                            ->addTag('kernel.event_listener', [
-                                'event' => $event,
-                                'method' => 'onEvent',
-                                'dispatcher' => 'enqueue.events.event_dispatcher',
-                            ])
-                        ;
-                    }
+                    $container->getDefinition('enqueue.events.async_listener')
+                        ->addTag('kernel.event_listener', [
+                            'event' => $event,
+                            'method' => 'onEvent',
+                            'dispatcher' => 'enqueue.events.event_dispatcher',
+                        ])
+                    ;
 
                     $container->getDefinition('enqueue.events.async_processor')
                         ->addTag('enqueue.processor', [
@@ -79,11 +67,6 @@ class AsyncEventsPass implements CompilerPassInterface
 
                 $service = $container->getDefinition($serviceId);
 
-                if ($useLegacyDispatcherConfig) {
-                    $service->clearTag('kernel.event_subscriber');
-                    $service->addTag('enqueue.async_event_subscriber', $tagAttribute);
-                }
-
                 /** @var EventSubscriberInterface $serviceClass */
                 $serviceClass = $service->getClass();
 
@@ -96,15 +79,13 @@ class AsyncEventsPass implements CompilerPassInterface
                             ])
                         ;
 
-                        if (!$useLegacyDispatcherConfig) {
-                            $container->getDefinition('enqueue.events.async_listener')
-                                ->addTag('kernel.event_listener', [
-                                    'event' => $event,
-                                    'method' => 'onEvent',
-                                    'dispatcher' => 'enqueue.events.event_dispatcher',
-                                ])
-                            ;
-                        }
+                        $container->getDefinition('enqueue.events.async_listener')
+                            ->addTag('kernel.event_listener', [
+                                'event' => $event,
+                                'method' => 'onEvent',
+                                'dispatcher' => 'enqueue.events.event_dispatcher',
+                            ])
+                        ;
 
                         $container->getDefinition('enqueue.events.async_processor')
                             ->addTag('enqueue.processor', [
@@ -117,15 +98,6 @@ class AsyncEventsPass implements CompilerPassInterface
                     }
                 }
             }
-        }
-
-        if ($useLegacyDispatcherConfig) {
-            $registerListenersPass = new RegisterListenersPass(
-                'enqueue.events.event_dispatcher',
-                'enqueue.async_event_listener',
-                'enqueue.async_event_subscriber'
-            );
-            $registerListenersPass->process($container);
         }
     }
 }

@@ -39,7 +39,7 @@ enqueue:
 
 ## Usage
 
-To make your listener async you have add `async: true` (every version) and `dispatcher: 'enqueue.events.event_dispatcher'` (since Symfony 5.3) attributes to the tag `kernel.event_listener`, like this:
+To make your listener async you have add `async: true` and `dispatcher: 'enqueue.events.event_dispatcher'` attributes to the tag `kernel.event_listener`, like this:
 
 ```yaml
 # app/config/config.yml
