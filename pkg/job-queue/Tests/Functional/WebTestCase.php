@@ -40,10 +40,7 @@ abstract class WebTestCase extends BaseWebTestCase
         static::ensureKernelShutdown();
     }
 
-    /**
-     * @return string
-     */
-    public static function getKernelClass()
+    public static function getKernelClass(): string
     {
         require_once __DIR__.'/app/AppKernel.php';
 

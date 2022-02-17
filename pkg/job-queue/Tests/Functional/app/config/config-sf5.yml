@@ -8,7 +8,8 @@ framework:
     test: ~
     assets: false
     session:
-        storage_factory_id: session.storage.factory.mock_file
+        # the only option incompatible with Symfony 6
+        storage_id: session.storage.mock_file
     secret:          "%secret%"
     router:          { resource: "%kernel.project_dir%/config/routing.yml" }
     default_locale:  "%locale%"

@@ -18,13 +18,13 @@ use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\TestLogger;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\Test\TestLogger;
 
 class RabbitMqStompDriverTest extends TestCase
 {
