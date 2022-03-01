@@ -9,7 +9,8 @@ framework:
     test: ~
     assets: false
     session:
-        storage_factory_id: session.storage.factory.mock_file
+        # option incompatible with Symfony 6
+        storage_id: session.storage.mock_file
     secret:          '%secret%'
     router:          { resource: '%kernel.project_dir%/config/routing.yml' }
     default_locale:  '%locale%'
@@ -126,6 +127,3 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\App\AsyncListener'
         public: true
         arguments: ['@enqueue.client.default.producer', '@enqueue.events.registry']
-
-    locale_aware_listener:
-        public: true

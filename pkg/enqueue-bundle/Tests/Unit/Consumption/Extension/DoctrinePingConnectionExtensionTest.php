@@ -7,13 +7,13 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
 use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Test\TestLogger;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\Test\TestLogger;
 
 class DoctrinePingConnectionExtensionTest extends TestCase
 {

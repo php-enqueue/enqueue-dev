@@ -47,10 +47,7 @@ class LazyProducerTest extends WebTestCase
         $producer->sendEvent('foo', 'foo');
     }
 
-    /**
-     * @return string
-     */
-    public static function getKernelClass()
+    public static function getKernelClass(): string
     {
         include_once __DIR__.'/App/CustomAppKernel.php';
 

@@ -14,9 +14,6 @@ class FlushSpoolProducerListener implements EventSubscriberInterface
      */
     private $producer;
 
-    /**
-     * @param SpoolProducer $producer
-     */
     public function __construct(SpoolProducer $producer)
     {
         $this->producer = $producer;
@@ -30,7 +27,7 @@ class FlushSpoolProducerListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         $events = [];
 

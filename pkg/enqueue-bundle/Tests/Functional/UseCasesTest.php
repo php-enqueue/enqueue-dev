@@ -18,7 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class UseCasesTest extends WebTestCase
 {
-    const RECEIVE_TIMEOUT = 500;
+    private const RECEIVE_TIMEOUT = 500;
 
     protected function setUp(): void
     {
@@ -360,10 +360,7 @@ class UseCasesTest extends WebTestCase
         $this->assertEquals($expectedBody, $processor->message->getBody());
     }
 
-    /**
-     * @return string
-     */
-    public static function getKernelClass()
+    public static function getKernelClass(): string
     {
         include_once __DIR__.'/App/CustomAppKernel.php';
 
