@@ -38,10 +38,7 @@ class CustomAppKernel extends Kernel
         $fs->mkdir(sys_get_temp_dir().'/EnqueueBundleCustom/cache/'.$this->enqueueConfigId);
     }
 
-    /**
-     * @return array
-     */
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         $bundles = [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
@@ -52,23 +49,17 @@ class CustomAppKernel extends Kernel
         return $bundles;
     }
 
-    /**
-     * @return string
-     */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sys_get_temp_dir().'/EnqueueBundleCustom/cache/'.$this->enqueueConfigId;
     }
 
-    /**
-     * @return string
-     */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return sys_get_temp_dir().'/EnqueueBundleCustom/cache/logs/'.$this->enqueueConfigId;
     }
 
-    protected function getContainerClass()
+    protected function getContainerClass(): string
     {
         return parent::getContainerClass().'Custom'.$this->enqueueConfigId;
     }
@@ -78,7 +69,11 @@ class CustomAppKernel extends Kernel
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
-        $loader->load(__DIR__.'/config/custom-config.yml');
+        if (self::VERSION_ID < 60000) {
+            $loader->load(__DIR__.'/config/custom-config-sf5.yml');
+        } else {
+            $loader->load(__DIR__.'/config/custom-config.yml');
+        }
 
         $c->loadFromExtension('enqueue', $this->enqueueConfig);
     }

@@ -39,10 +39,7 @@ abstract class WebTestCase extends BaseWebTestCase
         static::$client = null;
     }
 
-    /**
-     * @return string
-     */
-    public static function getKernelClass()
+    public static function getKernelClass(): string
     {
         include_once __DIR__.'/App/AppKernel.php';
 

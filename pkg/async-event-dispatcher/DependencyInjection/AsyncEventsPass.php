@@ -4,7 +4,6 @@ namespace Enqueue\AsyncEventDispatcher\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AsyncEventsPass implements CompilerPassInterface
@@ -30,16 +29,19 @@ class AsyncEventsPass implements CompilerPassInterface
 
                 $event = $tagAttribute['event'];
 
-                $service = $container->getDefinition($serviceId);
-
-                $service->clearTag('kernel.event_listener');
-                $service->addTag('enqueue.async_event_listener', $tagAttribute);
-
                 if (false == isset($registeredToEvent[$event])) {
                     $container->getDefinition('enqueue.events.async_listener')
                         ->addTag('kernel.event_listener', [
                             'event' => $event,
                             'method' => 'onEvent',
+                        ])
+                    ;
+
+                    $container->getDefinition('enqueue.events.async_listener')
+                        ->addTag('kernel.event_listener', [
+                            'event' => $event,
+                            'method' => 'onEvent',
+                            'dispatcher' => 'enqueue.events.event_dispatcher',
                         ])
                     ;
 
@@ -62,8 +64,6 @@ class AsyncEventsPass implements CompilerPassInterface
                 }
 
                 $service = $container->getDefinition($serviceId);
-                $service->clearTag('kernel.event_subscriber');
-                $service->addTag('enqueue.async_event_subscriber', $tagAttribute);
 
                 /** @var EventSubscriberInterface $serviceClass */
                 $serviceClass = $service->getClass();
@@ -74,6 +74,14 @@ class AsyncEventsPass implements CompilerPassInterface
                             ->addTag('kernel.event_listener', [
                                 'event' => $event,
                                 'method' => 'onEvent',
+                            ])
+                        ;
+
+                        $container->getDefinition('enqueue.events.async_listener')
+                            ->addTag('kernel.event_listener', [
+                                'event' => $event,
+                                'method' => 'onEvent',
+                                'dispatcher' => 'enqueue.events.event_dispatcher',
                             ])
                         ;
 
@@ -89,12 +97,5 @@ class AsyncEventsPass implements CompilerPassInterface
                 }
             }
         }
-
-        $registerListenersPass = new RegisterListenersPass(
-            'enqueue.events.event_dispatcher',
-            'enqueue.async_event_listener',
-            'enqueue.async_event_subscriber'
-        );
-        $registerListenersPass->process($container);
     }
 }

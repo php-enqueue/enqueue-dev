@@ -22,13 +22,22 @@ RUN set -x && \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-mysql \
         php${PHP_VERSION}-curl \
-        libgearman-dev \
-        php-pear \
         make \
+        g++ \
         unzip \
     && \
-    pecl channel-update pecl.php.net && \
-    pecl install gearman && \
+    update-alternatives --install /usr/bin/php php /usr/bin/php${PHP_VERSION} 100
+
+## gearman
+RUN set -x && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
+        libgearman-dev \
+    && \
+    mkdir -p $HOME/gearman && \
+    cd $HOME/gearman && \
+    git clone https://github.com/php/pecl-networking-gearman.git . && \
+    git checkout gearman-2.1.0 && \
+    phpize && ./configure && make && make install && \
     if [ ! -f /etc/php/${PHP_VERSION}/cli/conf.d/20-gearman.ini ]; then \
         echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-gearman.ini && \
         echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/20-gearman.ini \
@@ -37,16 +46,19 @@ RUN set -x && \
 
 ## librdkafka
 RUN set -x && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests \
-        g++ \
-    && \
     mkdir -p $HOME/librdkafka && \
     cd $HOME/librdkafka && \
     git clone https://github.com/edenhill/librdkafka.git . && \
     git checkout v1.0.0 && \
-    ./configure && make && make install && \
-    pecl install rdkafka && \
+    ./configure && make && make install
+
+## php-rdkafka
+RUN set -x && \
+    mkdir -p $HOME/php-rdkafka && \
+    cd $HOME/php-rdkafka && \
+    git clone https://github.com/arnaud-lb/php-rdkafka.git . && \
+    git checkout 5.0.1 && \
+    phpize && ./configure && make all && make install && \
     echo "extension=rdkafka.so" > /etc/php/${PHP_VERSION}/cli/conf.d/10-rdkafka.ini && \
     echo "extension=rdkafka.so" > /etc/php/${PHP_VERSION}/fpm/conf.d/10-rdkafka.ini
 
