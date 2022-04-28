@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.10.16](https://github.com/php-enqueue/enqueue-dev/tree/0.10.16) (2022-04-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.15...0.10.16)
+
+**Merged pull requests:**
+
+- Upgrade ext-rdkafka to 6.0 [\#1241](https://github.com/php-enqueue/enqueue-dev/pull/1241) ([lucasrivoiro](https://github.com/lucasrivoiro))
+- Replace rabbitmq-management-api with a packagist source and fixed small github actions typo [\#1240](https://github.com/php-enqueue/enqueue-dev/pull/1240) ([oreillysean](https://github.com/oreillysean))
+- Add support for Symfony 6; drop \< 5.1 [\#1239](https://github.com/php-enqueue/enqueue-dev/pull/1239) ([andrewmy](https://github.com/andrewmy))
+- Replace rabbitmq-management-api with a packagist source [\#1238](https://github.com/php-enqueue/enqueue-dev/pull/1238) ([andrewmy](https://github.com/andrewmy))
+- Fix CI [\#1237](https://github.com/php-enqueue/enqueue-dev/pull/1237) ([jdecool](https://github.com/jdecool))
+- Allow ext-rdkafka 6 usage [\#1233](https://github.com/php-enqueue/enqueue-dev/pull/1233) ([jdecool](https://github.com/jdecool))
+- Fix types for Symfony 5.4 [\#1225](https://github.com/php-enqueue/enqueue-dev/pull/1225) ([shyim](https://github.com/shyim))
+
 ## [0.10.15](https://github.com/php-enqueue/enqueue-dev/tree/0.10.15) (2021-12-11)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.14...0.10.15)
 
