@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.10.17](https://github.com/php-enqueue/enqueue-dev/tree/0.10.17) (2022-05-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.16...0.10.17)
+
+**Merged pull requests:**
+
+- Disable sleep while queue items available [\#1250](https://github.com/php-enqueue/enqueue-dev/pull/1250) ([mordilion](https://github.com/mordilion))
+
 ## [0.10.16](https://github.com/php-enqueue/enqueue-dev/tree/0.10.16) (2022-04-28)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.15...0.10.16)
 
