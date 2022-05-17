@@ -95,17 +95,21 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
         $currentQueueNames = [];
+        $queueConsumed = false;
         while (true) {
             if (empty($currentQueueNames)) {
                 $currentQueueNames = $queueNames;
+                $queueConsumed = false;
             }
 
             $this->removeExpiredMessages();
             $this->redeliverMessages();
 
             if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {
+                $queueConsumed = true;
+
                 /**
-                 * @var DbalConsumer
+                 * @var DbalConsumer $consumer
                  * @var callable     $callback
                  */
                 [$consumer, $callback] = $this->subscribers[$message->getQueue()];
@@ -118,7 +122,9 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             } else {
                 $currentQueueNames = [];
 
-                usleep($this->getPollingInterval() * 1000);
+                if (!$queueConsumed) {
+                    usleep($this->getPollingInterval() * 1000);
+                }
             }
 
             if ($timeout && microtime(true) >= $now + $timeout) {
