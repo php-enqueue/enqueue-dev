@@ -2,8 +2,8 @@
 
 namespace Enqueue\Pheanstalk\Tests;
 
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Pheanstalk\PheanstalkDestination;
 use Enqueue\Pheanstalk\PheanstalkMessage;
 use Enqueue\Pheanstalk\PheanstalkProducer;
@@ -28,7 +28,7 @@ class PheanstalkProducerTest extends TestCase
         $producer = new PheanstalkProducer($this->createPheanstalkMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Pheanstalk\PheanstalkDestination but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Pheanstalk\PheanstalkDestination but got Enqueue\NoEffect\NullQueue.');
         $producer->send(new NullQueue('aQueue'), new PheanstalkMessage());
     }
 
@@ -37,7 +37,7 @@ class PheanstalkProducerTest extends TestCase
         $producer = new PheanstalkProducer($this->createPheanstalkMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Pheanstalk\PheanstalkMessage but it is Enqueue\Null\NullMessage.');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Pheanstalk\PheanstalkMessage but it is Enqueue\NoEffect\NullMessage.');
         $producer->send(new PheanstalkDestination('aQueue'), new NullMessage());
     }
 

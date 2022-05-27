@@ -7,7 +7,7 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Context;
@@ -116,7 +116,7 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
         $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\NoEffect\NullQueue.');
         $consumer = $context->createConsumer(new NullQueue('aQueue'));
 
         $this->assertInstanceOf(FsConsumer::class, $consumer);

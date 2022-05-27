@@ -2,8 +2,8 @@
 
 namespace Enqueue\Redis\Tests;
 
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Redis\JsonSerializer;
 use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisContext;
@@ -35,7 +35,7 @@ class RedisProducerTest extends TestCase
         $producer = new RedisProducer($this->createContextMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\NoEffect\NullQueue.');
         $producer->send(new NullQueue('aQueue'), new RedisMessage());
     }
 
@@ -44,7 +44,7 @@ class RedisProducerTest extends TestCase
         $producer = new RedisProducer($this->createContextMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Redis\RedisMessage but it is Enqueue\Null\NullMessage.');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Redis\RedisMessage but it is Enqueue\NoEffect\NullMessage.');
         $producer->send(new RedisDestination('aQueue'), new NullMessage());
     }
 

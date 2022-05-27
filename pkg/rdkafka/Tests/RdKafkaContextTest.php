@@ -2,7 +2,7 @@
 
 namespace Enqueue\RdKafka\Tests;
 
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\RdKafka\JsonSerializer;
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\Serializer;

@@ -2,7 +2,7 @@
 
 namespace Enqueue\Pheanstalk\Tests;
 
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Pheanstalk\PheanstalkContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;

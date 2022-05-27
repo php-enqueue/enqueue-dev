@@ -20,7 +20,7 @@ use Enqueue\Consumption\Extension\ExitStatusExtension;
 use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Test\ReadAttributeTrait;
 use Enqueue\Tests\Consumption\Mock\BreakCycleExtension;
 use Enqueue\Tests\Consumption\Mock\DummySubscriptionConsumer;

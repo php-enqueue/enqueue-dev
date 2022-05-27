@@ -2,7 +2,7 @@
 
 namespace Enqueue\Tests\Rpc;
 
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullMessage;
 use Enqueue\Rpc\Promise;
 use PHPUnit\Framework\TestCase;
 

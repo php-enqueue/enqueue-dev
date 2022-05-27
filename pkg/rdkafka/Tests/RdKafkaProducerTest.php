@@ -2,8 +2,8 @@
 
 namespace Enqueue\RdKafka\Tests;
 
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\RdKafka\RdKafkaMessage;
 use Enqueue\RdKafka\RdKafkaProducer;
 use Enqueue\RdKafka\RdKafkaTopic;
@@ -30,7 +30,7 @@ class RdKafkaProducerTest extends TestCase
         $producer = new RdKafkaProducer($this->createKafkaProducerMock(), $this->createSerializerMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\RdKafka\RdKafkaTopic but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\RdKafka\RdKafkaTopic but got Enqueue\NoEffect\NullQueue.');
         $producer->send(new NullQueue('aQueue'), new RdKafkaMessage());
     }
 
@@ -39,7 +39,7 @@ class RdKafkaProducerTest extends TestCase
         $producer = new RdKafkaProducer($this->createKafkaProducerMock(), $this->createSerializerMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\RdKafka\RdKafkaMessage but it is Enqueue\Null\NullMessage.');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\RdKafka\RdKafkaMessage but it is Enqueue\NoEffect\NullMessage.');
         $producer->send(new RdKafkaTopic('aQueue'), new NullMessage());
     }
 
@@ -172,7 +172,7 @@ class RdKafkaProducerTest extends TestCase
 
         $expectedSerializer = $this->createSerializerMock();
 
-        //guard
+        // guard
         $this->assertNotSame($producer->getSerializer(), $expectedSerializer);
 
         $producer->setSerializer($expectedSerializer);

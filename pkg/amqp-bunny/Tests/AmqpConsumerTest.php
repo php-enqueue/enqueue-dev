@@ -7,7 +7,7 @@ use Bunny\Client;
 use Bunny\Message;
 use Enqueue\AmqpBunny\AmqpConsumer;
 use Enqueue\AmqpBunny\AmqpContext;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\WriteAttributeTrait;
 use Interop\Amqp\Impl\AmqpMessage;

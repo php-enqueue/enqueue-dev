@@ -6,8 +6,8 @@ use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
 use Enqueue\Fs\FsMessage;
 use Enqueue\Fs\FsProducer;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
@@ -33,7 +33,7 @@ class FsProducerTest extends \PHPUnit\Framework\TestCase
         $producer = new FsProducer($this->createContextMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Fs\FsDestination but got Enqueue\NoEffect\NullQueue.');
         $producer->send(new NullQueue('aQueue'), new FsMessage());
     }
 
@@ -42,7 +42,7 @@ class FsProducerTest extends \PHPUnit\Framework\TestCase
         $producer = new FsProducer($this->createContextMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Fs\FsMessage but it is Enqueue\Null\NullMessage.');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Fs\FsMessage but it is Enqueue\NoEffect\NullMessage.');
         $producer->send(new FsDestination(TempFile::generate()), new NullMessage());
     }
 

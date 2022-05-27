@@ -4,7 +4,7 @@ namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\Config;
 use Enqueue\Client\DelegateProcessor;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullMessage;
 use Enqueue\ProcessorRegistryInterface;
 use Interop\Queue\Context;
 use Interop\Queue\Processor;

@@ -10,7 +10,7 @@ use Enqueue\JobQueue\Commands;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\Topics;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullMessage;
 use Interop\Queue\Context;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;

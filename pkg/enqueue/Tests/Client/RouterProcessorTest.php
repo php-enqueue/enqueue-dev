@@ -10,8 +10,8 @@ use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Client\RouterProcessor;
 use Enqueue\Consumption\Result;
-use Enqueue\Null\NullContext;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullContext;
+use Enqueue\NoEffect\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Destination;
@@ -188,7 +188,7 @@ class RouterProcessorTest extends TestCase
 
         $result = $processor->process($message, new NullContext());
 
-        //guard
+        // guard
         $this->assertEquals(Result::ACK, $result->getStatus());
 
         $this->assertSame('theBody', $message->getBody());
