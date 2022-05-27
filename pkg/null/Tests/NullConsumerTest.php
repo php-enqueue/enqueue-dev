@@ -1,10 +1,10 @@
 <?php
 
-namespace Enqueue\Null\Tests;
+namespace Enqueue\NullTransporter\Tests;
 
-use Enqueue\Null\NullConsumer;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NullTransporter\NullConsumer;
+use Enqueue\NullTransporter\NullMessage;
+use Enqueue\NullTransporter\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use PHPUnit\Framework\TestCase;

@@ -22,7 +22,7 @@
         "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
     },
     "autoload": {
-        "psr-4": { "Enqueue\\Null\\": "" },
+        "psr-4": { "Enqueue\\NullTransporter\\": "" },
         "exclude-from-classmap": [
             "/Tests/"
         ]

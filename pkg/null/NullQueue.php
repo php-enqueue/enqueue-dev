@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Enqueue\Null;
+namespace Enqueue\NullTransporter;
 
 use Interop\Queue\Queue;
 

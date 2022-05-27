@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\Null;
+namespace Enqueue\NullTransporter;
 
 use Interop\Queue\Topic;
 
