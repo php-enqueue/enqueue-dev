@@ -1,5 +1,5 @@
 {
-    "name": "enqueue/null",
+    "name": "enqueue/noeffect",
     "type": "library",
     "description": "Enqueue Null transport",
     "keywords": ["messaging", "queue", "testing"],
@@ -22,7 +22,7 @@
         "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
     },
     "autoload": {
-        "psr-4": { "Enqueue\\Null\\": "" },
+        "psr-4": { "Enqueue\\NoEffect\\": "" },
         "exclude-from-classmap": [
             "/Tests/"
         ]

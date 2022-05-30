@@ -1,13 +1,13 @@
 <?php
 
-namespace Enqueue\Null\Tests;
+namespace Enqueue\NoEffect\Tests;
 
-use Enqueue\Null\NullConsumer;
-use Enqueue\Null\NullContext;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullProducer;
-use Enqueue\Null\NullQueue;
-use Enqueue\Null\NullTopic;
+use Enqueue\NoEffect\NullConsumer;
+use Enqueue\NoEffect\NullContext;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullProducer;
+use Enqueue\NoEffect\NullQueue;
+use Enqueue\NoEffect\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use PHPUnit\Framework\TestCase;

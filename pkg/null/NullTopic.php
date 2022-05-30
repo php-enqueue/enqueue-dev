@@ -1,6 +1,6 @@
 <?php
 
-namespace Enqueue\NoEffect;
+namespace Enqueue\Null;
 
 use Interop\Queue\Topic;
 

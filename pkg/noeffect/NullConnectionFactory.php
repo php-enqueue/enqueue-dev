@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Enqueue\Null;
+namespace Enqueue\NoEffect;
 
 use Interop\Queue\ConnectionFactory;
 use Interop\Queue\Context;

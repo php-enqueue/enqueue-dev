@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
+namespace Enqueue\NoEffect;
 
-namespace Enqueue\Null;
+use Interop\Queue\Topic;
 
-use Interop\Queue\Queue;
-
-class NullQueue implements Queue
+class NullTopic implements Topic
 {
     /**
      * @var string
@@ -18,7 +16,7 @@ class NullQueue implements Queue
         $this->name = $name;
     }
 
-    public function getQueueName(): string
+    public function getTopicName(): string
     {
         return $this->name;
     }
