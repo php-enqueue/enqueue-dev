@@ -88,7 +88,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
         $frame = $this->context->getBunnyChannel()->consume(
             $bunnyCallback,
             $consumer->getQueue()->getQueueName(),
-            $consumer->getConsumerTag(),
+            $consumer->getConsumerTag() ?? '',
             (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOLOCAL),
             (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_NOACK),
             (bool) ($consumer->getFlags() & InteropAmqpConsumer::FLAG_EXCLUSIVE),
