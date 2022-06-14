@@ -62,7 +62,7 @@ class DbalProducer implements Producer
 
         $publishedAt = null !== $message->getPublishedAt() ?
             $message->getPublishedAt() :
-            (int) (microtime(true) * 10000)
+            (int) microtime(true)
         ;
 
         $dbalMessage = [
