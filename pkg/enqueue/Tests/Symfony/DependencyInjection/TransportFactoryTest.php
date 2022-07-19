@@ -279,11 +279,6 @@ class TransportFactoryTest extends TestCase
             [['dsn' => 'foo://bar/baz']],
             $container->getDefinition('enqueue.transport.default.connection_factory')->getArguments())
         ;
-
-        $this->assertEquals(
-            [new Reference('enqueue.transport.default.connection_factory_factory'), 'create'],
-            $container->getDefinition('enqueue.transport.default.connection_factory')->getFactory())
-        ;
     }
 
     public function testShouldBuildConnectionFactoryUsingCustomFactoryClass()
