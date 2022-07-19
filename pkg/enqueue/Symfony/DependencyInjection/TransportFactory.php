@@ -132,15 +132,15 @@ final class TransportFactory
         $container->register($factoryFactoryId, $config['factory_class'] ?? ConnectionFactoryFactory::class);
 
         $factoryFactoryService = new Reference(
-            array_key_exists('factory_service', $config) ? $config['factory_service'] : $factoryFactoryId
+            $config['factory_service'] ?? $factoryFactoryId
         );
 
         unset($config['factory_service'], $config['factory_class']);
 
-        if (array_key_exists('connection_factory_class', $config)) {
-            $connectionFactoryClass = $config['connection_factory_class'];
-            unset($config['connection_factory_class']);
+        $connectionFactoryClass = $config['connection_factory_class'] ?? null;
+        unset($config['connection_factory_class']);
 
+        if (isset($connectionFactoryClass)) {
             $container->register($factoryId, $connectionFactoryClass)
                 ->addArgument($config)
             ;
