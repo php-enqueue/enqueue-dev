@@ -259,7 +259,14 @@ class TransportFactoryTest extends TestCase
 
         $transport = new TransportFactory('default');
 
-        $transport->buildConnectionFactory($container, ['dsn' => 'foo://bar/baz']);
+        $config = [
+            'dsn' => 'foo://bar/baz',
+            'connection_factory_class' => null,
+            'factory_service' => null,
+            'factory_class' => null,
+        ];
+
+        $transport->buildConnectionFactory($container, $config);
 
         $this->assertTrue($container->hasDefinition('enqueue.transport.default.connection_factory'));
 
