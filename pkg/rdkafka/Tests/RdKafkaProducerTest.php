@@ -323,6 +323,66 @@ class RdKafkaProducerTest extends TestCase
         $producer->send($destination, $message);
     }
 
+    public function testShouldAllowFalsyKeyFromMessage(): void
+    {
+        $key = 0;
+
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('producev')
+            ->with(
+                RD_KAFKA_PARTITION_UA,
+                0,
+                '',
+                $key
+            )
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->willReturn($kafkaTopic)
+        ;
+
+        $message = new RdKafkaMessage();
+        $message->setKey($key);
+
+        $producer = new RdKafkaProducer($kafkaProducer, $this->createSerializerMock());
+        $producer->send(new RdKafkaTopic(''), $message);
+    }
+
+    public function testShouldAllowFalsyKeyFromDestination(): void
+    {
+        $key = 0;
+
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('producev')
+            ->with(
+                RD_KAFKA_PARTITION_UA,
+                0,
+                '',
+                $key
+            )
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->willReturn($kafkaTopic)
+        ;
+
+        $destination = new RdKafkaTopic('');
+        $destination->setKey($key);
+
+        $producer = new RdKafkaProducer($kafkaProducer, $this->createSerializerMock());
+        $producer->send($destination, new RdKafkaMessage());
+    }
+
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|ProducerTopic
      */
