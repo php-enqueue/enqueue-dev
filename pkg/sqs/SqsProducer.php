@@ -56,7 +56,7 @@ class SqsProducer implements Producer
         ];
 
         if (null !== $this->deliveryDelay) {
-            $arguments['DelaySeconds'] = (int) $this->deliveryDelay / 1000;
+            $arguments['DelaySeconds'] = (int) ceil($this->deliveryDelay / 1000);
         }
 
         if ($message->getDelaySeconds()) {
