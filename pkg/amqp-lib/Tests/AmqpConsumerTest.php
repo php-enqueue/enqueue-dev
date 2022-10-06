@@ -115,10 +115,7 @@ class AmqpConsumerTest extends TestCase
     public function testShouldReturnMessageOnReceiveNoWait()
     {
         $libMessage = new \PhpAmqpLib\Message\AMQPMessage('body');
-        $libMessage->delivery_info['delivery_tag'] = 'delivery-tag';
-        $libMessage->delivery_info['routing_key'] = 'routing-key';
-        $libMessage->delivery_info['redelivered'] = true;
-        $libMessage->delivery_info['routing_key'] = 'routing-key';
+        $libMessage->setDeliveryInfo('delivery-tag', true, '', 'routing-key');
 
         $message = new AmqpMessage();
 
@@ -152,9 +149,7 @@ class AmqpConsumerTest extends TestCase
     public function testShouldReturnMessageOnReceiveWithReceiveMethodBasicGet()
     {
         $libMessage = new \PhpAmqpLib\Message\AMQPMessage('body');
-        $libMessage->delivery_info['delivery_tag'] = 'delivery-tag';
-        $libMessage->delivery_info['routing_key'] = 'routing-key';
-        $libMessage->delivery_info['redelivered'] = true;
+        $libMessage->setDeliveryInfo('delivery-tag', true, '', 'routing-key');
 
         $message = new AmqpMessage();
 

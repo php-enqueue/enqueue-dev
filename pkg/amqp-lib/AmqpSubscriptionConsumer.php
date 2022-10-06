@@ -102,13 +102,13 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
 
         $libCallback = function (LibAMQPMessage $message) {
             $receivedMessage = $this->context->convertMessage($message);
-            $receivedMessage->setConsumerTag($message->delivery_info['consumer_tag']);
+            $receivedMessage->setConsumerTag($message->getConsumerTag());
 
             /**
              * @var AmqpConsumer
              * @var callable     $callback
              */
-            list($consumer, $callback) = $this->subscribers[$message->delivery_info['consumer_tag']];
+            list($consumer, $callback) = $this->subscribers[$message->getConsumerTag()];
 
             if (false === call_user_func($callback, $receivedMessage, $consumer)) {
                 throw new StopBasicConsumptionException();
