@@ -96,7 +96,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
         $extQueue = new \AMQPQueue($this->context->getExtChannel());
         $extQueue->setName($consumer->getQueue()->getQueueName());
 
-        $extQueue->consume(null, Flags::convertConsumerFlags($consumer->getFlags()), $consumer->getConsumerTag());
+        $extQueue->consume(null, Flags::convertConsumerFlags($consumer->getFlags()), $consumer->getConsumerTag() ?? '');
 
         $consumerTag = $extQueue->getConsumerTag();
         $consumer->setConsumerTag($consumerTag);
