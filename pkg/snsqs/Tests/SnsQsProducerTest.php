@@ -10,6 +10,7 @@ use Enqueue\SnsQs\SnsQsProducer;
 use Enqueue\SnsQs\SnsQsQueue;
 use Enqueue\SnsQs\SnsQsTopic;
 use Enqueue\Sqs\SqsContext;
+use Enqueue\Sqs\SqsMessage;
 use Enqueue\Sqs\SqsProducer;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Destination;
@@ -124,18 +125,69 @@ class SnsQsProducerTest extends TestCase
         $producer->send($destination, new SnsQsMessage('', [], [], ['foo' => 'bar']));
     }
 
+    public function testShouldSendToSnsTopicMessageWithGroupIdAndDeduplicationId()
+    {
+        $snsMock = $this->createSnsContextMock();
+        $snsMock->method('createMessage')->willReturn(new SnsMessage());
+        $destination = new SnsQsTopic('');
+
+        $snsProducerStub = $this->prophesize(SnsProducer::class);
+        $snsProducerStub->send(
+            $destination,
+            Argument::that(function (SnsMessage $snsMessage) {
+                return 'group-id' === $snsMessage->getMessageGroupId()
+                    && 'deduplication-id' === $snsMessage->getMessageDeduplicationId();
+            })
+        )->shouldBeCalledOnce();
+
+        $snsMock->method('createProducer')->willReturn($snsProducerStub->reveal());
+
+        $snsMessage = new SnsQsMessage();
+        $snsMessage->setMessageGroupId('group-id');
+        $snsMessage->setMessageDeduplicationId('deduplication-id');
+
+        $producer = new SnsQsProducer($snsMock, $this->createSqsContextMock());
+        $producer->send($destination, $snsMessage);
+    }
+
     public function testShouldSendSqsMessageToSqsProducer()
     {
         $sqsMock = $this->createSqsContextMock();
+        $sqsMock->method('createMessage')->willReturn(new SqsMessage());
         $destination = new SnsQsQueue('');
 
-        $snsProducerStub = $this->prophesize(SqsProducer::class);
-        $snsProducerStub->send($destination, Argument::any())->shouldBeCalledOnce();
+        $sqsProducerStub = $this->prophesize(SqsProducer::class);
+        $sqsProducerStub->send($destination, Argument::any())->shouldBeCalledOnce();
 
-        $sqsMock->method('createProducer')->willReturn($snsProducerStub->reveal());
+        $sqsMock->method('createProducer')->willReturn($sqsProducerStub->reveal());
 
         $producer = new SnsQsProducer($this->createSnsContextMock(), $sqsMock);
         $producer->send($destination, new SnsQsMessage());
+    }
+
+    public function testShouldSendToSqsMessageWithGroupIdAndDeduplicationId()
+    {
+        $sqsMock = $this->createSqsContextMock();
+        $sqsMock->method('createMessage')->willReturn(new SqsMessage());
+        $destination = new SnsQsQueue('');
+
+        $sqsProducerStub = $this->prophesize(SqsProducer::class);
+        $sqsProducerStub->send(
+            $destination,
+            Argument::that(function (SqsMessage $sqsMessage) {
+                return 'group-id' === $sqsMessage->getMessageGroupId()
+                    && 'deduplication-id' === $sqsMessage->getMessageDeduplicationId();
+            })
+        )->shouldBeCalledOnce();
+
+        $sqsMock->method('createProducer')->willReturn($sqsProducerStub->reveal());
+
+        $sqsMessage = new SnsQsMessage();
+        $sqsMessage->setMessageGroupId('group-id');
+        $sqsMessage->setMessageDeduplicationId('deduplication-id');
+
+        $producer = new SnsQsProducer($this->createSnsContextMock(), $sqsMock);
+        $producer->send($destination, $sqsMessage);
     }
 
     /**
