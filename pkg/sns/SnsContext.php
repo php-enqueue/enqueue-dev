@@ -145,6 +145,16 @@ class SnsContext implements Context
         return $subscriptions;
     }
 
+    public function setSubscriptionAttributes(SnsSubscribe $subscribe): void
+    {
+        foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {
+            $this->client->setSubscriptionAttributes(array_merge(
+                $subscribe->getAttributes(),
+                ['SubscriptionArn' => $subscription['SubscriptionArn']],
+            ));
+        }
+    }
+
     public function getTopicArn(SnsDestination $destination): string
     {
         if (false == array_key_exists($destination->getTopicName(), $this->topicArns)) {

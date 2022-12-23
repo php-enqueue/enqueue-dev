@@ -60,6 +60,11 @@ class SnsClient
         return $this->callApi('unsubscribe', $args);
     }
 
+    public function setSubscriptionAttributes(array $args): Result
+    {
+        return $this->callApi('setSubscriptionAttributes', $args);
+    }
+
     public function listSubscriptionsByTopic(array $args): Result
     {
         return $this->callApi('ListSubscriptionsByTopic', $args);
