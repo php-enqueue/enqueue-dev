@@ -16,7 +16,7 @@ class SqsClientTest extends TestCase
         $awsClient = (new Sdk(['Sqs' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
+            'token' => false,
             'region' => '',
             'version' => '2012-11-05',
             'endpoint' => 'http://localhost',
@@ -32,7 +32,7 @@ class SqsClientTest extends TestCase
         $awsClient = (new Sdk(['Sqs' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
+            'token' => false,
             'region' => '',
             'version' => '2012-11-05',
             'endpoint' => 'http://localhost',

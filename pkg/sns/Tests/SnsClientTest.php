@@ -16,7 +16,7 @@ class SnsClientTest extends TestCase
         $awsClient = (new Sdk(['Sns' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
+            'token' => false,
             'region' => '',
             'version' => '2010-03-31',
             'endpoint' => 'http://localhost',
@@ -32,7 +32,7 @@ class SnsClientTest extends TestCase
         $awsClient = (new Sdk(['Sns' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
+            'token' => false,
             'region' => '',
             'version' => '2010-03-31',
             'endpoint' => 'http://localhost',
