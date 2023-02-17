@@ -78,17 +78,11 @@ jobs:
       fail-fast: false
       matrix:
         php: ['7.4', '8.0', '8.1']
-        symfony_version: ['5.4.*', '6.0.*', '6.1.*', '6.2.*']
+        symfony_version: ['5.4.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         exclude:
           - php: '7.4'
-            symfony_version: '6.0.*'
-          - php: '7.4'
-            symfony_version: '6.1.*'
-          - php: '7.4'
             symfony_version: '6.2.*'
-          - php: '8.0'
-            symfony_version: '6.1.*'
           - php: '8.0'
             symfony_version: '6.2.*'
 
@@ -130,18 +124,12 @@ jobs:
       fail-fast: false
       matrix:
         php: ['7.4', '8.0', '8.1'] # same as in the container
-        symfony_version: ['5.4.*', '6.0.*', '6.1.*', '6.2.*']
+        symfony_version: ['5.4.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         rdkafka_action: ['exclude-group', 'group']
         exclude:
           - php: '7.4'
-            symfony_version: '6.0.*'
-          - php: '7.4'
-            symfony_version: '6.1.*'
-          - php: '7.4'
             symfony_version: '6.2.*'
-          - php: '8.0'
-            symfony_version: '6.1.*'
           - php: '8.0'
             symfony_version: '6.2.*'
 
