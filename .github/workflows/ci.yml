@@ -77,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1']
+        php: ['7.4', '8.0', '8.1', '8.2']
         symfony_version: ['5.4.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         exclude:
@@ -123,7 +123,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1'] # same as in the container
+        php: ['7.4', '8.0', '8.1', '8.2'] # same as in the container
         symfony_version: ['5.4.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         exclude:
@@ -169,7 +169,7 @@ jobs:
       # TODO: convert these two steps into one w/o excludes when Gearman extension gets a release for PHP 8.1
       # See https://github.com/php/pecl-networking-gearman/issues/16
       - run: bin/test.sh
-        if: ${{ matrix.php != '8.1' }}
+        if: ${{ matrix.php != '8.1' && matrix.php != '8.2' }}
 
       - run: bin/test.sh --exclude-group=gearman
-        if: ${{ matrix.php == '8.1' }}
+        if: ${{ matrix.php == '8.1' && matrix.php != '8.2' }}
