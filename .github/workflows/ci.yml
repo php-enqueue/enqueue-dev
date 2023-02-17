@@ -23,7 +23,7 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "5.2.*"
+      - run: php ./bin/fix-symfony-version.php "5.4.*"
 
       - uses: "ramsey/composer-install@v1"
 
@@ -63,7 +63,7 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "5.2.*"
+      - run: php ./bin/fix-symfony-version.php "5.4.*"
 
       - run: composer update --no-progress
 
@@ -77,14 +77,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.3', '7.4', '8.0']
-        symfony_version: ['5.2.*', '6.0.*']
+        php: ['7.4', '8.0', '8.1']
+        symfony_version: ['5.4.*', '6.0.*', '6.1.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         exclude:
-          - php: '7.3'
-            symfony_version: '6.0.*'
           - php: '7.4'
             symfony_version: '6.0.*'
+          - php: '7.4'
+            symfony_version: '6.1.*'
+          - php: '7.4'
+            symfony_version: '6.2.*'
+          - php: '8.0'
+            symfony_version: '6.1.*'
+          - php: '8.0'
+            symfony_version: '6.2.*'
 
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -123,15 +129,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0'] # same as in the container
-        symfony_version: ['5.2.*', '6.0.*']
+        php: ['7.4', '8.0', '8.1'] # same as in the container
+        symfony_version: ['5.4.*', '6.0.*', '6.1.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         rdkafka_action: ['exclude-group', 'group']
         exclude:
-          - php: '7.3'
-            symfony_version: '6.0.*'
           - php: '7.4'
             symfony_version: '6.0.*'
+          - php: '7.4'
+            symfony_version: '6.1.*'
+          - php: '7.4'
+            symfony_version: '6.2.*'
+          - php: '8.0'
+            symfony_version: '6.1.*'
+          - php: '8.0'
+            symfony_version: '6.2.*'
 
     name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, rdkafka_action=${{ matrix.rdkafka_action }}, deps=${{ matrix.dependencies }}
 
