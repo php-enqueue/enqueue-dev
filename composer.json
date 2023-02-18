@@ -130,6 +130,9 @@
       "ext-mongo": "1.6.14",
       "ext-sockets": "1"
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "allow-plugins": {
+      "php-http/discovery": false
+    }
   }
 }

@@ -173,6 +173,17 @@ class SnsQsContext implements Context
         $this->getSqsContext()->close();
     }
 
+    public function setSubscriptionAttributes(SnsQsTopic $topic, SnsQsQueue $queue, array $attributes): void
+    {
+        $this->getSnsContext()->setSubscriptionAttributes(new SnsSubscribe(
+            $topic,
+            $this->getSqsContext()->getQueueArn($queue),
+            SnsSubscribe::PROTOCOL_SQS,
+            false,
+            $attributes,
+        ));
+    }
+
     private function getSnsContext(): SnsContext
     {
         if (null === $this->snsContext) {
