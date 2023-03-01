@@ -60,6 +60,11 @@ class SnsClient
         return $this->callApi('unsubscribe', $args);
     }
 
+    public function setSubscriptionAttributes(array $args): Result
+    {
+        return $this->callApi('setSubscriptionAttributes', $args);
+    }
+
     public function listSubscriptionsByTopic(array $args): Result
     {
         return $this->callApi('ListSubscriptionsByTopic', $args);
@@ -135,11 +140,6 @@ class SnsClient
             }
         }
 
-        throw new \LogicException(sprintf(
-            'The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"',
-            AwsSnsClient::class,
-            MultiRegionClient::class,
-            is_object($client) ? get_class($client) : gettype($client)
-        ));
+        throw new \LogicException(sprintf('The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"', AwsSnsClient::class, MultiRegionClient::class, is_object($client) ? get_class($client) : gettype($client)));
     }
 }
