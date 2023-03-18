@@ -10,7 +10,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Message Queue Bundle
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://img.shields.io/github/workflow/status/php-enqueue/enqueue-bundle/CI)](https://github.com/php-enqueue/enqueue-bundle/actions?query=workflow%3ACI)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/php-enqueue/enqueue-bundle/ci.yml?branch=master)](https://github.com/php-enqueue/enqueue-bundle/actions?query=workflow%3ACI)
 [![Total Downloads](https://poser.pugx.org/enqueue/enqueue-bundle/d/total.png)](https://packagist.org/packages/enqueue/enqueue-bundle)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/enqueue-bundle/version.png)](https://packagist.org/packages/enqueue/enqueue-bundle)
 

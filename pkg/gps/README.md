@@ -10,7 +10,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Google Pub/Sub Transport
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://img.shields.io/github/workflow/status/php-enqueue/gps/CI)](https://github.com/php-enqueue/gps/actions?query=workflow%3ACI)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/php-enqueue/gps/ci.yml?branch=master)](https://github.com/php-enqueue/gps/actions?query=workflow%3ACI)
 [![Total Downloads](https://poser.pugx.org/enqueue/gps/d/total.png)](https://packagist.org/packages/enqueue/gps)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/gps/version.png)](https://packagist.org/packages/enqueue/gps)
 

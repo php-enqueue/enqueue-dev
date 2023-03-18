@@ -10,7 +10,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Amazon SNS Transport
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://img.shields.io/github/workflow/status/php-enqueue/sns/CI)](https://github.com/php-enqueue/sns/actions?query=workflow%3ACI)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/php-enqueue/sns/ci.yml?branch=master)](https://github.com/php-enqueue/sns/actions?query=workflow%3ACI)
 [![Total Downloads](https://poser.pugx.org/enqueue/sns/d/total.png)](https://packagist.org/packages/enqueue/sns)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/sns/version.png)](https://packagist.org/packages/enqueue/sns)
 
