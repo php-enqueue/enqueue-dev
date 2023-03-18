@@ -1,5 +1,22 @@
 # Change Log
 
+## [0.10.18](https://github.com/php-enqueue/enqueue-dev/tree/0.10.18) (2023-03-18)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.17...0.10.18)
+
+**Merged pull requests:**
+
+- Fix Shield URLs in READMEs [\#1289](https://github.com/php-enqueue/enqueue-dev/pull/1289) ([amayer5125](https://github.com/amayer5125))
+- Fix AWS SDK token parameter [\#1284](https://github.com/php-enqueue/enqueue-dev/pull/1284) ([andrewmy](https://github.com/andrewmy))
+- MongoDB - Add combined index [\#1283](https://github.com/php-enqueue/enqueue-dev/pull/1283) ([ddziaduch](https://github.com/ddziaduch))
+- Add setting subscription attributes to Sns and SnsQs [\#1281](https://github.com/php-enqueue/enqueue-dev/pull/1281) ([andrewmy](https://github.com/andrewmy))
+- code style fix \(native\_constant\_invocation\) [\#1276](https://github.com/php-enqueue/enqueue-dev/pull/1276) ([EmilMassey](https://github.com/EmilMassey))
+- \[amqp-lib\] Replace amqp-lib deprecated public property with getters [\#1273](https://github.com/php-enqueue/enqueue-dev/pull/1273) ([ramunasd](https://github.com/ramunasd))
+- fix: parenthesis missing allowed invalid delays [\#1266](https://github.com/php-enqueue/enqueue-dev/pull/1266) ([aldenw](https://github.com/aldenw))
+- Allow rdkafka falsy keys [\#1264](https://github.com/php-enqueue/enqueue-dev/pull/1264) ([qkdreyer](https://github.com/qkdreyer))
+- Symfony config allow null [\#1263](https://github.com/php-enqueue/enqueue-dev/pull/1263) ([h0raz](https://github.com/h0raz))
+- Ensure pass consumer tag as string to bunny amqp [\#1255](https://github.com/php-enqueue/enqueue-dev/pull/1255) ([snapshotpl](https://github.com/snapshotpl))
+- chore: Update dependency dbal [\#1253](https://github.com/php-enqueue/enqueue-dev/pull/1253) ([meidlinga](https://github.com/meidlinga))
+
 ## [0.10.17](https://github.com/php-enqueue/enqueue-dev/tree/0.10.17) (2022-05-17)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.16...0.10.17)
 
