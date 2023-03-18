@@ -10,7 +10,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 # Symfony Async Event Dispatcher.
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://img.shields.io/github/workflow/status/php-enqueue/async-event-dispatcher/CI)](https://github.com/php-enqueue/async-event-dispathcer/actions?query=workflow%3ACI)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/php-enqueue/async-event-dispatcher/ci.yml?branch=master)](https://github.com/php-enqueue/async-event-dispathcer/actions?query=workflow%3ACI)
 [![Total Downloads](https://poser.pugx.org/enqueue/async-event-dispathcer/d/total.png)](https://packagist.org/packages/enqueue/async-event-dispatcher)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/async-event-dispathcer/version.png)](https://packagist.org/packages/enqueue/async-event-dispatcher)
 

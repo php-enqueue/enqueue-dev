@@ -18,7 +18,7 @@ Queue Monitoring tool. Track sent, consumed messages. Consumers performances.
 * Provides integration for Enqueue 
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
-[![Build Status](https://img.shields.io/github/workflow/status/php-enqueue/monitoring/CI)](https://github.com/php-enqueue/monitoring/actions?query=workflow%3ACI)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/php-enqueue/monitoring/ci.yml?branch=master)](https://github.com/php-enqueue/monitoring/actions?query=workflow%3ACI)
 [![Total Downloads](https://poser.pugx.org/enqueue/monitoring/d/total.png)](https://packagist.org/packages/enqueue/monitoring)
 [![Latest Stable Version](https://poser.pugx.org/enqueue/monitoring/version.png)](https://packagist.org/packages/enqueue/monitoring)
 
