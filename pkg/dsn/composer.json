@@ -1,7 +1,7 @@
 {
     "name": "enqueue/dsn",
     "type": "library",
-    "description": "Parse DSN",
+    "description": "Parse DSN (Data Source Name)",
     "keywords": ["dsn", "parse"],
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
