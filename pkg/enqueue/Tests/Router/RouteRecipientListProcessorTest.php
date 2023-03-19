@@ -3,8 +3,8 @@
 namespace Enqueue\Tests\Router;
 
 use Enqueue\Consumption\Result;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Router\Recipient;
 use Enqueue\Router\RecipientListRouterInterface;
 use Enqueue\Router\RouteRecipientListProcessor;

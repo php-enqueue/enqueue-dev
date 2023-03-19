@@ -8,7 +8,7 @@ use Enqueue\Client\DriverInterface;
 use Enqueue\Client\RouteCollection;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Symfony\Client\ConsumeCommand;
 use Enqueue\Symfony\Client\SimpleConsumeCommand;
 use Enqueue\Test\ClassExtensionTrait;

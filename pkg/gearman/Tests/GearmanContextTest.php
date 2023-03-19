@@ -3,7 +3,7 @@
 namespace Enqueue\Gearman\Tests;
 
 use Enqueue\Gearman\GearmanContext;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Exception\InvalidDestinationException;

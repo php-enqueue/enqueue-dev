@@ -2,8 +2,8 @@
 
 namespace Enqueue\Redis\Tests;
 
-use Enqueue\Null\NullQueue;
-use Enqueue\Null\NullTopic;
+use Enqueue\NoEffect\NullQueue;
+use Enqueue\NoEffect\NullTopic;
 use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisConsumer;
 use Enqueue\Redis\RedisContext;
@@ -113,7 +113,7 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
         $context = new RedisContext($this->createRedisMock(), 300);
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Redis\RedisDestination but got Enqueue\NoEffect\NullQueue.');
         $consumer = $context->createConsumer(new NullQueue('aQueue'));
 
         $this->assertInstanceOf(RedisConsumer::class, $consumer);

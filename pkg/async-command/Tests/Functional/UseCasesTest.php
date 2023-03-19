@@ -6,8 +6,8 @@ use Enqueue\AsyncCommand\CommandResult;
 use Enqueue\AsyncCommand\RunCommand;
 use Enqueue\AsyncCommand\RunCommandProcessor;
 use Enqueue\Consumption\Result;
-use Enqueue\Null\NullContext;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullContext;
+use Enqueue\NoEffect\NullMessage;
 use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 

@@ -2,9 +2,9 @@
 
 namespace Enqueue\Tests\Rpc;
 
-use Enqueue\Null\NullContext;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullContext;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Rpc\Promise;
 use Enqueue\Rpc\RpcClient;
 use Interop\Queue\Consumer;

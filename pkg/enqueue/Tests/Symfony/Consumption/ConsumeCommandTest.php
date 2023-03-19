@@ -8,7 +8,7 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Enqueue\Container\Container;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Symfony\Consumption\ConsumeCommand;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;

@@ -19,7 +19,7 @@
     "phpunit/phpunit": "^9.5",
     "queue-interop/queue-spec": "^0.6.2",
     "enqueue/test": "0.10.x-dev",
-    "enqueue/null": "0.10.x-dev"
+    "enqueue/noeffect": "0.10.x-dev"
   },
   "support": {
     "email": "opensource@forma-pro.com",

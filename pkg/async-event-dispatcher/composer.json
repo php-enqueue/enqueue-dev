@@ -18,7 +18,7 @@
         "symfony/http-kernel": "^5.1|^6.0",
         "symfony/filesystem": "^5.1|^6.0",
         "symfony/yaml": "^5.1|^6.0",
-        "enqueue/null": "0.10.x-dev",
+        "enqueue/noeffect": "0.10.x-dev",
         "enqueue/fs": "0.10.x-dev",
         "enqueue/test": "0.10.x-dev"
     },

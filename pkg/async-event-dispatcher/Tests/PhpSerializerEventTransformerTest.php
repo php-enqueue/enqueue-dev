@@ -4,7 +4,7 @@ namespace Enqueue\AsyncEventDispatcher\Tests;
 
 use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\AsyncEventDispatcher\PhpSerializerEventTransformer;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Message;

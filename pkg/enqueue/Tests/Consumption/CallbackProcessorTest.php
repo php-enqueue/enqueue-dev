@@ -3,8 +3,8 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\CallbackProcessor;
-use Enqueue\Null\NullContext;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullContext;
+use Enqueue\NoEffect\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Processor;
 use PHPUnit\Framework\TestCase;

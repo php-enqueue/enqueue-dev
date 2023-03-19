@@ -25,7 +25,7 @@ $ composer require enqueue/null
 
 ```php
 <?php
-use Enqueue\Null\NullConnectionFactory;
+use Enqueue\NoEffect\NullConnectionFactory;
 
 $connectionFactory = new NullConnectionFactory();
 

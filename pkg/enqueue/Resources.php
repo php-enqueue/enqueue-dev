@@ -10,7 +10,7 @@ use Enqueue\Fs\FsConnectionFactory;
 use Enqueue\Gearman\GearmanConnectionFactory;
 use Enqueue\Gps\GpsConnectionFactory;
 use Enqueue\Mongodb\MongodbConnectionFactory;
-use Enqueue\Null\NullConnectionFactory;
+use Enqueue\NoEffect\NullConnectionFactory;
 use Enqueue\Pheanstalk\PheanstalkConnectionFactory;
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Redis\RedisConnectionFactory;

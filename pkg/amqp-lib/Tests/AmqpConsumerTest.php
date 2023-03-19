@@ -4,7 +4,7 @@ namespace Enqueue\AmqpLib\Tests;
 
 use Enqueue\AmqpLib\AmqpConsumer;
 use Enqueue\AmqpLib\AmqpContext;
-use Enqueue\Null\NullMessage;
+use Enqueue\NoEffect\NullMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\WriteAttributeTrait;
 use Interop\Amqp\Impl\AmqpMessage;

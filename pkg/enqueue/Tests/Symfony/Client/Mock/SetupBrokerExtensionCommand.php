@@ -5,7 +5,7 @@ namespace Enqueue\Tests\Symfony\Client\Mock;
 use Enqueue\Client\Config;
 use Enqueue\Client\Driver\GenericDriver;
 use Enqueue\Client\RouteCollection;
-use Enqueue\Null\NullContext;
+use Enqueue\NoEffect\NullContext;
 use Enqueue\Symfony\Client\SetupBrokerExtensionCommandTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

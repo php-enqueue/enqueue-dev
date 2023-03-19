@@ -6,8 +6,8 @@ use Enqueue\AmqpExt\AmqpConsumer;
 use Enqueue\AmqpExt\AmqpContext;
 use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\AmqpExt\AmqpSubscriptionConsumer;
-use Enqueue\Null\NullQueue;
-use Enqueue\Null\NullTopic;
+use Enqueue\NoEffect\NullQueue;
+use Enqueue\NoEffect\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Enqueue\Test\ReadAttributeTrait;
 use Interop\Amqp\Impl\AmqpMessage;
@@ -124,7 +124,7 @@ class AmqpContextTest extends TestCase
         $context = new AmqpContext($this->createExtChannelMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpQueue but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpQueue but got Enqueue\NoEffect\NullQueue.');
         $context->createConsumer(new NullQueue('aName'));
     }
 
@@ -133,7 +133,7 @@ class AmqpContextTest extends TestCase
         $context = new AmqpContext($this->createExtChannelMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpTopic but got Enqueue\Null\NullTopic.');
+        $this->expectExceptionMessage('The destination must be an instance of Interop\Amqp\AmqpTopic but got Enqueue\NoEffect\NullTopic.');
         $context->createConsumer(new NullTopic('aName'));
     }
 

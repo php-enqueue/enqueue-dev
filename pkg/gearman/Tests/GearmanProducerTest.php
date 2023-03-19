@@ -5,8 +5,8 @@ namespace Enqueue\Gearman\Tests;
 use Enqueue\Gearman\GearmanDestination;
 use Enqueue\Gearman\GearmanMessage;
 use Enqueue\Gearman\GearmanProducer;
-use Enqueue\Null\NullMessage;
-use Enqueue\Null\NullQueue;
+use Enqueue\NoEffect\NullMessage;
+use Enqueue\NoEffect\NullQueue;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
@@ -28,7 +28,7 @@ class GearmanProducerTest extends TestCase
         $producer = new GearmanProducer($this->createGearmanClientMock());
 
         $this->expectException(InvalidDestinationException::class);
-        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Gearman\GearmanDestination but got Enqueue\Null\NullQueue.');
+        $this->expectExceptionMessage('The destination must be an instance of Enqueue\Gearman\GearmanDestination but got Enqueue\NoEffect\NullQueue.');
         $producer->send(new NullQueue('aQueue'), new GearmanMessage());
     }
 
@@ -37,7 +37,7 @@ class GearmanProducerTest extends TestCase
         $producer = new GearmanProducer($this->createGearmanClientMock());
 
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\Gearman\GearmanMessage but it is Enqueue\Null\NullMessage.');
+        $this->expectExceptionMessage('The message must be an instance of Enqueue\Gearman\GearmanMessage but it is Enqueue\NoEffect\NullMessage.');
         $producer->send(new GearmanDestination('aQueue'), new NullMessage());
     }
 
@@ -57,7 +57,7 @@ class GearmanProducerTest extends TestCase
         $gearman
             ->expects($this->once())
             ->method('returnCode')
-            ->willReturn(\GEARMAN_SUCCESS)
+            ->willReturn(GEARMAN_SUCCESS)
         ;
 
         $producer = new GearmanProducer($gearman);
