@@ -23,6 +23,7 @@ RUN set -x && \
         php${PHP_VERSION}-mysql \
         php${PHP_VERSION}-curl \
         php${PHP_VERSION}-mongodb \
+        php${PHP_VERSION}-mbstring \
         make \
         g++ \
         unzip \
