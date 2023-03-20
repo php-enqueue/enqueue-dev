@@ -10,9 +10,6 @@ use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group rdkafka
- */
 class RdKafkaContextTest extends TestCase
 {
     public function testThrowNotImplementedOnCreateTemporaryQueue()

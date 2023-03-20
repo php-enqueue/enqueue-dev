@@ -7,7 +7,6 @@ use Interop\Queue\Message;
 use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
 
 /**
- * @group rdkafka
  * @group functional
  * @retry 5
  */

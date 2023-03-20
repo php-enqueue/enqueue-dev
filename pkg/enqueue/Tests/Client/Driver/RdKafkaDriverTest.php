@@ -19,9 +19,6 @@ use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group rdkafka
- */
 class RdKafkaDriverTest extends TestCase
 {
     use ClassExtensionTrait;
