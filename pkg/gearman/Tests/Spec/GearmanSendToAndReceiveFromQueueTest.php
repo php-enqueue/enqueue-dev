@@ -9,6 +9,7 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
 /**
  * @group functional
+ * @group gearman
  */
 class GearmanSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {

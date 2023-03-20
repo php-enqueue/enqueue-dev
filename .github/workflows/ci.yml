@@ -167,4 +167,10 @@ jobs:
         env:
           PHP_VERSION: ${{ matrix.php }}
 
-      - run: bin/test.sh --${{ matrix.rdkafka_action }}=rdkafka
+      # TODO: convert these two steps into one w/o excludes when Gearman extension gets a release for PHP 8.1
+      # See https://github.com/php/pecl-networking-gearman/issues/16
+      - run: bin/test.sh
+        if: ${{ matrix.php }} != '8.1'
+
+      - run: bin/test.sh --exclude-group=gearman
+        if: ${{ matrix.php }} == '8.1'
