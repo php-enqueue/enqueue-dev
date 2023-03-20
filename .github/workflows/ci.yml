@@ -126,14 +126,13 @@ jobs:
         php: ['7.4', '8.0', '8.1'] # same as in the container
         symfony_version: ['5.4.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
-        rdkafka_action: ['exclude-group', 'group']
         exclude:
           - php: '7.4'
             symfony_version: '6.2.*'
           - php: '8.0'
             symfony_version: '6.2.*'
 
-    name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, rdkafka_action=${{ matrix.rdkafka_action }}, deps=${{ matrix.dependencies }}
+    name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
     steps:
       - uses: actions/checkout@v2
