@@ -24,8 +24,7 @@ class GearmanSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
     }
 
     /**
-     * @param Context $context
-     * @param string  $queueName
+     * @param string $queueName
      *
      * @return Queue
      */

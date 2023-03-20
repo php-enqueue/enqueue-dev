@@ -169,7 +169,7 @@ class RdKafkaProducerTest extends TestCase
 
         $expectedSerializer = $this->createSerializerMock();
 
-        //guard
+        // guard
         $this->assertNotSame($producer->getSerializer(), $expectedSerializer);
 
         $producer->setSerializer($expectedSerializer);

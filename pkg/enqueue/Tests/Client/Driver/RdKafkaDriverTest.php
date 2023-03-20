@@ -99,9 +99,6 @@ class RdKafkaDriverTest extends TestCase
         return new RdKafkaTopic($name);
     }
 
-    /**
-     * @return RdKafkaTopic
-     */
     protected function createTopic(string $name): RdKafkaTopic
     {
         return new RdKafkaTopic($name);
