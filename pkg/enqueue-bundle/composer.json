@@ -41,6 +41,7 @@
         "alcaeus/mongo-php-adapter": "^1.0",
         "symfony/browser-kit": "^5.4|^6.0",
         "symfony/expression-language": "^5.4|^6.0",
+        "symfony/validator": "^5.4|^6.0",
         "symfony/yaml": "^5.4|^6.0"
     },
     "suggest": {

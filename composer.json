@@ -63,6 +63,7 @@
     "symfony/http-kernel": "^5.4|^6.0",
     "symfony/filesystem": "^5.4|^6.0",
     "symfony/framework-bundle": "^5.4|^6.0",
+    "symfony/validator": "^5.4|^6.0",
     "symfony/yaml": "^5.4|^6.0",
     "empi89/php-amqp-stubs": "*@dev",
     "doctrine/doctrine-bundle": "^2.3.2",
