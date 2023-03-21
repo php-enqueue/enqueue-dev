@@ -10,7 +10,7 @@
         "enqueue/enqueue": "^0.10",
         "enqueue/null": "^0.10",
         "queue-interop/queue-interop": "^0.8",
-        "doctrine/orm": "^2.10",
+        "doctrine/orm": "^2.12",
         "doctrine/dbal": "^2.12 | ^3.0"
     },
     "require-dev": {
