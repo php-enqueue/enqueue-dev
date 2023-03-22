@@ -11,9 +11,6 @@ use PHPUnit\Framework\TestCase;
 use RdKafka\KafkaConsumer;
 use RdKafka\Message;
 
-/**
- * @group rdkafka
- */
 class RdKafkaConsumerTest extends TestCase
 {
     public function testCouldBeConstructedWithRequiredArguments()
@@ -198,7 +195,7 @@ class RdKafkaConsumerTest extends TestCase
     {
         $destination = new RdKafkaTopic('dest');
 
-        $expectedMessage = new  RdKafkaMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
+        $expectedMessage = new RdKafkaMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
 
         $kafkaMessage = new Message();
         $kafkaMessage->err = RD_KAFKA_RESP_ERR_NO_ERROR;
@@ -263,7 +260,7 @@ class RdKafkaConsumerTest extends TestCase
 
         $expectedSerializer = $this->createSerializerMock();
 
-        //guard
+        // guard
         $this->assertNotSame($consumer->getSerializer(), $expectedSerializer);
 
         $consumer->setSerializer($expectedSerializer);

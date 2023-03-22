@@ -23,7 +23,7 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "5.2.*"
+      - run: php ./bin/fix-symfony-version.php "5.4.*"
 
       - uses: "ramsey/composer-install@v1"
 
@@ -63,7 +63,7 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "5.2.*"
+      - run: php ./bin/fix-symfony-version.php "5.4.*"
 
       - run: composer update --no-progress
 
@@ -77,14 +77,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.3', '7.4', '8.0']
-        symfony_version: ['5.2.*', '6.0.*']
+        php: ['7.4', '8.0', '8.1', '8.2']
+        symfony_version: ['5.4.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         exclude:
-          - php: '7.3'
-            symfony_version: '6.0.*'
           - php: '7.4'
-            symfony_version: '6.0.*'
+            symfony_version: '6.2.*'
+          - php: '8.0'
+            symfony_version: '6.2.*'
 
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -123,17 +123,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0'] # same as in the container
-        symfony_version: ['5.2.*', '6.0.*']
+        php: ['7.4', '8.0', '8.1', '8.2'] # same as in the container
+        symfony_version: ['5.4.*', '6.2.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
-        rdkafka_action: ['exclude-group', 'group']
         exclude:
-          - php: '7.3'
-            symfony_version: '6.0.*'
           - php: '7.4'
-            symfony_version: '6.0.*'
+            symfony_version: '6.2.*'
+          - php: '8.0'
+            symfony_version: '6.2.*'
 
-    name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, rdkafka_action=${{ matrix.rdkafka_action }}, deps=${{ matrix.dependencies }}
+    name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
     steps:
       - uses: actions/checkout@v2
@@ -167,4 +166,10 @@ jobs:
         env:
           PHP_VERSION: ${{ matrix.php }}
 
-      - run: bin/test.sh --${{ matrix.rdkafka_action }}=rdkafka
+      # TODO: convert these two steps into one w/o excludes when Gearman extension gets a release for PHP 8.1
+      # See https://github.com/php/pecl-networking-gearman/issues/16
+      - run: bin/test.sh
+        if: ${{ matrix.php != '8.1' && matrix.php != '8.2' }}
+
+      - run: bin/test.sh --exclude-group=gearman
+        if: ${{ matrix.php == '8.1' && matrix.php != '8.2' }}

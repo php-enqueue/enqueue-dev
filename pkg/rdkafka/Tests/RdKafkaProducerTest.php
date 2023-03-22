@@ -15,9 +15,6 @@ use RdKafka\Producer;
 use RdKafka\ProducerTopic;
 use RdKafka\TopicConf;
 
-/**
- * @group rdkafka
- */
 class RdKafkaProducerTest extends TestCase
 {
     public function testCouldBeConstructedWithKafkaProducerAndSerializerAsArguments()
@@ -172,7 +169,7 @@ class RdKafkaProducerTest extends TestCase
 
         $expectedSerializer = $this->createSerializerMock();
 
-        //guard
+        // guard
         $this->assertNotSame($producer->getSerializer(), $expectedSerializer);
 
         $producer->setSerializer($expectedSerializer);

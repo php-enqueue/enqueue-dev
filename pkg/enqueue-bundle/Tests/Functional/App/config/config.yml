@@ -126,6 +126,3 @@ services:
         class: 'Enqueue\Bundle\Tests\Functional\App\AsyncListener'
         public: true
         arguments: ['@enqueue.client.default.producer', '@enqueue.events.registry']
-
-    locale_aware_listener:
-        public: true

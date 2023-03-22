@@ -7,6 +7,7 @@ use Interop\Queue\Spec\ContextSpec;
 
 /**
  * @group functional
+ * @group gearman
  */
 class GearmanContextTest extends ContextSpec
 {

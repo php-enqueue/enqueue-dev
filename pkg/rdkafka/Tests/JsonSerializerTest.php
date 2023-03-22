@@ -8,9 +8,6 @@ use Enqueue\RdKafka\Serializer;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group rdkafka
- */
 class JsonSerializerTest extends TestCase
 {
     use ClassExtensionTrait;
@@ -42,7 +39,7 @@ class JsonSerializerTest extends TestCase
 
         $resource = fopen(__FILE__, 'r');
 
-        //guard
+        // guard
         $this->assertIsResource($resource);
 
         $message = new RdKafkaMessage('theBody', ['aProp' => $resource]);

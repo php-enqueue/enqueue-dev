@@ -6,9 +6,6 @@ use Enqueue\RdKafka\RdKafkaConnectionFactory;
 use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group rdkafka
- */
 class RdKafkaConnectionFactoryTest extends TestCase
 {
     use ReadAttributeTrait;

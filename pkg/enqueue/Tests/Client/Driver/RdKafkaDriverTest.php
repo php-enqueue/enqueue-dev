@@ -19,9 +19,6 @@ use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group rdkafka
- */
 class RdKafkaDriverTest extends TestCase
 {
     use ClassExtensionTrait;
@@ -102,9 +99,6 @@ class RdKafkaDriverTest extends TestCase
         return new RdKafkaTopic($name);
     }
 
-    /**
-     * @return RdKafkaTopic
-     */
     protected function createTopic(string $name): RdKafkaTopic
     {
         return new RdKafkaTopic($name);

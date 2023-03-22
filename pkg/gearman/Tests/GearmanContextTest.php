@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @group functional
+ * @group gearman
  */
 class GearmanContextTest extends TestCase
 {

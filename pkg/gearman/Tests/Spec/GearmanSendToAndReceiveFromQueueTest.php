@@ -9,6 +9,7 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
 /**
  * @group functional
+ * @group gearman
  */
 class GearmanSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
@@ -23,8 +24,7 @@ class GearmanSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
     }
 
     /**
-     * @param Context $context
-     * @param string  $queueName
+     * @param string $queueName
      *
      * @return Queue
      */
