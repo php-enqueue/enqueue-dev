@@ -165,7 +165,7 @@ class SnsQsProducerTest extends TestCase
         $producer->send($destination, new SnsQsMessage());
     }
 
-    public function testShouldSendToSqsMessageWithGroupIdAndDeduplicationId()
+    public function testShouldSendToSqsProducerMessageWithGroupIdAndDeduplicationId()
     {
         $sqsMock = $this->createSqsContextMock();
         $sqsMock->method('createMessage')->willReturn(new SqsMessage());
