@@ -106,11 +106,12 @@ class PhpRedis implements Redis
         $this->redis = new \Redis();
 
         $connectionMethod = $this->config['persistent'] ? 'pconnect' : 'connect';
+        $unix = 'unix' === $this->config['scheme'] || in_array('unix', (array) $this->config['scheme_extensions'], true);
 
         $result = call_user_func(
             [$this->redis, $connectionMethod],
-            'unix' === $this->config['scheme'] ? $this->config['path'] : $this->config['host'],
-            $this->config['port'],
+            $unix ? $this->config['path'] : $this->config['host'],
+            $unix ? null : $this->config['port'],
             $this->config['timeout'],
             $this->config['persistent'] ? ($this->config['phpredis_persistent_id'] ?? null) : null,
             $this->config['phpredis_retry_interval'] ?? null,
