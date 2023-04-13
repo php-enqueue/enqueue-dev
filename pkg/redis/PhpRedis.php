@@ -94,7 +94,7 @@ class PhpRedis implements Redis
             return;
         }
 
-        $supportedSchemes = ['redis', 'tcp', 'unix'];
+        $supportedSchemes = ['redis', 'rediss', 'tcp', 'unix'];
         if (false == in_array($this->config['scheme'], $supportedSchemes, true)) {
             throw new \LogicException(sprintf(
                 'The given scheme protocol "%s" is not supported by php extension. It must be one of "%s"',
@@ -107,9 +107,11 @@ class PhpRedis implements Redis
 
         $connectionMethod = $this->config['persistent'] ? 'pconnect' : 'connect';
 
+        $host = $this->config['scheme'] === 'rediss' ? 'tls://' . $this->config['host'] : $this->config['host'];
+
         $result = call_user_func(
             [$this->redis, $connectionMethod],
-            'unix' === $this->config['scheme'] ? $this->config['path'] : $this->config['host'],
+            'unix' === $this->config['scheme'] ? $this->config['path'] : $host,
             $this->config['port'],
             $this->config['timeout'],
             $this->config['persistent'] ? ($this->config['phpredis_persistent_id'] ?? null) : null,
