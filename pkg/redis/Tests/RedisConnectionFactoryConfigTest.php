@@ -195,7 +195,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        //check normal redis connection for php redis extension
+        // check normal redis connection for php redis extension
         yield [
             'redis+phpredis://localhost:1234?foo=bar',
             [
@@ -218,7 +218,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        //check normal redis connection for predis library
+        // check normal redis connection for predis library
         yield [
             'redis+predis://localhost:1234?foo=bar',
             [
@@ -241,7 +241,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        //check tls connection for predis library
+        // check tls connection for predis library
         yield [
             'rediss+predis://localhost:1234?foo=bar&async=1',
             [
@@ -264,11 +264,11 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        //check tls connection for predis library
+        // check tls connection for predis library
         yield [
             'rediss+phpredis://localhost:1234?foo=bar&async=1',
             [
-                'host' => 'tls://localhost',
+                'host' => 'localhost',
                 'scheme' => 'rediss',
                 'port' => 1234,
                 'timeout' => 5.,
@@ -376,7 +376,6 @@ class RedisConnectionFactoryConfigTest extends TestCase
         ];
 
         // from predis doc
-
         yield [
             'tls://127.0.0.1?ssl[cafile]=private.pem&ssl[verify_peer]=1',
             [
