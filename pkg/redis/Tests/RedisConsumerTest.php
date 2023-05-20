@@ -112,6 +112,7 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
 
         $message = new RedisMessage();
         $message->setBody('text');
+        $message->setHeader('attempts', 0);
         $message->setReservedKey($serializer->toString($message));
 
         $consumer = new RedisConsumer($contextMock, new RedisDestination('aQueue'));
