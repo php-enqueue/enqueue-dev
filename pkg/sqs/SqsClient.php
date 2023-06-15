@@ -78,6 +78,16 @@ class SqsClient
         return $this->callApi('sendMessage', $args);
     }
 
+    public function tagQueue(array $args): Result
+    {
+        return $this->callApi('tagQueue', $args);
+    }
+
+    public function untagQueue(array $args): Result
+    {
+        return $this->callApi('untagQueue', $args);
+    }
+
     public function getAWSClient(): AwsSqsClient
     {
         $this->resolveClient();
