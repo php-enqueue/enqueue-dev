@@ -8,6 +8,9 @@ use Throwable;
 
 class MessageQueueCollector extends AbstractMessageQueueCollector
 {
+    /**
+     * @return void
+     */
     public function collect(Request $request, Response $response, Throwable $exception = null)
     {
         $this->collectInternal($request, $response);
