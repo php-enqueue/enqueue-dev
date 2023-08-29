@@ -109,15 +109,16 @@ class PhpRedis implements Redis
 
         $host = $this->config['scheme'] === 'rediss' ? 'tls://' . $this->config['host'] : $this->config['host'];
 
-        $result = call_user_func(
-            [$this->redis, $connectionMethod],
-            'unix' === $this->config['scheme'] ? $this->config['path'] : $host,
-            $this->config['port'],
-            $this->config['timeout'],
-            $this->config['persistent'] ? ($this->config['phpredis_persistent_id'] ?? null) : null,
-            $this->config['phpredis_retry_interval'] ?? null,
-            $this->config['read_write_timeout']
-        );
+        $args = [
+                'unix' === $this->config['scheme'] ? $this->config['path'] : $host,
+                $this->config['port'],
+                $this->config['timeout'],
+                $this->config['persistent'] ? ($this->config['phpredis_persistent_id'] ?? null) : null,
+                $this->config['phpredis_retry_interval'] ?? null,
+                $this->config['read_write_timeout'] ?? null,
+            ];
+
+        $result = $this->redis->$connectionMethod(...array_filter($args, fn ($arg) => isset($arg)));
 
         if (false == $result) {
             throw new ServerException('Failed to connect.');
