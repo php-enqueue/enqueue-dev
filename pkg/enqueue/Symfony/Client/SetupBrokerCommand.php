@@ -5,12 +5,14 @@ namespace Enqueue\Symfony\Client;
 use Enqueue\Client\DriverInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('enqueue:setup-broker')]
 class SetupBrokerCommand extends Command
 {
     protected static $defaultName = 'enqueue:setup-broker';

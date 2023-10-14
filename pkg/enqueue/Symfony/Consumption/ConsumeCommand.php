@@ -7,11 +7,13 @@ use Enqueue\Consumption\Extension\ExitStatusExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('enqueue:transport:consume')]
 class ConsumeCommand extends Command
 {
     use LimitsExtensionsCommandTrait;
