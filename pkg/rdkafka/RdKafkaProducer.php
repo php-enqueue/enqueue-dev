@@ -115,11 +115,11 @@ class RdKafkaProducer implements Producer
         return null;
     }
 
-    public function flush(int $timeout): void
+    public function flush(int $timeout): ?int
     {
         // Flush method is exposed in phprdkafka 4.0
         if (method_exists($this->producer, 'flush')) {
-            $this->producer->flush($timeout);
+            return $this->producer->flush($timeout);
         }
     }
 }
