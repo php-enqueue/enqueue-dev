@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.4
+ARG PHP_VERSION=8.2
 FROM makasim/nginx-php-fpm:${PHP_VERSION}-all-exts
 
 ARG PHP_VERSION
