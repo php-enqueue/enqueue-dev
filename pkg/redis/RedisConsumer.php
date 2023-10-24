@@ -42,9 +42,6 @@ class RedisConsumer implements Consumer
         return $this->redeliveryDelay;
     }
 
-    /**
-     * @param int $delay
-     */
     public function setRedeliveryDelay(int $delay): void
     {
         $this->redeliveryDelay = $delay;
@@ -103,7 +100,7 @@ class RedisConsumer implements Consumer
 
         if ($requeue) {
             $message = $this->getContext()->getSerializer()->toMessage($message->getReservedKey());
-            $message->setHeader('attempts', 0);
+            $message->setRedelivered(true);
 
             if ($message->getTimeToLive()) {
                 $message->setHeader('expires_at', time() + $message->getTimeToLive());

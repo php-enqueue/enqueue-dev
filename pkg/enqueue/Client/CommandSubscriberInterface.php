@@ -2,6 +2,15 @@
 
 namespace Enqueue\Client;
 
+/**
+ * @phpstan-type CommandConfig = array{
+ *     command: string,
+ *     processor?: string,
+ *     queue?: string,
+ *     prefix_queue?: bool,
+ *     exclusive?: bool,
+ * }
+ */
 interface CommandSubscriberInterface
 {
     /**
@@ -44,6 +53,8 @@ interface CommandSubscriberInterface
      * Note: If you set "prefix_queue" to true then the "queue" is used as is and therefor the driver is not used to create a transport queue name.
      *
      * @return string|array
+     *
+     * @phpstan-return string|CommandConfig|array<CommandConfig>
      */
     public static function getSubscribedCommand();
 }

@@ -12,7 +12,7 @@
         <field name="createdAt" column="created_at" type="datetime" nullable="false" />
         <field name="startedAt" column="started_at" type="datetime" nullable="true" />
         <field name="stoppedAt" column="stopped_at" type="datetime" nullable="true" />
-        <field name="data" column="data" type="json_array" nullable="true" />
+        <field name="data" column="data" type="json" nullable="true" />
         <many-to-one field="rootJob" target-entity="Enqueue\JobQueue\Doctrine\Entity\Job" inversed-by="childJobs">
             <join-column name="root_job_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>

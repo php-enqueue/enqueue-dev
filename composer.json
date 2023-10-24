@@ -27,7 +27,7 @@
     "makasim/temp-file": "^0.2",
     "google/cloud-pubsub": "^1.4.3",
     "doctrine/orm": "^2.12",
-    "doctrine/persistence": "^2.0",
+    "doctrine/persistence": "^2.0|^3.0",
     "mongodb/mongodb": "^1.2",
     "pda/pheanstalk": "^3.1",
     "aws/aws-sdk-php": "^3.155",

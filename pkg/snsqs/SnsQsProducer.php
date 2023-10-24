@@ -61,6 +61,8 @@ class SnsQsProducer implements Producer
                 $message->getHeaders()
             );
             $snsMessage->setMessageAttributes($message->getMessageAttributes());
+            $snsMessage->setMessageGroupId($message->getMessageGroupId());
+            $snsMessage->setMessageDeduplicationId($message->getMessageDeduplicationId());
 
             $this->getSnsProducer()->send($destination, $snsMessage);
         } else {
@@ -69,6 +71,9 @@ class SnsQsProducer implements Producer
                 $message->getProperties(),
                 $message->getHeaders()
             );
+
+            $sqsMessage->setMessageGroupId($message->getMessageGroupId());
+            $sqsMessage->setMessageDeduplicationId($message->getMessageDeduplicationId());
 
             $this->getSqsProducer()->send($destination, $sqsMessage);
         }
