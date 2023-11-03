@@ -11,7 +11,7 @@
   "require": {
     "php": "^7.4|^8.0",
 
-    "ext-amqp": "^1.9.3",
+    "ext-amqp": "^1.9.3|^2.0.0",
     "ext-gearman": "^2.0",
     "ext-mongodb": "^1.5",
     "ext-rdkafka": "^4.0|^5.0|^6.0",
