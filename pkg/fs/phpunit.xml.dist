@@ -1,30 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.5/phpunit.xsd"
-    colors="true"
-    bootstrap="./vendor/autoload.php"
->
-
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" colors="true" bootstrap="./vendor/autoload.php">
+    <coverage>
+        <include>
+            <directory suffix=".php">.</directory>
+        </include>
+        <exclude>
+            <directory>./vendor</directory>
+            <directory>./Resources</directory>
+            <directory>./Tests</directory>
+        </exclude>
+    </coverage>
     <testsuites>
         <testsuite name="Enqueue Filesystem Transport">
             <directory>./Tests</directory>
         </testsuite>
     </testsuites>
-
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
-    </listeners>
-
-    <filter>
-        <whitelist>
-            <directory suffix=".php">.</directory>
-            <exclude>
-                <directory>./vendor</directory>
-                <directory>./Resources</directory>
-                <directory>./Tests</directory>
-            </exclude>
-        </whitelist>
-    </filter>
 </phpunit>

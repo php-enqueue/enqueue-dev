@@ -20,11 +20,6 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Consumer::class, FsConsumer::class);
     }
 
-    public function testCouldBeConstructedWithContextAndDestinationAndPreFetchCountAsArguments()
-    {
-        new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 1);
-    }
-
     public function testShouldReturnDestinationSetInConstructorOnGetQueue()
     {
         $destination = new FsDestination(TempFile::generate());
@@ -53,15 +48,17 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
     public function testShouldDoNothingOnAcknowledge()
     {
         $consumer = new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 123);
-
+        $cloneWithInitialState = clone $consumer;
         $consumer->acknowledge(new FsMessage());
+        $this->assertEquals($cloneWithInitialState, $consumer);
     }
 
     public function testShouldDoNothingOnReject()
     {
         $consumer = new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 123);
-
+        $cloneWithInitialState = clone $consumer;
         $consumer->reject(new FsMessage());
+        $this->assertEquals($cloneWithInitialState, $consumer);
     }
 
     public function testCouldSetAndGetPollingInterval()
