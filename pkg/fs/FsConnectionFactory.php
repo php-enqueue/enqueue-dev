@@ -62,9 +62,9 @@ class FsConnectionFactory implements ConnectionFactory
     {
         return new FsContext(
             $this->config['path'],
-            $this->config['pre_fetch_count'],
-            $this->config['chmod'],
-            $this->config['polling_interval']
+            intval($this->config['pre_fetch_count']),
+            is_string($this->config['chmod']) ? octdec($this->config['chmod']) : $this->config['chmod'],
+            intval($this->config['polling_interval'])
         );
     }
 
