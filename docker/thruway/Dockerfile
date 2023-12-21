@@ -1,4 +1,4 @@
-FROM makasim/nginx-php-fpm:7.4-all-exts
+FROM makasim/nginx-php-fpm:8.0-all-exts
 
 RUN mkdir -p /thruway
 WORKDIR /thruway
