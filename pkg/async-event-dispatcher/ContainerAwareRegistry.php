@@ -33,9 +33,6 @@ class ContainerAwareRegistry implements Registry
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTransformerNameForEvent($eventName)
     {
         $transformerName = null;
@@ -62,9 +59,6 @@ class ContainerAwareRegistry implements Registry
         return $transformerName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTransformer($name)
     {
         if (false == array_key_exists($name, $this->transformersMap)) {
