@@ -179,6 +179,49 @@ class GpsConsumerTest extends TestCase
         $this->assertSame('the body', $message->getBody());
     }
 
+    public function testShouldReceiveMessageProtobufFormat()
+    {
+        $body = '2test+customer_6115118118117248@example.com"4test+customer_611511118118117248@example.com*&App\Tests\Entity\Entity497709';
+        $attributes = [
+            'ce-datacontenttype' => 'application/protobuf',
+        ];
+        
+        $nativeMessage = new Message([
+            'data' => $body,
+            'attributes' => $attributes,
+        ], []);
+
+        $subscription = $this->createSubscriptionMock();
+        $subscription
+            ->expects($this->once())
+            ->method('pull')
+            ->with($this->identicalTo([
+                'maxMessages' => 1,
+                'requestTimeout' => 12.345,
+            ]))
+            ->willReturn([$nativeMessage]);
+
+        $client = $this->createPubSubClientMock();
+        $client
+            ->expects($this->once())
+            ->method('subscription')
+            ->willReturn($subscription);
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getClient')
+            ->willReturn($client);
+
+        $consumer = new GpsConsumer($context, new GpsQueue('queue-name'));
+
+        $message = $consumer->receive(12345);
+
+        $this->assertInstanceOf(GpsMessage::class, $message);
+        $this->assertSame($body, $message->getBody());
+        $this->assertSame($attributes, $message->getProperties());
+    }
+
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|GpsContext
      */
