@@ -278,7 +278,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             ]
         );
         $message->setRedelivered($extEnvelope->isRedelivery());
-        $message->setDeliveryTag($extEnvelope->getDeliveryTag());
+        $message->setDeliveryTag((int) $extEnvelope->getDeliveryTag());
         $message->setRoutingKey($extEnvelope->getRoutingKey());
 
         return $message;
