@@ -68,7 +68,7 @@ class ContainerAwareRegistry implements Registry
         $transformer = $this->container->get($this->transformersMap[$name]);
 
         if (false == $transformer instanceof EventTransformer) {
-            throw new \LogicException(sprintf('The container must return instance of %s but got %s', EventTransformer::class, is_object($transformer) ? get_class($transformer) : gettype($transformer)));
+            throw new \LogicException(sprintf('The container must return instance of %s but got %s', EventTransformer::class, is_object($transformer) ? $transformer::class : gettype($transformer)));
         }
 
         return $transformer;
