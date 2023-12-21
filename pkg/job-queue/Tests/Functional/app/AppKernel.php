@@ -1,6 +1,9 @@
 <?php
 
-Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+// doctrine/annotations:2 autoloads annotations and removes loader registration
+if (method_exists(\Doctrine\Common\Annotations\AnnotationRegistry::class, 'registerLoader')) {
+    \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+}
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
