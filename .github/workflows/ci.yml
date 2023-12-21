@@ -93,6 +93,8 @@ jobs:
             symfony_version: '6.4.*'
           - php: '8.0'
             symfony_version: '7.0.*'
+          - php: '8.1'
+            symfony_version: '7.0.*'
 
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -146,6 +148,8 @@ jobs:
           - php: '8.0'
             symfony_version: '6.4.*'
           - php: '8.0'
+            symfony_version: '7.0.*'
+          - php: '8.1'
             symfony_version: '7.0.*'
 
     name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
