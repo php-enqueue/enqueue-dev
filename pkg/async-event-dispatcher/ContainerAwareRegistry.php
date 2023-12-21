@@ -2,13 +2,10 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ContainerAwareRegistry implements Registry, ContainerAwareInterface
+class ContainerAwareRegistry implements Registry
 {
-    use ContainerAwareTrait;
-
     /**
      * @var string[]
      */
@@ -19,6 +16,8 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
      */
     private $transformersMap;
 
+    private ContainerInterface $container;
+
     /**
      * @param string[] $eventsMap       [eventName => transformerName]
      * @param string[] $transformersMap [transformerName => transformerServiceId]
@@ -27,6 +26,11 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
     {
         $this->eventsMap = $eventsMap;
         $this->transformersMap = $transformersMap;
+    }
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 
     /**
