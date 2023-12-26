@@ -80,7 +80,9 @@ class GpsConnectionFactory implements ConnectionFactory
             });
         }
 
-        return new GpsContext($this->establishConnection());
+        return new GpsContext($this->establishConnection(), [
+            'serilalizeToJson' => $this->config['serilalizeToJson'],
+        ]);
     }
 
     private function parseDsn(string $dsn): array
@@ -105,6 +107,7 @@ class GpsConnectionFactory implements ConnectionFactory
             'emulatorHost' => $emulatorHost,
             'hasEmulator' => $hasEmulator,
             'lazy' => $dsn->getBool('lazy'),
+            'serilalizeToJson' => $dsn->getBool('serilalizeToJson'),
         ]), function ($value) { return null !== $value; });
     }
 
@@ -121,6 +124,7 @@ class GpsConnectionFactory implements ConnectionFactory
     {
         return [
             'lazy' => true,
+            'serilalizeToJson' => true
         ];
     }
 }

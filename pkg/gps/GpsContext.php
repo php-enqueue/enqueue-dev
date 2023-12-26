@@ -160,4 +160,9 @@ class GpsContext implements Context
 
         return $this->client;
     }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
 }

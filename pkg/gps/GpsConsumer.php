@@ -110,7 +110,14 @@ class GpsConsumer implements Consumer
 
     private function convertMessage(GoogleMessage $message): GpsMessage
     {
-        $gpsMessage = new GpsMessage($message->data(), $message->attributes(),[]);
+        $options = $this->context->getOptions();
+
+        if ($options['serilalizeToJson']) {
+            $gpsMessage = GpsMessage::jsonUnserialize($message->data());
+        } else {
+            $gpsMessage = new GpsMessage($message->data(), $message->attributes());
+        }
+
         $gpsMessage->setNativeMessage($message);
 
         return $gpsMessage;
