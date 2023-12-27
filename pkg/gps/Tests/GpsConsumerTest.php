@@ -131,6 +131,11 @@ class GpsConsumerTest extends TestCase
             ->willReturn($client)
         ;
 
+        $context
+            ->expects($this->once())
+            ->method('getOptions')
+            ->willReturn(['serilalizeToJson' => true]);
+
         $consumer = new GpsConsumer($context, new GpsQueue('queue-name'));
 
         $message = $consumer->receiveNoWait();
@@ -170,6 +175,11 @@ class GpsConsumerTest extends TestCase
             ->method('getClient')
             ->willReturn($client)
         ;
+
+        $context
+            ->expects($this->once())
+            ->method('getOptions')
+            ->willReturn(['serilalizeToJson' => true]);
 
         $consumer = new GpsConsumer($context, new GpsQueue('queue-name'));
 
