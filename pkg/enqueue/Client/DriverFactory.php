@@ -31,11 +31,7 @@ final class DriverFactory implements DriverFactoryInterface
 
         $knownDrivers = Resources::getKnownDrivers();
         if ($driverInfo = $this->findDriverInfo($dsn, $knownDrivers)) {
-            throw new \LogicException(sprintf(
-                'To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.',
-                $dsn->getScheme(),
-                implode(' ', $driverInfo['packages'])
-            ));
+            throw new \LogicException(sprintf('To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.', $dsn->getScheme(), implode(' ', $driverInfo['packages'])));
         }
 
         throw new \LogicException(sprintf(
