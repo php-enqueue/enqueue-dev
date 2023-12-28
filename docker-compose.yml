@@ -132,7 +132,7 @@ services:
       - '4576:4576'
       - '4575:4575'
     environment:
-      HOSTNAME_EXTERNAL: 'localstack'
+      LOCALSTACK_HOST: 'localstack'
       SERVICES: 'sqs,sns'
 
   influxdb:
