@@ -26,7 +26,7 @@ doctrine:
             TestEntity:
                 mapping: true
                 type: xml
-                dir: '%kernel.project_dir%/Tests/Functional/Entity'
+                dir: '%kernel.project_dir%/Tests/Functional/mapping'
                 alias: 'EnqueueJobQueue'
                 prefix: 'Enqueue\JobQueue\Tests\Functional\Entity'
                 is_bundle: false
