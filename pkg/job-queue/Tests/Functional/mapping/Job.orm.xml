@@ -13,9 +13,9 @@
         <field name="startedAt" column="started_at" type="datetime" nullable="true" />
         <field name="stoppedAt" column="stopped_at" type="datetime" nullable="true" />
         <field name="data" column="data" type="json" nullable="true" />
-        <many-to-one field="rootJob" target-entity="Enqueue\JobQueue\Doctrine\Entity\Job" inversed-by="childJobs">
+        <many-to-one field="rootJob" target-entity="Enqueue\JobQueue\Tests\Functional\Entity\Job" inversed-by="childJobs">
             <join-column name="root_job_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
-        <one-to-many field="childJobs" target-entity="Enqueue\JobQueue\Doctrine\Entity\Job" mapped-by="rootJob" />
+        <one-to-many field="childJobs" target-entity="Enqueue\JobQueue\Tests\Functional\Entity\Job" mapped-by="rootJob" />
     </entity>
 </doctrine-mapping>
