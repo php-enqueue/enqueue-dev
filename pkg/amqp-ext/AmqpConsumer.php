@@ -118,7 +118,7 @@ class AmqpConsumer implements InteropAmqpConsumer
     {
         InvalidMessageException::assertMessageInstanceOf($message, InteropAmqpMessage::class);
 
-        $this->getExtQueue()->ack($message->getDeliveryTag());
+        $this->getExtQueue()->ack((int) $message->getDeliveryTag());
     }
 
     /**
