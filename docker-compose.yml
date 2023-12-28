@@ -133,6 +133,7 @@ services:
     environment:
       LOCALSTACK_HOST: 'localstack:4566'
       SERVICES: 'sqs,sns'
+      SQS_ENDPOINT_STRATEGY: 'off'
 
   influxdb:
     image: 'influxdb:latest'
