@@ -74,6 +74,9 @@
     "dms/phpunit-arraysubset-asserts": "^0.2.1",
     "phpspec/prophecy-phpunit": "^2.0"
   },
+  "conflict": {
+    "aws/aws-sdk-php": ">=3.285.1"
+  },
   "autoload": {
     "psr-4": {
       "Enqueue\\AmqpBunny\\": "pkg/amqp-bunny/",
