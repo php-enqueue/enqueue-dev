@@ -93,7 +93,7 @@ class AmqpConsumer implements InteropAmqpConsumer
                 return $message;
             }
 
-            usleep(100000); //100ms
+            usleep(100000); // 100ms
         }
 
         return null;
@@ -130,7 +130,7 @@ class AmqpConsumer implements InteropAmqpConsumer
 
         $this->getExtQueue()->reject(
             $message->getDeliveryTag(),
-            $requeue ? AMQP_REQUEUE : AMQP_NOPARAM
+            $requeue ? \AMQP_REQUEUE : \AMQP_NOPARAM
         );
     }
 
