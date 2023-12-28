@@ -84,7 +84,7 @@ final class DriverFactory implements DriverFactoryInterface
     private function createRabbitMqStompDriver(ConnectionFactory $factory, Dsn $dsn, Config $config, RouteCollection $collection): RabbitMqStompDriver
     {
         $defaultManagementHost = $dsn->getHost() ?: $config->getTransportOption('host', 'localhost');
-        $managementVast = ltrim($dsn->getPath(), '/') ?: $config->getTransportOption('vhost', '/');
+        $managementVast = ltrim((string) $dsn->getPath(), '/') ?: $config->getTransportOption('vhost', '/');
 
         $managementClient = StompManagementClient::create(
             urldecode($managementVast),
