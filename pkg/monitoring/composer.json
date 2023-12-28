@@ -11,7 +11,7 @@
         "enqueue/dsn": "^0.10"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^9.6.15",
         "enqueue/test": "0.10.x-dev",
         "influxdb/influxdb-php": "^1.14",
         "datadog/php-datadogstatsd": "^1.3",
