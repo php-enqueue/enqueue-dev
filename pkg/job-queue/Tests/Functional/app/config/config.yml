@@ -25,7 +25,7 @@ doctrine:
         mappings:
             TestEntity:
                 mapping: true
-                type: annotation
+                type: attribute
                 dir: '%kernel.project_dir%/Tests/Functional/Entity'
                 alias: 'EnqueueJobQueue'
                 prefix: 'Enqueue\JobQueue\Tests\Functional\Entity'
