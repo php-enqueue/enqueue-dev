@@ -36,7 +36,7 @@ class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiv
     {
         $result = $this->createSnsQsQueue($queueName);
         sleep(1);
-        
+
         return $result;
     }
 }
