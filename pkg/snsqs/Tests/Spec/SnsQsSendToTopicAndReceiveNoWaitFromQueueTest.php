@@ -34,6 +34,9 @@ class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiv
 
     protected function createQueue(Context $context, $queueName)
     {
-        return $this->createSnsQsQueue($queueName);
+        $result = $this->createSnsQsQueue($queueName);
+        sleep(1);
+        
+        return $result;
     }
 }
