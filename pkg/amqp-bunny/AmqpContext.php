@@ -293,7 +293,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         if (false == $this->bunnyChannel) {
             $bunnyChannel = call_user_func($this->bunnyChannelFactory);
             if (false == $bunnyChannel instanceof Channel) {
-                throw new \LogicException(sprintf('The factory must return instance of \Bunny\Channel. It returned %s', is_object($bunnyChannel) ? get_class($bunnyChannel) : gettype($bunnyChannel)));
+                throw new \LogicException(sprintf('The factory must return instance of \Bunny\Channel. It returned %s', is_object($bunnyChannel) ? $bunnyChannel::class : gettype($bunnyChannel)));
             }
 
             $this->bunnyChannel = $bunnyChannel;

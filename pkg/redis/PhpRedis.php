@@ -103,7 +103,7 @@ class PhpRedis implements Redis
 
         $connectionMethod = $this->config['persistent'] ? 'pconnect' : 'connect';
 
-        $host = 'rediss' === $this->config['scheme'] ? 'tls://' . $this->config['host'] : $this->config['host'];
+        $host = 'rediss' === $this->config['scheme'] ? 'tls://'.$this->config['host'] : $this->config['host'];
 
         $result = call_user_func(
             [$this->redis, $connectionMethod],
