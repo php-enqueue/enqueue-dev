@@ -22,9 +22,6 @@ class DbalPersistedConnection extends Connection
      */
     protected static $persistedTransactionNestingLevels;
 
-    /**
-     * {@inheritdoc}
-     */
     public function connect()
     {
         if ($this->isConnected()) {
@@ -41,25 +38,16 @@ class DbalPersistedConnection extends Connection
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function beginTransaction()
     {
         $this->wrapTransactionNestingLevel('beginTransaction');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function commit()
     {
         $this->wrapTransactionNestingLevel('commit');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rollBack()
     {
         $this->wrapTransactionNestingLevel('rollBack');
