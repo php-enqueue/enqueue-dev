@@ -134,6 +134,7 @@ services:
       LOCALSTACK_HOST: 'localstack:4566'
       SERVICES: 'sqs,sns'
       SQS_ENDPOINT_STRATEGY: 'off'
+      EAGER_SERVICE_LOADING: 1
 
   influxdb:
     image: 'influxdb:latest'
