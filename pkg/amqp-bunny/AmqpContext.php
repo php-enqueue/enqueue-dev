@@ -51,7 +51,6 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
      * Callable must return instance of \Bunny\Channel once called.
      *
      * @param Channel|callable $bunnyChannel
-     * @param array            $config
      */
     public function __construct($bunnyChannel, array $config)
     {
@@ -218,7 +217,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $this->getBunnyChannel()->exchangeBind(
                 $bind->getTarget()->getTopicName(),
                 $bind->getSource()->getTopicName(),
-                $bind->getRoutingKey(),
+                (string) $bind->getRoutingKey(),
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
@@ -227,7 +226,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $this->getBunnyChannel()->queueBind(
                 $bind->getSource()->getQueueName(),
                 $bind->getTarget()->getTopicName(),
-                $bind->getRoutingKey(),
+                (string) $bind->getRoutingKey(),
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
@@ -236,7 +235,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $this->getBunnyChannel()->queueBind(
                 $bind->getTarget()->getQueueName(),
                 $bind->getSource()->getTopicName(),
-                $bind->getRoutingKey(),
+                (string) $bind->getRoutingKey(),
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
                 $bind->getArguments()
             );
@@ -294,10 +293,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         if (false == $this->bunnyChannel) {
             $bunnyChannel = call_user_func($this->bunnyChannelFactory);
             if (false == $bunnyChannel instanceof Channel) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of \Bunny\Channel. It returned %s',
-                    is_object($bunnyChannel) ? get_class($bunnyChannel) : gettype($bunnyChannel)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of \Bunny\Channel. It returned %s', is_object($bunnyChannel) ? $bunnyChannel::class : gettype($bunnyChannel)));
             }
 
             $this->bunnyChannel = $bunnyChannel;

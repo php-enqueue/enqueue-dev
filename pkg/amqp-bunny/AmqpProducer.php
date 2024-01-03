@@ -152,8 +152,8 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
             $this->channel->publish(
                 $message->getBody(),
                 $amqpProperties,
-                $destination->getTopicName(),
-                $message->getRoutingKey(),
+                (string) $destination->getTopicName(),
+                (string) $message->getRoutingKey(),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
             );
@@ -162,7 +162,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
                 $message->getBody(),
                 $amqpProperties,
                 '',
-                $destination->getQueueName(),
+                (string) $destination->getQueueName(),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
             );

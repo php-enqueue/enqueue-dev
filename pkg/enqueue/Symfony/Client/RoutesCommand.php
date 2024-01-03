@@ -65,7 +65,7 @@ class RoutesCommand extends Command
         try {
             $this->driver = $this->getDriver($input->getOption('client'));
         } catch (NotFoundExceptionInterface $e) {
-            throw new \LogicException(sprintf('Client "%s" is not supported.', $input->getOption('client')), null, $e);
+            throw new \LogicException(message: sprintf('Client "%s" is not supported.', $input->getOption('client')), previous: $e);
         }
 
         $routes = $this->driver->getRouteCollection()->all();
