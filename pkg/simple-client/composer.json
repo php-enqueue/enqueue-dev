@@ -10,7 +10,7 @@
         "enqueue/enqueue": "^0.10",
         "queue-interop/amqp-interop": "^0.8.2",
         "queue-interop/queue-interop": "^0.8",
-        "symfony/config": "^5.4|^6.0"
+        "symfony/config": "^5.4|^6.4|^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
@@ -18,7 +18,7 @@
         "enqueue/amqp-ext": "0.10.x-dev",
         "enqueue/fs": "0.10.x-dev",
         "enqueue/null": "0.10.x-dev",
-        "symfony/yaml": "^5.4|^6.0"
+        "symfony/yaml": "^5.4|^6.4|^7.0"
     },
     "support": {
         "email": "opensource@forma-pro.com",
