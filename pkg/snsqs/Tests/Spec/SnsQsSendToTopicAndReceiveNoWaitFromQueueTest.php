@@ -8,6 +8,7 @@ use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 
 /**
  * @group functional
+ *
  * @retry 5
  */
 class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
@@ -34,9 +35,6 @@ class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiv
 
     protected function createQueue(Context $context, $queueName)
     {
-        $result = $this->createSnsQsQueue($queueName);
-        sleep(1);
-
-        return $result;
+        return $this->createSnsQsQueue($queueName);
     }
 }
