@@ -9,16 +9,16 @@
         "php": "^7.4|^8.0",
         "enqueue/enqueue": "^0.10",
         "queue-interop/queue-interop": "^0.8",
-        "symfony/console": "^5.4|^6.0",
-        "symfony/process": "^5.4|^6.0"
+        "symfony/console": "^5.4|^6.4|^7.0",
+        "symfony/process": "^5.4|^6.4|^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "symfony/dependency-injection": "^5.4|^6.0",
-        "symfony/config": "^5.4|^6.0",
-        "symfony/http-kernel": "^5.4|^6.0",
-        "symfony/filesystem": "^5.4|^6.0",
-        "symfony/yaml": "^5.4|^6.0",
+        "symfony/dependency-injection": "^5.4|^6.4|^7.0",
+        "symfony/config": "^5.4|^6.4|^7.0",
+        "symfony/http-kernel": "^5.4|^6.4|^7.0",
+        "symfony/filesystem": "^5.4|^6.4|^7.0",
+        "symfony/yaml": "^5.4|^6.4|^7.0",
         "enqueue/null": "0.10.x-dev",
         "enqueue/fs": "0.10.x-dev",
         "enqueue/test": "0.10.x-dev"
@@ -31,7 +31,7 @@
         "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
     },
     "suggest": {
-        "symfony/dependency-injection": "^5.4|^6.0 If you'd like to use async event dispatcher container extension."
+        "symfony/dependency-injection": "^5.4|^6.4|^7.0 If you'd like to use async event dispatcher container extension."
     },
     "autoload": {
         "psr-4": { "Enqueue\\AsyncCommand\\": "" },
