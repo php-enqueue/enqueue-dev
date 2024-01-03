@@ -125,7 +125,7 @@
       "ext-amqp": "1.9.3",
       "ext-gearman": "2.0.3",
       "ext-rdkafka": "4.0",
-      "ext-mongodb": "1.5",
+      "ext-mongodb": "1.11",
       "ext-bcmath": "1",
       "ext-mbstring": "1",
       "ext-mongo": "1.6.14",
