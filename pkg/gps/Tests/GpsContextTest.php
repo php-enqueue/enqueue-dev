@@ -86,6 +86,13 @@ class GpsContextTest extends TestCase
         $context->createConsumer(new GpsTopic(''));
     }
 
+    public function testShouldReturnOptions()
+    {
+        $context = new GpsContext($this->createPubSubClientMock(), ['foo' => 'fooVal']);
+
+        $this->assertSame(['ackDeadlineSeconds' => 10, 'foo' => 'fooVal'], $context->getOptions());
+    }
+
     /**
      * @return PubSubClient|\PHPUnit\Framework\MockObject\MockObject|PubSubClient
      */

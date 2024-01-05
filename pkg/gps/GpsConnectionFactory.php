@@ -77,10 +77,14 @@ class GpsConnectionFactory implements ConnectionFactory
         if ($this->config['lazy']) {
             return new GpsContext(function () {
                 return $this->establishConnection();
-            });
+            }, [
+                'serilalizeToJson' => $this->config['serilalizeToJson'],
+            ]);
         }
 
-        return new GpsContext($this->establishConnection());
+        return new GpsContext($this->establishConnection(), [
+            'serilalizeToJson' => $this->config['serilalizeToJson'],
+        ]);
     }
 
     private function parseDsn(string $dsn): array
@@ -88,10 +92,7 @@ class GpsConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('gps' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "gps"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be "gps"', $dsn->getSchemeProtocol()));
         }
 
         $emulatorHost = $dsn->getString('emulatorHost');
@@ -105,6 +106,7 @@ class GpsConnectionFactory implements ConnectionFactory
             'emulatorHost' => $emulatorHost,
             'hasEmulator' => $hasEmulator,
             'lazy' => $dsn->getBool('lazy'),
+            'serilalizeToJson' => $dsn->getBool('serilalizeToJson'),
         ]), function ($value) { return null !== $value; });
     }
 
@@ -121,6 +123,7 @@ class GpsConnectionFactory implements ConnectionFactory
     {
         return [
             'lazy' => true,
+            'serilalizeToJson' => true,
         ];
     }
 }

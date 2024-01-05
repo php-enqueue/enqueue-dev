@@ -131,6 +131,11 @@ class GpsConsumerTest extends TestCase
             ->willReturn($client)
         ;
 
+        $context
+            ->expects($this->once())
+            ->method('getOptions')
+            ->willReturn(['serilalizeToJson' => true]);
+
         $consumer = new GpsConsumer($context, new GpsQueue('queue-name'));
 
         $message = $consumer->receiveNoWait();
@@ -171,12 +176,105 @@ class GpsConsumerTest extends TestCase
             ->willReturn($client)
         ;
 
+        $context
+            ->expects($this->once())
+            ->method('getOptions')
+            ->willReturn(['serilalizeToJson' => true]);
+
         $consumer = new GpsConsumer($context, new GpsQueue('queue-name'));
 
         $message = $consumer->receive(12345);
 
         $this->assertInstanceOf(GpsMessage::class, $message);
         $this->assertSame('the body', $message->getBody());
+    }
+
+    public function testShouldReceiveMessageUnSerialize()
+    {
+        $message = new GpsMessage('the body');
+        $nativeMessage = new Message([
+            'data' => json_encode($message),
+        ], []);
+
+        $subscription = $this->createSubscriptionMock();
+        $subscription
+            ->expects($this->once())
+            ->method('pull')
+            ->with($this->identicalTo([
+                'maxMessages' => 1,
+                'requestTimeout' => 12.345,
+            ]))
+            ->willReturn([$nativeMessage]);
+
+        $client = $this->createPubSubClientMock();
+        $client
+            ->expects($this->once())
+            ->method('subscription')
+            ->willReturn($subscription);
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getClient')
+            ->willReturn($client);
+        $context
+            ->expects($this->once())
+            ->method('getOptions')
+            ->willReturn(['serilalizeToJson' => false]);
+
+        $consumer = new GpsConsumer($context, new GpsQueue('queue-name'));
+
+        $message = $consumer->receive(12345);
+
+        $this->assertInstanceOf(GpsMessage::class, $message);
+        $this->assertSame($nativeMessage->data(), $message->getBody());
+        $this->assertSame($nativeMessage->attributes(), $message->getProperties());
+    }
+
+    public function testShouldReceiveMessageUnSerializeWithAttributes()
+    {
+        $message = new GpsMessage('the body');
+        $nativeMessage = new Message([
+            'data' => json_encode($message),
+            'attributes' => [
+                'foo' => 'fooVal',
+                'bar' => 'barVal',
+            ],
+        ], []);
+
+        $subscription = $this->createSubscriptionMock();
+        $subscription
+            ->expects($this->once())
+            ->method('pull')
+            ->with($this->identicalTo([
+                'maxMessages' => 1,
+                'requestTimeout' => 12.345,
+            ]))
+            ->willReturn([$nativeMessage]);
+
+        $client = $this->createPubSubClientMock();
+        $client
+            ->expects($this->once())
+            ->method('subscription')
+            ->willReturn($subscription);
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getClient')
+            ->willReturn($client);
+        $context
+            ->expects($this->once())
+            ->method('getOptions')
+            ->willReturn(['serilalizeToJson' => false]);
+
+        $consumer = new GpsConsumer($context, new GpsQueue('queue-name'));
+
+        $message = $consumer->receive(12345);
+
+        $this->assertInstanceOf(GpsMessage::class, $message);
+        $this->assertSame($nativeMessage->data(), $message->getBody());
+        $this->assertSame($nativeMessage->attributes(), $message->getProperties());
     }
 
     /**

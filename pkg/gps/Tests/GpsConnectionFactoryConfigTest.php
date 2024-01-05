@@ -41,9 +41,6 @@ class GpsConnectionFactoryConfigTest extends TestCase
 
     /**
      * @dataProvider provideConfigs
-     *
-     * @param mixed $config
-     * @param mixed $expectedConfig
      */
     public function testShouldParseConfigurationAsExpected($config, $expectedConfig)
     {
@@ -58,6 +55,7 @@ class GpsConnectionFactoryConfigTest extends TestCase
             null,
             [
                 'lazy' => true,
+                'serilalizeToJson' => true,
             ],
         ];
 
@@ -65,6 +63,7 @@ class GpsConnectionFactoryConfigTest extends TestCase
             'gps:',
             [
                 'lazy' => true,
+                'serilalizeToJson' => true,
             ],
         ];
 
@@ -72,6 +71,7 @@ class GpsConnectionFactoryConfigTest extends TestCase
             [],
             [
                 'lazy' => true,
+                'serilalizeToJson' => true,
             ],
         ];
 
@@ -83,6 +83,7 @@ class GpsConnectionFactoryConfigTest extends TestCase
                 'emulatorHost' => 'http://google-pubsub:8085',
                 'hasEmulator' => true,
                 'lazy' => true,
+                'serilalizeToJson' => true,
             ],
         ];
 
@@ -94,6 +95,7 @@ class GpsConnectionFactoryConfigTest extends TestCase
                 'emulatorHost' => 'http://google-pubsub:8085',
                 'hasEmulator' => true,
                 'lazy' => true,
+                'serilalizeToJson' => true,
             ],
         ];
 
@@ -104,6 +106,19 @@ class GpsConnectionFactoryConfigTest extends TestCase
                 'projectId' => 'mqdev',
                 'emulatorHost' => 'http://Fgoogle-pubsub:8085',
                 'lazy' => false,
+                'serilalizeToJson' => true,
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'gps:?foo=fooVal&projectId=mqdev&emulatorHost=http%3A%2F%2Fgoogle-pubsub%3A8085&serilalizeToJson=false'],
+            [
+                'foo' => 'fooVal',
+                'projectId' => 'mqdev',
+                'emulatorHost' => 'http://google-pubsub:8085',
+                'hasEmulator' => true,
+                'lazy' => true,
+                'serilalizeToJson' => false,
             ],
         ];
     }
