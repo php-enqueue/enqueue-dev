@@ -28,6 +28,11 @@ class RedisConsumer implements Consumer
      */
     private $redeliveryDelay = 300;
 
+    /**
+     * @var int
+     */
+    private $deliveryDelay;
+
     public function __construct(RedisContext $context, RedisDestination $queue)
     {
         $this->context = $context;
@@ -45,6 +50,19 @@ class RedisConsumer implements Consumer
     public function setRedeliveryDelay(int $delay): void
     {
         $this->redeliveryDelay = $delay;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeliveryDelay(): ?int
+    {
+        return $this->deliveryDelay;
+    }
+
+    public function setDeliveryDelay(int $deliveryDelay): void
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 
     /**
@@ -92,7 +110,7 @@ class RedisConsumer implements Consumer
     /**
      * @param RedisMessage $message
      */
-    public function reject(Message $message, bool $requeue = false): void
+    public function reject(Message $message, bool $requeue = false, $delay = 0): void
     {
         InvalidMessageException::assertMessageInstanceOf($message, RedisMessage::class);
 
@@ -102,13 +120,22 @@ class RedisConsumer implements Consumer
             $message = $this->getContext()->getSerializer()->toMessage($message->getReservedKey());
             $message->setRedelivered(true);
 
+            if (null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
+                $message->setDeliveryDelay($this->deliveryDelay);
+            }
+
             if ($message->getTimeToLive()) {
                 $message->setHeader('expires_at', time() + $message->getTimeToLive());
             }
 
-            $payload = $this->getContext()->getSerializer()->toString($message);
-
-            $this->getRedis()->lpush($this->queue->getName(), $payload);
+            if($message->getDeliveryDelay()) {
+                $deliveryAt = time() + $message->getDeliveryDelay() / 1000;
+                $payload = $this->getContext()->getSerializer()->toString($message);
+                $this->getRedis()->zadd($this->queue->getName().':delayed', $payload, $deliveryAt);
+            } else {
+                $payload = $this->getContext()->getSerializer()->toString($message);
+                $this->getRedis()->lpush($this->queue->getName(), $payload);
+            }
         }
     }
 
