@@ -38,16 +38,16 @@ services:
       - PREDIS_DSN=redis+predis://redis
       - PHPREDIS_DSN=redis+phpredis://redis
       - GPS_DSN=gps:?projectId=mqdev&emulatorHost=http://google-pubsub:8085
-      - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4576&version=latest
-      - SNS_DSN=sns:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4575&version=latest
-      - SNSQS_DSN=snsqs:?key=key&secret=secret&region=us-east-1&sns_endpoint=http://localstack:4575&sqs_endpoint=http://localstack:4576&version=latest
+      - SQS_DSN=sqs:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4566&version=latest
+      - SNS_DSN=sns:?key=key&secret=secret&region=us-east-1&endpoint=http://localstack:4566&version=latest
+      - SNSQS_DSN=snsqs:?key=key&secret=secret&region=us-east-1&sns_endpoint=http://localstack:4566&sqs_endpoint=http://localstack:4566&version=latest
       - WAMP_DSN=wamp://thruway:9090
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - AWS_SQS_KEY=key
       - AWS_SQS_SECRET=secret
       - AWS_SQS_REGION=us-east-1
-      - AWS_SQS_ENDPOINT=http://localstack:4576
+      - AWS_SQS_ENDPOINT=http://localstack:4566
       - AWS_SQS_VERSION=latest
       - BEANSTALKD_DSN=beanstalk://beanstalkd:11300
       - GEARMAN_DSN=gearman://gearmand:4730
@@ -127,13 +127,12 @@ services:
       - '9090:9090'
 
   localstack:
-    image: 'localstack/localstack:0.8.10'
+    image: 'localstack/localstack:3.0.2'
     ports:
-      - '4576:4576'
-      - '4575:4575'
+      - '4566:4566'
     environment:
-      HOSTNAME_EXTERNAL: 'localstack'
       SERVICES: 'sqs,sns'
+      LOCALSTACK_HOST: 'localstack:4566'
 
   influxdb:
     image: 'influxdb:latest'

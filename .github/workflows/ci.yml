@@ -78,17 +78,19 @@ jobs:
       fail-fast: false
       matrix:
         php: ['7.4', '8.0', '8.1', '8.2']
-        symfony_version: ['5.4.*', '6.2.*', '6.3.*']
+        symfony_version: ['5.4.*', '6.4.*', '7.0.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         exclude:
           - php: '7.4'
-            symfony_version: '6.2.*'
+            symfony_version: '6.4.*'
           - php: '7.4'
-            symfony_version: '6.3.*'
+            symfony_version: '7.0.*'
           - php: '8.0'
-            symfony_version: '6.2.*'
+            symfony_version: '6.4.*'
           - php: '8.0'
-            symfony_version: '6.3.*'
+            symfony_version: '7.0.*'
+          - php: '8.1'
+            symfony_version: '7.0.*'
 
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -127,18 +129,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2'] # same as in the container
-        symfony_version: ['5.4.*', '6.2.*', '6.3.*']
-        dependencies: ['--prefer-lowest', '--prefer-dist']
+        php: [ '7.4', '8.0', '8.1', '8.2' ] # same as in the container
+        symfony_version: [ '5.4.*', '6.4.*', '7.0.*' ]
+        dependencies: [ '--prefer-lowest', '--prefer-dist' ]
         exclude:
           - php: '7.4'
-            symfony_version: '6.2.*'
+            symfony_version: '6.4.*'
           - php: '7.4'
-            symfony_version: '6.3.*'
+            symfony_version: '7.0.*'
           - php: '8.0'
-            symfony_version: '6.2.*'
+            symfony_version: '6.4.*'
           - php: '8.0'
-            symfony_version: '6.3.*'
+            symfony_version: '7.0.*'
+          - php: '8.1'
+            symfony_version: '7.0.*'
 
     name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -180,4 +184,4 @@ jobs:
         if: ${{ matrix.php != '8.1' && matrix.php != '8.2' }}
 
       - run: bin/test.sh --exclude-group=gearman
-        if: ${{ matrix.php == '8.1' && matrix.php != '8.2' }}
+        if: ${{ matrix.php == '8.1' || matrix.php == '8.2' }}

@@ -177,7 +177,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     public function createTemporaryQueue(): Queue
     {
         $extQueue = new \AMQPQueue($this->getExtChannel());
-        $extQueue->setFlags(AMQP_EXCLUSIVE);
+        $extQueue->setFlags(\AMQP_EXCLUSIVE);
 
         $extQueue->declareQueue();
 
@@ -243,10 +243,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         if (false == $this->extChannel) {
             $extChannel = call_user_func($this->extChannelFactory);
             if (false == $extChannel instanceof \AMQPChannel) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of AMQPChannel. It returns %s',
-                    is_object($extChannel) ? get_class($extChannel) : gettype($extChannel)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of AMQPChannel. It returns %s', is_object($extChannel) ? get_class($extChannel) : gettype($extChannel)));
             }
 
             $this->extChannel = $extChannel;
@@ -278,7 +275,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             ]
         );
         $message->setRedelivered($extEnvelope->isRedelivery());
-        $message->setDeliveryTag($extEnvelope->getDeliveryTag());
+        $message->setDeliveryTag((int) $extEnvelope->getDeliveryTag());
         $message->setRoutingKey($extEnvelope->getRoutingKey());
 
         return $message;

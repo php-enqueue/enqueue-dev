@@ -9,7 +9,7 @@
         "php": "^7.4|^8.0",
         "queue-interop/queue-interop": "^0.8",
         "enqueue/dsn": "^0.10",
-        "symfony/filesystem": "^5.4|^6.0",
+        "symfony/filesystem": "^5.4|^6.4|^7.0",
         "makasim/temp-file": "^0.2@stable"
     },
     "require-dev": {
@@ -17,8 +17,8 @@
         "enqueue/null": "0.10.x-dev",
         "enqueue/test": "0.10.x-dev",
         "queue-interop/queue-spec": "^0.6.2",
-        "symfony/dependency-injection": "^5.4|^6.0",
-        "symfony/yaml": "^5.4|^6.0"
+        "symfony/dependency-injection": "^5.4|^6.4|^7.0",
+        "symfony/yaml": "^5.4|^6.4|^7.0"
     },
     "support": {
         "email": "opensource@forma-pro.com",

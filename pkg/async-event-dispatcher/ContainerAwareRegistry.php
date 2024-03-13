@@ -2,13 +2,10 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Psr\Container\ContainerInterface;
 
-class ContainerAwareRegistry implements Registry, ContainerAwareInterface
+class ContainerAwareRegistry implements Registry
 {
-    use ContainerAwareTrait;
-
     /**
      * @var string[]
      */
@@ -18,6 +15,8 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
      * @var string[]
      */
     private $transformersMap;
+
+    private ContainerInterface $container;
 
     /**
      * @param string[] $eventsMap       [eventName => transformerName]
@@ -29,9 +28,6 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
         $this->transformersMap = $transformersMap;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTransformerNameForEvent($eventName)
     {
         $transformerName = null;
@@ -58,25 +54,26 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
         return $transformerName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTransformer($name)
     {
-        if (false == array_key_exists($name, $this->transformersMap)) {
+        if (!array_key_exists($name, $this->transformersMap)) {
             throw new \LogicException(sprintf('There is no transformer named %s', $name));
         }
 
         $transformer = $this->container->get($this->transformersMap[$name]);
 
-        if (false == $transformer instanceof  EventTransformer) {
-            throw new \LogicException(sprintf(
-                'The container must return instance of %s but got %s',
-                EventTransformer::class,
-                is_object($transformer) ? get_class($transformer) : gettype($transformer)
-            ));
+        if (!$transformer instanceof EventTransformer) {
+            throw new \LogicException(sprintf('The container must return instance of %s but got %s', EventTransformer::class, is_object($transformer) ? get_class($transformer) : gettype($transformer)));
         }
 
         return $transformer;
+    }
+
+    /**
+     * @required
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
     }
 }
