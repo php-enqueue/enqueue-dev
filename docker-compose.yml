@@ -72,6 +72,8 @@ services:
 
   beanstalkd:
       image: 'jonbaldie/beanstalkd'
+      ports:
+        - "11300:11300"
 
   gearmand:
       image: 'artefactual/gearmand'

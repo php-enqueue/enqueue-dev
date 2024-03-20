@@ -1,0 +1,34 @@
+{
+  "name": "enqueue/natsjs",
+  "type": "library",
+  "description": "Message Queue Nats JS transport",
+  "keywords": ["messaging", "queue", "Nats", "JetStreams"],
+  "homepage": "https://enqueue.forma-pro.com/",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.1.0",
+    "basis-company/nats": "^0.20.0",
+    "ext-json": "*",
+    "queue-interop/queue-interop": "^0.8"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "enqueue/test": "0.10.x-dev",
+    "enqueue/null": "0.10.x-dev",
+    "queue-interop/queue-spec": "^0.6.2"
+  },
+  "support": {
+    "email": "opensource@forma-pro.com",
+    "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
+    "forum": "https://gitter.im/php-enqueue/Lobby",
+    "source": "https://github.com/php-enqueue/enqueue-dev",
+    "docs": "https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md"
+  },
+  "autoload": {
+    "psr-4": { "Enqueue\\Natsjs\\": "" },
+    "exclude-from-classmap": [
+      "/Tests/"
+    ]
+  },
+  "minimum-stability": "dev"
+}
