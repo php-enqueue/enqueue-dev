@@ -40,7 +40,7 @@ class RdKafkaMessage implements Message
     private $key;
 
     /**
-     * @var Message
+     * @var VendorMessage
      */
     private $kafkaMessage;
 
