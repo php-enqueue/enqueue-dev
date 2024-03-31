@@ -1,0 +1,9 @@
+version: '3'
+services:
+  nats:
+    image: nats:alpine
+    restart: unless-stopped
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: -js -m 8222

@@ -7,7 +7,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.1.0",
-    "basis-company/nats": "^0.20.0",
+    "basis-company/nats": "^0.21.0",
     "ext-json": "*",
     "queue-interop/queue-interop": "^0.8"
   },

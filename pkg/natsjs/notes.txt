@@ -1,0 +1,63 @@
+Nats
+    https://nats.io/
+
+Nats JS(jetstream)
+    https://docs.nats.io/nats-concepts/jetstream
+    https://docs.nats.io/using-nats/developer/develop_jetstream
+    https://docs.nats.io/nats-concepts/core-nats/queue#stream-as-a-queue
+    https://docs.nats.io/reference/reference-protocols/nats_api_reference
+
+JetStream Model Deep Dive
+    https://docs.nats.io/using-nats/developer/develop_jetstream/model_deep_dive
+
+Pedantic mode
+    https://docs.nats.io/using-nats/developer/connecting/misc#turn-on-pedantic-mode
+
+Using NATS streaming for event sourcing with snapshots
+    https://groups.google.com/g/natsio/c/OetiXggcFHk
+
+Nats JS client for php
+    https://github.com/basis-company/nats.php
+
+    Description of usage
+        https://github.com/basis-company/nats.php/issues/59#issuecomment-1907919039
+
+Ephemeral Consumer life cycle
+    https://natsio.slack.com/archives/CM3T6T7JQ/p1711275996676309
+        https://natsio.slack.com/archives/CM3T6T7JQ/p1711278584957209?thread_ts=1711275996.676309&cid=CM3T6T7JQ
+
+Nats streaming as task queue
+    https://github.com/nats-io/stan.js/issues/49
+
+Nats articles
+    https://www.byronruth.com/tag/series/
+
+NATS and Docker
+    https://docs.nats.io/running-a-nats-service/nats_docker
+
+RoadRunner Jobs
+    https://docs.roadrunner.dev/queues-and-jobs/overview-queues
+
+    Nats Jobs
+    https://docs.roadrunner.dev/queues-and-jobs/nats
+
+    Beanstalk Jobs
+    https://docs.roadrunner.dev/queues-and-jobs/beanstalk
+
+Composer local repository in order to work on a package
+    https://laracasts.com/discuss/channels/general-discussion/composer-local-repository-in-order-to-work-on-a-package
+
+Installing a local Composer package in your PHP project
+    https://aschmelyun.com/blog/installing-a-local-composer-package-in-your-php-project/
+
+Interop\Queue\Message:
+
+body            string
+properties      array map[string]string ???
+headers         array map[string]string ???
+redelivered     bool
+correlationId   ?string
+messageId       ?string
+timestamp       ?int
+replyTo         ?string
+
