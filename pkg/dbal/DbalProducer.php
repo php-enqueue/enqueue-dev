@@ -66,7 +66,7 @@ class DbalProducer implements Producer
         ;
 
         $dbalMessage = [
-            'id' => Uuid::uuid4(),
+            'id' => Uuid::uuid4()->toString(),
             'published_at' => $publishedAt,
             'body' => $body,
             'headers' => JSON::encode($message->getHeaders()),
