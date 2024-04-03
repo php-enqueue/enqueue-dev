@@ -70,7 +70,7 @@ class RdKafkaProducer implements Producer
     /**
      * @return RdKafkaProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -87,7 +87,7 @@ class RdKafkaProducer implements Producer
     /**
      * @return RdKafkaProducer
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -101,7 +101,7 @@ class RdKafkaProducer implements Producer
         return null;
     }
 
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;
