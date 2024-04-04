@@ -135,6 +135,7 @@ services:
       SERVICES: 'sqs,sns'
       SQS_ENDPOINT_STRATEGY: 'off'
       EAGER_SERVICE_LOADING: 1
+      DEBUG: 1
 
   influxdb:
     image: 'influxdb:latest'
