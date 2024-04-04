@@ -79,7 +79,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     /**
      * @return self
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         if (null === $this->delayStrategy) {
             throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
@@ -98,7 +98,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     /**
      * @return self
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         $this->priority = $priority;
 
@@ -113,7 +113,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     /**
      * @return self
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 
@@ -152,8 +152,8 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
             $this->channel->publish(
                 $message->getBody(),
                 $amqpProperties,
-                $destination->getTopicName(),
-                $message->getRoutingKey(),
+                (string) $destination->getTopicName(),
+                (string) $message->getRoutingKey(),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
             );
@@ -162,7 +162,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
                 $message->getBody(),
                 $amqpProperties,
                 '',
-                $destination->getQueueName(),
+                (string) $destination->getQueueName(),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_MANDATORY),
                 (bool) ($message->getFlags() & InteropAmqpMessage::FLAG_IMMEDIATE)
             );

@@ -79,7 +79,7 @@ final class ClientFactory
                 ->info('The array contains driver specific options')
                 ->ignoreExtraKeys(false)
             ->end()
-            ->end()->end()
+            ->end()
         ;
 
         return $builder;

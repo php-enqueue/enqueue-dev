@@ -22,9 +22,6 @@ class DbalPersistedConnection extends Connection
      */
     protected static $persistedTransactionNestingLevels;
 
-    /**
-     * {@inheritdoc}
-     */
     public function connect()
     {
         if ($this->isConnected()) {
@@ -41,28 +38,19 @@ class DbalPersistedConnection extends Connection
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function beginTransaction()
     {
-        $this->wrapTransactionNestingLevel('beginTransaction');
+        return $this->wrapTransactionNestingLevel('beginTransaction');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function commit()
     {
-        $this->wrapTransactionNestingLevel('commit');
+        return $this->wrapTransactionNestingLevel('commit');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rollBack()
     {
-        $this->wrapTransactionNestingLevel('rollBack');
+        return $this->wrapTransactionNestingLevel('rollBack');
     }
 
     /**
@@ -135,14 +123,14 @@ class DbalPersistedConnection extends Connection
      *
      * @throws \Exception
      */
-    private function wrapTransactionNestingLevel($method)
+    private function wrapTransactionNestingLevel($method): bool
     {
         $e = null;
 
         $this->setTransactionNestingLevel($this->getPersistedTransactionNestingLevel());
 
         try {
-            call_user_func(['parent', $method]);
+            $result = call_user_func([parent::class, $method]);
         } catch (\Exception $e) {
         }
 
@@ -151,5 +139,7 @@ class DbalPersistedConnection extends Connection
         if ($e) {
             throw $e;
         }
+
+        return $result;
     }
 }

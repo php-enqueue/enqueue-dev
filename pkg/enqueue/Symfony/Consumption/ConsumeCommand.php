@@ -67,7 +67,7 @@ class ConsumeCommand extends Command
             // QueueConsumer must be pre configured outside of the command!
             $consumer = $this->getQueueConsumer($transport);
         } catch (NotFoundExceptionInterface $e) {
-            throw new \LogicException(sprintf('Transport "%s" is not supported.', $transport), null, $e);
+            throw new \LogicException(message: sprintf('Transport "%s" is not supported.', $transport), previous: $e);
         }
 
         $this->setQueueConsumerOptions($consumer, $input);

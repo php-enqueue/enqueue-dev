@@ -33,13 +33,18 @@ trait SnsQsFactoryTrait
 
     protected function createSnsQsQueue(string $queueName): SnsQsQueue
     {
-        $queueName = $queueName.time();
+        $queueName .= time();
 
         $this->snsQsQueue = $this->snsQsContext->createQueue($queueName);
         $this->snsQsContext->declareQueue($this->snsQsQueue);
+        echo "Declared queue $queueName\n";
+        ob_flush();
+        sleep(1);
 
         if ($this->snsQsTopic) {
             $this->snsQsContext->bind($this->snsQsTopic, $this->snsQsQueue);
+            echo "Bound queue $queueName to topic\n";
+            ob_flush();
         }
 
         return $this->snsQsQueue;
@@ -47,7 +52,7 @@ trait SnsQsFactoryTrait
 
     protected function createSnsQsTopic(string $topicName): SnsQsTopic
     {
-        $topicName = $topicName.time();
+        $topicName .= time();
 
         $this->snsQsTopic = $this->snsQsContext->createTopic($topicName);
         $this->snsQsContext->declareTopic($this->snsQsTopic);

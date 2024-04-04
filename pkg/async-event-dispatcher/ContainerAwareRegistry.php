@@ -2,13 +2,10 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ContainerAwareRegistry implements Registry, ContainerAwareInterface
+class ContainerAwareRegistry implements Registry
 {
-    use ContainerAwareTrait;
-
     /**
      * @var string[]
      */
@@ -18,6 +15,8 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
      * @var string[]
      */
     private $transformersMap;
+
+    private ContainerInterface $container;
 
     /**
      * @param string[] $eventsMap       [eventName => transformerName]
@@ -29,9 +28,11 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
         $this->transformersMap = $transformersMap;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function setContainer(?ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     public function getTransformerNameForEvent($eventName)
     {
         $transformerName = null;
@@ -58,9 +59,6 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
         return $transformerName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTransformer($name)
     {
         if (false == array_key_exists($name, $this->transformersMap)) {
@@ -69,12 +67,8 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
 
         $transformer = $this->container->get($this->transformersMap[$name]);
 
-        if (false == $transformer instanceof  EventTransformer) {
-            throw new \LogicException(sprintf(
-                'The container must return instance of %s but got %s',
-                EventTransformer::class,
-                is_object($transformer) ? get_class($transformer) : gettype($transformer)
-            ));
+        if (false == $transformer instanceof EventTransformer) {
+            throw new \LogicException(sprintf('The container must return instance of %s but got %s', EventTransformer::class, is_object($transformer) ? $transformer::class : gettype($transformer)));
         }
 
         return $transformer;
