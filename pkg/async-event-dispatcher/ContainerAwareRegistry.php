@@ -28,7 +28,7 @@ class ContainerAwareRegistry implements Registry
         $this->transformersMap = $transformersMap;
     }
 
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }

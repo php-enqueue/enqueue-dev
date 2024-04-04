@@ -79,7 +79,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     /**
      * @return self
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         if (null === $this->delayStrategy) {
             throw DeliveryDelayNotSupportedException::providerDoestNotSupportIt();
@@ -98,7 +98,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     /**
      * @return self
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         $this->priority = $priority;
 
@@ -113,7 +113,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
     /**
      * @return self
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

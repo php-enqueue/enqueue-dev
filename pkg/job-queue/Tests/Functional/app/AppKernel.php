@@ -1,20 +1,23 @@
 <?php
 
-// doctrine/annotations:2 autoloads annotations and removes loader registration
-if (method_exists(\Doctrine\Common\Annotations\AnnotationRegistry::class, 'registerLoader')) {
-    \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
-}
-
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
+
+// doctrine/annotations:2 autoloads annotations and removes loader registration
+if (method_exists(AnnotationRegistry::class, 'registerLoader')) {
+    AnnotationRegistry::registerLoader('class_exists');
+}
 
 class AppKernel extends Kernel
 {
     public function registerBundles(): iterable
     {
         $bundles = [
-            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new FrameworkBundle(),
+            new DoctrineBundle(),
         ];
 
         return $bundles;
