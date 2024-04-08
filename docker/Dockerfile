@@ -38,7 +38,7 @@ RUN set -x && \
     mkdir -p $HOME/gearman && \
     cd $HOME/gearman && \
     git clone https://github.com/php/pecl-networking-gearman.git . && \
-    git checkout gearman-2.1.0 && \
+    git checkout gearman-2.1.2 && \
     phpize && ./configure && make && make install && \
     if [ ! -f /etc/php/${PHP_VERSION}/cli/conf.d/20-gearman.ini ]; then \
         echo "extension=gearman.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-gearman.ini && \
