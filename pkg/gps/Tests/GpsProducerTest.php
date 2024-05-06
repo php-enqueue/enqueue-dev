@@ -55,6 +55,37 @@ class GpsProducerTest extends TestCase
         $producer->send($topic, $message);
     }
 
+    public function testShouldSendMessageWithAttributes()
+    {
+        $topic = new GpsTopic('topic-name');
+        $message = new GpsMessage('', [], ['attributes' => ['key1' => 'value1']]);
+
+        $gtopic = $this->createGTopicMock();
+        $gtopic
+            ->expects($this->once())
+            ->method('publish')
+            ->with($this->identicalTo(['data' => '{"body":"","properties":[],"headers":[]}', 'attributes' => ['key1' => 'value1']]))
+        ;
+
+        $client = $this->createPubSubClientMock();
+        $client
+            ->expects($this->once())
+            ->method('topic')
+            ->with('topic-name')
+            ->willReturn($gtopic)
+        ;
+
+        $context = $this->createContextMock();
+        $context
+            ->expects($this->once())
+            ->method('getClient')
+            ->willReturn($client)
+        ;
+
+        $producer = new GpsProducer($context);
+        $producer->send($topic, $message);
+    }
+
     /**
      * @return GpsContext|\PHPUnit\Framework\MockObject\MockObject|GpsContext
      */

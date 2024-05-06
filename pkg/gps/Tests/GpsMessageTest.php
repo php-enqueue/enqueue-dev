@@ -29,7 +29,7 @@ class GpsMessageTest extends TestCase
 
         $json = json_encode($message);
 
-        //guard
+        // guard
         $this->assertNotEmpty($json);
 
         $unserializedMessage = GpsMessage::jsonUnserialize($json);
@@ -69,5 +69,14 @@ class GpsMessageTest extends TestCase
         $this->expectExceptionMessage('The malformed json given.');
 
         GpsMessage::jsonUnserialize('{]');
+    }
+
+    public function testGetAttributes()
+    {
+        $message = new GpsMessage('the body', [], ['attributes' => ['key1' => 'value1']]);
+
+        $attributes = $message->getAttributes();
+
+        $this->assertSame(['key1' => 'value1'], $attributes);
     }
 }
