@@ -17,7 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('enqueue:routes')]
 class RoutesCommand extends Command
 {
-
     /**
      * @var ContainerInterface
      */

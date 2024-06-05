@@ -15,7 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('enqueue:setup-broker')]
 class SetupBrokerCommand extends Command
 {
-
     /**
      * @var ContainerInterface
      */
