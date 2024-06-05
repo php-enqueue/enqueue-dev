@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class DoctrineSchemaCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (false === $container->hasDefinition('doctrine')) {
             return;
