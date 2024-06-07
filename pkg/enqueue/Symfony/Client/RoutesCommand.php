@@ -14,9 +14,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand('enqueue:routes')]
+#[AsCommand(self::COMMAND_NAME)]
 class RoutesCommand extends Command
 {
+    private const COMMAND_NAME = 'enqueue:routes';
     /**
      * @var ContainerInterface
      */
@@ -43,7 +44,7 @@ class RoutesCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->driverIdPatter = $driverIdPatter;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct(self::COMMAND_NAME);
     }
 
     protected function configure(): void

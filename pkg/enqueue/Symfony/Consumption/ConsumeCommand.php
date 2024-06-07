@@ -13,12 +13,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand('enqueue:transport:consume')]
+#[AsCommand(self::COMMAND_NAME)]
 class ConsumeCommand extends Command
 {
     use ChooseLoggerCommandTrait;
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
+
+    private const COMMAND_NAME = 'enqueue:transport:consume';
 
     /**
      * @var ContainerInterface
@@ -41,7 +43,7 @@ class ConsumeCommand extends Command
         $this->defaultTransport = $defaultTransport;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct(self::COMMAND_NAME);
     }
 
     protected function configure(): void

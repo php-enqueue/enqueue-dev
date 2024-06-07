@@ -13,9 +13,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand('enqueue:produce')]
+#[AsCommand(self::COMMAND_NAME)]
 class ProduceCommand extends Command
 {
+    private const COMMAND_NAME = 'enqueue:produce';
+
     /**
      * @var ContainerInterface
      */
@@ -37,7 +39,7 @@ class ProduceCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->producerIdPattern = $producerIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct(self::COMMAND_NAME);
     }
 
     protected function configure(): void
