@@ -15,7 +15,7 @@ while getopts "bustefdp" OPTION; do
       docker-compose stop
       ;;
     e)
-      docker exec -it mqdev_dev_1 /bin/bash
+      docker exec -it enqueue-dev-dev-1 /bin/bash
       ;;
     f)
       ./bin/php-cs-fixer fix
