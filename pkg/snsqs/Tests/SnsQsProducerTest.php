@@ -40,7 +40,7 @@ class SnsQsProducerTest extends TestCase
     public function testShouldThrowIfMessageIsInvalidType()
     {
         $this->expectException(InvalidMessageException::class);
-        $this->expectExceptionMessage('The message must be an instance of Enqueue\SnsQs\SnsQsMessage but it is Double\Message\P4');
+        $this->expectExceptionMessageMatches('/The message must be an instance of Enqueue\\\\SnsQs\\\\SnsQsMessage but it is Double\\\\Message\\\\P\d+/');
 
         $producer = new SnsQsProducer($this->createSnsContextMock(), $this->createSqsContextMock());
 
