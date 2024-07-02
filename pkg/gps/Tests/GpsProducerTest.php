@@ -33,8 +33,11 @@ class GpsProducerTest extends TestCase
         $gtopic
             ->expects($this->once())
             ->method('publish')
-            ->with($this->identicalTo(['data' => '{"body":"","properties":[],"headers":[]}']))
-        ;
+            ->with($this->identicalTo([
+                'data' => '{"body":"","properties":[],"headers":[]}',
+                'attributes' => [],
+            ])
+            );
 
         $client = $this->createPubSubClientMock();
         $client
