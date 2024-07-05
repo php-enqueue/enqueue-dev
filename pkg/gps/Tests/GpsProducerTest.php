@@ -35,7 +35,6 @@ class GpsProducerTest extends TestCase
             ->method('publish')
             ->with($this->identicalTo([
                 'data' => '{"body":"","properties":[],"headers":[]}',
-                'attributes' => [],
             ])
             );
 

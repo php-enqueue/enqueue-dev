@@ -37,10 +37,14 @@ class GpsProducer implements Producer
 
         /** @var Topic $topic */
         $topic = $this->context->getClient()->topic($destination->getTopicName());
-        $topic->publish([
-            'data' => json_encode($message),
-            'attributes' => $message->getAttributes(),
-        ]);
+
+        $params = ['data' => json_encode($message)];
+
+        if (count($message->getAttributes()) > 0) {
+            $params['attributes'] = $message->getAttributes();
+        }
+
+        $topic->publish($params);
     }
 
     public function setDeliveryDelay(?int $deliveryDelay = null): Producer
