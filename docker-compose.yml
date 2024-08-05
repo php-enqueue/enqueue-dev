@@ -1,5 +1,3 @@
-version: '2'
-
 services:
   dev:
     # when image publishing gets sorted:
@@ -134,12 +132,12 @@ services:
       LOCALSTACK_HOST: 'localstack'
       SERVICES: 'sqs,sns'
       EAGER_SERVICE_LOADING: '1'
-      DEFAULT_REGION: 'us-east-1'
     networks:
       default:
         aliases:
           - 'localstack'
           - 'sqs.us-east-1.localstack'
+          - 'snsqs.us-east-1.localstack'
 
   influxdb:
     image: 'influxdb:latest'

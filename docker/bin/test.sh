@@ -37,7 +37,7 @@ function waitForServiceLocalStack()
     until [ $READY = 1 ]; do
         printf "check readiness for service localstack:4566\n"
         RESPONSE=$(curl -s http://localstack:4566/_localstack/health)
-        if [[ $RESPONSE == *'"sns": "running"'* && $RESPONSE == *'"sqs": "running"'* ]]; then
+        if [[ $RESPONSE == *'"sns": "available"'* && $RESPONSE == *'"sqs": "available"'* ]]; then
             READY=1
         fi
         ((ATTEMPTS++))
