@@ -27,6 +27,34 @@ function waitForService()
     printf "service is online %s:%s\n" $1 $2
 }
 
+function waitForServiceLocalStack()
+{
+    waitForService localstack 4566 $1
+
+    ATTEMPTS=0
+    RESPONSE=''
+    READY=0
+    until [ $READY = 1 ]; do
+        printf "check readiness for service localstack:4566\n"
+        RESPONSE=$(curl -s http://localstack:4566/_localstack/health)
+        if [[ $RESPONSE == *'"sns": "available"'* && $RESPONSE == *'"sqs": "available"'* ]]; then
+            READY=1
+        fi
+        ((ATTEMPTS++))
+        if [ $ATTEMPTS -ge $2 ]; then
+            printf "service is not ready localstack:4566\n"
+            exit 1
+        fi
+        if [ "$FORCE_EXIT" = true ]; then
+            exit;
+        fi
+
+        sleep 1
+    done
+
+    printf "service is ready localstack:4566\n"
+}
+
 trap "FORCE_EXIT=true" SIGTERM SIGINT
 
 waitForService rabbitmq 5672 50
@@ -39,7 +67,7 @@ waitForService gearmand 4730 50
 waitForService kafka 9092 50
 waitForService mongo 27017 50
 waitForService thruway 9090 50
-waitForService localstack 4576 50
+waitForServiceLocalStack 50 50
 
 php docker/bin/refresh-mysql-database.php || exit 1
 php docker/bin/refresh-postgres-database.php  || exit 1

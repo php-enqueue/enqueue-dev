@@ -49,6 +49,6 @@ Once everything is done open a pull request on official repository.
 
 ## WTF?!
 
-* If you get `rabbitmqssl: forward host lookup failed: Unknown host, wait for service rabbitmqssl:5671` do `docker-compose down`.
+* If you get `rabbitmqssl: forward host lookup failed: Unknown host, wait for service rabbitmqssl:5671` do `docker compose down`.
 
 [back to index](index.md)

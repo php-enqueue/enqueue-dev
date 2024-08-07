@@ -6,22 +6,22 @@ set -e
 while getopts "bustefdp" OPTION; do
   case $OPTION in
     b)
-      docker-compose pull -q && docker-compose build
+      docker compose pull -q && docker compose build
       ;;
     u)
-      docker-compose up
+      docker compose up
       ;;
     s)
-      docker-compose stop
+      docker compose stop
       ;;
     e)
-      docker exec -it mqdev_dev_1 /bin/bash
+      docker exec -it enqueue-dev-dev-1 /bin/bash
       ;;
     f)
       ./bin/php-cs-fixer fix
       ;;
 
-    d) docker-compose run --workdir="/mqdev" --rm dev php pkg/enqueue-bundle/Tests/Functional/app/console.php config:dump-reference enqueue -vvv
+    d) docker compose run --workdir="/mqdev" --rm dev php pkg/enqueue-bundle/Tests/Functional/app/console.php config:dump-reference enqueue -vvv
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
