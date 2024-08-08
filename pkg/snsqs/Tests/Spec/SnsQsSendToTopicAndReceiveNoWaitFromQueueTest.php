@@ -8,12 +8,21 @@ use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 
 /**
  * @group functional
+ *
  * @retry 5
  */
 class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
 {
     use RetryTrait;
     use SnsQsFactoryTrait;
+
+    protected function setUp(): void
+    {
+        try {
+            $this->cleanUpSnsQs();
+        } catch (\Exception $e) {
+        }
+    }
 
     protected function tearDown(): void
     {
