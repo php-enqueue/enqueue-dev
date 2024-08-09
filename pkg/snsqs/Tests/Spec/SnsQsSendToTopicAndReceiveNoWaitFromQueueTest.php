@@ -16,14 +16,6 @@ class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiv
     use RetryTrait;
     use SnsQsFactoryTrait;
 
-    protected function setUp(): void
-    {
-        try {
-            $this->cleanUpSnsQs();
-        } catch (\Exception $e) {
-        }
-    }
-
     protected function tearDown(): void
     {
         parent::tearDown();
