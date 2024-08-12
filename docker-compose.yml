@@ -83,6 +83,7 @@ services:
 
   mysql:
     image: mysql:5.7
+    platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: mqdev
@@ -127,7 +128,7 @@ services:
       - '9090:9090'
 
   localstack:
-    image: 'localstack/localstack'
+    image: 'localstack/localstack:3.6.0'
     ports:
       - "127.0.0.1:4566:4566"            # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559"  # external services port range
