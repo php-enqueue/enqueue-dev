@@ -62,21 +62,6 @@ $context->declareTopic($fooTopic);
 $context->createProducer()->send($fooTopic, $message);
 ```
 
-You can send attributes using headers :
-
-```php
-<?php
-/** @var \Enqueue\Gps\GpsContext $context */
-
-$fooTopic = $context->createTopic('foo');
-$attributes = ['key1' => 'value1'];
-$message = $context->createMessage('Hello world!', [], ['attributes' => $attributes]);
-
-$context->declareTopic($fooTopic);
-
-$context->createProducer()->send($fooTopic, $message);
-```
-
 ## Consume message:
 
 Before you can consume message you have to subscribe a queue to the topic.

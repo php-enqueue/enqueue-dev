@@ -25,6 +25,11 @@ class GpsMessage implements Message, \JsonSerializable
     private $headers;
 
     /**
+     * @var array
+     */
+    private $attributes;
+
+    /**
      * @var bool
      */
     private $redelivered;
@@ -34,18 +39,12 @@ class GpsMessage implements Message, \JsonSerializable
      */
     private $nativeMessage;
 
-    /**
-     * @var array
-     */
-    private $attributes;
-
-    public function __construct(string $body = '', array $properties = [], array $headers = [])
+    public function __construct(string $body = '', array $properties = [], array $headers = [], array $attributes = [])
     {
         $this->body = $body;
         $this->properties = $properties;
-        $this->attributes = $headers['attributes'] ?? [];
-        unset($headers['attributes']);
         $this->headers = $headers;
+        $this->attributes = $attributes;
 
         $this->redelivered = false;
     }
@@ -179,6 +178,11 @@ class GpsMessage implements Message, \JsonSerializable
     public function setNativeMessage(?GoogleMessage $message = null): void
     {
         $this->nativeMessage = $message;
+    }
+
+    public function setAttributes(array $attributes): void
+    {
+        $this->attributes = $attributes;
     }
 
     public function getAttributes(): array

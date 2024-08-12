@@ -73,7 +73,7 @@ class GpsMessageTest extends TestCase
 
     public function testGetAttributes()
     {
-        $message = new GpsMessage('the body', [], ['attributes' => ['key1' => 'value1']]);
+        $message = new GpsMessage('the body', [], [], ['key1' => 'value1']);
 
         $attributes = $message->getAttributes();
 

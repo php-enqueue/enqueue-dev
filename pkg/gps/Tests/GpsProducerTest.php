@@ -35,8 +35,7 @@ class GpsProducerTest extends TestCase
             ->method('publish')
             ->with($this->identicalTo([
                 'data' => '{"body":"","properties":[],"headers":[]}',
-            ])
-            );
+            ]));
 
         $client = $this->createPubSubClientMock();
         $client
@@ -60,7 +59,7 @@ class GpsProducerTest extends TestCase
     public function testShouldSendMessageWithAttributes()
     {
         $topic = new GpsTopic('topic-name');
-        $message = new GpsMessage('', [], ['attributes' => ['key1' => 'value1']]);
+        $message = new GpsMessage('', [], [], ['key1' => 'value1']);
 
         $gtopic = $this->createGTopicMock();
         $gtopic
