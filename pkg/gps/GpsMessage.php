@@ -157,6 +157,7 @@ class GpsMessage implements Message, \JsonSerializable
             'body' => $this->getBody(),
             'properties' => $this->getProperties(),
             'headers' => $this->getHeaders(),
+            'attributes' => $this->getAttributes(),
         ];
     }
 
