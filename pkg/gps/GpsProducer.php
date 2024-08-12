@@ -37,12 +37,17 @@ class GpsProducer implements Producer
 
         /** @var Topic $topic */
         $topic = $this->context->getClient()->topic($destination->getTopicName());
-        $topic->publish([
-            'data' => json_encode($message),
-        ]);
+
+        $params = ['data' => json_encode($message)];
+
+        if (count($message->getAttributes()) > 0) {
+            $params['attributes'] = $message->getAttributes();
+        }
+
+        $topic->publish($params);
     }
 
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -56,7 +61,7 @@ class GpsProducer implements Producer
         return null;
     }
 
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -70,7 +75,7 @@ class GpsProducer implements Producer
         return null;
     }
 
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;
