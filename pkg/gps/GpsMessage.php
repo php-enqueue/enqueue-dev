@@ -167,7 +167,7 @@ class GpsMessage implements Message, \JsonSerializable
             throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
-        return new self($data['body'] ?? $json, $data['properties'] ?? [], $data['headers'] ?? []);
+        return new self($data['body'] ?? $json, $data['properties'] ?? [], $data['headers'] ?? [], $data['attributes'] ?? []);
     }
 
     public function getNativeMessage(): ?GoogleMessage
