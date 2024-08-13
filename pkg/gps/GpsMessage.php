@@ -25,11 +25,6 @@ class GpsMessage implements Message, \JsonSerializable
     private $headers;
 
     /**
-     * @var array
-     */
-    private $attributes;
-
-    /**
      * @var bool
      */
     private $redelivered;
@@ -39,12 +34,11 @@ class GpsMessage implements Message, \JsonSerializable
      */
     private $nativeMessage;
 
-    public function __construct(string $body = '', array $properties = [], array $headers = [], array $attributes = [])
+    public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
         $this->properties = $properties;
         $this->headers = $headers;
-        $this->attributes = $attributes;
 
         $this->redelivered = false;
     }
@@ -157,7 +151,6 @@ class GpsMessage implements Message, \JsonSerializable
             'body' => $this->getBody(),
             'properties' => $this->getProperties(),
             'headers' => $this->getHeaders(),
-            'attributes' => $this->getAttributes(),
         ];
     }
 
@@ -168,7 +161,7 @@ class GpsMessage implements Message, \JsonSerializable
             throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
-        return new self($data['body'] ?? $json, $data['properties'] ?? [], $data['headers'] ?? [], $data['attributes'] ?? []);
+        return new self($data['body'] ?? $json, $data['properties'] ?? [], $data['headers'] ?? []);
     }
 
     public function getNativeMessage(): ?GoogleMessage
@@ -179,15 +172,5 @@ class GpsMessage implements Message, \JsonSerializable
     public function setNativeMessage(?GoogleMessage $message = null): void
     {
         $this->nativeMessage = $message;
-    }
-
-    public function setAttributes(array $attributes): void
-    {
-        $this->attributes = $attributes;
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->attributes;
     }
 }

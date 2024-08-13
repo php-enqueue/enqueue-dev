@@ -18,14 +18,14 @@ class GpsMessageTest extends TestCase
 
     public function testColdBeSerializedToJson()
     {
-        $message = new GpsMessage('theBody', ['thePropFoo' => 'thePropFooVal'], ['theHeaderFoo' => 'theHeaderFooVal'], ['theAttributeFoo' => 'theAttributeFooVal']);
+        $message = new GpsMessage('theBody', ['thePropFoo' => 'thePropFooVal'], ['theHeaderFoo' => 'theHeaderFooVal']);
 
-        $this->assertEquals('{"body":"theBody","properties":{"thePropFoo":"thePropFooVal"},"headers":{"theHeaderFoo":"theHeaderFooVal"},"attributes":{"theAttributeFoo":"theAttributeFooVal"}}', json_encode($message));
+        $this->assertEquals('{"body":"theBody","properties":{"thePropFoo":"thePropFooVal"},"headers":{"theHeaderFoo":"theHeaderFooVal"}}', json_encode($message));
     }
 
     public function testCouldBeUnserializedFromJson()
     {
-        $message = new GpsMessage('theBody', ['thePropFoo' => 'thePropFooVal'], ['theHeaderFoo' => 'theHeaderFooVal'], ['theAttributeFoo' => 'theAttributeFooVal']);
+        $message = new GpsMessage('theBody', ['thePropFoo' => 'thePropFooVal'], ['theHeaderFoo' => 'theHeaderFooVal']);
 
         $json = json_encode($message);
 
@@ -40,7 +40,7 @@ class GpsMessageTest extends TestCase
 
     public function testMessageEntityCouldBeUnserializedFromJson()
     {
-        $json = '{"body":"theBody","properties":{"thePropFoo":"thePropFooVal"},"headers":{"theHeaderFoo":"theHeaderFooVal"},"attributes":{"theAttributeFoo":"theAttributeFooVal"}}';
+        $json = '{"body":"theBody","properties":{"thePropFoo":"thePropFooVal"},"headers":{"theHeaderFoo":"theHeaderFooVal"}}';
 
         $unserializedMessage = GpsMessage::jsonUnserialize($json);
 
@@ -49,7 +49,6 @@ class GpsMessageTest extends TestCase
         $this->assertEquals($decoded['body'], $unserializedMessage->getBody());
         $this->assertEquals($decoded['properties'], $unserializedMessage->getProperties());
         $this->assertEquals($decoded['headers'], $unserializedMessage->getHeaders());
-        $this->assertEquals($decoded['attributes'], $unserializedMessage->getAttributes());
     }
 
     public function testMessagePayloadCouldBeUnserializedFromJson()
@@ -62,7 +61,6 @@ class GpsMessageTest extends TestCase
         $this->assertEquals($json, $unserializedMessage->getBody());
         $this->assertEquals([], $unserializedMessage->getProperties());
         $this->assertEquals([], $unserializedMessage->getHeaders());
-        $this->assertEquals([], $unserializedMessage->getAttributes());
     }
 
     public function testThrowIfMalformedJsonGivenOnUnsterilizedFromJson()
@@ -71,14 +69,5 @@ class GpsMessageTest extends TestCase
         $this->expectExceptionMessage('The malformed json given.');
 
         GpsMessage::jsonUnserialize('{]');
-    }
-
-    public function testGetAttributes()
-    {
-        $message = new GpsMessage('the body', [], [], ['key1' => 'value1']);
-
-        $attributes = $message->getAttributes();
-
-        $this->assertSame(['key1' => 'value1'], $attributes);
     }
 }

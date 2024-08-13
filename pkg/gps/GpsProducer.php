@@ -40,8 +40,8 @@ class GpsProducer implements Producer
 
         $params = ['data' => json_encode($message)];
 
-        if (count($message->getAttributes()) > 0) {
-            $params['attributes'] = $message->getAttributes();
+        if (count($message->getHeaders()) > 0) {
+            $params['attributes'] = $message->getHeaders();
         }
 
         $topic->publish($params);
