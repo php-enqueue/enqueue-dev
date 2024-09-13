@@ -29,7 +29,7 @@ class GpsMessageTest extends TestCase
 
         $json = json_encode($message);
 
-        //guard
+        // guard
         $this->assertNotEmpty($json);
 
         $unserializedMessage = GpsMessage::jsonUnserialize($json);

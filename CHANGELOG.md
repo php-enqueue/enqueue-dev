@@ -1,5 +1,26 @@
 # Change Log
 
+## [0.10.21](https://github.com/php-enqueue/enqueue-dev/tree/0.10.21) (2024-08-12)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.20...0.10.21)
+
+**Merged pull requests:**
+
+- feat\(GPS\): allow send attributes in Google PubSub message. [\#1349](https://github.com/php-enqueue/enqueue-dev/pull/1349) ([p-pichet](https://github.com/p-pichet))
+
+## [0.10.19](https://github.com/php-enqueue/enqueue-dev/tree/0.10.19) (2023-07-15)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.18...0.10.19)
+
+**Merged pull requests:**
+
+- fix: do not reset attemps header when message is requeue [\#1301](https://github.com/php-enqueue/enqueue-dev/pull/1301) ([eortiz-tracktik](https://github.com/eortiz-tracktik))
+- Allow doctrine/persistence 3.1 version [\#1300](https://github.com/php-enqueue/enqueue-dev/pull/1300) ([xNarkon](https://github.com/xNarkon))
+- Add support for rediss and phpredis [\#1297](https://github.com/php-enqueue/enqueue-dev/pull/1297) ([splagemann](https://github.com/splagemann))
+- Replaced `json\_array` with `json` due to Doctrine Dbal 3.0 [\#1294](https://github.com/php-enqueue/enqueue-dev/pull/1294) ([NovakHonza](https://github.com/NovakHonza))
+- pkg PHP 8.1 and 8.2 support [\#1292](https://github.com/php-enqueue/enqueue-dev/pull/1292) ([snapshotpl](https://github.com/snapshotpl))
+- Update doctrine/persistence [\#1290](https://github.com/php-enqueue/enqueue-dev/pull/1290) ([jlabedo](https://github.com/jlabedo))
+- Add PHP 8.1 and 8.2, Symfony 6.2 to CI [\#1285](https://github.com/php-enqueue/enqueue-dev/pull/1285) ([andrewmy](https://github.com/andrewmy))
+- \[SNSQS\] added possibility to send FIFO-related parameters using snsqs transport [\#1278](https://github.com/php-enqueue/enqueue-dev/pull/1278) ([onatskyy](https://github.com/onatskyy))
+
 ## [0.10.18](https://github.com/php-enqueue/enqueue-dev/tree/0.10.18) (2023-03-18)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.17...0.10.18)
 

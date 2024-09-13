@@ -112,6 +112,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $queue = $this->amqpContext->createTemporaryQueue();
 
         $message = $this->amqpContext->createMessage(__METHOD__);
+        $message->setDeliveryTag(145);
 
         $producer = $this->amqpContext->createProducer();
         $producer->send($queue, $message);
@@ -137,6 +138,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $this->amqpContext->bind(new AmqpBind($topic, $queue));
 
         $message = $this->amqpContext->createMessage(__METHOD__);
+        $message->setDeliveryTag(145);
 
         $producer = $this->amqpContext->createProducer();
         $producer->send($topic, $message);
@@ -162,7 +164,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $this->assertNull($consumer->receive(1000));
 
         $message = $this->amqpContext->createMessage(__METHOD__);
-        $message->setDeliveryTag(1);
+        $message->setDeliveryTag(145);
 
         $producer = $this->amqpContext->createProducer();
         $producer->send($topic, $message);
@@ -186,7 +188,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $this->assertNull($consumer->receive(1000));
 
         $message = $this->amqpContext->createMessage(__METHOD__);
-        $message->setDeliveryTag(1);
+        $message->setDeliveryTag(145);
 
         $producer = $this->amqpContext->createProducer();
         $producer->send($topic, $message);
@@ -207,6 +209,7 @@ class AmqpCommonUseCasesTest extends TestCase
         $consumer = $this->amqpContext->createConsumer($queue);
 
         $message = $this->amqpContext->createMessage(__METHOD__);
+        $message->setDeliveryTag(145);
 
         $producer = $this->amqpContext->createProducer();
         $producer->send($queue, $message);
