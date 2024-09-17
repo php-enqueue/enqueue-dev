@@ -74,12 +74,8 @@ final class ClientFactory
             ->scalarNode('router_processor')->defaultNull()->end()
             ->integerNode('redelivered_delay_time')->min(0)->defaultValue(0)->end()
             ->scalarNode('default_queue')->defaultValue('default')->cannotBeEmpty()->end()
-            ->arrayNode('driver_options')
-                ->addDefaultsIfNotSet()
-                ->info('The array contains driver specific options')
-                ->ignoreExtraKeys(false)
+            ->arrayNode('driver_options')->addDefaultsIfNotSet()->info('The array contains driver specific options')->ignoreExtraKeys(false)->end()
             ->end()
-            ->end()->end()
         ;
 
         return $builder;
