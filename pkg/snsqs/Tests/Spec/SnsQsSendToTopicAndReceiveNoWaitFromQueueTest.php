@@ -8,6 +8,7 @@ use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 
 /**
  * @group functional
+ *
  * @retry 5
  */
 class SnsQsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
