@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.10.23](https://github.com/php-enqueue/enqueue-dev/tree/0.10.23) (2024-10-01)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.22...0.10.23)
+
+**Merged pull requests:**
+
+- Drop useless call to end method [\#1359](https://github.com/php-enqueue/enqueue-dev/pull/1359) ([ddziaduch](https://github.com/ddziaduch))
+
+## [0.10.22](https://github.com/php-enqueue/enqueue-dev/tree/0.10.22) (2024-08-13)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.21...0.10.22)
+
+**Merged pull requests:**
+
+- GPS: revert the attributes and use the headers instead. [\#1355](https://github.com/php-enqueue/enqueue-dev/pull/1355) ([p-pichet](https://github.com/p-pichet))
+
 ## [0.10.21](https://github.com/php-enqueue/enqueue-dev/tree/0.10.21) (2024-08-12)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.20...0.10.21)
 
