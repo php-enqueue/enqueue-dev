@@ -89,6 +89,7 @@
       "Enqueue\\Gps\\": "pkg/gps/",
       "Enqueue\\JobQueue\\": "pkg/job-queue/",
       "Enqueue\\Mongodb\\": "pkg/mongodb/",
+      "Enqueue\\Natsjs\\": "pkg/natsjs/",
       "Enqueue\\Null\\": "pkg/null/",
       "Enqueue\\Pheanstalk\\": "pkg/pheanstalk/",
       "Enqueue\\RdKafka\\": "pkg/rdkafka/",
