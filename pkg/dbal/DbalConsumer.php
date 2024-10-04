@@ -38,6 +38,11 @@ class DbalConsumer implements Consumer
      */
     private $redeliveryDelay;
 
+    /**
+     * @var int
+     */
+    private $deliveryDelay;
+
     public function __construct(DbalContext $context, DbalDestination $queue)
     {
         $this->context = $context;
@@ -63,6 +68,19 @@ class DbalConsumer implements Consumer
         $this->redeliveryDelay = $redeliveryDelay;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeliveryDelay(): ?int
+    {
+        return $this->deliveryDelay;
+    }
+
+    public function setDeliveryDelay(int $deliveryDelay): void
+    {
+        $this->deliveryDelay = $deliveryDelay;
     }
 
     /**
@@ -103,6 +121,10 @@ class DbalConsumer implements Consumer
         if ($requeue) {
             $message = clone $message;
             $message->setRedelivered(false);
+
+            if(null !== $this->deliveryDelay && null === $message->getDeliveryDelay()) {
+                $message->setDeliveryDelay($this->deliveryDelay);
+            }
 
             $this->getContext()->createProducer()->send($this->queue, $message);
         }
