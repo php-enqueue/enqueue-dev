@@ -77,18 +77,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2']
-        symfony_version: ['5.4.*', '6.2.*', '6.3.*']
+        php: ['8.2', '8.3']
+        symfony_version: ['5.4.*', '6.4.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
-        exclude:
-          - php: '7.4'
-            symfony_version: '6.2.*'
-          - php: '7.4'
-            symfony_version: '6.3.*'
-          - php: '8.0'
-            symfony_version: '6.2.*'
-          - php: '8.0'
-            symfony_version: '6.3.*'
 
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -97,12 +88,11 @@ jobs:
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "composer_cache_dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: $composer_cache_dir
           key: composer-${{ matrix.php }}-${{ matrix.symfony_version }}-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             composer-${{ matrix.php }}-${{ matrix.symfony_version }}-${{ matrix.dependencies }}-
@@ -127,18 +117,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2'] # same as in the container
-        symfony_version: ['5.4.*', '6.2.*', '6.3.*']
+        php: ['8.2', '8.3'] # same as in the container
+        symfony_version: ['5.4.*', '6.4.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
-        exclude:
-          - php: '7.4'
-            symfony_version: '6.2.*'
-          - php: '7.4'
-            symfony_version: '6.3.*'
-          - php: '8.0'
-            symfony_version: '6.2.*'
-          - php: '8.0'
-            symfony_version: '6.3.*'
 
     name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -147,12 +128,11 @@ jobs:
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "composer_cache_dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: $composer_cache_dir
           key: composer-${{ matrix.php }}-${{ matrix.symfony_version }}-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             composer-${{ matrix.php }}-${{ matrix.symfony_version }}-${{ matrix.dependencies }}-
