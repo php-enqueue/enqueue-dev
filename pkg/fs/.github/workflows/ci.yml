@@ -26,4 +26,4 @@ jobs:
         with:
           composer-options: "--prefer-source"
 
-      - run: SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/phpunit --exclude-group=functional
+      - run: SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/phpunit
