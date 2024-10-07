@@ -12,10 +12,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand('enqueue:setup-broker')]
+#[AsCommand(self::COMMAND_NAME)]
 class SetupBrokerCommand extends Command
 {
-    protected static $defaultName = 'enqueue:setup-broker';
+    private const COMMAND_NAME = 'enqueue:setup-broker';
 
     /**
      * @var ContainerInterface
@@ -38,7 +38,7 @@ class SetupBrokerCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->driverIdPattern = $driverIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct(self::COMMAND_NAME);
     }
 
     protected function configure(): void

@@ -20,7 +20,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand('enqueue:consume')]
+#[AsCommand(self::COMMAND_NAME)]
 class ConsumeCommand extends Command
 {
     use ChooseLoggerCommandTrait;
@@ -28,7 +28,7 @@ class ConsumeCommand extends Command
     use QueueConsumerOptionsCommandTrait;
     use SetupBrokerExtensionCommandTrait;
 
-    protected static $defaultName = 'enqueue:consume';
+    private const COMMAND_NAME = 'enqueue:consume';
 
     /**
      * @var ContainerInterface
@@ -68,7 +68,7 @@ class ConsumeCommand extends Command
         $this->driverIdPattern = $driverIdPattern;
         $this->processorIdPattern = $processorIdPatter;
 
-        parent::__construct(self::$defaultName);
+        parent::__construct(self::COMMAND_NAME);
     }
 
     protected function configure(): void
