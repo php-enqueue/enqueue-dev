@@ -6,7 +6,7 @@
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^8.1",
         "enqueue/enqueue": "^0.10",
         "enqueue/null": "^0.10",
         "queue-interop/queue-interop": "^0.8",
