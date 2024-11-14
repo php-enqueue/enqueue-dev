@@ -41,7 +41,7 @@ class ConsumeCommand extends Command
         $this->defaultTransport = $defaultTransport;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void

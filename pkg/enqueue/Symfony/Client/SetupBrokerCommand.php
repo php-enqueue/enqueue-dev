@@ -36,7 +36,7 @@ class SetupBrokerCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->driverIdPattern = $driverIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void

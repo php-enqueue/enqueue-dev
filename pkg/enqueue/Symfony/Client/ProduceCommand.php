@@ -37,7 +37,7 @@ class ProduceCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->producerIdPattern = $producerIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void

@@ -43,7 +43,7 @@ class RoutesCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->driverIdPatter = $driverIdPatter;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void
