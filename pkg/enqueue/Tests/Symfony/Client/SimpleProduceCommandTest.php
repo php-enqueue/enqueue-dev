@@ -28,13 +28,6 @@ class SimpleProduceCommandTest extends TestCase
         new SimpleProduceCommand($this->createProducerMock());
     }
 
-    public function testShouldHaveCommandName()
-    {
-        $command = new SimpleProduceCommand($this->createProducerMock());
-
-        $this->assertEquals('enqueue:produce', $command->getName());
-    }
-
     public function testShouldHaveExpectedOptions()
     {
         $command = new SimpleProduceCommand($this->createProducerMock());

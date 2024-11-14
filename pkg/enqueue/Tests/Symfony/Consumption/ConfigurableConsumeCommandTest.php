@@ -15,6 +15,7 @@ use Interop\Queue\Processor;
 use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -37,11 +38,22 @@ class ConfigurableConsumeCommandTest extends TestCase
         new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
-    public function testShouldHaveCommandName()
+    public function testShouldHaveAsCommandAttributeWithCommandName()
     {
-        $command = new ConfigurableConsumeCommand($this->createMock(ContainerInterface::class), 'default');
+        $commandClass = ConfigurableConsumeCommand::class;
 
-        $this->assertEquals('enqueue:transport:consume', $command->getName());
+        $reflectionClass = new \ReflectionClass($commandClass);
+
+        $attributes = $reflectionClass->getAttributes(AsCommand::class);
+
+        $this->assertNotEmpty($attributes, 'The command does not have the AsCommand attribute.');
+
+        // Get the first attribute instance (assuming there is only one AsCommand attribute)
+        $asCommandAttribute = $attributes[0];
+
+        // Verify the 'name' parameter value
+        $attributeInstance = $asCommandAttribute->newInstance();
+        $this->assertEquals('enqueue:transport:consume', $attributeInstance->name, 'The command name is not set correctly in the AsCommand attribute.');
     }
 
     public function testShouldHaveExpectedOptions()
@@ -192,7 +204,7 @@ class ConfigurableConsumeCommandTest extends TestCase
 
     public function testShouldExecuteConsumptionWhenProcessorImplementsQueueSubscriberInterface()
     {
-        $processor = new class() implements Processor, QueueSubscriberInterface {
+        $processor = new class implements Processor, QueueSubscriberInterface {
             public function process(InteropMessage $message, Context $context)
             {
             }

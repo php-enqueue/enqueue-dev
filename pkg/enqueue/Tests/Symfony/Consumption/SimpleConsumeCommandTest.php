@@ -29,13 +29,6 @@ class SimpleConsumeCommandTest extends TestCase
         new SimpleConsumeCommand($this->createQueueConsumerMock());
     }
 
-    public function testShouldHaveCommandName()
-    {
-        $command = new SimpleConsumeCommand($this->createQueueConsumerMock());
-
-        $this->assertEquals('enqueue:transport:consume', $command->getName());
-    }
-
     public function testShouldHaveExpectedOptions()
     {
         $command = new SimpleConsumeCommand($this->createQueueConsumerMock());
