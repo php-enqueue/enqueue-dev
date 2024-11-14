@@ -16,8 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('enqueue:produce')]
 class ProduceCommand extends Command
 {
-    protected static $defaultName = 'enqueue:produce';
-
     /**
      * @var ContainerInterface
      */

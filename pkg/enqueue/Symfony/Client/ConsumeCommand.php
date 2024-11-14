@@ -28,8 +28,6 @@ class ConsumeCommand extends Command
     use QueueConsumerOptionsCommandTrait;
     use SetupBrokerExtensionCommandTrait;
 
-    protected static $defaultName = 'enqueue:consume';
-
     /**
      * @var ContainerInterface
      */
