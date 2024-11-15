@@ -27,7 +27,7 @@ class CustomAppKernel extends Kernel
         ],
     ];
 
-    public function setEnqueueConfig(array $config)
+    public function setEnqueueConfig(array $config): void
     {
         $this->enqueueConfig = array_replace_recursive($this->enqueueConfig, $config);
         $this->enqueueConfig['default']['client']['app_name'] = str_replace('.', '', uniqid('app_name', true));

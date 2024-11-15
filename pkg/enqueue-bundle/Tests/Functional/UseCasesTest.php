@@ -32,12 +32,6 @@ class UseCasesTest extends WebTestCase
             $this->getContext()->close();
         }
 
-        if (static::$kernel) {
-            $fs = new Filesystem();
-            $fs->remove(static::$kernel->getLogDir());
-            $fs->remove(static::$kernel->getCacheDir());
-        }
-
         parent::tearDown();
     }
 

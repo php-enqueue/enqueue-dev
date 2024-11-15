@@ -4,7 +4,6 @@ namespace Enqueue\Bundle\Tests\Functional;
 
 use Enqueue\Bundle\Tests\Functional\App\CustomAppKernel;
 use Enqueue\Symfony\Client\LazyProducer;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @group functional
@@ -15,17 +14,6 @@ class LazyProducerTest extends WebTestCase
     {
         // do not call parent::setUp.
         // parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        if (static::$kernel) {
-            $fs = new Filesystem();
-            $fs->remove(static::$kernel->getLogDir());
-            $fs->remove(static::$kernel->getCacheDir());
-        }
-
-        parent::tearDown();
     }
 
     public function testShouldAllowGetLazyProducerWithoutError()
