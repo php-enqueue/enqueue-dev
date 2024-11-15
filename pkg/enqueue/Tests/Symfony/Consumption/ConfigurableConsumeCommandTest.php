@@ -204,7 +204,7 @@ class ConfigurableConsumeCommandTest extends TestCase
 
     public function testShouldExecuteConsumptionWhenProcessorImplementsQueueSubscriberInterface()
     {
-        $processor = new class implements Processor, QueueSubscriberInterface {
+        $processor = new class() implements Processor, QueueSubscriberInterface {
             public function process(InteropMessage $message, Context $context)
             {
             }
