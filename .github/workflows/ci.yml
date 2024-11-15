@@ -23,7 +23,7 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "6.2.*"
+      - run: php ./bin/fix-symfony-version.php "5.4.*"
 
       - uses: "ramsey/composer-install@v1"
 
@@ -63,7 +63,7 @@ jobs:
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
 
-      - run: php ./bin/fix-symfony-version.php "6.2.*"
+      - run: php ./bin/fix-symfony-version.php "5.4.*"
 
       - run: composer update --no-progress
 
