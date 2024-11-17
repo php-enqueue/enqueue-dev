@@ -22,6 +22,7 @@ use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
 use Interop\Queue\Queue;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -44,11 +45,22 @@ class ConsumeCommandTest extends TestCase
         new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
-    public function testShouldHaveCommandName()
+    public function testShouldHaveAsCommandAttributeWithCommandName()
     {
-        $command = new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
+        $commandClass = ConsumeCommand::class;
 
-        $this->assertEquals('enqueue:consume', $command->getName());
+        $reflectionClass = new \ReflectionClass($commandClass);
+
+        $attributes = $reflectionClass->getAttributes(AsCommand::class);
+
+        $this->assertNotEmpty($attributes, 'The command does not have the AsCommand attribute.');
+
+        // Get the first attribute instance (assuming there is only one AsCommand attribute)
+        $asCommandAttribute = $attributes[0];
+
+        // Verify the 'name' parameter value
+        $attributeInstance = $asCommandAttribute->newInstance();
+        $this->assertEquals('enqueue:consume', $attributeInstance->name, 'The command name is not set correctly in the AsCommand attribute.');
     }
 
     public function testShouldHaveExpectedOptions()
@@ -641,7 +653,7 @@ class ConsumeCommandTest extends TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|InteropContext
      */
-    private function createContextStub(Consumer $consumer = null): InteropContext
+    private function createContextStub(?Consumer $consumer = null): InteropContext
     {
         $context = $this->createContextWithoutSubscriptionConsumerMock();
         $context

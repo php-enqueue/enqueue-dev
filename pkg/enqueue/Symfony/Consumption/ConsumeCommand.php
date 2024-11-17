@@ -20,8 +20,6 @@ class ConsumeCommand extends Command
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
 
-    protected static $defaultName = 'enqueue:transport:consume';
-
     /**
      * @var ContainerInterface
      */
@@ -43,7 +41,7 @@ class ConsumeCommand extends Command
         $this->defaultTransport = $defaultTransport;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void

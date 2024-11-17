@@ -7,7 +7,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class CustomAppKernel extends Kernel
 {
@@ -27,7 +27,7 @@ class CustomAppKernel extends Kernel
         ],
     ];
 
-    public function setEnqueueConfig(array $config)
+    public function setEnqueueConfig(array $config): void
     {
         $this->enqueueConfig = array_replace_recursive($this->enqueueConfig, $config);
         $this->enqueueConfig['default']['client']['app_name'] = str_replace('.', '', uniqid('app_name', true));
@@ -64,9 +64,6 @@ class CustomAppKernel extends Kernel
         return parent::getContainerClass().'Custom'.$this->enqueueConfigId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
         if (self::VERSION_ID < 60000) {
@@ -78,10 +75,7 @@ class CustomAppKernel extends Kernel
         $c->loadFromExtension('enqueue', $this->enqueueConfig);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configureRoutes(RouteCollectionBuilder $routes)
+    protected function configureRoutes(RoutingConfigurator $routes)
     {
     }
 }

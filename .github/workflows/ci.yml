@@ -58,7 +58,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.2'
           coverage: none
           extensions: mongodb, redis, :xdebug
           ini-values: memory_limit=2048M
@@ -77,18 +77,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2']
-        symfony_version: ['5.4.*', '6.2.*', '6.3.*']
+        php: ['8.1', '8.2']
+        symfony_version: ['6.2.*', '6.3.*', '6.4.*', '7.0.*']
         dependencies: ['--prefer-lowest', '--prefer-dist']
         exclude:
-          - php: '7.4'
-            symfony_version: '6.2.*'
-          - php: '7.4'
-            symfony_version: '6.3.*'
-          - php: '8.0'
-            symfony_version: '6.2.*'
-          - php: '8.0'
-            symfony_version: '6.3.*'
+          - php: '8.1'
+            symfony_version: '7.0.*'
 
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
@@ -127,18 +121,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2'] # same as in the container
-        symfony_version: ['5.4.*', '6.2.*', '6.3.*']
-        dependencies: ['--prefer-lowest', '--prefer-dist']
+        php: [ '8.1', '8.2' ]
+        symfony_version: [ '6.2.*', '6.3.*', '6.4.*', '7.0.*' ]
+        dependencies: [ '--prefer-lowest', '--prefer-dist' ]
         exclude:
-          - php: '7.4'
-            symfony_version: '6.2.*'
-          - php: '7.4'
-            symfony_version: '6.3.*'
-          - php: '8.0'
-            symfony_version: '6.2.*'
-          - php: '8.0'
-            symfony_version: '6.3.*'
+          - php: '8.1'
+            symfony_version: '7.0.*'
 
     name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 

@@ -8,9 +8,7 @@ services:
     enqueue.events.registry:
         class: 'Enqueue\AsyncEventDispatcher\ContainerAwareRegistry'
         public: false
-        arguments: [[], []]
-        calls:
-            -  ['setContainer', ['@service_container']]
+        arguments: [[], [], '@service_container']
 
     enqueue.events.async_listener:
         class: 'Enqueue\AsyncEventDispatcher\AsyncListener'

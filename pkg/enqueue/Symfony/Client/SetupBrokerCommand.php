@@ -15,8 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('enqueue:setup-broker')]
 class SetupBrokerCommand extends Command
 {
-    protected static $defaultName = 'enqueue:setup-broker';
-
     /**
      * @var ContainerInterface
      */
@@ -38,7 +36,7 @@ class SetupBrokerCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->driverIdPattern = $driverIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void

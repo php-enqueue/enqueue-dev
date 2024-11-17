@@ -17,8 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('enqueue:routes')]
 class RoutesCommand extends Command
 {
-    protected static $defaultName = 'enqueue:routes';
-
     /**
      * @var ContainerInterface
      */
@@ -45,7 +43,7 @@ class RoutesCommand extends Command
         $this->defaultClient = $defaultClient;
         $this->driverIdPatter = $driverIdPatter;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void

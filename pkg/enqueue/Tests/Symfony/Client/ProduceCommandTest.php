@@ -9,6 +9,7 @@ use Enqueue\Symfony\Client\ProduceCommand;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -31,11 +32,22 @@ class ProduceCommandTest extends TestCase
         new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
     }
 
-    public function testShouldHaveCommandName()
+    public function testShouldHaveAsCommandAttributeWithCommandName()
     {
-        $command = new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
+        $commandClass = ProduceCommand::class;
 
-        $this->assertEquals('enqueue:produce', $command->getName());
+        $reflectionClass = new \ReflectionClass($commandClass);
+
+        $attributes = $reflectionClass->getAttributes(AsCommand::class);
+
+        $this->assertNotEmpty($attributes, 'The command does not have the AsCommand attribute.');
+
+        // Get the first attribute instance (assuming there is only one AsCommand attribute)
+        $asCommandAttribute = $attributes[0];
+
+        // Verify the 'name' parameter value
+        $attributeInstance = $asCommandAttribute->newInstance();
+        $this->assertEquals('enqueue:produce', $attributeInstance->name, 'The command name is not set correctly in the AsCommand attribute.');
     }
 
     public function testShouldHaveExpectedOptions()

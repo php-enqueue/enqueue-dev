@@ -2,12 +2,14 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Psr\Container\ContainerInterface;
 
-class ContainerAwareRegistry implements Registry, ContainerAwareInterface
+class ContainerAwareRegistry implements Registry
 {
-    use ContainerAwareTrait;
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
     /**
      * @var string[]
@@ -23,15 +25,13 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
      * @param string[] $eventsMap       [eventName => transformerName]
      * @param string[] $transformersMap [transformerName => transformerServiceId]
      */
-    public function __construct(array $eventsMap, array $transformersMap)
+    public function __construct(array $eventsMap, array $transformersMap, ContainerInterface $container)
     {
         $this->eventsMap = $eventsMap;
         $this->transformersMap = $transformersMap;
+        $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTransformerNameForEvent($eventName)
     {
         $transformerName = null;
@@ -39,7 +39,7 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
             $transformerName = $this->eventsMap[$eventName];
         } else {
             foreach ($this->eventsMap as $eventNamePattern => $name) {
-                if ('/' != $eventNamePattern[0]) {
+                if ('/' !== $eventNamePattern[0]) {
                     continue;
                 }
 
@@ -58,9 +58,6 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
         return $transformerName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTransformer($name)
     {
         if (false == array_key_exists($name, $this->transformersMap)) {
@@ -69,12 +66,8 @@ class ContainerAwareRegistry implements Registry, ContainerAwareInterface
 
         $transformer = $this->container->get($this->transformersMap[$name]);
 
-        if (false == $transformer instanceof  EventTransformer) {
-            throw new \LogicException(sprintf(
-                'The container must return instance of %s but got %s',
-                EventTransformer::class,
-                is_object($transformer) ? get_class($transformer) : gettype($transformer)
-            ));
+        if (false == $transformer instanceof EventTransformer) {
+            throw new \LogicException(sprintf('The container must return instance of %s but got %s', EventTransformer::class, is_object($transformer) ? $transformer::class : gettype($transformer)));
         }
 
         return $transformer;

@@ -22,8 +22,6 @@ class ConfigurableConsumeCommand extends Command
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
 
-    protected static $defaultName = 'enqueue:transport:consume';
-
     /**
      * @var ContainerInterface
      */
@@ -48,14 +46,14 @@ class ConfigurableConsumeCommand extends Command
         ContainerInterface $container,
         string $defaultTransport,
         string $queueConsumerIdPattern = 'enqueue.transport.%s.queue_consumer',
-        string $processorRegistryIdPattern = 'enqueue.transport.%s.processor_registry'
+        string $processorRegistryIdPattern = 'enqueue.transport.%s.processor_registry',
     ) {
         $this->container = $container;
         $this->defaultTransport = $defaultTransport;
         $this->queueConsumerIdPattern = $queueConsumerIdPattern;
         $this->processorRegistryIdPattern = $processorRegistryIdPattern;
 
-        parent::__construct(static::$defaultName);
+        parent::__construct();
     }
 
     protected function configure(): void

@@ -20,37 +20,25 @@ class ContainerAwareRegistryTest extends TestCase
         $this->assertClassImplements(Registry::class, ContainerAwareRegistry::class);
     }
 
-    public function testCouldBeConstructedWithEventsMapAndTransformersMapAsArguments()
-    {
-        new ContainerAwareRegistry([], []);
-    }
-
-    public function testShouldSetContainerToContainerProperty()
+    public function testShouldAllowGetTransportNameByEventName()
     {
         $container = new Container();
 
-        $registry = new ContainerAwareRegistry([], []);
-
-        $registry->setContainer($container);
-
-        $this->assertAttributeSame($container, 'container', $registry);
-    }
-
-    public function testShouldAllowGetTransportNameByEventName()
-    {
         $registry = new ContainerAwareRegistry([
-                'fooEvent' => 'fooTrans',
-        ], []);
+            'fooEvent' => 'fooTrans',
+        ], [], $container);
 
         $this->assertEquals('fooTrans', $registry->getTransformerNameForEvent('fooEvent'));
     }
 
     public function testShouldAllowDefineTransportNameAsRegExpPattern()
     {
+        $container = new Container();
+
         $registry = new ContainerAwareRegistry([
             '/.*/' => 'fooRegExpTrans',
             'fooEvent' => 'fooTrans',
-        ], []);
+        ], [], $container);
 
         // guard
         $this->assertEquals('fooTrans', $registry->getTransformerNameForEvent('fooEvent'));
@@ -60,9 +48,11 @@ class ContainerAwareRegistryTest extends TestCase
 
     public function testThrowIfNotSupportedEventGiven()
     {
+        $container = new Container();
+
         $registry = new ContainerAwareRegistry([
             'fooEvent' => 'fooTrans',
-        ], []);
+        ], [], $container);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('There is no transformer registered for the given event fooNotSupportedEvent');
@@ -71,9 +61,11 @@ class ContainerAwareRegistryTest extends TestCase
 
     public function testThrowIfThereIsNoRegisteredTransformerWithSuchName()
     {
+        $container = new Container();
+
         $registry = new ContainerAwareRegistry([], [
             'fooTrans' => 'foo_trans_id',
-        ]);
+        ], $container);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('There is no transformer named fooNotRegisteredName');
@@ -87,8 +79,7 @@ class ContainerAwareRegistryTest extends TestCase
 
         $registry = new ContainerAwareRegistry([], [
             'fooTrans' => 'foo_trans_id',
-        ]);
-        $registry->setContainer($container);
+        ], $container);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The container must return instance of Enqueue\AsyncEventDispatcher\EventTransformer but got stdClass');
@@ -104,8 +95,7 @@ class ContainerAwareRegistryTest extends TestCase
 
         $registry = new ContainerAwareRegistry([], [
             'fooTrans' => 'foo_trans_id',
-        ]);
-        $registry->setContainer($container);
+        ], $container);
 
         $this->assertSame($eventTransformerMock, $registry->getTransformer('fooTrans'));
     }
