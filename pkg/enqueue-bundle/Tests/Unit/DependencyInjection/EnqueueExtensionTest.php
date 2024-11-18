@@ -13,8 +13,8 @@ use Enqueue\JobQueue\JobRunner;
 use Enqueue\Test\ClassExtensionTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class EnqueueExtensionTest extends TestCase
 {
@@ -22,12 +22,12 @@ class EnqueueExtensionTest extends TestCase
 
     public function testShouldImplementConfigurationInterface()
     {
-        self::assertClassExtends(Extension::class, EnqueueExtension::class);
+        $this->assertClassExtends(Extension::class, EnqueueExtension::class);
     }
 
     public function testShouldBeFinal()
     {
-        self::assertClassFinal(EnqueueExtension::class);
+        $this->assertClassFinal(EnqueueExtension::class);
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
