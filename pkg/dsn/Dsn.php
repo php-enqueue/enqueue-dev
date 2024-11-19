@@ -215,23 +215,14 @@ class Dsn
         unset($schemeParts[0]);
         $schemeExtensions = array_values($schemeParts);
 
-        $user = parse_url($dsn, PHP_URL_USER) ?: null;
-        if (is_string($user)) {
-            $user = rawurldecode($user);
-        }
+        $parsedDsn = parse_url($dsn);
 
-        $password = parse_url($dsn, PHP_URL_PASS) ?: null;
-        if (is_string($password)) {
-            $password = rawurldecode($password);
-        }
-
-        $path = parse_url($dsn, PHP_URL_PATH) ?: null;
-        if ($path) {
-            $path = rawurldecode($path);
-        }
+        $user = isset($parsedDsn['user']) ? rawurldecode($parsedDsn['user']) : null;
+        $password = isset($parsedDsn['pass']) ? rawurldecode($parsedDsn['pass']) : null;
+        $path = isset($parsedDsn['path']) ? rawurldecode($parsedDsn['path']) : null;
 
         $query = [];
-        $queryString = parse_url($dsn, PHP_URL_QUERY) ?: null;
+        $queryString = $parsedDsn['query'] ?? null;
         if (is_string($queryString)) {
             $query = self::httpParseQuery($queryString, '&', PHP_QUERY_RFC3986);
         }
