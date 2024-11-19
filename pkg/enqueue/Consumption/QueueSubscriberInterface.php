@@ -10,5 +10,5 @@ interface QueueSubscriberInterface
      *
      * @return string[]
      */
-    public static function getSubscribedQueues();
+    public function getSubscribedQueues();
 }
