@@ -115,8 +115,8 @@ class PhpRedis implements Redis
             $this->config['port'],
             $this->config['timeout'],
             $this->config['persistent'] ? ($this->config['phpredis_persistent_id'] ?? null) : null,
-            $this->config['phpredis_retry_interval'] ?? null,
-            $this->config['read_write_timeout']
+            $this->config['phpredis_retry_interval'] ?? 0,
+            $this->config['read_write_timeout'] ?? 0
         );
 
         if (false == $result) {
