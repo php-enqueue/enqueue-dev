@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.10.24](https://github.com/php-enqueue/enqueue-dev/tree/0.10.24) (2024-11-30)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.23...0.10.24)
+
+**Merged pull requests:**
+
+- SF7 deprecations fix [\#1364](https://github.com/php-enqueue/enqueue-dev/pull/1364) ([zavitkov](https://github.com/zavitkov))
+- add symfony 7 support for enqueue-bundle [\#1362](https://github.com/php-enqueue/enqueue-dev/pull/1362) ([zavitkov](https://github.com/zavitkov))
+
 ## [0.10.23](https://github.com/php-enqueue/enqueue-dev/tree/0.10.23) (2024-10-01)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.22...0.10.23)
 
