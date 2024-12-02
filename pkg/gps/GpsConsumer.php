@@ -92,11 +92,19 @@ class GpsConsumer implements Consumer
      */
     public function reject(Message $message, bool $requeue = false): void
     {
-        if (false == $message->getNativeMessage()) {
+        $nativeMessage = $message->getNativeMessage();
+
+        if (null === $nativeMessage) {
             throw new \LogicException('Native google pub/sub message required but it is empty');
         }
 
-        $this->getSubscription()->acknowledge($message->getNativeMessage());
+        $subscription = $this->getSubscription();
+
+        if ($requeue) {
+            $subscription->modifyAckDeadline($nativeMessage, 0);
+        } else {
+            $subscription->acknowledge($nativeMessage);
+        }
     }
 
     private function getSubscription(): Subscription
