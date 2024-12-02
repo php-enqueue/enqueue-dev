@@ -24,11 +24,6 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Context::class, FsContext::class);
     }
 
-    public function testCouldBeConstructedWithExpectedArguments()
-    {
-        new FsContext(sys_get_temp_dir(), 1, 0666, 100);
-    }
-
     public function testShouldAllowCreateEmptyMessage()
     {
         $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);
@@ -130,7 +125,11 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
 
         $queue = $context->createQueue($tmpFile->getFilename());
 
-        $context->createConsumer($queue);
+        $this->assertSame(
+            100,
+            $context->createConsumer($queue)->getPollingInterval()
+        );
+
     }
 
     public function testShouldPropagatePreFetchCountToCreatedConsumer()
