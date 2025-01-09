@@ -120,7 +120,7 @@ class GenericDriver implements DriverInterface
         return new DriverSendResult($queue, $transportMessage);
     }
 
-    public function setupBroker(LoggerInterface $logger = null): void
+    public function setupBroker(?LoggerInterface $logger = null): void
     {
     }
 

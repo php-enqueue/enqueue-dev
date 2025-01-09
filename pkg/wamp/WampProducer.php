@@ -117,7 +117,7 @@ class WampProducer implements Producer
      *
      * @return WampProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -136,7 +136,7 @@ class WampProducer implements Producer
      *
      * @return WampProducer
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -155,7 +155,7 @@ class WampProducer implements Producer
      *
      * @return WampProducer
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;

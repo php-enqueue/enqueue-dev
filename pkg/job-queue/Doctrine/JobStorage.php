@@ -124,7 +124,7 @@ class JobStorage
     /**
      * @throws DuplicateJobException
      */
-    public function saveJob(Job $job, \Closure $lockCallback = null)
+    public function saveJob(Job $job, ?\Closure $lockCallback = null)
     {
         $class = $this->getEntityRepository()->getClassName();
         if (!$job instanceof $class) {

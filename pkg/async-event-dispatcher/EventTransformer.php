@@ -12,7 +12,7 @@ interface EventTransformer
      *
      * @return Message
      */
-    public function toMessage($eventName, Event $event = null);
+    public function toMessage($eventName, ?Event $event = null);
 
     /**
      * If you able to transform message back to event return it.

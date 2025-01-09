@@ -43,7 +43,7 @@ class AmqpConsumer implements InteropAmqpConsumer
         $this->flags = self::FLAG_NOPARAM;
     }
 
-    public function setConsumerTag(string $consumerTag = null): void
+    public function setConsumerTag(?string $consumerTag = null): void
     {
         $this->consumerTag = $consumerTag;
     }

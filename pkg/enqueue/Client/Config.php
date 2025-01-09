@@ -153,13 +153,13 @@ class Config
     }
 
     public static function create(
-        string $prefix = null,
-        string $separator = null,
-        string $app = null,
-        string $routerTopic = null,
-        string $routerQueue = null,
-        string $defaultQueue = null,
-        string $routerProcessor = null,
+        ?string $prefix = null,
+        ?string $separator = null,
+        ?string $app = null,
+        ?string $routerTopic = null,
+        ?string $routerQueue = null,
+        ?string $defaultQueue = null,
+        ?string $routerProcessor = null,
         array $transportConfig = [],
         array $driverConfig = []
     ): self {

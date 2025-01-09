@@ -73,7 +73,7 @@ class PheanstalkProducer implements Producer
     /**
      * @return PheanstalkProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
@@ -88,7 +88,7 @@ class PheanstalkProducer implements Producer
     /**
      * @return PheanstalkProducer
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         $this->priority = $priority;
 
@@ -103,7 +103,7 @@ class PheanstalkProducer implements Producer
     /**
      * @return PheanstalkProducer
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

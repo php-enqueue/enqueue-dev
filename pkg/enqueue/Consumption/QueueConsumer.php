@@ -63,9 +63,9 @@ final class QueueConsumer implements QueueConsumerInterface
      */
     public function __construct(
         InteropContext $interopContext,
-        ExtensionInterface $extension = null,
+        ?ExtensionInterface $extension = null,
         array $boundProcessors = [],
-        LoggerInterface $logger = null,
+        ?LoggerInterface $logger = null,
         int $receiveTimeout = 10000
     ) {
         $this->interopContext = $interopContext;
@@ -122,7 +122,7 @@ final class QueueConsumer implements QueueConsumerInterface
         return $this->bind($queue, new CallbackProcessor($processor));
     }
 
-    public function consume(ExtensionInterface $runtimeExtension = null): void
+    public function consume(?ExtensionInterface $runtimeExtension = null): void
     {
         $extension = $runtimeExtension ?
             new ChainExtension([$this->staticExtension, $runtimeExtension]) :
@@ -286,7 +286,7 @@ final class QueueConsumer implements QueueConsumerInterface
         $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
 
-    private function onEnd(ExtensionInterface $extension, int $startTime, ?int $exitStatus = null, SubscriptionConsumer $subscriptionConsumer = null): void
+    private function onEnd(ExtensionInterface $extension, int $startTime, ?int $exitStatus = null, ?SubscriptionConsumer $subscriptionConsumer = null): void
     {
         $endTime = (int) (microtime(true) * 1000);
 

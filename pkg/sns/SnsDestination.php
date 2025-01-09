@@ -34,7 +34,7 @@ class SnsDestination implements Topic, Queue
     /**
      * The policy that defines who can access your topic. By default, only the topic owner can publish or subscribe to the topic.
      */
-    public function setPolicy(string $policy = null): void
+    public function setPolicy(?string $policy = null): void
     {
         $this->setAttribute('Policy', $policy);
     }
@@ -47,7 +47,7 @@ class SnsDestination implements Topic, Queue
     /**
      * The display name to use for a topic with SMS subscriptions.
      */
-    public function setDisplayName(string $displayName = null): void
+    public function setDisplayName(?string $displayName = null): void
     {
         $this->setAttribute('DisplayName', $displayName);
     }
@@ -60,7 +60,7 @@ class SnsDestination implements Topic, Queue
     /**
      * The display name to use for a topic with SMS subscriptions.
      */
-    public function setDeliveryPolicy(int $deliveryPolicy = null): void
+    public function setDeliveryPolicy(?int $deliveryPolicy = null): void
     {
         $this->setAttribute('DeliveryPolicy', $deliveryPolicy);
     }

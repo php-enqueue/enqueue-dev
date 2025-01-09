@@ -23,7 +23,7 @@ class RpcClient
      * @param Context    $context
      * @param RpcFactory $promiseFactory
      */
-    public function __construct(Context $context, RpcFactory $promiseFactory = null)
+    public function __construct(Context $context, ?RpcFactory $promiseFactory = null)
     {
         $this->context = $context;
         $this->rpcFactory = $promiseFactory ?: new RpcFactory($context);

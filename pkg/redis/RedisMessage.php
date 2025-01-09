@@ -107,7 +107,7 @@ class RedisMessage implements Message
         return $this->redelivered;
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $this->setHeader('correlation_id', $correlationId);
     }
@@ -117,7 +117,7 @@ class RedisMessage implements Message
         return $this->getHeader('correlation_id');
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $this->setHeader('message_id', $messageId);
     }
@@ -134,12 +134,12 @@ class RedisMessage implements Message
         return null === $value ? null : (int) $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
@@ -168,7 +168,7 @@ class RedisMessage implements Message
     /**
      * Set time to live in milliseconds.
      */
-    public function setTimeToLive(int $timeToLive = null): void
+    public function setTimeToLive(?int $timeToLive = null): void
     {
         $this->setHeader('time_to_live', $timeToLive);
     }
@@ -181,7 +181,7 @@ class RedisMessage implements Message
     /**
      * Set delay in milliseconds.
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): void
+    public function setDeliveryDelay(?int $deliveryDelay = null): void
     {
         $this->setHeader('delivery_delay', $deliveryDelay);
     }

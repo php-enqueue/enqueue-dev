@@ -71,7 +71,7 @@ class RdKafkaConsumer implements Consumer
         return $this->offset;
     }
 
-    public function setOffset(int $offset = null): void
+    public function setOffset(?int $offset = null): void
     {
         if ($this->subscribed) {
             throw new \LogicException('The consumer has already subscribed.');

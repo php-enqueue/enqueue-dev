@@ -45,7 +45,7 @@ class StompProducer implements Producer
     /**
      * @return $this|Producer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         if (empty($deliveryDelay)) {
             return $this;
@@ -64,7 +64,7 @@ class StompProducer implements Producer
      *
      * @return $this|Producer
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         if (empty($priority)) {
             return $this;
@@ -81,7 +81,7 @@ class StompProducer implements Producer
     /**
      * @return $this|Producer
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         if (empty($timeToLive)) {
             return $this;

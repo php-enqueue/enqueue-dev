@@ -112,7 +112,7 @@ class RdKafkaMessage implements Message
         $this->redelivered = $redelivered;
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $this->setHeader('correlation_id', (string) $correlationId);
     }
@@ -122,7 +122,7 @@ class RdKafkaMessage implements Message
         return $this->getHeader('correlation_id');
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $this->setHeader('message_id', (string) $messageId);
     }
@@ -139,12 +139,12 @@ class RdKafkaMessage implements Message
         return null === $value ? null : (int) $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
@@ -159,7 +159,7 @@ class RdKafkaMessage implements Message
         return $this->partition;
     }
 
-    public function setPartition(int $partition = null): void
+    public function setPartition(?int $partition = null): void
     {
         $this->partition = $partition;
     }
@@ -169,7 +169,7 @@ class RdKafkaMessage implements Message
         return $this->key;
     }
 
-    public function setKey(string $key = null): void
+    public function setKey(?string $key = null): void
     {
         $this->key = $key;
     }
@@ -179,7 +179,7 @@ class RdKafkaMessage implements Message
         return $this->kafkaMessage;
     }
 
-    public function setKafkaMessage(VendorMessage $message = null): void
+    public function setKafkaMessage(?VendorMessage $message = null): void
     {
         $this->kafkaMessage = $message;
     }

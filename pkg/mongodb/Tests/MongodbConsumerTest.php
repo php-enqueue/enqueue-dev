@@ -183,7 +183,7 @@ class InvalidMessage implements Message
         throw new \BadMethodCallException('This should not be called directly');
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
     }
 
@@ -192,7 +192,7 @@ class InvalidMessage implements Message
         throw new \BadMethodCallException('This should not be called directly');
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
     }
 
@@ -206,11 +206,11 @@ class InvalidMessage implements Message
         throw new \BadMethodCallException('This should not be called directly');
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
     }
 

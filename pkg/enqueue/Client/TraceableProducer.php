@@ -71,7 +71,7 @@ final class TraceableProducer implements ProducerInterface
         $this->traces = [];
     }
 
-    private function collectTrace(string $topic = null, string $command = null, $message): void
+    private function collectTrace(?string $topic, ?string $command, $message): void
     {
         $trace = [
             'topic' => $topic,

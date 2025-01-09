@@ -58,7 +58,7 @@ class AmqpDriver extends GenericDriver
         return $transportMessage;
     }
 
-    public function setupBroker(LoggerInterface $logger = null): void
+    public function setupBroker(?LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {

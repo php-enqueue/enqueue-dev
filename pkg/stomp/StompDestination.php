@@ -122,7 +122,7 @@ class StompDestination implements Topic, Queue
         return $this->routingKey;
     }
 
-    public function setRoutingKey(string $routingKey = null): void
+    public function setRoutingKey(?string $routingKey = null): void
     {
         $this->routingKey = $routingKey;
     }

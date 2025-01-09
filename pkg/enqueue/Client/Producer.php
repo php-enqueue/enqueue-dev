@@ -27,7 +27,7 @@ final class Producer implements ProducerInterface
     public function __construct(
         DriverInterface $driver,
         RpcFactory $rpcFactory,
-        ExtensionInterface $extension = null
+        ?ExtensionInterface $extension = null
     ) {
         $this->driver = $driver;
         $this->rpcFactory = $rpcFactory;

@@ -144,7 +144,7 @@ class SqsMessage implements Message
         $this->redelivered = $redelivered;
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
@@ -154,7 +154,7 @@ class SqsMessage implements Message
         return $this->getHeader('reply_to');
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $this->setHeader('correlation_id', $correlationId);
     }
@@ -164,7 +164,7 @@ class SqsMessage implements Message
         return $this->getHeader('correlation_id');
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $this->setHeader('message_id', $messageId);
     }
@@ -181,7 +181,7 @@ class SqsMessage implements Message
         return null === $value ? null : (int) $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
@@ -211,7 +211,7 @@ class SqsMessage implements Message
      * any messages sent with the same MessageDeduplicationId are accepted successfully but aren't delivered during the 5-minute
      * deduplication interval. For more information, see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing.
      */
-    public function setMessageDeduplicationId(string $id = null): void
+    public function setMessageDeduplicationId(?string $id = null): void
     {
         $this->messageDeduplicationId = $id;
     }
@@ -230,7 +230,7 @@ class SqsMessage implements Message
      * for multiple users). In this scenario, multiple readers can process the queue, but the session data
      * of each user is processed in a FIFO fashion.
      */
-    public function setMessageGroupId(string $id = null): void
+    public function setMessageGroupId(?string $id = null): void
     {
         $this->messageGroupId = $id;
     }
@@ -247,7 +247,7 @@ class SqsMessage implements Message
      * If you receive a message more than once, each time you receive it, you get a different receipt handle.
      * You must provide the most recently received receipt handle when you request to delete the message (otherwise, the message might not be deleted).
      */
-    public function setReceiptHandle(string $receipt = null): void
+    public function setReceiptHandle(?string $receipt = null): void
     {
         $this->receiptHandle = $receipt;
     }

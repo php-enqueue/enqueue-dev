@@ -84,7 +84,7 @@ class Result
     /**
      * @param InteropMessage|null $reply
      */
-    public function setReply(InteropMessage $reply = null)
+    public function setReply(?InteropMessage $reply = null)
     {
         $this->reply = $reply;
     }

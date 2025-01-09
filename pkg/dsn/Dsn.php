@@ -140,27 +140,27 @@ class Dsn
         return $this->queryBag->toArray();
     }
 
-    public function getString(string $name, string $default = null): ?string
+    public function getString(string $name, ?string $default = null): ?string
     {
         return $this->queryBag->getString($name, $default);
     }
 
-    public function getDecimal(string $name, int $default = null): ?int
+    public function getDecimal(string $name, ?int $default = null): ?int
     {
         return $this->queryBag->getDecimal($name, $default);
     }
 
-    public function getOctal(string $name, int $default = null): ?int
+    public function getOctal(string $name, ?int $default = null): ?int
     {
         return $this->queryBag->getOctal($name, $default);
     }
 
-    public function getFloat(string $name, float $default = null): ?float
+    public function getFloat(string $name, ?float $default = null): ?float
     {
         return $this->queryBag->getFloat($name, $default);
     }
 
-    public function getBool(string $name, bool $default = null): ?bool
+    public function getBool(string $name, ?bool $default = null): ?bool
     {
         return $this->queryBag->getBool($name, $default);
     }

@@ -74,7 +74,7 @@ class RedisProducer implements Producer
     /**
      * @return self
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
@@ -89,7 +89,7 @@ class RedisProducer implements Producer
     /**
      * @return RedisProducer
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -106,7 +106,7 @@ class RedisProducer implements Producer
     /**
      * @return self
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

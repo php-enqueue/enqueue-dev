@@ -117,7 +117,7 @@ final class SimpleClient
      *
      * @param string|array $config
      */
-    public function __construct($config, LoggerInterface $logger = null)
+    public function __construct($config, ?LoggerInterface $logger = null)
     {
         if (is_string($config)) {
             $config = [
@@ -134,7 +134,7 @@ final class SimpleClient
     /**
      * @param callable|Processor $processor
      */
-    public function bindTopic(string $topic, $processor, string $processorName = null): void
+    public function bindTopic(string $topic, $processor, ?string $processorName = null): void
     {
         if (is_callable($processor)) {
             $processor = new CallbackProcessor($processor);
@@ -153,7 +153,7 @@ final class SimpleClient
     /**
      * @param callable|Processor $processor
      */
-    public function bindCommand(string $command, $processor, string $processorName = null): void
+    public function bindCommand(string $command, $processor, ?string $processorName = null): void
     {
         if (is_callable($processor)) {
             $processor = new CallbackProcessor($processor);
@@ -185,7 +185,7 @@ final class SimpleClient
         $this->producer->sendEvent($topic, $message);
     }
 
-    public function consume(ExtensionInterface $runtimeExtension = null): void
+    public function consume(?ExtensionInterface $runtimeExtension = null): void
     {
         $this->setupBroker();
 

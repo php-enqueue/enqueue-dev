@@ -102,12 +102,12 @@ class ConsumedMessageStats implements Stats
         array $properties,
         bool $redelivered,
         string $status,
-        string $errorClass = null,
-        string $errorMessage = null,
-        int $errorCode = null,
-        string $errorFile = null,
-        int $errorLine = null,
-        string $trace = null
+        ?string $errorClass = null,
+        ?string $errorMessage = null,
+        ?int $errorCode = null,
+        ?string $errorFile = null,
+        ?int $errorLine = null,
+        ?string $trace = null
     ) {
         $this->consumerId = $consumerId;
         $this->timestampMs = $timestampMs;

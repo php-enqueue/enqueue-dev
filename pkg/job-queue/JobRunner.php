@@ -17,7 +17,7 @@ class JobRunner
     /**
      * @param Job $rootJob
      */
-    public function __construct(JobProcessor $jobProcessor, Job $rootJob = null)
+    public function __construct(JobProcessor $jobProcessor, ?Job $rootJob = null)
     {
         $this->jobProcessor = $jobProcessor;
         $this->rootJob = $rootJob;

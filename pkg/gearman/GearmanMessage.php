@@ -101,7 +101,7 @@ class GearmanMessage implements Message, \JsonSerializable
         $this->redelivered = $redelivered;
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $this->setHeader('correlation_id', (string) $correlationId);
     }
@@ -111,7 +111,7 @@ class GearmanMessage implements Message, \JsonSerializable
         return $this->getHeader('correlation_id');
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $this->setHeader('message_id', (string) $messageId);
     }
@@ -128,12 +128,12 @@ class GearmanMessage implements Message, \JsonSerializable
         return null === $value ? null : (int) $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
@@ -171,7 +171,7 @@ class GearmanMessage implements Message, \JsonSerializable
         return $this->job;
     }
 
-    public function setJob(\GearmanJob $job = null): void
+    public function setJob(?\GearmanJob $job = null): void
     {
         $this->job = $job;
     }

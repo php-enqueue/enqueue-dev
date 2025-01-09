@@ -44,7 +44,7 @@ class SnsQsConsumer implements Consumer
      * The duration (in seconds) that the received messages are hidden from subsequent retrieve
      * requests after being retrieved by a ReceiveMessage request.
      */
-    public function setVisibilityTimeout(int $visibilityTimeout = null): void
+    public function setVisibilityTimeout(?int $visibilityTimeout = null): void
     {
         $this->consumer->setVisibilityTimeout($visibilityTimeout);
     }

@@ -11,7 +11,7 @@ trait DelayStrategyAwareTrait
      */
     protected $delayStrategy;
 
-    public function setDelayStrategy(DelayStrategy $delayStrategy = null): DelayStrategyAware
+    public function setDelayStrategy(?DelayStrategy $delayStrategy = null): DelayStrategyAware
     {
         $this->delayStrategy = $delayStrategy;
 

@@ -63,11 +63,11 @@ class SnsMessage implements Message
         string $body = '',
         array $properties = [],
         array $headers = [],
-        array $messageAttributes = null,
-        string $messageStructure = null,
-        string $phoneNumber = null,
-        string $subject = null,
-        string $targetArn = null
+        ?array $messageAttributes = null,
+        ?string $messageStructure = null,
+        ?string $phoneNumber = null,
+        ?string $subject = null,
+        ?string $targetArn = null
     ) {
         $this->body = $body;
         $this->properties = $properties;
@@ -192,7 +192,7 @@ class SnsMessage implements Message
      * of each user is processed in a FIFO fashion.
      * For more information, see: https://docs.aws.amazon.com/sns/latest/dg/fifo-message-grouping.html
      */
-    public function setMessageGroupId(string $id = null): void
+    public function setMessageGroupId(?string $id = null): void
     {
         $this->messageGroupId = $id;
     }
@@ -210,7 +210,7 @@ class SnsMessage implements Message
      * aren't delivered during the 5-minute deduplication interval.
      * For more information, see https://docs.aws.amazon.com/sns/latest/dg/fifo-message-dedup.html
      */
-    public function setMessageDeduplicationId(string $id = null): void
+    public function setMessageDeduplicationId(?string $id = null): void
     {
         $this->messageDeduplicationId = $id;
     }

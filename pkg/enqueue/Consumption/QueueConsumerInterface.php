@@ -38,5 +38,5 @@ interface QueueConsumerInterface
      *
      * @throws \Exception
      */
-    public function consume(ExtensionInterface $runtimeExtension = null): void;
+    public function consume(?ExtensionInterface $runtimeExtension = null): void;
 }
