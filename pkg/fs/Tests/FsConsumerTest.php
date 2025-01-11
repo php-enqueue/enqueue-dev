@@ -20,6 +20,9 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Consumer::class, FsConsumer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithContextAndDestinationAndPreFetchCountAsArguments()
     {
         new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 1);
@@ -50,6 +53,9 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(456, $consumer->getPreFetchCount());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldDoNothingOnAcknowledge()
     {
         $consumer = new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 123);
@@ -57,6 +63,9 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
         $consumer->acknowledge(new FsMessage());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldDoNothingOnReject()
     {
         $consumer = new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 123);

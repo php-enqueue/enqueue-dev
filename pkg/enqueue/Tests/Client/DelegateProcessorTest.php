@@ -13,6 +13,9 @@ use PHPUnit\Framework\TestCase;
 
 class DelegateProcessorTest extends TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new DelegateProcessor($this->createProcessorRegistryMock());

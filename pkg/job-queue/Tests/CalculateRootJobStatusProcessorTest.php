@@ -17,6 +17,9 @@ use Psr\Log\LoggerInterface;
 
 class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new CalculateRootJobStatusProcessor(

@@ -24,6 +24,9 @@ class GearmanContextTest extends TestCase
         $this->assertClassImplements(Context::class, GearmanContext::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithConnectionConfigAsFirstArgument()
     {
         new GearmanContext(['host' => 'aHost', 'port' => 'aPort']);

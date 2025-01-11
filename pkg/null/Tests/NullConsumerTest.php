@@ -18,6 +18,9 @@ class NullConsumerTest extends TestCase
         $this->assertClassImplements(Consumer::class, NullConsumer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithQueueAsArgument()
     {
         new NullConsumer(new NullQueue('aName'));
@@ -41,6 +44,9 @@ class NullConsumerTest extends TestCase
         $this->assertNull($consumer->receiveNoWait());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldDoNothingOnAcknowledge()
     {
         $consumer = new NullConsumer(new NullQueue('theQueueName'));
@@ -48,6 +54,9 @@ class NullConsumerTest extends TestCase
         $consumer->acknowledge(new NullMessage());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldDoNothingOnReject()
     {
         $consumer = new NullConsumer(new NullQueue('theQueueName'));

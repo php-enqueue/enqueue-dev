@@ -21,6 +21,9 @@ class NullContextTest extends TestCase
         $this->assertClassImplements(Context::class, NullContext::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithoutAnyArguments()
     {
         new NullContext();

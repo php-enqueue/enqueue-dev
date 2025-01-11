@@ -16,6 +16,9 @@ class NullTopicTest extends TestCase
         $this->assertClassImplements(Topic::class, NullTopic::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithNameAsArgument()
     {
         new NullTopic('aName');

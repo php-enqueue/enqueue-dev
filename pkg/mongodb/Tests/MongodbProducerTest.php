@@ -23,6 +23,9 @@ class MongodbProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, MongodbProducer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new MongodbProducer($this->createContextMock());

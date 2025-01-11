@@ -28,6 +28,9 @@ class DbalConsumerTest extends TestCase
         $this->assertClassImplements(Consumer::class, DbalConsumer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new DbalConsumer($this->createContextMock(), new DbalDestination('queue'));

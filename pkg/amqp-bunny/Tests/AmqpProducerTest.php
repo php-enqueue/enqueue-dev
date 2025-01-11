@@ -24,6 +24,10 @@ class AmqpProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 
+    /**
+     * @doesNotPerformAssertions
+     */
+
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new AmqpProducer($this->createBunnyChannelMock(), $this->createContextMock());

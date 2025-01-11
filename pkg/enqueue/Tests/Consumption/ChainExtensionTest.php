@@ -33,6 +33,9 @@ class ChainExtensionTest extends TestCase
         $this->assertClassImplements(ExtensionInterface::class, ChainExtension::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithExtensionsArray()
     {
         new ChainExtension([$this->createExtension(), $this->createExtension()]);

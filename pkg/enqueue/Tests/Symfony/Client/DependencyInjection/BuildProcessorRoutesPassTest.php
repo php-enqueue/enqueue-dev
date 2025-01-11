@@ -25,6 +25,9 @@ class BuildProcessorRoutesPassTest extends TestCase
         $this->assertClassFinal(BuildProcessorRoutesPass::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithoutArguments()
     {
         new BuildProcessorRoutesPass();

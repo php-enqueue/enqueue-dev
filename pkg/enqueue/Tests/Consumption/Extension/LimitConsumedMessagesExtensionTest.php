@@ -16,6 +16,9 @@ use Psr\Log\NullLogger;
 
 class LimitConsumedMessagesExtensionTest extends TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new LimitConsumedMessagesExtension(12345);

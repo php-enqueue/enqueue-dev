@@ -14,6 +14,9 @@ class PheanstalkConsumerTest extends TestCase
 {
     use ClassExtensionTrait;
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithDestinationAndPheanstalkAsArguments()
     {
         new PheanstalkConsumer(

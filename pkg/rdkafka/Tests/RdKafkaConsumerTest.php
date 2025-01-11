@@ -13,6 +13,9 @@ use RdKafka\Message;
 
 class RdKafkaConsumerTest extends TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new RdKafkaConsumer(

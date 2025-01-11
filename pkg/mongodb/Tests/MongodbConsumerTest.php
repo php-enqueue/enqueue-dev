@@ -25,6 +25,9 @@ class MongodbConsumerTest extends TestCase
         $this->assertClassImplements(Consumer::class, MongodbConsumer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new MongodbConsumer($this->createContextMock(), new MongodbDestination('queue'));
@@ -39,6 +42,9 @@ class MongodbConsumerTest extends TestCase
         $this->assertSame($destination, $consumer->getQueue());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldCallAcknowledgedMethod()
     {
         $consumer = new MongodbConsumer($this->createContextMock(), new MongodbDestination('queue'));

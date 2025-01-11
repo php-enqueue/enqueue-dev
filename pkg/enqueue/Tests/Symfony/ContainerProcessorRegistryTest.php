@@ -23,6 +23,9 @@ class ContainerProcessorRegistryTest extends TestCase
         $this->assertClassFinal(ContainerProcessorRegistry::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithContainerAsFirstArgument()
     {
         new ContainerProcessorRegistry($this->createContainerMock());

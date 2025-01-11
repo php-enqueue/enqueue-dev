@@ -25,6 +25,9 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Consumer::class, StompConsumer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredAttributes()
     {
         new StompConsumer($this->createStompClientMock(), $this->createDummyDestination());

@@ -18,6 +18,9 @@ class CallbackProcessorTest extends TestCase
         $this->assertClassImplements(Processor::class, CallbackProcessor::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithCallableAsArgument()
     {
         new CallbackProcessor(function () {

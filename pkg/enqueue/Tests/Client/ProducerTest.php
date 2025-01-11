@@ -24,11 +24,17 @@ class ProducerTest extends TestCase
         self::assertClassFinal(Producer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new Producer($this->createDriverMock(), $this->createRpcFactoryMock());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithOptionalArguments()
     {
         new Producer(

@@ -19,6 +19,9 @@ class DriverPreSendTest extends TestCase
         self::assertClassFinal(DriverPreSend::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithExpectedArguments()
     {
         new DriverPreSend(

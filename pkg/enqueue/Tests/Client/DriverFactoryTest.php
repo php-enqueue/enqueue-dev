@@ -61,6 +61,9 @@ class DriverFactoryTest extends TestCase
         $this->assertTrue($rc->isFinal());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithoutAnyArguments()
     {
         new DriverFactory();

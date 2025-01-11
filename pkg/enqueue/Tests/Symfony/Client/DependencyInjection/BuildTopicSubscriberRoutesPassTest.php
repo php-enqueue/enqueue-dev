@@ -29,6 +29,9 @@ class BuildTopicSubscriberRoutesPassTest extends TestCase
         $this->assertClassFinal(BuildTopicSubscriberRoutesPass::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithoutArguments()
     {
         new BuildTopicSubscriberRoutesPass();

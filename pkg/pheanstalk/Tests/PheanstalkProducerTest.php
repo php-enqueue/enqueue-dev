@@ -18,6 +18,9 @@ class PheanstalkProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithPheanstalkAsFirstArgument()
     {
         new PheanstalkProducer($this->createPheanstalkMock());

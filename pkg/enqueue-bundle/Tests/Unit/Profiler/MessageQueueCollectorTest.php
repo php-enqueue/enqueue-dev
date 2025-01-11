@@ -23,6 +23,9 @@ class MessageQueueCollectorTest extends TestCase
         $this->assertClassExtends(DataCollector::class, MessageQueueCollector::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithEmptyConstructor()
     {
         new MessageQueueCollector();

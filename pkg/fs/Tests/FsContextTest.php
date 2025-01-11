@@ -24,6 +24,9 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Context::class, FsContext::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithExpectedArguments()
     {
         new FsContext(sys_get_temp_dir(), 1, 0666, 100);
@@ -122,6 +125,9 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(FsConsumer::class, $consumer);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldCreateConsumer()
     {
         $tmpFile = new TempFile(sys_get_temp_dir().'/foo');

@@ -17,6 +17,9 @@ use PHPUnit\Framework\TestCase;
 
 class DoctrinePingConnectionExtensionTest extends TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredAttributes()
     {
         new DoctrinePingConnectionExtension($this->createRegistryMock());

@@ -24,6 +24,9 @@ class AsyncProcessorTest extends TestCase
         $this->assertClassImplements(Processor::class, AsyncProcessor::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRegistryAndProxyEventDispatcher()
     {
         new AsyncProcessor($this->createRegistryMock(), $this->createProxyEventDispatcherMock());

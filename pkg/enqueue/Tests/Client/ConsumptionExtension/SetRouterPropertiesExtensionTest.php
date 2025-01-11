@@ -27,6 +27,9 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $this->assertClassImplements(MessageReceivedExtensionInterface::class, SetRouterPropertiesExtension::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new SetRouterPropertiesExtension($this->createDriverMock());

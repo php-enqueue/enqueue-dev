@@ -25,6 +25,9 @@ class ConfigurationTest extends TestCase
         $this->assertClassFinal(Configuration::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithDebugAsArgument()
     {
         new Configuration(true);

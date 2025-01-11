@@ -11,6 +11,9 @@ use Psr\Log\NullLogger;
 
 class NicenessExtensionTest extends TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new NicenessExtension(0);

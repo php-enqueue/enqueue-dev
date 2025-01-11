@@ -16,6 +16,9 @@ class NullQueueTest extends TestCase
         $this->assertClassImplements(Queue::class, NullQueue::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithNameAsArgument()
     {
         new NullQueue('aName');

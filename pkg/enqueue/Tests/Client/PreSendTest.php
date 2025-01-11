@@ -18,6 +18,9 @@ class PreSendTest extends TestCase
         self::assertClassFinal(PreSend::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithExpectedArguments()
     {
         new PreSend(

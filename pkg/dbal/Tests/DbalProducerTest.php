@@ -21,6 +21,9 @@ class DbalProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, DbalProducer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new DbalProducer($this->createContextMock());

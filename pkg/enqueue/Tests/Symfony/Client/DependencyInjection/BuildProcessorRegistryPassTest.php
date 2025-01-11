@@ -26,6 +26,9 @@ class BuildProcessorRegistryPassTest extends TestCase
         $this->assertClassFinal(BuildProcessorRegistryPass::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithoutArguments()
     {
         new BuildProcessorRegistryPass();

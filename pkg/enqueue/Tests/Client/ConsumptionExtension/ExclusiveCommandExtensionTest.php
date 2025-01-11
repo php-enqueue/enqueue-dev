@@ -34,6 +34,9 @@ class ExclusiveCommandExtensionTest extends TestCase
         $this->assertClassFinal(ExclusiveCommandExtension::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithDriverAsFirstArgument()
     {
         new ExclusiveCommandExtension($this->createDriverStub());

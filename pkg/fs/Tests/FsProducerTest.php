@@ -23,6 +23,9 @@ class FsProducerTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Producer::class, FsProducer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithContextAsFirstArgument()
     {
         new FsProducer($this->createContextMock());

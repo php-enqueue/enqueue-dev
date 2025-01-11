@@ -25,6 +25,9 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $this->assertClassFinal(BuildConsumptionExtensionsPass::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithoutArguments()
     {
         new BuildConsumptionExtensionsPass();

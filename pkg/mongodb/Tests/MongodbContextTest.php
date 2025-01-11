@@ -29,6 +29,9 @@ class MongodbContextTest extends TestCase
         $this->assertClassImplements(Context::class, MongodbContext::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new MongodbContext($this->createClientMock());

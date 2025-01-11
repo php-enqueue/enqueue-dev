@@ -32,6 +32,9 @@ class SnsQsProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, SnsQsProducer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new SnsQsProducer($this->createSnsContextMock(), $this->createSqsContextMock());

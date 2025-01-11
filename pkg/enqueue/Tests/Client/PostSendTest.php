@@ -21,6 +21,9 @@ class PostSendTest extends TestCase
         self::assertClassFinal(PostSend::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithExpectedArguments()
     {
         new PostSend(

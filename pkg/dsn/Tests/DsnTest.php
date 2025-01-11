@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 
 class DsnTest extends TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithDsnAsFirstArgument()
     {
         Dsn::parseFirst('foo://localhost:1234');

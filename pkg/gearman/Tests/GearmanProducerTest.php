@@ -18,6 +18,9 @@ class GearmanProducerTest extends TestCase
     use ClassExtensionTrait;
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithGearmanClientAsFirstArgument()
     {
         new GearmanProducer($this->createGearmanClientMock());

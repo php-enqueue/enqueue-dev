@@ -30,6 +30,9 @@ class FlushSpoolProducerExtensionTest extends TestCase
         $this->assertClassImplements(EndExtensionInterface::class, FlushSpoolProducerExtension::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithSpoolProducerAsFirstArgument()
     {
         new FlushSpoolProducerExtension($this->createSpoolProducerMock());

@@ -17,6 +17,9 @@ class AmqpSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithAmqpContextAsFirstArgument()
     {
         new AmqpSubscriptionConsumer($this->createAmqpContextMock());

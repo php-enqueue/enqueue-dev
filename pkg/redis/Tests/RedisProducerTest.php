@@ -25,6 +25,9 @@ class RedisProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, RedisProducer::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRedisAsFirstArgument()
     {
         new RedisProducer($this->createContextMock());

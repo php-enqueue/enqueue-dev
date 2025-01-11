@@ -17,6 +17,9 @@ use Psr\Log\NullLogger;
 
 class LimitConsumptionTimeExtensionTest extends TestCase
 {
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCouldBeConstructedWithRequiredArguments()
     {
         new LimitConsumptionTimeExtension(new \DateTime('+1 day'));
