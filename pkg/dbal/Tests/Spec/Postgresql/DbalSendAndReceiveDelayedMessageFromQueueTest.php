@@ -11,9 +11,6 @@ class DbalSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelaye
 {
     use CreateDbalContextTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->createDbalContext();

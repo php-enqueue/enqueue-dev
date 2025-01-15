@@ -13,9 +13,6 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
  */
 class GearmanSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new GearmanConnectionFactory(getenv('GEARMAN_DSN'));

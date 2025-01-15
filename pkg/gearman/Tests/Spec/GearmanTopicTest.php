@@ -10,9 +10,6 @@ class GearmanTopicTest extends TopicSpec
 {
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createTopic()
     {
         return new GearmanDestination(self::EXPECTED_TOPIC_NAME);

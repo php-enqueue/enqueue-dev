@@ -1,6 +1,6 @@
 <?php
 
-namespace  Enqueue\Client\Driver;
+namespace Enqueue\Client\Driver;
 
 use Interop\Amqp\AmqpQueue;
 use Interop\Queue\Queue as InteropQueue;

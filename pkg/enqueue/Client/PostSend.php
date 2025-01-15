@@ -22,7 +22,7 @@ final class PostSend
         ProducerInterface $producer,
         DriverInterface $driver,
         Destination $transportDestination,
-        TransportMessage $transportMessage
+        TransportMessage $transportMessage,
     ) {
         $this->message = $message;
         $this->producer = $producer;

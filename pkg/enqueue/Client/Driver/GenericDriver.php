@@ -39,7 +39,7 @@ class GenericDriver implements DriverInterface
     public function __construct(
         Context $context,
         Config $config,
-        RouteCollection $routeCollection
+        RouteCollection $routeCollection,
     ) {
         $this->context = $context;
         $this->config = $config;
@@ -120,7 +120,7 @@ class GenericDriver implements DriverInterface
         return new DriverSendResult($queue, $transportMessage);
     }
 
-    public function setupBroker(LoggerInterface $logger = null): void
+    public function setupBroker(?LoggerInterface $logger = null): void
     {
     }
 

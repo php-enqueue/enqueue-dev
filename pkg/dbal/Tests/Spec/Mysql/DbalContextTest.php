@@ -11,9 +11,6 @@ class DbalContextTest extends ContextSpec
 {
     use CreateDbalContextTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->createDbalContext();

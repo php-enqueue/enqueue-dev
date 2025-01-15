@@ -10,9 +10,6 @@ use Interop\Queue\Spec\QueueSpec;
  */
 class WampQueueTest extends QueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createQueue()
     {
         return new WampDestination(self::EXPECTED_QUEUE_NAME);

@@ -11,13 +11,14 @@ use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
 
 /**
  * @group functional
+ *
  * @retry 5
  */
 class SqsSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {
+    use CreateSqsQueueTrait;
     use RetryTrait;
     use SqsExtension;
-    use CreateSqsQueueTrait;
 
     /**
      * @var SqsContext

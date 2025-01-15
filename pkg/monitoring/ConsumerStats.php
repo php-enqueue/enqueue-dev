@@ -121,12 +121,12 @@ class ConsumerStats implements Stats
         int $requeued,
         int $memoryUsage,
         float $systemLoad,
-        string $errorClass = null,
-        string $errorMessage = null,
-        int $errorCode = null,
-        string $errorFile = null,
-        int $errorLine = null,
-        string $trace = null
+        ?string $errorClass = null,
+        ?string $errorMessage = null,
+        ?int $errorCode = null,
+        ?string $errorFile = null,
+        ?int $errorLine = null,
+        ?string $trace = null,
     ) {
         $this->consumerId = $consumerId;
         $this->timestampMs = $timestampMs;

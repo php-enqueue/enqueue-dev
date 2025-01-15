@@ -17,9 +17,6 @@ class LimitConsumptionTimeExtension implements PreConsumeExtensionInterface, Pos
      */
     protected $timeLimit;
 
-    /**
-     * @param \DateTime $timeLimit
-     */
     public function __construct(\DateTime $timeLimit)
     {
         $this->timeLimit = $timeLimit;
@@ -53,8 +50,8 @@ class LimitConsumptionTimeExtension implements PreConsumeExtensionInterface, Pos
             $logger->debug(sprintf(
                 '[LimitConsumptionTimeExtension] Execution interrupted as limit time has passed.'.
                 ' now: "%s", time-limit: "%s"',
-                $now->format(DATE_ISO8601),
-                $this->timeLimit->format(DATE_ISO8601)
+                $now->format(\DATE_ISO8601),
+                $this->timeLimit->format(\DATE_ISO8601)
             ));
 
             return true;

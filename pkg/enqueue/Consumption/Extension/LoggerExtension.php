@@ -13,9 +13,6 @@ class LoggerExtension implements InitLoggerExtensionInterface
      */
     private $logger;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -28,7 +25,7 @@ class LoggerExtension implements InitLoggerExtensionInterface
         if ($previousLogger !== $this->logger) {
             $context->changeLogger($this->logger);
 
-            $this->logger->debug(sprintf('Change logger from "%s" to "%s"', get_class($previousLogger), get_class($this->logger)));
+            $this->logger->debug(sprintf('Change logger from "%s" to "%s"', $previousLogger::class, get_class($this->logger)));
         }
     }
 }

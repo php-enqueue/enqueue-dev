@@ -28,26 +28,17 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
      */
     private $redeliveryDelay = 300;
 
-    /**
-     * @param RedisContext $context
-     */
     public function __construct(RedisContext $context)
     {
         $this->context = $context;
         $this->subscribers = [];
     }
 
-    /**
-     * @return int
-     */
     public function getRedeliveryDelay(): ?int
     {
         return $this->redeliveryDelay;
     }
 
-    /**
-     * @param int $delay
-     */
     public function setRedeliveryDelay(int $delay): void
     {
         $this->redeliveryDelay = $delay;
@@ -89,7 +80,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     public function subscribe(Consumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof RedisConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, $consumer::class));
         }
 
         $queueName = $consumer->getQueue()->getQueueName();
@@ -111,7 +102,7 @@ class RedisSubscriptionConsumer implements SubscriptionConsumer
     public function unsubscribe(Consumer $consumer): void
     {
         if (false == $consumer instanceof RedisConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', RedisConsumer::class, $consumer::class));
         }
 
         $queueName = $consumer->getQueue()->getQueueName();

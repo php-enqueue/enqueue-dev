@@ -23,10 +23,7 @@ class LimitConsumerMemoryExtension implements PreConsumeExtensionInterface, Post
     public function __construct($memoryLimit)
     {
         if (false == is_int($memoryLimit)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Expected memory limit is int but got: "%s"',
-                is_object($memoryLimit) ? get_class($memoryLimit) : gettype($memoryLimit)
-            ));
+            throw new \InvalidArgumentException(sprintf('Expected memory limit is int but got: "%s"', is_object($memoryLimit) ? $memoryLimit::class : gettype($memoryLimit)));
         }
 
         $this->memoryLimit = $memoryLimit * 1024 * 1024;

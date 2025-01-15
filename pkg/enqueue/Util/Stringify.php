@@ -7,14 +7,8 @@ namespace Enqueue\Util;
  */
 class Stringify
 {
-    /**
-     * @var mixed
-     */
     private $value;
 
-    /**
-     * @param mixed $value
-     */
     public function __construct($value)
     {
         $this->value = $value;
@@ -26,7 +20,7 @@ class Stringify
             return $this->value;
         }
 
-        return json_encode($this->value, JSON_UNESCAPED_SLASHES);
+        return json_encode($this->value, \JSON_UNESCAPED_SLASHES);
     }
 
     public static function that($value): self

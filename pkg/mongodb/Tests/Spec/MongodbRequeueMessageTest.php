@@ -13,9 +13,6 @@ class MongodbRequeueMessageTest extends RequeueMessageSpec
 {
     use MongodbExtensionTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildMongodbContext();

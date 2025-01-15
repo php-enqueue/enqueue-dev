@@ -12,7 +12,7 @@ foreach ([__DIR__.'/../vendor/autoload.php', __DIR__.'/../../../vendor/autoload.
 if ($autoload) {
     require_once $autoload;
 } else {
-    throw new \LogicException('Composer autoload was not found');
+    throw new LogicException('Composer autoload was not found');
 }
 
 use Enqueue\SnsQs\SnsQsConnectionFactory;
@@ -33,7 +33,7 @@ $message = $context->createMessage('Hello Bar!', ['key' => 'value'], ['key2' => 
 
 while (true) {
     $context->createProducer()->send($topic, $message);
-    echo 'Sent message: '.$message->getBody().PHP_EOL;
+    echo 'Sent message: '.$message->getBody().\PHP_EOL;
     sleep(1);
 }
 

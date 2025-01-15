@@ -109,8 +109,6 @@ class LimitsExtensionsCommandTraitTest extends TestCase
     }
 
     /**
-     * @param mixed $inputValue
-     * @param bool  $enabled
      * @dataProvider provideNicenessValues
      */
     public function testShouldAddNicenessExtension($inputValue, bool $enabled)

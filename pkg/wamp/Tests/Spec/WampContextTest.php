@@ -13,9 +13,6 @@ class WampContextTest extends ContextSpec
 {
     use WampExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildWampContext();

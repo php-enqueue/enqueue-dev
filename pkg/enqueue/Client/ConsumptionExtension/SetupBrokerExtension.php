@@ -18,9 +18,6 @@ class SetupBrokerExtension implements StartExtensionInterface
      */
     private $isDone;
 
-    /**
-     * @param DriverInterface $driver
-     */
     public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;

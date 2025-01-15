@@ -11,9 +11,6 @@ trait SerializerAwareTrait
      */
     private $serializer;
 
-    /**
-     * @param Serializer $serializer
-     */
     public function setSerializer(Serializer $serializer)
     {
         $this->serializer = $serializer;

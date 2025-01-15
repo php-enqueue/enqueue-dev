@@ -10,9 +10,6 @@ class GearmanQueueTest extends QueueSpec
 {
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createQueue()
     {
         return new GearmanDestination(self::EXPECTED_QUEUE_NAME);

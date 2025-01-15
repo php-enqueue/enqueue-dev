@@ -15,9 +15,9 @@ use Stomp\Transport\Frame;
 
 class StompConsumer implements Consumer
 {
-    const ACK_AUTO = 'auto';
-    const ACK_CLIENT = 'client';
-    const ACK_CLIENT_INDIVIDUAL = 'client-individual';
+    public const ACK_AUTO = 'auto';
+    public const ACK_CLIENT = 'client';
+    public const ACK_CLIENT_INDIVIDUAL = 'client-individual';
 
     /**
      * @var StompDestination

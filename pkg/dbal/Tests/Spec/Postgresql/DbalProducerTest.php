@@ -11,9 +11,6 @@ class DbalProducerTest extends ProducerSpec
 {
     use CreateDbalContextTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createProducer()
     {
         return $this->createDbalContext()->createProducer();

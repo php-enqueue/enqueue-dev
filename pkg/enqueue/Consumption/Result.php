@@ -10,19 +10,19 @@ class Result
     /**
      * @see Processor::ACK for more details
      */
-    const ACK = Processor::ACK;
+    public const ACK = Processor::ACK;
 
     /**
      * @see Processor::REJECT for more details
      */
-    const REJECT = Processor::REJECT;
+    public const REJECT = Processor::REJECT;
 
     /**
      * @see Processor::REQUEUE for more details
      */
-    const REQUEUE = Processor::REQUEUE;
+    public const REQUEUE = Processor::REQUEUE;
 
-    const ALREADY_ACKNOWLEDGED = 'enqueue.already_acknowledged';
+    public const ALREADY_ACKNOWLEDGED = 'enqueue.already_acknowledged';
 
     /**
      * @var string
@@ -39,10 +39,6 @@ class Result
      */
     private $reply;
 
-    /**
-     * @param mixed $status
-     * @param mixed $reason
-     */
     public function __construct($status, $reason = '')
     {
         $this->status = (string) $status;
@@ -81,10 +77,7 @@ class Result
         return $this->reply;
     }
 
-    /**
-     * @param InteropMessage|null $reply
-     */
-    public function setReply(InteropMessage $reply = null)
+    public function setReply(?InteropMessage $reply = null)
     {
         $this->reply = $reply;
     }
@@ -120,9 +113,8 @@ class Result
     }
 
     /**
-     * @param InteropMessage $replyMessage
-     * @param string         $status
-     * @param string|null    $reason
+     * @param string      $status
+     * @param string|null $reason
      *
      * @return static
      */

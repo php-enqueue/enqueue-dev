@@ -18,8 +18,6 @@ class RedisSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopO
 
     /**
      * @return RedisContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -28,8 +26,6 @@ class RedisSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopO
 
     /**
      * @param RedisContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

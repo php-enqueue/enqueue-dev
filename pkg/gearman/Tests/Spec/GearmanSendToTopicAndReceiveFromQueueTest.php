@@ -19,9 +19,6 @@ class GearmanSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFro
         $this->time = time();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new GearmanConnectionFactory(getenv('GEARMAN_DSN'));
@@ -29,17 +26,11 @@ class GearmanSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFro
         return $factory->createContext();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createQueue(Context $context, $queueName)
     {
         return $context->createQueue($queueName.$this->time);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createTopic(Context $context, $topicName)
     {
         return $context->createTopic($topicName.$this->time);

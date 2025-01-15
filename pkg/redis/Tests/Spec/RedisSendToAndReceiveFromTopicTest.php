@@ -13,9 +13,6 @@ class RedisSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
     use RedisExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildPhpRedisContext();

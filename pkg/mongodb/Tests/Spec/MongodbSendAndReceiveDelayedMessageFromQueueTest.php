@@ -13,9 +13,6 @@ class MongodbSendAndReceiveDelayedMessageFromQueueTest extends SendAndReceiveDel
 {
     use MongodbExtensionTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildMongodbContext();

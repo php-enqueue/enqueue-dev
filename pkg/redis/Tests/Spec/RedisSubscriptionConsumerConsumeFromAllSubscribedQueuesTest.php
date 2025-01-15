@@ -18,8 +18,6 @@ class RedisSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscr
 
     /**
      * @return RedisContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -28,8 +26,6 @@ class RedisSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscr
 
     /**
      * @param RedisContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

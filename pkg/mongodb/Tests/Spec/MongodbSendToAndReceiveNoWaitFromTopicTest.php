@@ -13,9 +13,6 @@ class MongodbSendToAndReceiveNoWaitFromTopicTest extends SendToAndReceiveNoWaitF
 {
     use MongodbExtensionTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildMongodbContext();

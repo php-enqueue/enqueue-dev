@@ -62,7 +62,7 @@ class SqsDestination implements Topic, Queue
      *  The number of seconds for which the delivery of all messages in the queue is delayed.
      *  Valid values: An integer from 0 to 900 seconds (15 minutes). The default is 0 (zero).
      */
-    public function setDelaySeconds(int $seconds = null): void
+    public function setDelaySeconds(?int $seconds = null): void
     {
         if (null == $seconds) {
             unset($this->attributes['DelaySeconds']);
@@ -76,7 +76,7 @@ class SqsDestination implements Topic, Queue
      * Valid values: An integer from 1,024 bytes (1 KiB) to 262,144 bytes (256 KiB).
      * The default is 262,144 (256 KiB).
      */
-    public function setMaximumMessageSize(int $bytes = null): void
+    public function setMaximumMessageSize(?int $bytes = null): void
     {
         if (null == $bytes) {
             unset($this->attributes['MaximumMessageSize']);
@@ -90,7 +90,7 @@ class SqsDestination implements Topic, Queue
      * Valid values: An integer from 60 seconds (1 minute) to 1,209,600 seconds (14 days).
      * The default is 345,600 (4 days).
      */
-    public function setMessageRetentionPeriod(int $seconds = null): void
+    public function setMessageRetentionPeriod(?int $seconds = null): void
     {
         if (null == $seconds) {
             unset($this->attributes['MessageRetentionPeriod']);
@@ -103,7 +103,7 @@ class SqsDestination implements Topic, Queue
      * The queue's policy. A valid AWS policy. For more information about policy structure,
      * see http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html.
      */
-    public function setPolicy(string $policy = null): void
+    public function setPolicy(?string $policy = null): void
     {
         if (null == $policy) {
             unset($this->attributes['Policy']);
@@ -116,7 +116,7 @@ class SqsDestination implements Topic, Queue
      * The number of seconds for which a ReceiveMessage action waits for a message to arrive.
      * Valid values: An integer from 0 to 20 (seconds). The default is 0 (zero).
      */
-    public function setReceiveMessageWaitTimeSeconds(int $seconds = null): void
+    public function setReceiveMessageWaitTimeSeconds(?int $seconds = null): void
     {
         if (null == $seconds) {
             unset($this->attributes['ReceiveMessageWaitTimeSeconds']);
@@ -145,7 +145,7 @@ class SqsDestination implements Topic, Queue
      * The default is 30. For more information about the visibility timeout,
      * see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html.
      */
-    public function setVisibilityTimeout(int $seconds = null): void
+    public function setVisibilityTimeout(?int $seconds = null): void
     {
         if (null == $seconds) {
             unset($this->attributes['VisibilityTimeout']);
@@ -208,7 +208,7 @@ class SqsDestination implements Topic, Queue
         $this->queueOwnerAWSAccountId = $queueOwnerAWSAccountId;
     }
 
-    public function setRegion(string $region = null): void
+    public function setRegion(?string $region = null): void
     {
         $this->region = $region;
     }

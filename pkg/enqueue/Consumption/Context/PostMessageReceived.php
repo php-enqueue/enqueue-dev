@@ -56,7 +56,7 @@ final class PostMessageReceived
         Message $message,
         $result,
         int $receivedAt,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $this->context = $context;
         $this->consumer = $consumer;

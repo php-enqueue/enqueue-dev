@@ -56,9 +56,6 @@ class DbalContext implements Context
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createMessage(string $body = '', array $properties = [], array $headers = []): Message
     {
         $message = new DbalMessage();
@@ -201,7 +198,7 @@ class DbalContext implements Context
         if (false == $this->connection) {
             $connection = call_user_func($this->connectionFactory);
             if (false == $connection instanceof Connection) {
-                throw new \LogicException(sprintf('The factory must return instance of Doctrine\DBAL\Connection. It returns %s', is_object($connection) ? get_class($connection) : gettype($connection)));
+                throw new \LogicException(sprintf('The factory must return instance of Doctrine\DBAL\Connection. It returns %s', is_object($connection) ? $connection::class : gettype($connection)));
             }
 
             $this->connection = $connection;

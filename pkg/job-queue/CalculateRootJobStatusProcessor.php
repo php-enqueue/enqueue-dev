@@ -38,7 +38,7 @@ class CalculateRootJobStatusProcessor implements Processor, CommandSubscriberInt
         JobStorage $jobStorage,
         CalculateRootJobStatusService $calculateRootJobStatusCase,
         ProducerInterface $producer,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $this->jobStorage = $jobStorage;
         $this->calculateRootJobStatusService = $calculateRootJobStatusCase;

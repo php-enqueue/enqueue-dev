@@ -11,13 +11,14 @@ use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 
 /**
  * @group functional
+ *
  * @retry 5
  */
 class SqsSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
 {
+    use CreateSqsQueueTrait;
     use RetryTrait;
     use SqsExtension;
-    use CreateSqsQueueTrait;
 
     /**
      * @var SqsContext

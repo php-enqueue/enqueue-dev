@@ -30,7 +30,7 @@ class DatadogStorage implements StatsStorage
         $this->config = $this->prepareConfig($config);
 
         if (null === $this->datadog) {
-            if (true === filter_var($this->config['batched'], FILTER_VALIDATE_BOOLEAN)) {
+            if (true === filter_var($this->config['batched'], \FILTER_VALIDATE_BOOLEAN)) {
                 $this->datadog = new BatchedDogStatsd($this->config);
             } else {
                 $this->datadog = new DogStatsd($this->config);
@@ -104,10 +104,7 @@ class DatadogStorage implements StatsStorage
         $dsn = Dsn::parseFirst($dsn);
 
         if ('datadog' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "datadog"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be "datadog"', $dsn->getSchemeProtocol()));
         }
 
         return array_filter(array_replace($dsn->getQuery(), [
@@ -132,11 +129,6 @@ class DatadogStorage implements StatsStorage
         });
     }
 
-    /**
-     * @param $config
-     *
-     * @return array
-     */
     private function prepareConfig($config): array
     {
         if (empty($config)) {

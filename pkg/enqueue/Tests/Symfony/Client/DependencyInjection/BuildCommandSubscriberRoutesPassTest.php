@@ -154,7 +154,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['foo']);
         $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -188,7 +188,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['foo']);
         $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -210,7 +210,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['foo']);
         $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -254,7 +254,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['foo']);
         $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -293,7 +293,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['foo']);
         $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -335,7 +335,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['foo']);
         $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -360,7 +360,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['foo']);
         $container->setParameter('enqueue.default_client', 'foo');
         $container->setDefinition('enqueue.client.foo.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -410,7 +410,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $container->setParameter('enqueue.clients', ['default']);
         $container->setParameter('enqueue.default_client', 'default');
         $container->setDefinition('enqueue.client.default.route_collection', $routeCollection);
-        $container->register('aFooProcessor', get_class($processor))
+        $container->register('aFooProcessor', $processor::class)
             ->addTag('enqueue.command_subscriber')
         ;
 
@@ -438,7 +438,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
 
     private function createCommandSubscriberProcessor($commandSubscriberReturns = ['aCommand'])
     {
-        $processor = new class() implements Processor, CommandSubscriberInterface {
+        $processor = new class implements Processor, CommandSubscriberInterface {
             public static $return;
 
             public function process(InteropMessage $message, Context $context)

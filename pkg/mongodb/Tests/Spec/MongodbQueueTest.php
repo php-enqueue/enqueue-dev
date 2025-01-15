@@ -10,9 +10,6 @@ use Interop\Queue\Spec\QueueSpec;
  */
 class MongodbQueueTest extends QueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createQueue()
     {
         return new MongodbDestination(self::EXPECTED_QUEUE_NAME);

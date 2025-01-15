@@ -6,10 +6,10 @@ namespace Enqueue\Monitoring;
 
 class ConsumedMessageStats implements Stats
 {
-    const STATUS_ACK = 'acknowledged';
-    const STATUS_REJECTED = 'rejected';
-    const STATUS_REQUEUED = 'requeued';
-    const STATUS_FAILED = 'failed';
+    public const STATUS_ACK = 'acknowledged';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_REQUEUED = 'requeued';
+    public const STATUS_FAILED = 'failed';
 
     /**
      * @var string
@@ -102,12 +102,12 @@ class ConsumedMessageStats implements Stats
         array $properties,
         bool $redelivered,
         string $status,
-        string $errorClass = null,
-        string $errorMessage = null,
-        int $errorCode = null,
-        string $errorFile = null,
-        int $errorLine = null,
-        string $trace = null
+        ?string $errorClass = null,
+        ?string $errorMessage = null,
+        ?int $errorCode = null,
+        ?string $errorFile = null,
+        ?int $errorLine = null,
+        ?string $trace = null,
     ) {
         $this->consumerId = $consumerId;
         $this->timestampMs = $timestampMs;

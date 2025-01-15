@@ -37,7 +37,7 @@ class StompManagementClient
         return $this->client->exchanges()->create($this->vhost, $name, $options);
     }
 
-    public function bind(string $exchange, string $queue, string $routingKey = null, $arguments = null)
+    public function bind(string $exchange, string $queue, ?string $routingKey = null, $arguments = null)
     {
         return $this->client->bindings()->create($this->vhost, $exchange, $queue, $routingKey, $arguments);
     }

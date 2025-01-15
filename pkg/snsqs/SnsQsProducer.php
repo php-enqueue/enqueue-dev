@@ -51,7 +51,7 @@ class SnsQsProducer implements Producer
         InvalidMessageException::assertMessageInstanceOf($message, SnsQsMessage::class);
 
         if (false == $destination instanceof SnsQsTopic && false == $destination instanceof SnsQsQueue) {
-            throw new InvalidDestinationException(sprintf('The destination must be an instance of [%s|%s] but got %s.', SnsQsTopic::class, SnsQsQueue::class, is_object($destination) ? get_class($destination) : gettype($destination)));
+            throw new InvalidDestinationException(sprintf('The destination must be an instance of [%s|%s] but got %s.', SnsQsTopic::class, SnsQsQueue::class, is_object($destination) ? $destination::class : gettype($destination)));
         }
 
         if ($destination instanceof SnsQsTopic) {
@@ -82,7 +82,7 @@ class SnsQsProducer implements Producer
     /**
      * Delivery delay is supported by SQSProducer.
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         $this->getSqsProducer()->setDeliveryDelay($deliveryDelay);
 
@@ -97,7 +97,7 @@ class SnsQsProducer implements Producer
         return $this->getSqsProducer()->getDeliveryDelay();
     }
 
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         $this->getSnsProducer()->setPriority($priority);
         $this->getSqsProducer()->setPriority($priority);
@@ -110,7 +110,7 @@ class SnsQsProducer implements Producer
         return $this->getSnsProducer()->getPriority();
     }
 
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->getSnsProducer()->setTimeToLive($timeToLive);
         $this->getSqsProducer()->setTimeToLive($timeToLive);

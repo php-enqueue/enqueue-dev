@@ -25,11 +25,7 @@ class AsyncProcessor implements Processor
         $this->registry = $registry;
 
         if (false == $dispatcher instanceof AsyncEventDispatcher) {
-            throw new \InvalidArgumentException(sprintf(
-                'The dispatcher argument must be instance of "%s" but got "%s"',
-                AsyncEventDispatcher::class,
-                get_class($dispatcher)
-            ));
+            throw new \InvalidArgumentException(sprintf('The dispatcher argument must be instance of "%s" but got "%s"', AsyncEventDispatcher::class, $dispatcher::class));
         }
 
         $this->dispatcher = $dispatcher;

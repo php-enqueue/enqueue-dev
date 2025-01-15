@@ -33,9 +33,9 @@ class SignalExtension implements StartExtensionInterface, PreConsumeExtensionInt
 
         pcntl_async_signals(true);
 
-        pcntl_signal(SIGTERM, [$this, 'handleSignal']);
-        pcntl_signal(SIGQUIT, [$this, 'handleSignal']);
-        pcntl_signal(SIGINT, [$this, 'handleSignal']);
+        pcntl_signal(\SIGTERM, [$this, 'handleSignal']);
+        pcntl_signal(\SIGQUIT, [$this, 'handleSignal']);
+        pcntl_signal(\SIGINT, [$this, 'handleSignal']);
 
         $this->logger = $context->getLogger();
         $this->interruptConsumption = false;
@@ -71,9 +71,9 @@ class SignalExtension implements StartExtensionInterface, PreConsumeExtensionInt
         }
 
         switch ($signal) {
-            case SIGTERM:  // 15 : supervisor default stop
-            case SIGQUIT:  // 3  : kill -s QUIT
-            case SIGINT:   // 2  : ctrl+c
+            case \SIGTERM:  // 15 : supervisor default stop
+            case \SIGQUIT:  // 3  : kill -s QUIT
+            case \SIGINT:   // 2  : ctrl+c
                 if ($this->logger) {
                     $this->logger->debug('[SignalExtension] Interrupt consumption');
                 }

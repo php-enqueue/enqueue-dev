@@ -105,7 +105,7 @@ class DriverFactoryTest extends TestCase
         string $connectionFactoryClass,
         string $contextClass,
         array $conifg,
-        string $expectedDriverClass
+        string $expectedDriverClass,
     ) {
         $connectionFactoryMock = $this->createMock($connectionFactoryClass);
         $connectionFactoryMock
@@ -134,7 +134,7 @@ class DriverFactoryTest extends TestCase
         yield ['file:', FsConnectionFactory::class, FsContext::class, [], FsDriver::class];
 
         // https://github.com/php-enqueue/enqueue-dev/issues/511
-//        yield ['gearman:', GearmanConnectionFactory::class, NullContext::class, [], NullDriver::class];
+        //        yield ['gearman:', GearmanConnectionFactory::class, NullContext::class, [], NullDriver::class];
 
         yield ['gps:', GpsConnectionFactory::class, GpsContext::class, [], GpsDriver::class];
 

@@ -68,7 +68,7 @@ final class BuildCommandSubscriberRoutesPass implements CompilerPassInterface
 
                     // 0.8 command subscriber
                     if (isset($commands['processorName'])) {
-                        @trigger_error('The command subscriber 0.8 syntax is deprecated since Enqueue 0.9.', E_USER_DEPRECATED);
+                        @trigger_error('The command subscriber 0.8 syntax is deprecated since Enqueue 0.9.', \E_USER_DEPRECATED);
 
                         $source = $commands['processorName'];
                         $processor = $params['processorName'] ?? $serviceId;
@@ -117,11 +117,7 @@ final class BuildCommandSubscriberRoutesPass implements CompilerPassInterface
 
                             $routeCollection->add(new Route($source, Route::COMMAND, $processor, $options));
                         } else {
-                            throw new \LogicException(sprintf(
-                                'Command subscriber configuration is invalid for "%s::getSubscribedCommand()". "%s"',
-                                $processorClass,
-                                json_encode($processorClass::getSubscribedCommand())
-                            ));
+                            throw new \LogicException(sprintf('Command subscriber configuration is invalid for "%s::getSubscribedCommand()". "%s"', $processorClass, json_encode($processorClass::getSubscribedCommand())));
                         }
                     }
                 }

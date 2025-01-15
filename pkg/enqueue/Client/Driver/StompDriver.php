@@ -22,7 +22,7 @@ class StompDriver extends GenericDriver
         parent::__construct($context, ...$args);
     }
 
-    public function setupBroker(LoggerInterface $logger = null): void
+    public function setupBroker(?LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $logger->debug('[StompDriver] Stomp protocol does not support broker configuration');

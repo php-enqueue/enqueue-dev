@@ -10,9 +10,6 @@ class GearmanConnectionFactoryTest extends ConnectionFactorySpec
 {
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createConnectionFactory()
     {
         return new GearmanConnectionFactory();

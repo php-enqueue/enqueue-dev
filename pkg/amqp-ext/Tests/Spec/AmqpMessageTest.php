@@ -7,9 +7,6 @@ use Interop\Queue\Spec\MessageSpec;
 
 class AmqpMessageTest extends MessageSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createMessage()
     {
         return new AmqpMessage();

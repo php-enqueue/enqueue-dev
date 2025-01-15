@@ -63,7 +63,7 @@ class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
+     * @return MockObject|JobStorage
      */
     private function createJobStorageMock()
     {

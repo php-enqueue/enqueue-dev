@@ -111,7 +111,7 @@ class FsCommonUseCasesTest extends \PHPUnit\Framework\TestCase
         $topic = $this->fsContext->createTopic('fs_test_queue_exchange');
 
         $consumer = $this->fsContext->createConsumer($topic);
-        //guard
+        // guard
         $this->assertNull($consumer->receive(1000));
 
         $message = $this->fsContext->createMessage(__METHOD__);

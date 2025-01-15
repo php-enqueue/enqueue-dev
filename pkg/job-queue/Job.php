@@ -4,11 +4,11 @@ namespace Enqueue\JobQueue;
 
 class Job
 {
-    const STATUS_NEW = 'enqueue.job_queue.status.new';
-    const STATUS_RUNNING = 'enqueue.job_queue.status.running';
-    const STATUS_SUCCESS = 'enqueue.job_queue.status.success';
-    const STATUS_FAILED = 'enqueue.job_queue.status.failed';
-    const STATUS_CANCELLED = 'enqueue.job_queue.status.cancelled';
+    public const STATUS_NEW = 'enqueue.job_queue.status.new';
+    public const STATUS_RUNNING = 'enqueue.job_queue.status.running';
+    public const STATUS_SUCCESS = 'enqueue.job_queue.status.success';
+    public const STATUS_FAILED = 'enqueue.job_queue.status.failed';
+    public const STATUS_CANCELLED = 'enqueue.job_queue.status.cancelled';
 
     /**
      * @var int
@@ -216,8 +216,6 @@ class Job
      * Do not call from the outside.
      *
      * @internal
-     *
-     * @param Job $rootJob
      */
     public function setRootJob(self $rootJob)
     {

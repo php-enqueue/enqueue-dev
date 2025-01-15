@@ -32,10 +32,7 @@ class PrepareBodyExtension implements PreSendEventExtensionInterface, PreSendCom
             // only array of scalars is allowed.
             array_walk_recursive($body, function ($value) {
                 if (!is_scalar($value) && null !== $value) {
-                    throw new \LogicException(sprintf(
-                        'The message\'s body must be an array of scalars. Found not scalar in the array: %s',
-                        is_object($value) ? get_class($value) : gettype($value)
-                    ));
+                    throw new \LogicException(sprintf('The message\'s body must be an array of scalars. Found not scalar in the array: %s', is_object($value) ? $value::class : gettype($value)));
                 }
             });
 
@@ -45,10 +42,7 @@ class PrepareBodyExtension implements PreSendEventExtensionInterface, PreSendCom
             $contentType = $contentType ?: 'application/json';
             $body = JSON::encode($body);
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: %s',
-                is_object($body) ? get_class($body) : gettype($body)
-            ));
+            throw new \InvalidArgumentException(sprintf('The message\'s body must be either null, scalar, array or object (implements \JsonSerializable). Got: %s', is_object($body) ? $body::class : gettype($body)));
         }
 
         $message->setContentType($contentType);

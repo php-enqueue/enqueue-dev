@@ -31,11 +31,6 @@ class Promise
      */
     private $message;
 
-    /**
-     * @param \Closure $receiveCallback
-     * @param \Closure $receiveNoWaitCallback
-     * @param \Closure $finallyCallback
-     */
     public function __construct(\Closure $receiveCallback, \Closure $receiveNoWaitCallback, \Closure $finallyCallback)
     {
         $this->receiveCallback = $receiveCallback;
@@ -106,8 +101,7 @@ class Promise
     }
 
     /**
-     * @param \Closure $cb
-     * @param array    $args
+     * @param array $args
      *
      * @return InteropMessage
      */
@@ -116,8 +110,7 @@ class Promise
         $message = call_user_func_array($cb, $args);
 
         if (null !== $message && false == $message instanceof InteropMessage) {
-            throw new \RuntimeException(sprintf(
-                'Expected "%s" but got: "%s"', InteropMessage::class, is_object($message) ? get_class($message) : gettype($message)));
+            throw new \RuntimeException(sprintf('Expected "%s" but got: "%s"', InteropMessage::class, is_object($message) ? $message::class : gettype($message)));
         }
 
         return $message;

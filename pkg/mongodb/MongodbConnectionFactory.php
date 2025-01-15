@@ -89,7 +89,7 @@ class MongodbConnectionFactory implements ConnectionFactory
         // see: https://github.com/php-enqueue/enqueue-dev/issues/1027
         if (isset($parsedUrl['path']) && '/' !== $parsedUrl['path']) {
             $pathParts = explode('/', $parsedUrl['path']);
-            //DB name
+            // DB name
             if ($pathParts[1]) {
                 $config['dbname'] = $pathParts[1];
             }
@@ -97,7 +97,7 @@ class MongodbConnectionFactory implements ConnectionFactory
         if (isset($parsedUrl['query'])) {
             $queryParts = null;
             parse_str($parsedUrl['query'], $queryParts);
-            //get enqueue attributes values
+            // get enqueue attributes values
             if (!empty($queryParts['polling_interval'])) {
                 $config['polling_interval'] = (int) $queryParts['polling_interval'];
             }

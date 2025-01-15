@@ -1455,7 +1455,7 @@ class QueueConsumerTest extends TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|InteropContext
      */
-    private function createContextStub(Consumer $consumer = null): InteropContext
+    private function createContextStub(?Consumer $consumer = null): InteropContext
     {
         $context = $this->createContextWithoutSubscriptionConsumerMock();
         $context

@@ -52,7 +52,7 @@ final class MessageReceived
         Message $message,
         Processor $processor,
         int $receivedAt,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $this->context = $context;
         $this->consumer = $consumer;

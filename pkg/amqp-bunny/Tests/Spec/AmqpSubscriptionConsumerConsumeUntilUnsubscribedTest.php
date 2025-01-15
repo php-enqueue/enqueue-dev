@@ -24,8 +24,6 @@ class AmqpSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionC
 
     /**
      * @return AmqpContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -39,8 +37,6 @@ class AmqpSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionC
 
     /**
      * @param AmqpContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

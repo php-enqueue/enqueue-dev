@@ -158,7 +158,7 @@ class ConnectionFactoryFactoryTest extends TestCase
         yield ['file:', FsConnectionFactory::class];
 
         // https://github.com/php-enqueue/enqueue-dev/issues/511
-//        yield ['gearman:', GearmanConnectionFactory::class];
+        //        yield ['gearman:', GearmanConnectionFactory::class];
 
         yield ['gps:', GpsConnectionFactory::class];
 

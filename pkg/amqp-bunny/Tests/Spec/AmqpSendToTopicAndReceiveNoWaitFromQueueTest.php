@@ -14,9 +14,6 @@ use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
  */
 class AmqpSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
@@ -25,8 +22,6 @@ class AmqpSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceive
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
      */
     protected function createQueue(Context $context, $queueName)
@@ -41,8 +36,6 @@ class AmqpSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceive
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
      */
     protected function createTopic(Context $context, $topicName)

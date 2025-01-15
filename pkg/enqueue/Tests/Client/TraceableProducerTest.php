@@ -272,8 +272,8 @@ class TraceableProducerTest extends TestCase
         $producer->sendEvent('aFooTopic', 'aFooBody');
 
         Assert::assertArraySubset([
-                ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
-                ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
+            ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
+            ['topic' => 'aFooTopic', 'body' => 'aFooBody'],
         ], $producer->getTraces());
     }
 
@@ -354,7 +354,7 @@ class TraceableProducerTest extends TestCase
 
         $producer->sendEvent('aFooTopic', 'aFooBody');
 
-        //guard
+        // guard
         $this->assertNotEmpty($producer->getTraces());
 
         $producer->clearTraces();

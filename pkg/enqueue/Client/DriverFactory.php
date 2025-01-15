@@ -31,18 +31,10 @@ final class DriverFactory implements DriverFactoryInterface
 
         $knownDrivers = Resources::getKnownDrivers();
         if ($driverInfo = $this->findDriverInfo($dsn, $knownDrivers)) {
-            throw new \LogicException(sprintf(
-                'To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.',
-                $dsn->getScheme(),
-                implode(' ', $driverInfo['packages'])
-            ));
+            throw new \LogicException(sprintf('To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.', $dsn->getScheme(), implode(' ', $driverInfo['packages'])));
         }
 
-        throw new \LogicException(sprintf(
-            'A given scheme "%s" is not supported. Maybe it is a custom driver, make sure you registered it with "%s::addDriver".',
-            $dsn->getScheme(),
-            Resources::class
-        ));
+        throw new \LogicException(sprintf('A given scheme "%s" is not supported. Maybe it is a custom driver, make sure you registered it with "%s::addDriver".', $dsn->getScheme(), Resources::class));
     }
 
     private function findDriverInfo(Dsn $dsn, array $factories): ?array

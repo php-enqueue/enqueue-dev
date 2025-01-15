@@ -67,9 +67,9 @@ class InfluxDbStorage implements StatsStorage
             // and causes library to use defaults.
             @trigger_error(
                 sprintf('Passing %s as %s argument is deprecated. Pass it as "client" array property or use createWithClient instead',
-                Client::class,
-                __METHOD__
-            ), E_USER_DEPRECATED);
+                    Client::class,
+                    __METHOD__
+                ), \E_USER_DEPRECATED);
             $this->client = $config;
             $config = [];
         } else {
@@ -91,12 +91,7 @@ class InfluxDbStorage implements StatsStorage
 
         if (null !== $config['client']) {
             if (!$config['client'] instanceof Client) {
-                throw new \InvalidArgumentException(sprintf(
-                    '%s configuration property is expected to be an instance of %s class. %s was passed instead.',
-                    'client',
-                    Client::class,
-                    gettype($config['client'])
-                ));
+                throw new \InvalidArgumentException(sprintf('%s configuration property is expected to be an instance of %s class. %s was passed instead.', 'client', Client::class, gettype($config['client'])));
             }
             $this->client = $config['client'];
         }
@@ -105,10 +100,7 @@ class InfluxDbStorage implements StatsStorage
     }
 
     /**
-     * @param Client $client
      * @param string $config
-     *
-     * @return InfluxDbStorage
      */
     public static function createWithClient(Client $client, $config = 'influxdb:'): self
     {
@@ -254,10 +246,7 @@ class InfluxDbStorage implements StatsStorage
         $dsn = Dsn::parseFirst($dsn);
 
         if (false === in_array($dsn->getSchemeProtocol(), ['influxdb'], true)) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "influxdb"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be "influxdb"', $dsn->getSchemeProtocol()));
         }
 
         return array_filter(array_replace($dsn->getQuery(), [

@@ -38,11 +38,7 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
     {
         foreach ($collection->all() as $route) {
             if ($route->isCommand() && $route->isProcessorExclusive() && false == $route->getQueue()) {
-                throw new \LogicException(sprintf(
-                    'The command "%s" processor "%s" is exclusive but queue is not specified. Exclusive processors could not be run on a default queue.',
-                    $route->getSource(),
-                    $route->getProcessor()
-                ));
+                throw new \LogicException(sprintf('The command "%s" processor "%s" is exclusive but queue is not specified. Exclusive processors could not be run on a default queue.', $route->getSource(), $route->getProcessor()));
             }
         }
     }
@@ -61,25 +57,13 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
 
             if ($route->isPrefixQueue()) {
                 if (array_key_exists($route->getQueue(), $prefixedQueues)) {
-                    throw new \LogicException(sprintf(
-                        'The command "%s" processor "%s" is exclusive. The queue "%s" already has another exclusive command processor "%s" bound to it.',
-                        $route->getSource(),
-                        $route->getProcessor(),
-                        $route->getQueue(),
-                        $prefixedQueues[$route->getQueue()]
-                    ));
+                    throw new \LogicException(sprintf('The command "%s" processor "%s" is exclusive. The queue "%s" already has another exclusive command processor "%s" bound to it.', $route->getSource(), $route->getProcessor(), $route->getQueue(), $prefixedQueues[$route->getQueue()]));
                 }
 
                 $prefixedQueues[$route->getQueue()] = $route->getProcessor();
             } else {
                 if (array_key_exists($route->getQueue(), $queues)) {
-                    throw new \LogicException(sprintf(
-                        'The command "%s" processor "%s" is exclusive. The queue "%s" already has another exclusive command processor "%s" bound to it.',
-                        $route->getSource(),
-                        $route->getProcessor(),
-                        $route->getQueue(),
-                        $queues[$route->getQueue()]
-                    ));
+                    throw new \LogicException(sprintf('The command "%s" processor "%s" is exclusive. The queue "%s" already has another exclusive command processor "%s" bound to it.', $route->getSource(), $route->getProcessor(), $route->getQueue(), $queues[$route->getQueue()]));
                 }
 
                 $queues[$route->getQueue()] = $route->getProcessor();
@@ -102,7 +86,7 @@ final class AnalyzeRouteCollectionPass implements CompilerPassInterface
         $notPrefixedQueues = [];
 
         foreach ($collection->all() as $route) {
-            //default queue
+            // default queue
             $queueName = $route->getQueue();
             if (false == $queueName) {
                 return;

@@ -11,12 +11,12 @@ $config = [
     'pass' => 'guest',
 ];
 
-class FibonacciRpcClient
+class rpc_client
 {
-    /** @var \Interop\Amqp\AmqpContext */
+    /** @var Interop\Amqp\AmqpContext */
     private $context;
 
-    /** @var \Interop\Amqp\AmqpQueue */
+    /** @var Interop\Amqp\AmqpQueue */
     private $callback_queue;
 
     public function __construct(array $config)
@@ -43,7 +43,7 @@ class FibonacciRpcClient
         while (true) {
             if ($message = $consumer->receive()) {
                 if ($message->getCorrelationId() == $corr_id) {
-                    return (int) ($message->getBody());
+                    return (int) $message->getBody();
                 }
             }
         }

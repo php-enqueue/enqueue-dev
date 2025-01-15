@@ -47,7 +47,7 @@ class AmqpConsumer implements InteropAmqpConsumer
         $this->flags = self::FLAG_NOPARAM;
     }
 
-    public function setConsumerTag(string $consumerTag = null): void
+    public function setConsumerTag(?string $consumerTag = null): void
     {
         $this->consumerTag = $consumerTag;
     }
@@ -97,7 +97,7 @@ class AmqpConsumer implements InteropAmqpConsumer
                 return $message;
             }
 
-            usleep(100000); //100ms
+            usleep(100000); // 100ms
         }
 
         return null;
@@ -127,7 +127,6 @@ class AmqpConsumer implements InteropAmqpConsumer
 
     /**
      * @param InteropAmqpMessage $message
-     * @param bool               $requeue
      */
     public function reject(Message $message, bool $requeue = false): void
     {

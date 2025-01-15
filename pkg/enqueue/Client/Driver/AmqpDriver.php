@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace  Enqueue\Client\Driver;
+namespace Enqueue\Client\Driver;
 
 use Enqueue\AmqpExt\AmqpProducer;
 use Enqueue\Client\Message;
@@ -45,11 +45,7 @@ class AmqpDriver extends GenericDriver
         $priorityMap = $this->getPriorityMap();
         if ($priority = $clientMessage->getPriority()) {
             if (false == array_key_exists($priority, $priorityMap)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Cant convert client priority "%s" to transport one. Could be one of "%s"',
-                    $priority,
-                    implode('", "', array_keys($priorityMap))
-                ));
+                throw new \InvalidArgumentException(sprintf('Cant convert client priority "%s" to transport one. Could be one of "%s"', $priority, implode('", "', array_keys($priorityMap))));
             }
 
             $transportMessage->setPriority($priorityMap[$priority]);
@@ -58,7 +54,7 @@ class AmqpDriver extends GenericDriver
         return $transportMessage;
     }
 
-    public function setupBroker(LoggerInterface $logger = null): void
+    public function setupBroker(?LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {

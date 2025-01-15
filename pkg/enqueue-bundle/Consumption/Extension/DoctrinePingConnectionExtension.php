@@ -6,8 +6,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Consumption\Context\MessageReceived;
 use Enqueue\Consumption\MessageReceivedExtensionInterface;
-use ErrorException;
-use Throwable;
 
 class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterface
 {
@@ -49,7 +47,7 @@ class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterfa
     private function ping(Connection $connection): bool
     {
         set_error_handler(static function (int $severity, string $message, string $file, int $line): bool {
-            throw new ErrorException($message, $severity, $severity, $file, $line);
+            throw new \ErrorException($message, $severity, $severity, $file, $line);
         });
 
         try {
@@ -58,7 +56,7 @@ class DoctrinePingConnectionExtension implements MessageReceivedExtensionInterfa
             $connection->executeQuery($dummySelectSQL);
 
             return true;
-        } catch (Throwable $exception) {
+        } catch (\Throwable $exception) {
             return false;
         } finally {
             restore_error_handler();

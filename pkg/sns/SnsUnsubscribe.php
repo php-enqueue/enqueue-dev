@@ -24,7 +24,7 @@ class SnsUnsubscribe
     public function __construct(
         SnsDestination $topic,
         string $endpoint,
-        string $protocol
+        string $protocol,
     ) {
         $this->topic = $topic;
         $this->endpoint = $endpoint;

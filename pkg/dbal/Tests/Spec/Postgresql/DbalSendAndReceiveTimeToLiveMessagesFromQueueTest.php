@@ -11,9 +11,6 @@ class DbalSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTi
 {
     use CreateDbalContextTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->createDbalContext();

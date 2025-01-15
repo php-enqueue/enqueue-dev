@@ -19,9 +19,6 @@ class LegacyFilesystemLock implements Lock
         $this->lockHandlers = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function lock(FsDestination $destination)
     {
         $lockHandler = $this->getLockHandler($destination);
@@ -31,9 +28,6 @@ class LegacyFilesystemLock implements Lock
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function release(FsDestination $destination)
     {
         $lockHandler = $this->getLockHandler($destination);
@@ -51,8 +45,6 @@ class LegacyFilesystemLock implements Lock
     }
 
     /**
-     * @param FsDestination $destination
-     *
      * @return LockHandler
      */
     private function getLockHandler(FsDestination $destination)
@@ -161,7 +153,7 @@ class LockHandler
 
         // On Windows, even if PHP doc says the contrary, LOCK_NB works, see
         // https://bugs.php.net/54129
-        if (!flock($this->handle, LOCK_EX | ($blocking ? 0 : LOCK_NB))) {
+        if (!flock($this->handle, \LOCK_EX | ($blocking ? 0 : \LOCK_NB))) {
             fclose($this->handle);
             $this->handle = null;
 
@@ -177,7 +169,7 @@ class LockHandler
     public function release()
     {
         if ($this->handle) {
-            flock($this->handle, LOCK_UN | LOCK_NB);
+            flock($this->handle, \LOCK_UN | \LOCK_NB);
             fclose($this->handle);
             $this->handle = null;
         }

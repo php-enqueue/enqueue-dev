@@ -37,7 +37,7 @@ final class End
         int $startTime,
         int $endTime,
         LoggerInterface $logger,
-        ?int $exitStatus = null
+        ?int $exitStatus = null,
     ) {
         $this->context = $context;
         $this->logger = $logger;

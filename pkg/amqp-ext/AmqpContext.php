@@ -243,10 +243,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         if (false == $this->extChannel) {
             $extChannel = call_user_func($this->extChannelFactory);
             if (false == $extChannel instanceof \AMQPChannel) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of AMQPChannel. It returns %s',
-                    is_object($extChannel) ? get_class($extChannel) : gettype($extChannel)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of AMQPChannel. It returns %s', is_object($extChannel) ? $extChannel::class : gettype($extChannel)));
             }
 
             $this->extChannel = $extChannel;

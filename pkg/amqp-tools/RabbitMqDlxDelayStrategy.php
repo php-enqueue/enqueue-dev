@@ -13,9 +13,6 @@ use Interop\Queue\Exception\InvalidDestinationException;
 
 class RabbitMqDlxDelayStrategy implements DelayStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
     public function delayMessage(AmqpContext $context, AmqpDestination $dest, AmqpMessage $message, int $delay): void
     {
         $properties = $message->getProperties();
@@ -44,10 +41,7 @@ class RabbitMqDlxDelayStrategy implements DelayStrategy
             $delayQueue->setArgument('x-dead-letter-exchange', '');
             $delayQueue->setArgument('x-dead-letter-routing-key', $dest->getQueueName());
         } else {
-            throw new InvalidDestinationException(sprintf('The destination must be an instance of %s but got %s.',
-                AmqpTopic::class.'|'.AmqpQueue::class,
-                get_class($dest)
-            ));
+            throw new InvalidDestinationException(sprintf('The destination must be an instance of %s but got %s.', AmqpTopic::class.'|'.AmqpQueue::class, $dest::class));
         }
 
         $context->declareQueue($delayQueue);

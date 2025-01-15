@@ -86,7 +86,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
     public function subscribe(Consumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, $consumer::class));
         }
 
         if ($consumer->getConsumerTag() && array_key_exists($consumer->getConsumerTag(), $this->subscribers)) {
@@ -109,7 +109,7 @@ class AmqpSubscriptionConsumer implements InteropAmqpSubscriptionConsumer
     public function unsubscribe(Consumer $consumer): void
     {
         if (false == $consumer instanceof AmqpConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', AmqpConsumer::class, $consumer::class));
         }
 
         if (false == $consumer->getConsumerTag()) {

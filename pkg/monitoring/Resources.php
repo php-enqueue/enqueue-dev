@@ -7,7 +7,7 @@ final class Resources
     /**
      * @var array
      */
-    private static $knownStorages = null;
+    private static $knownStorages;
 
     private function __construct()
     {

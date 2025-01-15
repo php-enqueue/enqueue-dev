@@ -32,7 +32,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     private $connection;
 
     /**
-     * @see \Enqueue\AmqpTools\ConnectionConfig for possible config formats and values.
+     * @see ConnectionConfig for possible config formats and values.
      *
      * @param array|string|null $config
      */

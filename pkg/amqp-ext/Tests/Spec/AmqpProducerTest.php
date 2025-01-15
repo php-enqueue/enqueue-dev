@@ -10,9 +10,6 @@ use Interop\Queue\Spec\ProducerSpec;
  */
 class AmqpProducerTest extends ProducerSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createProducer()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));

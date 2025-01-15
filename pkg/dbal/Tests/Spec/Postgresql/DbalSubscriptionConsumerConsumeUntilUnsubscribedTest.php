@@ -18,8 +18,6 @@ class DbalSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionC
 
     /**
      * @return DbalContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -28,8 +26,6 @@ class DbalSubscriptionConsumerConsumeUntilUnsubscribedTest extends SubscriptionC
 
     /**
      * @param DbalContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

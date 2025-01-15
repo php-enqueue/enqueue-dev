@@ -13,9 +13,6 @@ class RedisSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFro
 {
     use RedisExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildPhpRedisContext();

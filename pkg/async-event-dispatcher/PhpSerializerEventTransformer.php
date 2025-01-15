@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PhpSerializerEventTransformer extends AbstractPhpSerializerEventTransformer implements EventTransformer
 {
-    public function toMessage($eventName, Event $event = null)
+    public function toMessage($eventName, ?Event $event = null)
     {
         return $this->context->createMessage(serialize($event));
     }

@@ -148,11 +148,6 @@ class SqsClient
             }
         }
 
-        throw new \LogicException(sprintf(
-            'The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"',
-            AwsSqsClient::class,
-            MultiRegionClient::class,
-            is_object($client) ? get_class($client) : gettype($client)
-        ));
+        throw new \LogicException(sprintf('The input client must be an instance of "%s" or "%s" or a callable that returns one of those. Got "%s"', AwsSqsClient::class, MultiRegionClient::class, is_object($client) ? $client::class : gettype($client)));
     }
 }

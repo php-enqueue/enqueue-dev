@@ -65,7 +65,7 @@ class MongodbMessage implements Message
         $this->redelivered = false;
     }
 
-    public function setId(string $id = null): void
+    public function setId(?string $id = null): void
     {
         $this->id = $id;
     }
@@ -135,7 +135,7 @@ class MongodbMessage implements Message
         $this->redelivered = $redelivered;
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
@@ -150,7 +150,7 @@ class MongodbMessage implements Message
         return $this->priority;
     }
 
-    public function setPriority(int $priority = null): void
+    public function setPriority(?int $priority = null): void
     {
         $this->priority = $priority;
     }
@@ -163,7 +163,7 @@ class MongodbMessage implements Message
     /**
      * In milliseconds.
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): void
+    public function setDeliveryDelay(?int $deliveryDelay = null): void
     {
         $this->deliveryDelay = $deliveryDelay;
     }
@@ -176,12 +176,12 @@ class MongodbMessage implements Message
     /**
      * In milliseconds.
      */
-    public function setTimeToLive(int $timeToLive = null): void
+    public function setTimeToLive(?int $timeToLive = null): void
     {
         $this->timeToLive = $timeToLive;
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $this->setHeader('correlation_id', $correlationId);
     }
@@ -191,7 +191,7 @@ class MongodbMessage implements Message
         return $this->getHeader('correlation_id', null);
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $this->setHeader('message_id', $messageId);
     }
@@ -208,7 +208,7 @@ class MongodbMessage implements Message
         return null === $value ? null : (int) $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
@@ -221,7 +221,7 @@ class MongodbMessage implements Message
     /**
      * In milliseconds.
      */
-    public function setPublishedAt(int $publishedAt = null): void
+    public function setPublishedAt(?int $publishedAt = null): void
     {
         $this->publishedAt = $publishedAt;
     }

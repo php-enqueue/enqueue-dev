@@ -32,8 +32,6 @@ class DbalSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceivePrio
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param DbalContext $context
      *
      * @return DbalMessage

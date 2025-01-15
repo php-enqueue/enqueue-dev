@@ -4,9 +4,9 @@ namespace Enqueue\Client;
 
 final class Route
 {
-    const TOPIC = 'enqueue.client.topic_route';
+    public const TOPIC = 'enqueue.client.topic_route';
 
-    const COMMAND = 'enqueue.client.command_route';
+    public const COMMAND = 'enqueue.client.command_route';
 
     /**
      * @var string
@@ -32,7 +32,7 @@ final class Route
         string $source,
         string $sourceType,
         string $processor,
-        array $options = []
+        array $options = [],
     ) {
         $this->source = $source;
         $this->sourceType = $sourceType;

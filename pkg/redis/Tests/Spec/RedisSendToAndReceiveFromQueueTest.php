@@ -13,9 +13,6 @@ class RedisSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
     use RedisExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildPhpRedisContext();

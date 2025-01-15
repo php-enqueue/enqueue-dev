@@ -23,9 +23,6 @@ trait LimitsExtensionsCommandTrait
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @throws \Exception
      *
      * @return ExtensionInterface[]

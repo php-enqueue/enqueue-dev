@@ -13,17 +13,11 @@ class RouteRecipientListProcessor implements Processor
      */
     private $router;
 
-    /**
-     * @param RecipientListRouterInterface $router
-     */
     public function __construct(RecipientListRouterInterface $router)
     {
         $this->router = $router;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(InteropMessage $message, Context $context)
     {
         $producer = $context->createProducer();

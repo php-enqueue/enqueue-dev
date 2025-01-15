@@ -88,10 +88,7 @@ class GpsConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('gps' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "gps"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be "gps"', $dsn->getSchemeProtocol()));
         }
 
         $emulatorHost = $dsn->getString('emulatorHost');

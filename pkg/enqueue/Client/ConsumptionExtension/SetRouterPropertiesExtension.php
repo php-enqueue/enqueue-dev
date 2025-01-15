@@ -14,9 +14,6 @@ class SetRouterPropertiesExtension implements MessageReceivedExtensionInterface
      */
     private $driver;
 
-    /**
-     * @param DriverInterface $driver
-     */
     public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;

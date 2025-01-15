@@ -53,12 +53,8 @@ class FsProducer implements Producer
             $rawMessage = str_replace('|{', '\|\{', $rawMessage);
             $rawMessage = '|'.$rawMessage;
 
-            if (JSON_ERROR_NONE !== json_last_error()) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Could not encode value into json. Error %s and message %s',
-                    json_last_error(),
-                    json_last_error_msg()
-                ));
+            if (\JSON_ERROR_NONE !== json_last_error()) {
+                throw new \InvalidArgumentException(sprintf('Could not encode value into json. Error %s and message %s', json_last_error(), json_last_error_msg()));
             }
 
             $rawMessage = str_repeat(' ', 64 - (strlen($rawMessage) % 64)).$rawMessage;
@@ -67,7 +63,7 @@ class FsProducer implements Producer
         });
     }
 
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         if (null === $deliveryDelay) {
             return $this;
@@ -81,7 +77,7 @@ class FsProducer implements Producer
         return null;
     }
 
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -95,7 +91,7 @@ class FsProducer implements Producer
         return null;
     }
 
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

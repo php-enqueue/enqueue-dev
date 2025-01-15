@@ -20,8 +20,6 @@ class MongodbSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerSto
 
     /**
      * @return MongodbContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -30,8 +28,6 @@ class MongodbSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerSto
 
     /**
      * @param MongodbContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

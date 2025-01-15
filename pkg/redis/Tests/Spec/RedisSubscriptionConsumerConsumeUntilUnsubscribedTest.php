@@ -18,8 +18,6 @@ class RedisSubscriptionConsumerConsumeUntilUnsubscribedTest extends Subscription
 
     /**
      * @return RedisContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -28,8 +26,6 @@ class RedisSubscriptionConsumerConsumeUntilUnsubscribedTest extends Subscription
 
     /**
      * @param RedisContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

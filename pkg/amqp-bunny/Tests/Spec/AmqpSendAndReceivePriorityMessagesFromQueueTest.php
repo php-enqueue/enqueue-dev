@@ -12,9 +12,6 @@ use Interop\Queue\Spec\SendAndReceivePriorityMessagesFromQueueSpec;
  */
 class AmqpSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceivePriorityMessagesFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
@@ -23,8 +20,6 @@ class AmqpSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceivePrio
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
      */
     protected function createQueue(Context $context, $queueName)

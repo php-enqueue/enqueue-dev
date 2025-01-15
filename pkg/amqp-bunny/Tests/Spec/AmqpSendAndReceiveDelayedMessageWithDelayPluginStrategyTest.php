@@ -18,9 +18,6 @@ class AmqpSendAndReceiveDelayedMessageWithDelayPluginStrategyTest extends SendAn
         $this->markTestIncomplete();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
@@ -31,8 +28,6 @@ class AmqpSendAndReceiveDelayedMessageWithDelayPluginStrategyTest extends SendAn
 
     /**
      * @param AmqpContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

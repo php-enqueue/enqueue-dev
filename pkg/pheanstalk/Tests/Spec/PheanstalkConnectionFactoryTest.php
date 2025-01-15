@@ -7,9 +7,6 @@ use Interop\Queue\Spec\ConnectionFactorySpec;
 
 class PheanstalkConnectionFactoryTest extends ConnectionFactorySpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createConnectionFactory()
     {
         return new PheanstalkConnectionFactory();

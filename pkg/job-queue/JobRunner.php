@@ -14,10 +14,7 @@ class JobRunner
      */
     private $rootJob;
 
-    /**
-     * @param Job $rootJob
-     */
-    public function __construct(JobProcessor $jobProcessor, Job $rootJob = null)
+    public function __construct(JobProcessor $jobProcessor, ?Job $rootJob = null)
     {
         $this->jobProcessor = $jobProcessor;
         $this->rootJob = $rootJob;
@@ -28,8 +25,6 @@ class JobRunner
      * @param string $name
      *
      * @throws \Throwable|\Exception if $runCallback triggers an exception
-     *
-     * @return mixed
      */
     public function runUnique($ownerId, $name, callable $runCallback)
     {
@@ -69,8 +64,6 @@ class JobRunner
 
     /**
      * @param string $name
-     *
-     * @return mixed
      */
     public function createDelayed($name, callable $startCallback)
     {
@@ -83,8 +76,6 @@ class JobRunner
 
     /**
      * @param string $jobId
-     *
-     * @return mixed
      */
     public function runDelayed($jobId, callable $runCallback)
     {

@@ -4,7 +4,6 @@ namespace Enqueue\Bundle\Tests\Functional\Client;
 
 use Enqueue\Bundle\Tests\Functional\WebTestCase;
 use Enqueue\Client\Message;
-use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Client\TraceableProducer;
 use Enqueue\Rpc\Promise;

@@ -41,7 +41,7 @@ class SnsQsMessage implements Message
         string $body = '',
         array $properties = [],
         array $headers = [],
-        array $messageAttributes = null
+        ?array $messageAttributes = null,
     ) {
         $this->body = $body;
         $this->properties = $properties;
@@ -77,7 +77,7 @@ class SnsQsMessage implements Message
      * any messages sent with the same MessageDeduplicationId are accepted successfully but aren't delivered during the 5-minute
      * deduplication interval. For more information, see http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing.
      */
-    public function setMessageDeduplicationId(string $id = null): void
+    public function setMessageDeduplicationId(?string $id = null): void
     {
         $this->messageDeduplicationId = $id;
     }
@@ -96,7 +96,7 @@ class SnsQsMessage implements Message
      * for multiple users). In this scenario, multiple readers can process the queue, but the session data
      * of each user is processed in a FIFO fashion.
      */
-    public function setMessageGroupId(string $id = null): void
+    public function setMessageGroupId(?string $id = null): void
     {
         $this->messageGroupId = $id;
     }

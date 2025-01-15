@@ -10,9 +10,6 @@ use Interop\Queue\Spec\TopicSpec;
  */
 class MongodbTopicTest extends TopicSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createTopic()
     {
         return new MongodbDestination(self::EXPECTED_TOPIC_NAME);

@@ -9,7 +9,7 @@ use Enqueue\Consumption\Result;
 
 class DelayRedeliveredMessageExtension implements MessageReceivedExtensionInterface
 {
-    const PROPERTY_REDELIVER_COUNT = 'enqueue.redelivery_count';
+    public const PROPERTY_REDELIVER_COUNT = 'enqueue.redelivery_count';
 
     /**
      * @var DriverInterface
@@ -24,8 +24,7 @@ class DelayRedeliveredMessageExtension implements MessageReceivedExtensionInterf
     private $delay;
 
     /**
-     * @param DriverInterface $driver
-     * @param int             $delay  The number of seconds the message should be delayed
+     * @param int $delay The number of seconds the message should be delayed
      */
     public function __construct(DriverInterface $driver, $delay)
     {

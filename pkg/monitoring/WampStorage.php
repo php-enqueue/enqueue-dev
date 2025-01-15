@@ -195,10 +195,7 @@ class WampStorage implements StatsStorage
         $dsn = Dsn::parseFirst($dsn);
 
         if (false === in_array($dsn->getSchemeProtocol(), ['wamp', 'ws'], true)) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "wamp"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be "wamp"', $dsn->getSchemeProtocol()));
         }
 
         return array_filter(array_replace($dsn->getQuery(), [

@@ -159,7 +159,7 @@ class FsConsumerTest extends TestCase
 
         $context->workWithFile($queue, 'a+', function (FsDestination $destination, $file) {
             $msg = '|{"body":""}';
-            //guard
+            // guard
             $this->assertNotSame(0, strlen($msg) % 64);
 
             fwrite($file, $msg);

@@ -25,14 +25,13 @@ class PrepareBodyExtensionTest extends TestCase
     /**
      * @dataProvider provideMessages
      *
-     * @param mixed      $body
      * @param mixed|null $contentType
      */
     public function testShouldSendStringUnchangedAndAddPlainTextContentTypeIfEmpty(
         $body,
         $contentType,
         string $expectedBody,
-        string $expectedContentType
+        string $expectedContentType,
     ) {
         $message = new Message($body);
         $message->setContentType($contentType);

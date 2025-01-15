@@ -19,11 +19,6 @@ final class CommandResult implements \JsonSerializable
      */
     private $errorOutput;
 
-    /**
-     * @param int    $exitCode
-     * @param string $output
-     * @param string $errorOutput
-     */
     public function __construct(int $exitCode, string $output, string $errorOutput)
     {
         $this->exitCode = $exitCode;
@@ -58,12 +53,8 @@ final class CommandResult implements \JsonSerializable
     public static function jsonUnserialize(string $json): self
     {
         $data = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
+        if (\JSON_ERROR_NONE !== json_last_error()) {
+            throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
         return new self($data['exitCode'], $data['output'], $data['errorOutput']);

@@ -29,18 +29,10 @@ final class ConnectionFactoryFactory implements ConnectionFactoryFactoryInterfac
 
         $knownConnections = Resources::getKnownConnections();
         if ($factoryClass = $this->findFactoryClass($dsn, $knownConnections)) {
-            throw new \LogicException(sprintf(
-                'To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.',
-                $dsn->getScheme(),
-                $knownConnections[$factoryClass]['package']
-            ));
+            throw new \LogicException(sprintf('To use given scheme "%s" a package has to be installed. Run "composer req %s" to add it.', $dsn->getScheme(), $knownConnections[$factoryClass]['package']));
         }
 
-        throw new \LogicException(sprintf(
-            'A given scheme "%s" is not supported. Maybe it is a custom connection, make sure you registered it with "%s::addConnection".',
-            $dsn->getScheme(),
-            Resources::class
-        ));
+        throw new \LogicException(sprintf('A given scheme "%s" is not supported. Maybe it is a custom connection, make sure you registered it with "%s::addConnection".', $dsn->getScheme(), Resources::class));
     }
 
     private function findFactoryClass(Dsn $dsn, array $factories): ?string

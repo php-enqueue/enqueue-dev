@@ -34,9 +34,7 @@ interface QueueConsumerInterface
      * Runtime extension - is an extension or a collection of extensions which could be set on runtime.
      * Here's a good example: @see LimitsExtensionsCommandTrait.
      *
-     * @param ExtensionInterface|null $runtimeExtension
-     *
      * @throws \Exception
      */
-    public function consume(ExtensionInterface $runtimeExtension = null): void;
+    public function consume(?ExtensionInterface $runtimeExtension = null): void;
 }

@@ -72,7 +72,7 @@ final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
 
                         // 0.8 topic subscriber
                         } elseif (is_array($params) && is_string($key)) {
-                            @trigger_error('The topic subscriber 0.8 syntax is deprecated since Enqueue 0.9.', E_USER_DEPRECATED);
+                            @trigger_error('The topic subscriber 0.8 syntax is deprecated since Enqueue 0.9.', \E_USER_DEPRECATED);
 
                             $source = $key;
                             $processor = $params['processorName'] ?? $serviceId;
@@ -109,11 +109,7 @@ final class BuildTopicSubscriberRoutesPass implements CompilerPassInterface
 
                             $routeCollection->add(new Route($source, Route::TOPIC, $processor, $options));
                         } else {
-                            throw new \LogicException(sprintf(
-                                'Topic subscriber configuration is invalid for "%s::getSubscribedTopics()". Got "%s"',
-                                $processorClass,
-                                json_encode($processorClass::getSubscribedTopics())
-                            ));
+                            throw new \LogicException(sprintf('Topic subscriber configuration is invalid for "%s::getSubscribedTopics()". Got "%s"', $processorClass, json_encode($processorClass::getSubscribedTopics())));
                         }
                     }
                 }

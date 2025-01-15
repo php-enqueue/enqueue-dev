@@ -18,9 +18,6 @@ class PheanstalkSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceive
         $this->time = time();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new PheanstalkConnectionFactory(getenv('BEANSTALKD_DSN'));
@@ -28,17 +25,11 @@ class PheanstalkSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceive
         return $factory->createContext();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createQueue(Context $context, $queueName)
     {
         return $context->createQueue($queueName.$this->time);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createTopic(Context $context, $topicName)
     {
         return $context->createTopic($topicName.$this->time);

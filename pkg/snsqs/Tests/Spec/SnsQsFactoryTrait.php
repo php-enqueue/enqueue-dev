@@ -33,7 +33,7 @@ trait SnsQsFactoryTrait
 
     protected function createSnsQsQueue(string $queueName): SnsQsQueue
     {
-        $queueName = $queueName.time();
+        $queueName .= time();
 
         $this->snsQsQueue = $this->snsQsContext->createQueue($queueName);
         $this->snsQsContext->declareQueue($this->snsQsQueue);
@@ -47,7 +47,7 @@ trait SnsQsFactoryTrait
 
     protected function createSnsQsTopic(string $topicName): SnsQsTopic
     {
-        $topicName = $topicName.time();
+        $topicName .= time();
 
         $this->snsQsTopic = $this->snsQsContext->createTopic($topicName);
         $this->snsQsContext->declareTopic($this->snsQsTopic);

@@ -13,9 +13,6 @@ class MongodbProducerTest extends ProducerSpec
 {
     use MongodbExtensionTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createProducer()
     {
         return $this->buildMongodbContext()->createProducer();

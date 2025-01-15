@@ -18,7 +18,7 @@ final class PreSend
         string $commandOrTopic,
         Message $message,
         ProducerInterface $producer,
-        DriverInterface $driver
+        DriverInterface $driver,
     ) {
         $this->message = $message;
         $this->commandOrTopic = $commandOrTopic;
@@ -48,7 +48,7 @@ final class PreSend
         $this->commandOrTopic = $newTopic;
     }
 
-    public function changeBody($body, string $contentType = null): void
+    public function changeBody($body, ?string $contentType = null): void
     {
         $this->message->setBody($body);
 

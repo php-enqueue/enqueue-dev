@@ -18,8 +18,6 @@ class DbalSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscri
 
     /**
      * @return DbalContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -28,8 +26,6 @@ class DbalSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscri
 
     /**
      * @param DbalContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

@@ -97,11 +97,7 @@ class WampContext implements Context
         $client = call_user_func($this->clientFactory);
 
         if (false == $client instanceof Client) {
-            throw new \LogicException(sprintf(
-                'The factory must return instance of "%s". But it returns %s',
-                Client::class,
-                is_object($client) ? get_class($client) : gettype($client)
-            ));
+            throw new \LogicException(sprintf('The factory must return instance of "%s". But it returns %s', Client::class, is_object($client) ? $client::class : gettype($client)));
         }
 
         $this->clients[] = $client;

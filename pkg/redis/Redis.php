@@ -7,41 +7,21 @@ namespace Enqueue\Redis;
 interface Redis
 {
     /**
-     * @param string $script
-     * @param array  $keys
-     * @param array  $args
-     *
      * @throws ServerException
-     *
-     * @return mixed
      */
     public function eval(string $script, array $keys = [], array $args = []);
 
     /**
-     * @param string $key
-     * @param string $value
-     * @param float  $score
-     *
      * @throws ServerException
-     *
-     * @return int
      */
     public function zadd(string $key, string $value, float $score): int;
 
     /**
-     * @param string $key
-     * @param string $value
-     *
      * @throws ServerException
-     *
-     * @return int
      */
     public function zrem(string $key, string $value): int;
 
     /**
-     * @param string $key
-     * @param string $value
-     *
      * @throws ServerException
      *
      * @return int length of the list
@@ -53,17 +33,11 @@ interface Redis
      * @param int      $timeout in seconds
      *
      * @throws ServerException
-     *
-     * @return RedisResult|null
      */
     public function brpop(array $keys, int $timeout): ?RedisResult;
 
     /**
-     * @param string $key
-     *
      * @throws ServerException
-     *
-     * @return RedisResult|null
      */
     public function rpop(string $key): ?RedisResult;
 
@@ -75,8 +49,6 @@ interface Redis
     public function disconnect(): void;
 
     /**
-     * @param string $key
-     *
      * @throws ServerException
      */
     public function del(string $key): void;

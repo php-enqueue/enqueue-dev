@@ -12,9 +12,6 @@ class SqsProducerTest extends ProducerSpec
 {
     use SqsExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createProducer()
     {
         return $this->buildSqsContext()->createProducer();

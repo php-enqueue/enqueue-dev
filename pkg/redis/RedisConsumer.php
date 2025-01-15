@@ -34,9 +34,6 @@ class RedisConsumer implements Consumer
         $this->queue = $queue;
     }
 
-    /**
-     * @return int
-     */
     public function getRedeliveryDelay(): ?int
     {
         return $this->redeliveryDelay;

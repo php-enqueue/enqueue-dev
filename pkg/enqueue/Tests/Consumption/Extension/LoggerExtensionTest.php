@@ -42,7 +42,7 @@ class LoggerExtensionTest extends TestCase
         $logger
             ->expects($this->once())
             ->method('debug')
-            ->with(sprintf('Change logger from "%s" to "%s"', get_class($logger), get_class($previousLogger)))
+            ->with(sprintf('Change logger from "%s" to "%s"', $logger::class, $previousLogger::class))
         ;
 
         $extension = new LoggerExtension($logger);

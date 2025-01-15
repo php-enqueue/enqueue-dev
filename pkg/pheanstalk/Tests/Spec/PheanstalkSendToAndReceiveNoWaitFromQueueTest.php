@@ -11,9 +11,6 @@ use Interop\Queue\Spec\SendToAndReceiveNoWaitFromQueueSpec;
  */
 class PheanstalkSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new PheanstalkConnectionFactory(getenv('BEANSTALKD_DSN'));
@@ -21,9 +18,6 @@ class PheanstalkSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWa
         return $factory->createContext();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createQueue(Context $context, $queueName)
     {
         return $context->createQueue($queueName.time());

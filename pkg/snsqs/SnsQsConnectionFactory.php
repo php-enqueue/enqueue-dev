@@ -83,10 +83,7 @@ class SnsQsConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('snsqs' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "snsqs"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be "snsqs"', $dsn->getSchemeProtocol()));
         }
 
         $this->parseOptions($dsn->getQuery());

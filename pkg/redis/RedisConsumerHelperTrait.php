@@ -15,10 +15,6 @@ trait RedisConsumerHelperTrait
 
     /**
      * @param RedisDestination[] $queues
-     * @param int                $timeout
-     * @param int                $redeliveryDelay
-     *
-     * @return RedisMessage|null
      */
     protected function receiveMessage(array $queues, int $timeout, int $redeliveryDelay): ?RedisMessage
     {
