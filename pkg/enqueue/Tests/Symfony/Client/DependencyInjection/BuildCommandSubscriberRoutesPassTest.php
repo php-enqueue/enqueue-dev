@@ -29,14 +29,6 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
         $this->assertClassFinal(BuildCommandSubscriberRoutesPass::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutArguments()
-    {
-        new BuildCommandSubscriberRoutesPass();
-    }
-
     public function testThrowIfEnqueueClientsParameterNotSet()
     {
         $pass = new BuildCommandSubscriberRoutesPass();

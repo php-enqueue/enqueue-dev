@@ -16,13 +16,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetter;
 
 class ResetServicesExtensionTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new ResetServicesExtension($this->createResetterMock());
-    }
 
     public function testItShouldResetServices()
     {

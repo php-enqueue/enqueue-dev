@@ -24,14 +24,6 @@ class SimpleConsumeCommandTest extends TestCase
         $this->assertClassNotFinal(SimpleConsumeCommand::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredAttributes()
-    {
-        new SimpleConsumeCommand($this->createQueueConsumerMock());
-    }
-
     public function testShouldHaveExpectedOptions()
     {
         $command = new SimpleConsumeCommand($this->createQueueConsumerMock());

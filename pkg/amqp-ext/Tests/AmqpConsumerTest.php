@@ -20,14 +20,6 @@ class AmqpConsumerTest extends TestCase
     }
 
     /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithContextAndQueueAsArguments()
-    {
-        new AmqpConsumer($this->createContext(), new AmqpQueue('aName'));
-    }
-
-    /**
      * @return MockObject|AmqpContext
      */
     private function createContext()

@@ -21,14 +21,6 @@ class NullProducerTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new NullProducer();
-    }
-
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testShouldDoNothingOnSend()
     {
         $producer = new NullProducer();

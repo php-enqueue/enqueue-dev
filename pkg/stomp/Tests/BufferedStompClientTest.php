@@ -21,14 +21,6 @@ class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
         $this->assertClassExtends(Client::class, BufferedStompClient::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new BufferedStompClient('tcp://localhost:12345');
-    }
-
     public function testCouldGetBufferSizeValue()
     {
         $client = new BufferedStompClient('tcp://localhost:12345', 12345);

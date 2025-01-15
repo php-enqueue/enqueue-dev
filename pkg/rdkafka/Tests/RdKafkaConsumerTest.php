@@ -13,19 +13,6 @@ use RdKafka\Message;
 
 class RdKafkaConsumerTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new RdKafkaConsumer(
-            $this->createKafkaConsumerMock(),
-            $this->createContextMock(),
-            new RdKafkaTopic(''),
-            $this->createSerializerMock()
-        );
-    }
-
     public function testShouldReturnQueueSetInConstructor()
     {
         $destination = new RdKafkaTopic('');

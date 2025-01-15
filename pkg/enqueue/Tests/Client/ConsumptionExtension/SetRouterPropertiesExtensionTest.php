@@ -27,14 +27,6 @@ class SetRouterPropertiesExtensionTest extends TestCase
         $this->assertClassImplements(MessageReceivedExtensionInterface::class, SetRouterPropertiesExtension::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new SetRouterPropertiesExtension($this->createDriverMock());
-    }
-
     public function testShouldSetRouterProcessorPropertyIfNotSetAndOnRouterQueue()
     {
         $config = Config::create('test', '.', '', '', 'router-queue', '', 'router-processor-name');

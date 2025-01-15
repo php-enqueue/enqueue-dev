@@ -24,14 +24,6 @@ class MongodbSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithMongodbContextAsFirstArgument()
-    {
-        new MongodbSubscriptionConsumer($this->createMongodbContextMock());
-    }
-
     public function testShouldAddConsumerAndCallbackToSubscribersPropertyOnSubscribe()
     {
         $subscriptionConsumer = new MongodbSubscriptionConsumer($this->createMongodbContextMock());

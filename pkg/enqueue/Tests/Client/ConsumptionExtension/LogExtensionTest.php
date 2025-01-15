@@ -55,14 +55,6 @@ class LogExtensionTest extends TestCase
         $this->assertClassExtends(\Enqueue\Consumption\Extension\LogExtension::class, LogExtension::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new LogExtension();
-    }
-
     public function testShouldLogStartOnStart()
     {
         $logger = $this->createLogger();

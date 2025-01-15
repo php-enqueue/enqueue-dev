@@ -17,14 +17,6 @@ class JsonSerializerTest extends TestCase
         $this->assertClassImplements(Serializer::class, JsonSerializer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new JsonSerializer();
-    }
-
     public function testShouldConvertMessageToJsonString()
     {
         $serializer = new JsonSerializer();

@@ -17,14 +17,6 @@ use Psr\Log\NullLogger;
 
 class LimitConsumerMemoryExtensionTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new LimitConsumerMemoryExtension(12345);
-    }
-
     public function testShouldThrowExceptionIfMemoryLimitIsNotInt()
     {
         $this->expectException(\InvalidArgumentException::class);

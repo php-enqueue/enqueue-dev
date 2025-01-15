@@ -49,14 +49,6 @@ class LogExtensionTest extends TestCase
         $this->assertClassImplements(PostMessageReceivedExtensionInterface::class, LogExtension::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new LogExtension();
-    }
-
     public function testShouldLogStartOnStart()
     {
         $logger = $this->createLogger();

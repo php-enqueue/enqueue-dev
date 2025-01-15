@@ -15,12 +15,4 @@ class EnqueueBundleTest extends TestCase
     {
         $this->assertClassExtends(Bundle::class, EnqueueBundle::class);
     }
-
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new EnqueueBundle();
-    }
 }

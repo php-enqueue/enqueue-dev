@@ -21,14 +21,6 @@ class InvalidArgumentExceptionTest extends TestCase
         $this->assertClassExtends(\LogicException::class, InvalidArgumentException::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new InvalidArgumentException();
-    }
-
     public function testThrowIfAssertInstanceOfNotSameAsExpected()
     {
         $this->expectException(InvalidArgumentException::class);

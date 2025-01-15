@@ -22,14 +22,6 @@ class RedisSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRedisContextAsFirstArgument()
-    {
-        new RedisSubscriptionConsumer($this->createRedisContextMock());
-    }
-
     public function testShouldAddConsumerAndCallbackToSubscribersPropertyOnSubscribe()
     {
         $subscriptionConsumer = new RedisSubscriptionConsumer($this->createRedisContextMock());

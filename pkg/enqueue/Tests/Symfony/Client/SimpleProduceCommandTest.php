@@ -23,14 +23,6 @@ class SimpleProduceCommandTest extends TestCase
         $this->assertClassNotFinal(SimpleProduceCommand::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithContainerAsFirstArgument()
-    {
-        new SimpleProduceCommand($this->createProducerMock());
-    }
-
     public function testShouldHaveExpectedOptions()
     {
         $command = new SimpleProduceCommand($this->createProducerMock());

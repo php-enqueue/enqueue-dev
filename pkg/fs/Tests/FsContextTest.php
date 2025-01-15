@@ -24,14 +24,6 @@ class FsContextTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Context::class, FsContext::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithExpectedArguments()
-    {
-        new FsContext(sys_get_temp_dir(), 1, 0666, 100);
-    }
-
     public function testShouldAllowCreateEmptyMessage()
     {
         $context = new FsContext(sys_get_temp_dir(), 1, 0666, 100);

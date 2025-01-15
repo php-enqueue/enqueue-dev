@@ -29,14 +29,6 @@ class RoutesCommandTest extends TestCase
         $this->assertClassNotFinal(RoutesCommand::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithConfigAndRouteCollectionAsArguments()
-    {
-        new RoutesCommand($this->createMock(ContainerInterface::class), 'default');
-    }
-
     public function testShouldHaveAsCommandAttributeWithCommandName()
     {
         $commandClass = RoutesCommand::class;

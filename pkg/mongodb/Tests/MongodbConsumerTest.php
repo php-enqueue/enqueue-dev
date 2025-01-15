@@ -25,14 +25,6 @@ class MongodbConsumerTest extends TestCase
         $this->assertClassImplements(Consumer::class, MongodbConsumer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new MongodbConsumer($this->createContextMock(), new MongodbDestination('queue'));
-    }
-
     public function testShouldReturnInstanceOfDestination()
     {
         $destination = new MongodbDestination('queue');

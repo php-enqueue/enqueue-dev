@@ -23,14 +23,6 @@ class RouteRecipientListProcessorTest extends TestCase
         $this->assertClassImplements(Processor::class, RouteRecipientListProcessor::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRouterAsFirstArgument()
-    {
-        new RouteRecipientListProcessor($this->createRecipientListRouterMock());
-    }
-
     public function testShouldProduceRecipientsMessagesAndAckOriginalMessage()
     {
         $fooRecipient = new Recipient(new NullQueue('aName'), new NullMessage());

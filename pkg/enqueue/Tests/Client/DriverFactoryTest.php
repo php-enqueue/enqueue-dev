@@ -61,14 +61,6 @@ class DriverFactoryTest extends TestCase
         $this->assertTrue($rc->isFinal());
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new DriverFactory();
-    }
-
     public function testThrowIfPackageThatSupportSchemeNotInstalled()
     {
         $scheme = 'scheme5b7aa7d7cd213';

@@ -21,14 +21,6 @@ class FallbackSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new FallbackSubscriptionConsumer();
-    }
-
     public function testShouldInitSubscribersPropertyWithEmptyArray()
     {
         $subscriptionConsumer = new FallbackSubscriptionConsumer();

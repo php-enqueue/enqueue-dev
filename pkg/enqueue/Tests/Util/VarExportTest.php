@@ -8,14 +8,6 @@ use PHPUnit\Framework\TestCase;
 class VarExportTest extends TestCase
 {
     /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithValueAsArgument()
-    {
-        new VarExport('aVal');
-    }
-
-    /**
      * @dataProvider provideValues
      *
      * @param mixed $value

@@ -18,14 +18,6 @@ class AmqpSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithAmqpContextAsFirstArgument()
-    {
-        new AmqpSubscriptionConsumer($this->createAmqpContextMock());
-    }
-
-    /**
      * @return AmqpContext|MockObject
      */
     private function createAmqpContextMock()

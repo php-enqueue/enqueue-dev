@@ -23,14 +23,6 @@ class PrepareBodyExtensionTest extends TestCase
     }
 
     /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldConstructedWithoutAnyArguments()
-    {
-        new PrepareBodyExtension();
-    }
-
-    /**
      * @dataProvider provideMessages
      *
      * @param mixed      $body

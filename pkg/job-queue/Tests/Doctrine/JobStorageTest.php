@@ -15,14 +15,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class JobStorageTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new JobStorage($this->createDoctrineMock(), 'entity-class', 'unique_table');
-    }
-
     public function testShouldCreateJobObject()
     {
         $repository = $this->createRepositoryMock();

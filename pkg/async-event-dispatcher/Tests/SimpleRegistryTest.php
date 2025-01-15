@@ -18,14 +18,6 @@ class SimpleRegistryTest extends TestCase
         $this->assertClassImplements(Registry::class, SimpleRegistry::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithEventsMapAndTransformersMapAsArguments()
-    {
-        new SimpleRegistry([], []);
-    }
-
     public function testShouldAllowGetTransportNameByEventName()
     {
         $registry = new SimpleRegistry([

@@ -19,18 +19,6 @@ class DriverPreSendTest extends TestCase
         self::assertClassFinal(DriverPreSend::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithExpectedArguments()
-    {
-        new DriverPreSend(
-            new Message(),
-            $this->createProducerMock(),
-            $this->createDriverMock()
-        );
-    }
-
     public function testShouldAllowGetArgumentSetInConstructor()
     {
         $expectedMessage = new Message();

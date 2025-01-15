@@ -25,14 +25,6 @@ class DbalSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithDbalContextAsFirstArgument()
-    {
-        new DbalSubscriptionConsumer($this->createDbalContextMock());
-    }
-
     public function testShouldAddConsumerAndCallbackToSubscribersPropertyOnSubscribe()
     {
         $subscriptionConsumer = new DbalSubscriptionConsumer($this->createDbalContextMock());

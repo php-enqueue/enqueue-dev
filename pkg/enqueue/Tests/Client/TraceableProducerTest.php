@@ -18,14 +18,6 @@ class TraceableProducerTest extends TestCase
         $this->assertClassImplements(ProducerInterface::class, TraceableProducer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithInternalMessageProducer()
-    {
-        new TraceableProducer($this->createProducerMock());
-    }
-
     public function testShouldPassAllArgumentsToInternalEventMessageProducerSendMethod()
     {
         $topic = 'theTopic';

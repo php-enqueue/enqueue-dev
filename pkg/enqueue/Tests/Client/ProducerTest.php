@@ -25,26 +25,6 @@ class ProducerTest extends TestCase
     }
 
     /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new Producer($this->createDriverMock(), $this->createRpcFactoryMock());
-    }
-
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithOptionalArguments()
-    {
-        new Producer(
-            $this->createDriverMock(),
-            $this->createRpcFactoryMock(),
-            $this->createMock(ExtensionInterface::class)
-        );
-    }
-
-    /**
      * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createRpcFactoryMock(): RpcFactory

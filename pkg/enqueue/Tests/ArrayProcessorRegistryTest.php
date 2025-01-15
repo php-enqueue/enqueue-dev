@@ -18,14 +18,6 @@ class ArrayProcessorRegistryTest extends TestCase
         $this->assertClassImplements(ProcessorRegistryInterface::class, ArrayProcessorRegistry::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArgument()
-    {
-        new ArrayProcessorRegistry();
-    }
-
     public function testShouldThrowExceptionIfProcessorIsNotSet()
     {
         $registry = new ArrayProcessorRegistry();

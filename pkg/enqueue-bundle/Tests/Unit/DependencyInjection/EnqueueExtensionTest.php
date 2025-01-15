@@ -30,14 +30,6 @@ class EnqueueExtensionTest extends TestCase
         $this->assertClassFinal(EnqueueExtension::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new EnqueueExtension();
-    }
-
     public function testShouldRegisterConnectionFactory()
     {
         $container = $this->getContainerBuilder(true);

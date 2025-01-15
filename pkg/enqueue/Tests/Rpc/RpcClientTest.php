@@ -15,14 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class RpcClientTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithContextAsFirstArgument()
-    {
-        new RpcClient($this->createContextMock());
-    }
-
     public function testShouldSetReplyToIfNotSet()
     {
         $context = new NullContext();

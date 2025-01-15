@@ -25,14 +25,6 @@ class SqsContextTest extends TestCase
         $this->assertClassImplements(Context::class, SqsContext::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithSqsClientAsFirstArgument()
-    {
-        new SqsContext($this->createSqsClientMock(), []);
-    }
-
     public function testShouldAllowCreateEmptyMessage()
     {
         $context = new SqsContext($this->createSqsClientMock(), []);

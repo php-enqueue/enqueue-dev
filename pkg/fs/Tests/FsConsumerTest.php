@@ -20,14 +20,6 @@ class FsConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Consumer::class, FsConsumer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithContextAndDestinationAndPreFetchCountAsArguments()
-    {
-        new FsConsumer($this->createContextMock(), new FsDestination(TempFile::generate()), 1);
-    }
-
     public function testShouldReturnDestinationSetInConstructorOnGetQueue()
     {
         $destination = new FsDestination(TempFile::generate());

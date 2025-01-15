@@ -22,14 +22,6 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Consumer::class, RedisConsumer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithContextAndDestinationAndPreFetchCountAsArguments()
-    {
-        new RedisConsumer($this->createContextMock(), new RedisDestination('aQueue'));
-    }
-
     public function testShouldReturnDestinationSetInConstructorOnGetQueue()
     {
         $destination = new RedisDestination('aQueue');

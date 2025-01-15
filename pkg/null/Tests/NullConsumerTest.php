@@ -18,14 +18,6 @@ class NullConsumerTest extends TestCase
         $this->assertClassImplements(Consumer::class, NullConsumer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithQueueAsArgument()
-    {
-        new NullConsumer(new NullQueue('aName'));
-    }
-
     public function testShouldAlwaysReturnNullOnReceive()
     {
         $consumer = new NullConsumer(new NullQueue('theQueueName'));

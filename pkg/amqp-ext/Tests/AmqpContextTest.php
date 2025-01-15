@@ -28,24 +28,6 @@ class AmqpContextTest extends TestCase
         $this->assertClassImplements(Context::class, AmqpContext::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithExtChannelAsFirstArgument()
-    {
-        new AmqpContext($this->createExtChannelMock());
-    }
-
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
-    {
-        new AmqpContext(function () {
-            return $this->createExtChannelMock();
-        });
-    }
-
     public function testThrowIfNeitherCallbackNorExtChannelAsFirstArgument()
     {
         $this->expectException(\InvalidArgumentException::class);

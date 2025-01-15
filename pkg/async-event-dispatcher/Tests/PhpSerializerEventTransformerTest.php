@@ -21,14 +21,6 @@ class PhpSerializerEventTransformerTest extends TestCase
         $this->assertClassImplements(EventTransformer::class, PhpSerializerEventTransformer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new PhpSerializerEventTransformer($this->createContextStub());
-    }
-
     public function testShouldReturnMessageWithPhpSerializedEventAsBodyOnToMessage()
     {
         $transformer = new PhpSerializerEventTransformer($this->createContextStub());

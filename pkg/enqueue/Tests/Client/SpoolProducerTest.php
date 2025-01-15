@@ -18,14 +18,6 @@ class SpoolProducerTest extends TestCase
         self::assertClassImplements(ProducerInterface::class, SpoolProducer::class);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithRealProducer()
-    {
-        new SpoolProducer($this->createProducerMock());
-    }
-
     public function testShouldQueueEventMessageOnSend()
     {
         $message = new Message();

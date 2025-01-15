@@ -39,14 +39,6 @@ class FlushSpoolProducerListenerTest extends TestCase
         $this->assertEquals('flushMessages', $events[ConsoleEvents::TERMINATE]);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCouldBeConstructedWithSpoolProducerAsFirstArgument()
-    {
-        new FlushSpoolProducerListener($this->createSpoolProducerMock());
-    }
-
     public function testShouldFlushSpoolProducerOnFlushMessagesCall()
     {
         $producerMock = $this->createSpoolProducerMock();

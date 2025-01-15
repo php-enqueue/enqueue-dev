@@ -40,14 +40,6 @@ class ConnectionFactoryFactoryTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new ConnectionFactoryFactory();
-    }
-
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testShouldAcceptStringDSN()
     {
         $factory = new ConnectionFactoryFactory();
