@@ -27,7 +27,7 @@ class DiUtils
 
     public static function create(string $moduleName, string $configName): self
     {
-        return new static($moduleName, $configName);
+        return new self($moduleName, $configName);
     }
 
     public function getModuleName(): string

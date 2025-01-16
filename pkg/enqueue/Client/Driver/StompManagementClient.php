@@ -24,7 +24,7 @@ class StompManagementClient
 
     public static function create(string $vhost = '/', string $host = 'localhost', int $port = 15672, string $login = 'guest', string $password = 'guest'): self
     {
-        return new static(new Client(null, 'http://'.$host.':'.$port, $login, $password), $vhost);
+        return new self(new Client(null, 'http://'.$host.':'.$port, $login, $password), $vhost);
     }
 
     public function declareQueue(string $name, array $options)

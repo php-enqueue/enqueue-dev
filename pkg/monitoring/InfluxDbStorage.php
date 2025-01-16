@@ -109,7 +109,7 @@ class InfluxDbStorage implements StatsStorage
         }
         $config['client'] = $client;
 
-        return new static($config);
+        return new self($config);
     }
 
     public function pushConsumerStats(ConsumerStats $stats): void

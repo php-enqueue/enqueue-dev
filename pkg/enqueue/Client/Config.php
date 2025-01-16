@@ -163,7 +163,7 @@ class Config
         array $transportConfig = [],
         array $driverConfig = [],
     ): self {
-        return new static(
+        return new self(
             $prefix ?: '',
             $separator ?: '.',
             $app ?: '',

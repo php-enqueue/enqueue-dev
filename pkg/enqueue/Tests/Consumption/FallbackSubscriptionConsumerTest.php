@@ -147,34 +147,18 @@ class FallbackSubscriptionConsumerTest extends TestCase
         $fourthMessage = $this->createMessageStub('fourth');
         $fifthMessage = $this->createMessageStub('fifth');
 
-        $fooMessages = [null, $firstMessage, null, $secondMessage, $thirdMessage];
-
         $fooConsumer = $this->createConsumerStub('foo_queue');
         $fooConsumer
             ->expects($this->any())
             ->method('receiveNoWait')
-            ->willReturnCallback(function () use (&$fooMessages) {
-                if (empty($fooMessages)) {
-                    return null;
-                }
-
-                return array_shift($fooMessages);
-            })
+            ->willReturnOnConsecutiveCalls(null, $firstMessage, null, $secondMessage, $thirdMessage)
         ;
-
-        $barMessages = [$fourthMessage, null, null, $fifthMessage];
 
         $barConsumer = $this->createConsumerStub('bar_queue');
         $barConsumer
             ->expects($this->any())
             ->method('receiveNoWait')
-            ->willReturnCallback(function () use (&$barMessages) {
-                if (empty($barMessages)) {
-                    return null;
-                }
-
-                return array_shift($barMessages);
-            })
+            ->willReturnOnConsecutiveCalls($fourthMessage, null, null, $fifthMessage)
         ;
 
         $actualOrder = [];

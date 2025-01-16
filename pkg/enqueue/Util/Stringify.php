@@ -25,6 +25,6 @@ class Stringify
 
     public static function that($value): self
     {
-        return new static($value);
+        return new self($value);
     }
 }

@@ -89,7 +89,7 @@ class Result
      */
     public static function ack($reason = '')
     {
-        return new static(self::ACK, $reason);
+        return new self(self::ACK, $reason);
     }
 
     /**
@@ -99,7 +99,7 @@ class Result
      */
     public static function reject($reason)
     {
-        return new static(self::REJECT, $reason);
+        return new self(self::REJECT, $reason);
     }
 
     /**
@@ -109,7 +109,7 @@ class Result
      */
     public static function requeue($reason = '')
     {
-        return new static(self::REQUEUE, $reason);
+        return new self(self::REQUEUE, $reason);
     }
 
     /**
@@ -122,7 +122,7 @@ class Result
     {
         $status = null === $status ? self::ACK : $status;
 
-        $result = new static($status, $reason);
+        $result = new self($status, $reason);
         $result->setReply($replyMessage);
 
         return $result;

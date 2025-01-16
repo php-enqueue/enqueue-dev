@@ -41,16 +41,22 @@ class DbalPersistedConnection extends Connection
     public function beginTransaction()
     {
         $this->wrapTransactionNestingLevel('beginTransaction');
+
+        return true;
     }
 
     public function commit()
     {
         $this->wrapTransactionNestingLevel('commit');
+
+        return true;
     }
 
     public function rollBack()
     {
         $this->wrapTransactionNestingLevel('rollBack');
+
+        return true;
     }
 
     /**
