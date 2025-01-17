@@ -146,7 +146,7 @@ class AmqpProducer implements InteropAmqpProducer, DelayStrategyAware
         } else {
             /** @var AmqpQueue $destination */
             $amqpExchange = new \AMQPExchange($this->amqpChannel);
-            $amqpExchange->setType(AMQP_EX_TYPE_DIRECT);
+            $amqpExchange->setType(\AMQP_EX_TYPE_DIRECT);
             $amqpExchange->setName('');
 
             $amqpExchange->publish(

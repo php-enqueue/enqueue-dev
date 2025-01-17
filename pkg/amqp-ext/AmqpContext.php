@@ -177,7 +177,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
     public function createTemporaryQueue(): Queue
     {
         $extQueue = new \AMQPQueue($this->getExtChannel());
-        $extQueue->setFlags(AMQP_EXCLUSIVE);
+        $extQueue->setFlags(\AMQP_EXCLUSIVE);
 
         $extQueue->declareQueue();
 

@@ -37,7 +37,7 @@ class RdKafkaProducer implements Producer
         InvalidDestinationException::assertDestinationInstanceOf($destination, RdKafkaTopic::class);
         InvalidMessageException::assertMessageInstanceOf($message, RdKafkaMessage::class);
 
-        $partition = $message->getPartition() ?? $destination->getPartition() ?? RD_KAFKA_PARTITION_UA;
+        $partition = $message->getPartition() ?? $destination->getPartition() ?? \RD_KAFKA_PARTITION_UA;
         $payload = $this->serializer->toString($message);
         $key = $message->getKey() ?? $destination->getKey() ?? null;
 

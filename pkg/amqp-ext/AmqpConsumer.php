@@ -130,7 +130,7 @@ class AmqpConsumer implements InteropAmqpConsumer
 
         $this->getExtQueue()->reject(
             $message->getDeliveryTag(),
-            $requeue ? AMQP_REQUEUE : AMQP_NOPARAM
+            $requeue ? \AMQP_REQUEUE : \AMQP_NOPARAM
         );
     }
 

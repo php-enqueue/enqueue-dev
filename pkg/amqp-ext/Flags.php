@@ -12,14 +12,14 @@ class Flags
 {
     public static function convertMessageFlags(int $interop): int
     {
-        $flags = AMQP_NOPARAM;
+        $flags = \AMQP_NOPARAM;
 
         if ($interop & InteropAmqpMessage::FLAG_MANDATORY) {
-            $flags |= AMQP_MANDATORY;
+            $flags |= \AMQP_MANDATORY;
         }
 
         if ($interop & InteropAmqpMessage::FLAG_IMMEDIATE) {
-            $flags |= AMQP_IMMEDIATE;
+            $flags |= \AMQP_IMMEDIATE;
         }
 
         return $flags;
@@ -27,12 +27,12 @@ class Flags
 
     public static function convertTopicFlags(int $interop): int
     {
-        $flags = AMQP_NOPARAM;
+        $flags = \AMQP_NOPARAM;
 
         $flags |= static::convertDestinationFlags($interop);
 
         if ($interop & InteropAmqpTopic::FLAG_INTERNAL) {
-            $flags |= AMQP_INTERNAL;
+            $flags |= \AMQP_INTERNAL;
         }
 
         return $flags;
@@ -40,12 +40,12 @@ class Flags
 
     public static function convertQueueFlags(int $interop): int
     {
-        $flags = AMQP_NOPARAM;
+        $flags = \AMQP_NOPARAM;
 
         $flags |= static::convertDestinationFlags($interop);
 
         if ($interop & InteropAmqpQueue::FLAG_EXCLUSIVE) {
-            $flags |= AMQP_EXCLUSIVE;
+            $flags |= \AMQP_EXCLUSIVE;
         }
 
         return $flags;
@@ -53,22 +53,22 @@ class Flags
 
     public static function convertDestinationFlags(int $interop): int
     {
-        $flags = AMQP_NOPARAM;
+        $flags = \AMQP_NOPARAM;
 
         if ($interop & InteropAmqpDestination::FLAG_PASSIVE) {
-            $flags |= AMQP_PASSIVE;
+            $flags |= \AMQP_PASSIVE;
         }
 
         if ($interop & InteropAmqpDestination::FLAG_DURABLE) {
-            $flags |= AMQP_DURABLE;
+            $flags |= \AMQP_DURABLE;
         }
 
         if ($interop & InteropAmqpDestination::FLAG_AUTODELETE) {
-            $flags |= AMQP_AUTODELETE;
+            $flags |= \AMQP_AUTODELETE;
         }
 
         if ($interop & InteropAmqpDestination::FLAG_NOWAIT) {
-            $flags |= AMQP_NOWAIT;
+            $flags |= \AMQP_NOWAIT;
         }
 
         return $flags;
@@ -76,22 +76,22 @@ class Flags
 
     public static function convertConsumerFlags(int $interop): int
     {
-        $flags = AMQP_NOPARAM;
+        $flags = \AMQP_NOPARAM;
 
         if ($interop & InteropAmqpConsumer::FLAG_NOLOCAL) {
-            $flags |= AMQP_NOLOCAL;
+            $flags |= \AMQP_NOLOCAL;
         }
 
         if ($interop & InteropAmqpConsumer::FLAG_NOACK) {
-            $flags |= AMQP_AUTOACK;
+            $flags |= \AMQP_AUTOACK;
         }
 
         if ($interop & InteropAmqpConsumer::FLAG_EXCLUSIVE) {
-            $flags |= AMQP_EXCLUSIVE;
+            $flags |= \AMQP_EXCLUSIVE;
         }
 
         if ($interop & InteropAmqpConsumer::FLAG_NOWAIT) {
-            $flags |= AMQP_NOWAIT;
+            $flags |= \AMQP_NOWAIT;
         }
 
         return $flags;
