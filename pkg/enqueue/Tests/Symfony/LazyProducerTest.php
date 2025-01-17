@@ -20,11 +20,6 @@ class LazyProducerTest extends TestCase
         $this->assertClassImplements(ProducerInterface::class, LazyProducer::class);
     }
 
-    public function testCouldBeConstructedWithContainerAndServiceId()
-    {
-        new LazyProducer($this->createContainerMock(), 'realProducerId');
-    }
-
     public function testShouldNotCallRealProducerInConstructor()
     {
         $containerMock = $this->createContainerMock();

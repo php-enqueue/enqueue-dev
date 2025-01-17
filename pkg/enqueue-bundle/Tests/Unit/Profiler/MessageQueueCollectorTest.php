@@ -23,11 +23,6 @@ class MessageQueueCollectorTest extends TestCase
         $this->assertClassExtends(DataCollector::class, MessageQueueCollector::class);
     }
 
-    public function testCouldBeConstructedWithEmptyConstructor()
-    {
-        new MessageQueueCollector();
-    }
-
     public function testShouldReturnExpectedName()
     {
         $collector = new MessageQueueCollector();

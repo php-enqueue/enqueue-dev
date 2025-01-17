@@ -23,18 +23,6 @@ class StompContextTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Context::class, StompContext::class);
     }
 
-    public function testCouldBeCreatedWithRequiredArguments()
-    {
-        new StompContext($this->createStompClientMock(), ExtensionType::RABBITMQ);
-    }
-
-    public function testCouldBeConstructedWithExtChannelCallbackFactoryAsFirstArgument()
-    {
-        new StompContext(function () {
-            return $this->createStompClientMock();
-        }, ExtensionType::RABBITMQ);
-    }
-
     public function testThrowIfNeitherCallbackNorExtChannelAsFirstArgument()
     {
         $this->expectException(\InvalidArgumentException::class);

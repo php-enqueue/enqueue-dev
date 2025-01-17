@@ -27,11 +27,6 @@ class SnsProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, SnsProducer::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new SnsProducer($this->createSnsContextMock());
-    }
-
     public function testShouldThrowIfBodyOfInvalidType()
     {
         $this->expectException(InvalidMessageException::class);

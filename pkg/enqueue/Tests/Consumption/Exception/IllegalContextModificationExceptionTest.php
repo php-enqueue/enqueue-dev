@@ -20,9 +20,4 @@ class IllegalContextModificationExceptionTest extends TestCase
     {
         $this->assertClassExtends(\LogicException::class, IllegalContextModificationException::class);
     }
-
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new IllegalContextModificationException();
-    }
 }

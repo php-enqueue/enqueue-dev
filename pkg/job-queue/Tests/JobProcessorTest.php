@@ -13,11 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 class JobProcessorTest extends TestCase
 {
-    public function testCouldBeCreatedWithRequiredArguments()
-    {
-        new JobProcessor($this->createJobStorage(), $this->createProducerMock());
-    }
-
     public function testCreateRootJobShouldThrowIfOwnerIdIsEmpty()
     {
         $processor = new JobProcessor($this->createJobStorage(), $this->createProducerMock());

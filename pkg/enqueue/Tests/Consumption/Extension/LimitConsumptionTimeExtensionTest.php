@@ -17,11 +17,6 @@ use Psr\Log\NullLogger;
 
 class LimitConsumptionTimeExtensionTest extends TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new LimitConsumptionTimeExtension(new \DateTime('+1 day'));
-    }
-
     public function testOnPreConsumeShouldInterruptExecutionIfConsumptionTimeExceeded()
     {
         $context = new PreConsume(

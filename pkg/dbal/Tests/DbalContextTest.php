@@ -27,11 +27,6 @@ class DbalContextTest extends TestCase
         $this->assertClassImplements(Context::class, DbalContext::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new DbalContext($this->createConnectionMock());
-    }
-
     public function testCouldBeConstructedWithEmptyConfiguration()
     {
         $factory = new DbalContext($this->createConnectionMock(), []);

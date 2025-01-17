@@ -40,11 +40,6 @@ class ConsumeCommandTest extends TestCase
         $this->assertClassNotFinal(ConsumeCommand::class);
     }
 
-    public function testCouldBeConstructedWithRequiredAttributes()
-    {
-        new ConsumeCommand($this->createMock(ContainerInterface::class), 'default');
-    }
-
     public function testShouldHaveAsCommandAttributeWithCommandName()
     {
         $commandClass = ConsumeCommand::class;

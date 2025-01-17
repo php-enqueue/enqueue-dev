@@ -13,11 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 class DelegateProcessorTest extends TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new DelegateProcessor($this->createProcessorRegistryMock());
-    }
-
     public function testShouldThrowExceptionIfProcessorNameIsNotSet()
     {
         $this->expectException(\LogicException::class);

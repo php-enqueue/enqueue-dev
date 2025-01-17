@@ -25,11 +25,6 @@ class RedisProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, RedisProducer::class);
     }
 
-    public function testCouldBeConstructedWithRedisAsFirstArgument()
-    {
-        new RedisProducer($this->createContextMock());
-    }
-
     public function testThrowIfDestinationNotRedisDestinationOnSend()
     {
         $producer = new RedisProducer($this->createContextMock());

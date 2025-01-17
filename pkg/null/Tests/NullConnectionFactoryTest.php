@@ -17,11 +17,6 @@ class NullConnectionFactoryTest extends TestCase
         $this->assertClassImplements(ConnectionFactory::class, NullConnectionFactory::class);
     }
 
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new NullConnectionFactory();
-    }
-
     public function testShouldReturnNullContextOnCreateContextCall()
     {
         $factory = new NullConnectionFactory();

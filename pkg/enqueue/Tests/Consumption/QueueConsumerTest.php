@@ -39,21 +39,6 @@ class QueueConsumerTest extends TestCase
 {
     use ReadAttributeTrait;
 
-    public function testCouldBeConstructedWithAllArguments()
-    {
-        new QueueConsumer($this->createContextStub(), null, [], null, 0);
-    }
-
-    public function testCouldBeConstructedWithContextOnly()
-    {
-        new QueueConsumer($this->createContextStub());
-    }
-
-    public function testCouldBeConstructedWithContextAndSingleExtension()
-    {
-        new QueueConsumer($this->createContextStub(), $this->createExtension());
-    }
-
     public function testShouldSetEmptyArrayToBoundProcessorsPropertyInConstructor()
     {
         $consumer = new QueueConsumer($this->createContextStub(), null, [], null, 0);

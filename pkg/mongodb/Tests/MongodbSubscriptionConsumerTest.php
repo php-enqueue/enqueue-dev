@@ -24,11 +24,6 @@ class MongodbSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    public function testCouldBeConstructedWithMongodbContextAsFirstArgument()
-    {
-        new MongodbSubscriptionConsumer($this->createMongodbContextMock());
-    }
-
     public function testShouldAddConsumerAndCallbackToSubscribersPropertyOnSubscribe()
     {
         $subscriptionConsumer = new MongodbSubscriptionConsumer($this->createMongodbContextMock());
@@ -65,6 +60,9 @@ class MongodbSubscriptionConsumerTest extends TestCase
         $subscriptionConsumer->subscribe($barConsumer, $barCallback);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldAllowSubscribeSameConsumerAndCallbackSecondTime()
     {
         $subscriptionConsumer = new MongodbSubscriptionConsumer($this->createMongodbContextMock());

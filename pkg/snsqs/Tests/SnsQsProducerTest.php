@@ -32,11 +32,6 @@ class SnsQsProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, SnsQsProducer::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new SnsQsProducer($this->createSnsContextMock(), $this->createSqsContextMock());
-    }
-
     public function testShouldThrowIfMessageIsInvalidType()
     {
         $this->expectException(InvalidMessageException::class);

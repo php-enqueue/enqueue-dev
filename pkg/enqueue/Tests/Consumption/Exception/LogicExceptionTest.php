@@ -20,9 +20,4 @@ class LogicExceptionTest extends TestCase
     {
         $this->assertClassExtends(\LogicException::class, LogicException::class);
     }
-
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new LogicException();
-    }
 }

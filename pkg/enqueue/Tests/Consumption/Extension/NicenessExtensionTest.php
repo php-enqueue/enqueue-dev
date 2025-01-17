@@ -11,11 +11,6 @@ use Psr\Log\NullLogger;
 
 class NicenessExtensionTest extends TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new NicenessExtension(0);
-    }
-
     public function testShouldThrowExceptionOnInvalidArgument()
     {
         $this->expectException(\InvalidArgumentException::class);

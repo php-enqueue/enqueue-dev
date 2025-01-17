@@ -24,11 +24,6 @@ class SqsConsumerTest extends TestCase
         $this->assertClassImplements(Consumer::class, SqsConsumer::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new SqsConsumer($this->createContextMock(), new SqsDestination('queue'));
-    }
-
     public function testShouldReturnInstanceOfDestination()
     {
         $destination = new SqsDestination('queue');

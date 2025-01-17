@@ -8,11 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class DsnTest extends TestCase
 {
-    public function testCouldBeConstructedWithDsnAsFirstArgument()
-    {
-        Dsn::parseFirst('foo://localhost:1234');
-    }
-
     public function testThrowsIfSchemePartIsMissing()
     {
         $this->expectException(\LogicException::class);

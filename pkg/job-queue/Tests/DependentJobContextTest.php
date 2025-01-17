@@ -7,11 +7,6 @@ use Enqueue\JobQueue\Job;
 
 class DependentJobContextTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new DependentJobContext(new Job());
-    }
-
     public function testShouldReturnJob()
     {
         $job = new Job();

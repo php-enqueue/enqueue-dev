@@ -10,11 +10,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class DependentJobServiceTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new DependentJobService($this->createJobStorageMock());
-    }
-
     public function testShouldThrowIfJobIsNotRootJob()
     {
         $job = new Job();

@@ -20,11 +20,6 @@ class LoggerExtensionTest extends TestCase
         $this->assertClassImplements(InitLoggerExtensionInterface::class, LoggerExtension::class);
     }
 
-    public function testCouldBeConstructedWithLoggerAsFirstArgument()
-    {
-        new LoggerExtension($this->createLogger());
-    }
-
     public function testShouldSetLoggerToContextOnInitLogger()
     {
         $logger = $this->createLogger();

@@ -27,11 +27,6 @@ class ProduceCommandTest extends TestCase
         $this->assertClassNotFinal(ProduceCommand::class);
     }
 
-    public function testCouldBeConstructedWithContainerAsFirstArgument()
-    {
-        new ProduceCommand($this->createMock(ContainerInterface::class), 'default');
-    }
-
     public function testShouldHaveAsCommandAttributeWithCommandName()
     {
         $commandClass = ProduceCommand::class;

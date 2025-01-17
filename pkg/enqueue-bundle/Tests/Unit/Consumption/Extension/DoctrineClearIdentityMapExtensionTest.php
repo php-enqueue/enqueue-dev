@@ -16,11 +16,6 @@ use Psr\Log\LoggerInterface;
 
 class DoctrineClearIdentityMapExtensionTest extends TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new DoctrineClearIdentityMapExtension($this->createRegistryMock());
-    }
-
     public function testShouldClearIdentityMap()
     {
         $manager = $this->createManagerMock();

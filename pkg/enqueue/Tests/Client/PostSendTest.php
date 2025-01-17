@@ -21,17 +21,6 @@ class PostSendTest extends TestCase
         self::assertClassFinal(PostSend::class);
     }
 
-    public function testCouldBeConstructedWithExpectedArguments()
-    {
-        new PostSend(
-            new Message(),
-            $this->createProducerMock(),
-            $this->createDriverMock(),
-            $this->createDestinationMock(),
-            $this->createTransportMessageMock()
-        );
-    }
-
     public function testShouldAllowGetArgumentSetInConstructor()
     {
         $expectedMessage = new Message();

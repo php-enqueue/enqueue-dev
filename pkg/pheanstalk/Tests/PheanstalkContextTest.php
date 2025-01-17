@@ -21,11 +21,6 @@ class PheanstalkContextTest extends TestCase
         $this->assertClassImplements(Context::class, PheanstalkContext::class);
     }
 
-    public function testCouldBeConstructedWithPheanstalkAsFirstArgument()
-    {
-        new PheanstalkContext($this->createPheanstalkMock());
-    }
-
     public function testThrowNotImplementedOnCreateTemporaryQueue()
     {
         $context = new PheanstalkContext($this->createPheanstalkMock());

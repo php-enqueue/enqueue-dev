@@ -25,11 +25,6 @@ class SimpleRoutesCommandTest extends TestCase
         $this->assertClassNotFinal(SimpleRoutesCommand::class);
     }
 
-    public function testCouldBeConstructedWithConfigAndRouteCollectionAsArguments()
-    {
-        new SimpleRoutesCommand($this->createDriverMock());
-    }
-
     public function testShouldHaveCommandAliases()
     {
         $command = new SimpleRoutesCommand($this->createDriverMock());

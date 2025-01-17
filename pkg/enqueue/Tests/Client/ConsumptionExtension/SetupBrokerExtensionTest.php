@@ -21,11 +21,6 @@ class SetupBrokerExtensionTest extends TestCase
         $this->assertClassImplements(StartExtensionInterface::class, SetupBrokerExtension::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new SetupBrokerExtension($this->createDriverMock());
-    }
-
     public function testShouldSetupBroker()
     {
         $logger = new NullLogger();

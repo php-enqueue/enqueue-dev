@@ -23,11 +23,6 @@ class SimpleSetupBrokerCommandTest extends TestCase
         $this->assertClassNotFinal(SimpleSetupBrokerCommand::class);
     }
 
-    public function testCouldBeConstructedWithContainerAsFirstArgument()
-    {
-        new SimpleSetupBrokerCommand($this->createClientDriverMock());
-    }
-
     public function testShouldHaveCommandAliases()
     {
         $command = new SimpleSetupBrokerCommand($this->createClientDriverMock());

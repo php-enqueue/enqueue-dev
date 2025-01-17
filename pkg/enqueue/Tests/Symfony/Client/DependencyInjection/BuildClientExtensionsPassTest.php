@@ -25,11 +25,6 @@ class BuildClientExtensionsPassTest extends TestCase
         $this->assertClassFinal(BuildClientExtensionsPass::class);
     }
 
-    public function testCouldBeConstructedWithoutArguments()
-    {
-        new BuildClientExtensionsPass();
-    }
-
     public function testThrowIfEnqueueClientsParameterNotSet()
     {
         $pass = new BuildClientExtensionsPass();

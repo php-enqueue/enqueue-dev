@@ -17,11 +17,6 @@ use RdKafka\TopicConf;
 
 class RdKafkaProducerTest extends TestCase
 {
-    public function testCouldBeConstructedWithKafkaProducerAndSerializerAsArguments()
-    {
-        new RdKafkaProducer($this->createKafkaProducerMock(), $this->createSerializerMock());
-    }
-
     public function testThrowIfDestinationInvalid()
     {
         $producer = new RdKafkaProducer($this->createKafkaProducerMock(), $this->createSerializerMock());

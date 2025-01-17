@@ -19,11 +19,6 @@ class AmqpConsumerTest extends TestCase
         $this->assertClassImplements(Consumer::class, AmqpConsumer::class);
     }
 
-    public function testCouldBeConstructedWithContextAndQueueAsArguments()
-    {
-        new AmqpConsumer($this->createContext(), new AmqpQueue('aName'));
-    }
-
     /**
      * @return MockObject|AmqpContext
      */

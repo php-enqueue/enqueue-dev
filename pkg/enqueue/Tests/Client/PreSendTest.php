@@ -18,16 +18,6 @@ class PreSendTest extends TestCase
         self::assertClassFinal(PreSend::class);
     }
 
-    public function testCouldBeConstructedWithExpectedArguments()
-    {
-        new PreSend(
-            'aCommandOrTopic',
-            new Message(),
-            $this->createProducerMock(),
-            $this->createDriverMock()
-        );
-    }
-
     public function testShouldAllowGetArgumentSetInConstructor()
     {
         $expectedCommandOrTopic = 'theCommandOrTopic';

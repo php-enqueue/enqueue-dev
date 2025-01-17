@@ -26,11 +26,6 @@ class SetupBrokerCommandTest extends TestCase
         $this->assertClassNotFinal(SetupBrokerCommand::class);
     }
 
-    public function testCouldBeConstructedWithContainerAsFirstArgument()
-    {
-        new SetupBrokerCommand($this->createMock(ContainerInterface::class), 'default');
-    }
-
     public function testShouldHaveAsCommandAttributeWithCommandName()
     {
         $commandClass = SetupBrokerCommand::class;

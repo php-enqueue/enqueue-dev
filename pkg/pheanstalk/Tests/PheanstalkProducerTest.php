@@ -18,11 +18,6 @@ class PheanstalkProducerTest extends TestCase
 {
     use ClassExtensionTrait;
 
-    public function testCouldBeConstructedWithPheanstalkAsFirstArgument()
-    {
-        new PheanstalkProducer($this->createPheanstalkMock());
-    }
-
     public function testThrowIfDestinationInvalid()
     {
         $producer = new PheanstalkProducer($this->createPheanstalkMock());

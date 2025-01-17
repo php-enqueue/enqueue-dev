@@ -17,11 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class DoctrinePingConnectionExtensionTest extends TestCase
 {
-    public function testCouldBeConstructedWithRequiredAttributes()
-    {
-        new DoctrinePingConnectionExtension($this->createRegistryMock());
-    }
-
     public function testShouldNotReconnectIfConnectionIsOK()
     {
         $connection = $this->createConnectionMock();

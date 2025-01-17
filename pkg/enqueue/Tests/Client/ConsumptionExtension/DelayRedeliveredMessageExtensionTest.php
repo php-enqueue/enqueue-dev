@@ -23,10 +23,6 @@ use Psr\Log\NullLogger;
 
 class DelayRedeliveredMessageExtensionTest extends TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new DelayRedeliveredMessageExtension($this->createDriverMock(), 12345);
-    }
 
     public function testShouldSendDelayedMessageAndRejectOriginalMessage()
     {

@@ -7,11 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class VarExportTest extends TestCase
 {
-    public function testCouldBeConstructedWithValueAsArgument()
-    {
-        new VarExport('aVal');
-    }
-
     /**
      * @dataProvider provideValues
      *

@@ -21,11 +21,6 @@ class DbalProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, DbalProducer::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new DbalProducer($this->createContextMock());
-    }
-
     public function testShouldThrowIfDestinationOfInvalidType()
     {
         $this->expectException(InvalidDestinationException::class);

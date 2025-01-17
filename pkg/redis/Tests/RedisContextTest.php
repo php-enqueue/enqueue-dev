@@ -25,18 +25,6 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Context::class, RedisContext::class);
     }
 
-    public function testCouldBeConstructedWithRedisAsFirstArgument()
-    {
-        new RedisContext($this->createRedisMock(), 300);
-    }
-
-    public function testCouldBeConstructedWithRedisFactoryAsFirstArgument()
-    {
-        new RedisContext(function () {
-            return $this->createRedisMock();
-        }, 300);
-    }
-
     public function testThrowIfNeitherRedisNorFactoryGiven()
     {
         $this->expectException(\InvalidArgumentException::class);

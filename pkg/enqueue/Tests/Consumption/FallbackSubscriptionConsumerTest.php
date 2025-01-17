@@ -21,11 +21,6 @@ class FallbackSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new FallbackSubscriptionConsumer();
-    }
-
     public function testShouldInitSubscribersPropertyWithEmptyArray()
     {
         $subscriptionConsumer = new FallbackSubscriptionConsumer();
@@ -69,6 +64,9 @@ class FallbackSubscriptionConsumerTest extends TestCase
         $subscriptionConsumer->subscribe($barConsumer, $barCallback);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldAllowSubscribeSameConsumerAndCallbackSecondTime()
     {
         $subscriptionConsumer = new FallbackSubscriptionConsumer();

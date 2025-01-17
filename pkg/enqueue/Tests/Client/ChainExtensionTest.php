@@ -29,11 +29,6 @@ class ChainExtensionTest extends TestCase
         $this->assertClassFinal(ChainExtension::class);
     }
 
-    public function testCouldBeConstructedWithExtensionsArray()
-    {
-        new ChainExtension([$this->createExtension(), $this->createExtension()]);
-    }
-
     public function testThrowIfArrayContainsNotExtension()
     {
         $this->expectException(\LogicException::class);

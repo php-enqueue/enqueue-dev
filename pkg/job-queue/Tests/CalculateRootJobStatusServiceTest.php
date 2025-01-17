@@ -9,11 +9,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new CalculateRootJobStatusService($this->createJobStorageMock());
-    }
-
     public function stopStatusProvider()
     {
         return [

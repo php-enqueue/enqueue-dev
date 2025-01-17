@@ -17,16 +17,6 @@ use Psr\Log\LoggerInterface;
 
 class CalculateRootJobStatusProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new CalculateRootJobStatusProcessor(
-            $this->createJobStorageMock(),
-            $this->createCalculateRootJobStatusCaseMock(),
-            $this->createProducerMock(),
-            $this->createLoggerMock()
-        );
-    }
-
     public function testShouldReturnSubscribedTopicNames()
     {
         $this->assertEquals(

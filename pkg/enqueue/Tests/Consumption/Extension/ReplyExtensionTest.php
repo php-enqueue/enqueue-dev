@@ -25,11 +25,6 @@ class ReplyExtensionTest extends TestCase
         $this->assertClassImplements(PostMessageReceivedExtensionInterface::class, ReplyExtension::class);
     }
 
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new ReplyExtension();
-    }
-
     public function testShouldDoNothingIfReceivedMessageNotHaveReplyToSet()
     {
         $extension = new ReplyExtension();

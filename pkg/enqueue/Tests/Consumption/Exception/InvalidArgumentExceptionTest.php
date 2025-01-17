@@ -21,11 +21,6 @@ class InvalidArgumentExceptionTest extends TestCase
         $this->assertClassExtends(\LogicException::class, InvalidArgumentException::class);
     }
 
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new InvalidArgumentException();
-    }
-
     public function testThrowIfAssertInstanceOfNotSameAsExpected()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -36,6 +31,9 @@ class InvalidArgumentExceptionTest extends TestCase
         InvalidArgumentException::assertInstanceOf(new \SplStack(), \SplQueue::class);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldDoNothingIfAssertDestinationInstanceOfSameAsExpected()
     {
         InvalidArgumentException::assertInstanceOf(new \SplQueue(), \SplQueue::class);

@@ -25,11 +25,6 @@ class BuildConsumptionExtensionsPassTest extends TestCase
         $this->assertClassFinal(BuildConsumptionExtensionsPass::class);
     }
 
-    public function testCouldBeConstructedWithoutArguments()
-    {
-        new BuildConsumptionExtensionsPass();
-    }
-
     public function testThrowIfEnqueueTransportsParameterNotSet()
     {
         $pass = new BuildConsumptionExtensionsPass();

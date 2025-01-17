@@ -25,11 +25,6 @@ class DbalSubscriptionConsumerTest extends TestCase
         $this->assertTrue($rc->implementsInterface(SubscriptionConsumer::class));
     }
 
-    public function testCouldBeConstructedWithDbalContextAsFirstArgument()
-    {
-        new DbalSubscriptionConsumer($this->createDbalContextMock());
-    }
-
     public function testShouldAddConsumerAndCallbackToSubscribersPropertyOnSubscribe()
     {
         $subscriptionConsumer = new DbalSubscriptionConsumer($this->createDbalContextMock());
@@ -66,6 +61,9 @@ class DbalSubscriptionConsumerTest extends TestCase
         $subscriptionConsumer->subscribe($barConsumer, $barCallback);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldAllowSubscribeSameConsumerAndCallbackSecondTime()
     {
         $subscriptionConsumer = new DbalSubscriptionConsumer($this->createDbalContextMock());

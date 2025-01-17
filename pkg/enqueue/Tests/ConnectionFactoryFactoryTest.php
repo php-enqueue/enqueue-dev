@@ -37,11 +37,9 @@ class ConnectionFactoryFactoryTest extends TestCase
         $this->assertTrue($rc->isFinal());
     }
 
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new ConnectionFactoryFactory();
-    }
-
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldAcceptStringDSN()
     {
         $factory = new ConnectionFactoryFactory();
@@ -49,6 +47,9 @@ class ConnectionFactoryFactoryTest extends TestCase
         $factory->create('null:');
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldAcceptArrayWithDsnKey()
     {
         $factory = new ConnectionFactoryFactory();

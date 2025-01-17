@@ -23,11 +23,6 @@ class MongodbProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, MongodbProducer::class);
     }
 
-    public function testCouldBeConstructedWithRequiredArguments()
-    {
-        new MongodbProducer($this->createContextMock());
-    }
-
     public function testShouldThrowIfDestinationOfInvalidType()
     {
         $this->expectException(InvalidDestinationException::class);

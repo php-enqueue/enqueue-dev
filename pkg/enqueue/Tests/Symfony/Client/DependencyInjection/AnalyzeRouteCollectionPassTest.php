@@ -23,11 +23,6 @@ class AnalyzeRouteCollectionPassTest extends TestCase
         $this->assertClassFinal(AnalyzeRouteCollectionPass::class);
     }
 
-    public function testCouldBeConstructedWithoutArguments()
-    {
-        new AnalyzeRouteCollectionPass();
-    }
-
     public function testThrowIfEnqueueClientsParameterNotSet()
     {
         $pass = new AnalyzeRouteCollectionPass();

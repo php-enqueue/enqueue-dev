@@ -22,11 +22,6 @@ class PrepareBodyExtensionTest extends TestCase
         $this->assertTrue($rc->implementsInterface(PreSendCommandExtensionInterface::class));
     }
 
-    public function testCouldConstructedWithoutAnyArguments()
-    {
-        new PrepareBodyExtension();
-    }
-
     /**
      * @dataProvider provideMessages
      *

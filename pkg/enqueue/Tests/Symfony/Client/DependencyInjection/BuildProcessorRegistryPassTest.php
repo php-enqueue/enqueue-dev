@@ -26,11 +26,6 @@ class BuildProcessorRegistryPassTest extends TestCase
         $this->assertClassFinal(BuildProcessorRegistryPass::class);
     }
 
-    public function testCouldBeConstructedWithoutArguments()
-    {
-        new BuildProcessorRegistryPass();
-    }
-
     public function testThrowIfEnqueueClientsParameterNotSet()
     {
         $pass = new BuildProcessorRegistryPass();

@@ -25,11 +25,6 @@ class BuildProcessorRoutesPassTest extends TestCase
         $this->assertClassFinal(BuildProcessorRoutesPass::class);
     }
 
-    public function testCouldBeConstructedWithoutArguments()
-    {
-        new BuildProcessorRoutesPass();
-    }
-
     public function testThrowIfEnqueueClientsParameterNotSet()
     {
         $pass = new BuildProcessorRoutesPass();

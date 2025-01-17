@@ -18,11 +18,9 @@ class NullProducerTest extends TestCase
         $this->assertClassImplements(Producer::class, NullProducer::class);
     }
 
-    public function testCouldBeConstructedWithoutAnyArguments()
-    {
-        new NullProducer();
-    }
-
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldDoNothingOnSend()
     {
         $producer = new NullProducer();

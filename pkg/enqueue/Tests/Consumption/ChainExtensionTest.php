@@ -33,11 +33,6 @@ class ChainExtensionTest extends TestCase
         $this->assertClassImplements(ExtensionInterface::class, ChainExtension::class);
     }
 
-    public function testCouldBeConstructedWithExtensionsArray()
-    {
-        new ChainExtension([$this->createExtension(), $this->createExtension()]);
-    }
-
     public function testShouldProxyOnInitLoggerToAllInternalExtensions()
     {
         $context = new InitLogger(new NullLogger());

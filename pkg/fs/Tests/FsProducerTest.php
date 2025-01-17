@@ -23,11 +23,6 @@ class FsProducerTest extends \PHPUnit\Framework\TestCase
         $this->assertClassImplements(Producer::class, FsProducer::class);
     }
 
-    public function testCouldBeConstructedWithContextAsFirstArgument()
-    {
-        new FsProducer($this->createContextMock());
-    }
-
     public function testThrowIfDestinationNotFsOnSend()
     {
         $producer = new FsProducer($this->createContextMock());
