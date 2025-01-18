@@ -11,6 +11,7 @@ class QueueSubscriberProcessor implements Processor, QueueSubscriberInterface
 {
     public function process(InteropMessage $message, Context $context)
     {
+        return self::ACK;
     }
 
     public static function getSubscribedQueues()

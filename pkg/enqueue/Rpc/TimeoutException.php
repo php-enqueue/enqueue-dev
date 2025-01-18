@@ -12,6 +12,6 @@ class TimeoutException extends \LogicException
      */
     public static function create($timeout, $correlationId)
     {
-        return new static(sprintf('Rpc call timeout is reached without receiving a reply message. Timeout: %s, CorrelationId: %s', $timeout, $correlationId));
+        return new self(sprintf('Rpc call timeout is reached without receiving a reply message. Timeout: %s, CorrelationId: %s', $timeout, $correlationId));
     }
 }

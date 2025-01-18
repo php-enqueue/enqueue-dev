@@ -443,6 +443,7 @@ class BuildCommandSubscriberRoutesPassTest extends TestCase
 
             public function process(InteropMessage $message, Context $context)
             {
+                return self::ACK;
             }
 
             public static function getSubscribedCommand()

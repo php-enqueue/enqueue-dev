@@ -121,5 +121,7 @@ class RdKafkaProducer implements Producer
         if (method_exists($this->producer, 'flush')) {
             return $this->producer->flush($timeout);
         }
+
+        return null;
     }
 }

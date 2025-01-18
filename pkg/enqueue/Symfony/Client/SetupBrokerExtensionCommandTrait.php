@@ -18,7 +18,7 @@ trait SetupBrokerExtensionCommandTrait
     }
 
     /**
-     * @return ExtensionInterface
+     * @return ExtensionInterface|null
      */
     protected function getSetupBrokerExtension(InputInterface $input, DriverInterface $driver)
     {
