@@ -31,7 +31,7 @@ final class Resources
      *
      * @var array
      */
-    private static $knownConnections = null;
+    private static $knownConnections;
 
     private function __construct()
     {

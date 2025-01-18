@@ -13,7 +13,7 @@ use Stomp\Network\Observer\ServerAliveObserver;
 
 class StompConnectionFactory implements ConnectionFactory
 {
-    const SUPPORTED_SCHEMES = [
+    public const SUPPORTED_SCHEMES = [
         ExtensionType::ACTIVEMQ,
         ExtensionType::RABBITMQ,
         ExtensionType::ARTEMIS,
@@ -120,7 +120,7 @@ class StompConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('stomp' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf('The given DSN is not supported. Must start with "stomp:".'));
+            throw new \LogicException('The given DSN is not supported. Must start with "stomp:".');
         }
 
         $schemeExtension = current($dsn->getSchemeExtensions());

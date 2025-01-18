@@ -23,7 +23,6 @@ use Psr\Log\NullLogger;
 
 class DelayRedeliveredMessageExtensionTest extends TestCase
 {
-
     public function testShouldSendDelayedMessageAndRejectOriginalMessage()
     {
         $queue = new NullQueue('queue');

@@ -13,9 +13,6 @@ class WampProducerTest extends ProducerSpec
 {
     use WampExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createProducer()
     {
         return $this->buildWampContext()->createProducer();

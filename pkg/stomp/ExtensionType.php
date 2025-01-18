@@ -6,7 +6,7 @@ namespace Enqueue\Stomp;
 
 class ExtensionType
 {
-    const ACTIVEMQ = 'activemq';
-    const RABBITMQ = 'rabbitmq';
-    const ARTEMIS = 'artemis';
+    public const ACTIVEMQ = 'activemq';
+    public const RABBITMQ = 'rabbitmq';
+    public const ARTEMIS = 'artemis';
 }

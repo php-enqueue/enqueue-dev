@@ -21,12 +21,12 @@ class QueryBag
         return $this->query;
     }
 
-    public function getString(string $name, string $default = null): ?string
+    public function getString(string $name, ?string $default = null): ?string
     {
         return array_key_exists($name, $this->query) ? $this->query[$name] : $default;
     }
 
-    public function getDecimal(string $name, int $default = null): ?int
+    public function getDecimal(string $name, ?int $default = null): ?int
     {
         $value = $this->getString($name);
         if (null === $value) {
@@ -40,7 +40,7 @@ class QueryBag
         return (int) $value;
     }
 
-    public function getOctal(string $name, int $default = null): ?int
+    public function getOctal(string $name, ?int $default = null): ?int
     {
         $value = $this->getString($name);
         if (null === $value) {
@@ -54,7 +54,7 @@ class QueryBag
         return intval($value, 8);
     }
 
-    public function getFloat(string $name, float $default = null): ?float
+    public function getFloat(string $name, ?float $default = null): ?float
     {
         $value = $this->getString($name);
         if (null === $value) {
@@ -68,7 +68,7 @@ class QueryBag
         return (float) $value;
     }
 
-    public function getBool(string $name, bool $default = null): ?bool
+    public function getBool(string $name, ?bool $default = null): ?bool
     {
         $value = $this->getString($name);
         if (null === $value) {

@@ -11,13 +11,14 @@ use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
 
 /**
  * @group functional
+ *
  * @retry 5
  */
 class SqsSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
-    use SqsExtension;
-    use RetryTrait;
     use CreateSqsQueueTrait;
+    use RetryTrait;
+    use SqsExtension;
 
     /**
      * @var SqsContext

@@ -69,7 +69,7 @@ jobs:
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
-      - run: ./bin/php-cs-fixer fix --config=.php_cs.php --no-interaction --dry-run --diff -v --path-mode=intersection -- ${{ env.GIT_DIFF_FILTERED }}
+      - run: ./bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --no-interaction --dry-run --diff -v --path-mode=intersection -- ${{ env.GIT_DIFF_FILTERED }}
         if: env.GIT_DIFF_FILTERED
 
   unit_tests:

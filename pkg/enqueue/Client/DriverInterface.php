@@ -27,7 +27,7 @@ interface DriverInterface
      * Prepare broker for work.
      * Creates all required queues, exchanges, topics, bindings etc.
      */
-    public function setupBroker(LoggerInterface $logger = null): void;
+    public function setupBroker(?LoggerInterface $logger = null): void;
 
     public function getConfig(): Config;
 

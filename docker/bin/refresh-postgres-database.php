@@ -11,4 +11,4 @@ $dbalContext = (new DbalConnectionFactory($dsn))->createContext();
 $dbalContext->getDbalConnection()->getSchemaManager()->dropAndCreateDatabase('postgres');
 $dbalContext->createDataBaseTable();
 
-echo 'Postgresql Database is updated'.PHP_EOL;
+echo 'Postgresql Database is updated'.\PHP_EOL;

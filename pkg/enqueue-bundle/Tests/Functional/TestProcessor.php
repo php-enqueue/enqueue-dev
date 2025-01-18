@@ -9,7 +9,7 @@ use Interop\Queue\Processor;
 
 class TestProcessor implements Processor, TopicSubscriberInterface
 {
-    const TOPIC = 'test-topic';
+    public const TOPIC = 'test-topic';
 
     /**
      * @var Message

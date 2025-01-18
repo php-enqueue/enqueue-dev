@@ -20,7 +20,7 @@ trait RedisExtension
 
         $context = (new RedisConnectionFactory($config))->createContext();
 
-        //guard
+        // guard
         $this->assertInstanceOf(PhpRedis::class, $context->getRedis());
 
         return $context;
@@ -36,7 +36,7 @@ trait RedisExtension
 
         $context = (new RedisConnectionFactory($config))->createContext();
 
-        //guard
+        // guard
         $this->assertInstanceOf(PRedis::class, $context->getRedis());
 
         return $context;

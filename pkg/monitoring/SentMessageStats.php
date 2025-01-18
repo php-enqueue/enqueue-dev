@@ -48,7 +48,7 @@ class SentMessageStats implements Stats
         ?string $messageId,
         ?string $correlationId,
         array $headers,
-        array $properties
+        array $properties,
     ) {
         $this->timestampMs = $timestampMs;
         $this->destination = $destination;

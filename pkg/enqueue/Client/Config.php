@@ -4,13 +4,13 @@ namespace Enqueue\Client;
 
 class Config
 {
-    const TOPIC = 'enqueue.topic';
-    const COMMAND = 'enqueue.command';
-    const PROCESSOR = 'enqueue.processor';
-    const EXPIRE = 'enqueue.expire';
-    const PRIORITY = 'enqueue.priority';
-    const DELAY = 'enqueue.delay';
-    const CONTENT_TYPE = 'enqueue.content_type';
+    public const TOPIC = 'enqueue.topic';
+    public const COMMAND = 'enqueue.command';
+    public const PROCESSOR = 'enqueue.processor';
+    public const EXPIRE = 'enqueue.expire';
+    public const PRIORITY = 'enqueue.priority';
+    public const DELAY = 'enqueue.delay';
+    public const CONTENT_TYPE = 'enqueue.content_type';
 
     /**
      * @var string
@@ -66,7 +66,7 @@ class Config
         string $defaultQueue,
         string $routerProcessor,
         array $transportConfig,
-        array $driverConfig
+        array $driverConfig,
     ) {
         $this->prefix = trim($prefix);
         $this->app = trim($app);
@@ -153,15 +153,15 @@ class Config
     }
 
     public static function create(
-        string $prefix = null,
-        string $separator = null,
-        string $app = null,
-        string $routerTopic = null,
-        string $routerQueue = null,
-        string $defaultQueue = null,
-        string $routerProcessor = null,
+        ?string $prefix = null,
+        ?string $separator = null,
+        ?string $app = null,
+        ?string $routerTopic = null,
+        ?string $routerQueue = null,
+        ?string $defaultQueue = null,
+        ?string $routerProcessor = null,
         array $transportConfig = [],
-        array $driverConfig = []
+        array $driverConfig = [],
     ): self {
         return new static(
             $prefix ?: '',

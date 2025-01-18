@@ -37,7 +37,7 @@ echo " [x] Awaiting RPC requests\n";
 
 while (true) {
     if ($req = $consumer->receive()) {
-        $n = (int) ($req->getBody());
+        $n = (int) $req->getBody();
         echo ' [.] fib(', $n, ")\n";
 
         $msg = $context->createMessage((string) fib($n));

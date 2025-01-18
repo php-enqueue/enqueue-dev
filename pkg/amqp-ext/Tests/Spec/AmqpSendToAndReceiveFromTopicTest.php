@@ -13,9 +13,6 @@ use Interop\Queue\Spec\SendToAndReceiveFromTopicSpec;
  */
 class AmqpSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
@@ -24,8 +21,6 @@ class AmqpSendToAndReceiveFromTopicTest extends SendToAndReceiveFromTopicSpec
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
      */
     protected function createTopic(Context $context, $topicName)

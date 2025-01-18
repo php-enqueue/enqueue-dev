@@ -24,9 +24,6 @@ class FlushSpoolProducerListener implements EventSubscriberInterface
         $this->producer->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         $events = [];

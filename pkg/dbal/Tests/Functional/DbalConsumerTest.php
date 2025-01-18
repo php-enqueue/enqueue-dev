@@ -117,15 +117,15 @@ class DbalConsumerTest extends TestCase
 
         $this->context->getDbalConnection()->insert(
             $this->context->getTableName(), [
-            'id' => 'id',
-            'published_at' => '123',
-            'body' => 'expiredMessage',
-            'headers' => json_encode([]),
-            'properties' => json_encode([]),
-            'queue' => __METHOD__,
-            'redelivered' => 0,
-            'time_to_live' => time() - 10000,
-        ]);
+                'id' => 'id',
+                'published_at' => '123',
+                'body' => 'expiredMessage',
+                'headers' => json_encode([]),
+                'properties' => json_encode([]),
+                'queue' => __METHOD__,
+                'redelivered' => 0,
+                'time_to_live' => time() - 10000,
+            ]);
 
         $message = $context->createMessage('notExpiredMessage');
         $message->setRedelivered(false);

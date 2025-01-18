@@ -12,14 +12,11 @@ interface EventTransformer
      *
      * @return Message
      */
-    public function toMessage($eventName, Event $event = null);
+    public function toMessage($eventName, ?Event $event = null);
 
     /**
      * If you able to transform message back to event return it.
      * If you failed to transform for some reason you can return a string status.
-     *
-     * @param mixed $eventNAme
-     * @param mixed $eventName
      *
      * @return Event|string|object
      *

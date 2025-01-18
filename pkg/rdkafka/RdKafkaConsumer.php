@@ -71,7 +71,7 @@ class RdKafkaConsumer implements Consumer
         return $this->offset;
     }
 
-    public function setOffset(int $offset = null): void
+    public function setOffset(?int $offset = null): void
     {
         if ($this->subscribed) {
             throw new \LogicException('The consumer has already subscribed.');
@@ -167,11 +167,11 @@ class RdKafkaConsumer implements Consumer
         }
 
         switch ($kafkaMessage->err) {
-            case RD_KAFKA_RESP_ERR__PARTITION_EOF:
-            case RD_KAFKA_RESP_ERR__TIMED_OUT:
-            case RD_KAFKA_RESP_ERR__TRANSPORT:
+            case \RD_KAFKA_RESP_ERR__PARTITION_EOF:
+            case \RD_KAFKA_RESP_ERR__TIMED_OUT:
+            case \RD_KAFKA_RESP_ERR__TRANSPORT:
                 return null;
-            case RD_KAFKA_RESP_ERR_NO_ERROR:
+            case \RD_KAFKA_RESP_ERR_NO_ERROR:
                 $message = $this->serializer->toMessage($kafkaMessage->payload);
                 $message->setKey($kafkaMessage->key);
                 $message->setPartition($kafkaMessage->partition);

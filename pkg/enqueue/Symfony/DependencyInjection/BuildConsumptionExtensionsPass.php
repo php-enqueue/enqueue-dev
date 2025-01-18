@@ -43,7 +43,7 @@ final class BuildConsumptionExtensionsPass implements CompilerPassInterface
                 }
             }
 
-            krsort($groupByPriority, SORT_NUMERIC);
+            krsort($groupByPriority, \SORT_NUMERIC);
 
             $flatExtensions = [];
             foreach ($groupByPriority as $extension) {

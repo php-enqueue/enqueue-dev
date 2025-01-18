@@ -10,9 +10,6 @@ use Interop\Queue\Spec\TopicSpec;
  */
 class WampTopicTest extends TopicSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createTopic()
     {
         return new WampDestination(self::EXPECTED_TOPIC_NAME);

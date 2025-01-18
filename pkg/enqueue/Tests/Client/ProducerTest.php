@@ -3,7 +3,6 @@
 namespace Enqueue\Tests\Client;
 
 use Enqueue\Client\DriverInterface;
-use Enqueue\Client\ExtensionInterface;
 use Enqueue\Client\Producer;
 use Enqueue\Client\ProducerInterface;
 use Enqueue\Rpc\RpcFactory;

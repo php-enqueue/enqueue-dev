@@ -20,7 +20,6 @@ final class RunCommand implements \JsonSerializable
     private $options;
 
     /**
-     * @param string   $command
      * @param string[] $arguments
      * @param string[] $options
      */
@@ -64,12 +63,8 @@ final class RunCommand implements \JsonSerializable
     public static function jsonUnserialize(string $json): self
     {
         $data = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(sprintf(
-                'The malformed json given. Error %s and message %s',
-                json_last_error(),
-                json_last_error_msg()
-            ));
+        if (\JSON_ERROR_NONE !== json_last_error()) {
+            throw new \InvalidArgumentException(sprintf('The malformed json given. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
         return new self($data['command'], $data['arguments'], $data['options']);

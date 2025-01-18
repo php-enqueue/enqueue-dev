@@ -12,9 +12,6 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
  */
 class PheanstalkSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new PheanstalkConnectionFactory(getenv('BEANSTALKD_DSN'));
@@ -23,8 +20,7 @@ class PheanstalkSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueS
     }
 
     /**
-     * @param Context $context
-     * @param string  $queueName
+     * @param string $queueName
      *
      * @return Queue
      */

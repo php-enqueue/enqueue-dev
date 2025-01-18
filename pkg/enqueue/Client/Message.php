@@ -7,12 +7,12 @@ class Message
     /**
      * @const string
      */
-    const SCOPE_MESSAGE_BUS = 'enqueue.scope.message_bus';
+    public const SCOPE_MESSAGE_BUS = 'enqueue.scope.message_bus';
 
     /**
      * @const string
      */
-    const SCOPE_APP = 'enqueue.scope.app';
+    public const SCOPE_APP = 'enqueue.scope.app';
 
     /**
      * @var string|null
@@ -256,10 +256,8 @@ class Message
     }
 
     /**
-     * @param string $name
-     * @param mixed  $default
-     *
-     * @return mixed
+     * @param string     $name
+     * @param mixed|null $default
      */
     public function getHeader($name, $default = null)
     {
@@ -268,16 +266,12 @@ class Message
 
     /**
      * @param string $name
-     * @param mixed  $value
      */
     public function setHeader($name, $value)
     {
         $this->headers[$name] = $value;
     }
 
-    /**
-     * @param array $headers
-     */
     public function setHeaders(array $headers)
     {
         $this->headers = $headers;
@@ -291,19 +285,14 @@ class Message
         return $this->properties;
     }
 
-    /**
-     * @param array $properties
-     */
     public function setProperties(array $properties)
     {
         $this->properties = $properties;
     }
 
     /**
-     * @param string $name
-     * @param mixed  $default
-     *
-     * @return mixed
+     * @param string     $name
+     * @param mixed|null $default
      */
     public function getProperty($name, $default = null)
     {
@@ -312,7 +301,6 @@ class Message
 
     /**
      * @param string $name
-     * @param mixed  $value
      */
     public function setProperty($name, $value)
     {

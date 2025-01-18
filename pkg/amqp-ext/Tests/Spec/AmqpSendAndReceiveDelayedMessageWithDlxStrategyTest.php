@@ -13,9 +13,6 @@ use Interop\Queue\Spec\SendAndReceiveDelayedMessageFromQueueSpec;
  */
 class AmqpSendAndReceiveDelayedMessageWithDlxStrategyTest extends SendAndReceiveDelayedMessageFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
@@ -26,8 +23,6 @@ class AmqpSendAndReceiveDelayedMessageWithDlxStrategyTest extends SendAndReceive
 
     /**
      * @param AmqpContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

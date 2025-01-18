@@ -32,9 +32,6 @@ class StompHeadersEncoderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider headerValuesDataProvider
-     *
-     * @param mixed $originalValue
-     * @param mixed $encodedValue
      */
     public function testShouldEncodeHeaders($originalValue, $encodedValue)
     {
@@ -43,9 +40,6 @@ class StompHeadersEncoderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider propertyValuesDataProvider
-     *
-     * @param mixed $originalValue
-     * @param mixed $encodedValue
      */
     public function testShouldEncodeProperties($originalValue, $encodedValue)
     {
@@ -54,9 +48,6 @@ class StompHeadersEncoderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider headerValuesDataProvider
-     *
-     * @param mixed $originalValue
-     * @param mixed $encodedValue
      */
     public function testShouldDecodeHeaders($originalValue, $encodedValue)
     {
@@ -65,9 +56,6 @@ class StompHeadersEncoderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider propertyValuesDataProvider
-     *
-     * @param mixed $originalValue
-     * @param mixed $encodedValue
      */
     public function testShouldDecodeProperties($originalValue, $encodedValue)
     {

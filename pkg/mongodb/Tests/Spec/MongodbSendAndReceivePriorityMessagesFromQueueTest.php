@@ -34,8 +34,6 @@ class MongodbSendAndReceivePriorityMessagesFromQueueTest extends SendAndReceiveP
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MongodbContext $context
      *
      * @return MongodbMessage

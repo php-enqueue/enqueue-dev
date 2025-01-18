@@ -12,7 +12,7 @@ foreach ([__DIR__.'/../vendor/autoload.php', __DIR__.'/../../../vendor/autoload.
 if ($autoload) {
     require_once $autoload;
 } else {
-    throw new \LogicException('Composer autoload was not found');
+    throw new LogicException('Composer autoload was not found');
 }
 
 use Enqueue\Sqs\SqsConnectionFactory;
@@ -27,7 +27,7 @@ $context->declareQueue($queue);
 
 while (true) {
     $context->createProducer()->send($queue, $message);
-    echo 'Sent message: '.$message->getBody().PHP_EOL;
+    echo 'Sent message: '.$message->getBody().\PHP_EOL;
     sleep(1);
 }
 

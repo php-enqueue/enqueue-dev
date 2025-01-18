@@ -104,9 +104,6 @@ class ConnectionConfig
         $this->addSupportedScheme('amqps');
     }
 
-    /**
-     * @param string[] $extensions
-     */
     public function addSupportedScheme(string $schema): self
     {
         $this->supportedSchemes[] = $schema;
@@ -117,7 +114,6 @@ class ConnectionConfig
 
     /**
      * @param string $name
-     * @param mixed  $value
      *
      * @return self
      */
@@ -153,18 +149,18 @@ class ConnectionConfig
 
         $config = array_replace($this->defaultConfig, $config);
         $config['host'] = (string) $config['host'];
-        $config['port'] = (int) ($config['port']);
+        $config['port'] = (int) $config['port'];
         $config['user'] = (string) $config['user'];
         $config['pass'] = (string) $config['pass'];
-        $config['read_timeout'] = max((float) ($config['read_timeout']), 0);
-        $config['write_timeout'] = max((float) ($config['write_timeout']), 0);
-        $config['connection_timeout'] = max((float) ($config['connection_timeout']), 0);
-        $config['heartbeat'] = max((float) ($config['heartbeat']), 0);
+        $config['read_timeout'] = max((float) $config['read_timeout'], 0);
+        $config['write_timeout'] = max((float) $config['write_timeout'], 0);
+        $config['connection_timeout'] = max((float) $config['connection_timeout'], 0);
+        $config['heartbeat'] = max((float) $config['heartbeat'], 0);
         $config['persisted'] = !empty($config['persisted']);
         $config['lazy'] = !empty($config['lazy']);
         $config['qos_global'] = !empty($config['qos_global']);
-        $config['qos_prefetch_count'] = max((int) ($config['qos_prefetch_count']), 0);
-        $config['qos_prefetch_size'] = max((int) ($config['qos_prefetch_size']), 0);
+        $config['qos_prefetch_count'] = max((int) $config['qos_prefetch_count'], 0);
+        $config['qos_prefetch_size'] = max((int) $config['qos_prefetch_size'], 0);
         $config['ssl_on'] = !empty($config['ssl_on']);
         $config['ssl_verify'] = !empty($config['ssl_verify']);
         $config['ssl_cacert'] = (string) $config['ssl_cacert'];
@@ -346,10 +342,8 @@ class ConnectionConfig
     }
 
     /**
-     * @param string $name
-     * @param mixed  $default
-     *
-     * @return mixed
+     * @param string     $name
+     * @param mixed|null $default
      */
     public function getOption($name, $default = null)
     {
@@ -383,11 +377,7 @@ class ConnectionConfig
 
         $supportedSchemes = $this->supportedSchemes;
         if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be one of "%s".',
-                $dsn->getSchemeProtocol(),
-                implode('", "', $supportedSchemes)
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be one of "%s".', $dsn->getSchemeProtocol(), implode('", "', $supportedSchemes)));
         }
 
         $sslOn = false;
@@ -406,7 +396,7 @@ class ConnectionConfig
             'user' => $dsn->getUser(),
             'pass' => $dsn->getPassword(),
             'vhost' => null !== ($path = $dsn->getPath()) ?
-                (0 === strpos($path, '/') ? substr($path, 1) : $path)
+                (str_starts_with($path, '/') ? substr($path, 1) : $path)
                 : null,
             'read_timeout' => $dsn->getFloat('read_timeout'),
             'write_timeout' => $dsn->getFloat('write_timeout'),

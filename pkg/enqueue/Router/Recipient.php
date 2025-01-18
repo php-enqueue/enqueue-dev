@@ -17,10 +17,6 @@ class Recipient
      */
     private $message;
 
-    /**
-     * @param Destination    $destination
-     * @param InteropMessage $message
-     */
     public function __construct(Destination $destination, InteropMessage $message)
     {
         $this->destination = $destination;

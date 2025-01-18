@@ -37,9 +37,6 @@ class DependentJobProcessor implements Processor, TopicSubscriberInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(Message $message, Context $context)
     {
         $data = JSON::decode($message->getBody());

@@ -28,7 +28,7 @@ class SignalSocketHelper
             return;
         }
 
-        $signals = [SIGTERM, SIGQUIT, SIGINT];
+        $signals = [\SIGTERM, \SIGQUIT, \SIGINT];
 
         if ($this->handlers) {
             throw new \LogicException('The handlers property should be empty but it is not. The afterSocket method might not have been called.');
@@ -60,12 +60,12 @@ class SignalSocketHelper
             return;
         }
 
-        $signals = [SIGTERM, SIGQUIT, SIGINT];
+        $signals = [\SIGTERM, \SIGQUIT, \SIGINT];
 
         $this->wasThereSignal = null;
 
         foreach ($signals as $signal) {
-            $handler = isset($this->handlers[$signal]) ? $this->handlers[$signal] : SIG_DFL;
+            $handler = isset($this->handlers[$signal]) ? $this->handlers[$signal] : \SIG_DFL;
 
             pcntl_signal($signal, $handler);
         }
@@ -73,9 +73,6 @@ class SignalSocketHelper
         $this->handlers = [];
     }
 
-    /**
-     * @return bool
-     */
     public function wasThereSignal(): bool
     {
         return (bool) $this->wasThereSignal;

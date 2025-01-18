@@ -8,9 +8,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 trait QueueConsumerOptionsCommandTrait
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configureQueueConsumerOptions()
     {
         $this
@@ -18,10 +15,6 @@ trait QueueConsumerOptionsCommandTrait
         ;
     }
 
-    /**
-     * @param QueueConsumerInterface $consumer
-     * @param InputInterface         $input
-     */
     protected function setQueueConsumerOptions(QueueConsumerInterface $consumer, InputInterface $input)
     {
         if (null !== $receiveTimeout = $input->getOption('receive-timeout')) {

@@ -8,7 +8,7 @@ $kafkaStubsDir = __DIR__.'/../vendor/kwn/php-rdkafka-stubs';
 if (false == file_exists($kafkaStubsDir)) {
     $kafkaStubsDir = __DIR__.'/../../../vendor/kwn/php-rdkafka-stubs';
     if (false == file_exists($kafkaStubsDir)) {
-        throw new \LogicException('The kafka extension is not loaded and stubs could not be found as well');
+        throw new LogicException('The kafka extension is not loaded and stubs could not be found as well');
     }
 }
 

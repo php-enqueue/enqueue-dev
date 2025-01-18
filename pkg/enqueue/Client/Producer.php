@@ -27,7 +27,7 @@ final class Producer implements ProducerInterface
     public function __construct(
         DriverInterface $driver,
         RpcFactory $rpcFactory,
-        ExtensionInterface $extension = null
+        ?ExtensionInterface $extension = null,
     ) {
         $this->driver = $driver;
         $this->rpcFactory = $rpcFactory;
@@ -97,10 +97,7 @@ final class Producer implements ProducerInterface
     private function doSend(Message $message): void
     {
         if (false === is_string($message->getBody())) {
-            throw new \LogicException(sprintf(
-                'The message body must be string at this stage, got "%s". Make sure you passed string as message or there is an extension that converts custom input to string.',
-                is_object($message->getBody()) ? get_class($message->getBody()) : gettype($message->getBody())
-            ));
+            throw new \LogicException(sprintf('The message body must be string at this stage, got "%s". Make sure you passed string as message or there is an extension that converts custom input to string.', is_object($message->getBody()) ? get_class($message->getBody()) : gettype($message->getBody())));
         }
 
         if ($message->getProperty(Config::PROCESSOR)) {

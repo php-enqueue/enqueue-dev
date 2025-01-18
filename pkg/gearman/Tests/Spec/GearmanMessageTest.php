@@ -10,9 +10,6 @@ class GearmanMessageTest extends MessageSpec
 {
     use SkipIfGearmanExtensionIsNotInstalledTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createMessage()
     {
         return new GearmanMessage();

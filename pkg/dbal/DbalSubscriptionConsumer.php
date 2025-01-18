@@ -25,7 +25,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     private $subscribers;
 
     /**
-     * @var \Doctrine\DBAL\Connection
+     * @var Connection
      */
     private $dbal;
 
@@ -139,7 +139,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     public function subscribe(Consumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof DbalConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', DbalConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', DbalConsumer::class, $consumer::class));
         }
 
         $queueName = $consumer->getQueue()->getQueueName();
@@ -160,7 +160,7 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     public function unsubscribe(Consumer $consumer): void
     {
         if (false == $consumer instanceof DbalConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', DbalConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', DbalConsumer::class, $consumer::class));
         }
 
         $queueName = $consumer->getQueue()->getQueueName();

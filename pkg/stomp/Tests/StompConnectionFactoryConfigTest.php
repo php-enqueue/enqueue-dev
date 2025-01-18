@@ -41,9 +41,6 @@ class StompConnectionFactoryConfigTest extends TestCase
 
     /**
      * @dataProvider provideConfigs
-     *
-     * @param mixed $config
-     * @param mixed $expectedConfig
      */
     public function testShouldParseConfigurationAsExpected($config, $expectedConfig)
     {

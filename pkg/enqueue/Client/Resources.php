@@ -26,7 +26,7 @@ final class Resources
      *
      * @var array
      */
-    private static $knownDrivers = null;
+    private static $knownDrivers;
 
     private function __construct()
     {

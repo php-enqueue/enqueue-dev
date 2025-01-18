@@ -81,7 +81,7 @@ class SqsProducer implements Producer
     /**
      * @return SqsProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
@@ -96,7 +96,7 @@ class SqsProducer implements Producer
     /**
      * @return SqsProducer
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         if (null === $priority) {
             return $this;
@@ -113,7 +113,7 @@ class SqsProducer implements Producer
     /**
      * @return SqsProducer
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         if (null === $timeToLive) {
             return $this;

@@ -15,8 +15,6 @@ class AmqpSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscri
 {
     /**
      * @return AmqpContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -30,8 +28,6 @@ class AmqpSubscriptionConsumerConsumeFromAllSubscribedQueuesTest extends Subscri
 
     /**
      * @param AmqpContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

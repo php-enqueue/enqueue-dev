@@ -6,13 +6,13 @@ namespace Enqueue\Stomp;
 
 class StompHeadersEncoder
 {
-    const PROPERTY_PREFIX = '_property_';
-    const TYPE_PREFIX = '_type_';
-    const TYPE_STRING = 's';
-    const TYPE_INT = 'i';
-    const TYPE_FLOAT = 'f';
-    const TYPE_BOOL = 'b';
-    const TYPE_NULL = 'n';
+    public const PROPERTY_PREFIX = '_property_';
+    public const TYPE_PREFIX = '_type_';
+    public const TYPE_STRING = 's';
+    public const TYPE_INT = 'i';
+    public const TYPE_FLOAT = 'f';
+    public const TYPE_BOOL = 'b';
+    public const TYPE_NULL = 'n';
 
     public static function encode(array $headers = [], array $properties = []): array
     {
@@ -36,7 +36,7 @@ class StompHeadersEncoder
 
         // separate headers/properties
         foreach ($headers as $key => $value) {
-            if (0 === strpos($key, self::PROPERTY_PREFIX)) {
+            if (str_starts_with($key, self::PROPERTY_PREFIX)) {
                 $encodedProperties[substr($key, $prefixLength)] = $value;
             } else {
                 $encodedHeaders[$key] = $value;
@@ -94,7 +94,7 @@ class StompHeadersEncoder
 
         foreach ($headers as $key => $value) {
             // skip type header
-            if (0 === strpos($key, self::TYPE_PREFIX)) {
+            if (str_starts_with($key, self::TYPE_PREFIX)) {
                 continue;
             }
 

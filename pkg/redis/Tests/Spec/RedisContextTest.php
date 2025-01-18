@@ -13,9 +13,6 @@ class RedisContextTest extends ContextSpec
 {
     use RedisExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildPhpRedisContext();

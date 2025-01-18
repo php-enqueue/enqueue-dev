@@ -13,9 +13,6 @@ class MongodbContextTest extends ContextSpec
 {
     use MongodbExtensionTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildMongodbContext();

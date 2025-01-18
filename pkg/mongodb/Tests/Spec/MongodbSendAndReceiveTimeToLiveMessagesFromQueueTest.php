@@ -13,9 +13,6 @@ class MongodbSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiv
 {
     use MongodbExtensionTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->buildMongodbContext();

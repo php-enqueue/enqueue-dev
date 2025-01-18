@@ -39,8 +39,6 @@ class JSONTest extends TestCase
 
     /**
      * @dataProvider nonStringDataProvider
-     *
-     * @param mixed $value
      */
     public function testShouldThrowExceptionIfInputIsNotString($value)
     {

@@ -81,7 +81,7 @@ class DbalProducer implements Producer
         $delay = $message->getDeliveryDelay();
         if ($delay) {
             if (!is_int($delay)) {
-                throw new \LogicException(sprintf('Delay must be integer but got: "%s"', is_object($delay) ? get_class($delay) : gettype($delay)));
+                throw new \LogicException(sprintf('Delay must be integer but got: "%s"', is_object($delay) ? $delay::class : gettype($delay)));
             }
 
             if ($delay <= 0) {
@@ -94,7 +94,7 @@ class DbalProducer implements Producer
         $timeToLive = $message->getTimeToLive();
         if ($timeToLive) {
             if (!is_int($timeToLive)) {
-                throw new \LogicException(sprintf('TimeToLive must be integer but got: "%s"', is_object($timeToLive) ? get_class($timeToLive) : gettype($timeToLive)));
+                throw new \LogicException(sprintf('TimeToLive must be integer but got: "%s"', is_object($timeToLive) ? $timeToLive::class : gettype($timeToLive)));
             }
 
             if ($timeToLive <= 0) {
@@ -128,7 +128,7 @@ class DbalProducer implements Producer
         }
     }
 
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
@@ -140,7 +140,7 @@ class DbalProducer implements Producer
         return $this->deliveryDelay;
     }
 
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         $this->priority = $priority;
 
@@ -152,7 +152,7 @@ class DbalProducer implements Producer
         return $this->priority;
     }
 
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

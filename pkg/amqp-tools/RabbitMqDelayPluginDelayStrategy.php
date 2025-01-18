@@ -39,10 +39,7 @@ class RabbitMqDelayPluginDelayStrategy implements DelayStrategy
             $context->declareTopic($delayTopic);
             $context->bind(new AmqpBind($dest, $delayTopic, $delayMessage->getRoutingKey()));
         } else {
-            throw new InvalidDestinationException(sprintf('The destination must be an instance of %s but got %s.',
-                AmqpTopic::class.'|'.AmqpQueue::class,
-                get_class($dest)
-            ));
+            throw new InvalidDestinationException(sprintf('The destination must be an instance of %s but got %s.', AmqpTopic::class.'|'.AmqpQueue::class, $dest::class));
         }
 
         $producer = $context->createProducer();

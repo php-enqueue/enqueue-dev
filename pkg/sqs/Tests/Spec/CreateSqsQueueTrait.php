@@ -11,7 +11,7 @@ trait CreateSqsQueueTrait
 
     protected function createSqsQueue(SqsContext $context, string $queueName): SqsDestination
     {
-        $queueName = $queueName.time();
+        $queueName .= time();
 
         $this->queue = $context->createQueue($queueName);
         $context->declareQueue($this->queue);

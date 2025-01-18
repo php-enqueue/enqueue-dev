@@ -8,6 +8,7 @@ use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
 /**
  * @group functional
+ *
  * @retry 5
  */
 class SnsQsSendToTopicAndReceiveFromQueueSpec extends SendToTopicAndReceiveFromQueueSpec

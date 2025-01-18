@@ -84,7 +84,7 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
         }
 
         if ($timeout > 0) {
-            $timeout = $timeout / 1000;
+            $timeout /= 1000;
             $timeout = $timeout >= 0.1 ? $timeout : 0.1;
 
             $this->timer = $this->client->getLoop()->addTimer($timeout, function () {
@@ -100,14 +100,12 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param WampConsumer $consumer
      */
     public function subscribe(Consumer $consumer, callable $callback): void
     {
         if (false == $consumer instanceof WampConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', WampConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', WampConsumer::class, $consumer::class));
         }
 
         if ($this->client) {
@@ -127,14 +125,12 @@ class WampSubscriptionConsumer implements SubscriptionConsumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param WampConsumer $consumer
      */
     public function unsubscribe(Consumer $consumer): void
     {
         if (false == $consumer instanceof WampConsumer) {
-            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', WampConsumer::class, get_class($consumer)));
+            throw new \InvalidArgumentException(sprintf('The consumer must be instance of "%s" got "%s"', WampConsumer::class, $consumer::class));
         }
 
         if ($this->client) {

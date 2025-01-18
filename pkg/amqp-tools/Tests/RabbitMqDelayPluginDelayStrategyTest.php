@@ -192,7 +192,7 @@ class TestProducer implements AmqpProducer, DelayStrategy
     {
     }
 
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         throw new \BadMethodCallException('This should not be called directly');
     }
@@ -202,7 +202,7 @@ class TestProducer implements AmqpProducer, DelayStrategy
         throw new \BadMethodCallException('This should not be called directly');
     }
 
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         throw new \BadMethodCallException('This should not be called directly');
     }
@@ -212,7 +212,7 @@ class TestProducer implements AmqpProducer, DelayStrategy
         throw new \BadMethodCallException('This should not be called directly');
     }
 
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         throw new \BadMethodCallException('This should not be called directly');
     }

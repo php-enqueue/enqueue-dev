@@ -85,8 +85,6 @@ class SimpleClientTest extends TestCase
 
     /**
      * @dataProvider transportConfigDataProvider
-     *
-     * @param mixed $config
      */
     public function testSendEventWithOneSubscriber($config, string $timeLimit)
     {
@@ -125,8 +123,6 @@ class SimpleClientTest extends TestCase
 
     /**
      * @dataProvider transportConfigDataProvider
-     *
-     * @param mixed $config
      */
     public function testSendEventWithTwoSubscriber($config, string $timeLimit)
     {
@@ -168,8 +164,6 @@ class SimpleClientTest extends TestCase
 
     /**
      * @dataProvider transportConfigDataProvider
-     *
-     * @param mixed $config
      */
     public function testSendCommand($config, string $timeLimit)
     {

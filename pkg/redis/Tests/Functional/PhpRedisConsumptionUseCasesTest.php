@@ -32,9 +32,6 @@ class PhpRedisConsumptionUseCasesTest extends TestCase
         $this->context->close();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getContext()
     {
         return $this->context;

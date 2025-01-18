@@ -9,16 +9,16 @@ use Interop\Queue\Topic;
 
 class StompDestination implements Topic, Queue
 {
-    const TYPE_TOPIC = 'topic';
-    const TYPE_EXCHANGE = 'exchange';
-    const TYPE_QUEUE = 'queue';
-    const TYPE_AMQ_QUEUE = 'amq/queue';
-    const TYPE_TEMP_QUEUE = 'temp-queue';
-    const TYPE_REPLY_QUEUE = 'reply-queue';
+    public const TYPE_TOPIC = 'topic';
+    public const TYPE_EXCHANGE = 'exchange';
+    public const TYPE_QUEUE = 'queue';
+    public const TYPE_AMQ_QUEUE = 'amq/queue';
+    public const TYPE_TEMP_QUEUE = 'temp-queue';
+    public const TYPE_REPLY_QUEUE = 'reply-queue';
 
-    const HEADER_DURABLE = 'durable';
-    const HEADER_AUTO_DELETE = 'auto-delete';
-    const HEADER_EXCLUSIVE = 'exclusive';
+    public const HEADER_DURABLE = 'durable';
+    public const HEADER_AUTO_DELETE = 'auto-delete';
+    public const HEADER_EXCLUSIVE = 'exclusive';
 
     /**
      * @var string
@@ -122,7 +122,7 @@ class StompDestination implements Topic, Queue
         return $this->routingKey;
     }
 
-    public function setRoutingKey(string $routingKey = null): void
+    public function setRoutingKey(?string $routingKey = null): void
     {
         $this->routingKey = $routingKey;
     }

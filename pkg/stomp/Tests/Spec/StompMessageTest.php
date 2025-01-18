@@ -7,9 +7,6 @@ use Interop\Queue\Spec\MessageSpec;
 
 class StompMessageTest extends MessageSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createMessage()
     {
         return new StompMessage();

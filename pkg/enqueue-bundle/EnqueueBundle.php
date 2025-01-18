@@ -23,11 +23,11 @@ class EnqueueBundle extends Bundle
 {
     public function build(ContainerBuilder $container): void
     {
-        //transport passes
+        // transport passes
         $container->addCompilerPass(new BuildConsumptionExtensionsPass());
         $container->addCompilerPass(new BuildProcessorRegistryPass());
 
-        //client passes
+        // client passes
         $container->addCompilerPass(new BuildClientConsumptionExtensionsPass());
         $container->addCompilerPass(new BuildClientExtensionsPass());
         $container->addCompilerPass(new BuildClientTopicSubscriberRoutesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

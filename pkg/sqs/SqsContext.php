@@ -134,7 +134,7 @@ class SqsContext implements Context
      */
     public function getClient(): AwsSqsClient
     {
-        @trigger_error('The method is deprecated since 0.9.2. SqsContext::getAwsSqsClient() method should be used.', E_USER_DEPRECATED);
+        @trigger_error('The method is deprecated since 0.9.2. SqsContext::getAwsSqsClient() method should be used.', \E_USER_DEPRECATED);
 
         return $this->getAwsSqsClient();
     }

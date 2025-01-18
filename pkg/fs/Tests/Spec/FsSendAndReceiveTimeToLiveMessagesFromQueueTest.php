@@ -9,8 +9,6 @@ use Interop\Queue\Spec\SendAndReceiveTimeToLiveMessagesFromQueueSpec;
 class FsSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTimeToLiveMessagesFromQueueSpec
 {
     /**
-     * {@inheritdoc}
-     *
      * @return FsContext
      */
     protected function createContext()

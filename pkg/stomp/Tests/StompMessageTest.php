@@ -93,7 +93,7 @@ class StompMessageTest extends \PHPUnit\Framework\TestCase
 
         $message->setHeader('aHeader', 'aVal');
 
-        //guard
+        // guard
         $this->assertSame('aVal', $message->getHeader('aHeader'));
 
         $message->setHeader('aHeader', null);
@@ -108,7 +108,7 @@ class StompMessageTest extends \PHPUnit\Framework\TestCase
 
         $message->setProperty('aProperty', 'aVal');
 
-        //guard
+        // guard
         $this->assertSame('aVal', $message->getProperty('aProperty'));
 
         $message->setProperty('aProperty', null);

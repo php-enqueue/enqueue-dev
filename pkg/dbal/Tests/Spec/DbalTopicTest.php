@@ -7,9 +7,6 @@ use Interop\Queue\Spec\TopicSpec;
 
 class DbalTopicTest extends TopicSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createTopic()
     {
         return new DbalDestination(self::EXPECTED_TOPIC_NAME);

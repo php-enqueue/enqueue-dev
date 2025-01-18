@@ -19,9 +19,6 @@ class AmqpSslSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
         parent::test();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $baseDir = realpath(__DIR__.'/../../../../');
@@ -44,8 +41,6 @@ class AmqpSslSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
      */
     protected function createQueue(Context $context, $queueName)

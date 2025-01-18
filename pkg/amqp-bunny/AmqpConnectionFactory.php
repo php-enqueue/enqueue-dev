@@ -26,7 +26,7 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
     private $client;
 
     /**
-     * @see \Enqueue\AmqpTools\ConnectionConfig for possible config formats and values
+     * @see ConnectionConfig for possible config formats and values
      *
      * @param array|string|null $config
      */
@@ -89,10 +89,10 @@ class AmqpConnectionFactory implements InteropAmqpConnectionFactory, DelayStrate
             $bunnyConfig['timeout'] = $this->config->getConnectionTimeout();
 
             // @see https://github.com/php-enqueue/enqueue-dev/issues/229
-//            $bunnyConfig['persistent'] = $this->config->isPersisted();
-//            if ($this->config->isPersisted()) {
-//                $bunnyConfig['path'] = 'enqueue';//$this->config->getOption('path', $this->config->getOption('vhost'));
-//            }
+            //            $bunnyConfig['persistent'] = $this->config->isPersisted();
+            //            if ($this->config->isPersisted()) {
+            //                $bunnyConfig['path'] = 'enqueue';//$this->config->getOption('path', $this->config->getOption('vhost'));
+            //            }
 
             if ($this->config->getHeartbeat()) {
                 $bunnyConfig['heartbeat'] = $this->config->getHeartbeat();

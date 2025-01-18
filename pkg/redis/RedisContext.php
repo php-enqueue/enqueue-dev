@@ -38,7 +38,6 @@ class RedisContext implements Context
      * Callable must return instance of Redis once called.
      *
      * @param Redis|callable $redis
-     * @param int            $redeliveryDelay
      */
     public function __construct($redis, int $redeliveryDelay)
     {
@@ -47,11 +46,7 @@ class RedisContext implements Context
         } elseif (is_callable($redis)) {
             $this->redisFactory = $redis;
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The $redis argument must be either %s or callable that returns %s once called.',
-                Redis::class,
-                Redis::class
-            ));
+            throw new \InvalidArgumentException(sprintf('The $redis argument must be either %s or callable that returns %s once called.', Redis::class, Redis::class));
         }
 
         $this->redeliveryDelay = $redeliveryDelay;
@@ -159,11 +154,7 @@ class RedisContext implements Context
         if (false == $this->redis) {
             $redis = call_user_func($this->redisFactory);
             if (false == $redis instanceof Redis) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of %s. It returned %s',
-                    Redis::class,
-                    is_object($redis) ? get_class($redis) : gettype($redis)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of %s. It returned %s', Redis::class, is_object($redis) ? $redis::class : gettype($redis)));
             }
 
             $this->redis = $redis;

@@ -14,7 +14,7 @@ class FsContextTest extends TestCase
      */
     private $fsContext;
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $fs = new Filesystem();
         $fs->remove(sys_get_temp_dir().'/enqueue');

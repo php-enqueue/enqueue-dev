@@ -74,11 +74,7 @@ class FsConnectionFactory implements ConnectionFactory
 
         $supportedSchemes = ['file'];
         if (false == in_array($dsn->getSchemeProtocol(), $supportedSchemes, true)) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be one of "%s"',
-                $dsn->getSchemeProtocol(),
-                implode('", "', $supportedSchemes)
-            ));
+            throw new \LogicException(sprintf('The given scheme protocol "%s" is not supported. It must be one of "%s"', $dsn->getSchemeProtocol(), implode('", "', $supportedSchemes)));
         }
 
         return array_filter(array_replace($dsn->getQuery(), [

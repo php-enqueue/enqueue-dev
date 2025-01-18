@@ -84,7 +84,7 @@ class WampConsumer implements Consumer
         }
 
         if ($timeout > 0) {
-            $timeout = $timeout / 1000;
+            $timeout /= 1000;
             $timeout = $timeout >= 0.1 ? $timeout : 0.1;
 
             $this->timer = $this->client->getLoop()->addTimer($timeout, function () {
@@ -112,8 +112,6 @@ class WampConsumer implements Consumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param WampMessage $message
      */
     public function acknowledge(Message $message): void
@@ -122,8 +120,6 @@ class WampConsumer implements Consumer
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param WampMessage $message
      */
     public function reject(Message $message, bool $requeue = false): void

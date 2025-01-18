@@ -10,9 +10,6 @@ use Interop\Queue\Spec\Amqp\SendAndReceiveTimestampAsIntegerSpec;
  */
 class AmqpSendAndReceiveTimestampAsIntengerTest extends SendAndReceiveTimestampAsIntegerSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));

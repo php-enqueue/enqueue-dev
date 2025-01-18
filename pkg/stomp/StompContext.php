@@ -74,7 +74,7 @@ class StompContext implements Context
      */
     public function createQueue(string $name): Queue
     {
-        if (0 !== strpos($name, '/')) {
+        if (!str_starts_with($name, '/')) {
             $destination = new StompDestination($this->extensionType);
             $destination->setType(StompDestination::TYPE_QUEUE);
             $destination->setStompName($name);
@@ -101,7 +101,7 @@ class StompContext implements Context
      */
     public function createTopic(string $name): Topic
     {
-        if (0 !== strpos($name, '/')) {
+        if (!str_starts_with($name, '/')) {
             $destination = new StompDestination($this->extensionType);
             $destination->setType($this->useExchangePrefix ? StompDestination::TYPE_EXCHANGE : StompDestination::TYPE_TOPIC);
             $destination->setStompName($name);
@@ -130,7 +130,7 @@ class StompContext implements Context
 
         foreach ($types as $_type) {
             $typePrefix = '/'.$_type.'/';
-            if (0 === strpos($dest, $typePrefix)) {
+            if (str_starts_with($dest, $typePrefix)) {
                 $type = $_type;
                 $dest = substr($dest, strlen($typePrefix));
 
@@ -225,7 +225,7 @@ class StompContext implements Context
         $stomp = call_user_func($this->stompFactory);
 
         if (false == $stomp instanceof BufferedStompClient) {
-            throw new \LogicException(sprintf('The factory must return instance of BufferedStompClient. It returns %s', is_object($stomp) ? get_class($stomp) : gettype($stomp)));
+            throw new \LogicException(sprintf('The factory must return instance of BufferedStompClient. It returns %s', is_object($stomp) ? $stomp::class : gettype($stomp)));
         }
 
         return $stomp;

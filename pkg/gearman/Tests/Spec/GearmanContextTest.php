@@ -11,9 +11,6 @@ use Interop\Queue\Spec\ContextSpec;
  */
 class GearmanContextTest extends ContextSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return (new GearmanConnectionFactory(getenv('GEARMAN_DSN')))->createContext();

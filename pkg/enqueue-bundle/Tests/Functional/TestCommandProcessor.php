@@ -9,7 +9,7 @@ use Interop\Queue\Processor;
 
 class TestCommandProcessor implements Processor, CommandSubscriberInterface
 {
-    const COMMAND = 'test-command';
+    public const COMMAND = 'test-command';
 
     /**
      * @var Message

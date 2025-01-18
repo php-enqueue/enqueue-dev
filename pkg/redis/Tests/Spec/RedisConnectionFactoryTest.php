@@ -10,9 +10,6 @@ use Interop\Queue\Spec\ConnectionFactorySpec;
  */
 class RedisConnectionFactoryTest extends ConnectionFactorySpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createConnectionFactory()
     {
         return new RedisConnectionFactory();

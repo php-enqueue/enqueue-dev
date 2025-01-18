@@ -9,9 +9,6 @@ class VarExportTest extends TestCase
 {
     /**
      * @dataProvider provideValues
-     *
-     * @param mixed $value
-     * @param mixed $expected
      */
     public function testShouldConvertValueToStringUsingVarExportFunction($value, $expected)
     {

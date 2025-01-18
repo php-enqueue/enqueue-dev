@@ -10,9 +10,6 @@ use Interop\Queue\Spec\MessageSpec;
  */
 class RedisMessageTest extends MessageSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createMessage()
     {
         return new RedisMessage();

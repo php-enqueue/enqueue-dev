@@ -58,9 +58,9 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected function rollbackTransaction()
     {
-        //the error can be thrown during setUp
-        //It would be caught by phpunit and tearDown called.
-        //In this case we could not rollback since container may not exist.
+        // the error can be thrown during setUp
+        // It would be caught by phpunit and tearDown called.
+        // In this case we could not rollback since container may not exist.
         if (false == static::$container) {
             return;
         }

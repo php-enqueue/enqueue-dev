@@ -2,8 +2,6 @@
 
 namespace Enqueue\Test;
 
-use ReflectionProperty;
-
 trait ReadAttributeTrait
 {
     public function readAttribute(object $object, string $attribute)
@@ -19,14 +17,14 @@ trait ReadAttributeTrait
     private function getClassAttribute(
         object $object,
         string $attribute,
-        ?string $class = null
-    ): ReflectionProperty {
+        ?string $class = null,
+    ): \ReflectionProperty {
         if (null === $class) {
-            $class = get_class($object);
+            $class = $object::class;
         }
 
         try {
-            return new ReflectionProperty($class, $attribute);
+            return new \ReflectionProperty($class, $attribute);
         } catch (\ReflectionException $exception) {
             $parentClass = get_parent_class($object);
             if (false === $parentClass) {

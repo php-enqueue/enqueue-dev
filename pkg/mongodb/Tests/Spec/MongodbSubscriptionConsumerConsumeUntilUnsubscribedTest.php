@@ -20,8 +20,6 @@ class MongodbSubscriptionConsumerConsumeUntilUnsubscribedTest extends Subscripti
 
     /**
      * @return MongodbContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -30,8 +28,6 @@ class MongodbSubscriptionConsumerConsumeUntilUnsubscribedTest extends Subscripti
 
     /**
      * @param MongodbContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

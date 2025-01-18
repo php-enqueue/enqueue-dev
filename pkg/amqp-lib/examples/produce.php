@@ -12,7 +12,7 @@ foreach ([__DIR__.'/../vendor/autoload.php', __DIR__.'/../../../vendor/autoload.
 if ($autoload) {
     require_once $autoload;
 } else {
-    throw new \LogicException('Composer autoload was not found');
+    throw new LogicException('Composer autoload was not found');
 }
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
@@ -26,7 +26,7 @@ $context = $factory->createContext();
 $topic = $context->createTopic('test.amqp.ext');
 $topic->addFlag(AmqpTopic::FLAG_DURABLE);
 $topic->setType(AmqpTopic::TYPE_FANOUT);
-//$topic->setArguments(['alternate-exchange' => 'foo']);
+// $topic->setArguments(['alternate-exchange' => 'foo']);
 
 $context->deleteTopic($topic);
 $context->declareTopic($topic);

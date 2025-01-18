@@ -188,7 +188,7 @@ class RouterProcessorTest extends TestCase
 
         $result = $processor->process($message, new NullContext());
 
-        //guard
+        // guard
         $this->assertEquals(Result::ACK, $result->getStatus());
 
         $this->assertSame('theBody', $message->getBody());

@@ -12,9 +12,6 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
  */
 class AmqpSslSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $baseDir = realpath(__DIR__.'/../../../../');
@@ -37,8 +34,6 @@ class AmqpSslSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
      */
     protected function createQueue(Context $context, $queueName)

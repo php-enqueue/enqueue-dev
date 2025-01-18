@@ -1,6 +1,6 @@
 <?php
 
-namespace  Enqueue\Client\Driver;
+namespace Enqueue\Client\Driver;
 
 use Enqueue\Fs\FsContext;
 use Enqueue\Fs\FsDestination;
@@ -18,7 +18,7 @@ class FsDriver extends GenericDriver
         parent::__construct($context, ...$args);
     }
 
-    public function setupBroker(LoggerInterface $logger = null): void
+    public function setupBroker(?LoggerInterface $logger = null): void
     {
         $logger = $logger ?: new NullLogger();
         $log = function ($text, ...$args) use ($logger) {

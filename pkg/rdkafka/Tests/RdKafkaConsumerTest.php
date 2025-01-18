@@ -32,7 +32,7 @@ class RdKafkaConsumerTest extends TestCase
         $destination = new RdKafkaTopic('dest');
 
         $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+        $kafkaMessage->err = \RD_KAFKA_RESP_ERR__TIMED_OUT;
 
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
@@ -61,7 +61,7 @@ class RdKafkaConsumerTest extends TestCase
         $destination = new RdKafkaTopic('dest');
 
         $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+        $kafkaMessage->err = \RD_KAFKA_RESP_ERR__TIMED_OUT;
 
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
@@ -91,7 +91,7 @@ class RdKafkaConsumerTest extends TestCase
         $destination = new RdKafkaTopic('dest');
 
         $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+        $kafkaMessage->err = \RD_KAFKA_RESP_ERR__TIMED_OUT;
 
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
@@ -122,7 +122,7 @@ class RdKafkaConsumerTest extends TestCase
         $destination->setPartition(1);
 
         $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+        $kafkaMessage->err = \RD_KAFKA_RESP_ERR__TIMED_OUT;
 
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
@@ -154,7 +154,7 @@ class RdKafkaConsumerTest extends TestCase
         $destination = new RdKafkaTopic('dest');
 
         $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR__TIMED_OUT;
+        $kafkaMessage->err = \RD_KAFKA_RESP_ERR__TIMED_OUT;
 
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
@@ -188,7 +188,7 @@ class RdKafkaConsumerTest extends TestCase
         $expectedMessage = new RdKafkaMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
 
         $kafkaMessage = new Message();
-        $kafkaMessage->err = RD_KAFKA_RESP_ERR_NO_ERROR;
+        $kafkaMessage->err = \RD_KAFKA_RESP_ERR_NO_ERROR;
         $kafkaMessage->payload = 'theSerializedMessage';
 
         $kafkaConsumer = $this->createKafkaConsumerMock();

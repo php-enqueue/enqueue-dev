@@ -66,7 +66,7 @@ class Dsn
         ?int $port,
         ?string $path,
         ?string $queryString,
-        array $query
+        array $query,
     ) {
         $this->scheme = $scheme;
         $this->schemeProtocol = $schemeProtocol;
@@ -140,27 +140,27 @@ class Dsn
         return $this->queryBag->toArray();
     }
 
-    public function getString(string $name, string $default = null): ?string
+    public function getString(string $name, ?string $default = null): ?string
     {
         return $this->queryBag->getString($name, $default);
     }
 
-    public function getDecimal(string $name, int $default = null): ?int
+    public function getDecimal(string $name, ?int $default = null): ?int
     {
         return $this->queryBag->getDecimal($name, $default);
     }
 
-    public function getOctal(string $name, int $default = null): ?int
+    public function getOctal(string $name, ?int $default = null): ?int
     {
         return $this->queryBag->getOctal($name, $default);
     }
 
-    public function getFloat(string $name, float $default = null): ?float
+    public function getFloat(string $name, ?float $default = null): ?float
     {
         return $this->queryBag->getFloat($name, $default);
     }
 
-    public function getBool(string $name, bool $default = null): ?bool
+    public function getBool(string $name, ?bool $default = null): ?bool
     {
         return $this->queryBag->getBool($name, $default);
     }
@@ -192,14 +192,12 @@ class Dsn
     }
 
     /**
-     * @param string $dsn
-     *
      * @return Dsn[]
      */
     public static function parse(string $dsn): array
     {
-        if (false === strpos($dsn, ':')) {
-            throw new \LogicException(sprintf('The DSN is invalid. It does not have scheme separator ":".'));
+        if (!str_contains($dsn, ':')) {
+            throw new \LogicException('The DSN is invalid. It does not have scheme separator ":".');
         }
 
         list($scheme, $dsnWithoutScheme) = explode(':', $dsn, 2);
@@ -215,28 +213,28 @@ class Dsn
         unset($schemeParts[0]);
         $schemeExtensions = array_values($schemeParts);
 
-        $user = parse_url($dsn, PHP_URL_USER) ?: null;
+        $user = parse_url($dsn, \PHP_URL_USER) ?: null;
         if (is_string($user)) {
             $user = rawurldecode($user);
         }
 
-        $password = parse_url($dsn, PHP_URL_PASS) ?: null;
+        $password = parse_url($dsn, \PHP_URL_PASS) ?: null;
         if (is_string($password)) {
             $password = rawurldecode($password);
         }
 
-        $path = parse_url($dsn, PHP_URL_PATH) ?: null;
+        $path = parse_url($dsn, \PHP_URL_PATH) ?: null;
         if ($path) {
             $path = rawurldecode($path);
         }
 
         $query = [];
-        $queryString = parse_url($dsn, PHP_URL_QUERY) ?: null;
+        $queryString = parse_url($dsn, \PHP_URL_QUERY) ?: null;
         if (is_string($queryString)) {
-            $query = self::httpParseQuery($queryString, '&', PHP_QUERY_RFC3986);
+            $query = self::httpParseQuery($queryString, '&', \PHP_QUERY_RFC3986);
         }
         $hostsPorts = '';
-        if (0 === strpos($dsnWithoutScheme, '//')) {
+        if (str_starts_with($dsnWithoutScheme, '//')) {
             $dsnWithoutScheme = substr($dsnWithoutScheme, 2);
             $dsnWithoutUserPassword = explode('@', $dsnWithoutScheme, 2);
             $dsnWithoutUserPassword = 2 === count($dsnWithoutUserPassword) ?
@@ -299,7 +297,7 @@ class Dsn
     /**
      * based on http://php.net/manual/en/function.parse-str.php#119484 with some slight modifications.
      */
-    private static function httpParseQuery(string $queryString, string $argSeparator = '&', int $decType = PHP_QUERY_RFC1738): array
+    private static function httpParseQuery(string $queryString, string $argSeparator = '&', int $decType = \PHP_QUERY_RFC1738): array
     {
         $result = [];
         $parts = explode($argSeparator, $queryString);
@@ -308,11 +306,11 @@ class Dsn
             list($paramName, $paramValue) = explode('=', $part, 2);
 
             switch ($decType) {
-                case PHP_QUERY_RFC3986:
+                case \PHP_QUERY_RFC3986:
                     $paramName = rawurldecode($paramName);
                     $paramValue = rawurldecode($paramValue);
                     break;
-                case PHP_QUERY_RFC1738:
+                case \PHP_QUERY_RFC1738:
                 default:
                     $paramName = urldecode($paramName);
                     $paramValue = urldecode($paramValue);

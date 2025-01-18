@@ -46,7 +46,7 @@ class PheanstalkConsumerTest extends TestCase
     public function testShouldReceiveFromQueueAndReturnMessageIfMessageInQueue()
     {
         $destination = new PheanstalkDestination('theQueueName');
-        $message = new  PheanstalkMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
+        $message = new PheanstalkMessage('theBody', ['foo' => 'fooVal'], ['bar' => 'barVal']);
 
         $job = new Job('theJobId', json_encode($message));
 

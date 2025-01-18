@@ -12,9 +12,6 @@ use Interop\Queue\Spec\SendAndReceiveTimeToLiveMessagesFromQueueSpec;
  */
 class AmqpSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTimeToLiveMessagesFromQueueSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
@@ -23,8 +20,6 @@ class AmqpSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTi
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
      */
     protected function createQueue(Context $context, $queueName)

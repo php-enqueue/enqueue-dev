@@ -63,10 +63,10 @@ final class QueueConsumer implements QueueConsumerInterface
      */
     public function __construct(
         InteropContext $interopContext,
-        ExtensionInterface $extension = null,
+        ?ExtensionInterface $extension = null,
         array $boundProcessors = [],
-        LoggerInterface $logger = null,
-        int $receiveTimeout = 10000
+        ?LoggerInterface $logger = null,
+        int $receiveTimeout = 10000,
     ) {
         $this->interopContext = $interopContext;
         $this->receiveTimeout = $receiveTimeout;
@@ -122,7 +122,7 @@ final class QueueConsumer implements QueueConsumerInterface
         return $this->bind($queue, new CallbackProcessor($processor));
     }
 
-    public function consume(ExtensionInterface $runtimeExtension = null): void
+    public function consume(?ExtensionInterface $runtimeExtension = null): void
     {
         $extension = $runtimeExtension ?
             new ChainExtension([$this->staticExtension, $runtimeExtension]) :
@@ -195,7 +195,7 @@ final class QueueConsumer implements QueueConsumerInterface
             if (null === $result) {
                 try {
                     $result = $processor->process($message, $this->interopContext);
-                } catch (\Exception | \Throwable $e) {
+                } catch (\Exception|\Throwable $e) {
                     $result = $this->onProcessorException($extension, $consumer, $message, $e, $receivedAt);
                 }
             }
@@ -278,15 +278,13 @@ final class QueueConsumer implements QueueConsumerInterface
 
     /**
      * @internal
-     *
-     * @param SubscriptionConsumer $fallbackSubscriptionConsumer
      */
     public function setFallbackSubscriptionConsumer(SubscriptionConsumer $fallbackSubscriptionConsumer): void
     {
         $this->fallbackSubscriptionConsumer = $fallbackSubscriptionConsumer;
     }
 
-    private function onEnd(ExtensionInterface $extension, int $startTime, ?int $exitStatus = null, SubscriptionConsumer $subscriptionConsumer = null): void
+    private function onEnd(ExtensionInterface $extension, int $startTime, ?int $exitStatus = null, ?SubscriptionConsumer $subscriptionConsumer = null): void
     {
         $endTime = (int) (microtime(true) * 1000);
 

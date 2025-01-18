@@ -51,7 +51,7 @@ class PreSendTest extends TestCase
             $this->createDriverMock()
         );
 
-        //guard
+        // guard
         $this->assertSame('aCommandOrTopic', $context->getTopic());
 
         $context->changeTopic('theChangedTopic');
@@ -68,7 +68,7 @@ class PreSendTest extends TestCase
             $this->createDriverMock()
         );
 
-        //guard
+        // guard
         $this->assertSame('aCommandOrTopic', $context->getCommand());
 
         $context->changeCommand('theChangedCommand');
@@ -85,7 +85,7 @@ class PreSendTest extends TestCase
             $this->createDriverMock()
         );
 
-        //guard
+        // guard
         $this->assertSame('aBody', $context->getMessage()->getBody());
         $this->assertNull($context->getMessage()->getContentType());
 

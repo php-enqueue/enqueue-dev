@@ -89,7 +89,7 @@ class FsMessageTest extends \PHPUnit\Framework\TestCase
 
         $json = json_encode($message);
 
-        //guard
+        // guard
         $this->assertNotEmpty($json);
 
         $unserializedMessage = FsMessage::jsonUnserialize($json);

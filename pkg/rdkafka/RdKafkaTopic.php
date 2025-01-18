@@ -50,7 +50,7 @@ class RdKafkaTopic implements Topic, Queue
         return $this->conf;
     }
 
-    public function setConf(TopicConf $conf = null): void
+    public function setConf(?TopicConf $conf = null): void
     {
         $this->conf = $conf;
     }
@@ -60,7 +60,7 @@ class RdKafkaTopic implements Topic, Queue
         return $this->partition;
     }
 
-    public function setPartition(int $partition = null): void
+    public function setPartition(?int $partition = null): void
     {
         $this->partition = $partition;
     }
@@ -70,7 +70,7 @@ class RdKafkaTopic implements Topic, Queue
         return $this->key;
     }
 
-    public function setKey(string $key = null): void
+    public function setKey(?string $key = null): void
     {
         $this->key = $key;
     }

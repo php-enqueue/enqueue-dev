@@ -48,7 +48,7 @@ class PheanstalkProducer implements Producer
         InvalidMessageException::assertMessageInstanceOf($message, PheanstalkMessage::class);
 
         $rawMessage = json_encode($message);
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (\JSON_ERROR_NONE !== json_last_error()) {
             throw new \InvalidArgumentException(sprintf('Could not encode value into json. Error %s and message %s', json_last_error(), json_last_error_msg()));
         }
 
@@ -73,7 +73,7 @@ class PheanstalkProducer implements Producer
     /**
      * @return PheanstalkProducer
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): Producer
+    public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
         $this->deliveryDelay = $deliveryDelay;
 
@@ -88,7 +88,7 @@ class PheanstalkProducer implements Producer
     /**
      * @return PheanstalkProducer
      */
-    public function setPriority(int $priority = null): Producer
+    public function setPriority(?int $priority = null): Producer
     {
         $this->priority = $priority;
 
@@ -103,7 +103,7 @@ class PheanstalkProducer implements Producer
     /**
      * @return PheanstalkProducer
      */
-    public function setTimeToLive(int $timeToLive = null): Producer
+    public function setTimeToLive(?int $timeToLive = null): Producer
     {
         $this->timeToLive = $timeToLive;
 

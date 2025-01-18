@@ -103,9 +103,6 @@ class BufferedStompClient extends Client
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function disconnect($sync = false)
     {
         parent::disconnect($sync);

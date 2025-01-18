@@ -112,7 +112,7 @@ class FsConsumer implements Consumer
             while ($count) {
                 $frame = $this->readFrame($file, 1);
 
-                //guards
+                // guards
                 if ($frame && false == ('|' == $frame[0] || ' ' == $frame[0])) {
                     throw new \LogicException(sprintf('The frame could start from either " " or "|". The malformed frame starts with "%s".', $frame[0]));
                 }
@@ -188,13 +188,13 @@ class FsConsumer implements Consumer
         $frameSize = 64;
         $offset = $frameNumber * $frameSize;
 
-        fseek($file, -$offset, SEEK_END);
+        fseek($file, -$offset, \SEEK_END);
         $frame = fread($file, $frameSize);
         if ('' == $frame) {
             return '';
         }
 
-        if (false !== strpos($frame, '|{')) {
+        if (str_contains($frame, '|{')) {
             return $frame;
         }
 

@@ -15,8 +15,6 @@ class AmqpSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopOn
 {
     /**
      * @return AmqpContext
-     *
-     * {@inheritdoc}
      */
     protected function createContext()
     {
@@ -30,8 +28,6 @@ class AmqpSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopOn
 
     /**
      * @param AmqpContext $context
-     *
-     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {

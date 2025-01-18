@@ -6,7 +6,7 @@ namespace Enqueue\Sns;
 
 class SnsSubscribe
 {
-    const PROTOCOL_SQS = 'sqs';
+    public const PROTOCOL_SQS = 'sqs';
 
     /**
      * @var SnsDestination
@@ -23,14 +23,8 @@ class SnsSubscribe
      */
     private $protocol;
 
-    /**
-     * @var
-     */
     private $returnSubscriptionArn;
 
-    /**
-     * @var
-     */
     private $attributes;
 
     public function __construct(
@@ -38,7 +32,7 @@ class SnsSubscribe
         string $endpoint,
         string $protocol,
         bool $returnSubscriptionArn = false,
-        array $attributes = []
+        array $attributes = [],
     ) {
         $this->topic = $topic;
         $this->endpoint = $endpoint;

@@ -10,9 +10,6 @@ use Interop\Queue\Spec\MessageSpec;
  */
 class WampMessageTest extends MessageSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createMessage()
     {
         return new WampMessage();

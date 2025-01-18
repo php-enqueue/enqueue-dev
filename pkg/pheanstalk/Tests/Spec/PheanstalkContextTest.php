@@ -8,9 +8,6 @@ use Pheanstalk\Pheanstalk;
 
 class PheanstalkContextTest extends ContextSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return new PheanstalkContext($this->createMock(Pheanstalk::class));

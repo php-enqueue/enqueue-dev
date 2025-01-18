@@ -92,7 +92,7 @@ class DbalConnectionFactory implements ConnectionFactory
         return $this->connection;
     }
 
-    private function parseDsn(string $dsn, array $config = null): array
+    private function parseDsn(string $dsn, ?array $config = null): array
     {
         $parsedDsn = Dsn::parseFirst($dsn);
 

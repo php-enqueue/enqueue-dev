@@ -37,7 +37,7 @@ class JsonSerializerTest extends TestCase
 
         $resource = fopen(__FILE__, 'r');
 
-        //guard
+        // guard
         $this->assertIsResource($resource);
 
         $message = new RedisMessage('theBody', ['aProp' => $resource]);

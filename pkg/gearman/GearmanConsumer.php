@@ -27,8 +27,6 @@ class GearmanConsumer implements Consumer
 
     /**
      * Message content.
-     *
-     * @var mixed
      */
     private $message;
 

@@ -21,7 +21,7 @@ class SimpleRegistryTest extends TestCase
     public function testShouldAllowGetTransportNameByEventName()
     {
         $registry = new SimpleRegistry([
-                'fooEvent' => 'fooTrans',
+            'fooEvent' => 'fooTrans',
         ], []);
 
         $this->assertEquals('fooTrans', $registry->getTransformerNameForEvent('fooEvent'));

@@ -97,7 +97,7 @@ class NullMessage implements Message
         $this->redelivered = $redelivered;
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $headers = $this->getHeaders();
         $headers['correlation_id'] = (string) $correlationId;
@@ -110,7 +110,7 @@ class NullMessage implements Message
         return $this->getHeader('correlation_id');
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $headers = $this->getHeaders();
         $headers['message_id'] = (string) $messageId;
@@ -130,7 +130,7 @@ class NullMessage implements Message
         return null === $value ? null : (int) $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $headers = $this->getHeaders();
         $headers['timestamp'] = (int) $timestamp;
@@ -138,7 +138,7 @@ class NullMessage implements Message
         $this->setHeaders($headers);
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }

@@ -20,9 +20,6 @@ class LimitConsumedMessagesExtension implements PreConsumeExtensionInterface, Po
      */
     protected $messageConsumed;
 
-    /**
-     * @param int $messageLimit
-     */
     public function __construct(int $messageLimit)
     {
         $this->messageLimit = $messageLimit;

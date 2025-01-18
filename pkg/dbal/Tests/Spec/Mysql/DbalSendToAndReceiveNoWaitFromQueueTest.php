@@ -11,9 +11,6 @@ class DbalSendToAndReceiveNoWaitFromQueueTest extends SendToAndReceiveNoWaitFrom
 {
     use CreateDbalContextTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->createDbalContext();

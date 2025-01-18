@@ -67,11 +67,6 @@ class DbalMessage implements Message
      */
     private $publishedAt;
 
-    /**
-     * @param string $body
-     * @param array  $properties
-     * @param array  $headers
-     */
     public function __construct(string $body = '', array $properties = [], array $headers = [])
     {
         $this->body = $body;
@@ -144,7 +139,7 @@ class DbalMessage implements Message
         $this->redelivered = $redelivered;
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply_to', $replyTo);
     }
@@ -159,7 +154,7 @@ class DbalMessage implements Message
         return $this->priority;
     }
 
-    public function setPriority(int $priority = null): void
+    public function setPriority(?int $priority = null): void
     {
         $this->priority = $priority;
     }
@@ -172,14 +167,11 @@ class DbalMessage implements Message
     /**
      * Set delay in milliseconds.
      */
-    public function setDeliveryDelay(int $deliveryDelay = null): void
+    public function setDeliveryDelay(?int $deliveryDelay = null): void
     {
         $this->deliveryDelay = $deliveryDelay;
     }
 
-    /**
-     * @return int
-     */
     public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
@@ -188,12 +180,12 @@ class DbalMessage implements Message
     /**
      * Set time to live in milliseconds.
      */
-    public function setTimeToLive(int $timeToLive = null): void
+    public function setTimeToLive(?int $timeToLive = null): void
     {
         $this->timeToLive = $timeToLive;
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $this->setHeader('correlation_id', $correlationId);
     }
@@ -203,7 +195,7 @@ class DbalMessage implements Message
         return $this->getHeader('correlation_id', null);
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $this->setHeader('message_id', $messageId);
     }
@@ -220,7 +212,7 @@ class DbalMessage implements Message
         return null === $value ? null : $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
@@ -240,7 +232,7 @@ class DbalMessage implements Message
         return $this->redeliverAfter;
     }
 
-    public function setRedeliverAfter(int $redeliverAfter = null): void
+    public function setRedeliverAfter(?int $redeliverAfter = null): void
     {
         $this->redeliverAfter = $redeliverAfter;
     }
@@ -250,7 +242,7 @@ class DbalMessage implements Message
         return $this->publishedAt;
     }
 
-    public function setPublishedAt(int $publishedAt = null): void
+    public function setPublishedAt(?int $publishedAt = null): void
     {
         $this->publishedAt = $publishedAt;
     }

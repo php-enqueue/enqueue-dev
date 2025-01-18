@@ -19,20 +19,14 @@ class RpcClient
      */
     private $rpcFactory;
 
-    /**
-     * @param Context    $context
-     * @param RpcFactory $promiseFactory
-     */
-    public function __construct(Context $context, RpcFactory $promiseFactory = null)
+    public function __construct(Context $context, ?RpcFactory $promiseFactory = null)
     {
         $this->context = $context;
         $this->rpcFactory = $promiseFactory ?: new RpcFactory($context);
     }
 
     /**
-     * @param Destination    $destination
-     * @param InteropMessage $message
-     * @param int            $timeout
+     * @param int $timeout
      *
      * @throws TimeoutException if the wait timeout is reached
      *
@@ -44,9 +38,7 @@ class RpcClient
     }
 
     /**
-     * @param Destination    $destination
-     * @param InteropMessage $message
-     * @param int            $timeout
+     * @param int $timeout
      *
      * @return Promise
      */

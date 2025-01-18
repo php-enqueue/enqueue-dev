@@ -142,7 +142,7 @@ class JobStorageTest extends WebTestCase
     }
 
     /**
-     * @return \Enqueue\JobQueue\Doctrine\JobStorage
+     * @return JobStorage
      */
     private function getJobStorage()
     {

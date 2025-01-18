@@ -124,7 +124,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
         $this->assertFalse($context->isExecutionInterrupted());
 
         // test
-        $extension = new LimitConsumerMemoryExtension(PHP_INT_MAX);
+        $extension = new LimitConsumerMemoryExtension(\PHP_INT_MAX);
         $extension->onPreConsume($context);
 
         $this->assertFalse($context->isExecutionInterrupted());
@@ -145,7 +145,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
         $this->assertFalse($postConsume->isExecutionInterrupted());
 
         // test
-        $extension = new LimitConsumerMemoryExtension(PHP_INT_MAX);
+        $extension = new LimitConsumerMemoryExtension(\PHP_INT_MAX);
         $extension->onPostConsume($postConsume);
 
         $this->assertFalse($postConsume->isExecutionInterrupted());
@@ -166,7 +166,7 @@ class LimitConsumerMemoryExtensionTest extends TestCase
         $this->assertFalse($postReceivedMessage->isExecutionInterrupted());
 
         // test
-        $extension = new LimitConsumerMemoryExtension(PHP_INT_MAX);
+        $extension = new LimitConsumerMemoryExtension(\PHP_INT_MAX);
         $extension->onPostMessageReceived($postReceivedMessage);
 
         $this->assertFalse($postReceivedMessage->isExecutionInterrupted());

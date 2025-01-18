@@ -52,11 +52,7 @@ class GpsContext implements Context
         } elseif (is_callable($client)) {
             $this->clientFactory = $client;
         } else {
-            throw new \InvalidArgumentException(sprintf(
-                'The $client argument must be either %s or callable that returns %s once called.',
-                PubSubClient::class,
-                PubSubClient::class
-            ));
+            throw new \InvalidArgumentException(sprintf('The $client argument must be either %s or callable that returns %s once called.', PubSubClient::class, PubSubClient::class));
         }
     }
 
@@ -148,11 +144,7 @@ class GpsContext implements Context
         if (false == $this->client) {
             $client = call_user_func($this->clientFactory);
             if (false == $client instanceof PubSubClient) {
-                throw new \LogicException(sprintf(
-                    'The factory must return instance of %s. It returned %s',
-                    PubSubClient::class,
-                    is_object($client) ? get_class($client) : gettype($client)
-                ));
+                throw new \LogicException(sprintf('The factory must return instance of %s. It returned %s', PubSubClient::class, is_object($client) ? $client::class : gettype($client)));
             }
 
             $this->client = $client;

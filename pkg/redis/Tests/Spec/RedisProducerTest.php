@@ -13,9 +13,6 @@ class RedisProducerTest extends ProducerSpec
 {
     use RedisExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createProducer()
     {
         return $this->buildPhpRedisContext()->createProducer();

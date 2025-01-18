@@ -26,9 +26,6 @@ class JobRunner extends BaseJobRunner
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function runUnique($ownerId, $jobName, \Closure $runCallback)
     {
         $this->runUniqueJobs[] = ['ownerId' => $ownerId, 'jobName' => $jobName, 'runCallback' => $runCallback];
@@ -36,11 +33,6 @@ class JobRunner extends BaseJobRunner
         return call_user_func($runCallback, $this, new Job());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return mixed
-     */
     public function createDelayed($jobName, \Closure $startCallback)
     {
         $this->createDelayedJobs[] = ['jobName' => $jobName, 'runCallback' => $startCallback];
@@ -48,11 +40,6 @@ class JobRunner extends BaseJobRunner
         return call_user_func($startCallback, $this, new Job());
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return mixed
-     */
     public function runDelayed($jobId, \Closure $runCallback)
     {
         $this->runDelayedJobs[] = ['jobId' => $jobId, 'runCallback' => $runCallback];

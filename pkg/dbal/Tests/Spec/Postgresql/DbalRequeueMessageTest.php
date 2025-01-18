@@ -11,9 +11,6 @@ class DbalRequeueMessageTest extends RequeueMessageSpec
 {
     use CreateDbalContextTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createContext()
     {
         return $this->createDbalContext();

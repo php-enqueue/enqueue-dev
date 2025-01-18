@@ -91,7 +91,7 @@ trait CommonUseCasesTrait
 
         $consumer = $this->getContext()->createConsumer($topic);
 
-        //guard
+        // guard
         $this->assertNull($consumer->receive(1000));
 
         $message = $this->getContext()->createMessage(__METHOD__);

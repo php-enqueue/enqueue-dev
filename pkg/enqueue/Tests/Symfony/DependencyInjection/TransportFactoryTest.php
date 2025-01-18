@@ -148,7 +148,7 @@ class TransportFactoryTest extends TestCase
                 'dsn' => 'foo:',
                 'factory_class' => 'aFactoryClass',
                 'factory_service' => 'aFactoryService',
-        ], ]]);
+            ], ]]);
     }
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryClassAtTheSameTime()
@@ -166,7 +166,7 @@ class TransportFactoryTest extends TestCase
                 'dsn' => 'foo:',
                 'connection_factory_class' => 'aFactoryClass',
                 'factory_service' => 'aFactoryService',
-        ], ]]);
+            ], ]]);
     }
 
     public function testThrowIfConnectionFactoryClassUsedWithFactoryServiceAtTheSameTime()
@@ -183,7 +183,7 @@ class TransportFactoryTest extends TestCase
                 'dsn' => 'foo:',
                 'connection_factory_class' => 'aFactoryClass',
                 'factory_service' => 'aFactoryService',
-        ], ]]);
+            ], ]]);
     }
 
     public function testShouldAllowSetFactoryClass()
@@ -197,7 +197,7 @@ class TransportFactoryTest extends TestCase
             'transport' => [
                 'dsn' => 'foo:',
                 'factory_class' => 'theFactoryClass',
-        ], ]]);
+            ], ]]);
 
         $this->assertArrayHasKey('factory_class', $config['transport']);
         $this->assertSame('theFactoryClass', $config['transport']['factory_class']);
@@ -214,7 +214,7 @@ class TransportFactoryTest extends TestCase
             'transport' => [
                 'dsn' => 'foo:',
                 'factory_service' => 'theFactoryService',
-        ], ]]);
+            ], ]]);
 
         $this->assertArrayHasKey('factory_service', $config['transport']);
         $this->assertSame('theFactoryService', $config['transport']['factory_service']);
@@ -231,7 +231,7 @@ class TransportFactoryTest extends TestCase
             'transport' => [
                 'dsn' => 'foo:',
                 'connection_factory_class' => 'theFactoryClass',
-        ], ]]);
+            ], ]]);
 
         $this->assertArrayHasKey('connection_factory_class', $config['transport']);
         $this->assertSame('theFactoryClass', $config['transport']['connection_factory_class']);

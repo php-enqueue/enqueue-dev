@@ -7,14 +7,8 @@ namespace Enqueue\Util;
  */
 class VarExport
 {
-    /**
-     * @var mixed
-     */
     private $value;
 
-    /**
-     * @param mixed $value
-     */
     public function __construct($value)
     {
         $this->value = $value;

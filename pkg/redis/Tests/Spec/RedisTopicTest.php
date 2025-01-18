@@ -10,9 +10,6 @@ use Interop\Queue\Spec\TopicSpec;
  */
 class RedisTopicTest extends TopicSpec
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createTopic()
     {
         return new RedisDestination(self::EXPECTED_TOPIC_NAME);

@@ -20,8 +20,6 @@ class DelegateProcessor implements Processor
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return string|object
      */
     public function process(InteropMessage $message, Context $context)

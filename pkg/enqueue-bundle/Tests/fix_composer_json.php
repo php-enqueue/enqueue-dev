@@ -7,4 +7,4 @@ $composerJson = json_decode(file_get_contents(__DIR__.'/../composer.json'), true
 $composerJson['config']['platform']['ext-amqp'] = '1.9.3';
 $composerJson['config']['platform']['ext-mongo'] = '1.6.14';
 
-file_put_contents(__DIR__.'/../composer.json', json_encode($composerJson, JSON_PRETTY_PRINT));
+file_put_contents(__DIR__.'/../composer.json', json_encode($composerJson, \JSON_PRETTY_PRINT));

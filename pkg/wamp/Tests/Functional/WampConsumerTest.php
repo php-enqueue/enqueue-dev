@@ -12,6 +12,7 @@ use Thruway\Logging\Logger;
 /**
  * @group functional
  * @group Wamp
+ *
  * @retry 5
  */
 class WampConsumerTest extends TestCase

@@ -120,7 +120,7 @@ class StompMessage implements Message
         $this->redelivered = $redelivered;
     }
 
-    public function setCorrelationId(string $correlationId = null): void
+    public function setCorrelationId(?string $correlationId = null): void
     {
         $this->setHeader('correlation_id', (string) $correlationId);
     }
@@ -130,7 +130,7 @@ class StompMessage implements Message
         return $this->getHeader('correlation_id');
     }
 
-    public function setMessageId(string $messageId = null): void
+    public function setMessageId(?string $messageId = null): void
     {
         $this->setHeader('message_id', (string) $messageId);
     }
@@ -147,7 +147,7 @@ class StompMessage implements Message
         return null === $value ? null : (int) $value;
     }
 
-    public function setTimestamp(int $timestamp = null): void
+    public function setTimestamp(?int $timestamp = null): void
     {
         $this->setHeader('timestamp', $timestamp);
     }
@@ -157,12 +157,12 @@ class StompMessage implements Message
         return $this->frame;
     }
 
-    public function setFrame(Frame $frame = null): void
+    public function setFrame(?Frame $frame = null): void
     {
         $this->frame = $frame;
     }
 
-    public function setReplyTo(string $replyTo = null): void
+    public function setReplyTo(?string $replyTo = null): void
     {
         $this->setHeader('reply-to', $replyTo);
     }
