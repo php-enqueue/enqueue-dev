@@ -67,7 +67,7 @@ class SpoolProducerTest extends TestCase
             ->expects($invoked)
             ->method('sendEvent')
             ->willReturnCallback(function (string $topic, $argMessage) use ($invoked, $message) {
-                match($invoked->getInvocationCount()) {
+                match ($invoked->getInvocationCount()) {
                     1 => $this->assertSame(['foo_topic', 'first'], [$topic, $argMessage]),
                     2 => $this->assertSame(['bar_topic', ['second']], [$topic, $argMessage]),
                     3 => $this->assertSame(['baz_topic', $message], [$topic, $argMessage]),

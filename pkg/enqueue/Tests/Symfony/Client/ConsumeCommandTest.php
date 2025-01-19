@@ -281,12 +281,12 @@ class ConsumeCommandTest extends TestCase
             ->expects($driverInvoked)
             ->method('createQueue')
             ->willReturnCallback(function (string $queueName, bool $prefix) use ($driverInvoked, $defaultQueue, $customQueue) {
-                match($driverInvoked->getInvocationCount()) {
+                match ($driverInvoked->getInvocationCount()) {
                     1 => $this->assertSame(['default', true], [$queueName, $prefix]),
                     2 => $this->assertSame(['custom', true], [$queueName, $prefix]),
                 };
 
-                return $driverInvoked->getInvocationCount() === 1 ? $defaultQueue : $customQueue;
+                return 1 === $driverInvoked->getInvocationCount() ? $defaultQueue : $customQueue;
             })
         ;
         $consumerInvoked = $this->exactly(2);
@@ -422,12 +422,12 @@ class ConsumeCommandTest extends TestCase
             ->expects($invoked)
             ->method('createQueue')
             ->willReturnCallback(function (string $queueName, bool $prefix) use ($defaultQueue, $customQueue, $invoked) {
-                match($invoked->getInvocationCount()) {
+                match ($invoked->getInvocationCount()) {
                     1 => $this->assertSame(['default', true], [$queueName, $prefix]),
                     2 => $this->assertSame(['custom', true], [$queueName, $prefix]),
                 };
 
-                return $invoked->getInvocationCount() === 1 ? $defaultQueue : $customQueue;
+                return 1 === $invoked->getInvocationCount() ? $defaultQueue : $customQueue;
             })
         ;
 
@@ -437,7 +437,7 @@ class ConsumeCommandTest extends TestCase
             ->expects($consumerInvoked)
             ->method('bind')
             ->willReturnCallback(function ($queueName, Processor $argProcessor) use ($consumerInvoked, $defaultQueue, $processor, $consumer, $customQueue) {
-                match($consumerInvoked->getInvocationCount()) {
+                match ($consumerInvoked->getInvocationCount()) {
                     1 => $this->assertSame([$defaultQueue, $processor], [$queueName, $argProcessor]),
                     2 => $this->assertSame([$customQueue, $processor], [$queueName, $argProcessor]),
                 };

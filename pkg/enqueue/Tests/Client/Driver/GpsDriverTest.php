@@ -69,7 +69,7 @@ class GpsDriverTest extends TestCase
             ->willReturnCallback(function ($topic, $queue) use ($invoked, $routerTopic, $processorTopic, $routerQueue, $processorQueue) {
                 match ($invoked->getInvocationCount()) {
                     1 => $this->assertSame([$routerTopic, $routerQueue], [$topic, $queue]),
-                    2 => $this->assertSame([$processorTopic, $processorQueue] , [$topic, $queue]),
+                    2 => $this->assertSame([$processorTopic, $processorQueue], [$topic, $queue]),
                 };
             });
 
