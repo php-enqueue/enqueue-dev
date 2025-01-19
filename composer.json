@@ -28,7 +28,7 @@
     "google/cloud-pubsub": "^1.4.3",
     "doctrine/orm": "^2.12",
     "doctrine/persistence": "^2.0|^3.0",
-    "mongodb/mongodb": "^1.2",
+    "mongodb/mongodb": "^1.17",
     "pda/pheanstalk": "^3.1",
     "aws/aws-sdk-php": "^3.290",
     "stomp-php/stomp-php": "^4.5|^5",
@@ -127,7 +127,7 @@
       "ext-rdkafka": "4.0",
       "ext-bcmath": "1",
       "ext-mbstring": "1",
-      "ext-mongo": "1.6.14",
+      "ext-mongodb": "1.17",
       "ext-sockets": "1"
     },
     "prefer-stable": true,
