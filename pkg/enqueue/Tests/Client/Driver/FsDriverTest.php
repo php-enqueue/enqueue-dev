@@ -18,6 +18,7 @@ use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
 use Makasim\File\TempFile;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FsDriverTest extends TestCase
@@ -44,25 +45,18 @@ class FsDriverTest extends TestCase
         $context = $this->createContextMock();
         // setup router
         $context
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('createQueue')
-            ->willReturn($routerQueue)
+            ->with($this->getDefaultQueueTransportName())
+            ->willReturnOnConsecutiveCalls($routerQueue, $processorQueue)
         ;
         $context
-            ->expects($this->at(1))
+            ->expects($this->exactly(2))
             ->method('declareDestination')
-            ->with($this->identicalTo($routerQueue))
-        ;
-        // setup processor queue
-        $context
-            ->expects($this->at(2))
-            ->method('createQueue')
-            ->willReturn($processorQueue)
-        ;
-        $context
-            ->expects($this->at(3))
-            ->method('declareDestination')
-            ->with($this->identicalTo($processorQueue))
+            ->with($this->logicalOr(
+                $this->identicalTo($routerQueue),
+                $this->identicalTo($processorQueue)
+            ))
         ;
 
         $routeCollection = new RouteCollection([
@@ -84,7 +78,7 @@ class FsDriverTest extends TestCase
     }
 
     /**
-     * @return FsContext
+     * @return FsContext&MockObject
      */
     protected function createContextMock(): Context
     {
