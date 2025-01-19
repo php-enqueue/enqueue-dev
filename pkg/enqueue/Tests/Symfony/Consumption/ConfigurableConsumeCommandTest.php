@@ -174,10 +174,11 @@ class ConfigurableConsumeCommandTest extends TestCase
             ->expects($invoked)
             ->method('bind')
             ->willReturnCallback(function ($queueName, Processor $argProcessor) use ($invoked, $processor, $consumer) {
-                match($invoked->getInvocationCount()) {
+                match ($invoked->getInvocationCount()) {
                     1 => $this->assertSame(['queue-name', $processor], [$queueName, $argProcessor]),
                     2 => $this->assertSame(['another-queue-name', $processor], [$queueName, $argProcessor]),
                 };
+
                 return $consumer;
             })
         ;
@@ -219,7 +220,7 @@ class ConfigurableConsumeCommandTest extends TestCase
             ->expects($invoked)
             ->method('bind')
             ->willReturnCallback(function ($queueName, Processor $argProcessor) use ($invoked, $processor, $consumer) {
-                match($invoked->getInvocationCount()) {
+                match ($invoked->getInvocationCount()) {
                     1 => $this->assertSame(['fooSubscribedQueues', $processor], [$queueName, $argProcessor]),
                     2 => $this->assertSame(['barSubscribedQueues', $processor], [$queueName, $argProcessor]),
                 };

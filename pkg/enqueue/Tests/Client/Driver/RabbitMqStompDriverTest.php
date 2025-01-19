@@ -389,7 +389,7 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($invoked)
             ->method('declareExchange')
             ->willReturnCallback(function (string $name, array $options) use ($invoked) {
-                match($invoked->getInvocationCount()) {
+                match ($invoked->getInvocationCount()) {
                     1 => $this->assertSame([
                         'aprefix.router',
                         ['type' => 'fanout', 'durable' => true, 'auto_delete' => false],
@@ -406,8 +406,8 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($bindInvoked)
             ->method('bind')
             ->willReturnCallback(function (string $exchange, string $queue, ?string $routingKey = null, $arguments = null) use ($bindInvoked) {
-                match($bindInvoked->getInvocationCount()) {
-                    1 =>$this->assertSame(
+                match ($bindInvoked->getInvocationCount()) {
+                    1 => $this->assertSame(
                         ['aprefix.router', 'aprefix.default', 'aprefix.default', null],
                         [$exchange, $queue, $routingKey, $arguments],
                     ),
