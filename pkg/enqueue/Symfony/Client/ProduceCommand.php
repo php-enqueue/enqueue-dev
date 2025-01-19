@@ -67,7 +67,7 @@ class ProduceCommand extends Command
         try {
             $producer = $this->getProducer($client);
         } catch (NotFoundExceptionInterface $e) {
-            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), null, $e);
+            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), 0, $e);
         }
 
         if ($topic) {
