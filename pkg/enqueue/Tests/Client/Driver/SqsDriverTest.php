@@ -17,6 +17,7 @@ use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SqsDriverTest extends TestCase
@@ -42,28 +43,18 @@ class SqsDriverTest extends TestCase
         $context = $this->createContextMock();
         // setup router
         $context
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('createQueue')
             ->with('aprefix_dot_default')
-            ->willReturn($routerQueue)
+            ->willReturnOnConsecutiveCalls($routerQueue, $processorQueue)
         ;
         $context
-            ->expects($this->at(1))
+            ->expects($this->exactly(2))
             ->method('declareQueue')
-            ->with($this->identicalTo($routerQueue))
-        ;
-        // setup processor queue
-        $context
-            ->expects($this->at(2))
-            ->method('createQueue')
-            ->with('aprefix_dot_default')
-            ->willReturn($processorQueue)
-        ;
-        $context
-            ->expects($this->at(3))
-            ->method('declareQueue')
-            ->with($this->identicalTo($processorQueue))
-        ;
+            ->with($this->logicalOr(
+                $this->identicalTo($routerQueue),
+                $this->identicalTo($processorQueue)
+            ));
 
         $driver = new SqsDriver(
             $context,
@@ -82,7 +73,7 @@ class SqsDriverTest extends TestCase
     }
 
     /**
-     * @return SqsContext
+     * @return SqsContext&MockObject
      */
     protected function createContextMock(): Context
     {

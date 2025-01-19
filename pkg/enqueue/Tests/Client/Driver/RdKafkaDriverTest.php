@@ -17,6 +17,7 @@ use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RdKafkaDriverTest extends TestCase
@@ -39,26 +40,14 @@ class RdKafkaDriverTest extends TestCase
         $routerTopic = new RdKafkaTopic('');
         $routerQueue = new RdKafkaTopic('');
 
-        $processorTopic = new RdKafkaTopic('');
-
         $context = $this->createContextMock();
 
         $context
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('createQueue')
-            ->willReturn($routerTopic)
+            ->with($this->getDefaultQueueTransportName())
+            ->willReturnOnConsecutiveCalls($routerTopic, $routerQueue)
         ;
-        $context
-            ->expects($this->at(1))
-            ->method('createQueue')
-            ->willReturn($routerQueue)
-        ;
-        $context
-            ->expects($this->at(2))
-            ->method('createQueue')
-            ->willReturn($processorTopic)
-        ;
-
         $driver = new RdKafkaDriver(
             $context,
             $this->createDummyConfig(),
@@ -76,7 +65,7 @@ class RdKafkaDriverTest extends TestCase
     }
 
     /**
-     * @return RdKafkaContext
+     * @return RdKafkaContext&MockObject
      */
     protected function createContextMock(): Context
     {

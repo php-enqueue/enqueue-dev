@@ -370,7 +370,7 @@ class ProducerSendCommandTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('onPreSendCommand')
             ->willReturnCallback(function (PreSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -408,7 +408,7 @@ class ProducerSendCommandTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('onPreSendCommand')
             ->willReturnCallback(function (PreSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -446,7 +446,7 @@ class ProducerSendCommandTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('onDriverPreSend')
             ->willReturnCallback(function (DriverPreSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
@@ -454,7 +454,7 @@ class ProducerSendCommandTest extends TestCase
                 $this->assertSame($driver, $context->getDriver());
                 $this->assertSame('command', $context->getCommand());
 
-                $this->assertTrue($context->isEvent());
+                $this->assertFalse($context->isEvent());
             });
 
         $producer->sendCommand('command', $message);
@@ -478,7 +478,7 @@ class ProducerSendCommandTest extends TestCase
         $producer = new Producer($driver, $this->createRpcFactoryMock(), $extension);
 
         $extension
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('onPostSend')
             ->willReturnCallback(function (PostSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());

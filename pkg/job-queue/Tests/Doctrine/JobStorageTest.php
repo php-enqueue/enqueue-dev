@@ -434,15 +434,16 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
                 $callback($connection);
             })
         ;
+        $invoked = $this->exactly(2);
         $connection
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('insert')
-            ->with('unique_table', ['name' => 'owner-id'])
-        ;
-        $connection
-            ->expects($this->at(1))
-            ->method('insert')
-            ->with('unique_table', ['name' => 'job-name'])
+            ->willReturnCallback(function ($table, array $data, array $types) use ($invoked) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame(['unique_table', ['name' => 'owner-id'], []], [$table, $data, $types]),
+                    2 => $this->assertSame(['unique_table', ['name' => 'job-name'], []], [$table, $data, $types]),
+                };
+            })
         ;
 
         $repository = $this->createRepositoryMock();
@@ -503,16 +504,17 @@ class JobStorageTest extends \PHPUnit\Framework\TestCase
         $job->setUnique(true);
         $job->setStoppedAt(new \DateTime());
 
+        $invoked = $this->exactly(2);
         $connection = $this->createConnectionMock();
         $connection
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('delete')
-            ->with('unique_table', ['name' => 'owner-id'])
-        ;
-        $connection
-            ->expects($this->at(1))
-            ->method('delete')
-            ->with('unique_table', ['name' => 'job-name'])
+            ->willReturnCallback(function ($table, array $criteria, array $types) use ($invoked) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame(['unique_table', ['name' => 'owner-id'], []], [$table, $criteria, $types]),
+                    2 => $this->assertSame(['unique_table', ['name' => 'job-name'], []], [$table, $criteria, $types]),
+                };
+            })
         ;
 
         $repository = $this->createRepositoryMock();

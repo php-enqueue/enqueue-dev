@@ -318,19 +318,19 @@ class AmqpContextTest extends TestCase
         $context->purgeQueue($queue);
     }
 
-    public function testShouldSetQos()
+    public function testShouldSetQos(): void
     {
+        $invoked = $this->exactly(2);
         $channel = $this->createChannelMock();
         $channel
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('basic_qos')
-            ->with($this->identicalTo(0), $this->identicalTo(1), $this->isFalse())
-        ;
-        $channel
-            ->expects($this->at(1))
-            ->method('basic_qos')
-            ->with($this->identicalTo(123), $this->identicalTo(456), $this->isTrue())
-        ;
+            ->willReturnCallback(function ($prefetch_size, $prefetch_count, $a_global) use ($invoked) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame([0, 1, false], [$prefetch_size, $prefetch_count, $a_global]),
+                    2 => $this->assertSame([123, 456, true], [$prefetch_size, $prefetch_count, $a_global]),
+                };
+            });
 
         $connection = $this->createConnectionMock();
         $connection

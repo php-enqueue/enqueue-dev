@@ -18,6 +18,7 @@ use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GpsDriverTest extends TestCase
@@ -46,38 +47,31 @@ class GpsDriverTest extends TestCase
         $context = $this->createContextMock();
         // setup router
         $context
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('createTopic')
-            ->willReturn($routerTopic)
+            ->with($this->logicalOr(
+                'aprefix.router',
+                $this->getDefaultQueueTransportName(),
+            ))
+            ->willReturnOnConsecutiveCalls($routerTopic, $processorTopic)
         ;
         $context
-            ->expects($this->at(1))
-            ->method('createQueue')
-            ->willReturn($routerQueue)
-        ;
-        $context
-            ->expects($this->at(2))
-            ->method('subscribe')
-            ->with($this->identicalTo($routerTopic), $this->identicalTo($routerQueue))
-        ;
-        $context
-            ->expects($this->at(3))
+            ->expects($this->exactly(2))
             ->method('createQueue')
             ->with($this->getDefaultQueueTransportName())
-            ->willReturn($processorQueue)
+            ->willReturnOnConsecutiveCalls($routerQueue, $processorQueue)
         ;
-        // setup processor queue
+
+        $invoked = $this->exactly(2);
         $context
-            ->expects($this->at(4))
-            ->method('createTopic')
-            ->with($this->getDefaultQueueTransportName())
-            ->willReturn($processorTopic)
-        ;
-        $context
-            ->expects($this->at(5))
+            ->expects($invoked)
             ->method('subscribe')
-            ->with($this->identicalTo($processorTopic), $this->identicalTo($processorQueue))
-        ;
+            ->willReturnCallback(function ($topic, $queue) use ($invoked, $routerTopic, $processorTopic, $routerQueue, $processorQueue) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame([$routerTopic, $routerQueue], [$topic, $queue]),
+                    2 => $this->assertSame([$processorTopic, $processorQueue] , [$topic, $queue]),
+                };
+            });
 
         $driver = new GpsDriver(
             $context,
@@ -96,7 +90,7 @@ class GpsDriverTest extends TestCase
     }
 
     /**
-     * @return GpsContext
+     * @return GpsContext&MockObject
      */
     protected function createContextMock(): Context
     {
