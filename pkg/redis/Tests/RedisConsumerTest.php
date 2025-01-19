@@ -183,22 +183,14 @@ class RedisConsumerTest extends \PHPUnit\Framework\TestCase
 
         $redisMock = $this->createRedisMock();
         $redisMock
-            ->expects($this->at(2))
+            ->expects($this->exactly(3))
             ->method('brpop')
             ->with(['aQueue'], $expectedTimeout)
-            ->willReturn(null)
-        ;
-        $redisMock
-            ->expects($this->at(5))
-            ->method('brpop')
-            ->with(['aQueue'], $expectedTimeout)
-            ->willReturn(null)
-        ;
-        $redisMock
-            ->expects($this->at(8))
-            ->method('brpop')
-            ->with(['aQueue'], $expectedTimeout)
-            ->willReturn(new RedisResult('aQueue', $serializer->toString(new RedisMessage('aBody'))))
+            ->willReturnOnConsecutiveCalls(
+                null,
+                null,
+                new RedisResult('aQueue', $serializer->toString(new RedisMessage('aBody')))
+            )
         ;
 
         $contextMock = $this->createContextMock();

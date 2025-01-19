@@ -6,7 +6,9 @@ use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Resources;
 use Enqueue\Wamp\WampConnectionFactory;
 use Interop\Queue\ConnectionFactory;
+use Interop\Queue\Context;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Exception\LogicException;
 
 class ResourcesTest extends TestCase
 {
@@ -70,22 +72,18 @@ class ResourcesTest extends TestCase
 
     public function testThrowsIfNoSchemesProvidedOnAddConnection()
     {
-        $connectionClass = $this->getMockClass(ConnectionFactory::class);
-
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Schemes could not be empty.');
 
-        Resources::addConnection($connectionClass, [], [], 'foo');
+        Resources::addConnection(ConnectionFactory::class, [], [], 'foo');
     }
 
     public function testThrowsIfNoPackageProvidedOnAddConnection()
     {
-        $connectionClass = $this->getMockClass(ConnectionFactory::class);
-
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Package name could not be empty.');
 
-        Resources::addConnection($connectionClass, ['foo'], [], '');
+        Resources::addConnection(ConnectionFactory::class, ['foo'], [], '');
     }
 
     public function testShouldAllowRegisterConnectionThatIsNotInstalled()
@@ -104,10 +102,15 @@ class ResourcesTest extends TestCase
 
     public function testShouldAllowGetPreviouslyRegisteredConnection()
     {
-        $connectionClass = $this->getMockClass(ConnectionFactory::class);
+        $connectionClass = new class implements ConnectionFactory {
+            public function createContext(): Context
+            {
+                throw new LogicException('not implemented');
+            }
+        };
 
         Resources::addConnection(
-            $connectionClass,
+            $connectionClass::class,
             ['fooscheme', 'barscheme'],
             ['fooextension', 'barextension'],
             'foo/bar'
@@ -116,9 +119,9 @@ class ResourcesTest extends TestCase
         $availableConnections = Resources::getAvailableConnections();
 
         self::assertIsArray($availableConnections);
-        $this->assertArrayHasKey($connectionClass, $availableConnections);
+        $this->assertArrayHasKey($connectionClass::class, $availableConnections);
 
-        $connectionInfo = $availableConnections[$connectionClass];
+        $connectionInfo = $availableConnections[$connectionClass::class];
         $this->assertArrayHasKey('schemes', $connectionInfo);
         $this->assertSame(['fooscheme', 'barscheme'], $connectionInfo['schemes']);
 

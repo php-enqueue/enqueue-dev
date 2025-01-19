@@ -2,11 +2,20 @@
 
 namespace Enqueue\Tests\Client;
 
+use Enqueue\Client\Config;
 use Enqueue\Client\Driver\AmqpDriver;
 use Enqueue\Client\Driver\RabbitMqDriver;
 use Enqueue\Client\DriverInterface;
+use Enqueue\Client\DriverSendResult;
+use Enqueue\Client\Message;
 use Enqueue\Client\Resources;
+use Enqueue\Client\Route;
+use Enqueue\Client\RouteCollection;
+use Interop\Queue\Context;
+use Interop\Queue\Message as InteropMessage;
+use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class ResourcesTest extends TestCase
 {
@@ -100,22 +109,18 @@ class ResourcesTest extends TestCase
 
     public function testThrowsIfNoSchemesProvidedOnAddDriver()
     {
-        $driverClass = $this->getMockClass(DriverInterface::class);
-
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Schemes could not be empty.');
 
-        Resources::addDriver($driverClass, [], [], ['foo']);
+        Resources::addDriver(DriverInterface::class, [], [], ['foo']);
     }
 
     public function testThrowsIfNoPackageProvidedOnAddDriver()
     {
-        $driverClass = $this->getMockClass(DriverInterface::class);
-
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Packages could not be empty.');
 
-        Resources::addDriver($driverClass, ['foo'], [], []);
+        Resources::addDriver(DriverInterface::class, ['foo'], [], []);
     }
 
     public function testShouldAllowRegisterDriverThatIsNotInstalled()
@@ -131,10 +136,60 @@ class ResourcesTest extends TestCase
 
     public function testShouldAllowGetPreviouslyRegisteredDriver()
     {
-        $driverClass = $this->getMockClass(DriverInterface::class);
+        $driverClass = new class implements DriverInterface {
+            public function createTransportMessage(Message $message): InteropMessage
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function createClientMessage(InteropMessage $message): Message
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function sendToRouter(Message $message): DriverSendResult
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function sendToProcessor(Message $message): DriverSendResult
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function createQueue(string $queueName, bool $prefix = true): InteropQueue
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function createRouteQueue(Route $route): InteropQueue
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function setupBroker(?LoggerInterface $logger = null): void
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function getConfig(): Config
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function getContext(): Context
+            {
+                throw new \LogicException('not implemented');
+            }
+
+            public function getRouteCollection(): RouteCollection
+            {
+                throw new \LogicException('not implemented');
+            }
+        };
 
         Resources::addDriver(
-            $driverClass,
+            $driverClass::class,
             ['fooscheme', 'barscheme'],
             ['fooextension', 'barextension'],
             ['foo/bar']
@@ -145,7 +200,7 @@ class ResourcesTest extends TestCase
         $driverInfo = end($availableDrivers);
 
         $this->assertArrayHasKey('driverClass', $driverInfo);
-        $this->assertSame($driverClass, $driverInfo['driverClass']);
+        $this->assertSame($driverClass::class, $driverInfo['driverClass']);
 
         $this->assertArrayHasKey('schemes', $driverInfo);
         $this->assertSame(['fooscheme', 'barscheme'], $driverInfo['schemes']);
