@@ -190,6 +190,7 @@ class RdKafkaConsumerTest extends TestCase
         $kafkaMessage = new Message();
         $kafkaMessage->err = \RD_KAFKA_RESP_ERR_NO_ERROR;
         $kafkaMessage->payload = 'theSerializedMessage';
+        $kafkaMessage->partition = 0;
 
         $kafkaConsumer = $this->createKafkaConsumerMock();
         $kafkaConsumer
