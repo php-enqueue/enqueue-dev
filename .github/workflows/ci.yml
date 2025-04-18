@@ -9,9 +9,9 @@ jobs:
     name: Static analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: technote-space/get-diff-action@v4
+      - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             pkg/**/*.php
@@ -25,7 +25,7 @@ jobs:
 
       - run: php ./bin/fix-symfony-version.php "5.4.*"
 
-      - uses: "ramsey/composer-install@v1"
+      - uses: "ramsey/composer-install@v3"
 
       - run: sed -i 's/525568/16777471/' vendor/kwn/php-rdkafka-stubs/stubs/constants.php
 
@@ -37,9 +37,9 @@ jobs:
     name: Code style check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: technote-space/get-diff-action@v4
+      - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             pkg/**/*.php
@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-cs-check-${{ hashFiles('**/composer.json') }}
@@ -87,14 +87,14 @@ jobs:
     name: PHP ${{ matrix.php }} unit tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
           echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ matrix.php }}-${{ matrix.symfony_version }}-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
@@ -131,14 +131,14 @@ jobs:
     name: PHP ${{ matrix.php }} functional tests on Sf ${{ matrix.symfony_version }}, deps=${{ matrix.dependencies }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
           echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ matrix.php }}-${{ matrix.symfony_version }}-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
