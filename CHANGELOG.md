@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.10.25](https://github.com/php-enqueue/enqueue-dev/tree/0.10.25) (2025-04-18)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.24...0.10.25)
+
+**Merged pull requests:**
+
+- Bugfix/static drift [\#1373](https://github.com/php-enqueue/enqueue-dev/pull/1373) ([JimTools](https://github.com/JimTools))
+- CS Fixes [\#1372](https://github.com/php-enqueue/enqueue-dev/pull/1372) ([JimTools](https://github.com/JimTools))
+- Fixing risky tests [\#1371](https://github.com/php-enqueue/enqueue-dev/pull/1371) ([JimTools](https://github.com/JimTools))
+
 ## [0.10.24](https://github.com/php-enqueue/enqueue-dev/tree/0.10.24) (2024-11-30)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.23...0.10.24)
 
