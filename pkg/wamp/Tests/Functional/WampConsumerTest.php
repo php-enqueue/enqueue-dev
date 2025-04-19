@@ -2,7 +2,6 @@
 
 namespace Enqueue\Wamp\Tests\Functional;
 
-use Enqueue\Test\RetryTrait;
 use Enqueue\Test\WampExtension;
 use Enqueue\Wamp\WampMessage;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +16,6 @@ use Thruway\Logging\Logger;
  */
 class WampConsumerTest extends TestCase
 {
-    use RetryTrait;
     use WampExtension;
 
     public static function setUpBeforeClass(): void

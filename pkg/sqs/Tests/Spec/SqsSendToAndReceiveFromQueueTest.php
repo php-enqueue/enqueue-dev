@@ -4,7 +4,6 @@ namespace Enqueue\Sqs\Tests\Spec;
 
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
-use Enqueue\Test\RetryTrait;
 use Enqueue\Test\SqsExtension;
 use Interop\Queue\Context;
 use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
@@ -17,7 +16,6 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 class SqsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
     use CreateSqsQueueTrait;
-    use RetryTrait;
     use SqsExtension;
 
     /**

@@ -50,7 +50,7 @@
   },
   "require-dev": {
     "ext-pcntl": "*",
-    "phpunit/phpunit": "^9.5",
+    "phpunit/phpunit": "^10.5",
     "phpstan/phpstan": "^1.0",
     "queue-interop/queue-spec": "^0.6.2",
     "symfony/browser-kit": "^6.2|^7.0",
@@ -71,7 +71,6 @@
     "alcaeus/mongo-php-adapter": "^1.0",
     "kwn/php-rdkafka-stubs": "^2.0.3",
     "friendsofphp/php-cs-fixer": "^3.4",
-    "dms/phpunit-arraysubset-asserts": "^0.2.1",
     "phpspec/prophecy-phpunit": "^2.0"
   },
   "autoload": {
