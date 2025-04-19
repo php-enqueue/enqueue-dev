@@ -9,7 +9,6 @@ use Enqueue\Consumption\Extension\ReplyExtension;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Sqs\SqsContext;
-use Enqueue\Test\RetryTrait;
 use Enqueue\Test\SqsExtension;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
@@ -18,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class SqsConsumptionUseCasesTest extends TestCase
 {
-    use RetryTrait;
     use SqsExtension;
 
     /**

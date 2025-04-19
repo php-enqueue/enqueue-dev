@@ -2,7 +2,6 @@
 
 namespace Enqueue\SnsQs\Tests\Spec;
 
-use Enqueue\Test\RetryTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
 
@@ -13,7 +12,6 @@ use Interop\Queue\Spec\SendToAndReceiveFromQueueSpec;
  */
 class SnsQsSendToAndReceiveFromQueueTest extends SendToAndReceiveFromQueueSpec
 {
-    use RetryTrait;
     use SnsQsFactoryTrait;
 
     protected function tearDown(): void
