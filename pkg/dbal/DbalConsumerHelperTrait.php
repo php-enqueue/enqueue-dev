@@ -53,7 +53,7 @@ trait DbalConsumerHelperTrait
 
         while (microtime(true) < $endAt) {
             try {
-                $result = $select->execute()->fetch();
+                $result = $select->execute()->fetchAssociative();
                 if (empty($result)) {
                     return null;
                 }
@@ -69,7 +69,7 @@ trait DbalConsumerHelperTrait
                         ->setParameter('deliveryId', $deliveryId, DbalType::GUID)
                         ->setMaxResults(1)
                         ->execute()
-                        ->fetch();
+                        ->fetchAssociative();
 
                     // the message has been removed by a 3rd party, such as truncate operation.
                     if (false === $deliveredMessage) {
