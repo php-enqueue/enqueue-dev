@@ -94,7 +94,7 @@ class ConsumeCommand extends Command
         try {
             $consumer = $this->getQueueConsumer($client);
         } catch (NotFoundExceptionInterface $e) {
-            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), null, $e);
+            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), previous: $e);
         }
 
         $driver = $this->getDriver($client);

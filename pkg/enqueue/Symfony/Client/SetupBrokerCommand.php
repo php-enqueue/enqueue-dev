@@ -55,7 +55,7 @@ class SetupBrokerCommand extends Command
         try {
             $this->getDriver($client)->setupBroker(new ConsoleLogger($output));
         } catch (NotFoundExceptionInterface $e) {
-            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), null, $e);
+            throw new \LogicException(sprintf('Client "%s" is not supported.', $client), previous: $e);
         }
 
         $output->writeln('Broker set up');
