@@ -1,7 +1,7 @@
 {
   "name": "enqueue/enqueue-dev",
   "type": "project",
-  "minimum-stability": "beta",
+  "minimum-stability": "stable",
   "homepage": "https://enqueue.forma-pro.com/",
   "scripts": {
     "cs-fix": "bin/php-cs-fixer fix",

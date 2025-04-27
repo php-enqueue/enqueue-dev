@@ -12,7 +12,7 @@ function waitForService()
     ATTEMPTS=0
     until nc -z $1 $2; do
         printf "wait for service %s:%s\n" $1 $2
-        ((ATTEMPTS++))
+        ATTEMPTS=$((ATTEMPTS++))
         if [ $ATTEMPTS -ge $3 ]; then
             printf "service is not running %s:%s\n" $1 $2
             exit 1
