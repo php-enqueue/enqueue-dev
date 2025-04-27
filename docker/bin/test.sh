@@ -47,4 +47,4 @@ php pkg/job-queue/Tests/Functional/app/console doctrine:database:create --if-not
 php pkg/job-queue/Tests/Functional/app/console doctrine:schema:update --force --complete || exit 1
 
 #php pkg/enqueue-bundle/Tests/Functional/app/console.php config:dump-reference  enqueue
-bin/phpunit "$@"
+php -d memory_limit=-1 bin/phpunit "$@"
