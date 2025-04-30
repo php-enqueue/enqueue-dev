@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/tmp/pear pecl install redis \
     pecl install --configureoptions 'with-librabbitmq-dir="autodetect"' amqp
 RUN docker-php-ext-enable redis mongodb gearman rdkafka xdebug amqp
 
-COPY ./php/cli.ini /usr/local/etc/php/conf.d/1-dev_cli
+COPY ./php/cli.ini /usr/local/etc/php/conf.d/.user.ini
 COPY ./bin/dev_entrypoiny.sh /usr/local/bin/entrypoint.sh
 RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 RUN chmod u+x /usr/local/bin/entrypoint.sh
