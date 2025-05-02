@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # wait for service
 # $1 host
@@ -12,7 +12,7 @@ function waitForService()
     ATTEMPTS=0
     until nc -z $1 $2; do
         printf "wait for service %s:%s\n" $1 $2
-        ((ATTEMPTS++))
+        ATTEMPTS=$((ATTEMPTS++))
         if [ $ATTEMPTS -ge $3 ]; then
             printf "service is not running %s:%s\n" $1 $2
             exit 1
@@ -47,4 +47,4 @@ php pkg/job-queue/Tests/Functional/app/console doctrine:database:create --if-not
 php pkg/job-queue/Tests/Functional/app/console doctrine:schema:update --force --complete || exit 1
 
 #php pkg/enqueue-bundle/Tests/Functional/app/console.php config:dump-reference  enqueue
-bin/phpunit "$@"
+php -d memory_limit=-1 bin/phpunit "$@"

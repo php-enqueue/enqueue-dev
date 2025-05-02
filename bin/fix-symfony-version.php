@@ -6,7 +6,7 @@ if (empty($argv[1])) {
 
 $newVersion = $argv[1];
 
-$composer = file_get_contents(__DIR__.'/../composer.json');
+$composer = trim(file_get_contents(__DIR__.'/../composer.json'));
 
 $updatedComposer = preg_replace('/"symfony\/(.*)": ".*"/', '"symfony/$1": "'.$newVersion.'"', $composer).\PHP_EOL;
 echo $updatedComposer.\PHP_EOL;
