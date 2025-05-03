@@ -50,7 +50,7 @@
   },
   "require-dev": {
     "ext-pcntl": "*",
-    "phpunit/phpunit": "^9.5.28",
+    "phpunit/phpunit": "^9.6.23",
     "phpstan/phpstan": "^2.1",
     "queue-interop/queue-spec": "^0.6.2",
     "symfony/browser-kit": "^6.2|^7.0",
