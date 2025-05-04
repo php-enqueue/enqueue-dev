@@ -136,7 +136,7 @@ class DbalPersistedConnection extends Connection
         $this->setTransactionNestingLevel($this->getPersistedTransactionNestingLevel());
 
         try {
-            call_user_func(['parent', $method]);
+            parent::$method();
         } catch (\Exception $e) {
         }
 

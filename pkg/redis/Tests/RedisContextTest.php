@@ -149,19 +149,9 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     {
         $redisMock = $this->createRedisMock();
         $redisMock
-            ->expects($this->at(0))
+            ->expects($this->exactly(3))
             ->method('del')
-            ->with('aQueueName')
-        ;
-        $redisMock
-            ->expects($this->at(1))
-            ->method('del')
-            ->with('aQueueName:delayed')
-        ;
-        $redisMock
-            ->expects($this->at(2))
-            ->method('del')
-            ->with('aQueueName:reserved')
+            ->with($this->logicalOr('aQueueName', 'aQueueName:delayed', 'aQueueName:reserved'))
         ;
 
         $context = new RedisContext($redisMock, 300);
@@ -189,19 +179,9 @@ class RedisContextTest extends \PHPUnit\Framework\TestCase
     {
         $redisMock = $this->createRedisMock();
         $redisMock
-            ->expects($this->at(0))
+            ->expects($this->exactly(3))
             ->method('del')
-            ->with('aTopicName')
-        ;
-        $redisMock
-            ->expects($this->at(1))
-            ->method('del')
-            ->with('aTopicName:delayed')
-        ;
-        $redisMock
-            ->expects($this->at(2))
-            ->method('del')
-            ->with('aTopicName:reserved')
+            ->with($this->logicalOr('aTopicName', 'aTopicName:delayed', 'aTopicName:reserved'))
         ;
 
         $context = new RedisContext($redisMock, 300);
