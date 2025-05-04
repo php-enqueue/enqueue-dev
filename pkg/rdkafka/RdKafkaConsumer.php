@@ -10,6 +10,7 @@ use Interop\Queue\Message;
 use Interop\Queue\Queue;
 use RdKafka\KafkaConsumer;
 use RdKafka\TopicPartition;
+use RdKafka\Exception as RdKafkaException;
 
 class RdKafkaConsumer implements Consumer
 {
@@ -86,6 +87,22 @@ class RdKafkaConsumer implements Consumer
     public function getQueue(): Queue
     {
         return $this->topic;
+    }
+
+    /** 
+     * @return  RdKafkaTopic[] 
+     */
+    public function getAssignment(): array
+    {
+        try {
+            return array_map(function (TopicPartition $partition) {
+                $topic = new RdKafkaTopic($partition->getTopic());
+                $topic->setPartition($partition->getPartition());
+                return $topic;
+            }, $this->consumer->getAssignment());
+        } catch (RdKafkaException) {
+            return [];
+        }
     }
 
     /**
