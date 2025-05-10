@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.10.26](https://github.com/php-enqueue/enqueue-dev/tree/0.10.26) (2025-05-10)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.25...0.10.26)
+
+**Merged pull requests:**
+
+- Fix: Updating composer [\#1383](https://github.com/php-enqueue/enqueue-dev/pull/1383) ([JimTools](https://github.com/JimTools))
+- Fix: Fixing CI [\#1382](https://github.com/php-enqueue/enqueue-dev/pull/1382) ([JimTools](https://github.com/JimTools))
+
 ## [0.10.25](https://github.com/php-enqueue/enqueue-dev/tree/0.10.25) (2025-04-18)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.24...0.10.25)
 
