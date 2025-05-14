@@ -50,8 +50,8 @@
   },
   "require-dev": {
     "ext-pcntl": "*",
-    "phpunit/phpunit": "^9.5.28",
-    "phpstan/phpstan": "^1.0",
+    "phpunit/phpunit": "^9.6.23",
+    "phpstan/phpstan": "^2.1",
     "queue-interop/queue-spec": "^0.6.2",
     "symfony/browser-kit": "^6.2|^7.0",
     "symfony/config": "^6.2|^7.0",
@@ -70,7 +70,7 @@
     "doctrine/mongodb-odm-bundle": "^4.7|^5.0",
     "alcaeus/mongo-php-adapter": "^1.0",
     "kwn/php-rdkafka-stubs": "^2.0.3",
-    "friendsofphp/php-cs-fixer": "^3.4",
+    "friendsofphp/php-cs-fixer": "^3.64",
     "dms/phpunit-arraysubset-asserts": "^0.2.1",
     "phpspec/prophecy-phpunit": "^2.0"
   },

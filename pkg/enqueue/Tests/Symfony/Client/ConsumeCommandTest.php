@@ -19,6 +19,7 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Processor;
 use Interop\Queue\Queue;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -274,33 +275,35 @@ class ConsumeCommandTest extends TestCase
 
         $processor = $this->createDelegateProcessorMock();
 
+        $driverInvoked = $this->exactly(2);
         $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects($this->at(3))
+            ->expects($driverInvoked)
             ->method('createQueue')
-            ->with('default', true)
-            ->willReturn($defaultQueue)
-        ;
-        $driver
-            ->expects($this->at(4))
-            ->method('createQueue')
-            ->with('custom', true)
-            ->willReturn($customQueue)
-        ;
+            ->willReturnCallback(function (string $queueName, bool $prefix) use ($driverInvoked, $defaultQueue, $customQueue) {
+                match ($driverInvoked->getInvocationCount()) {
+                    1 => $this->assertSame(['default', true], [$queueName, $prefix]),
+                    2 => $this->assertSame(['custom', true], [$queueName, $prefix]),
+                };
 
+                return 1 === $driverInvoked->getInvocationCount() ? $defaultQueue : $customQueue;
+            })
+        ;
+        $consumerInvoked = $this->exactly(2);
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects($this->at(0))
+            ->expects($consumerInvoked)
             ->method('bind')
-            ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
-        ;
+            ->willReturnCallback(function ($queueName, Processor $argProcessor) use ($consumerInvoked, $defaultQueue, $processor, $customQueue, $consumer) {
+                match ($consumerInvoked->getInvocationCount()) {
+                    1 => $this->assertSame([$defaultQueue, $processor], [$queueName, $argProcessor]),
+                    2 => $this->assertSame([$customQueue, $processor], [$queueName, $argProcessor]),
+                };
+
+                return $consumer;
+            });
         $consumer
-            ->expects($this->at(1))
-            ->method('bind')
-            ->with($this->identicalTo($customQueue), $this->identicalTo($processor))
-        ;
-        $consumer
-            ->expects($this->at(2))
+            ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -413,33 +416,37 @@ class ConsumeCommandTest extends TestCase
 
         $processor = $this->createDelegateProcessorMock();
 
+        $invoked = $this->exactly(2);
         $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects($this->at(3))
+            ->expects($invoked)
             ->method('createQueue')
-            ->with('default', true)
-            ->willReturn($defaultQueue)
-        ;
-        $driver
-            ->expects($this->at(4))
-            ->method('createQueue', true)
-            ->with('custom')
-            ->willReturn($customQueue)
+            ->willReturnCallback(function (string $queueName, bool $prefix) use ($defaultQueue, $customQueue, $invoked) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame(['default', true], [$queueName, $prefix]),
+                    2 => $this->assertSame(['custom', true], [$queueName, $prefix]),
+                };
+
+                return 1 === $invoked->getInvocationCount() ? $defaultQueue : $customQueue;
+            })
         ;
 
+        $consumerInvoked = $this->exactly(2);
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects($this->at(0))
+            ->expects($consumerInvoked)
             ->method('bind')
-            ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
+            ->willReturnCallback(function ($queueName, Processor $argProcessor) use ($consumerInvoked, $defaultQueue, $processor, $consumer, $customQueue) {
+                match ($consumerInvoked->getInvocationCount()) {
+                    1 => $this->assertSame([$defaultQueue, $processor], [$queueName, $argProcessor]),
+                    2 => $this->assertSame([$customQueue, $processor], [$queueName, $argProcessor]),
+                };
+
+                return $consumer;
+            })
         ;
         $consumer
-            ->expects($this->at(1))
-            ->method('bind')
-            ->with($this->identicalTo($customQueue), $this->identicalTo($processor))
-        ;
-        $consumer
-            ->expects($this->at(2))
+            ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -467,7 +474,7 @@ class ConsumeCommandTest extends TestCase
 
         $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('createQueue')
             ->with('default', true)
             ->willReturn($defaultQueue)
@@ -475,12 +482,12 @@ class ConsumeCommandTest extends TestCase
 
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('bind')
             ->with($this->identicalTo($defaultQueue), $this->identicalTo($processor))
         ;
         $consumer
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -520,21 +527,9 @@ class ConsumeCommandTest extends TestCase
 
         $driver = $this->createDriverStub($routeCollection);
         $driver
-            ->expects($this->at(3))
-            ->method('createQueue', true)
-            ->with('default')
-            ->willReturn($queue)
-        ;
-        $driver
-            ->expects($this->at(4))
-            ->method('createQueue', true)
-            ->with('fooQueue')
-            ->willReturn($queue)
-        ;
-        $driver
-            ->expects($this->at(5))
-            ->method('createQueue', true)
-            ->with('ololoQueue')
+            ->expects($this->exactly(3))
+            ->method('createQueue')
+            ->with($this->logicalOr('default', 'fooQueue', 'ololoQueue'))
             ->willReturn($queue)
         ;
 

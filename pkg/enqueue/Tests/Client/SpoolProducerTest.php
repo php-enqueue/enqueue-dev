@@ -61,21 +61,18 @@ class SpoolProducerTest extends TestCase
         $message = new Message();
         $message->setScope('third');
 
+        $invoked = $this->exactly(3);
         $realProducer = $this->createProducerMock();
         $realProducer
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('sendEvent')
-            ->with('foo_topic', 'first')
-        ;
-        $realProducer
-            ->expects($this->at(1))
-            ->method('sendEvent')
-            ->with('bar_topic', ['second'])
-        ;
-        $realProducer
-            ->expects($this->at(2))
-            ->method('sendEvent')
-            ->with('baz_topic', $this->identicalTo($message))
+            ->willReturnCallback(function (string $topic, $argMessage) use ($invoked, $message) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame(['foo_topic', 'first'], [$topic, $argMessage]),
+                    2 => $this->assertSame(['bar_topic', ['second']], [$topic, $argMessage]),
+                    3 => $this->assertSame(['baz_topic', $message], [$topic, $argMessage]),
+                };
+            })
         ;
         $realProducer
             ->expects($this->never())
@@ -96,21 +93,18 @@ class SpoolProducerTest extends TestCase
         $message = new Message();
         $message->setScope('third');
 
+        $invoked = $this->exactly(3);
         $realProducer = $this->createProducerMock();
         $realProducer
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('sendCommand')
-            ->with('foo_command', 'first')
-        ;
-        $realProducer
-            ->expects($this->at(1))
-            ->method('sendCommand')
-            ->with('bar_command', ['second'])
-        ;
-        $realProducer
-            ->expects($this->at(2))
-            ->method('sendCommand')
-            ->with('baz_command', $this->identicalTo($message))
+            ->willReturnCallback(function (string $command, $argMessage, bool $needReply) use ($invoked, $message) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame(['foo_command', 'first', false], [$command, $argMessage, $needReply]),
+                    2 => $this->assertSame(['bar_command', ['second'], false], [$command, $argMessage, $needReply]),
+                    3 => $this->assertSame(['baz_command', $message, false], [$command, $argMessage, $needReply]),
+                };
+            })
         ;
 
         $producer = new SpoolProducer($realProducer);

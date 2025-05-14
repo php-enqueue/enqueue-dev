@@ -32,8 +32,8 @@ class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
     {
         $client = new BufferedStompClient('tcp://localhost:12345', 12345);
 
-        $this->assertObjectHasAttribute('buffer', $client);
-        $this->assertObjectHasAttribute('currentBufferSize', $client);
+        $this->assertObjectHasProperty('buffer', $client);
+        $this->assertObjectHasProperty('currentBufferSize', $client);
 
         $this->writeAttribute($client, 'buffer', [1, 2, 3]);
         $this->writeAttribute($client, 'currentBufferSize', 12345);
@@ -123,14 +123,8 @@ class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
 
         $connection = $this->createStompConnectionMock();
         $connection
-            ->expects($this->at(1))
             ->method('readFrame')
-            ->willReturn($frame)
-        ;
-        $connection
-            ->expects($this->at(2))
-            ->method('readFrame')
-            ->willReturn(false)
+            ->willReturnOnConsecutiveCalls($frame, false)
         ;
 
         $client = new BufferedStompClient($connection);
@@ -154,14 +148,9 @@ class BufferedStompClientTest extends \PHPUnit\Framework\TestCase
 
         $connection = $this->createStompConnectionMock();
         $connection
-            ->expects($this->at(1))
+            ->expects($this->exactly(2))
             ->method('readFrame')
-            ->willReturn($frame1)
-        ;
-        $connection
-            ->expects($this->at(3))
-            ->method('readFrame')
-            ->willReturn($frame2)
+            ->willReturnOnConsecutiveCalls($frame1, $frame2)
         ;
 
         $client = new BufferedStompClient($connection);

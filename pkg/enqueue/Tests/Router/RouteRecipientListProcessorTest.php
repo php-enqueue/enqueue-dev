@@ -10,6 +10,8 @@ use Enqueue\Router\RecipientListRouterInterface;
 use Enqueue\Router\RouteRecipientListProcessor;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
+use Interop\Queue\Destination;
+use Interop\Queue\Message;
 use Interop\Queue\Processor;
 use Interop\Queue\Producer as InteropProducer;
 use PHPUnit\Framework\TestCase;
@@ -38,17 +40,17 @@ class RouteRecipientListProcessorTest extends TestCase
             ->willReturn([$fooRecipient, $barRecipient])
         ;
 
+        $invoked = $this->exactly(2);
         $producerMock = $this->createProducerMock();
         $producerMock
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('send')
-            ->with($this->identicalTo($fooRecipient->getDestination()), $this->identicalTo($fooRecipient->getMessage()))
-        ;
-        $producerMock
-            ->expects($this->at(1))
-            ->method('send')
-            ->with($this->identicalTo($barRecipient->getDestination()), $this->identicalTo($barRecipient->getMessage()))
-        ;
+            ->willReturnCallback(function (Destination $destination, Message $message) use ($invoked, $fooRecipient, $barRecipient) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame([$fooRecipient->getDestination(), $fooRecipient->getMessage()], [$destination, $message]),
+                    2 => $this->assertSame([$barRecipient->getDestination(), $barRecipient->getMessage()], [$destination, $message]),
+                };
+            });
 
         $sessionMock = $this->createContextMock();
         $sessionMock

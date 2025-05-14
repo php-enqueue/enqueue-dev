@@ -196,14 +196,9 @@ class RabbitMqStompDriverTest extends TestCase
 
         $producer = $this->createProducerMock();
         $producer
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('setDeliveryDelay')
-            ->with(10000)
-        ;
-        $producer
-            ->expects($this->at(1))
-            ->method('setDeliveryDelay')
-            ->with(null)
+            ->with($this->logicalOr(10000, null))
         ;
         $producer
             ->expects($this->once())
@@ -300,7 +295,7 @@ class RabbitMqStompDriverTest extends TestCase
 
         $managementClient = $this->createManagementClientMock();
         $managementClient
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('declareExchange')
             ->with('aprefix.router', [
                 'type' => 'fanout',
@@ -309,7 +304,7 @@ class RabbitMqStompDriverTest extends TestCase
             ])
         ;
         $managementClient
-            ->expects($this->at(1))
+            ->expects($this->exactly(2))
             ->method('declareQueue')
             ->with('aprefix.default', [
                 'durable' => true,
@@ -320,20 +315,9 @@ class RabbitMqStompDriverTest extends TestCase
             ])
         ;
         $managementClient
-            ->expects($this->at(2))
+            ->expects($this->once())
             ->method('bind')
             ->with('aprefix.router', 'aprefix.default', 'aprefix.default')
-        ;
-        $managementClient
-            ->expects($this->at(3))
-            ->method('declareQueue')
-            ->with('aprefix.default', [
-                'durable' => true,
-                'auto_delete' => false,
-                'arguments' => [
-                    'x-max-priority' => 4,
-                ],
-            ])
         ;
 
         $contextMock = $this->createContextMock();
@@ -400,22 +384,39 @@ class RabbitMqStompDriverTest extends TestCase
         ]);
 
         $managementClient = $this->createManagementClientMock();
+        $invoked = $this->exactly(2);
         $managementClient
-            ->expects($this->at(4))
+            ->expects($invoked)
             ->method('declareExchange')
-            ->with('aprefix.default.delayed', [
-                'type' => 'x-delayed-message',
-                'durable' => true,
-                'auto_delete' => false,
-                'arguments' => [
-                    'x-delayed-type' => 'direct',
-                ],
-            ])
-        ;
+            ->willReturnCallback(function (string $name, array $options) use ($invoked) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame([
+                        'aprefix.router',
+                        ['type' => 'fanout', 'durable' => true, 'auto_delete' => false],
+                    ], [$name, $options]),
+                    2 => $this->assertSame([
+                        'aprefix.default.delayed',
+                        ['type' => 'x-delayed-message', 'durable' => true, 'auto_delete' => false, 'arguments' => ['x-delayed-type' => 'direct']],
+                    ], [$name, $options]),
+                };
+            });
+
+        $bindInvoked = $this->exactly(2);
         $managementClient
-            ->expects($this->at(5))
+            ->expects($bindInvoked)
             ->method('bind')
-            ->with('aprefix.default.delayed', 'aprefix.default', 'aprefix.default')
+            ->willReturnCallback(function (string $exchange, string $queue, ?string $routingKey = null, $arguments = null) use ($bindInvoked) {
+                match ($bindInvoked->getInvocationCount()) {
+                    1 => $this->assertSame(
+                        ['aprefix.router', 'aprefix.default', 'aprefix.default', null],
+                        [$exchange, $queue, $routingKey, $arguments],
+                    ),
+                    2 => $this->assertSame(
+                        ['aprefix.default.delayed', 'aprefix.default', 'aprefix.default', null],
+                        [$exchange, $queue, $routingKey, $arguments],
+                    ),
+                };
+            })
         ;
 
         $config = Config::create(

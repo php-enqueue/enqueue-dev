@@ -168,19 +168,22 @@ class ConfigurableConsumeCommandTest extends TestCase
     {
         $processor = $this->createProcessor();
 
+        $invoked = $this->exactly(2);
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('bind')
-            ->with('queue-name', $this->identicalTo($processor))
+            ->willReturnCallback(function ($queueName, Processor $argProcessor) use ($invoked, $processor, $consumer) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame(['queue-name', $processor], [$queueName, $argProcessor]),
+                    2 => $this->assertSame(['another-queue-name', $processor], [$queueName, $argProcessor]),
+                };
+
+                return $consumer;
+            })
         ;
         $consumer
-            ->expects($this->at(1))
-            ->method('bind')
-            ->with('another-queue-name', $this->identicalTo($processor))
-        ;
-        $consumer
-            ->expects($this->at(2))
+            ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;
@@ -210,19 +213,23 @@ class ConfigurableConsumeCommandTest extends TestCase
             }
         };
 
+        $invoked = $this->exactly(2);
+
         $consumer = $this->createQueueConsumerMock();
         $consumer
-            ->expects($this->at(0))
+            ->expects($invoked)
             ->method('bind')
-            ->with('fooSubscribedQueues', $this->identicalTo($processor))
+            ->willReturnCallback(function ($queueName, Processor $argProcessor) use ($invoked, $processor, $consumer) {
+                match ($invoked->getInvocationCount()) {
+                    1 => $this->assertSame(['fooSubscribedQueues', $processor], [$queueName, $argProcessor]),
+                    2 => $this->assertSame(['barSubscribedQueues', $processor], [$queueName, $argProcessor]),
+                };
+
+                return $consumer;
+            })
         ;
         $consumer
-            ->expects($this->at(1))
-            ->method('bind')
-            ->with('barSubscribedQueues', $this->identicalTo($processor))
-        ;
-        $consumer
-            ->expects($this->at(2))
+            ->expects($this->once())
             ->method('consume')
             ->with($this->isInstanceOf(ChainExtension::class))
         ;

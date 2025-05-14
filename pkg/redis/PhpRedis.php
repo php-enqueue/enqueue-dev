@@ -112,7 +112,7 @@ class PhpRedis implements Redis
             $this->config['timeout'],
             $this->config['persistent'] ? ($this->config['phpredis_persistent_id'] ?? null) : null,
             (int) ($this->config['phpredis_retry_interval'] ?? 0),
-            (float) $this->config['read_write_timeout'] ?? 0
+            (float) ($this->config['read_write_timeout'] ?? 0)
         );
 
         if (false == $result) {
