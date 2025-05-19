@@ -2,13 +2,13 @@
 
 namespace Enqueue\Consumption\Extension;
 
-use Enqueue\Consumption\Context\PostMessageReceived;
+use Enqueue\Consumption\Context\PostConsume;
 use Enqueue\Consumption\Context\PreConsume;
-use Enqueue\Consumption\PostMessageReceivedExtensionInterface;
+use Enqueue\Consumption\PostConsumeExtensionInterface;
 use Enqueue\Consumption\PreConsumeExtensionInterface;
 use Psr\Log\LoggerInterface;
 
-class LimitConsumedMessagesExtension implements PreConsumeExtensionInterface, PostMessageReceivedExtensionInterface
+class LimitConsumedMessagesExtension implements PreConsumeExtensionInterface, PostConsumeExtensionInterface
 {
     /**
      * @var int
@@ -18,12 +18,11 @@ class LimitConsumedMessagesExtension implements PreConsumeExtensionInterface, Po
     /**
      * @var int
      */
-    protected $messageConsumed;
+    protected $messageConsumed = 0;
 
     public function __construct(int $messageLimit)
     {
         $this->messageLimit = $messageLimit;
-        $this->messageConsumed = 0;
     }
 
     public function onPreConsume(PreConsume $context): void
@@ -34,7 +33,7 @@ class LimitConsumedMessagesExtension implements PreConsumeExtensionInterface, Po
         }
     }
 
-    public function onPostMessageReceived(PostMessageReceived $context): void
+    public function onPostConsume(PostConsume $context): void
     {
         ++$this->messageConsumed;
 
