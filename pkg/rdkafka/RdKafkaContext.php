@@ -216,6 +216,10 @@ class RdKafkaContext implements Context
             if (isset($this->config['stats_cb'])) {
                 $this->conf->setStatsCb($this->config['stats_cb']);
             }
+
+            if (isset($this->config['oauthbearer_token_refresh_cb'])) {
+                $this->conf->setOauthbearerTokenRefreshCb($this->config['oauthbearer_token_refresh_cb']);
+            }
         }
 
         return $this->conf;
