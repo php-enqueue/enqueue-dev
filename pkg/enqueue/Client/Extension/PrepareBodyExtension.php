@@ -2,6 +2,7 @@
 
 namespace Enqueue\Client\Extension;
 
+use ArrayObject;
 use Enqueue\Client\Message;
 use Enqueue\Client\PreSend;
 use Enqueue\Client\PreSendCommandExtensionInterface;
@@ -28,7 +29,14 @@ class PrepareBodyExtension implements PreSendEventExtensionInterface, PreSendCom
         if (is_scalar($body) || null === $body) {
             $contentType = $contentType ?: 'text/plain';
             $body = (string) $body;
-        } elseif (is_array($body)) {
+        } elseif (is_array($body) || $body instanceof ArrayObject) {
+            // convert ArrayObjects to arrays
+            array_walk_recursive($body, function (&$value) {
+                if ($value instanceof ArrayObject) {
+                    $value = (array) $value;
+                }
+            });
+
             // only array of scalars is allowed.
             array_walk_recursive($body, function ($value) {
                 if (!is_scalar($value) && null !== $value) {
