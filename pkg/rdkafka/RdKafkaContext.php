@@ -16,6 +16,7 @@ use Interop\Queue\Producer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
 use Interop\Queue\Topic;
+use InvalidArgumentException;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer as VendorProducer;
@@ -54,8 +55,35 @@ class RdKafkaContext implements Context
         $this->config = $config;
         $this->kafkaConsumers = [];
         $this->rdKafkaConsumers = [];
+        $this->configureSerializer($config);
+    }
 
-        $this->setSerializer(new JsonSerializer());
+    /**
+     * @param array $config
+     * @return void
+     */
+    private function configureSerializer(array $config): void
+    {
+        if (!isset($config['serializer'])) {
+            $this->setSerializer(new JsonSerializer());
+            return;
+        }
+
+        if (is_string($config['serializer'])) {
+            $this->setSerializer(new $config['serializer']());
+        } elseif (is_array($config['serializer']) && isset($config['serializer']['class'])) {
+            $serializerClass = $config['serializer']['class'];
+            $serializerOptions = $config['serializer']['options'] ?? [];
+            if (!empty($serializerOptions)) {
+                $this->setSerializer(new $serializerClass($serializerOptions));
+            } else {
+                $this->setSerializer(new $serializerClass());
+            }
+        } elseif ($config['serializer'] instanceof Serializer) {
+            $this->setSerializer($config['serializer']);
+        } else {
+            throw new InvalidArgumentException('Invalid serializer configuration');
+        }
     }
 
     /**

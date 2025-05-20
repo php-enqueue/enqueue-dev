@@ -8,6 +8,7 @@ use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\Serializer;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class RdKafkaContextTest extends TestCase
@@ -34,6 +35,27 @@ class RdKafkaContextTest extends TestCase
         $context = new RdKafkaContext([]);
 
         $this->assertInstanceOf(JsonSerializer::class, $context->getSerializer());
+    }
+
+    public function testShouldUseStringSerializerClassFromConfig()
+    {
+        $mockSerializerClass = get_class($this->createMock(Serializer::class));
+
+        $context = new RdKafkaContext([
+            'serializer' => $mockSerializerClass
+        ]);
+
+        $this->assertInstanceOf($mockSerializerClass, $context->getSerializer());
+    }
+
+    public function testShouldThrowExceptionOnInvalidSerializerConfig()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid serializer configuration');
+
+        new RdKafkaContext([
+            'serializer' => 123
+        ]);
     }
 
     public function testShouldAllowGetPreviouslySetSerializer()
