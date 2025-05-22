@@ -16,7 +16,6 @@ use Interop\Queue\Producer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
 use Interop\Queue\Topic;
-use InvalidArgumentException;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer as VendorProducer;
@@ -56,34 +55,6 @@ class RdKafkaContext implements Context
         $this->kafkaConsumers = [];
         $this->rdKafkaConsumers = [];
         $this->configureSerializer($config);
-    }
-
-    /**
-     * @param array $config
-     * @return void
-     */
-    private function configureSerializer(array $config): void
-    {
-        if (!isset($config['serializer'])) {
-            $this->setSerializer(new JsonSerializer());
-            return;
-        }
-
-        if (is_string($config['serializer'])) {
-            $this->setSerializer(new $config['serializer']());
-        } elseif (is_array($config['serializer']) && isset($config['serializer']['class'])) {
-            $serializerClass = $config['serializer']['class'];
-            $serializerOptions = $config['serializer']['options'] ?? [];
-            if (!empty($serializerOptions)) {
-                $this->setSerializer(new $serializerClass($serializerOptions));
-            } else {
-                $this->setSerializer(new $serializerClass());
-            }
-        } elseif ($config['serializer'] instanceof Serializer) {
-            $this->setSerializer($config['serializer']);
-        } else {
-            throw new InvalidArgumentException('Invalid serializer configuration');
-        }
     }
 
     /**
@@ -206,6 +177,58 @@ class RdKafkaContext implements Context
         $patch = (\RD_KAFKA_VERSION & 0x0000FF00) >> 8;
 
         return "$major.$minor.$patch";
+    }
+
+    /**
+     * @return void
+     *              JsonSerializer should be the default fallback if no serializer is specified
+     */
+    private function configureSerializer(array $config): void
+    {
+        if (!isset($config['serializer'])) {
+            $this->setSerializer(new JsonSerializer());
+
+            return;
+        }
+
+        $serializer = $config['serializer'];
+
+        if ($serializer instanceof Serializer) {
+            $this->setSerializer($serializer);
+
+            return;
+        }
+
+        $serializerClass = $this->resolveSerializerClass($serializer);
+
+        if (!class_exists($serializerClass) || !is_a($serializerClass, Serializer::class, true)) {
+            throw $this->createInvalidSerializerException($serializerClass);
+        }
+
+        $serializerOptions = $serializer['options'] ?? [];
+        $this->setSerializer(new $serializerClass($serializerOptions));
+    }
+
+    private function resolveSerializerClass(mixed $serializer): string
+    {
+        if (is_string($serializer)) {
+            return $serializer;
+        }
+
+        if (is_array($serializer) && isset($serializer['class'])) {
+            return $serializer['class'];
+        }
+
+        throw $this->createInvalidSerializerException($serializer);
+    }
+
+    private function createInvalidSerializerException(mixed $value): \InvalidArgumentException
+    {
+        return new \InvalidArgumentException(sprintf(
+            'Invalid serializer configuration. Expected "serializer" to be a string, an array with a "class" key, or a %s instance. Received %s instead.',
+            Serializer::class,
+            get_debug_type($value)
+        ));
     }
 
     private function getConf(): Conf
