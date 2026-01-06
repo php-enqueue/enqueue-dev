@@ -7,7 +7,7 @@ Enqueue is an MIT-licensed open source project with its ongoing development made
 
 ---
 
-# Enqueue. Parse DSN class
+# Enqueue. Parse DSN (Data Source Name) class
 
 ## Resources
 
