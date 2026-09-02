@@ -10,6 +10,8 @@ use Enqueue\RdKafka\Serializer;
 use PHPUnit\Framework\TestCase;
 use RdKafka\KafkaConsumer;
 use RdKafka\Message;
+use RdKafka\TopicPartition;
+use RdKafka\Exception as RdKafkaException;
 
 class RdKafkaConsumerTest extends TestCase
 {
@@ -259,6 +261,62 @@ class RdKafkaConsumerTest extends TestCase
         $this->assertSame($expectedSerializer, $consumer->getSerializer());
     }
 
+    public function testShouldGetAssignmentWhenThereAreNoPartitions(): void
+    {
+        $rdKafka = $this->createKafkaConsumerMock();
+        $rdKafka->expects($this->once())
+            ->method('getAssignment')
+            ->willReturn([]);
+
+        $consumer = new RdKafkaConsumer(
+            $rdKafka,
+            $this->createContextMock(),
+            new RdKafkaTopic(''),
+            $this->createSerializerMock()
+        );
+
+        $this->assertEquals([], $consumer->getAssignment());
+    }
+
+    public function testShouldGetAssignmentWhenThereArePartitions(): void
+    {
+        $partition = new TopicPartition('', 0);
+
+        $rdKafka = $this->createKafkaConsumerMock();
+        $rdKafka->expects($this->once())
+            ->method('getAssignment')
+            ->willReturn([$partition]);
+
+        $consumer = new RdKafkaConsumer(
+            $rdKafka,
+            $this->createContextMock(),
+            new RdKafkaTopic(''),
+            $this->createSerializerMock()
+        );
+
+        $expected = new RdKafkaTopic('');
+        $expected->setPartition(0);
+
+        $this->assertEquals([$expected], $consumer->getAssignment());
+    }
+
+    public function testShouldGetAssignmentReturnEmptyArrayWhenThrowException(): void
+    {
+        $rdKafka = $this->createKafkaConsumerMock();
+        $rdKafka->expects($this->once())
+            ->method('getAssignment')
+            ->willThrowException($this->createExceptionMock());
+
+        $consumer = new RdKafkaConsumer(
+            $rdKafka,
+            $this->createContextMock(),
+            new RdKafkaTopic(''),
+            $this->createSerializerMock()
+        );
+
+        $this->assertEquals([], $consumer->getAssignment());
+    }
+
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|KafkaConsumer
      */
@@ -281,5 +339,13 @@ class RdKafkaConsumerTest extends TestCase
     private function createSerializerMock()
     {
         return $this->createMock(Serializer::class);
+    }
+
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject|RdKafkaException
+     */
+    private function createExceptionMock()
+    {
+        return $this->createMock(RdKafkaException::class);
     }
 }
