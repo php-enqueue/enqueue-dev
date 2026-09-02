@@ -34,6 +34,18 @@ class PRedis implements Redis
             throw new \LogicException('The package "predis/predis" must be installed. Please run "composer req predis/predis:^1.1" to install it');
         }
 
+        if (array_key_exists('client', $config) && null !== $config['client']) {
+            if (!$config['client'] instanceof Client) {
+                throw new \InvalidArgumentException(sprintf('%s configuration property is expected to be an instance of %s class. %s was passed instead.', 'client', Client::class, gettype($config['client'])));
+            }
+            $this->redis = $config['client'];
+
+            $this->options = [];
+            $this->parameters = [];
+
+            return;
+        }
+
         $this->options = $config['predis_options'];
 
         $this->parameters = [
@@ -52,6 +64,11 @@ class PRedis implements Redis
         if ($config['ssl']) {
             $this->parameters['ssl'] = $config['ssl'];
         }
+    }
+
+    public static function createWithClient(Client $client): self
+    {
+        return new self(['client' => $client]);
     }
 
     public function eval(string $script, array $keys = [], array $args = [])
