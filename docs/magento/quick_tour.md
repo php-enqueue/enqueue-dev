@@ -22,7 +22,7 @@ composer require "magento-hackathon/magento-composer-installer:~3.0"
 composer require "enqueue/magento-enqueue:*@dev" "enqueue/amqp-ext"
 ```
 
-_**Note**: You could use not only AMQP transport but any other [available](../transport)._
+_**Note**: You could use not only AMQP transport but any other [available](../../transport)._
 
 ## Configuration
 
