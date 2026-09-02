@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client\Extension;
 
+use ArrayObject;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Extension\PrepareBodyExtension;
 use Enqueue\Client\Message;
@@ -113,6 +114,10 @@ class PrepareBodyExtensionTest extends TestCase
         yield [['foo' => 'fooVal'], null, '{"foo":"fooVal"}', 'application/json'];
 
         yield [['foo' => 'fooVal'], 'foo/bar', '{"foo":"fooVal"}', 'foo/bar'];
+
+        yield [new ArrayObject(['foo' => 'fooVal']), null, '{"foo":"fooVal"}', 'application/json'];
+
+        yield [['foo' => 'fooVal', 'bar' => new ArrayObject(['barOne', 'barTwo'])], null, '{"foo":"fooVal","bar":["barOne","barTwo"]}', 'application/json'];
 
         yield [new JsonSerializableObject(), null, '{"foo":"fooVal"}', 'application/json'];
 
