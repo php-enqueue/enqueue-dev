@@ -341,6 +341,7 @@ class SqsConsumerTest extends TestCase
             'ApproximateReceiveCount' => '3',
             'SentTimestamp' => '1560512260079',
         ], $result->getAttributes());
+        $this->assertSame(1560512260, $result->getTimestamp());
         $this->assertTrue($result->isRedelivered());
         $this->assertEquals('The Receipt', $result->getReceiptHandle());
         $this->assertEquals('theMessageId', $result->getMessageId());

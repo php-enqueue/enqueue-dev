@@ -52,6 +52,23 @@ class SqsMessageTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(['timestamp' => 12345], $message->getHeaders());
     }
 
+    public function testShouldGetTimestampFromSentTimestampAttribute()
+    {
+        $message = new SqsMessage();
+        $message->setAttributes([
+            'SentTimestamp' => '1560512260079',
+        ]);
+
+        $this->assertSame(1560512260, $message->getTimestamp());
+    }
+
+    public function testShouldReturnNullTimestampWhenSentTimestampAttributeIsMissing()
+    {
+        $message = new SqsMessage();
+
+        $this->assertNull($message->getTimestamp());
+    }
+
     public function testShouldSetReplyToAsHeader()
     {
         $message = new SqsMessage();

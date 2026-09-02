@@ -176,9 +176,10 @@ class SqsMessage implements Message
 
     public function getTimestamp(): ?int
     {
-        $value = $this->getHeader('timestamp');
+        $value = $this->getAttribute('SentTimestamp');
 
-        return null === $value ? null : (int) $value;
+        // SQS SentTimestamp is milliseconds since epoch.
+        return null === $value ? null : (int) $intdiv($value, 1000);
     }
 
     public function setTimestamp(?int $timestamp = null): void
