@@ -72,6 +72,8 @@ class RdKafkaProducer implements Producer
      */
     public function setDeliveryDelay(?int $deliveryDelay = null): Producer
     {
+        $deliveryDelay = null;
+
         if (null === $deliveryDelay) {
             return $this;
         }
